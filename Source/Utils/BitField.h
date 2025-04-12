@@ -1,14 +1,15 @@
 #pragma once
 
-namespace Utils
+namespace Silent::Utils
 {
     class BitField
     {
-    private:
+    public:
         // Aliases
 
-        using ChunkType = unsigned int;
+         using ChunkType = unsigned int;
 
+        private:
         // Constants
 
         static constexpr auto DEFAULT_SIZE = 32;
@@ -67,7 +68,6 @@ namespace Utils
         // Converters
 
         std::string ToString() const;
-        ChunkType	ToPackedBits() const;
 
         // Operators
 
@@ -82,20 +82,26 @@ namespace Utils
         BitField  operator ^(const BitField& bitField) const;
         BitField  operator ~() const;
 
-        // Compatibility operators
-
-        bool         operator ==(unsigned int packedBits) const;
-        bool         operator !=(unsigned int packedBits) const;
-        BitField&    operator =(unsigned int packedBits);
-        BitField&    operator &=(unsigned int packedBits);
-        BitField&    operator |=(unsigned int packedBits);
-        unsigned int operator &(unsigned int packedBits) const;
-        unsigned int operator |(unsigned int packedBits) const;
-
     private:
         // Helpers
 
         void Fill(bool value);
         bool IsBitIdxValid(unsigned int bitIdx) const;
+    };
+}
+
+namespace std
+{
+    template<>
+    struct hash<Silent::Utils::BitField>
+    {
+        size_t operator()(const Silent::Utils::BitField& bitField) const
+        {
+            size_t hashValue = 0;
+            for (auto chunk : bitField.GetChunks())
+                hashValue ^= hash<Silent::Utils::BitField::ChunkType>{}(chunk) + 0x9E3779B9 + (hashValue << 6) + (hashValue >> 2);
+
+            return hashValue;
+        }
     };
 }

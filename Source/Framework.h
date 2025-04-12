@@ -36,10 +36,6 @@
 // spdlog
 #include <spdlog/spdlog.h>
 
-// Resources
-#include "Utils/Debug.h"
-//#include "Math/Math.h"
-
 namespace Silent
 {
     // =========
@@ -49,5 +45,10 @@ namespace Silent
     constexpr int NO_VALUE = -1;
 }
 
+// Resources
+#include "Utils/Debug.h"
+//#include "Math/Math.h"
+
 using namespace Silent;
-using namespace Silent::Debug;
+using namespace Silent::Utils::Debug;
+//using namespace Silent::Math;

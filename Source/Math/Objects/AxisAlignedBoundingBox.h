@@ -15,14 +15,15 @@ namespace Silent::Math
 
         // Fields
 
-        glm::vec3 Center  = {};
-        glm::vec3 Extents = {};
+        glm::vec3 Center  = glm::vec3();
+        glm::vec3 Extents = glm::vec3();
 
         // Constructors
     
         constexpr AxisAlignedBoundingBox() = default;
         constexpr AxisAlignedBoundingBox(const glm::vec3& center, const glm::vec3& extents) : Center(center), Extents(extents) {}
                   AxisAlignedBoundingBox(const std::span<glm::vec3>& points);
+                  AxisAlignedBoundingBox(const BoundingSphere& sphere);
                   AxisAlignedBoundingBox(const OrientedBoundingBox& obb);
 
         // Getters

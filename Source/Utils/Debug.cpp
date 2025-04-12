@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Utils/Debug.h"
 
-namespace Silent::Debug
+namespace Silent::Utils::Debug
 {
     static auto StartTime = std::chrono::high_resolution_clock::time_point{};
 

@@ -13,7 +13,6 @@ namespace Silent::Math
 {
     class         BoundingSphere;
     class         Ray;
-    typedef class AxisAlignedBoundingBox Aabb;
     typedef class OrientedBoundingBox Obb;
 
     enum class BvhBuildStrategy
@@ -30,7 +29,7 @@ namespace Silent::Math
         struct Node
         {
             int  ObjectId = NO_VALUE; // NOTE: Only stored by leaf.
-            Aabb Aabb     = {};
+            Aabb Aabb     = AxisAlignedBoundingBox();
 
             int Height       = 0;
             int ParentId     = NO_VALUE;

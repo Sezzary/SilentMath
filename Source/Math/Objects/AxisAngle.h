@@ -24,7 +24,7 @@ namespace Silent::Math
                   AxisAngle(const glm::vec3& dir);
                   AxisAngle(const EulerAngles& eulerAngles);
                   AxisAngle(const glm::quat& quat);
-                  AxisAngle(const glm::mat3& rotMatrix);
+                  AxisAngle(const glm::mat3& rotMat);
 
         // Utilities
 

@@ -52,10 +52,10 @@ namespace Silent::Math
         Angle = FP_ANGLE_FROM_RAD(rad);
     }
 
-    AxisAngle::AxisAngle(const glm::mat3& rotMatrix)
+    AxisAngle::AxisAngle(const glm::mat3& rotMat)
     {
         // Compute angle.
-        float trace = rotMatrix[0][0] + rotMatrix[1][1] + rotMatrix[2][2];
+        float trace = rotMat[0][0] + rotMat[1][1] + rotMat[2][2];
         float rad = glm::acos((trace - 1.0f) / 2.0f);
 
         // Compute axis.
@@ -66,9 +66,9 @@ namespace Silent::Math
         }
         else
         {
-            axis = glm::vec3(rotMatrix[2][1] - rotMatrix[1][2], 
-                             rotMatrix[0][2] - rotMatrix[2][0], 
-                             rotMatrix[1][0] - rotMatrix[0][1]) / (glm::sin(rad) * 2.0f);
+            axis = glm::vec3(rotMat[2][1] - rotMat[1][2], 
+                             rotMat[0][2] - rotMat[2][0], 
+                             rotMat[1][0] - rotMat[0][1]) / (glm::sin(rad) * 2.0f);
         }
 
         // Set axis and angle.

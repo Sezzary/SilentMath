@@ -7,10 +7,10 @@ namespace Silent::Math
     public:
         // Fields
 
-        glm::vec3 Center      = {};
+        glm::vec3 Center      = glm::vec3();
+        glm::quat Orientation = glm::quat();
         float     Radius      = 0.0f;
         float     Height      = 0.0f;
-        glm::quat Orientation = {};
 
         // Constructors
 

@@ -4,33 +4,35 @@
 #include "Math/Constants.h"
 #include "Math/Objects/BoundingSphere.h"
 #include "Math/Objects/OrientedBoundingBox.h"
-#include "Utils.h"
+#include "Utils/Utils.h"
+
+using namespace Silent::Utils;
 
 namespace Silent::Math
 {
     AxisAlignedBoundingBox::AxisAlignedBoundingBox(const std::span<glm::vec3>& points)
-	{
-		auto pointMin = glm::vec3(INFINITY);
-		auto pointMax = glm::vec3(-INFINITY);
+    {
+        auto pointMin = glm::vec3(INFINITY);
+        auto pointMax = glm::vec3(-INFINITY);
 
-		// Compute max and min AABB points.
-		for (const auto& point : points)
-		{
-			pointMin = glm::vec3(
-				std::min(pointMin.x, point.x),
-				std::min(pointMin.y, point.y),
-				std::min(pointMin.z, point.z));
+        // Compute min and max AABB points.
+        for (const auto& point : points)
+        {
+            pointMin = glm::vec3(
+                std::min(pointMin.x, point.x),
+                std::min(pointMin.y, point.y),
+                std::min(pointMin.z, point.z));
 
-			pointMax = glm::vec3(
-				std::max(pointMax.x, point.x),
-				std::max(pointMax.y, point.y),
-				std::max(pointMax.z, point.z));
-		}
+            pointMax = glm::vec3(
+                std::max(pointMax.x, point.x),
+                std::max(pointMax.y, point.y),
+                std::max(pointMax.z, point.z));
+        }
 
-		// Construct AABB.
-		Center = (pointMin + pointMax) / 2.0f;
-		Extents = (pointMax - pointMin) / 2.0f;
-	}
+        // Construct AABB.
+        Center = (pointMin + pointMax) / 2.0f;
+        Extents = (pointMax - pointMin) / 2.0f;
+    }
 
     /*AxisAlignedBoundingBox::AxisAlignedBoundingBox(const OrientedBoundingBox& obb)
     {
@@ -134,8 +136,8 @@ namespace Silent::Math
             for (const auto& corner : obb.GetCorners())
             {
                 float proj = glm::dot(corner, axis);
-                obbProjMin = glm::min(obbProjMin, proj);
-                obbProjMax = glm::max(obbProjMax, proj);
+                obbProjMin = std::min(obbProjMin, proj);
+                obbProjMax = std::max(obbProjMax, proj);
             }
 
             // If no overlap on this axis, no intersection.
