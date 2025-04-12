@@ -1,0 +1,9 @@
+[submodule "Libraries/glm"]
+    path = Libraries/glm
+    url = https://github.com/g-truc/glm.git
+[submodule "Libraries/PhysX"]
+    path = Libraries/PhysX
+    url = https://github.com/NVIDIAGameWorks/PhysX.git
+[submodule "Libraries/spdlog"]
+	path = Libraries/spdlog
+	url = https://github.com/gabime/spdlog.git
