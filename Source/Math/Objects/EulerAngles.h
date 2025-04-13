@@ -59,7 +59,7 @@ namespace Silent::Math
         EulerAngles  operator *(const EulerAngles& eulerAngles) const;
         EulerAngles  operator *(float scalar) const;
         EulerAngles  operator /(float scalar) const;
-    
+
     private:
         // Helpers
 

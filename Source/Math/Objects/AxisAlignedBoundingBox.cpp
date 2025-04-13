@@ -18,15 +18,8 @@ namespace Silent::Math
         // Compute min and max AABB points.
         for (const auto& point : points)
         {
-            pointMin = glm::vec3(
-                std::min(pointMin.x, point.x),
-                std::min(pointMin.y, point.y),
-                std::min(pointMin.z, point.z));
-
-            pointMax = glm::vec3(
-                std::max(pointMax.x, point.x),
-                std::max(pointMax.y, point.y),
-                std::max(pointMax.z, point.z));
+            pointMin = glm::min(pointMin, point);
+            pointMax = glm::max(pointMax, point);
         }
 
         // Construct AABB.
@@ -34,10 +27,16 @@ namespace Silent::Math
         Extents = (pointMax - pointMin) / 2.0f;
     }
 
-    /*AxisAlignedBoundingBox::AxisAlignedBoundingBox(const OrientedBoundingBox& obb)
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const BoundingSphere& sphere)
+    {
+        Center = sphere.Center;
+        Extents = glm::vec3(sphere.Radius);
+    }
+
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const OrientedBoundingBox& obb)
     {
         *this = AxisAlignedBoundingBox(ToSpan(obb.GetCorners()));
-    }*/
+    }
 
     float AxisAlignedBoundingBox::GetSurfaceArea() const
     {
@@ -73,8 +72,7 @@ namespace Silent::Math
 
     bool AxisAlignedBoundingBox::Intersects(const BoundingSphere& sphere) const
     {
-        auto closestPoint = glm::clamp(sphere.Center, Center - Extents, Center + Extents);
-        return glm::distance2(closestPoint, sphere.Center) <= SQUARE(sphere.Radius);
+        return sphere.Intersects(*this);
     }
 
     bool AxisAlignedBoundingBox::Intersects(const AxisAlignedBoundingBox& aabb) const
@@ -200,6 +198,46 @@ namespace Silent::Math
         }
 
         return ContainmentType::Intersects;
+    }
+
+    ContainmentType AxisAlignedBoundingBox::Contains(const OrientedBoundingBox& obb) const
+    {
+        // Get the corners of the OBB.
+        
+        bool allInside = true;
+        bool allOutside = true;
+
+        // Check if each OBB corner is inside AABB.
+        auto obbCorners = obb.GetCorners();
+        for (const auto& corner : obbCorners)
+        {
+            // Is inside.
+            if (corner.x >= (Center.x - Extents.x) && corner.x <= (Center.x + Extents.x) &&
+                corner.y >= (Center.y - Extents.y) && corner.y <= (Center.y + Extents.y) &&
+                corner.z >= (Center.z - Extents.z) && corner.z <= (Center.z + Extents.z))
+            {
+                allOutside = false;
+            }
+            // Is outside.
+            else
+            {
+                allInside = false;
+            }
+        }
+
+        // Determine containment type based on corner checks.
+        if (allInside)
+        {
+            return ContainmentType::Contains;
+        }
+        else if (allOutside)
+        {
+            return ContainmentType::Disjoint;
+        }
+        else
+        {
+            return ContainmentType::Intersects;
+        }
     }
 
     AxisAlignedBoundingBox AxisAlignedBoundingBox::Merge(const AxisAlignedBoundingBox& aabb0, const AxisAlignedBoundingBox& aabb1)

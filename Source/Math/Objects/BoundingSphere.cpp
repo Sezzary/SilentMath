@@ -28,11 +28,32 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
-        return aabb.Intersects(*this);
+        auto closestPoint = glm::clamp(Center, aabb.Center - aabb.Extents, aabb.Center + aabb.Extents);
+        return glm::distance2(closestPoint, Center) <= SQUARE(Radius);
     }
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
         return false;
     }
+    
+    /*ContainmentType BoundingSphere::Contains(const glm::vec3& point) const
+    {
+        
+    }
+
+    ContainmentType BoundingSphere::Contains(const BoundingSphere& sphere) const
+    {
+        
+    }
+
+    ContainmentType BoundingSphere::Contains(const AxisAlignedBoundingBox& aabb) const
+    {
+        
+    }
+
+    ContainmentType BoundingSphere::Contains(const OrientedBoundingBox& obb) const
+    {
+
+    }*/
 }

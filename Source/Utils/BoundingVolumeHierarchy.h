@@ -9,7 +9,7 @@ using namespace Silent::Math;
 // https://www.gdcvault.com/play/1025909/Math-for-Game-Developers-Dynamic
 
 // NOTE: _leafIdMap is a hash map for convenience. If performance suffers with too many Move() and Remove() calls, a method with faster access can be implemented.
-// However, it requires maintaining an odd index variable outside the BVH instance, so a hash map is preferred for the benefit of cleaner code. -- Sezz 2024.11.05
+// However, it requires maintaining an odd index variable outside the BVH instance, so a hash map is preferred for the benefit of cleaner code.
 
 namespace Silent::Utils
 {

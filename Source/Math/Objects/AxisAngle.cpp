@@ -114,8 +114,8 @@ namespace Silent::Math
     glm::mat3 AxisAngle::ToRotationMatrix() const
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
-        float cosAngle = glm::cos(rad);
         float sinAngle = glm::sin(rad);
+        float cosAngle = glm::cos(rad);
         float oneMinusCos = 1.0f - cosAngle;
     
         // Construct rotation matrix using Rodrigues' formula.

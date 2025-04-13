@@ -2,7 +2,11 @@
 
 namespace Silent::Math
 {
-    typedef class OrientedBoundingBox
+    enum class ContainmentType;
+    class      AxisAlignedBoundingBox;
+    class      BoundingSphere;
+
+    class OrientedBoundingBox
     {
     public:
         // Constants
@@ -18,16 +22,25 @@ namespace Silent::Math
         // Constructors
 
        constexpr OrientedBoundingBox() = default;
-       //constexpr OrientedBoundingBox(const glm::vec3& center, const glm::vec3& extents, const glm::quat orient) : Center(center), Extents(extents), Orientation(orient) {}
+       constexpr OrientedBoundingBox(const glm::vec3& center, const glm::vec3& extents, const glm::quat rot) : Center(center), Extents(extents), Rotation(rot) {}
 
        // Getters
 
        float                  GetSurfaceArea() const;
        float                  GetVolume() const;
-       glm::mat4              GetTransformMatrix() const;
        std::vector<glm::vec3> GetCorners() const;
+       glm::mat4              GetTransformMatrix() const;
 
        // Utilities
 
-    } Obb;
+       bool Intersects(const glm::vec3& point) const;
+       bool Intersects(const BoundingSphere& sphere) const;
+       bool Intersects(const AxisAlignedBoundingBox& aabb) const;
+       bool Intersects(const OrientedBoundingBox& obb) const;
+
+       ContainmentType Contains(const glm::vec3& point) const;
+       ContainmentType Contains(const BoundingSphere& sphere) const;
+       ContainmentType Contains(const AxisAlignedBoundingBox& aabb) const;
+       ContainmentType Contains(const OrientedBoundingBox& obb) const;
+    };
 }

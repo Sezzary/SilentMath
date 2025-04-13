@@ -29,7 +29,7 @@ namespace Silent::Math
 
     constexpr float ROUND(float value)
     {
-        return ((value > 0.0f) ? int(value + 0.5f) : int(value - 0.5f));
+        return ((value > 0.0f) ? (int)(value + 0.5f) : (int)(value - 0.5f));
     }
     
     /** Converts an integer to a fixed-point Q format. */
@@ -63,7 +63,7 @@ namespace Silent::Math
     /** Converts a floating-point alpha in the range [0.0f, 1.0f] to a fixed-point alpha in Q3.12 format. */
     constexpr short FP_ALPHA(float alpha)
     {
-        return (short)(alpha * (1 << (Q12_SHIFT)));
+        return (short)(FP_FLOAT_TO(alpha, Q12_SHIFT));
     }
 
     /** Converts floating-point degrees to fixed-point angles in Q1.15 format. */
