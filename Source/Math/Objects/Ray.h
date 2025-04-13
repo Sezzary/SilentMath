@@ -11,13 +11,13 @@ namespace Silent::Math
     public:
         // Fields
 
-        glm::vec3 Position  = glm::vec3();
+        glm::vec3 Origin    = glm::vec3();
         glm::vec3 Direction = glm::vec3(0.0f, 0.0f, 1.0f);
 
         // Constructors
 
         constexpr Ray() = default;
-        constexpr Ray(const glm::vec3& pos, const glm::vec3& dir) : Position(pos), Direction(dir) {}
+        constexpr Ray(const glm::vec3& origin, const glm::vec3& dir) : Origin(origin), Direction(dir) {}
 
         // Inquirers
 

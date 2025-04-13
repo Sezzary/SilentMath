@@ -2,15 +2,16 @@
 
 namespace Silent::Math
 {
-    class AxisAlignedBoundingBox;
-    class OrientedBoundingBox;
+    class      AxisAlignedBoundingBox;
+    class      OrientedBoundingBox;
+    enum class ContainmentType;
 
     class BoundingSphere
     {
     public:
         // Fields
 
-        glm::vec3 Center = {};
+        glm::vec3 Center = glm::vec3();
         float     Radius = 0.0f;
 
         // Constructors
@@ -37,6 +38,8 @@ namespace Silent::Math
 
         // Operators
 
+        bool            operator ==(const BoundingSphere& sphere) const;
+        bool            operator !=(const BoundingSphere& sphere) const;
         BoundingSphere& operator =(const BoundingSphere& sphere) = default;
     };
 }

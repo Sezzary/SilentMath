@@ -2,9 +2,9 @@
 
 namespace Silent::Math
 {
-    enum class ContainmentType;
     class      AxisAlignedBoundingBox;
     class      BoundingSphere;
+    enum class ContainmentType;
 
     class OrientedBoundingBox
     {
@@ -15,9 +15,9 @@ namespace Silent::Math
 
         // Fields
 
-        glm::vec3 Center   = {};
-        glm::vec3 Extents  = {};
-        glm::quat Rotation = {};
+        glm::vec3 Center   = glm::vec3();
+        glm::vec3 Extents  = glm::vec3();
+        glm::quat Rotation = glm::quat();
 
         // Constructors
 
@@ -42,5 +42,11 @@ namespace Silent::Math
        ContainmentType Contains(const BoundingSphere& sphere) const;
        ContainmentType Contains(const AxisAlignedBoundingBox& aabb) const;
        ContainmentType Contains(const OrientedBoundingBox& obb) const;
+
+       // Operators
+
+       bool                 operator ==(const OrientedBoundingBox& obb) const;
+       bool                 operator !=(const OrientedBoundingBox& obb) const;
+       OrientedBoundingBox& operator =(const OrientedBoundingBox& obb) = default;
     };
 }

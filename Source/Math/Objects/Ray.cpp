@@ -10,7 +10,7 @@ namespace Silent::Math
 {
     std::optional<float> Ray::Intersects(const BoundingSphere& sphere) const
     {
-        auto posDelta = sphere.Center - Position;
+        auto posDelta = sphere.Center - Origin;
         auto projLength = glm::dot(posDelta, Direction);
 
         auto distSqr = glm::length2(posDelta) - SQUARE(projLength);
@@ -27,8 +27,8 @@ namespace Silent::Math
     std::optional<float> Ray::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
         auto invDir = 1.0f / Direction;
-        auto intersectMin = (aabb.Center - aabb.Extents - Position) * invDir;
-        auto intersectMax = (aabb.Center + aabb.Extents - Position) * invDir;
+        auto intersectMin = (aabb.Center - aabb.Extents - Origin) * invDir;
+        auto intersectMax = (aabb.Center + aabb.Extents - Origin) * invDir;
 
         float nearIntersect = glm::max(glm::max(intersectMin.x, intersectMin.y), intersectMin.z);
         float farIntersect = glm::min(glm::min(intersectMax.x, intersectMax.y), intersectMax.z);
@@ -46,9 +46,9 @@ namespace Silent::Math
         auto invTransformMatrix = glm::inverse(obb.GetTransformMatrix());
 
         // Compute local ray.
-        auto localPos = glm::vec3(glm::vec4(Position, 1.0f) * invTransformMatrix);
+        auto localOrigin = glm::vec3(glm::vec4(Origin, 1.0f) * invTransformMatrix);
         auto localDir = glm::vec3(glm::vec4(Direction, 0.0f) * invTransformMatrix);
-        auto localRay = Ray(localPos, localDir);
+        auto localRay = Ray(localOrigin, localDir);
 
         // Test AABB intersection in local space.
         auto aabb = AxisAlignedBoundingBox(glm::vec3(0.0f), obb.Extents);
@@ -57,7 +57,7 @@ namespace Silent::Math
 
     bool Ray::operator ==(const Ray& ray) const
     {
-        return Position == ray.Position && Direction == ray.Direction;
+        return Origin == ray.Origin && Direction == ray.Direction;
     }
 
     bool Ray::operator !=(const Ray& ray) const

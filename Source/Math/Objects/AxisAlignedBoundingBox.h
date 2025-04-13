@@ -1,10 +1,11 @@
 #pragma once
+#include <span>
 
 namespace Silent::Math
 {
-    enum class ContainmentType;
     class      BoundingSphere;
     class      OrientedBoundingBox;
+    enum class ContainmentType;
 
     class AxisAlignedBoundingBox
     {
@@ -31,6 +32,8 @@ namespace Silent::Math
         float                  GetSurfaceArea() const;
         float                  GetVolume() const;
         std::vector<glm::vec3> GetCorners() const;
+        glm::vec3              GetMin() const;
+        glm::vec3              GetMax() const;
 
         // Inquirers
 
@@ -51,6 +54,8 @@ namespace Silent::Math
 
         // Operators
 
+        bool                    operator ==(const AxisAlignedBoundingBox& aabb) const;
+        bool                    operator !=(const AxisAlignedBoundingBox& aabb) const;
         AxisAlignedBoundingBox& operator =(const AxisAlignedBoundingBox& aabb) = default;
     };
 }

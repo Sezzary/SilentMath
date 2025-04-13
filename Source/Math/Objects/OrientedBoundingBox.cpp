@@ -128,8 +128,42 @@ namespace Silent::Math
         return aabb.Contains(*this);
     }
 
-    /*ContainmentType OrientedBoundingBox::Contains(const OrientedBoundingBox& obb) const
+    ContainmentType OrientedBoundingBox::Contains(const OrientedBoundingBox& obb) const
     {
+        // Check if each corner of other OBB is inside this OBB.
+        for (const auto& corner : obb.GetCorners())
+        {
+            bool isInside = false;
 
-    }*/
+            // Transform corner to local space of current OBB using inverse rotation.
+            auto rotCorner = glm::inverse(Rotation) * (corner - Center);
+
+            // Check if corner lies within extents of current OBB in all axes.
+            if (glm::abs(rotCorner.x) <= Extents.x &&
+                glm::abs(rotCorner.y) <= Extents.y &&
+                glm::abs(rotCorner.z) <= Extents.z)
+            {
+                isInside = true;
+            }
+
+            // If any corner is outside, this OBB does not fully contain other.
+            if (!isInside)
+            {
+                return ContainmentType::Disjoint;
+            }
+        }
+
+        // All corners of other OBB are inside this OBB.
+        return ContainmentType::Contains;
+    }
+
+    bool OrientedBoundingBox::operator ==(const OrientedBoundingBox& obb) const
+    {
+        return Center == obb.Center && Extents == obb.Extents && Rotation == obb.Rotation;
+    }
+
+    bool OrientedBoundingBox::operator !=(const OrientedBoundingBox& obb) const
+    {
+        return !(*this == obb);
+    }
 }

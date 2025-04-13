@@ -63,11 +63,21 @@ namespace Silent::Math
         };
     }
 
+    glm::vec3 AxisAlignedBoundingBox::GetMin() const
+    {
+        return Center - Extents;
+    }
+
+    glm::vec3 AxisAlignedBoundingBox::GetMax() const
+    {
+        return Center + Extents;
+    }
+
     bool AxisAlignedBoundingBox::Intersects(const glm::vec3& point) const
     {
-        return point.x >= (Center.x - Extents.x) && point.x <= (Center.x + Extents.x) &&
-               point.y >= (Center.y - Extents.y) && point.y <= (Center.y + Extents.y) &&
-               point.z >= (Center.z - Extents.z) && point.z <= (Center.z + Extents.z);
+        return abs(point.x) <= (Center.x + Extents.x) &&
+               abs(point.y) <= (Center.y + Extents.y) &&
+               abs(point.z) <= (Center.z + Extents.z);
     }
 
     bool AxisAlignedBoundingBox::Intersects(const BoundingSphere& sphere) const
@@ -156,26 +166,7 @@ namespace Silent::Math
 
     ContainmentType AxisAlignedBoundingBox::Contains(const BoundingSphere& sphere) const
     {
-        auto closestPoint = glm::clamp(sphere.Center, Center - Extents, Center + Extents);
-        float distSqr = glm::distance2(closestPoint, sphere.Center);
-        if (distSqr > SQUARE(sphere.Radius))
-        {
-            return ContainmentType::Disjoint;
-        }
-
-        auto aabbMin = Center - Extents;
-        auto aabbMax = Center + Extents;
-        auto sphereMin = sphere.Center - glm::vec3(sphere.Radius);
-        auto sphereMax = sphere.Center + glm::vec3(sphere.Radius);
-
-        if (sphereMin.x >= aabbMin.x && sphereMax.x <= aabbMax.x &&
-            sphereMin.y >= aabbMin.y && sphereMax.y <= aabbMax.y &&
-            sphereMin.z >= aabbMin.z && sphereMax.z <= aabbMax.z)
-        {
-            return ContainmentType::Contains;
-        }
-
-        return ContainmentType::Intersects;
+        return sphere.Contains(*this);
     }
 
     ContainmentType AxisAlignedBoundingBox::Contains(const AxisAlignedBoundingBox& aabb) const
@@ -251,5 +242,15 @@ namespace Silent::Math
     {
         Center = (Center + aabb.Center) / 2.0f;
         Extents = glm::max(Extents, aabb.Extents);
+    }
+
+    bool AxisAlignedBoundingBox::operator ==(const AxisAlignedBoundingBox& aabb) const
+    {
+        return Center == aabb.Center && Extents == aabb.Extents;
+    }
+
+    bool AxisAlignedBoundingBox::operator !=(const AxisAlignedBoundingBox& aabb) const
+    {
+        return !(*this == aabb);
     }
 }
