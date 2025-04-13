@@ -24,8 +24,8 @@ namespace Silent::Math
 
        float                  GetSurfaceArea() const;
        float                  GetVolume() const;
-       std::vector<glm::vec3> GetCorners() const;
        glm::mat4              GetTransformMatrix() const;
+       std::vector<glm::vec3> GetCorners() const;
 
        // Utilities
 

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Math/Objects/AxisAlignedBoundingBox.h"
+#include "Math/Math.h"
+
+using namespace Silent::Math;
 
 // References:
 // https://github.com/erincatto/box2d/blob/28adacf82377d4113f2ed00586141463244b9d10/src/dynamic_tree.c
@@ -9,12 +11,8 @@
 // NOTE: _leafIdMap is a hash map for convenience. If performance suffers with too many Move() and Remove() calls, a method with faster access can be implemented.
 // However, it requires maintaining an odd index variable outside the BVH instance, so a hash map is preferred for the benefit of cleaner code. -- Sezz 2024.11.05
 
-namespace Silent::Math
+namespace Silent::Utils
 {
-    class         BoundingSphere;
-    class         Ray;
-    typedef class OrientedBoundingBox Obb;
-
     enum class BvhBuildStrategy
     {
         Fast,     // O(n): Fast build, okay quality. Top-down approach with median split.
@@ -28,8 +26,8 @@ namespace Silent::Math
     private:
         struct Node
         {
-            int  ObjectId = NO_VALUE; // NOTE: Only stored by leaf.
-            Aabb Aabb     = AxisAlignedBoundingBox();
+            int                    ObjectId = NO_VALUE; // NOTE: Only stored by leaf.
+            AxisAlignedBoundingBox Aabb     = AxisAlignedBoundingBox();
 
             int Height       = 0;
             int ParentId     = NO_VALUE;
@@ -50,7 +48,7 @@ namespace Silent::Math
         // Constructors
 
         BoundingVolumeHierarchy() = default;
-        BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<Aabb>& aabbs, BvhBuildStrategy strategy = BvhBuildStrategy::Balanced);
+        BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy = BvhBuildStrategy::Balanced);
 
         // Getters
 
@@ -59,7 +57,7 @@ namespace Silent::Math
         std::vector<int> GetBoundedObjectIds() const;
         std::vector<int> GetBoundedObjectIds(const Ray& ray, float dist) const;
         std::vector<int> GetBoundedObjectIds(const BoundingSphere& sphere) const;
-        std::vector<int> GetBoundedObjectIds(const Aabb& aabb) const;
+        std::vector<int> GetBoundedObjectIds(const AxisAlignedBoundingBox& aabb) const;
         std::vector<int> GetBoundedObjectIds(const Obb& obb) const;
 
         // Inquirers
@@ -68,8 +66,8 @@ namespace Silent::Math
 
         // Utilities
 
-        void Insert(int objectId, const Aabb& aabb, float boundary = 0.0f);
-        void Move(int objectId, const Aabb& aabb, float boundary = 0.0f);
+        void Insert(int objectId, const AxisAlignedBoundingBox& aabb, float boundary = 0.0f);
+        void Move(int objectId, const AxisAlignedBoundingBox& aabb, float boundary = 0.0f);
         void Remove(int objectId);
 
     private:
@@ -90,8 +88,8 @@ namespace Silent::Math
 
         // Static helpers
 
-        void Build(const std::vector<int>& objectIds, const std::vector<Aabb>& aabbs, BvhBuildStrategy strategy);
-        int	 Build(const std::vector<int>& objectIds, const std::vector<Aabb>& aabbs, int start, int end, BvhBuildStrategy strategy);
+        void Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy);
+        int	 Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, int start, int end, BvhBuildStrategy strategy);
 
         // Debug helpers
 

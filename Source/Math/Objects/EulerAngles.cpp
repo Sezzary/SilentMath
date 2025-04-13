@@ -17,7 +17,7 @@ namespace Silent::Math
 
     EulerAngles::EulerAngles(const AxisAngle& axisAngle)
     {
-        auto quat = this->ToQuaternion();
+        auto quat = ToQuaternion();
         *this = EulerAngles(quat);
     }
 

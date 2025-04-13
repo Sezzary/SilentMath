@@ -2,11 +2,11 @@
 
 namespace Silent::Math
 {
-    enum class    ContainmentType;
-    class         BoundingSphere;
-    typedef class OrientedBoundingBox Obb;
+    enum class ContainmentType;
+    class      BoundingSphere;
+    class      OrientedBoundingBox;
 
-    typedef class AxisAlignedBoundingBox
+    class AxisAlignedBoundingBox
     {
     public:
         // Constants
@@ -52,5 +52,5 @@ namespace Silent::Math
         // Operators
 
         AxisAlignedBoundingBox& operator =(const AxisAlignedBoundingBox& aabb) = default;
-    } Aabb;
+    };
 }

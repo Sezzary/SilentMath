@@ -30,8 +30,8 @@ namespace Silent::Math
         auto intersectMin = (aabb.Center - aabb.Extents - Position) * invDir;
         auto intersectMax = (aabb.Center + aabb.Extents - Position) * invDir;
 
-        float nearIntersect = std::max(std::max(intersectMin.x, intersectMin.y), intersectMin.z);
-        float farIntersect = std::min(std::min(intersectMax.x, intersectMax.y), intersectMax.z);
+        float nearIntersect = glm::max(glm::max(intersectMin.x, intersectMin.y), intersectMin.z);
+        float farIntersect = glm::min(glm::min(intersectMax.x, intersectMax.y), intersectMax.z);
         if (nearIntersect > farIntersect || farIntersect < 0.0f)
         {
             return std::nullopt;
@@ -42,7 +42,7 @@ namespace Silent::Math
 
     std::optional<float> Ray::Intersects(const OrientedBoundingBox& obb) const
     {
-        // Compute OBB's inverse transform matrix
+        // Compute OBB's inverse transform matrix.
         auto invTransformMatrix = glm::inverse(obb.GetTransformMatrix());
 
         // Compute local ray.
