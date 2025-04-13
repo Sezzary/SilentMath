@@ -5,5 +5,5 @@
     path = Libraries/PhysX
     url = https://github.com/NVIDIAGameWorks/PhysX.git
 [submodule "Libraries/spdlog"]
-	path = Libraries/spdlog
-	url = https://github.com/gabime/spdlog.git
+    path = Libraries/spdlog
+    url = https://github.com/gabime/spdlog.git
