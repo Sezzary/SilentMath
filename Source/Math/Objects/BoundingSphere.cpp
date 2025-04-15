@@ -3,6 +3,7 @@
 
 #include "Math/Constants.h"
 #include "Math/Objects/AxisAlignedBoundingBox.h"
+#include "Math/Objects/OrientedBoundingBox.h"
 
 namespace Silent::Math
 {
@@ -34,7 +35,7 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
-        /*constexpr unsigned int AXIS_COUNT = 3;
+        constexpr unsigned int AXIS_COUNT = 3;
     
         auto rotMat = glm::mat3_cast(obb.Rotation);
         auto centerDelta = obb.Center - Center;
@@ -49,7 +50,7 @@ namespace Silent::Math
         }
 
         float distSqr = glm::distance2(Center, closestPoint);
-        return distSqr <= SQUARE(Radius);*/
+        return distSqr <= SQUARE(Radius);
     }
     
     ContainmentType BoundingSphere::Contains(const glm::vec3& point) const
@@ -101,7 +102,29 @@ namespace Silent::Math
 
     ContainmentType BoundingSphere::Contains(const OrientedBoundingBox& obb) const
     {
+        bool allInside = true;
+        for (const auto& corner : obb.GetCorners())
+        {
+            auto centerDelta = corner - Center;
+            float distSqr = glm::dot(centerDelta, centerDelta);
+            if (distSqr > SQUARE(Radius))
+            {
+                allInside = false;
+                break;
+            }
+        }
 
+        if (allInside)
+        {
+            return ContainmentType::Contains;
+        }
+
+        if (obb.Intersects(Center))
+        {
+            return ContainmentType::Intersects;
+        }
+
+        return ContainmentType::Disjoint;
     }
     
     bool BoundingSphere::operator ==(const BoundingSphere& sphere) const

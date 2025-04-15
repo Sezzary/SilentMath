@@ -17,8 +17,15 @@ namespace Silent::Math
     constexpr unsigned int SIN_LUT_SIZE   = 4096;  /** Number of entries in the sine lookup table. */
     constexpr unsigned int FP_ANGLE_COUNT = 65536; /** Number of fixed-point angles in Q1.15 format. */
 
-    constexpr auto SQUARE = [](auto x) { return (x * x); };
-    constexpr auto CUBE   = [](auto x) { return (x * x * x); };
+    constexpr auto SQUARE = [](auto x)
+    {
+        return (x * x);
+    };
+
+    constexpr auto CUBE = [](auto x)
+    {
+        return (x * x * x);
+    };
 
     enum class ContainmentType
     {
@@ -56,6 +63,12 @@ namespace Silent::Math
         return (val0 * val1) >> shift;
     }
 
+    /** Multiplies an integer by a float converted to fixed-point Q format and converts the result from the fixed-point Q format. */
+    constexpr int FP_MULTIPLY_FLOAT(int val0, float val1, unsigned int shift)
+    {
+        return FP_MULTIPLY(val0, (int)FP_FLOAT_TO(val1, shift), shift);
+    }
+
     /** Multiplies an integer by a float converted to fixed-point Q format, using 64-bit intermediate via Math_MulFixed for higher precision. */
     /*#define FP_MULTIPLY_PRECISE(val0, val1, shift) \
         (Math_MulFixed((val0), FP_FLOAT_TO((val1), (shift)), (shift)))*/
@@ -72,17 +85,19 @@ namespace Silent::Math
         return (short)(deg * (FP_ANGLE_COUNT / 360.0f));
     }
 
+    /** Converts floating-point radians to fixed-point angles in Q1.15 format. */
     constexpr short FP_ANGLE_FROM_RAD(float rad)
     {
 	    return (short)ROUND((rad / RADIAN) * ((float)FP_ANGLE_COUNT / 360.0f));
     }
 
+    /** Converts fixed-point angles in Q1.15 format to floating-point radians. */
     constexpr float FP_ANGLE_TO_RAD(short angle)
     {
         return (angle * ((float)FP_ANGLE_COUNT / 360.0f)) * RADIAN;
     }
 
-    /** Converts floating-point tile units to fixed-point world units in Q12.8 format. */
+    /** Converts floating-point meters to fixed-point world units in Q12.8 format. */
     constexpr int FP_METER(float meters)
     {
         return (int)(meters * (1 << Q8_SHIFT));

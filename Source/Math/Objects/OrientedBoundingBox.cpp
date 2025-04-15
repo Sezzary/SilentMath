@@ -133,12 +133,11 @@ namespace Silent::Math
         // Check if each corner of other OBB is inside this OBB.
         for (const auto& corner : obb.GetCorners())
         {
-            bool isInside = false;
-
-            // Transform corner to local space of current OBB using inverse rotation.
+            // Transform corner to local space of this OBB using inverse rotation.
             auto rotCorner = glm::inverse(Rotation) * (corner - Center);
 
-            // Check if corner lies within extents of current OBB in all axes.
+            // Check if corner lies within extents of this OBB in all axes.
+            bool isInside = false;
             if (glm::abs(rotCorner.x) <= Extents.x &&
                 glm::abs(rotCorner.y) <= Extents.y &&
                 glm::abs(rotCorner.z) <= Extents.z)
@@ -146,7 +145,7 @@ namespace Silent::Math
                 isInside = true;
             }
 
-            // If any corner is outside, this OBB does not fully contain other.
+            // If any corner is outside, this OBB doesn't fully contain other OBB.
             if (!isInside)
             {
                 return ContainmentType::Disjoint;
