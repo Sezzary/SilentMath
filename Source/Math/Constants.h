@@ -11,11 +11,11 @@ namespace Silent::Math
     constexpr float SQRT_2   = 1.41421356237f;
     constexpr float EPSILON  = 0.00001f;
 
-    constexpr unsigned int Q4_SHIFT       = 4;     /** Used for: Q27.4 positions. */
-    constexpr unsigned int Q8_SHIFT       = 8;     /** Used for: Q8.8 range limits. Q24.8 tile units. */
-    constexpr unsigned int Q12_SHIFT      = 12;    /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
-    constexpr unsigned int SIN_LUT_SIZE   = 4096;  /** Number of entries in the sine lookup table. */
-    constexpr unsigned int FP_ANGLE_COUNT = 65536; /** Number of fixed-point angles in Q1.15 format. */
+    constexpr uint Q4_SHIFT       = 4;     /** Used for: Q27.4 positions. */
+    constexpr uint Q8_SHIFT       = 8;     /** Used for: Q8.8 range limits. Q24.8 tile units. */
+    constexpr uint Q12_SHIFT      = 12;    /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
+    constexpr uint SIN_LUT_SIZE   = 4096;  /** Number of entries in the sine lookup table. */
+    constexpr uint FP_ANGLE_COUNT = 65536; /** Number of fixed-point angles in Q1.15 format. */
 
     constexpr auto SQUARE = [](auto x)
     {
@@ -36,35 +36,35 @@ namespace Silent::Math
 
     constexpr float ROUND(float value)
     {
-        return ((value > 0.0f) ? (int)(value + 0.5f) : (int)(value - 0.5f));
+        return (float)((value > 0.0f) ? (int)(value + 0.5f) : (int)(value - 0.5f));
     }
     
     /** Converts an integer to a fixed-point Q format. */
-    constexpr int FP_TO(int val, unsigned int shift)
+    constexpr int FP_TO(int val, uint shift)
     {
         return val << shift;
     }
 
     /** Converts a float to a fixed-point Q format. */
-    constexpr float FP_FLOAT_TO(float val, unsigned int shift)
+    constexpr float FP_FLOAT_TO(float val, uint shift)
     {
         return val * FP_TO(1, shift);
     }
 
     /** Converts an integer from a fixed-point Q format. */
-    constexpr int FP_FROM(int val, unsigned int shift)
+    constexpr int FP_FROM(int val, uint shift)
     {
         return val >> shift;
     }
 
     /** Multiplies two integers in a fixed-point Q format and converts the result from the fixed-point Q format. */
-    constexpr int FP_MULTIPLY(int val0, int val1, unsigned int shift)
+    constexpr int FP_MULTIPLY(int val0, int val1, uint shift)
     {
         return (val0 * val1) >> shift;
     }
 
     /** Multiplies an integer by a float converted to fixed-point Q format and converts the result from the fixed-point Q format. */
-    constexpr int FP_MULTIPLY_FLOAT(int val0, float val1, unsigned int shift)
+    constexpr int FP_MULTIPLY_FLOAT(int val0, float val1, uint shift)
     {
         return FP_MULTIPLY(val0, (int)FP_FLOAT_TO(val1, shift), shift);
     }
@@ -77,6 +77,12 @@ namespace Silent::Math
     constexpr short FP_ALPHA(float alpha)
     {
         return (short)(FP_FLOAT_TO(alpha, Q12_SHIFT));
+    }
+
+    /** Converts a normalized color value in the range [0.0f, 1.0f] to an 8-bit color format in the range [0, 255]. */
+    constexpr uchar FP_COLOR(float val)
+    {
+        return (uchar)(val * 255);
     }
 
     /** Converts floating-point degrees to fixed-point angles in Q1.15 format. */

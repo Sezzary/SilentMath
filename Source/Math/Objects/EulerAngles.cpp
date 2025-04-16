@@ -3,6 +3,9 @@
 
 #include "Math/Constants.h"
 #include "Math/Objects/AxisAngle.h"
+#include "Utils/Utils.h"
+
+using namespace Silent::Utils;
 
 namespace Silent::Math
 {
@@ -17,7 +20,7 @@ namespace Silent::Math
 
     EulerAngles::EulerAngles(const AxisAngle& axisAngle)
     {
-        auto quat = ToQuaternion();
+        auto quat = axisAngle.ToQuaternion();
         *this = EulerAngles(quat);
     }
 
@@ -145,17 +148,17 @@ namespace Silent::Math
 
     EulerAngles& EulerAngles::operator *=(float scalar)
     {
-        x *= scalar;
-        y *= scalar;
-        z *= scalar;
+        x = (short)(x * scalar);
+        y = (short)(y * scalar);
+        z = (short)(z * scalar);
         return *this;
     }
 
     EulerAngles& EulerAngles::operator /=(float scalar)
     {
-        x /= scalar;
-        y /= scalar;
-        z /= scalar;
+        x = (short)(x / scalar);
+        y = (short)(y / scalar);
+        z = (short)(z / scalar);
         return *this;
     }
 
@@ -208,7 +211,7 @@ namespace Silent::Math
             return angleTo;
         }
 
-        int sign = copysign(1, angleTo - angleFrom);
-        return angleFrom + (angularVel * sign);
+        int sign = CopySign(1, angleTo - angleFrom);
+        return (short)(angleFrom + (angularVel * sign));
     }
 }

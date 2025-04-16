@@ -8,7 +8,7 @@ namespace Silent::Utils
     ParallelTaskManager::ParallelTaskManager()
     {
         // Reserve threads.
-        unsigned int threadCount = GetCoreCount() * 2;
+        uint threadCount = GetCoreCount() * 2;
         _threads.reserve(threadCount);
 
         // Create threads.
@@ -26,12 +26,12 @@ namespace Silent::Utils
         return instance;
     }
 
-    unsigned int ParallelTaskManager::GetThreadCount() const
+    uint ParallelTaskManager::GetThreadCount() const
     {
-        return (unsigned int)_threads.size();
+        return (uint)_threads.size();
     }
 
-    unsigned int ParallelTaskManager::GetCoreCount() const
+    uint ParallelTaskManager::GetCoreCount() const
     {
         return std::max(std::thread::hardware_concurrency(), 1u);
     }

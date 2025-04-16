@@ -3,5 +3,13 @@
 
 namespace Silent::Utils
 {
-    
+    int CopySign(int value, int sign)
+    {
+        if ((sign < 0 && value > 0) || (sign >= 0 && value < 0))
+        {
+            return -value;
+        }
+
+        return value;
+    }
 }

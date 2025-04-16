@@ -64,7 +64,7 @@ namespace Silent::Math
 
     bool OrientedBoundingBox::Intersects(const OrientedBoundingBox& obb) const
     {
-        constexpr unsigned int AXIS_COUNT = 3;
+        constexpr int AXIS_COUNT = 3;
 
         // Compute rotation matrices.
         auto rotMat0 = glm::mat3_cast(Rotation);

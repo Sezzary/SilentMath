@@ -1,5 +1,4 @@
 #pragma once
-#include <span>
 
 namespace Silent::Math
 {
@@ -12,7 +11,7 @@ namespace Silent::Math
     public:
         // Constants
 
-        static constexpr unsigned int CORNER_COUNT = 8;
+        static constexpr uint CORNER_COUNT = 8;
 
         // Fields
 
@@ -23,7 +22,7 @@ namespace Silent::Math
     
         constexpr AxisAlignedBoundingBox() = default;
         constexpr AxisAlignedBoundingBox(const glm::vec3& center, const glm::vec3& extents) : Center(center), Extents(extents) {}
-                  AxisAlignedBoundingBox(const std::span<glm::vec3>& points);
+                  AxisAlignedBoundingBox(const std::span<const glm::vec3>& points);
                   AxisAlignedBoundingBox(const BoundingSphere& sphere);
                   AxisAlignedBoundingBox(const OrientedBoundingBox& obb);
 

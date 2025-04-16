@@ -10,7 +10,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Math
 {
-    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const std::span<glm::vec3>& points)
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const std::span<const glm::vec3>& points)
     {
         auto pointMin = glm::vec3(INFINITY);
         auto pointMax = glm::vec3(-INFINITY);
@@ -97,9 +97,9 @@ namespace Silent::Math
 
     bool AxisAlignedBoundingBox::Intersects(const OrientedBoundingBox& obb) const
     {
-        constexpr unsigned int AXIS_COUNT       = 3;
-        constexpr float        DEFAULT_PROJ_MIN = std::numeric_limits<float>::max();
-        constexpr float        DEFAULT_PROJ_MAX = std::numeric_limits<float>::lowest();
+        constexpr uint  AXIS_COUNT       = 3;
+        constexpr float DEFAULT_PROJ_MIN = std::numeric_limits<float>::max();
+        constexpr float DEFAULT_PROJ_MAX = std::numeric_limits<float>::lowest();
 
         // Use Separating Axis Theorem (SAT) for AABB vs OBB intersection.
         auto aabbMin = Center - Extents;

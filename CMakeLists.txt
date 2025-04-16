@@ -27,7 +27,7 @@ target_compile_options(Math PRIVATE
 # Set compiler warning flags.
 if(MSVC)
     # MSVC warning flags.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4") # Use /W4 (Level 4) for MSVC.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 else()
     # GCC/Clang warning flags.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
@@ -44,17 +44,17 @@ target_include_directories(Math PRIVATE
 # Add library header paths.
 target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
-#    ${CMAKE_CURRENT_LIST_DIR}/Libraries/PhysX)
+    #${CMAKE_CURRENT_LIST_DIR}/Libraries/PhysX
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
 
 #set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/Libraries/PhysX CACHE PATH "PhysX root directory")
 
 # Add library directories.
 add_subdirectory(Libraries/glm)
-#add_subdirectory(Libraries/PhysX/physx/compiler/public)
+#add_subdirectory(Libraries/PhysX/physx/source/compiler/cmake)
 add_subdirectory(Libraries/spdlog)
 
 # Add libraries.
 target_link_libraries(Math PRIVATE
-#    PhysX
+    #PhysX
     spdlog)

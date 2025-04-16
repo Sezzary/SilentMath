@@ -35,7 +35,7 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
-        constexpr unsigned int AXIS_COUNT = 3;
+        constexpr uint AXIS_COUNT = 3;
     
         auto rotMat = glm::mat3_cast(obb.Rotation);
         auto centerDelta = obb.Center - Center;

@@ -52,7 +52,7 @@ namespace Silent::Utils
 
         // Getters
 
-        unsigned int GetSize() const;
+        uint GetSize() const;
 
         std::vector<int> GetBoundedObjectIds() const;
         std::vector<int> GetBoundedObjectIds(const Ray& ray, float dist) const;

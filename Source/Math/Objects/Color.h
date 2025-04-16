@@ -7,10 +7,10 @@ namespace Silent::Math
     public:
         // Fields
 
-        unsigned char R = 0;
-        unsigned char G = 0;
-        unsigned char B = 0;
-        unsigned char A = 0;
+        uchar R = 0;
+        uchar G = 0;
+        uchar B = 0;
+        uchar A = 0;
 
         // Presets
 
@@ -23,17 +23,16 @@ namespace Silent::Math
         // Constructors
 
         constexpr	 Color() = default;
-        constexpr	 Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255) : R(r), G(g), B(b), A(a) {}
-        static Color FromPackedRgba(unsigned int packedRgba);
-        static Color FromHsl(short h, unsigned char s, unsigned char l);
+        constexpr	 Color(uchar r, uchar g, uchar b, uchar a = 255) : R(r), G(g), B(b), A(a) {}
+        static Color FromPackedRgba(uint packedRgba);
 
         // Utilities
 
         Color Invert() const;
 
-        static Color Blend(const Color& color0, const Color& color1, unsigned char alpha);
-        static Color Brighten(const Color& color, unsigned char alpha);
-        static Color Darken(const Color& color, unsigned char alpha);
+        static Color Blend(const Color& color0, const Color& color1, uchar alpha);
+        static Color Brighten(const Color& color, uchar alpha);
+        static Color Darken(const Color& color, uchar alpha);
 
         // Converters
 

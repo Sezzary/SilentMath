@@ -7,7 +7,7 @@ namespace Silent::Utils
     public:
         // Aliases
 
-         using ChunkType = unsigned int;
+         using ChunkType = uint;
 
         private:
         // Constants
@@ -17,7 +17,7 @@ namespace Silent::Utils
 
         // Fields
 
-        unsigned int           _size   = 0;
+        uint           _size   = 0;
         std::vector<ChunkType> _chunks = {};
 
     public:
@@ -29,41 +29,41 @@ namespace Silent::Utils
         // Constructors
 
         BitField();
-        BitField(unsigned int size);
+        BitField(uint size);
         BitField(const std::initializer_list<bool>& bits);
-        BitField(const std::vector<ChunkType>& bitChunks, unsigned int size);
+        BitField(const std::vector<ChunkType>& bitChunks, uint size);
         BitField(const std::string& bitString);
         
         // Getters
 
-        unsigned int                  GetSize() const;
-        unsigned int                  GetCount() const;
+        uint                          GetSize() const;
+        uint                          GetCount() const;
         const std::vector<ChunkType>& GetChunks() const;
 
         // Setters
 
-        void Set(unsigned int bitIdx);
-        void Set(const std::vector<unsigned int>& bitIdxs);
+        void Set(uint bitIdx);
+        void Set(const std::vector<uint>& bitIdxs);
         void SetAll();
-        void Clear(unsigned int bitIdx);
-        void Clear(const std::vector<unsigned int>& bitIdxs);
+        void Clear(uint bitIdx);
+        void Clear(const std::vector<uint>& bitIdxs);
         void ClearAll();
-        void Flip(unsigned int bitIdx);
-        void Flip(const std::vector<unsigned int>& bitIdxs);
+        void Flip(uint bitIdx);
+        void Flip(const std::vector<uint>& bitIdxs);
         void FlipAll();
 
         // Inquirers
 
         bool IsEmpty() const;
 
-        bool Test(const std::vector<unsigned int>& bitIdxs, bool testAny = true) const;
-        bool Test(unsigned int bitIdx) const;
+        bool Test(const std::vector<uint>& bitIdxs, bool testAny = true) const;
+        bool Test(uint bitIdx) const;
         bool TestAny() const;
         bool TestAll() const;
 
         // Utilities
 
-        void Resize(unsigned int size);
+        void Resize(uint size);
 
         // Converters
 
@@ -86,7 +86,7 @@ namespace Silent::Utils
         // Helpers
 
         void Fill(bool value);
-        bool IsBitIdxValid(unsigned int bitIdx) const;
+        bool IsBitIdxValid(uint bitIdx) const;
     };
 }
 

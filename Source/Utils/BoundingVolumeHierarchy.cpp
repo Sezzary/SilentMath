@@ -22,9 +22,9 @@ namespace Silent::Utils
         Build(objectIds, aabbs, strategy);
     }
 
-    unsigned int BoundingVolumeHierarchy::GetSize() const
+    uint BoundingVolumeHierarchy::GetSize() const
     {
-        return (unsigned int)_leafIdMap.size();
+        return (uint)_leafIdMap.size();
     }
 
     std::vector<int> BoundingVolumeHierarchy::GetBoundedObjectIds() const
@@ -253,7 +253,6 @@ namespace Silent::Utils
             int leftChildId = sibling.LeftChildId;
             int rightChildId = sibling.RightChildId;
 
-            float area = sibling.Aabb.GetSurfaceArea();
             float inheritCost = leaf.Aabb.GetSurfaceArea() * 2;
 
             // Calculate cost of creating new parent for sibling and new leaf.
@@ -463,7 +462,6 @@ namespace Silent::Utils
                 parent.Height = rightChild.Height + 1;
             }
 
-            int prevParentId = parentId;
             parentId = parent.ParentId;
         }
     }
@@ -775,7 +773,7 @@ namespace Silent::Utils
         auto objectIds = GetBoundedObjectIds();
         for (int refObjectId : objectIds)
         {
-            unsigned int count = 0;
+            uint count = 0;
             for (int objectId : objectIds)
             {
                 if (refObjectId == objectId)

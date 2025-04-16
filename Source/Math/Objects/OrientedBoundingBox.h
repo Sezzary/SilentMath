@@ -11,7 +11,7 @@ namespace Silent::Math
     public:
         // Constants
 
-        static constexpr unsigned int CORNER_COUNT = 8;
+        static constexpr int CORNER_COUNT = 8;
 
         // Fields
 

@@ -26,8 +26,8 @@ namespace Silent::Utils
 
         static ParallelTaskManager& Get();
 
-        unsigned int GetThreadCount() const;
-        unsigned int GetCoreCount() const;
+        uint GetThreadCount() const;
+        uint GetCoreCount() const;
 
         // Utilities
 
