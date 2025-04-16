@@ -71,7 +71,7 @@ namespace Silent::Utils
         return GetBoundedObjectIds(testColl);
     }
 
-    std::vector<int> BoundingVolumeHierarchy::GetBoundedObjectIds(const Obb& obb) const
+    std::vector<int> BoundingVolumeHierarchy::GetBoundedObjectIds(const OrientedBoundingBox& obb) const
     {
         auto testColl = [&](const Node& node)
         {

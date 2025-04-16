@@ -21,14 +21,14 @@ namespace Silent::Math
         }
     
         auto intersectOffset = sqrt(radiusSqr - distSqr);
-        return std::make_optional(projLength - intersectOffset);
+        return projLength - intersectOffset;
     }
-    
+
     std::optional<float> Ray::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
         auto invDir = 1.0f / Direction;
-        auto intersectMin = (aabb.Center - aabb.Extents - Origin) * invDir;
-        auto intersectMax = (aabb.Center + aabb.Extents - Origin) * invDir;
+        auto intersectMin = ((aabb.Center - aabb.Extents) - Origin) * invDir;
+        auto intersectMax = ((aabb.Center + aabb.Extents) - Origin) * invDir;
 
         float nearIntersect = std::max({ intersectMin.x, intersectMin.y, intersectMin.z });
         float farIntersect = std::min({ intersectMax.x, intersectMax.y, intersectMax.z });
@@ -36,18 +36,18 @@ namespace Silent::Math
         {
             return std::nullopt;
         }
-        
-        return std::make_optional(nearIntersect);
+
+        return nearIntersect;
     }
 
     std::optional<float> Ray::Intersects(const OrientedBoundingBox& obb) const
     {
-        // Compute OBB's inverse transform matrix.
-        auto invTransformMatrix = glm::inverse(obb.GetTransformMatrix());
+        // Compute inverse OBB transform matrix.
+        auto invTransformMat = glm::inverse(obb.GetTransformMatrix());
 
         // Compute local ray.
-        auto localOrigin = glm::vec3(glm::vec4(Origin, 1.0f) * invTransformMatrix);
-        auto localDir = glm::vec3(glm::vec4(Direction, 0.0f) * invTransformMatrix);
+        auto localOrigin = glm::vec3(glm::vec4(Origin, 1.0f) * invTransformMat);
+        auto localDir = glm::vec3(glm::vec4(Direction, 0.0f) * invTransformMat);
         auto localRay = Ray(localOrigin, localDir);
 
         // Test AABB intersection in local space.

@@ -4,7 +4,7 @@
 
 namespace Silent::Math
 {
-    bool  ApproxEqual(float value0, float value1, float epsilon = EPSILON);
+    bool  IsApproxEqual(float value0, float value1, float epsilon = EPSILON);
     float FloorToStep(float value, float step);
     float CeilToStep(float value, float step);
     float RoundToStep(float value, float step);

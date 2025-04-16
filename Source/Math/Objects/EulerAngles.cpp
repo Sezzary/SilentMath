@@ -83,8 +83,7 @@ namespace Silent::Math
     {
         constexpr auto FORWARD_DIR = glm::vec3(0.0f, 0.0f, 1.0f);
     
-        auto rotMat = glm::yawPitchRoll(FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(z));
-        return glm::normalize(glm::mat3(rotMat) * FORWARD_DIR);
+        return glm::normalize(ToRotationMatrix() * FORWARD_DIR);
     }
 
     AxisAngle EulerAngles::ToAxisAngle() const
@@ -177,12 +176,12 @@ namespace Silent::Math
 
     EulerAngles EulerAngles::operator *(float scalar) const
     {
-        return EulerAngles((short)round(x * scalar), (short)round(y * scalar), (short)round(z * scalar));
+        return EulerAngles((short)round((float)x * scalar), (short)round((float)y * scalar), (short)round((float)z * scalar));
     }
 
     EulerAngles EulerAngles::operator /(float scalar) const
     {
-        return EulerAngles((short)round(x / scalar), (short)round(y / scalar), (short)round(z / scalar));
+        return EulerAngles((short)round((float)x / scalar), (short)round((float)y / scalar), (short)round((float)z / scalar));
     }
 
     bool EulerAngles::Compare(short angle0, short angle1, short epsilon)

@@ -58,7 +58,7 @@ namespace Silent::Utils
         std::vector<int> GetBoundedObjectIds(const Ray& ray, float dist) const;
         std::vector<int> GetBoundedObjectIds(const BoundingSphere& sphere) const;
         std::vector<int> GetBoundedObjectIds(const AxisAlignedBoundingBox& aabb) const;
-        std::vector<int> GetBoundedObjectIds(const Obb& obb) const;
+        std::vector<int> GetBoundedObjectIds(const OrientedBoundingBox& obb) const;
 
         // Inquirers
 

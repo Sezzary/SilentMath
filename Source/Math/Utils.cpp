@@ -2,7 +2,7 @@
 
 namespace Silent::Math
 {
-    bool ApproxEqual(float value0, float value1, float epsilon)
+    bool IsApproxEqual(float value0, float value1, float epsilon)
     {
         return (std::max(value0, value1) - std::min(value0, value1)) <= epsilon;
     }
