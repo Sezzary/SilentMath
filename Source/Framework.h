@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <functional>
 #include <future>
+#include <limits>
 #include <optional>
 #include <queue>
 #include <random>
