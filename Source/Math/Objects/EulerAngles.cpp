@@ -44,9 +44,9 @@ namespace Silent::Math
                Compare(eulerAngles0.z, eulerAngles1.z, epsilon);
     }
 
-    void EulerAngles::Lerp(const EulerAngles& eulerAnglesTo, float alpha, short epsilon)
+    void EulerAngles::Lerp(const EulerAngles& to, float alpha, short epsilon)
     {
-        *this = Lerp(*this, eulerAnglesTo, alpha, epsilon);
+        *this = Lerp(*this, to, alpha, epsilon);
     }
 
     EulerAngles EulerAngles::Lerp(const EulerAngles& from, const EulerAngles& to, float alpha, short epsilon)

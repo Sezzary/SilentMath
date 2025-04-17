@@ -1,42 +1,47 @@
 #pragma once
 
+#include "Math/Constants.h"
+
 namespace Silent::Math
 {
-    class Color
+    class Color : glm::vec4
     {
     public:
-        // Fields
-
-        uchar R = 0;
-        uchar G = 0;
-        uchar B = 0;
-        uchar A = 0;
-
         // Presets
 
         static const Color Black;
+        static const Color White;
         static const Color Red;
         static const Color Green;
         static const Color Blue;
-        static const Color White;
 
         // Constructors
 
         constexpr	 Color() = default;
-        constexpr	 Color(uchar r, uchar g, uchar b, uchar a = 255) : R(r), G(g), B(b), A(a) {}
+        constexpr	 Color(float r, float g, float b, float a = 1.0f) { x = r; y = g; z = b; w = a; }
         static Color FromPackedRgba(uint packedRgba);
+
+        // Getters
+
+        float R() const;
+        float G() const;
+        float B() const;
+        float A() const;
 
         // Utilities
 
-        Color Invert() const;
-
-        static Color Blend(const Color& color0, const Color& color1, uchar alpha);
-        static Color Brighten(const Color& color, uchar alpha);
-        static Color Darken(const Color& color, uchar alpha);
+        static Color Invert(const Color& color);
+        void         Invert();
+        static Color Blend(const Color& color0, const Color& color1, float alpha);
+        void         Blend(const Color& color, float alpha);
+        static Color Brighten(const Color& color, float factor);
+        void         Brighten(float alpha);
+        static Color Darken(const Color& color, float factor);
+        void         Darken(float alpha);
 
         // Converters
 
-        int ToPackedRgba() const;
+        uint ToPackedRgba() const;
 
         // Operators
 
