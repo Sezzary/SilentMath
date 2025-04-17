@@ -9,30 +9,40 @@ namespace Silent::Utils::Debug
     {
         static auto prevMsg = std::string();
         if (prevMsg == msg && !allowSpam)
+        {
             return;
+        }
         prevMsg = msg;
 
         switch (level)
         {
             default:
             case LogLevel::Info:
+            {
                 spdlog::info(msg);
                 break;
+            }
             
             case LogLevel::Warning:
+            {
                 spdlog::warn(msg);
                 break;
+            }
 
             case LogLevel::Error:
+            {
                 spdlog::error(msg);
                 break;
+            }
         }
     }
 
     void Assert(bool cond, const std::string& msg)
     {
-        if constexpr (!IS_DEBUG_MODE)
+        if constexpr (!IS_DEBUG)
+        {
             return;
+        }
 
         if (!cond)
         {
@@ -43,16 +53,20 @@ namespace Silent::Utils::Debug
 
     void StartTimer()
     {
-        if constexpr (!IS_DEBUG_MODE)
+        if constexpr (!IS_DEBUG)
+        {
             return;
+        }
 
         StartTime = std::chrono::high_resolution_clock::now();
     }
 
     void EndTimer()
     {
-        if constexpr (!IS_DEBUG_MODE)
+        if constexpr (!IS_DEBUG)
+        {
             return;
+        }
 
         auto endTime = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Framework.h"
+
 namespace Silent::Math
 {
     constexpr float PI       = glm::pi<float>();

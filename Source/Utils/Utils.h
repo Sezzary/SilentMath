@@ -2,7 +2,12 @@
 
 namespace Silent::Utils
 {
-    int CopySign(int value, int sign);
+    template <typename T>
+    requires std::is_arithmetic_v<T>
+    int GetSign(T value)
+    {
+        return (value >= 0) ? 1 : -1;
+    }
 
     template <typename T>
     bool Contains(const std::span<T>& span, const T& element)
@@ -24,68 +29,20 @@ namespace Silent::Utils
     }
 
     template <typename T, uint size>
-    std::span<T> ToSpan(T (&cArray)[size])
+    std::span<T> ToSpan(T(&cArray)[size])
     {
         return std::span<T>(cArray, size);
     }
 
-    template<typename T, uint size>
-    std::span<const T> ToSpan(const std::array<T, size>& array)
+    template<typename TContainer>
+    std::span<const typename TContainer::value_type> ToSpan(const TContainer& container)
     {
-        return std::span<const T>(array.data(), array.size());
-    }
-
-    template<typename T, uint size>
-    std::span<T> ToSpan(std::array<T, size>& array)
-    {
-        return std::span<T>(array.data(), array.size());
-    }
-
-    template<typename T>
-    std::span<const T> ToSpan(const std::set<T>& set)
-    {
-        return std::span<const T>(set.data(), set.size());
-    }
-
-    template<typename T>
-    std::span<T> ToSpan(std::set<T>& set)
-    {
-        return std::span<T>(set.data(), set.size());
-    }
-
-    template<typename T>
-    std::span<const T> ToSpan(const std::stack<T>& stack)
-    {
-        return std::span<const T>(stack.data(), stack.size());
-    }
-
-    template<typename T>
-    std::span<T> ToSpan(std::stack<T>& stack)
-    {
-        return std::span<T>(stack.data(), stack.size());
+        return std::span<const typename TContainer::value_type>(std::begin(container), std::end(container));
     }
     
-    template<typename T>
-    std::span<const T> ToSpan(const std::queue<T>& queue)
+    template<typename TContainer>
+    std::span<typename TContainer::value_type> ToSpan(TContainer& container)
     {
-        return std::span<const T>(queue.data(), queue.size());
-    }
-
-    template<typename T>
-    std::span<T> ToSpan(std::queue<T>& queue)
-    {
-        return std::span<T>(queue.data(), queue.size());
-    }
-
-    template<typename T>
-    std::span<const T> ToSpan(const std::vector<T>& vector)
-    {
-        return std::span<const T>(vector.data(), vector.size());
-    }
-
-    template<typename T>
-    std::span<T> ToSpan(std::vector<T>& vector)
-    {
-        return std::span<T>(vector.data(), vector.size());
+        return std::span<typename TContainer::value_type>(std::begin(container), std::end(container));
     }
 }

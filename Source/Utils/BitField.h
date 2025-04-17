@@ -12,12 +12,12 @@ namespace Silent::Utils
         private:
         // Constants
 
-        static constexpr auto DEFAULT_SIZE = 32;
-        static constexpr auto CHUNK_SIZE   = std::numeric_limits<ChunkType>::digits;
+        static constexpr uint DEFAULT_SIZE = 32;
+        static constexpr uint CHUNK_SIZE   = std::numeric_limits<ChunkType>::digits;
 
         // Fields
 
-        uint           _size   = 0;
+        uint                   _size   = 0;
         std::vector<ChunkType> _chunks = {};
 
     public:

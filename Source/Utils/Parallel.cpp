@@ -12,7 +12,7 @@ namespace Silent::Utils
         _threads.reserve(threadCount);
 
         // Create threads.
-        for (int i = 0; i < threadCount; i++)
+        for (int i = 0; (uint)i < threadCount; i++)
         {
             _threads.push_back(std::thread(&ParallelTaskManager::Worker, this));
         }
@@ -85,7 +85,7 @@ namespace Silent::Utils
             }
             catch (const std::exception& ex)
             {
-                Log("Failed to join thread.", LogLevel::Error);
+                Log("Failed to join thread: " + std::string(ex.what()), LogLevel::Error);
             }
         }
     }

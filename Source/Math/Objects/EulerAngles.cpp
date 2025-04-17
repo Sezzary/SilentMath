@@ -211,7 +211,7 @@ namespace Silent::Math
             return angleTo;
         }
 
-        int sign = CopySign(1, angleTo - angleFrom);
+        int sign = GetSign(angleTo - angleFrom);
         return (short)(angleFrom + (angularVel * sign));
     }
 }

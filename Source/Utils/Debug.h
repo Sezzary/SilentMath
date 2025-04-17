@@ -2,10 +2,10 @@
 
 namespace Silent::Utils::Debug
 {
-#ifdef DEBUG
-    constexpr bool IS_DEBUG_MODE = true;
+#ifdef _DEBUG
+    constexpr bool IS_DEBUG = true;
 #else
-    constexpr bool IS_DEBUG_MODE = false;
+    constexpr bool IS_DEBUG = false;
 #endif
 
     enum class LogLevel

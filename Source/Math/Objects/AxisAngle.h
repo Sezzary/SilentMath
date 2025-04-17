@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Math/Constants.h"
+
 namespace Silent::Math
 {
     class EulerAngles;

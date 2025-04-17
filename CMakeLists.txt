@@ -16,7 +16,7 @@ set_target_properties(Math PROPERTIES OUTPUT_NAME "Math" DEBUG_POSTFIX "_d")
 
 # Set Debug build definitions.
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-add_definitions(-D_DEBUG_BUILD)
+add_definitions(-D_DEBUG)
 endif()
 
 # Set compiler options for Debug and Release modes.
@@ -44,17 +44,13 @@ target_include_directories(Math PRIVATE
 # Add library header paths.
 target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
-    #${CMAKE_CURRENT_LIST_DIR}/Libraries/PhysX
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
-
-#set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/Libraries/PhysX CACHE PATH "PhysX root directory")
 
 # Add library directories.
 add_subdirectory(Libraries/glm)
-#add_subdirectory(Libraries/PhysX/physx/source/compiler/cmake)
 add_subdirectory(Libraries/spdlog)
 
 # Add libraries.
 target_link_libraries(Math PRIVATE
-    #PhysX
+    glm
     spdlog)
