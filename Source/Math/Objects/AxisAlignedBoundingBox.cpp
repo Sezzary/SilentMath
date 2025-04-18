@@ -75,9 +75,9 @@ namespace Silent::Math
 
     bool AxisAlignedBoundingBox::Intersects(const glm::vec3& point) const
     {
-        return abs(point.x) <= (Center.x + Extents.x) &&
-               abs(point.y) <= (Center.y + Extents.y) &&
-               abs(point.z) <= (Center.z + Extents.z);
+        return point.x >= (Center.x - Extents.x) && point.x <= (Center.x + Extents.x) &&
+               point.y >= (Center.y - Extents.y) && point.y <= (Center.y + Extents.y) &&
+               point.z >= (Center.z - Extents.z) && point.z <= (Center.z + Extents.z);
     }
 
     bool AxisAlignedBoundingBox::Intersects(const BoundingSphere& sphere) const
@@ -115,15 +115,13 @@ namespace Silent::Math
             {
                 axis = glm::vec3(1.0f, 0.0f, 0.0f);
             }
-
             // Y axis.
-            if (i == 1)
+            else if (i == 1)
             {
                 axis = glm::vec3(0.0f, 1.0f, 0.0f);
             }
-
             // Z axis.
-            if (i == 2)
+            else if (i == 2)
             {
                 axis = glm::vec3(0.0f, 0.0f, 1.0f);
             }

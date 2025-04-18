@@ -112,10 +112,9 @@ namespace Silent::Math
         *this = Color::Darken(*this, alpha);
     }
 
-    // TODO: Check.
     uint Color::ToPackedRgba() const
     {
-        return ((FP_COLOR(A()) << 24) | (FP_COLOR(R()) << 16) | (FP_COLOR(G()) << 8) | FP_COLOR(B()));
+        return (FP_COLOR(R()) << 24) | (FP_COLOR(G()) << 16) | (FP_COLOR(B()) << 8) | FP_COLOR(A());
     }
 
     bool Color::operator ==(const Color& color) const
