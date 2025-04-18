@@ -30,9 +30,9 @@ namespace Silent::Math
 
         float                  GetSurfaceArea() const;
         float                  GetVolume() const;
-        std::vector<glm::vec3> GetCorners() const;
         glm::vec3              GetMin() const;
         glm::vec3              GetMax() const;
+        std::vector<glm::vec3> GetCorners() const;
 
         // Inquirers
 

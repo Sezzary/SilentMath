@@ -13,28 +13,48 @@ namespace Silent::Math
     {
         constexpr uchar BIT_MASK = FP_COLOR(1.0f);
 
-        return Color((float)((packedRgba >> 24) & BIT_MASK) / (float)BIT_MASK, // Alpha
-                     (float)((packedRgba >> 16) & BIT_MASK) / (float)BIT_MASK, // Blue
-                     (float)((packedRgba >> 8) & BIT_MASK) / (float)BIT_MASK,  // Green
-                     (float)(packedRgba & BIT_MASK) / (float)BIT_MASK);        // Red
+        return Color((float)((packedRgba >> 24) & BIT_MASK) / (float)BIT_MASK,
+                     (float)((packedRgba >> 16) & BIT_MASK) / (float)BIT_MASK,
+                     (float)((packedRgba >> 8) & BIT_MASK) / (float)BIT_MASK,
+                     (float)(packedRgba & BIT_MASK) / (float)BIT_MASK);
     }
 
-    float Color::R() const
+    const float& Color::R() const
     {
         return x;
     }
 
-    float Color::G() const
+    float& Color::R()
+    {
+        return x;
+    }
+
+    const float& Color::G() const
     {
         return y;
     }
 
-    float Color::B() const
+    float& Color::G()
+    {
+        return y;
+    }
+
+    const float& Color::B() const
     {
         return z;
     }
 
-    float Color::A() const
+    float& Color::B()
+    {
+        return z;
+    }
+
+    const float& Color::A() const
+    {
+        return w;
+    }
+
+    float& Color::A()
     {
         return w;
     }
@@ -90,6 +110,12 @@ namespace Silent::Math
     void Color::Darken(float alpha)
     {
         *this = Color::Darken(*this, alpha);
+    }
+
+    // TODO: Check.
+    uint Color::ToPackedRgba() const
+    {
+        return ((FP_COLOR(A()) << 24) | (FP_COLOR(R()) << 16) | (FP_COLOR(G()) << 8) | FP_COLOR(B()));
     }
 
     bool Color::operator ==(const Color& color) const

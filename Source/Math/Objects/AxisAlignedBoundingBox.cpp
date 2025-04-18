@@ -48,6 +48,16 @@ namespace Silent::Math
         return (Extents.x * Extents.y * Extents.z) * 2.0f;
     }
 
+    glm::vec3 AxisAlignedBoundingBox::GetMin() const
+    {
+        return Center - Extents;
+    }
+
+    glm::vec3 AxisAlignedBoundingBox::GetMax() const
+    {
+        return Center + Extents;
+    }
+
     std::vector<glm::vec3> AxisAlignedBoundingBox::GetCorners() const
     {
         return std::vector<glm::vec3>
@@ -61,16 +71,6 @@ namespace Silent::Math
             Center + glm::vec3(-Extents.x,  Extents.y,  Extents.z),
             Center + glm::vec3( Extents.x,  Extents.y,  Extents.z)
         };
-    }
-
-    glm::vec3 AxisAlignedBoundingBox::GetMin() const
-    {
-        return Center - Extents;
-    }
-
-    glm::vec3 AxisAlignedBoundingBox::GetMax() const
-    {
-        return Center + Extents;
     }
 
     bool AxisAlignedBoundingBox::Intersects(const glm::vec3& point) const

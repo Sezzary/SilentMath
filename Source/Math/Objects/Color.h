@@ -23,10 +23,14 @@ namespace Silent::Math
 
         // Getters
 
-        float R() const;
-        float G() const;
-        float B() const;
-        float A() const;
+        const float& R() const;
+        float&       R();
+        const float& G() const;
+        float&       G();
+        const float& B() const;
+        float&       B();
+        const float& A() const;
+        float&       A();
 
         // Utilities
 
