@@ -4,9 +4,9 @@
 
 namespace Silent::Math
 {
-    bool  IsApproxEqual(float value0, float value1, float epsilon = EPSILON);
-    float FloorToStep(float value, float step);
-    float CeilToStep(float value, float step);
-    float RoundToStep(float value, float step);
-    float Remap(float value, float min0, float max0, float min1, float max1);
+    bool  IsApproxEqual(float a, float b, float epsilon = EPSILON);
+    float FloorToStep(float x, float step);
+    float CeilToStep(float x, float step);
+    float RoundToStep(float x, float step);
+    float Remap(float x, float min0, float max0, float min1, float max1);
 }

@@ -28,59 +28,61 @@ namespace Silent::Math
     /** @brief Squares a numeric value. */
     constexpr auto SQUARE = [](auto x)
     {
-        return (x * x);
+        return x * x;
     };
 
     /** @brief Cubes a numeric value. */
     constexpr auto CUBE = [](auto x)
     {
-        return (x * x * x);
+        return x * x * x;
     };
 
     /** @brief Rounds a floating-point value. */
-    constexpr float ROUND(float value)
+    constexpr float ROUND(float x)
     {
-        return (float)((value > 0.0f) ? (int)(value + 0.5f) : (int)(value - 0.5f));
+        return (float)((x > 0.0f) ? (int)(x + 0.5f) : (int)(x - 0.5f));
     }
     
     /** @brief Converts an integer to a fixed-point Q format. */
-    constexpr int FP_TO(int val, uint shift)
+    constexpr int FP_TO(int x, uint shift)
     {
-        return val << shift;
+        return x << shift;
     }
 
     /** @brief Converts a float to a fixed-point Q format. */
-    constexpr float FP_FLOAT_TO(float val, uint shift)
+    constexpr int FP_FLOAT_TO(float x, uint shift)
     {
-        return val * FP_TO(1, shift);
+        return (int)ROUND(x * FP_TO(1, shift));
     }
 
     /** @brief Converts an integer from a fixed-point Q format. */
-    constexpr int FP_FROM(int val, uint shift)
+    constexpr int FP_FROM(int x, uint shift)
     {
-        return val >> shift;
+        return x >> shift;
     }
 
     /** @brief Multiplies two integers in a fixed-point Q format and converts the result from the fixed-point Q format. */
-    constexpr int FP_MULTIPLY(int val0, int val1, uint shift)
+    constexpr int FP_MULTIPLY(int a, int b, uint shift)
     {
-        return (val0 * val1) >> shift;
+        return (a * b) >> shift;
     }
 
     /** @brief Multiplies an integer by a float converted to fixed-point Q format and converts the result from the fixed-point Q format. */
-    constexpr int FP_MULTIPLY_FLOAT(int val0, float val1, uint shift)
+    constexpr int FP_MULTIPLY_FLOAT(int a, float b, uint shift)
     {
-        return FP_MULTIPLY(val0, (int)FP_FLOAT_TO(val1, shift), shift);
+        return FP_MULTIPLY(a, FP_FLOAT_TO(b, shift), shift);
     }
 
-    /** @brief Multiplies an integer by a float converted to fixed-point Q format, using 64-bit intermediate via Math_MulFixed for higher precision. */
-    /*#define FP_MULTIPLY_PRECISE(val0, val1, shift) \
-        (Math_MulFixed((val0), FP_FLOAT_TO((val1), (shift)), (shift)))*/
+    /** @brief Multiplies an integer by a float converted to fixed-point Q format, using 64-bit intermediate for higher precision. */
+    constexpr int FP_MULTIPLY_PRECISE(int a, float b, uint shift)
+    {
+        return FP_MULTIPLY((int64)a, FP_FLOAT_TO(b, shift), shift);
+    }
 
     /** @brief Converts a floating-point alpha in the range [0.0f, 1.0f] to a fixed-point alpha in Q3.12 format. */
     constexpr short FP_ALPHA(float alpha)
     {
-        return (short)(FP_FLOAT_TO(alpha, Q12_SHIFT));
+        return (short)FP_FLOAT_TO(alpha, Q12_SHIFT);
     }
 
     /** @brief Converts a normalized color value in the range [0.0f, 1.0f] to an 8-bit color format in the range [0, 255]. */
@@ -92,13 +94,13 @@ namespace Silent::Math
     /** @brief Converts floating-point degrees to fixed-point angles in Q1.15 format. */
     constexpr short FP_ANGLE(float deg)
     {
-        return (short)(deg * (FP_ANGLE_COUNT / 360.0f));
+        return (short)ROUND(deg * (FP_ANGLE_COUNT / 360.0f));
     }
 
     /** @brief Converts floating-point radians to fixed-point angles in Q1.15 format. */
     constexpr short FP_ANGLE_FROM_RAD(float rad)
     {
-	    return (short)ROUND((rad / RADIAN) * ((float)FP_ANGLE_COUNT / 360.0f));
+	    return FP_ANGLE(rad / RADIAN);
     }
 
     /** @brief Converts fixed-point angles in Q1.15 format to floating-point radians. */
@@ -110,6 +112,6 @@ namespace Silent::Math
     /** @brief Converts floating-point meters to fixed-point world units in Q12.8 format. */
     constexpr int FP_METER(float meters)
     {
-        return (int)(meters * (1 << Q8_SHIFT));
+        return FP_FLOAT_TO(meters, Q8_SHIFT);
     }
 }

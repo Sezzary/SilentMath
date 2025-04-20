@@ -2,29 +2,29 @@
 
 namespace Silent::Math
 {
-    bool IsApproxEqual(float value0, float value1, float epsilon)
+    bool IsApproxEqual(float a, float b, float epsilon)
     {
-        return (std::max(value0, value1) - std::min(value0, value1)) <= epsilon;
+        return (std::max(a, b) - std::min(a, b)) <= epsilon;
     }
 
-    float FloorToStep(float value, float step)
+    float FloorToStep(float x, float step)
     {
-        return floor(value / step) * step;
+        return floor(x / step) * step;
     }
 
-    float CeilToStep(float value, float step)
+    float CeilToStep(float x, float step)
     {
-        return ceil(value / step) * step;
+        return ceil(x / step) * step;
     }
 
-    float RoundToStep(float value, float step)
+    float RoundToStep(float x, float step)
     {
-        return round(value / step) * step;
+        return round(x / step) * step;
     }
 
-    float Remap(float value, float min0, float max0, float min1, float max1)
+    float Remap(float x, float min0, float max0, float min1, float max1)
     {
-        float alpha = (value - min0) / (max0 - min0);
+        float alpha = (x - min0) / (max0 - min0);
         return std::lerp(min1, max1, alpha);
     }
 }
