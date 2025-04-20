@@ -7,6 +7,21 @@
 
 namespace Silent::Math
 {
+    float OrientedBoundingBox::GetWidth() const
+    {
+        return Extents.x * 2;
+    }
+
+    float OrientedBoundingBox::GetHeight() const
+    {
+        return Extents.y * 2;
+    }
+
+    float OrientedBoundingBox::GetDepth() const
+    {
+        return Extents.z * 2;
+    }
+
     float OrientedBoundingBox::GetSurfaceArea() const
     {
         return ((Extents.x * Extents.y) + (Extents.x * Extents.z) + (Extents.y * Extents.z)) * 2.0f;

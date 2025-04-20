@@ -38,6 +38,21 @@ namespace Silent::Math
         *this = AxisAlignedBoundingBox(ToSpan(obb.GetCorners()));
     }
 
+    float AxisAlignedBoundingBox::GetWidth() const
+    {
+        return Extents.x * 2;
+    }
+
+    float AxisAlignedBoundingBox::GetHeight() const
+    {
+        return Extents.y * 2;
+    }
+
+    float AxisAlignedBoundingBox::GetDepth() const
+    {
+        return Extents.z * 2;
+    }
+
     float AxisAlignedBoundingBox::GetSurfaceArea() const
     {
         return ((Extents.x * Extents.y) + (Extents.x * Extents.z) + (Extents.y * Extents.z)) * 2.0f;
