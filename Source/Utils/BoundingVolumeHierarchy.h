@@ -84,12 +84,12 @@ namespace Silent::Utils
         void RemoveLeaf(int leafId);
         void RefitNode(int nodeId);
         void RemoveNode(int nodeId);
-        int	 BalanceNode(int nodeId);
+        int  BalanceNode(int nodeId);
 
         // Static helpers
 
         void Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy);
-        int	 Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, int start, int end, BvhBuildStrategy strategy);
+        int  Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, int start, int end, BvhBuildStrategy strategy);
 
         // Debug helpers
 

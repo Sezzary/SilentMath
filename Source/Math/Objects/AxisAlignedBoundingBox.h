@@ -28,6 +28,9 @@ namespace Silent::Math
 
         // Getters
 
+        float                  GetWidth() const;
+        float                  GetHeight() const;
+        float                  GetDepth() const;
         float                  GetSurfaceArea() const;
         float                  GetVolume() const;
         glm::vec3              GetMin() const;

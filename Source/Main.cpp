@@ -7,5 +7,4 @@ using namespace Silent::Utils;
 
 int main()
 {
-    
 }

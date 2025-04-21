@@ -14,7 +14,7 @@ namespace Silent::Utils
         std::vector<std::thread> _threads      = {};
         std::queue<ParallelTask> _tasks        = {};
         std::mutex               _taskMutex    = {};
-        std::condition_variable	 _taskCond     = {};
+        std::condition_variable  _taskCond     = {};
         bool                     _deinitialize = false;
 
         // Constructors

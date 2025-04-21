@@ -28,7 +28,8 @@
                 "--build",
                 "${workspaceFolder}/Build/Debug"
             ],
-            "group": {
+            "group":
+            {
                 "kind": "build",
                 "isDefault": false
             },

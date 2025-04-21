@@ -1,7 +1,8 @@
 {
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
-    "files.associations": {
+    "files.associations":
+    {
         "algorithm": "cpp",
         "array": "cpp",
         "atomic": "cpp",

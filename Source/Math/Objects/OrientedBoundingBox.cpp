@@ -145,29 +145,42 @@ namespace Silent::Math
 
     ContainmentType OrientedBoundingBox::Contains(const OrientedBoundingBox& obb) const
     {
-        // Check if each corner of other OBB is inside this OBB.
-        for (const auto& corner : obb.GetCorners())
+        /*constexpr uint AXIS_COUNT = 3;
+
+        // Transform other OBB into local space of this OBB.
+        auto rotMat = glm::transpose(Rotation); // Inverse rotation.
+
+        // Get relative position of other OBB's center in this OBB's local space.
+        auto relCenter = rotMat * (obb.Center - Center);
+
+        // Check each axis (X, Y, Z) of this OBB and other OBB.
+        for (int i = 0; i < AXIS_COUNT; i++)
         {
-            // Transform corner to local space of this OBB using inverse rotation.
-            auto rotCorner = glm::inverse(Rotation) * (corner - Center);
-
-            // Check if corner lies within extents of this OBB in all axes.
-            bool isInside = false;
-            if (glm::abs(rotCorner.x) <= Extents.x &&
-                glm::abs(rotCorner.y) <= Extents.y &&
-                glm::abs(rotCorner.z) <= Extents.z)
-            {
-                isInside = true;
-            }
-
-            // If any corner is outside, this OBB doesn't fully contain other OBB.
-            if (!isInside)
+            // Check if OBBs overlap on this axis (using projection).
+            float proj = glm::abs(relCenter[i]);
+            if (proj > (Extents[i] + obb.Extents[i]))
             {
                 return ContainmentType::Disjoint;
             }
         }
 
-        // All corners of other OBB are inside this OBB.
+        // Check cross products of axes of both OBBs.
+        glm::vec3 axes[AXIS_COUNT] = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) };
+        for (int i = 0; i < AXIS_COUNT; i++)
+        {
+            for (int j = 0; j < AXIS_COUNT; j++)
+            {
+                auto axis = glm::cross(axes[i], axes[j]);
+
+                // Calculate projections onto this axis.
+                float proj = glm::abs(glm::dot(obb.Extents, axis)) + glm::abs(glm::dot(Extents, axis));
+                if (glm::abs(glm::dot(relCenter, axis)) > proj)
+                {
+                    return ContainmentType::Disjoint;
+                }
+            }
+        }*/
+
         return ContainmentType::Contains;
     }
 

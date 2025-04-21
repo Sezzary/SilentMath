@@ -17,8 +17,8 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr	 Color() = default;
-        constexpr	 Color(float r, float g, float b, float a = 1.0f) { x = r; y = g; z = b; w = a; }
+        constexpr    Color() = default;
+        constexpr    Color(float r, float g, float b, float a = 1.0f) { x = r; y = g; z = b; w = a; }
         static Color FromPackedRgba(uint packedRgba);
 
         // Getters
