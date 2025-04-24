@@ -9,16 +9,6 @@ namespace Silent::Math
     const Color Color::Green = Color(FP_ALPHA(0.0f), FP_ALPHA(1.0f), FP_ALPHA(0.0f), FP_ALPHA(1.0f));
     const Color Color::Blue  = Color(FP_ALPHA(0.0f), FP_ALPHA(0.0f), FP_ALPHA(1.0f), FP_ALPHA(1.0f));
 
-    Color Color::FromPackedRgba(uint packedRgba)
-    {
-        constexpr uchar BIT_MASK = FP_COLOR(1.0f);
-
-        return Color((float)((packedRgba >> 24) & BIT_MASK) / (float)BIT_MASK,
-                     (float)((packedRgba >> 16) & BIT_MASK) / (float)BIT_MASK,
-                     (float)((packedRgba >> 8) & BIT_MASK) / (float)BIT_MASK,
-                     (float)(packedRgba & BIT_MASK) / (float)BIT_MASK);
-    }
-
     const float& Color::R() const
     {
         return x;
@@ -27,6 +17,11 @@ namespace Silent::Math
     float& Color::R()
     {
         return x;
+    }
+
+    uchar Color::R8() const
+    {
+        return FP_COLOR(R());
     }
 
     const float& Color::G() const
@@ -39,6 +34,11 @@ namespace Silent::Math
         return y;
     }
 
+    uchar Color::G8() const
+    {
+        return FP_COLOR(G());
+    }
+
     const float& Color::B() const
     {
         return z;
@@ -49,6 +49,11 @@ namespace Silent::Math
         return z;
     }
 
+    uchar Color::B8() const
+    {
+        return FP_COLOR(B());
+    }
+
     const float& Color::A() const
     {
         return w;
@@ -57,6 +62,40 @@ namespace Silent::Math
     float& Color::A()
     {
         return w;
+    }
+
+    uchar Color::A8() const
+    {
+        return FP_COLOR(A());
+    }
+
+    Color From8Bit(uchar r, uchar g, uchar b, uchar a)
+    {
+        return Color(r / (float)FP_COLOR(1.0f),
+                     g / (float)FP_COLOR(1.0f),
+                     b / (float)FP_COLOR(1.0f),
+                     a / (float)FP_COLOR(1.0f));
+    }
+
+    Color Color::FromPackedRgba(uint packedRgba)
+    {
+        constexpr uchar BIT_MASK = FP_COLOR(1.0f);
+
+        return Color((float)((packedRgba >> 24) & BIT_MASK) / (float)BIT_MASK,
+                     (float)((packedRgba >> 16) & BIT_MASK) / (float)BIT_MASK,
+                     (float)((packedRgba >> 8) & BIT_MASK) / (float)BIT_MASK,
+                     (float)(packedRgba & BIT_MASK) / (float)BIT_MASK);
+    }
+
+    // TODO
+    Color Color::Lerp(const Color& color0, const Color& color1, float alpha)
+    {
+        return Color();//glm::lerp(color0, color1, alpha));
+    }
+
+    void Color::Lerp(const Color& color, float alpha)
+    {
+        *this = Color::Lerp(*this, color, alpha);
     }
 
     Color Color::Invert(const Color& color)

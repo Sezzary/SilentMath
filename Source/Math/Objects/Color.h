@@ -7,6 +7,24 @@ namespace Silent::Math
     class Color : glm::vec4
     {
     public:
+        // Accessors
+
+        const float& R() const;
+        float&       R();
+        uchar        R8() const;
+
+        const float& G() const;
+        float&       G();
+        uchar        G8() const;
+
+        const float& B() const;
+        float&       B();
+        uchar        B8() const;
+
+        const float& A() const;
+        float&       A();
+        uchar        A8() const;
+
         // Presets
 
         static const Color Black;
@@ -19,21 +37,13 @@ namespace Silent::Math
 
         constexpr    Color() = default;
         constexpr    Color(float r, float g, float b, float a = 1.0f) { x = r; y = g; z = b; w = a; }
+        static Color From8Bit(uchar r, uchar g, uchar b, uchar a = FP_COLOR(1.0f));
         static Color FromPackedRgba(uint packedRgba);
-
-        // Getters
-
-        const float& R() const;
-        float&       R();
-        const float& G() const;
-        float&       G();
-        const float& B() const;
-        float&       B();
-        const float& A() const;
-        float&       A();
 
         // Utilities
 
+        static Color Lerp(const Color& color0, const Color& color1, float alpha);
+        void         Lerp(const Color& color, float alpha);
         static Color Invert(const Color& color);
         void         Invert();
         static Color Blend(const Color& color0, const Color& color1, float alpha);

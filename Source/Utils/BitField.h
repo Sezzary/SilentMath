@@ -9,7 +9,7 @@ namespace Silent::Utils
 
          using ChunkType = uint;
 
-        private:
+    private:
         // Constants
 
         static constexpr uint DEFAULT_SIZE = 32;
