@@ -4,6 +4,8 @@
 
 namespace Silent::Math
 {
+    using FpAngle = short;
+
     constexpr uint Q4_SHIFT       = 4;                                                                           /** Used for: Q27.4 positions. */
     constexpr uint Q8_SHIFT       = 8;                                                                           /** Used for: Q8.8 range limits. Q24.8 tile units. */
     constexpr uint Q12_SHIFT      = 12;                                                                          /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
@@ -91,19 +93,19 @@ namespace Silent::Math
     }
 
     /** @brief Converts floating-point degrees to fixed-point angles in Q1.15 format. */
-    constexpr short FP_ANGLE(float deg)
+    constexpr FpAngle FP_ANGLE(float deg)
     {
-        return (short)ROUND(deg * (FP_ANGLE_COUNT / 360.0f));
+        return (FpAngle)ROUND(deg * (FP_ANGLE_COUNT / 360.0f));
     }
 
     /** @brief Converts floating-point radians to fixed-point angles in Q1.15 format. */
-    constexpr short FP_ANGLE_FROM_RAD(float rad)
+    constexpr FpAngle FP_ANGLE_FROM_RAD(float rad)
     {
         return FP_ANGLE(rad / (PI / 180.0f));
     }
 
     /** @brief Converts fixed-point angles in Q1.15 format to floating-point radians. */
-    constexpr float FP_ANGLE_TO_RAD(short angle)
+    constexpr float FP_ANGLE_TO_RAD(FpAngle angle)
     {
         return (angle * ((float)FP_ANGLE_COUNT / 360.0f)) * (PI / 180.0f);
     }
