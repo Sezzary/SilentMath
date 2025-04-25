@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Math/Objects/Vector3.h"
+
 namespace Silent::Math
 {
     class AxisAngle;
     class EulerAngles;
     class Matrix;
-    class Vector3;
 
     class Quaternion : public glm::quat
     {
@@ -26,6 +27,13 @@ namespace Silent::Math
         void              Lerp(const Quaternion& to, float alpha);
         static Quaternion Slerp(const Quaternion& from, const Quaternion& to, float alpha);
         void              Slerp(const Quaternion& to, float alpha);
+
+        // Converters
+
+        Vector3 ToDirection() const;
+
+        const glm::quat& ToGlmQuat() const;
+        glm::quat&       ToGlmQuat();
 
         // Operators
 

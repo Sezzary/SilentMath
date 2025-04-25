@@ -69,7 +69,7 @@ namespace Silent::Math
 
     Vector3 Vector3::Cross(const Vector3& vec0, const Vector3& vec1)
     {
-        return glm::cross(vec0.ToGlmVec3(), vec1.ToGlmVec3());
+        return Vector3(glm::cross(vec0.ToGlmVec3(), vec1.ToGlmVec3()));
     }
 
     Vector3 Vector3::Cross(const Vector3& vec) const
@@ -79,7 +79,7 @@ namespace Silent::Math
 
     Vector3 Vector3::Normalize(const Vector3& vec)
     {
-        return glm::normalize(vec.ToGlmVec3());
+        return Vector3(glm::normalize(vec.ToGlmVec3()));
     }
 
     void Vector3::Normalize()
@@ -89,7 +89,7 @@ namespace Silent::Math
 
     Vector3 Vector3::Lerp(const Vector3& from, const Vector3& to, float alpha)
     {
-        return glm::lerp(from.ToGlmVec3(), to.ToGlmVec3(), alpha);
+        return Vector3(glm::lerp(from.ToGlmVec3(), to.ToGlmVec3(), alpha));
     }
 
     void Vector3::Lerp(const Vector3& to, float alpha)
@@ -99,7 +99,7 @@ namespace Silent::Math
 
     Vector3 Vector3::Smoothstep(const Vector3& from, const Vector3& to, float alpha)
     {
-        return glm::smoothstep(from.ToGlmVec3(), to.ToGlmVec3(), glm::vec3(alpha));
+        return Vector3(glm::smoothstep(from.ToGlmVec3(), to.ToGlmVec3(), glm::vec3(alpha)));
     }
 
     void Vector3::Smoothstep(const Vector3& to, float alpha)
@@ -109,7 +109,7 @@ namespace Silent::Math
 
     Vector3 Vector3::Transform(const Vector3& vec, const Matrix& mat)
     {
-        return glm::vec3(mat.ToGlmMat4() * glm::vec4(vec, 1.0f));
+        return Vector3(glm::vec3(mat.ToGlmMat4() * glm::vec4(vec, 1.0f)));
     }
 
     void Vector3::Transform(const Matrix& mat)
@@ -179,31 +179,31 @@ namespace Silent::Math
 
     Vector3 Vector3::operator+(const Vector3& vec) const
     {
-        return ToGlmVec3() + vec.ToGlmVec3();
+        return Vector3(ToGlmVec3() + vec.ToGlmVec3());
     }
 
     Vector3 Vector3::operator-(const Vector3& vec) const
     {
-        return ToGlmVec3() - vec.ToGlmVec3();
+        return Vector3(ToGlmVec3() - vec.ToGlmVec3());
     }
 
     Vector3 Vector3::operator*(const Vector3& vec) const
     {
-        return ToGlmVec3() * vec.ToGlmVec3();
+        return Vector3(ToGlmVec3() * vec.ToGlmVec3());
     }
 
     Vector3 Vector3::operator*(float scalar) const
     {
-        return ToGlmVec3() * scalar;
+        return Vector3(ToGlmVec3() * scalar);
     }
 
     Vector3 Vector3::operator/(float scalar) const
     {
-        return ToGlmVec3() / scalar;
+        return Vector3(ToGlmVec3() / scalar);
     }
 
     Vector3 Vector3::operator-() const
     {
-        return -ToGlmVec3();
+        return Vector3(-ToGlmVec3());
     }
 }

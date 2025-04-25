@@ -19,6 +19,6 @@ namespace Silent::Math
 
     Quaternion Matrix::ToQuaternion() const
     {
-        return glm::quat_cast(ToGlmMat4());
+        return Quaternion(glm::quat_cast(ToGlmMat4()));
     }
 }
