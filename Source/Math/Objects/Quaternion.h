@@ -30,7 +30,8 @@ namespace Silent::Math
 
         // Converters
 
-        Vector3 ToDirection() const;
+        Vector3     ToDirection() const;
+        EulerAngles ToEulerAngles() const;
 
         const glm::quat& ToGlmQuat() const;
         glm::quat&       ToGlmQuat();

@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Math/Objects/Quaternion.h"
 
+#include "Math/Constants.h"
 #include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
@@ -29,6 +30,12 @@ namespace Silent::Math
     {
         return Vector3(glm::rotate(ToGlmQuat(), glm::vec3(0.0f, 0.0f, 1.0f)));
     }*/
+
+    EulerAngles Quaternion::ToEulerAngles() const
+    {
+        auto eulerAnglesRad = glm::eulerAngles(ToGlmQuat());
+        return EulerAngles(FP_ANGLE_FROM_RAD(eulerAnglesRad.x), FP_ANGLE_FROM_RAD(eulerAnglesRad.y), FP_ANGLE_FROM_RAD(eulerAnglesRad.z));
+    }
 
     const glm::quat& Quaternion::ToGlmQuat() const
     {

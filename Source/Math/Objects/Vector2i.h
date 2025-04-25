@@ -12,7 +12,7 @@ namespace Silent::Math
     public:
         // Constants
 
-        static constexpr uint AXIS_COUNT = 3;
+        static constexpr uint AXIS_COUNT = 2;
 
         // Presets
 
@@ -30,14 +30,14 @@ namespace Silent::Math
 
         // Utilities
 
-        static float    Length(const Vector2i& vec);
-        float           Length() const;
-        static float    LengthSquared(const Vector2i& vec);
-        float           LengthSquared() const;
-        static float    Distance(const Vector2i& from, const Vector2i& to);
-        float           Distance(const Vector2i& to) const;
-        static float    DistanceSquared(const Vector2i& from, const Vector2i& to);
-        float           DistanceSquared(const Vector2i& to) const;
+        static float Length(const Vector2i& vec);
+        float        Length() const;
+        static float LengthSquared(const Vector2i& vec);
+        float        LengthSquared() const;
+        static float Distance(const Vector2i& from, const Vector2i& to);
+        float        Distance(const Vector2i& to) const;
+        static float DistanceSquared(const Vector2i& from, const Vector2i& to);
+        float        DistanceSquared(const Vector2i& to) const;
 
         static Vector2i Lerp(const Vector2i& from, const Vector2i& to, float alpha);
         void            Lerp(const Vector2i& to, float alpha);

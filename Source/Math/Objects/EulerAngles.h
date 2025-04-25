@@ -32,7 +32,7 @@ namespace Silent::Math
                   EulerAngles(const glm::vec3& dir);
                   EulerAngles(const AxisAngle& axisAngle);
                   EulerAngles(const glm::quat& quat);
-                  EulerAngles(const glm::mat3& rotMat);
+                  EulerAngles(const Matrix& mat);
 
         // Utilities
 
@@ -49,7 +49,7 @@ namespace Silent::Math
         glm::vec3 ToDirection() const;
         glm::quat ToQuaternion() const;
         AxisAngle ToAxisAngle() const;
-        glm::mat3 ToRotationMatrix() const;
+        Matrix    ToRotationMatrix() const;
 
         // Operators
 
