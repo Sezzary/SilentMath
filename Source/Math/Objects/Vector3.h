@@ -52,6 +52,8 @@ namespace Silent::Math
         void           Smoothstep(const Vector3& to, float alpha);
         static Vector3 Transform(const Vector3& vec, const Matrix& mat);
         void           Transform(const Matrix& mat);
+        static Vector3 Rotate(const Vector3& vec, const Matrix& mat);
+        void           Rotate(const Matrix& mat);
         static Vector3 Translate(const Vector3& vec, const Vector3& dir, float dist);
         void           Translate(const Vector3& dir, float dist);
 

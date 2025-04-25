@@ -117,6 +117,16 @@ namespace Silent::Math
         *this = Vector3::Transform(*this, mat);
     }
 
+    Vector3 Vector3::Rotate(const Vector3& vec, const Matrix& mat)
+    {
+        return Vector3(glm::vec3(mat.ToGlmMat4() * glm::vec4(vec, 0.0f)));
+    }
+
+    void Vector3::Rotate(const Matrix& mat)
+    {
+        *this = Vector3::Rotate(*this, mat);
+    }
+
     Vector3 Vector3::Translate(const Vector3& vec, const Vector3& dir, float dist)
     {
         return vec + (dir * dist);

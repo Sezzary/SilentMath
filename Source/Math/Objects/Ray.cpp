@@ -4,14 +4,16 @@
 #include "Math/Constants.h"
 #include "Math/Objects/AxisAlignedBoundingBox.h"
 #include "Math/Objects/BoundingSphere.h"
+#include "Math/Objects/Matrix.h"
 #include "Math/Objects/OrientedBoundingBox.h"
+#include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
 {
     std::optional<float> Ray::Intersects(const BoundingSphere& sphere) const
     {
         auto posDelta = sphere.Center - Origin;
-        auto projLength = glm::dot(posDelta, Direction);
+        auto projLength = Vector3::Dot(posDelta, Direction);
 
         auto distSqr = glm::length2(posDelta) - SQUARE(projLength);
         auto radiusSqr = SQUARE(sphere.Radius);
@@ -46,12 +48,12 @@ namespace Silent::Math
         auto invTransformMat = glm::inverse(obb.GetTransformMatrix());
 
         // Compute local ray.
-        auto localOrigin = glm::vec3(glm::vec4(Origin, 1.0f) * invTransformMat);
-        auto localDir = glm::vec3(glm::vec4(Direction, 0.0f) * invTransformMat);
+        auto localOrigin = Vector3::Transform(Origin, invTransformMat);
+        auto localDir = Vector3::Rotate(Direction, invTransformMat);
         auto localRay = Ray(localOrigin, localDir);
 
         // Test AABB intersection in local space.
-        auto aabb = AxisAlignedBoundingBox(glm::vec3(0.0f), obb.Extents);
+        auto aabb = AxisAlignedBoundingBox(Vector3::Zero, obb.Extents);
         return localRay.Intersects(aabb);
     }
 

@@ -15,7 +15,9 @@ namespace Silent::Math
 
         // Constructors
 
-        Matrix() = default;
+        constexpr Matrix() = default;
+        constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
+
 
         // Utilities
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Constants.h"
+#include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
 {
@@ -13,13 +13,13 @@ namespace Silent::Math
     public:
         // Fields
 
-        glm::vec3 Origin    = glm::vec3();
-        glm::vec3 Direction = glm::vec3(0.0f, 0.0f, 1.0f);
+        Vector3 Origin    = Vector3::Zero;
+        Vector3 Direction = Vector3::UnitZ;
 
         // Constructors
 
         constexpr Ray() = default;
-        constexpr Ray(const glm::vec3& origin, const glm::vec3& dir) : Origin(origin), Direction(dir) {}
+        constexpr Ray(const Vector3& origin, const Vector3& dir) : Origin(origin), Direction(dir) {}
 
         // Inquirers
 
