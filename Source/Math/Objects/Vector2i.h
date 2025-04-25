@@ -1,0 +1,73 @@
+#pragma once
+
+#include "Math/Constants.h"
+
+namespace Silent::Math
+{
+    class Matrix;
+    class Vector2;
+
+    class Vector2i : public glm::ivec2
+    {
+    public:
+        // Constants
+
+        static constexpr uint AXIS_COUNT = 3;
+
+        // Presets
+
+        static const Vector2i Zero;
+        static const Vector2i One;
+        static const Vector2i UnitX;
+        static const Vector2i UnitY;
+
+        // Constructors
+
+        constexpr Vector2i() = default;
+        constexpr Vector2i(const glm::ivec2& vec) : glm::ivec2(vec) {}
+        constexpr Vector2i(int x)                                   { this->x = x; this->y = x; }
+        constexpr Vector2i(int x, int y)                            { this->x = x; this->y = y; }
+
+        // Utilities
+
+        static float    Length(const Vector2i& vec);
+        float           Length() const;
+        static float    LengthSquared(const Vector2i& vec);
+        float           LengthSquared() const;
+        static float    Distance(const Vector2i& from, const Vector2i& to);
+        float           Distance(const Vector2i& to) const;
+        static float    DistanceSquared(const Vector2i& from, const Vector2i& to);
+        float           DistanceSquared(const Vector2i& to) const;
+
+        static Vector2i Lerp(const Vector2i& from, const Vector2i& to, float alpha);
+        void            Lerp(const Vector2i& to, float alpha);
+        static Vector2i Transform(const Vector2i& vec, const Matrix& mat);
+        void            Transform(const Matrix& mat);
+        static Vector2i Translate(const Vector2i& vec, const Vector2& dir, float dist);
+        void            Translate(const Vector2& dir, float dist);
+
+        // Converters
+
+        Vector2 ToVector2() const;
+
+        const glm::ivec2& ToGlmVec2i() const;
+        glm::ivec2&       ToGlmVec2i();
+
+        // Operators
+
+        bool      operator==(const Vector2i& vec) const;
+        bool      operator!=(const Vector2i& vec) const;
+        Vector2i& operator=(const Vector2i& vec) = default;
+        Vector2i& operator+=(const Vector2i& vec);
+        Vector2i& operator-=(const Vector2i& vec);
+        Vector2i& operator*=(const Vector2i& vec);
+        Vector2i& operator*=(float scalar);
+        Vector2i& operator/=(float scalar);
+        Vector2i  operator+(const Vector2i& vec) const;
+        Vector2i  operator-(const Vector2i& vec) const;
+        Vector2i  operator*(const Vector2i& vec) const;
+        Vector2i  operator*(float scalar) const;
+        Vector2i  operator/(float scalar) const;
+        Vector2i  operator-() const;
+    };
+}

@@ -68,7 +68,7 @@ namespace Silent::Math
 
     Vector3i Vector3i::Transform(const Vector3i& vec, const Matrix& mat)
     {
-        return Vector3i(glm::ivec3(mat.ToGlmMat4() * glm::vec4(vec, 1.0f)));
+        return Vector3i(glm::ivec3(mat.ToGlmMat4() * glm::ivec4(vec, 1)));
     }
 
     void Vector3i::Transform(const Matrix& mat)

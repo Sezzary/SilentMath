@@ -49,13 +49,17 @@ namespace Silent::Math
         return (a > b) ? a : b;
     };
 
-    /** @brief Clamps a value to the range [min, max]. */
-    #define CLAMP(x, min, max) \
-        (((x) < (min)) ? (min) : (((x) > (max)) ? (max) : (x)))
+    /** @brief Clamps a value to the range `[min, max]`. */
+    constexpr auto CLAMP = [](auto x, auto min, auto max)
+    {
+        return (x < min) ? min : ((x > max) ? max : x);
+    };
 
     /** @brief Computes the absolute difference between two values. */
-    #define ABS_DIFF(a, b) \
-        ((((a) - (b)) < 0) ? ((b) - (a)) : ((a) - (b)))
+    constexpr auto ABS_DIFF = [](auto a, auto b)
+    {
+        return ((a - b) < 0) ? (b - a) : (a - b);
+    };
 
     /** @brief Rounds a floating-point value. */
     constexpr float ROUND(float x)
