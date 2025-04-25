@@ -78,14 +78,14 @@ namespace Silent::Math
     {
         return std::vector<glm::vec3>
         {
-            Center + glm::vec3(-Extents.x, -Extents.y, -Extents.z),
-            Center + glm::vec3( Extents.x, -Extents.y, -Extents.z),
-            Center + glm::vec3(-Extents.x,  Extents.y, -Extents.z),
-            Center + glm::vec3( Extents.x,  Extents.y, -Extents.z),
-            Center + glm::vec3(-Extents.x, -Extents.y,  Extents.z),
-            Center + glm::vec3( Extents.x, -Extents.y,  Extents.z),
-            Center + glm::vec3(-Extents.x,  Extents.y,  Extents.z),
-            Center + glm::vec3( Extents.x,  Extents.y,  Extents.z)
+            Center + Vector3(-Extents.x, -Extents.y, -Extents.z),
+            Center + Vector3( Extents.x, -Extents.y, -Extents.z),
+            Center + Vector3(-Extents.x,  Extents.y, -Extents.z),
+            Center + Vector3( Extents.x,  Extents.y, -Extents.z),
+            Center + Vector3(-Extents.x, -Extents.y,  Extents.z),
+            Center + Vector3( Extents.x, -Extents.y,  Extents.z),
+            Center + Vector3(-Extents.x,  Extents.y,  Extents.z),
+            Center + Vector3( Extents.x,  Extents.y,  Extents.z)
         };
     }
 

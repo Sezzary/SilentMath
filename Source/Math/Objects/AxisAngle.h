@@ -6,16 +6,20 @@
 namespace Silent::Math
 {
     class EulerAngles;
+    class Matrix;
 
     class AxisAngle
     {
-    private:
+    public:
         // Fields
 
         Vector3 Axis  = Vector3::UnitZ;
         short   Angle = 0;
 
-    public:
+        // Presets
+
+        static const AxisAngle Identity;
+
         // Constructors
 
         constexpr AxisAngle() = default;
@@ -23,7 +27,7 @@ namespace Silent::Math
                   AxisAngle(const Vector3& dir);
                   AxisAngle(const EulerAngles& eulerAngles);
                   AxisAngle(const glm::quat& quat);
-                  AxisAngle(const glm::mat3& mat);
+                  AxisAngle(const Matrix& mat);
 
         // Utilities
 
@@ -35,7 +39,7 @@ namespace Silent::Math
         Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;
         glm::quat   ToQuaternion() const;
-        glm::mat3   ToRotationMatrix() const;
+        Matrix      ToMatrix() const;
 
         // Operators
 

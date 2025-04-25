@@ -3,9 +3,12 @@
 
 #include "Math/Constants.h"
 #include "Math/Objects/EulerAngles.h"
+#include "Math/Objects/Matrix.h"
 
 namespace Silent::Math
 {
+    const AxisAngle AxisAngle::Identity = AxisAngle(glm::vec3(), 0);
+
     AxisAngle::AxisAngle(const Vector3& dir)
     {
         // Compute axis.
@@ -52,10 +55,10 @@ namespace Silent::Math
         Angle = FP_ANGLE_FROM_RAD(rad);
     }
 
-    AxisAngle::AxisAngle(const glm::mat3& rotMat)
+    AxisAngle::AxisAngle(const Matrix& mat)
     {
         // Compute angle.
-        float trace = rotMat[0][0] + rotMat[1][1] + rotMat[2][2];
+        float trace = mat[0][0] + mat[1][1] + mat[2][2];
         float rad = glm::acos((trace - 1.0f) / 2.0f);
 
         // Compute axis.
@@ -66,9 +69,9 @@ namespace Silent::Math
         }
         else
         {
-            axis = Vector3(rotMat[2][1] - rotMat[1][2], 
-                           rotMat[0][2] - rotMat[2][0], 
-                           rotMat[1][0] - rotMat[0][1]) / (glm::sin(rad) * 2.0f);
+            axis = Vector3(mat[2][1] - mat[1][2], 
+                           mat[0][2] - mat[2][0], 
+                           mat[1][0] - mat[0][1]) / (glm::sin(rad) * 2.0f);
         }
 
         // Set axis and angle.
@@ -111,7 +114,7 @@ namespace Silent::Math
         return glm::quat(cosHalfAngle, Axis.x * sinHalfAngle, Axis.y * sinHalfAngle, Axis.z * sinHalfAngle);
     }
 
-    glm::mat3 AxisAngle::ToRotationMatrix() const
+    Matrix AxisAngle::ToMatrix() const
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
         float sinAngle = glm::sin(rad);
@@ -119,12 +122,12 @@ namespace Silent::Math
         float oneMinusCos = 1.0f - cosAngle;
     
         // Construct rotation matrix using Rodrigues' formula.
-        return glm::mat3
+        return Matrix(glm::mat3
         {
             {
                 cosAngle + SQUARE(Axis.x) * oneMinusCos,
                 ((Axis.x * Axis.y) * oneMinusCos) - (Axis.z * sinAngle),
-                ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle)
+                ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
             },
             {
                 ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
@@ -136,7 +139,7 @@ namespace Silent::Math
                 ((Axis.y * Axis.z) * oneMinusCos) + (Axis.x * sinAngle),
                 cosAngle + (SQUARE(Axis.z) * oneMinusCos)
             }
-        };
+        });
     }
 
     bool AxisAngle::operator==(const AxisAngle& axisAngle) const

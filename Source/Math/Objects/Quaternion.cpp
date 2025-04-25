@@ -6,6 +6,8 @@
 
 namespace Silent::Math
 {
+    const Quaternion Quaternion::Identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
     Quaternion Quaternion::Lerp(const Quaternion& from, const Quaternion& to, float alpha)
     {
         return Quaternion(glm::lerp(from.ToGlmQuat(), to.ToGlmQuat(), alpha));

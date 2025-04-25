@@ -11,8 +11,9 @@ namespace Silent::Math
     class Quaternion : public glm::quat
     {
     public:
-
         // Presets
+
+        static const Quaternion Identity;
 
         // Constructors
 

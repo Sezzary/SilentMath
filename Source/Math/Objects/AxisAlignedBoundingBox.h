@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Math/Objects/Vector3.h"
+
 namespace Silent::Math
 {
     class      BoundingSphere;
     class      OrientedBoundingBox;
-    class      Vector3;
     enum class ContainmentType;
 
     class AxisAlignedBoundingBox
