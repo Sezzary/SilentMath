@@ -29,8 +29,8 @@ namespace Silent::Math
         
         // Operators
 
-        bool operator ==(const Ray& ray) const;
-        bool operator !=(const Ray& ray) const;
-        Ray& operator =(const Ray& ray) = default;
+        bool operator==(const Ray& ray) const;
+        bool operator!=(const Ray& ray) const;
+        Ray& operator=(const Ray& ray) = default;
     };
 }

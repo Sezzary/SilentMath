@@ -55,7 +55,7 @@ namespace Silent::Math
     
     ContainmentType BoundingSphere::Contains(const glm::vec3& point) const
     {
-        return Intersects(point) ? ContainmentType::Contains : ContainmentType::Disjoint;
+        return Intersects(point) ? ContainmentType::Contains : ContainmentType::None;
     }
 
     ContainmentType BoundingSphere::Contains(const BoundingSphere& sphere) const
@@ -72,7 +72,7 @@ namespace Silent::Math
             return ContainmentType::Intersects;
         }
 
-        return ContainmentType::Disjoint;
+        return ContainmentType::None;
     }
 
     ContainmentType BoundingSphere::Contains(const AxisAlignedBoundingBox& aabb) const
@@ -84,7 +84,7 @@ namespace Silent::Math
         float distSqr = glm::distance2(closestPoint, Center);
         if (distSqr > SQUARE(Radius))
         {
-            return ContainmentType::Disjoint;
+            return ContainmentType::None;
         }
 
         auto sphereMin = Center - glm::vec3(Radius);
@@ -124,7 +124,7 @@ namespace Silent::Math
             return ContainmentType::Intersects;
         }
 
-        return ContainmentType::Disjoint;
+        return ContainmentType::None;
     }
     
     bool BoundingSphere::operator ==(const BoundingSphere& sphere) const

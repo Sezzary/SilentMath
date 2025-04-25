@@ -4,13 +4,11 @@
 
 namespace Silent::Math
 {
-    using FpAngle = short;
-
-    constexpr uint Q4_SHIFT       = 4;                                         /** Used for: Q27.4 positions. */
-    constexpr uint Q8_SHIFT       = 8;                                         /** Used for: Q8.8 range limits. Q24.8 tile units. */
-    constexpr uint Q12_SHIFT      = 12;                                        /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
-    constexpr uint FP_ANGLE_COUNT = (std::numeric_limits<FpAngle>::max() -
-                                     std::numeric_limits<FpAngle>::min()) + 1; /** Number of fixed-point angles in Q1.15 format. */
+    constexpr uint Q4_SHIFT       = 4;                                       /** Used for: Q27.4 positions. */
+    constexpr uint Q8_SHIFT       = 8;                                       /** Used for: Q8.8 range limits. Q24.8 tile units. */
+    constexpr uint Q12_SHIFT      = 12;                                      /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
+    constexpr uint FP_ANGLE_COUNT = (std::numeric_limits<short>::max() -
+                                     std::numeric_limits<short>::min()) + 1; /** Number of fixed-point angles in Q1.15 format. */
 
     constexpr float PI       = glm::pi<float>();
     constexpr float PI_MUL_4 = PI * 4.0f;
@@ -22,7 +20,7 @@ namespace Silent::Math
 
     enum class ContainmentType
     {
-        Disjoint,
+        None,
         Intersects,
         Contains
     };
@@ -38,6 +36,26 @@ namespace Silent::Math
     {
         return x * x * x;
     };
+
+    /** @brief Determines the smaller of two values. */
+    constexpr auto MIN = [](auto a, auto b)
+    {
+        return (a < b) ? a : b;
+    };
+
+    /** @brief Determines the larger of two values. */
+    constexpr auto MAX = [](auto a, auto b)
+    {
+        return (a > b) ? a : b;
+    };
+
+    /** @brief Clamps a value to the range [min, max]. */
+    #define CLAMP(x, min, max) \
+        (((x) < (min)) ? (min) : (((x) > (max)) ? (max) : (x)))
+
+    /** @brief Computes the absolute difference between two values. */
+    #define ABS_DIFF(a, b) \
+        ((((a) - (b)) < 0) ? ((b) - (a)) : ((a) - (b)))
 
     /** @brief Rounds a floating-point value. */
     constexpr float ROUND(float x)
@@ -94,19 +112,19 @@ namespace Silent::Math
     }
 
     /** @brief Converts floating-point degrees to fixed-point angles in Q1.15 format. */
-    constexpr FpAngle FP_ANGLE(float deg)
+    constexpr short FP_ANGLE(float deg)
     {
-        return (FpAngle)ROUND(deg * (FP_ANGLE_COUNT / 360.0f));
+        return (short)ROUND(deg * (FP_ANGLE_COUNT / 360.0f));
     }
 
     /** @brief Converts floating-point radians to fixed-point angles in Q1.15 format. */
-    constexpr FpAngle FP_ANGLE_FROM_RAD(float rad)
+    constexpr short FP_ANGLE_FROM_RAD(float rad)
     {
         return FP_ANGLE(rad / (PI / 180.0f));
     }
 
     /** @brief Converts fixed-point angles in Q1.15 format to floating-point radians. */
-    constexpr float FP_ANGLE_TO_RAD(FpAngle angle)
+    constexpr float FP_ANGLE_TO_RAD(short angle)
     {
         return (angle * ((float)FP_ANGLE_COUNT / 360.0f)) * (PI / 180.0f);
     }

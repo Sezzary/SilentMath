@@ -9,7 +9,7 @@ namespace Silent::Math
     private:
         // Constants
 
-        static constexpr short DEFAULT_EPSILON = 3;
+        static constexpr auto DEFAULT_EPSILON = (short)3;
 
     public:
         // Fields
@@ -21,7 +21,7 @@ namespace Silent::Math
         // Constructors
 
         constexpr EulerAngles() = default;
-        constexpr EulerAngles(short x, short y, short z) { this->x = x; this->y = y; this->z = z; };
+        constexpr EulerAngles(short x, short y, short z) { this->x = x; this->y = y; this->z = z; }
                   EulerAngles(const glm::vec3& dir);
                   EulerAngles(const AxisAngle& axisAngle);
                   EulerAngles(const glm::quat& quat);
@@ -40,31 +40,31 @@ namespace Silent::Math
         // Converters
 
         glm::vec3 ToDirection() const;
-        AxisAngle ToAxisAngle() const;
         glm::quat ToQuaternion() const;
+        AxisAngle ToAxisAngle() const;
         glm::mat3 ToRotationMatrix() const;
 
         // Operators
 
-        bool         operator ==(const EulerAngles& eulerAngles) const;
-        bool         operator !=(const EulerAngles& eulerAngles) const;
-        EulerAngles& operator =(const EulerAngles& eulerAngles);
-        EulerAngles& operator +=(const EulerAngles& eulerAngles);
-        EulerAngles& operator -=(const EulerAngles& eulerAngles);
-        EulerAngles& operator *=(const EulerAngles& eulerAngles);
-        EulerAngles& operator *=(float scalar);
-        EulerAngles& operator /=(float scalar);
-        EulerAngles  operator +(const EulerAngles& eulerAngles) const;
-        EulerAngles  operator -(const EulerAngles& eulerAngles) const;
-        EulerAngles  operator *(const EulerAngles& eulerAngles) const;
-        EulerAngles  operator *(float scalar) const;
-        EulerAngles  operator /(float scalar) const;
+        bool         operator==(const EulerAngles& eulerAngles) const;
+        bool         operator!=(const EulerAngles& eulerAngles) const;
+        EulerAngles& operator=(const EulerAngles& eulerAngles);
+        EulerAngles& operator+=(const EulerAngles& eulerAngles);
+        EulerAngles& operator-=(const EulerAngles& eulerAngles);
+        EulerAngles& operator*=(const EulerAngles& eulerAngles);
+        EulerAngles& operator*=(float scalar);
+        EulerAngles& operator/=(float scalar);
+        EulerAngles  operator+(const EulerAngles& eulerAngles) const;
+        EulerAngles  operator-(const EulerAngles& eulerAngles) const;
+        EulerAngles  operator*(const EulerAngles& eulerAngles) const;
+        EulerAngles  operator*(float scalar) const;
+        EulerAngles  operator/(float scalar) const;
 
     private:
         // Helpers
 
-        static bool  Compare(short angle0, short angle1, short epsilon = DEFAULT_EPSILON);
-        static short Lerp(short angleFrom, short angleTo, float alpha, short epsilon = DEFAULT_EPSILON);
-        static short InterpConstant(short angleFrom, short angleTo, short angularVel);
+        static bool    Compare(short angle0, short angle1, short epsilon = DEFAULT_EPSILON);
+        static short Lerp(short from, short to, float alpha, short epsilon = DEFAULT_EPSILON);
+        static short InterpConstant(short from, short to, short angularVel);
     };
 }

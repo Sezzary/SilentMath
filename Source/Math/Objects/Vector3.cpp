@@ -1,0 +1,203 @@
+#include "Framework.h"
+#include "Math/Objects/Vector3.h"
+
+#include "Math/Objects/Matrix.h"
+
+namespace Silent::Math
+{
+    const Vector3 Vector3::Zero  = Vector3(0.0f, 0.0f, 0.0f);
+    const Vector3 Vector3::One   = Vector3(1.0f, 1.0f, 1.0f);
+    const Vector3 Vector3::UnitX = Vector3(1.0f, 0.0f, 0.0f);
+    const Vector3 Vector3::UnitY = Vector3(0.0f, 1.0f, 0.0f);
+    const Vector3 Vector3::UnitZ = Vector3(0.0f, 0.0f, 1.0f);
+
+    float Vector3::Length(const Vector3& vec)
+    {
+        return glm::length(vec.ToGlmVec3());
+    }
+
+    float Vector3::Length() const
+    {
+        return Vector3::Length(*this);
+    }
+
+    float Vector3::LengthSquared(const Vector3& vec)
+    {
+        return glm::length2(vec.ToGlmVec3());
+    }
+
+    float Vector3::LengthSquared() const
+    {
+        return Vector3::LengthSquared(*this);
+    }
+
+    float Vector3::Distance(const Vector3& from, const Vector3& to)
+    {
+        return glm::distance(from.ToGlmVec3(), to.ToGlmVec3());
+    }
+
+    float Vector3::Distance(const Vector3& to) const
+    {
+        return Vector3::Distance(*this, to);
+    }
+
+    float Vector3::DistanceSquared(const Vector3& from, const Vector3& to)
+    {
+        return glm::distance2(from.ToGlmVec3(), to.ToGlmVec3());
+    }
+
+    float Vector3::DistanceSquared(const Vector3& to) const
+    {
+        return Vector3::DistanceSquared(*this, to);
+    }
+
+    float Vector3::Dot(const Vector3& vec0, const Vector3& vec1)
+    {
+        return glm::dot(vec0.ToGlmVec3(), vec1.ToGlmVec3());
+    }
+
+    float Vector3::Dot(const Vector3& vec) const
+    {
+        return Vector3::Dot(*this, vec);
+    }
+
+    Vector3 Vector3::Cross(const Vector3& vec0, const Vector3& vec1)
+    {
+        return glm::cross(vec0.ToGlmVec3(), vec1.ToGlmVec3());
+    }
+
+    Vector3 Vector3::Cross(const Vector3& vec) const
+    {
+        return Vector3::Cross(*this, vec);
+    }
+
+    Vector3 Vector3::Normalize(const Vector3& vec)
+    {
+        return glm::normalize(vec.ToGlmVec3());
+    }
+
+    void Vector3::Normalize()
+    {
+        *this = Vector3::Normalize(*this);
+    }
+
+    Vector3 Vector3::Lerp(const Vector3& from, const Vector3& to, float alpha)
+    {
+        return glm::lerp(from.ToGlmVec3(), to.ToGlmVec3(), alpha);
+    }
+
+    void Vector3::Lerp(const Vector3& to, float alpha)
+    {
+        *this = Vector3::Lerp(*this, to, alpha);
+    }
+
+    Vector3 Vector3::Smoothstep(const Vector3& from, const Vector3& to, float alpha)
+    {
+        return glm::smoothstep(from.ToGlmVec3(), to.ToGlmVec3(), glm::vec3(alpha));
+    }
+
+    void Vector3::Smoothstep(const Vector3& to, float alpha)
+    {
+        *this = Vector3::Smoothstep(*this, to, alpha);
+    }
+
+    /*Vector3 Vector3::Transform(const Vector3& vec, const Matrix& mat)
+    {
+        return glm::vec3(mat.ToGlmMat4() * glm::vec4(vec, 1.0f));
+    }*/
+
+    /*void Vector3::Transform(const Matrix& mat)
+    {
+        *this = Vector3::Transform(*this, mat);
+    }*/
+
+    Vector3 Vector3::Translate(const Vector3& vec, const Vector3& dir, float dist)
+    {
+        return vec + (dir * dist);
+    }
+
+    void Vector3::Translate(const Vector3& dir, float dist)
+    {
+        *this = Vector3::Translate(*this, Vector3::Normalize(dir), dist);
+    }
+
+    const glm::vec3& Vector3::ToGlmVec3() const
+    {
+        return *(const glm::vec3*)this;
+    }
+
+    glm::vec3& Vector3::ToGlmVec3()
+    {
+        return *(glm::vec3*)this;
+    }
+
+    bool Vector3::operator==(const Vector3& vec) const
+    {
+        return ToGlmVec3() == vec.ToGlmVec3();
+    }
+
+    bool Vector3::operator!=(const Vector3& vec) const
+    {
+        return ToGlmVec3() != vec.ToGlmVec3();
+    }
+
+    Vector3& Vector3::operator+=(const Vector3& vec)
+    {
+        ToGlmVec3() += vec.ToGlmVec3();
+        return *this;
+    }
+
+    Vector3& Vector3::operator-=(const Vector3& vec)
+    {
+        ToGlmVec3() -= vec.ToGlmVec3();
+        return *this;
+    }
+
+    Vector3& Vector3::operator*=(const Vector3& vec)
+    {
+        ToGlmVec3() *= vec.ToGlmVec3();
+        return *this;
+    }
+
+    Vector3& Vector3::operator*=(float scalar)
+    {
+        ToGlmVec3() *= scalar;
+        return *this;
+    }
+
+    Vector3& Vector3::operator/=(float scalar)
+    {
+        ToGlmVec3() /= scalar;
+        return *this;
+    }
+
+    Vector3 Vector3::operator+(const Vector3& vec) const
+    {
+        return ToGlmVec3() + vec.ToGlmVec3();
+    }
+
+    Vector3 Vector3::operator-(const Vector3& vec) const
+    {
+        return ToGlmVec3() - vec.ToGlmVec3();
+    }
+
+    Vector3 Vector3::operator*(const Vector3& vec) const
+    {
+        return ToGlmVec3() * vec.ToGlmVec3();
+    }
+
+    Vector3 Vector3::operator*(float scalar) const
+    {
+        return ToGlmVec3() * scalar;
+    }
+
+    Vector3 Vector3::operator/(float scalar) const
+    {
+        return ToGlmVec3() / scalar;
+    }
+
+    Vector3 Vector3::operator-() const
+    {
+        return -ToGlmVec3();
+    }
+}

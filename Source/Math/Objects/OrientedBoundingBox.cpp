@@ -130,7 +130,7 @@ namespace Silent::Math
 
     ContainmentType OrientedBoundingBox::Contains(const glm::vec3& point) const
     {
-        return Intersects(point) ? ContainmentType::Contains : ContainmentType::Disjoint;
+        return Intersects(point) ? ContainmentType::Contains : ContainmentType::None;
     }
 
     ContainmentType OrientedBoundingBox::Contains(const BoundingSphere& sphere) const

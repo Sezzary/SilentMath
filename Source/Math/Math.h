@@ -8,4 +8,5 @@
 #include "Math/Objects/EulerAngles.h"
 #include "Math/Objects/OrientedBoundingBox.h"
 #include "Math/Objects/Ray.h"
+#include "Math/Objects/Vector3.h"
 #include "Math/Utils.h"

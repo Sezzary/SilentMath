@@ -56,8 +56,8 @@ namespace Silent::Math
 
         // Operators
 
-        bool                    operator ==(const AxisAlignedBoundingBox& aabb) const;
-        bool                    operator !=(const AxisAlignedBoundingBox& aabb) const;
-        AxisAlignedBoundingBox& operator =(const AxisAlignedBoundingBox& aabb) = default;
+        bool                    operator==(const AxisAlignedBoundingBox& aabb) const;
+        bool                    operator!=(const AxisAlignedBoundingBox& aabb) const;
+        AxisAlignedBoundingBox& operator=(const AxisAlignedBoundingBox& aabb) = default;
     };
 }

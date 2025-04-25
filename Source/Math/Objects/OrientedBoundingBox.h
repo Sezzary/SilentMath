@@ -4,6 +4,7 @@ namespace Silent::Math
 {
     class      AxisAlignedBoundingBox;
     class      BoundingSphere;
+    class      Vector3;
     enum class ContainmentType;
 
     class OrientedBoundingBox

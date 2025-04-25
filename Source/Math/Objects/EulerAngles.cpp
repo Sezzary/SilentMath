@@ -89,14 +89,14 @@ namespace Silent::Math
         return glm::normalize(ToRotationMatrix() * FORWARD_DIR);
     }
 
-    AxisAngle EulerAngles::ToAxisAngle() const
-    {
-        return AxisAngle(*this);
-    }
-
     glm::quat EulerAngles::ToQuaternion() const
     {
         return glm::quat(glm::vec3(FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(z)));
+    }
+
+    AxisAngle EulerAngles::ToAxisAngle() const
+    {
+        return AxisAngle(*this);
     }
 
     glm::mat3 EulerAngles::ToRotationMatrix() const
@@ -104,17 +104,17 @@ namespace Silent::Math
         return glm::mat3(glm::yawPitchRoll(FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(z)));
     }
 
-    bool EulerAngles::operator ==(const EulerAngles& eulerAngles) const
+    bool EulerAngles::operator==(const EulerAngles& eulerAngles) const
     {
         return x == eulerAngles.x && y == eulerAngles.y && z == eulerAngles.z;
     }
 
-    bool EulerAngles::operator !=(const EulerAngles& eulerAngles) const
+    bool EulerAngles::operator!=(const EulerAngles& eulerAngles) const
     {
         return !(*this == eulerAngles);
     }
 
-    EulerAngles& EulerAngles::operator =(const EulerAngles& eulerAngles)
+    EulerAngles& EulerAngles::operator=(const EulerAngles& eulerAngles)
     {
         x = eulerAngles.x;
         y = eulerAngles.y;
@@ -122,7 +122,7 @@ namespace Silent::Math
         return *this;
     }
 
-    EulerAngles& EulerAngles::operator +=(const EulerAngles& eulerAngles)
+    EulerAngles& EulerAngles::operator+=(const EulerAngles& eulerAngles)
     {
         x += eulerAngles.x;
         y += eulerAngles.y;
@@ -130,7 +130,7 @@ namespace Silent::Math
         return *this;
     }
 
-    EulerAngles& EulerAngles::operator -=(const EulerAngles& eulerAngles)
+    EulerAngles& EulerAngles::operator-=(const EulerAngles& eulerAngles)
     {
         x -= eulerAngles.x;
         y -= eulerAngles.y;
@@ -138,7 +138,7 @@ namespace Silent::Math
         return *this;
     }
 
-    EulerAngles& EulerAngles::operator *=(const EulerAngles& eulerAngles)
+    EulerAngles& EulerAngles::operator*=(const EulerAngles& eulerAngles)
     {
         x *= eulerAngles.x;
         y *= eulerAngles.y;
@@ -146,7 +146,7 @@ namespace Silent::Math
         return *this;
     }
 
-    EulerAngles& EulerAngles::operator *=(float scalar)
+    EulerAngles& EulerAngles::operator*=(float scalar)
     {
         x = (short)(x * scalar);
         y = (short)(y * scalar);
@@ -154,7 +154,7 @@ namespace Silent::Math
         return *this;
     }
 
-    EulerAngles& EulerAngles::operator /=(float scalar)
+    EulerAngles& EulerAngles::operator/=(float scalar)
     {
         x = (short)(x / scalar);
         y = (short)(y / scalar);
@@ -162,27 +162,27 @@ namespace Silent::Math
         return *this;
     }
 
-    EulerAngles EulerAngles::operator +(const EulerAngles& eulerAngles) const
+    EulerAngles EulerAngles::operator+(const EulerAngles& eulerAngles) const
     {
         return EulerAngles(x + eulerAngles.x, y + eulerAngles.y, z + eulerAngles.z);
     }
 
-    EulerAngles EulerAngles::operator -(const EulerAngles& eulerAngles) const
+    EulerAngles EulerAngles::operator-(const EulerAngles& eulerAngles) const
     {
         return EulerAngles(x - eulerAngles.x, y - eulerAngles.y, z - eulerAngles.z);
     }
 
-    EulerAngles EulerAngles::operator *(const EulerAngles& eulerAngles) const
+    EulerAngles EulerAngles::operator*(const EulerAngles& eulerAngles) const
     {
         return EulerAngles(x * eulerAngles.x, y * eulerAngles.y, z * eulerAngles.z);
     }
 
-    EulerAngles EulerAngles::operator *(float scalar) const
+    EulerAngles EulerAngles::operator*(float scalar) const
     {
         return EulerAngles((short)round((float)x * scalar), (short)round((float)y * scalar), (short)round((float)z * scalar));
     }
 
-    EulerAngles EulerAngles::operator /(float scalar) const
+    EulerAngles EulerAngles::operator/(float scalar) const
     {
         return EulerAngles((short)round((float)x / scalar), (short)round((float)y / scalar), (short)round((float)z / scalar));
     }
@@ -193,25 +193,25 @@ namespace Silent::Math
         return abs(delta) <= epsilon;
     }
 
-    short EulerAngles::Lerp(short angleFrom, short angleTo, float alpha, short epsilon)
+    short EulerAngles::Lerp(short from, short to, float alpha, short epsilon)
     {
-        if (Compare(angleFrom, angleTo, epsilon))
+        if (Compare(from, to, epsilon))
         {
-            return angleTo;
+            return to;
         }
 
-        short angleDelta = angleTo - angleFrom;
-        return (short)round(angleFrom + (angleDelta * std::clamp(alpha, 0.0f, 1.0f)));
+        short angleDelta = to - from;
+        return (short)round(from + (angleDelta * std::clamp(alpha, 0.0f, 1.0f)));
     }
 
-    short EulerAngles::InterpConstant(short angleFrom, short angleTo, short angularVel)
+    short EulerAngles::InterpConstant(short from, short to, short angularVel)
     {
-        if (Compare(angleFrom, angleTo, angularVel))
+        if (Compare(from, to, angularVel))
         {
-            return angleTo;
+            return to;
         }
 
-        int sign = GetSign(angleTo - angleFrom);
-        return (short)(angleFrom + (angularVel * sign));
+        int sign = GetSign(to - from);
+        return (short)(from + (angularVel * sign));
     }
 }

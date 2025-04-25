@@ -55,12 +55,12 @@ namespace Silent::Math
         return localRay.Intersects(aabb);
     }
 
-    bool Ray::operator ==(const Ray& ray) const
+    bool Ray::operator==(const Ray& ray) const
     {
         return Origin == ray.Origin && Direction == ray.Direction;
     }
 
-    bool Ray::operator !=(const Ray& ray) const
+    bool Ray::operator!=(const Ray& ray) const
     {
         return !(*this == ray);
     }

@@ -174,7 +174,7 @@ namespace Silent::Math
 
     ContainmentType AxisAlignedBoundingBox::Contains(const glm::vec3& point) const
     {
-        return Intersects(point) ? ContainmentType::Contains : ContainmentType::Disjoint;
+        return Intersects(point) ? ContainmentType::Contains : ContainmentType::None;
     }
 
     ContainmentType AxisAlignedBoundingBox::Contains(const BoundingSphere& sphere) const
@@ -186,7 +186,7 @@ namespace Silent::Math
     {
         if (!Intersects(aabb))
         {
-            return ContainmentType::Disjoint;
+            return ContainmentType::None;
         }
 
         auto thisMin = Center - Extents;
@@ -236,7 +236,7 @@ namespace Silent::Math
         }
         else if (allOutside)
         {
-            return ContainmentType::Disjoint;
+            return ContainmentType::None;
         }
         else
         {
@@ -257,12 +257,12 @@ namespace Silent::Math
         Extents = glm::max(Extents, aabb.Extents);
     }
 
-    bool AxisAlignedBoundingBox::operator ==(const AxisAlignedBoundingBox& aabb) const
+    bool AxisAlignedBoundingBox::operator==(const AxisAlignedBoundingBox& aabb) const
     {
         return Center == aabb.Center && Extents == aabb.Extents;
     }
 
-    bool AxisAlignedBoundingBox::operator !=(const AxisAlignedBoundingBox& aabb) const
+    bool AxisAlignedBoundingBox::operator!=(const AxisAlignedBoundingBox& aabb) const
     {
         return !(*this == aabb);
     }
