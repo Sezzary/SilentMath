@@ -3,12 +3,17 @@
 
 #include "Math/Constants.h"
 #include "Math/Objects/AxisAngle.h"
+#include "Math/Objects/Matrix.h"
+#include "Math/Objects/Quaternion.h"
+#include "Math/Objects/Vector3.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
 
 namespace Silent::Math
 {
+    const EulerAngles EulerAngles::Identity = EulerAngles(0, 0, 0);
+
     EulerAngles::EulerAngles(const glm::vec3& dir)
     {
         auto dirNorm = glm::normalize(dir);
@@ -70,12 +75,12 @@ namespace Silent::Math
         return EulerAngles(quat);
     }
 
-    void EulerAngles::InterpolateConstant(const EulerAngles& to, short angularVel)
+    void EulerAngles::InterpConstant(const EulerAngles& to, short angularVel)
     {
-        *this = InterpolateConstant(*this, to, angularVel);
+        *this = InterpConstant(*this, to, angularVel);
     }
 
-    EulerAngles EulerAngles::InterpolateConstant(const EulerAngles& from, const EulerAngles& to, short angularVel)
+    EulerAngles EulerAngles::InterpConstant(const EulerAngles& from, const EulerAngles& to, short angularVel)
     {
         return EulerAngles(InterpConstant(from.x, to.x, angularVel),
                            InterpConstant(from.y, to.y, angularVel),

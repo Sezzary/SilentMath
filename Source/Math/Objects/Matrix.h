@@ -8,6 +8,7 @@ namespace Silent::Math
 
     class Matrix : public glm::mat4
     {
+    public:
         // Presets
 
         static const Matrix Identity;
@@ -16,7 +17,12 @@ namespace Silent::Math
 
         Matrix() = default;
 
+        // Utilities
+
         // Converters
+
+        const glm::mat4& ToGlmMat4() const;
+        glm::mat4&       ToGlmMat4();
 
         Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;

@@ -1,11 +1,14 @@
 #pragma once
 
+#include "Math/Constants.h"
+
 namespace Silent::Math
 {
     class Matrix;
 
     class Vector3 : public glm::vec3
     {
+    public:
         // Constants
 
         static constexpr uint AXIS_COUNT = 3;
@@ -27,6 +30,7 @@ namespace Silent::Math
 
         // Utilities
 
+        static bool    Compare(const Vector3& vec0, const Vector3& vec1, float epsilon = EPSILON);
         static float   Length(const Vector3& vec);
         float          Length() const;
         static float   LengthSquared(const Vector3& vec);
@@ -58,19 +62,19 @@ namespace Silent::Math
 
         // Operators
 
-        bool     operator ==(const Vector3& vec) const;
-        bool     operator !=(const Vector3& vec) const;
-        Vector3& operator =(const Vector3& vec) = default;
-        Vector3& operator +=(const Vector3& vec);
-        Vector3& operator -=(const Vector3& vec);
-        Vector3& operator *=(const Vector3& vec);
-        Vector3& operator *=(float scalar);
-        Vector3& operator /=(float scalar);
-        Vector3  operator +(const Vector3& vec) const;
-        Vector3  operator -(const Vector3& vec) const;
-        Vector3  operator *(const Vector3& vec) const;
-        Vector3  operator *(float scalar) const;
-        Vector3  operator /(float scalar) const;
-        Vector3  operator -() const;
+        bool     operator==(const Vector3& vec) const;
+        bool     operator!=(const Vector3& vec) const;
+        Vector3& operator=(const Vector3& vec) = default;
+        Vector3& operator+=(const Vector3& vec);
+        Vector3& operator-=(const Vector3& vec);
+        Vector3& operator*=(const Vector3& vec);
+        Vector3& operator*=(float scalar);
+        Vector3& operator/=(float scalar);
+        Vector3  operator+(const Vector3& vec) const;
+        Vector3  operator-(const Vector3& vec) const;
+        Vector3  operator*(const Vector3& vec) const;
+        Vector3  operator*(float scalar) const;
+        Vector3  operator/(float scalar) const;
+        Vector3  operator-() const;
     };
 }

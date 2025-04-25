@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Math/Objects/Vector3.h"
 
+#include "Math/Constants.h"
 #include "Math/Objects/Matrix.h"
 
 namespace Silent::Math
@@ -10,6 +11,11 @@ namespace Silent::Math
     const Vector3 Vector3::UnitX = Vector3(1.0f, 0.0f, 0.0f);
     const Vector3 Vector3::UnitY = Vector3(0.0f, 1.0f, 0.0f);
     const Vector3 Vector3::UnitZ = Vector3(0.0f, 0.0f, 1.0f);
+
+    bool Vector3::Compare(const Vector3& vec0, const Vector3& vec1, float epsilon)
+    {
+        return Vector3::DistanceSquared(vec0, vec1) <= SQUARE(epsilon);
+    }
 
     float Vector3::Length(const Vector3& vec)
     {
@@ -101,15 +107,15 @@ namespace Silent::Math
         *this = Vector3::Smoothstep(*this, to, alpha);
     }
 
-    /*Vector3 Vector3::Transform(const Vector3& vec, const Matrix& mat)
+    Vector3 Vector3::Transform(const Vector3& vec, const Matrix& mat)
     {
         return glm::vec3(mat.ToGlmMat4() * glm::vec4(vec, 1.0f));
-    }*/
+    }
 
-    /*void Vector3::Transform(const Matrix& mat)
+    void Vector3::Transform(const Matrix& mat)
     {
         *this = Vector3::Transform(*this, mat);
-    }*/
+    }
 
     Vector3 Vector3::Translate(const Vector3& vec, const Vector3& dir, float dist)
     {

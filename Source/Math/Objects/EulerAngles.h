@@ -3,6 +3,9 @@
 namespace Silent::Math
 {
     class AxisAngle;
+    class Matrix;
+    class Quaternion;
+    class Vector3;
 
     class EulerAngles
     {
@@ -14,9 +17,13 @@ namespace Silent::Math
     public:
         // Fields
 
-        short x = 0; // Pitch
-        short y = 0; // Yaw
-        short z = 0; // Roll
+        short x = 0; // Pitch.
+        short y = 0; // Yaw.
+        short z = 0; // Roll.
+
+        // Presets
+
+        static const EulerAngles Identity;
 
         // Constructors
 
@@ -34,8 +41,8 @@ namespace Silent::Math
         static EulerAngles Lerp(const EulerAngles& from, const EulerAngles& to, float alpha, short epsilon = DEFAULT_EPSILON);
         void               Slerp(const EulerAngles& to, float alpha);
         static EulerAngles Slerp(const EulerAngles& from, const EulerAngles& to, float alpha);
-        void               InterpolateConstant(const EulerAngles& to, short angularVel);
-        static EulerAngles InterpolateConstant(const EulerAngles& from, const EulerAngles& eulerTo, short angularVel);
+        void               InterpConstant(const EulerAngles& to, short angularVel);
+        static EulerAngles InterpConstant(const EulerAngles& from, const EulerAngles& eulerTo, short angularVel);
 
         // Converters
 
@@ -63,7 +70,7 @@ namespace Silent::Math
     private:
         // Helpers
 
-        static bool    Compare(short angle0, short angle1, short epsilon = DEFAULT_EPSILON);
+        static bool  Compare(short angle0, short angle1, short epsilon = DEFAULT_EPSILON);
         static short Lerp(short from, short to, float alpha, short epsilon = DEFAULT_EPSILON);
         static short InterpConstant(short from, short to, short angularVel);
     };
