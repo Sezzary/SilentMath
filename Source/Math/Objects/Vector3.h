@@ -44,6 +44,10 @@ namespace Silent::Math
         static Vector3 Cross(const Vector3& vec0, const Vector3& vec1);
         Vector3        Cross(const Vector3& vec) const;
 
+        static Vector3 Min(const Vector3& vec0, const Vector3& vec1);
+        void           Min(const Vector3& vec);
+        static Vector3 Max(const Vector3& vec0, const Vector3& vec1);
+        void           Max(const Vector3& vec);
         static Vector3 Normalize(const Vector3& vec);
         void           Normalize();
         static Vector3 Lerp(const Vector3& from, const Vector3& to, float alpha);

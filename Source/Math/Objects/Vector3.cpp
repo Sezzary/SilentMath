@@ -77,6 +77,26 @@ namespace Silent::Math
         return Vector3::Cross(*this, vec);
     }
 
+    Vector3 Vector3::Min(const Vector3& vec0, const Vector3& vec1)
+    {
+        return glm::min(vec0.ToGlmVec3(), vec1.ToGlmVec3());
+    }
+
+    void Vector3::Min(const Vector3& vec)
+    {
+        *this = Vector3::Min(*this, vec);
+    }
+
+    Vector3 Vector3::Max(const Vector3& vec0, const Vector3& vec1)
+    {
+        return glm::max(vec0.ToGlmVec3(), vec1.ToGlmVec3());
+    }
+
+    void Vector3::Max(const Vector3& vec)
+    {
+        *this = Vector3::Max(*this, vec);
+    }
+
     Vector3 Vector3::Normalize(const Vector3& vec)
     {
         return Vector3(glm::normalize(vec.ToGlmVec3()));
