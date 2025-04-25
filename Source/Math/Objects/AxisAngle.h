@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Constants.h"
+#include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
 {
@@ -9,24 +10,20 @@ namespace Silent::Math
     class AxisAngle
     {
     private:
-        // Constants
-
-        static constexpr auto DEFAULT_AXIS = glm::vec3(0.0f, 0.0f, 1.0f);
-
         // Fields
 
-        glm::vec3 Axis  = DEFAULT_AXIS;
-        short     Angle = 0;
+        Vector3 Axis  = Vector3::UnitZ;
+        short   Angle = 0;
 
     public:
         // Constructors
 
         constexpr AxisAngle() = default;
-        constexpr AxisAngle(const glm::vec3& axis, short angle) : Axis(axis), Angle(angle) {};
-                  AxisAngle(const glm::vec3& dir);
+        constexpr AxisAngle(const Vector3& axis, short angle) : Axis(axis), Angle(angle) {};
+                  AxisAngle(const Vector3& dir);
                   AxisAngle(const EulerAngles& eulerAngles);
                   AxisAngle(const glm::quat& quat);
-                  AxisAngle(const glm::mat3& rotMat);
+                  AxisAngle(const glm::mat3& mat);
 
         // Utilities
 
@@ -35,17 +32,17 @@ namespace Silent::Math
 
         // Converters
 
-        glm::vec3   ToDirection() const;
+        Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;
         glm::quat   ToQuaternion() const;
         glm::mat3   ToRotationMatrix() const;
 
         // Operators
 
-        bool       operator ==(const AxisAngle& axisAngle) const;
-        bool       operator !=(const AxisAngle& axisAngle) const;
-        AxisAngle& operator =(const AxisAngle& axisAngle);
-        AxisAngle& operator *=(const AxisAngle& axisAngle);
-        AxisAngle  operator *(const AxisAngle& axisAngle) const;
+        bool       operator==(const AxisAngle& axisAngle) const;
+        bool       operator!=(const AxisAngle& axisAngle) const;
+        AxisAngle& operator=(const AxisAngle& axisAngle);
+        AxisAngle& operator*=(const AxisAngle& axisAngle);
+        AxisAngle  operator*(const AxisAngle& axisAngle) const;
     };
 }

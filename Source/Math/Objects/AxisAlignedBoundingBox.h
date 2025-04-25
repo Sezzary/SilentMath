@@ -4,6 +4,7 @@ namespace Silent::Math
 {
     class      BoundingSphere;
     class      OrientedBoundingBox;
+    class      Vector3;
     enum class ContainmentType;
 
     class AxisAlignedBoundingBox
@@ -33,18 +34,18 @@ namespace Silent::Math
         float                  GetDepth() const;
         float                  GetSurfaceArea() const;
         float                  GetVolume() const;
-        glm::vec3              GetMin() const;
-        glm::vec3              GetMax() const;
+        Vector3                GetMin() const;
+        Vector3                GetMax() const;
         std::vector<glm::vec3> GetCorners() const;
 
         // Inquirers
 
-        bool Intersects(const glm::vec3& point) const;
+        bool Intersects(const Vector3& point) const;
         bool Intersects(const BoundingSphere& sphere) const;
         bool Intersects(const AxisAlignedBoundingBox& aabb) const;
         bool Intersects(const OrientedBoundingBox& obb) const;
 
-        ContainmentType Contains(const glm::vec3& point) const;
+        ContainmentType Contains(const Vector3& point) const;
         ContainmentType Contains(const BoundingSphere& sphere) const;
         ContainmentType Contains(const AxisAlignedBoundingBox& aabb) const;
         ContainmentType Contains(const OrientedBoundingBox& obb) const;

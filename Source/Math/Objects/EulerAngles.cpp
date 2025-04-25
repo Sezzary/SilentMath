@@ -48,11 +48,6 @@ namespace Silent::Math
                Compare(eulerAngles0.z, eulerAngles1.z, epsilon);
     }
 
-    void EulerAngles::Lerp(const EulerAngles& to, float alpha, short epsilon)
-    {
-        *this = Lerp(*this, to, alpha, epsilon);
-    }
-
     EulerAngles EulerAngles::Lerp(const EulerAngles& from, const EulerAngles& to, float alpha, short epsilon)
     {
         return EulerAngles(Lerp(from.x, to.x, alpha, epsilon),
@@ -60,23 +55,22 @@ namespace Silent::Math
                            Lerp(from.z, to.z, alpha, epsilon));
     }
 
-    void EulerAngles::Slerp(const EulerAngles& to, float alpha)
+    void EulerAngles::Lerp(const EulerAngles& to, float alpha, short epsilon)
     {
-        *this = Slerp(*this, to, alpha);
+        *this = Lerp(*this, to, alpha, epsilon);
     }
 
     EulerAngles EulerAngles::Slerp(const EulerAngles& from, const EulerAngles& to, float alpha)
     {
         auto quatFrom = from.ToQuaternion();
         auto quatTo = to.ToQuaternion();
-
         auto quat = glm::slerp(quatFrom, quatTo, alpha);
         return EulerAngles(quat);
     }
 
-    void EulerAngles::InterpConstant(const EulerAngles& to, short angularVel)
+    void EulerAngles::Slerp(const EulerAngles& to, float alpha)
     {
-        *this = InterpConstant(*this, to, angularVel);
+        *this = Slerp(*this, to, alpha);
     }
 
     EulerAngles EulerAngles::InterpConstant(const EulerAngles& from, const EulerAngles& to, short angularVel)
@@ -84,6 +78,11 @@ namespace Silent::Math
         return EulerAngles(InterpConstant(from.x, to.x, angularVel),
                            InterpConstant(from.y, to.y, angularVel),
                            InterpConstant(from.z, to.z, angularVel));
+    }
+
+    void EulerAngles::InterpConstant(const EulerAngles& to, short angularVel)
+    {
+        *this = InterpConstant(*this, to, angularVel);
     }
 
     glm::vec3 EulerAngles::ToDirection() const

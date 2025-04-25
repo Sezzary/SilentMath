@@ -6,17 +6,17 @@
 
 namespace Silent::Math
 {
-    AxisAngle::AxisAngle(const glm::vec3& dir)
+    AxisAngle::AxisAngle(const Vector3& dir)
     {
         // Compute axis.
-        auto axis = glm::normalize(glm::cross(DEFAULT_AXIS, dir));
-        if (glm::length(axis) < EPSILON)
+        auto axis = Vector3::Normalize(Vector3::Cross(Vector3::UnitZ, dir));
+        if (axis.LengthSquared() < EPSILON)
         {
-            axis = DEFAULT_AXIS;
+            axis = Vector3::UnitZ;
         }
 
         // Compute angle.
-        float dotProduct = glm::dot(dir, DEFAULT_AXIS);
+        float dotProduct = Vector3::Dot(dir, Vector3::UnitZ);
         float rad = glm::acos(dotProduct);
 
         // Set axis angl angle.
@@ -38,11 +38,11 @@ namespace Silent::Math
         auto axis = glm::vec3();
         if (sinHalfAngle < EPSILON)
         {
-            axis = DEFAULT_AXIS;
+            axis = Vector3::UnitZ;
         }
         else
         {
-            axis = glm::vec3(quat.x, quat.y, quat.z) / sinHalfAngle;
+            axis = Vector3(quat.x, quat.y, quat.z) / sinHalfAngle;
         }
 
         // Compute angle.
@@ -59,16 +59,16 @@ namespace Silent::Math
         float rad = glm::acos((trace - 1.0f) / 2.0f);
 
         // Compute axis.
-        auto axis = glm::vec3();
+        auto axis = Vector3::Zero;
         if (rad == 0.0f)
         {
-            axis = DEFAULT_AXIS;
+            axis = Vector3::UnitZ;
         }
         else
         {
-            axis = glm::vec3(rotMat[2][1] - rotMat[1][2], 
-                             rotMat[0][2] - rotMat[2][0], 
-                             rotMat[1][0] - rotMat[0][1]) / (glm::sin(rad) * 2.0f);
+            axis = Vector3(rotMat[2][1] - rotMat[1][2], 
+                           rotMat[0][2] - rotMat[2][0], 
+                           rotMat[1][0] - rotMat[0][1]) / (glm::sin(rad) * 2.0f);
         }
 
         // Set axis and angle.
@@ -89,7 +89,7 @@ namespace Silent::Math
         return AxisAngle(quat);
     }
 
-    glm::vec3 AxisAngle::ToDirection() const
+    Vector3 AxisAngle::ToDirection() const
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
         return (glm::cos(rad) * Axis) + ((1.0f - glm::cos(rad)) * Axis);
@@ -139,30 +139,30 @@ namespace Silent::Math
         };
     }
 
-    bool AxisAngle::operator ==(const AxisAngle& axisAngle) const
+    bool AxisAngle::operator==(const AxisAngle& axisAngle) const
     {
         return Axis == axisAngle.Axis && Angle == axisAngle.Angle;
     }
 
-    bool AxisAngle::operator !=(const AxisAngle& axisAngle) const
+    bool AxisAngle::operator!=(const AxisAngle& axisAngle) const
     {
         return !(*this == axisAngle);
     }
     
-    AxisAngle& AxisAngle::operator =(const AxisAngle& axisAngle)
+    AxisAngle& AxisAngle::operator=(const AxisAngle& axisAngle)
     {
         Axis = axisAngle.Axis;
         Angle = axisAngle.Angle;
         return *this;
     }
     
-    AxisAngle& AxisAngle::operator *=(const AxisAngle& axisAngle)
+    AxisAngle& AxisAngle::operator*=(const AxisAngle& axisAngle)
     {
         *this = *this * axisAngle;
         return *this;
     }
     
-    AxisAngle AxisAngle::operator *(const AxisAngle& axisAngle) const
+    AxisAngle AxisAngle::operator*(const AxisAngle& axisAngle) const
     {
         auto quat0 = ToQuaternion();
         auto quat1 = axisAngle.ToQuaternion();

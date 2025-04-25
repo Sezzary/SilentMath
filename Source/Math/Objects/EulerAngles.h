@@ -37,12 +37,12 @@ namespace Silent::Math
         // Utilities
 
         static bool        Compare(const EulerAngles& eulerAngles0, const EulerAngles& eulerAngles1, short epsilon = DEFAULT_EPSILON);
-        void               Lerp(const EulerAngles& to, float alpha, short epsilon = DEFAULT_EPSILON);
         static EulerAngles Lerp(const EulerAngles& from, const EulerAngles& to, float alpha, short epsilon = DEFAULT_EPSILON);
-        void               Slerp(const EulerAngles& to, float alpha);
+        void               Lerp(const EulerAngles& to, float alpha, short epsilon = DEFAULT_EPSILON);
         static EulerAngles Slerp(const EulerAngles& from, const EulerAngles& to, float alpha);
-        void               InterpConstant(const EulerAngles& to, short angularVel);
+        void               Slerp(const EulerAngles& to, float alpha);
         static EulerAngles InterpConstant(const EulerAngles& from, const EulerAngles& eulerTo, short angularVel);
+        void               InterpConstant(const EulerAngles& to, short angularVel);
 
         // Converters
 

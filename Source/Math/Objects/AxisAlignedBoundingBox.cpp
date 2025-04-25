@@ -4,6 +4,7 @@
 #include "Math/Constants.h"
 #include "Math/Objects/BoundingSphere.h"
 #include "Math/Objects/OrientedBoundingBox.h"
+#include "Math/Objects/Vector3.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
@@ -63,12 +64,12 @@ namespace Silent::Math
         return (Extents.x * Extents.y * Extents.z) * 2.0f;
     }
 
-    glm::vec3 AxisAlignedBoundingBox::GetMin() const
+    Vector3 AxisAlignedBoundingBox::GetMin() const
     {
         return Center - Extents;
     }
 
-    glm::vec3 AxisAlignedBoundingBox::GetMax() const
+    Vector3 AxisAlignedBoundingBox::GetMax() const
     {
         return Center + Extents;
     }
@@ -88,7 +89,7 @@ namespace Silent::Math
         };
     }
 
-    bool AxisAlignedBoundingBox::Intersects(const glm::vec3& point) const
+    bool AxisAlignedBoundingBox::Intersects(const Vector3& point) const
     {
         return point.x >= (Center.x - Extents.x) && point.x <= (Center.x + Extents.x) &&
                point.y >= (Center.y - Extents.y) && point.y <= (Center.y + Extents.y) &&
@@ -172,7 +173,7 @@ namespace Silent::Math
         return true;
     }
 
-    ContainmentType AxisAlignedBoundingBox::Contains(const glm::vec3& point) const
+    ContainmentType AxisAlignedBoundingBox::Contains(const Vector3& point) const
     {
         return Intersects(point) ? ContainmentType::Contains : ContainmentType::None;
     }
