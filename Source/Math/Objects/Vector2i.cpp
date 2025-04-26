@@ -12,6 +12,16 @@ namespace Silent::Math
     const Vector2i Vector2i::UnitX = Vector2i(1, 0);
     const Vector2i Vector2i::UnitY = Vector2i(0, 1);
 
+    float Vector2i::Distance(const Vector2i& from, const Vector2i& to)
+    {
+        return Vector2::Distance(from.ToVector2(), to.ToVector2());
+    }
+
+    float Vector2i::DistanceSquared(const Vector2i& from, const Vector2i& to)
+    {
+        return Vector2::DistanceSquared(from.ToVector2(), to.ToVector2());
+    }
+
     float Vector2i::Length(const Vector2i& vec)
     {
         return vec.ToVector2().Length();
@@ -30,26 +40,6 @@ namespace Silent::Math
     float Vector2i::LengthSquared() const
     {
         return Vector2i::LengthSquared(*this);
-    }
-
-    float Vector2i::Distance(const Vector2i& from, const Vector2i& to)
-    {
-        return Vector2::Distance(from.ToVector2(), to.ToVector2());
-    }
-
-    float Vector2i::Distance(const Vector2i& to) const
-    {
-        return Vector2i::Distance(*this, to);
-    }
-
-    float Vector2i::DistanceSquared(const Vector2i& from, const Vector2i& to)
-    {
-        return Vector2::DistanceSquared(from.ToVector2(), to.ToVector2());
-    }
-
-    float Vector2i::DistanceSquared(const Vector2i& to) const
-    {
-        return Vector2i::DistanceSquared(*this, to);
     }
 
     Vector2i Vector2i::Min(const Vector2i& vec0, const Vector2i& vec1)

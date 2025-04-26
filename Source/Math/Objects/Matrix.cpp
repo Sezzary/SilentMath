@@ -8,6 +8,8 @@
 
 namespace Silent::Math
 {
+    const Matrix Matrix::Identity = Matrix(1.0f);
+
     const glm::mat4& Matrix::ToGlmMat4() const
     {
         return *(const glm::mat4*)this;

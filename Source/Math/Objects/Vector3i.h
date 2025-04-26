@@ -31,14 +31,13 @@ namespace Silent::Math
 
         // Utilities
 
+        static float Distance(const Vector3i& from, const Vector3i& to);
+        static float DistanceSquared(const Vector3i& from, const Vector3i& to);
+
         static float Length(const Vector3i& vec);
         float        Length() const;
         static float LengthSquared(const Vector3i& vec);
         float        LengthSquared() const;
-        static float Distance(const Vector3i& from, const Vector3i& to);
-        float        Distance(const Vector3i& to) const;
-        static float DistanceSquared(const Vector3i& from, const Vector3i& to);
-        float        DistanceSquared(const Vector3i& to) const;
 
         static Vector3i Min(const Vector3i& vec0, const Vector3i& vec1);
         void            Min(const Vector3i& vec);

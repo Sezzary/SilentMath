@@ -9,7 +9,7 @@
 
 namespace Silent::Math
 {
-    const AxisAngle AxisAngle::Identity = AxisAngle(glm::vec3(), 0);
+    const AxisAngle AxisAngle::Identity = AxisAngle(Vector3::UnitZ, 0);
 
     AxisAngle::AxisAngle(const Vector3& dir)
     {
@@ -21,25 +21,40 @@ namespace Silent::Math
         }
 
         // Compute angle.
-        float dotProduct = Vector3::Dot(dir, Vector3::UnitZ);
-        float rad = glm::acos(dotProduct);
+        float dot = Vector3::Dot(dir, Vector3::UnitZ);
+        float rad = glm::acos(dot);
 
-        // Set axis angl angle.
+        // Set axis angle.
         Axis = axis;
         Angle = FP_ANGLE_FROM_RAD(rad);
     }
 
-    void AxisAngle::Slerp(const AxisAngle& to, float alpha)
+    AxisAngle AxisAngle::Lerp(const AxisAngle& from, const AxisAngle& to, float alpha)
     {
-        *this = Slerp(*this, to, alpha);
+        auto quatFrom = from.ToQuaternion();
+        auto quatTo = to.ToQuaternion();
+
+        auto quat = Quaternion::Lerp(quatFrom, quatTo, alpha);
+        return quat.ToAxisAngle();
+    }
+
+    void AxisAngle::Lerp(const AxisAngle& to, float alpha)
+    {
+        *this = Lerp(*this, to, alpha);
     }
 
     AxisAngle AxisAngle::Slerp(const AxisAngle& from, const AxisAngle& to, float alpha)
     {
         auto quatFrom = from.ToQuaternion();
         auto quatTo = to.ToQuaternion();
+
         auto quat = Quaternion::Slerp(quatFrom, quatTo, alpha);
         return quat.ToAxisAngle();
+    }
+
+    void AxisAngle::Slerp(const AxisAngle& to, float alpha)
+    {
+        *this = Slerp(*this, to, alpha);
     }
 
     Vector3 AxisAngle::ToDirection() const
@@ -62,10 +77,10 @@ namespace Silent::Math
         float sinHalfAngle = glm::sin(halfAngle);
         float cosHalfAngle = glm::cos(halfAngle);
 
-        return Quaternion(glm::quat(Axis.x * sinHalfAngle,
-                                    Axis.y * sinHalfAngle,
-                                    Axis.z * sinHalfAngle,
-                                    cosHalfAngle));
+        return Quaternion(Axis.x * sinHalfAngle,
+                          Axis.y * sinHalfAngle,
+                          Axis.z * sinHalfAngle,
+                          cosHalfAngle);
     }
 
     Matrix AxisAngle::ToMatrix() const
@@ -75,24 +90,25 @@ namespace Silent::Math
         float cosAngle = glm::cos(rad);
         float oneMinusCos = 1.0f - cosAngle;
     
-        return Matrix(glm::mat3
-        {
-            {
-                cosAngle + SQUARE(Axis.x) * oneMinusCos,
-                ((Axis.x * Axis.y) * oneMinusCos) - (Axis.z * sinAngle),
-                ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
-            },
-            {
-                ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
-                cosAngle + (SQUARE(Axis.y) * oneMinusCos),
-                ((Axis.y * Axis.z) * oneMinusCos) - (Axis.x * sinAngle)
-            },
-            {
-                ((Axis.x * Axis.z) * oneMinusCos) - (Axis.y * sinAngle),
-                ((Axis.y * Axis.z) * oneMinusCos) + (Axis.x * sinAngle),
-                cosAngle + (SQUARE(Axis.z) * oneMinusCos)
-            }
-        });
+        return Matrix(cosAngle + SQUARE(Axis.x) * oneMinusCos,
+                      ((Axis.x * Axis.y) * oneMinusCos) - (Axis.z * sinAngle),
+                      ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
+                      0.0f,
+
+                      ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
+                      cosAngle + (SQUARE(Axis.y) * oneMinusCos),
+                      ((Axis.y * Axis.z) * oneMinusCos) - (Axis.x * sinAngle),
+                      0.0f,
+
+                      ((Axis.x * Axis.z) * oneMinusCos) - (Axis.y * sinAngle),
+                      ((Axis.y * Axis.z) * oneMinusCos) + (Axis.x * sinAngle),
+                      cosAngle + (SQUARE(Axis.z) * oneMinusCos),
+                      0.0f,
+
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      1.0f);
     }
 
     bool AxisAngle::operator==(const AxisAngle& axisAngle) const

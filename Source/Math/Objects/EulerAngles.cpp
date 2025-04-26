@@ -88,6 +88,11 @@ namespace Silent::Math
         return Matrix(glm::yawPitchRoll(FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(z)));
     }
 
+    glm::vec3 EulerAngles::ToGlmEulerAngles() const
+    {
+        return glm::vec3(FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(z));
+    }
+
     bool EulerAngles::operator==(const EulerAngles& eulerAngles) const
     {
         return x == eulerAngles.x && y == eulerAngles.y && z == eulerAngles.z;

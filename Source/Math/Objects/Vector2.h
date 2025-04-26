@@ -29,20 +29,16 @@ namespace Silent::Math
 
         // Utilities
 
-        static bool  Compare(const Vector2& vec0, const Vector2& vec1, float epsilon = EPSILON);
+        static float Distance(const Vector2& from, const Vector2& to);
+        static float DistanceSquared(const Vector2& from, const Vector2& to);
+        static float Dot(const Vector2& vec0, const Vector2& vec1);
+        static float Cross(const Vector2& vec0, const Vector2& vec1);
+
         static float Length(const Vector2& vec);
         float        Length() const;
         static float LengthSquared(const Vector2& vec);
         float        LengthSquared() const;
-        static float Distance(const Vector2& from, const Vector2& to);
-        float        Distance(const Vector2& to) const;
-        static float DistanceSquared(const Vector2& from, const Vector2& to);
-        float        DistanceSquared(const Vector2& to) const;
-        static float Dot(const Vector2& vec0, const Vector2& vec1);
-        float        Dot(const Vector2& vec) const;
-        static float Cross(const Vector2& vec0, const Vector2& vec1);
-        float        Cross(const Vector2& vec) const;
-
+        
         static Vector2 Min(const Vector2& vec0, const Vector2& vec1);
         void           Min(const Vector2& vec);
         static Vector2 Max(const Vector2& vec0, const Vector2& vec1);
@@ -62,6 +58,8 @@ namespace Silent::Math
         static Vector2 Translate(const Vector2& vec, const Vector2& dir, float dist);
         void           Translate(const Vector2& dir, float dist);
 
+        static bool Compare(const Vector2& vec0, const Vector2& vec1, float epsilon = EPSILON);
+    
         // Converters
 
         const glm::vec2& ToGlmVec2() const;

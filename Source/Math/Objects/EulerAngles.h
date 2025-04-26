@@ -48,6 +48,8 @@ namespace Silent::Math
         AxisAngle  ToAxisAngle() const;
         Matrix     ToMatrix() const;
 
+        glm::vec3 ToGlmEulerAngles() const;
+
         // Operators
 
         bool         operator==(const EulerAngles& eulerAngles) const;

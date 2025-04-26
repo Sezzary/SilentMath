@@ -29,8 +29,10 @@ namespace Silent::Math
 
         // Utilities
 
-        void             Slerp(const AxisAngle& to, float alpha);
+        static AxisAngle Lerp(const AxisAngle& from, const AxisAngle& to, float alpha);
+        void             Lerp(const AxisAngle& to, float alpha);
         static AxisAngle Slerp(const AxisAngle& from, const AxisAngle& to, float alpha);
+        void             Slerp(const AxisAngle& to, float alpha);
 
         // Converters
 

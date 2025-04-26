@@ -17,6 +17,7 @@ namespace Silent::Math
 
         constexpr Matrix() = default;
         constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
+        constexpr Matrix(float m)              : glm::mat4(m)   {}
         constexpr Matrix(float m00, float m01, float m02, float m03,
                          float m10, float m11, float m12, float m13,
                          float m20, float m21, float m22, float m23,
@@ -37,5 +38,19 @@ namespace Silent::Math
 
         const glm::mat4& ToGlmMat4() const;
         glm::mat4&       ToGlmMat4();
+
+        // Operators
+
+        bool    operator==(const Matrix& matrix) const;
+        bool    operator!=(const Matrix& matrix) const;
+        Matrix& operator=(const Matrix& matrix);
+        Matrix& operator+=(const Matrix& matrix);
+        Matrix& operator-=(const Matrix& matrix);
+        Matrix& operator*=(const Matrix& matrix);
+        Matrix& operator*=(float scalar);
+        Matrix& operator/=(const Matrix& matrix);
+        Matrix& operator/=(float scalar);
+        Matrix  operator+() const;
+        Matrix  operator-() const;
     };
 }

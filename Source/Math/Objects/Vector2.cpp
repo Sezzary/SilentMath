@@ -11,9 +11,24 @@ namespace Silent::Math
     const Vector2 Vector2::UnitX = Vector2(1.0f, 0.0f);
     const Vector2 Vector2::UnitY = Vector2(0.0f, 1.0f);
 
-    bool Vector2::Compare(const Vector2& vec0, const Vector2& vec1, float epsilon)
+    float Vector2::Distance(const Vector2& from, const Vector2& to)
     {
-        return Vector2::DistanceSquared(vec0, vec1) <= SQUARE(epsilon);
+        return glm::distance(from.ToGlmVec2(), to.ToGlmVec2());
+    }
+
+    float Vector2::DistanceSquared(const Vector2& from, const Vector2& to)
+    {
+        return glm::distance2(from.ToGlmVec2(), to.ToGlmVec2());
+    }
+
+    float Vector2::Dot(const Vector2& vec0, const Vector2& vec1)
+    {
+        return glm::dot(vec0.ToGlmVec2(), vec1.ToGlmVec2());
+    }
+
+    float Vector2::Cross(const Vector2& vec0, const Vector2& vec1)
+    {
+        return (vec0.x * vec1.y) - (vec0.y * vec1.x);
     }
 
     float Vector2::Length(const Vector2& vec)
@@ -34,46 +49,6 @@ namespace Silent::Math
     float Vector2::LengthSquared() const
     {
         return Vector2::LengthSquared(*this);
-    }
-
-    float Vector2::Distance(const Vector2& from, const Vector2& to)
-    {
-        return glm::distance(from.ToGlmVec2(), to.ToGlmVec2());
-    }
-
-    float Vector2::Distance(const Vector2& to) const
-    {
-        return Vector2::Distance(*this, to);
-    }
-
-    float Vector2::DistanceSquared(const Vector2& from, const Vector2& to)
-    {
-        return glm::distance2(from.ToGlmVec2(), to.ToGlmVec2());
-    }
-
-    float Vector2::DistanceSquared(const Vector2& to) const
-    {
-        return Vector2::DistanceSquared(*this, to);
-    }
-
-    float Vector2::Dot(const Vector2& vec0, const Vector2& vec1)
-    {
-        return glm::dot(vec0.ToGlmVec2(), vec1.ToGlmVec2());
-    }
-
-    float Vector2::Dot(const Vector2& vec) const
-    {
-        return Vector2::Dot(*this, vec);
-    }
-
-    float Vector2::Cross(const Vector2& vec0, const Vector2& vec1)
-    {
-        return (vec0.x * vec1.y) - (vec0.y * vec1.x);
-    }
-
-    float Vector2::Cross(const Vector2& vec) const
-    {
-        return Vector2::Cross(*this, vec);
     }
 
     Vector2 Vector2::Min(const Vector2& vec0, const Vector2& vec1)
@@ -154,6 +129,11 @@ namespace Silent::Math
     void Vector2::Translate(const Vector2& dir, float dist)
     {
         *this = Vector2::Translate(*this, Vector2::Normalize(dir), dist);
+    }
+
+    bool Vector2::Compare(const Vector2& vec0, const Vector2& vec1, float epsilon)
+    {
+        return Vector2::DistanceSquared(vec0, vec1) <= SQUARE(epsilon);
     }
 
     const glm::vec2& Vector2::ToGlmVec2() const

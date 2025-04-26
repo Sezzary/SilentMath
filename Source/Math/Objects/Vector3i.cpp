@@ -13,6 +13,16 @@ namespace Silent::Math
     const Vector3i Vector3i::UnitY = Vector3i(0, 1, 0);
     const Vector3i Vector3i::UnitZ = Vector3i(0, 0, 1);
 
+    float Vector3i::Distance(const Vector3i& from, const Vector3i& to)
+    {
+        return Vector3::Distance(from.ToVector3(), to.ToVector3());
+    }
+
+    float Vector3i::DistanceSquared(const Vector3i& from, const Vector3i& to)
+    {
+        return Vector3::DistanceSquared(from.ToVector3(), to.ToVector3());
+    }
+
     float Vector3i::Length(const Vector3i& vec)
     {
         return vec.ToVector3().Length();
@@ -31,26 +41,6 @@ namespace Silent::Math
     float Vector3i::LengthSquared() const
     {
         return Vector3i::LengthSquared(*this);
-    }
-
-    float Vector3i::Distance(const Vector3i& from, const Vector3i& to)
-    {
-        return Vector3::Distance(from.ToVector3(), to.ToVector3());
-    }
-
-    float Vector3i::Distance(const Vector3i& to) const
-    {
-        return Vector3i::Distance(*this, to);
-    }
-
-    float Vector3i::DistanceSquared(const Vector3i& from, const Vector3i& to)
-    {
-        return Vector3::DistanceSquared(from.ToVector3(), to.ToVector3());
-    }
-
-    float Vector3i::DistanceSquared(const Vector3i& to) const
-    {
-        return Vector3i::DistanceSquared(*this, to);
     }
 
     Vector3i Vector3i::Min(const Vector3i& vec0, const Vector3i& vec1)
