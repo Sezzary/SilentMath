@@ -60,7 +60,7 @@ namespace Silent::Math
     Vector3 AxisAngle::ToDirection() const
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
-        return (glm::cos(rad) * Axis) + ((1.0f - glm::cos(rad)) * Axis);
+        return (Axis * glm::cos(rad)) + (Axis * (1.0f - glm::cos(rad)));
     }
 
     EulerAngles AxisAngle::ToEulerAngles() const
@@ -138,6 +138,7 @@ namespace Silent::Math
     {
         auto quat0 = ToQuaternion();
         auto quat1 = axisAngle.ToQuaternion();
+
         auto quat = quat0 * quat1;
         return quat.ToAxisAngle();
     }

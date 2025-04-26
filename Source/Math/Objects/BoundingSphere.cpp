@@ -36,17 +36,20 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
-        auto rotMat = glm::mat3_cast(obb.Rotation);
+        auto rotMat = obb.Rotation.ToMatrix();
         auto centerDelta = obb.Center - Center;
         auto closestPoint = obb.Center;
 
-        // Project sphere center onto each axis of OBB.
-        /*for (int i = 0; i < Vector3::AXIS_COUNT; i++)
+        // Project sphere center onto each OBB axis.
+        for (int i = 0; i < Vector3::AXIS_COUNT; i++)
         {
-            float proj = Vector3::Dot(centerDelta, rotMat[i]);
+            auto axis = Vector3(rotMat[i].x, rotMat[i].y, rotMat[i].z);
+
+            float proj = Vector3::Dot(centerDelta, axis);
             proj = glm::clamp(proj, -obb.Extents[i], obb.Extents[i]);
-            closestPoint += proj * rotMat[i];
-        }*/
+
+            closestPoint += proj * axis;
+        }
 
         float distSqr = Vector3::DistanceSquared(Center, closestPoint);
         return distSqr <= SQUARE(Radius);
@@ -60,13 +63,12 @@ namespace Silent::Math
     ContainmentType BoundingSphere::Contains(const BoundingSphere& sphere) const
     {
         float distSqr = Vector3::DistanceSquared(Center, sphere.Center);
-        if (distSqr <= ((Radius - sphere.Radius) * (Radius - sphere.Radius)))
+        if (distSqr <= SQUARE(Radius - sphere.Radius))
         {
             return ContainmentType::Contains;
         }
         
-        float radiusSum = Radius + sphere.Radius;
-        if (distSqr <= SQUARE(radiusSum))
+        if (distSqr <= SQUARE(Radius + sphere.Radius))
         {
             return ContainmentType::Intersects;
         }
@@ -88,7 +90,6 @@ namespace Silent::Math
 
         auto sphereMin = Center - Vector3(Radius);
         auto sphereMax = Center + Vector3(Radius);
-
         if (sphereMin.x >= aabbMin.x && sphereMax.x <= aabbMax.x &&
             sphereMin.y >= aabbMin.y && sphereMax.y <= aabbMax.y &&
             sphereMin.z >= aabbMin.z && sphereMax.z <= aabbMax.z)

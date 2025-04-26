@@ -8,7 +8,7 @@ namespace Silent::Utils
 {
     bool BoundingVolumeHierarchy::Node::IsLeaf() const
     {
-        return (LeftChildId == NO_VALUE && RightChildId == NO_VALUE);
+        return LeftChildId == NO_VALUE && RightChildId == NO_VALUE;
     }
 
     BoundingVolumeHierarchy::BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy)
@@ -268,9 +268,8 @@ namespace Silent::Utils
                 auto aabb = AxisAlignedBoundingBox::Merge(leftChild.Aabb, leaf.Aabb);
                 float newArea = aabb.GetSurfaceArea();
 
-                leftCost = leftChild.IsLeaf() ?
-                    newArea + inheritCost :
-                    (newArea - leftChild.Aabb.GetSurfaceArea()) + inheritCost;
+                leftCost = leftChild.IsLeaf() ? (newArea + inheritCost) :
+                                                ((newArea - leftChild.Aabb.GetSurfaceArea()) + inheritCost);
             }
 
             // Calculate cost of descending into right child.
@@ -281,9 +280,8 @@ namespace Silent::Utils
                 auto aabb = AxisAlignedBoundingBox::Merge(rightChild.Aabb, leaf.Aabb);
                 float newArea = aabb.GetSurfaceArea();
 
-                rightCost = rightChild.IsLeaf() ?
-                    newArea + inheritCost :
-                    (newArea - rightChild.Aabb.GetSurfaceArea()) + inheritCost;
+                rightCost = rightChild.IsLeaf() ? (newArea + inheritCost) :
+                                                  ((newArea - rightChild.Aabb.GetSurfaceArea()) + inheritCost);
             }
 
             // Test if descent is worthwhile according to minimum cost.
@@ -755,9 +753,8 @@ namespace Silent::Utils
             }
 
             // Set height.
-            node.Height = std::max(
-                (node.LeftChildId != NO_VALUE) ? _nodes[node.LeftChildId].Height : 0, 
-                (node.RightChildId != NO_VALUE) ? _nodes[node.RightChildId].Height : 0) + 1;
+            node.Height = std::max((node.LeftChildId != NO_VALUE) ? _nodes[node.LeftChildId].Height : 0, 
+                                   (node.RightChildId != NO_VALUE) ? _nodes[node.RightChildId].Height : 0) + 1;
 
             // Add new inner node.
             _nodes.push_back(node);
