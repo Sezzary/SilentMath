@@ -41,8 +41,14 @@ namespace Silent::Math
         static float Dot(const Vector2& vec0, const Vector2& vec1);
         float        Dot(const Vector2& vec) const;
         static float Cross(const Vector2& vec0, const Vector2& vec1);
-        Vector2      Cross(const Vector2& vec) const;
+        float        Cross(const Vector2& vec) const;
 
+        static Vector2 Min(const Vector2& vec0, const Vector2& vec1);
+        void           Min(const Vector2& vec);
+        static Vector2 Max(const Vector2& vec0, const Vector2& vec1);
+        void           Max(const Vector2& vec);
+        static Vector2 Clamp(const Vector2& vec, const Vector2& min, const Vector2& max);
+        void           Clamp(const Vector2& min, const Vector2& max);
         static Vector2 Normalize(const Vector2& vec);
         void           Normalize();
         static Vector2 Lerp(const Vector2& from, const Vector2& to, float alpha);
@@ -51,6 +57,8 @@ namespace Silent::Math
         void           Smoothstep(const Vector2& to, float alpha);
         static Vector2 Transform(const Vector2& vec, const Matrix& mat);
         void           Transform(const Matrix& mat);
+        static Vector2 Rotate(const Vector2& vec, const Matrix& mat);
+        void           Rotate(const Matrix& mat);
         static Vector2 Translate(const Vector2& vec, const Vector2& dir, float dist);
         void           Translate(const Vector2& dir, float dist);
 

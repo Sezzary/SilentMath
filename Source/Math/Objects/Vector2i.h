@@ -39,6 +39,12 @@ namespace Silent::Math
         static float DistanceSquared(const Vector2i& from, const Vector2i& to);
         float        DistanceSquared(const Vector2i& to) const;
 
+        static Vector2i Min(const Vector2i& vec0, const Vector2i& vec1);
+        void            Min(const Vector2i& vec);
+        static Vector2i Max(const Vector2i& vec0, const Vector2i& vec1);
+        void            Max(const Vector2i& vec);
+        static Vector2i Clamp(const Vector2i& vec, const Vector2i& min, const Vector2i& max);
+        void            Clamp(const Vector2i& min, const Vector2i& max);
         static Vector2i Lerp(const Vector2i& from, const Vector2i& to, float alpha);
         void            Lerp(const Vector2i& to, float alpha);
         static Vector2i Transform(const Vector2i& vec, const Matrix& mat);

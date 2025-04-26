@@ -52,6 +52,36 @@ namespace Silent::Math
         return Vector2i::DistanceSquared(*this, to);
     }
 
+    Vector2i Vector2i::Min(const Vector2i& vec0, const Vector2i& vec1)
+    {
+        return glm::min(vec0.ToGlmVec2i(), vec1.ToGlmVec2i());
+    }
+
+    void Vector2i::Min(const Vector2i& vec)
+    {
+        *this = Vector2i::Min(*this, vec);
+    }
+
+    Vector2i Vector2i::Max(const Vector2i& vec0, const Vector2i& vec1)
+    {
+        return glm::max(vec0.ToGlmVec2i(), vec1.ToGlmVec2i());
+    }
+
+    void Vector2i::Max(const Vector2i& vec)
+    {
+        *this = Vector2i::Max(*this, vec);
+    }
+
+    Vector2i Vector2i::Clamp(const Vector2i& vec, const Vector2i& min, const Vector2i& max)
+    {
+        return Vector2i(glm::clamp(vec.ToGlmVec2i(), min.ToGlmVec2i(), max.ToGlmVec2i()));
+    }
+
+    void Vector2i::Clamp(const Vector2i& min, const Vector2i& max)
+    {
+        *this = Vector2i::Clamp(*this, min, max);
+    }
+
     Vector2i Vector2i::Lerp(const Vector2i& from, const Vector2i& to, float alpha)
     {
         auto fromFloat = glm::vec2(from.ToGlmVec2i());

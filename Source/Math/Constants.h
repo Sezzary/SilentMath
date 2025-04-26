@@ -103,16 +103,16 @@ namespace Silent::Math
         return FP_MULTIPLY((int64)a, FP_FLOAT_TO(b, shift), shift);
     }
 
-    /** @brief Converts a floating-point alpha in the range [0.0f, 1.0f] to a fixed-point alpha in Q3.12 format. */
+    /** @brief Converts a floating-point alpha in the range `[0.0f, 1.0f]` to a fixed-point alpha in Q3.12 format. */
     constexpr short FP_ALPHA(float alpha)
     {
         return (short)FP_FLOAT_TO(alpha, Q12_SHIFT);
     }
 
-    /** @brief Converts a normalized color value in the range [0.0f, 1.0f] to an 8-bit color format in the range [0, 255]. */
+    /** @brief Converts a normalized color value in the range `[0.0f, 1.0f]` to an 8-bit color format in the range `[0, 255]`. */
     constexpr uchar FP_COLOR(float val)
     {
-        return (uchar)(val * 255);
+        return (uchar)(val * (FP_TO(1, (Q8_SHIFT)) - 1));
     }
 
     /** @brief Converts floating-point degrees to fixed-point angles in Q1.15 format. */

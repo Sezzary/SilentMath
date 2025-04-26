@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Math/Objects/Vector3.h"
+
 namespace Silent::Math
 {
     class      AxisAlignedBoundingBox;
     class      BoundingSphere;
-    class      Vector3;
+    class      Matrix;
     enum class ContainmentType;
 
     class OrientedBoundingBox
@@ -16,8 +18,8 @@ namespace Silent::Math
 
         // Fields
 
-        Vector3 Center     = Vector3();
-        Vector3 Extents    = Vector3();
+        Vector3 Center     = Vector3::Zero;
+        Vector3 Extents    = Vector3::Zero;
         glm::quat Rotation = glm::quat();
 
         // Constructors
@@ -33,7 +35,7 @@ namespace Silent::Math
        float                GetSurfaceArea() const;
        float                GetVolume() const;
        std::vector<Vector3> GetCorners() const;
-       glm::mat4            GetTransformMatrix() const;
+       Matrix               GetTransformMatrix() const;
 
        // Utilities
 

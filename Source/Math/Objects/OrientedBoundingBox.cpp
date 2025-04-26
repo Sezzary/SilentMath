@@ -4,6 +4,7 @@
 #include "Math/Constants.h"
 #include "Math/Objects/AxisAlignedBoundingBox.h"
 #include "Math/Objects/BoundingSphere.h"
+#include "Math/Objects/Matrix.h"
 
 namespace Silent::Math
 {
@@ -49,7 +50,7 @@ namespace Silent::Math
         };
     }
 
-    glm::mat4 OrientedBoundingBox::GetTransformMatrix() const
+    Matrix OrientedBoundingBox::GetTransformMatrix() const
     {
         auto translationMat = glm::translate(glm::mat4(1.0f), Center);
         auto rotMat = glm::mat4_cast(Rotation);
@@ -79,8 +80,6 @@ namespace Silent::Math
 
     bool OrientedBoundingBox::Intersects(const OrientedBoundingBox& obb) const
     {
-        constexpr int AXIS_COUNT = 3;
-
         // Compute rotation matrices.
         auto rotMat0 = glm::mat3_cast(Rotation);
         auto rotMat1 = glm::mat3_cast(obb.Rotation);
@@ -89,9 +88,9 @@ namespace Silent::Math
         auto centerDelta = obb.Center - Center;
 
         // Test all the axes. 8 total: 3 from OBB 0, and 3 from OBB 1, and 2 from cross products of axes.
-        for (int i = 0; i < AXIS_COUNT; i++)
+        for (int i = 0; i < Vector3::AXIS_COUNT; i++)
         {
-            for (int j = 0; j < AXIS_COUNT; j++)
+            for (int j = 0; j < Vector3::AXIS_COUNT; j++)
             {
                 auto axis = glm::normalize(glm::cross(rotMat0[i], rotMat1[j]));
 
@@ -102,7 +101,7 @@ namespace Silent::Math
                 // Project OBB 0 vertices.
                 for (const auto& corner : GetCorners())
                 {
-                    float proj = glm::dot(corner, axis);
+                    float proj = Vector3::Dot(corner, axis);
                     proj0 = std::max(proj0, proj);
                     proj1 = std::min(proj1, proj);
                 }
@@ -112,7 +111,7 @@ namespace Silent::Math
                 float proj4 = INFINITY;
                 for (const auto& corner : obb.GetCorners())
                 {
-                    float proj = glm::dot(corner, axis);
+                    float proj = Vector3::Dot(corner, axis);
                     proj3 = std::max(proj3, proj);
                     proj4 = std::min(proj4, proj);
                 }

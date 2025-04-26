@@ -17,10 +17,14 @@ namespace Silent::Math
 
         constexpr Matrix() = default;
         constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
-        constexpr Matrix(float x0, float y0, float z0,
-                         float x1, float y1, float z1,
-                         float x2, float y2, float z2,
-                         float x3, float y3, float z3) {} // TODO
+        constexpr Matrix(float m00, float m01, float m02, float m03,
+                         float m10, float m11, float m12, float m13,
+                         float m20, float m21, float m22, float m23,
+                         float m30, float m31, float m32, float m33) :
+                         glm::mat4(m00, m01, m02, m03,
+                                   m10, m11, m12, m13,
+                                   m20, m21, m22, m23,
+                                   m30, m31, m32, m33) {}
 
         // Utilities
 

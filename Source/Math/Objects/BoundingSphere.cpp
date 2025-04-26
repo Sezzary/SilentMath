@@ -36,14 +36,12 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
-        constexpr uint AXIS_COUNT = 3;
-    
         auto rotMat = glm::mat3_cast(obb.Rotation);
         auto centerDelta = obb.Center - Center;
         auto closestPoint = obb.Center;
 
         // Project sphere center onto each axis of OBB.
-        /*for (int i = 0; i < AXIS_COUNT; i++)
+        /*for (int i = 0; i < Vector3::AXIS_COUNT; i++)
         {
             float proj = Vector3::Dot(centerDelta, rotMat[i]);
             proj = glm::clamp(proj, -obb.Extents[i], obb.Extents[i]);

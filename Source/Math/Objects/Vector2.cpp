@@ -71,9 +71,39 @@ namespace Silent::Math
         return (vec0.x * vec1.y) - (vec0.y * vec1.x);
     }
 
-    Vector2 Vector2::Cross(const Vector2& vec) const
+    float Vector2::Cross(const Vector2& vec) const
     {
         return Vector2::Cross(*this, vec);
+    }
+
+    Vector2 Vector2::Min(const Vector2& vec0, const Vector2& vec1)
+    {
+        return glm::min(vec0.ToGlmVec2(), vec1.ToGlmVec2());
+    }
+
+    void Vector2::Min(const Vector2& vec)
+    {
+        *this = Vector2::Min(*this, vec);
+    }
+
+    Vector2 Vector2::Max(const Vector2& vec0, const Vector2& vec1)
+    {
+        return glm::max(vec0.ToGlmVec2(), vec1.ToGlmVec2());
+    }
+
+    void Vector2::Max(const Vector2& vec)
+    {
+        *this = Vector2::Max(*this, vec);
+    }
+
+    Vector2 Vector2::Clamp(const Vector2& vec, const Vector2& min, const Vector2& max)
+    {
+        return Vector2(glm::clamp(vec.ToGlmVec2(), min.ToGlmVec2(), max.ToGlmVec2()));
+    }
+
+    void Vector2::Clamp(const Vector2& min, const Vector2& max)
+    {
+        *this = Vector2::Clamp(*this, min, max);
     }
 
     Vector2 Vector2::Normalize(const Vector2& vec)
