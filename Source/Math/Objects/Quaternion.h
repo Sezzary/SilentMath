@@ -24,6 +24,8 @@ namespace Silent::Math
 
         // Utilities
 
+        static Quaternion Invert(const Quaternion& quat);
+        void              Invert();
         static Quaternion Lerp(const Quaternion& from, const Quaternion& to, float alpha);
         void              Lerp(const Quaternion& to, float alpha);
         static Quaternion Slerp(const Quaternion& from, const Quaternion& to, float alpha);

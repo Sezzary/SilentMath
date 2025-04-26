@@ -30,19 +30,15 @@ namespace Silent::Math
 
         // Utilities
 
-        static bool    Compare(const Vector3& vec0, const Vector3& vec1, float epsilon = EPSILON);
-        static float   Length(const Vector3& vec);
-        float          Length() const;
-        static float   LengthSquared(const Vector3& vec);
-        float          LengthSquared() const;
         static float   Distance(const Vector3& from, const Vector3& to);
-        float          Distance(const Vector3& to) const;
         static float   DistanceSquared(const Vector3& from, const Vector3& to);
-        float          DistanceSquared(const Vector3& to) const;
         static float   Dot(const Vector3& vec0, const Vector3& vec1);
-        float          Dot(const Vector3& vec) const;
         static Vector3 Cross(const Vector3& vec0, const Vector3& vec1);
-        Vector3        Cross(const Vector3& vec) const;
+
+        static float Length(const Vector3& vec);
+        float        Length() const;
+        static float LengthSquared(const Vector3& vec);
+        float        LengthSquared() const;
 
         static Vector3 Min(const Vector3& vec0, const Vector3& vec1);
         void           Min(const Vector3& vec);
@@ -62,6 +58,8 @@ namespace Silent::Math
         void           Rotate(const Matrix& mat);
         static Vector3 Translate(const Vector3& vec, const Vector3& dir, float dist);
         void           Translate(const Vector3& dir, float dist);
+
+        static bool Compare(const Vector3& vec0, const Vector3& vec1, float epsilon = EPSILON);
 
         // Converters
 

@@ -11,7 +11,8 @@ namespace Silent::Math
     Quaternion::Quaternion(const Vector3& dir)
     {
         auto dirNorm = Vector3::Normalize(dir);
-        float rad = acos(Vector3::UnitZ.Dot(dirNorm));
+        float dot = Vector3::Dot(Vector3::UnitZ, dirNorm);
+        float rad = glm::acos(dot);
 
         if (rad < EPSILON)
         {
@@ -29,6 +30,16 @@ namespace Silent::Math
         x = axis.x * sinHalfAngle;
         y = axis.y * sinHalfAngle;
         z = axis.z * sinHalfAngle;
+    }
+
+    Quaternion Quaternion::Invert(const Quaternion& quat)
+    {
+        return Quaternion(glm::inverse(quat.ToGlmQuat()));
+    }
+
+    void Quaternion::Invert()
+    {
+        *this = Quaternion::Invert(*this);
     }
 
     Quaternion Quaternion::Lerp(const Quaternion& from, const Quaternion& to, float alpha)

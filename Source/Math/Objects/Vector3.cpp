@@ -12,9 +12,24 @@ namespace Silent::Math
     const Vector3 Vector3::UnitY = Vector3(0.0f, 1.0f, 0.0f);
     const Vector3 Vector3::UnitZ = Vector3(0.0f, 0.0f, 1.0f);
 
-    bool Vector3::Compare(const Vector3& vec0, const Vector3& vec1, float epsilon)
+    float Vector3::Distance(const Vector3& from, const Vector3& to)
     {
-        return Vector3::DistanceSquared(vec0, vec1) <= SQUARE(epsilon);
+        return glm::distance(from.ToGlmVec3(), to.ToGlmVec3());
+    }
+
+    float Vector3::DistanceSquared(const Vector3& from, const Vector3& to)
+    {
+        return glm::distance2(from.ToGlmVec3(), to.ToGlmVec3());
+    }
+
+    float Vector3::Dot(const Vector3& vec0, const Vector3& vec1)
+    {
+        return glm::dot(vec0.ToGlmVec3(), vec1.ToGlmVec3());
+    }
+
+    Vector3 Vector3::Cross(const Vector3& vec0, const Vector3& vec1)
+    {
+        return Vector3(glm::cross(vec0.ToGlmVec3(), vec1.ToGlmVec3()));
     }
 
     float Vector3::Length(const Vector3& vec)
@@ -35,46 +50,6 @@ namespace Silent::Math
     float Vector3::LengthSquared() const
     {
         return Vector3::LengthSquared(*this);
-    }
-
-    float Vector3::Distance(const Vector3& from, const Vector3& to)
-    {
-        return glm::distance(from.ToGlmVec3(), to.ToGlmVec3());
-    }
-
-    float Vector3::Distance(const Vector3& to) const
-    {
-        return Vector3::Distance(*this, to);
-    }
-
-    float Vector3::DistanceSquared(const Vector3& from, const Vector3& to)
-    {
-        return glm::distance2(from.ToGlmVec3(), to.ToGlmVec3());
-    }
-
-    float Vector3::DistanceSquared(const Vector3& to) const
-    {
-        return Vector3::DistanceSquared(*this, to);
-    }
-
-    float Vector3::Dot(const Vector3& vec0, const Vector3& vec1)
-    {
-        return glm::dot(vec0.ToGlmVec3(), vec1.ToGlmVec3());
-    }
-
-    float Vector3::Dot(const Vector3& vec) const
-    {
-        return Vector3::Dot(*this, vec);
-    }
-
-    Vector3 Vector3::Cross(const Vector3& vec0, const Vector3& vec1)
-    {
-        return Vector3(glm::cross(vec0.ToGlmVec3(), vec1.ToGlmVec3()));
-    }
-
-    Vector3 Vector3::Cross(const Vector3& vec) const
-    {
-        return Vector3::Cross(*this, vec);
     }
 
     Vector3 Vector3::Min(const Vector3& vec0, const Vector3& vec1)
@@ -165,6 +140,11 @@ namespace Silent::Math
     void Vector3::Translate(const Vector3& dir, float dist)
     {
         *this = Vector3::Translate(*this, Vector3::Normalize(dir), dist);
+    }
+
+    bool Vector3::Compare(const Vector3& vec0, const Vector3& vec1, float epsilon)
+    {
+        return Vector3::DistanceSquared(vec0, vec1) <= SQUARE(epsilon);
     }
 
     const glm::vec3& Vector3::ToGlmVec3() const
