@@ -4,6 +4,8 @@
 #include "Math/Constants.h"
 #include "Math/Objects/EulerAngles.h"
 #include "Math/Objects/Matrix.h"
+#include "Math/Objects/Quaternion.h"
+#include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
 {
@@ -27,58 +29,6 @@ namespace Silent::Math
         Angle = FP_ANGLE_FROM_RAD(rad);
     }
 
-    AxisAngle::AxisAngle(const EulerAngles& eulerAngles)
-    {
-        auto quat = eulerAngles.ToQuaternion();
-        *this = AxisAngle(quat);
-    }
-
-    AxisAngle::AxisAngle(const glm::quat& quat)
-    {
-        float sinHalfAngle = glm::sqrt(1.0f - SQUARE(quat.w));
-
-        // Compute axis.
-        auto axis = glm::vec3();
-        if (sinHalfAngle < EPSILON)
-        {
-            axis = Vector3::UnitZ;
-        }
-        else
-        {
-            axis = Vector3(quat.x, quat.y, quat.z) / sinHalfAngle;
-        }
-
-        // Compute angle.
-        float rad = glm::acos(quat.w) * 2.0f;
-
-        Axis = axis;
-        Angle = FP_ANGLE_FROM_RAD(rad);
-    }
-
-    AxisAngle::AxisAngle(const Matrix& mat)
-    {
-        // Compute angle.
-        float trace = mat[0][0] + mat[1][1] + mat[2][2];
-        float rad = glm::acos((trace - 1.0f) / 2.0f);
-
-        // Compute axis.
-        auto axis = Vector3::Zero;
-        if (rad == 0.0f)
-        {
-            axis = Vector3::UnitZ;
-        }
-        else
-        {
-            axis = Vector3(mat[2][1] - mat[1][2], 
-                           mat[0][2] - mat[2][0], 
-                           mat[1][0] - mat[0][1]) / (glm::sin(rad) * 2.0f);
-        }
-
-        // Set axis and angle.
-        Axis = axis;
-        Angle = FP_ANGLE_FROM_RAD(rad);
-    }
-
     void AxisAngle::Slerp(const AxisAngle& to, float alpha)
     {
         *this = Slerp(*this, to, alpha);
@@ -88,8 +38,8 @@ namespace Silent::Math
     {
         auto quatFrom = from.ToQuaternion();
         auto quatTo = to.ToQuaternion();
-        auto quat = glm::slerp(quatFrom, quatTo, alpha);
-        return AxisAngle(quat);
+        auto quat = Quaternion::Slerp(quatFrom, quatTo, alpha);
+        return quat.ToAxisAngle();
     }
 
     Vector3 AxisAngle::ToDirection() const
@@ -100,10 +50,11 @@ namespace Silent::Math
 
     EulerAngles AxisAngle::ToEulerAngles() const
     {
-        return EulerAngles(*this);
+        auto quat = ToQuaternion();
+        return quat.ToEulerAngles();
     }
 
-    glm::quat AxisAngle::ToQuaternion() const
+    Quaternion AxisAngle::ToQuaternion() const
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
 
@@ -111,7 +62,10 @@ namespace Silent::Math
         float sinHalfAngle = glm::sin(halfAngle);
         float cosHalfAngle = glm::cos(halfAngle);
 
-        return glm::quat(cosHalfAngle, Axis.x * sinHalfAngle, Axis.y * sinHalfAngle, Axis.z * sinHalfAngle);
+        return Quaternion(glm::quat(Axis.x * sinHalfAngle,
+                                    Axis.y * sinHalfAngle,
+                                    Axis.z * sinHalfAngle,
+                                    cosHalfAngle));
     }
 
     Matrix AxisAngle::ToMatrix() const
@@ -121,7 +75,6 @@ namespace Silent::Math
         float cosAngle = glm::cos(rad);
         float oneMinusCos = 1.0f - cosAngle;
     
-        // Construct rotation matrix using Rodrigues' formula.
         return Matrix(glm::mat3
         {
             {
@@ -170,6 +123,6 @@ namespace Silent::Math
         auto quat0 = ToQuaternion();
         auto quat1 = axisAngle.ToQuaternion();
         auto quat = quat0 * quat1;
-        return AxisAngle(quat);
+        return quat.ToAxisAngle();
     }
 }

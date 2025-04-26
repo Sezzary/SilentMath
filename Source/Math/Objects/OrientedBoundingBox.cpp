@@ -35,7 +35,7 @@ namespace Silent::Math
 
     std::vector<Vector3> OrientedBoundingBox::GetCorners() const
     {
-        auto rotMat = glm::mat4_cast(Rotation);
+        auto rotMat = Rotation.ToMatrix();
 
         return std::vector<Vector3>
         {
@@ -53,15 +53,15 @@ namespace Silent::Math
     Matrix OrientedBoundingBox::GetTransformMatrix() const
     {
         auto translationMat = glm::translate(glm::mat4(1.0f), Center);
-        auto rotMat = glm::mat4_cast(Rotation);
-    
+        auto rotMat = Rotation.ToMatrix();
+
         return rotMat * translationMat;
     }
     
     bool OrientedBoundingBox::Intersects(const Vector3& point) const
     {
-        auto rotMat = glm::mat3_cast(Rotation);
-        auto localPoint = (point - Center) * rotMat;
+        auto rotMat = Rotation.ToMatrix(); // TODO: Invert?
+        auto localPoint = Vector3::Transform(point - Center, rotMat);
 
         return std::abs(localPoint.x) <= Extents.x && 
                std::abs(localPoint.y) <= Extents.y && 
@@ -81,14 +81,15 @@ namespace Silent::Math
     bool OrientedBoundingBox::Intersects(const OrientedBoundingBox& obb) const
     {
         // Compute rotation matrices.
-        auto rotMat0 = glm::mat3_cast(Rotation);
-        auto rotMat1 = glm::mat3_cast(obb.Rotation);
+        auto rotMat0 = Rotation.ToMatrix();
+        auto rotMat1 = obb.Rotation.ToMatrix();
 
         // Compute center delta.
         auto centerDelta = obb.Center - Center;
 
+        // TODO
         // Test all the axes. 8 total: 3 from OBB 0, and 3 from OBB 1, and 2 from cross products of axes.
-        for (int i = 0; i < Vector3::AXIS_COUNT; i++)
+        /*for (int i = 0; i < Vector3::AXIS_COUNT; i++)
         {
             for (int j = 0; j < Vector3::AXIS_COUNT; j++)
             {
@@ -122,7 +123,7 @@ namespace Silent::Math
                     return false;
                 }
             }
-        }
+        }*/
 
         return true;
     }

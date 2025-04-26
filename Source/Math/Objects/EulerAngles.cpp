@@ -14,31 +14,13 @@ namespace Silent::Math
 {
     const EulerAngles EulerAngles::Identity = EulerAngles(0, 0, 0);
 
-    EulerAngles::EulerAngles(const glm::vec3& dir)
+    EulerAngles::EulerAngles(const Vector3& dir)
     {
-        auto dirNorm = glm::normalize(dir);
+        auto dirNorm = Vector3::Normalize(dir);
 
         x = FP_ANGLE_FROM_RAD(-glm::asin(dirNorm.y));
         y = FP_ANGLE_FROM_RAD(glm::atan2(dirNorm.x, dirNorm.z));
         z = FP_ANGLE_FROM_RAD(0.0f);
-    }
-
-    EulerAngles::EulerAngles(const AxisAngle& axisAngle)
-    {
-        auto quat = axisAngle.ToQuaternion();
-        *this = EulerAngles(quat);
-    }
-
-    EulerAngles::EulerAngles(const glm::quat& quat)
-    {
-        auto eulerAnglesRad = glm::eulerAngles(quat);
-        *this = EulerAngles(FP_ANGLE_FROM_RAD(eulerAnglesRad.x), FP_ANGLE_FROM_RAD(eulerAnglesRad.y), FP_ANGLE_FROM_RAD(eulerAnglesRad.z));
-    }
-
-    EulerAngles::EulerAngles(const Matrix& mat)
-    {
-        auto quat = mat.ToQuaternion();
-        *this = quat.ToEulerAngles();
     }
 
     bool EulerAngles::Compare(const EulerAngles& eulerAngles0, const EulerAngles& eulerAngles1, short epsilon)
@@ -64,8 +46,8 @@ namespace Silent::Math
     {
         auto quatFrom = from.ToQuaternion();
         auto quatTo = to.ToQuaternion();
-        auto quat = glm::slerp(quatFrom, quatTo, alpha);
-        return EulerAngles(quat);
+        auto quat = Quaternion::Slerp(quatFrom, quatTo, alpha);
+        return quat.ToEulerAngles();
     }
 
     void EulerAngles::Slerp(const EulerAngles& to, float alpha)
@@ -85,22 +67,23 @@ namespace Silent::Math
         *this = InterpConstant(*this, to, angularVel);
     }
 
-    glm::vec3 EulerAngles::ToDirection() const
+    Vector3 EulerAngles::ToDirection() const
     {
-        return Vector3::Normalize(Vector3::Rotate(Vector3::UnitZ, ToRotationMatrix()));
+        return Vector3::Normalize(Vector3::Rotate(Vector3::UnitZ, ToMatrix()));
     }
 
-    glm::quat EulerAngles::ToQuaternion() const
+    Quaternion EulerAngles::ToQuaternion() const
     {
-        return glm::quat(glm::vec3(FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(z)));
+        return Quaternion(glm::quat(glm::vec3(FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(z))));
     }
 
     AxisAngle EulerAngles::ToAxisAngle() const
     {
-        return AxisAngle(*this);
+        auto quat = ToQuaternion();
+        return quat.ToAxisAngle();
     }
 
-    Matrix EulerAngles::ToRotationMatrix() const
+    Matrix EulerAngles::ToMatrix() const
     {
         return Matrix(glm::yawPitchRoll(FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(z)));
     }

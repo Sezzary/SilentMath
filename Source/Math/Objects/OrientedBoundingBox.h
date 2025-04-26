@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/Objects/Quaternion.h"
 #include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
@@ -18,14 +19,14 @@ namespace Silent::Math
 
         // Fields
 
-        Vector3 Center     = Vector3::Zero;
-        Vector3 Extents    = Vector3::Zero;
-        glm::quat Rotation = glm::quat();
+        Vector3    Center   = Vector3::Zero;
+        Vector3    Extents  = Vector3::Zero;
+        Quaternion Rotation = Quaternion::Identity;
 
         // Constructors
 
        constexpr OrientedBoundingBox() = default;
-       constexpr OrientedBoundingBox(const Vector3& center, const Vector3& extents, const glm::quat rot) : Center(center), Extents(extents), Rotation(rot) {}
+       constexpr OrientedBoundingBox(const Vector3& center, const Vector3& extents, const Quaternion rot) : Center(center), Extents(extents), Rotation(rot) {}
 
        // Getters
 

@@ -29,10 +29,7 @@ namespace Silent::Math
 
         constexpr EulerAngles() = default;
         constexpr EulerAngles(short x, short y, short z) { this->x = x; this->y = y; this->z = z; }
-                  EulerAngles(const glm::vec3& dir);
-                  EulerAngles(const AxisAngle& axisAngle);
-                  EulerAngles(const glm::quat& quat);
-                  EulerAngles(const Matrix& mat);
+                  EulerAngles(const Vector3& dir);
 
         // Utilities
 
@@ -46,10 +43,10 @@ namespace Silent::Math
 
         // Converters
 
-        glm::vec3 ToDirection() const;
-        glm::quat ToQuaternion() const;
-        AxisAngle ToAxisAngle() const;
-        Matrix    ToRotationMatrix() const;
+        Vector3    ToDirection() const;
+        Quaternion ToQuaternion() const;
+        AxisAngle  ToAxisAngle() const;
+        Matrix     ToMatrix() const;
 
         // Operators
 
