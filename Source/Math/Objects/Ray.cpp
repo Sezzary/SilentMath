@@ -46,7 +46,7 @@ namespace Silent::Math
     std::optional<float> Ray::Intersects(const OrientedBoundingBox& obb) const
     {
         // Compute inverse OBB transform matrix.
-        auto invTransformMat = glm::inverse(obb.GetTransformMatrix());
+        auto invTransformMat = Matrix::Inverse(obb.GetTransformMatrix());
 
         // Compute local ray.
         auto localOrigin = Vector3::Transform(Origin, invTransformMat);

@@ -29,12 +29,19 @@ namespace Silent::Math
 
         // Utilities
 
+        static Matrix Inverse(const Matrix& matrix);
+        void          Inverse();
+
         // Converters
+
+        Vector3 ToTranslation() const;
 
         Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;
         Quaternion  ToQuaternion() const;
         AxisAngle   ToAxisAngle() const;
+
+        Vector3 ToScale() const;
 
         const glm::mat4& ToGlmMat4() const;
         glm::mat4&       ToGlmMat4();
@@ -43,7 +50,7 @@ namespace Silent::Math
 
         bool    operator==(const Matrix& matrix) const;
         bool    operator!=(const Matrix& matrix) const;
-        Matrix& operator=(const Matrix& matrix);
+        Matrix& operator=(const Matrix& matrix) = default;
         Matrix& operator+=(const Matrix& matrix);
         Matrix& operator-=(const Matrix& matrix);
         Matrix& operator*=(const Matrix& matrix);

@@ -76,6 +76,7 @@ namespace Silent::Math
     {
         auto fromFloat = glm::vec2(from.ToGlmVec2i());
         auto toFloat = glm::vec2(to.ToGlmVec2i());
+
         auto vecFloat = glm::lerp(fromFloat, toFloat, alpha);
         return Vector2i(glm::ivec2(glm::round(vecFloat)));
     }

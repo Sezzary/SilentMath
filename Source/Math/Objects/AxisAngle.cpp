@@ -83,7 +83,7 @@ namespace Silent::Math
                           cosHalfAngle);
     }
 
-    Matrix AxisAngle::ToMatrix() const
+    Matrix AxisAngle::ToRotationMatrix() const
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
         float sinAngle = glm::sin(rad);

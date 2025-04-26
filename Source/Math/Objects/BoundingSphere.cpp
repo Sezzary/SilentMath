@@ -36,7 +36,7 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
-        auto rotMat = obb.Rotation.ToMatrix();
+        auto rotMat = obb.Rotation.ToRotationMatrix();
         auto centerDelta = obb.Center - Center;
         auto closestPoint = obb.Center;
 

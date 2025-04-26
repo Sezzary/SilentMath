@@ -69,7 +69,7 @@ namespace Silent::Math
 
     Vector3 EulerAngles::ToDirection() const
     {
-        return Vector3::Normalize(Vector3::Rotate(Vector3::UnitZ, ToMatrix()));
+        return Vector3::Normalize(Vector3::Rotate(Vector3::UnitZ, ToRotationMatrix()));
     }
 
     Quaternion EulerAngles::ToQuaternion() const
@@ -83,7 +83,7 @@ namespace Silent::Math
         return quat.ToAxisAngle();
     }
 
-    Matrix EulerAngles::ToMatrix() const
+    Matrix EulerAngles::ToRotationMatrix() const
     {
         return Matrix(glm::yawPitchRoll(FP_ANGLE_TO_RAD(y), FP_ANGLE_TO_RAD(x), FP_ANGLE_TO_RAD(z)));
     }

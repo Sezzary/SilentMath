@@ -39,7 +39,7 @@ namespace Silent::Math
         Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;
         AxisAngle   ToAxisAngle() const;
-        Matrix      ToMatrix() const;
+        Matrix      ToRotationMatrix() const;
 
         const glm::quat& ToGlmQuat() const;
         glm::quat&       ToGlmQuat();

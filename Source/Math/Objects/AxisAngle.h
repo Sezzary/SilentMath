@@ -40,7 +40,7 @@ namespace Silent::Math
         Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;
         Quaternion  ToQuaternion() const;
-        Matrix      ToMatrix() const;
+        Matrix      ToRotationMatrix() const;
 
         // Operators
 

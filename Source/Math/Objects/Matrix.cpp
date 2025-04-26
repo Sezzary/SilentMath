@@ -10,6 +10,16 @@ namespace Silent::Math
 {
     const Matrix Matrix::Identity = Matrix(1.0f);
 
+    Matrix Matrix::Inverse(const Matrix& matrix)
+    {
+        return Matrix(glm::inverse(matrix.ToGlmMat4()));
+    }
+
+    void Matrix::Inverse()
+    {
+        *this = Matrix::Inverse(*this);
+    }
+
     const glm::mat4& Matrix::ToGlmMat4() const
     {
         return *(const glm::mat4*)this;
@@ -18,6 +28,11 @@ namespace Silent::Math
     glm::mat4& Matrix::ToGlmMat4()
     {
         return *(glm::mat4*)this;
+    }
+
+    Vector3 Matrix::ToTranslation() const
+    {
+        return Vector3((*this)[3][0], (*this)[3][1], (*this)[3][2]);
     }
 
     Vector3 Matrix::ToDirection() const
@@ -57,5 +72,12 @@ namespace Silent::Math
 
         // Set axis and angle.
         return AxisAngle(axis, FP_ANGLE_FROM_RAD(rad));
+    }
+
+    Vector3 Matrix::ToScale() const
+    {
+        return Vector3(Vector3((*this)[0][0], (*this)[0][1], (*this)[0][2]).Length(),
+                       Vector3((*this)[1][0], (*this)[1][1], (*this)[1][2]).Length(),
+                       Vector3((*this)[2][0], (*this)[2][1], (*this)[2][2]).Length());
     }
 }
