@@ -15,7 +15,7 @@ namespace Silent::Math
         auto posDelta = sphere.Center - Origin;
         auto projLength = Vector3::Dot(posDelta, Direction);
 
-        auto distSqr = glm::length2(posDelta) - SQUARE(projLength);
+        auto distSqr = posDelta.LengthSquared() - SQUARE(projLength);
         auto radiusSqr = SQUARE(sphere.Radius);
         if (distSqr > radiusSqr)
         {
@@ -28,7 +28,7 @@ namespace Silent::Math
 
     std::optional<float> Ray::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
-        auto invDir = 1.0f / Direction;
+        /*auto invDir = 1.0f / Direction;
         auto intersectMin = ((aabb.Center - aabb.Extents) - Origin) * invDir;
         auto intersectMax = ((aabb.Center + aabb.Extents) - Origin) * invDir;
 
@@ -39,7 +39,9 @@ namespace Silent::Math
             return std::nullopt;
         }
 
-        return nearIntersect;
+        return nearIntersect;*/
+        return std::nullopt;
+
     }
 
     std::optional<float> Ray::Intersects(const OrientedBoundingBox& obb) const

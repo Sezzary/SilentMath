@@ -4,6 +4,7 @@
 #include "Math/Constants.h"
 #include "Math/Objects/AxisAlignedBoundingBox.h"
 #include "Math/Objects/OrientedBoundingBox.h"
+#include "Math/Objects/Vector3.h"
 
 namespace Silent::Math
 {
@@ -17,20 +18,20 @@ namespace Silent::Math
         return CUBE(Radius) * (PI * (4.0f / 3.0f));
     }
 
-    bool BoundingSphere::Intersects(const glm::vec3& point) const
+    bool BoundingSphere::Intersects(const Vector3& point) const
     {
-        return glm::distance2(Center, point) <= SQUARE(Radius);
+        return Vector3::DistanceSquared(Center, point) <= SQUARE(Radius);
     }
 
     bool BoundingSphere::Intersects(const BoundingSphere& sphere) const
     {
-        return glm::distance2(Center, sphere.Center) <= SQUARE(Radius + sphere.Radius);
+        return Vector3::DistanceSquared(Center, sphere.Center) <= SQUARE(Radius + sphere.Radius);
     }
 
     bool BoundingSphere::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
-        auto closestPoint = glm::clamp(Center, aabb.Center - aabb.Extents, aabb.Center + aabb.Extents);
-        return glm::distance2(closestPoint, Center) <= SQUARE(Radius);
+        auto closestPoint = Vector3::Clamp(Center, aabb.Center - aabb.Extents, aabb.Center + aabb.Extents);
+        return Vector3::DistanceSquared(closestPoint, Center) <= SQUARE(Radius);
     }
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
@@ -42,25 +43,25 @@ namespace Silent::Math
         auto closestPoint = obb.Center;
 
         // Project sphere center onto each axis of OBB.
-        for (int i = 0; i < AXIS_COUNT; i++)
+        /*for (int i = 0; i < AXIS_COUNT; i++)
         {
-            float proj = glm::dot(centerDelta, rotMat[i]);
+            float proj = Vector3::Dot(centerDelta, rotMat[i]);
             proj = glm::clamp(proj, -obb.Extents[i], obb.Extents[i]);
             closestPoint += proj * rotMat[i];
-        }
+        }*/
 
-        float distSqr = glm::distance2(Center, closestPoint);
+        float distSqr = Vector3::DistanceSquared(Center, closestPoint);
         return distSqr <= SQUARE(Radius);
     }
     
-    ContainmentType BoundingSphere::Contains(const glm::vec3& point) const
+    ContainmentType BoundingSphere::Contains(const Vector3& point) const
     {
         return Intersects(point) ? ContainmentType::Contains : ContainmentType::None;
     }
 
     ContainmentType BoundingSphere::Contains(const BoundingSphere& sphere) const
     {
-        float distSqr = glm::distance2(Center, sphere.Center);
+        float distSqr = Vector3::DistanceSquared(Center, sphere.Center);
         if (distSqr <= ((Radius - sphere.Radius) * (Radius - sphere.Radius)))
         {
             return ContainmentType::Contains;
@@ -80,15 +81,15 @@ namespace Silent::Math
         auto aabbMin = aabb.GetMin();
         auto aabbMax = aabb.GetMax();
     
-        auto closestPoint = glm::clamp(Center, aabbMin, aabbMax);
-        float distSqr = glm::distance2(closestPoint, Center);
+        auto closestPoint = Vector3::Clamp(Center, aabbMin, aabbMax);
+        float distSqr = Vector3::DistanceSquared(closestPoint, Center);
         if (distSqr > SQUARE(Radius))
         {
             return ContainmentType::None;
         }
 
-        auto sphereMin = Center - glm::vec3(Radius);
-        auto sphereMax = Center + glm::vec3(Radius);
+        auto sphereMin = Center - Vector3(Radius);
+        auto sphereMax = Center + Vector3(Radius);
 
         if (sphereMin.x >= aabbMin.x && sphereMax.x <= aabbMax.x &&
             sphereMin.y >= aabbMin.y && sphereMax.y <= aabbMax.y &&
@@ -106,7 +107,7 @@ namespace Silent::Math
         for (const auto& corner : obb.GetCorners())
         {
             auto centerDelta = corner - Center;
-            float distSqr = glm::dot(centerDelta, centerDelta);
+            float distSqr = Vector3::Dot(centerDelta, centerDelta);
             if (distSqr > SQUARE(Radius))
             {
                 allInside = false;
@@ -127,12 +128,12 @@ namespace Silent::Math
         return ContainmentType::None;
     }
     
-    bool BoundingSphere::operator ==(const BoundingSphere& sphere) const
+    bool BoundingSphere::operator==(const BoundingSphere& sphere) const
     {
         return Center == sphere.Center && Radius == sphere.Radius;
     }
 
-    bool BoundingSphere::operator !=(const BoundingSphere& sphere) const
+    bool BoundingSphere::operator!=(const BoundingSphere& sphere) const
     {
         return !(*this == sphere);
     }

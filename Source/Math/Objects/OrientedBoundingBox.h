@@ -16,41 +16,41 @@ namespace Silent::Math
 
         // Fields
 
-        glm::vec3 Center   = glm::vec3();
-        glm::vec3 Extents  = glm::vec3();
+        Vector3 Center     = Vector3();
+        Vector3 Extents    = Vector3();
         glm::quat Rotation = glm::quat();
 
         // Constructors
 
        constexpr OrientedBoundingBox() = default;
-       constexpr OrientedBoundingBox(const glm::vec3& center, const glm::vec3& extents, const glm::quat rot) : Center(center), Extents(extents), Rotation(rot) {}
+       constexpr OrientedBoundingBox(const Vector3& center, const Vector3& extents, const glm::quat rot) : Center(center), Extents(extents), Rotation(rot) {}
 
        // Getters
 
-       float                  GetWidth() const;
-       float                  GetHeight() const;
-       float                  GetDepth() const;
-       float                  GetSurfaceArea() const;
-       float                  GetVolume() const;
-       std::vector<glm::vec3> GetCorners() const;
-       glm::mat4              GetTransformMatrix() const;
+       float                GetWidth() const;
+       float                GetHeight() const;
+       float                GetDepth() const;
+       float                GetSurfaceArea() const;
+       float                GetVolume() const;
+       std::vector<Vector3> GetCorners() const;
+       glm::mat4            GetTransformMatrix() const;
 
        // Utilities
 
-       bool Intersects(const glm::vec3& point) const;
+       bool Intersects(const Vector3& point) const;
        bool Intersects(const BoundingSphere& sphere) const;
        bool Intersects(const AxisAlignedBoundingBox& aabb) const;
        bool Intersects(const OrientedBoundingBox& obb) const;
 
-       ContainmentType Contains(const glm::vec3& point) const;
+       ContainmentType Contains(const Vector3& point) const;
        ContainmentType Contains(const BoundingSphere& sphere) const;
        ContainmentType Contains(const AxisAlignedBoundingBox& aabb) const;
        ContainmentType Contains(const OrientedBoundingBox& obb) const;
 
        // Operators
 
-       bool                 operator ==(const OrientedBoundingBox& obb) const;
-       bool                 operator !=(const OrientedBoundingBox& obb) const;
-       OrientedBoundingBox& operator =(const OrientedBoundingBox& obb) = default;
+       bool                 operator==(const OrientedBoundingBox& obb) const;
+       bool                 operator!=(const OrientedBoundingBox& obb) const;
+       OrientedBoundingBox& operator=(const OrientedBoundingBox& obb) = default;
     };
 }

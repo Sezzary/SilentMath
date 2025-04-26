@@ -32,20 +32,20 @@ namespace Silent::Math
         return Extents.x * Extents.y * Extents.z;
     }
 
-    std::vector<glm::vec3> OrientedBoundingBox::GetCorners() const
+    std::vector<Vector3> OrientedBoundingBox::GetCorners() const
     {
         auto rotMat = glm::mat4_cast(Rotation);
 
-        return std::vector<glm::vec3>
+        return std::vector<Vector3>
         {
-            Center + glm::vec3(glm::vec4(-Extents.x, -Extents.y, -Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4( Extents.x, -Extents.y, -Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4(-Extents.x,  Extents.y, -Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4( Extents.x,  Extents.y, -Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4(-Extents.x, -Extents.y,  Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4( Extents.x, -Extents.y,  Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4(-Extents.x,  Extents.y,  Extents.z, 1.0f) * rotMat),
-            Center + glm::vec3(glm::vec4( Extents.x,  Extents.y,  Extents.z, 1.0f) * rotMat)
+            Center + Vector3(glm::vec4(-Extents.x, -Extents.y, -Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4( Extents.x, -Extents.y, -Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4(-Extents.x,  Extents.y, -Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4( Extents.x,  Extents.y, -Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4(-Extents.x, -Extents.y,  Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4( Extents.x, -Extents.y,  Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4(-Extents.x,  Extents.y,  Extents.z, 1.0f) * rotMat),
+            Center + Vector3(glm::vec4( Extents.x,  Extents.y,  Extents.z, 1.0f) * rotMat)
         };
     }
 
@@ -57,7 +57,7 @@ namespace Silent::Math
         return rotMat * translationMat;
     }
     
-    bool OrientedBoundingBox::Intersects(const glm::vec3& point) const
+    bool OrientedBoundingBox::Intersects(const Vector3& point) const
     {
         auto rotMat = glm::mat3_cast(Rotation);
         auto localPoint = (point - Center) * rotMat;
@@ -128,7 +128,7 @@ namespace Silent::Math
         return true;
     }
 
-    ContainmentType OrientedBoundingBox::Contains(const glm::vec3& point) const
+    ContainmentType OrientedBoundingBox::Contains(const Vector3& point) const
     {
         return Intersects(point) ? ContainmentType::Contains : ContainmentType::None;
     }
@@ -165,7 +165,7 @@ namespace Silent::Math
         }
 
         // Check cross products of axes of both OBBs.
-        glm::vec3 axes[AXIS_COUNT] = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) };
+        Vector3 axes[AXIS_COUNT] = { Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) };
         for (int i = 0; i < AXIS_COUNT; i++)
         {
             for (int j = 0; j < AXIS_COUNT; j++)
@@ -184,12 +184,12 @@ namespace Silent::Math
         return ContainmentType::Contains;
     }
 
-    bool OrientedBoundingBox::operator ==(const OrientedBoundingBox& obb) const
+    bool OrientedBoundingBox::operator==(const OrientedBoundingBox& obb) const
     {
         return Center == obb.Center && Extents == obb.Extents && Rotation == obb.Rotation;
     }
 
-    bool OrientedBoundingBox::operator !=(const OrientedBoundingBox& obb) const
+    bool OrientedBoundingBox::operator!=(const OrientedBoundingBox& obb) const
     {
         return !(*this == obb);
     }

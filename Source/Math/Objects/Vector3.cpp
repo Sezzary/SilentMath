@@ -97,6 +97,16 @@ namespace Silent::Math
         *this = Vector3::Max(*this, vec);
     }
 
+    Vector3 Vector3::Clamp(const Vector3& vec, const Vector3& min, const Vector3& max)
+    {
+        return Vector3(glm::clamp(vec.ToGlmVec3(), min.ToGlmVec3(), max.ToGlmVec3()));
+    }
+
+    void Vector3::Clamp(const Vector3& min, const Vector3& max)
+    {
+        *this = Vector3::Clamp(*this, min, max);
+    }
+
     Vector3 Vector3::Normalize(const Vector3& vec)
     {
         return Vector3(glm::normalize(vec.ToGlmVec3()));

@@ -17,27 +17,27 @@ namespace Silent::Math
 
         // Fields
 
-        glm::vec3 Center  = glm::vec3();
-        glm::vec3 Extents = glm::vec3();
+        Vector3 Center  = Vector3::Zero;
+        Vector3 Extents = Vector3::Zero;
 
         // Constructors
     
         constexpr AxisAlignedBoundingBox() = default;
-        constexpr AxisAlignedBoundingBox(const glm::vec3& center, const glm::vec3& extents) : Center(center), Extents(extents) {}
-                  AxisAlignedBoundingBox(const std::span<const glm::vec3>& points);
+        constexpr AxisAlignedBoundingBox(const Vector3& center, const Vector3& extents) : Center(center), Extents(extents) {}
+                  AxisAlignedBoundingBox(const std::span<const Vector3>& points);
                   AxisAlignedBoundingBox(const BoundingSphere& sphere);
                   AxisAlignedBoundingBox(const OrientedBoundingBox& obb);
 
         // Getters
 
-        float                  GetWidth() const;
-        float                  GetHeight() const;
-        float                  GetDepth() const;
-        float                  GetSurfaceArea() const;
-        float                  GetVolume() const;
-        Vector3                GetMin() const;
-        Vector3                GetMax() const;
-        std::vector<glm::vec3> GetCorners() const;
+        float                GetWidth() const;
+        float                GetHeight() const;
+        float                GetDepth() const;
+        float                GetSurfaceArea() const;
+        float                GetVolume() const;
+        Vector3              GetMin() const;
+        Vector3              GetMax() const;
+        std::vector<Vector3> GetCorners() const;
 
         // Inquirers
 

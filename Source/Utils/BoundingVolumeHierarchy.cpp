@@ -112,7 +112,7 @@ namespace Silent::Utils
 
         // Set initial parameters.
         leaf.ObjectId = objectId;
-        leaf.Aabb = AxisAlignedBoundingBox(aabb.Center, aabb.Extents + glm::vec3(boundary));
+        leaf.Aabb = AxisAlignedBoundingBox(aabb.Center, aabb.Extents + Vector3(boundary));
         leaf.Height = 0;
 
         // Insert new leaf.

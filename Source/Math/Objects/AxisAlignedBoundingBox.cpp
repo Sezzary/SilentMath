@@ -11,16 +11,16 @@ using namespace Silent::Utils;
 
 namespace Silent::Math
 {
-    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const std::span<const glm::vec3>& points)
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const std::span<const Vector3>& points)
     {
-        auto pointMin = glm::vec3(INFINITY);
-        auto pointMax = glm::vec3(-INFINITY);
+        auto pointMin = Vector3(INFINITY);
+        auto pointMax = Vector3(-INFINITY);
 
         // Compute min and max AABB points.
         for (const auto& point : points)
         {
-            pointMin = glm::min(pointMin, point);
-            pointMax = glm::max(pointMax, point);
+            pointMin.Min(point);
+            pointMax.Max(point);
         }
 
         // Construct AABB.
@@ -31,7 +31,7 @@ namespace Silent::Math
     AxisAlignedBoundingBox::AxisAlignedBoundingBox(const BoundingSphere& sphere)
     {
         Center = sphere.Center;
-        Extents = glm::vec3(sphere.Radius);
+        Extents = Vector3(sphere.Radius);
     }
 
     AxisAlignedBoundingBox::AxisAlignedBoundingBox(const OrientedBoundingBox& obb)
@@ -74,9 +74,9 @@ namespace Silent::Math
         return Center + Extents;
     }
 
-    std::vector<glm::vec3> AxisAlignedBoundingBox::GetCorners() const
+    std::vector<Vector3> AxisAlignedBoundingBox::GetCorners() const
     {
-        return std::vector<glm::vec3>
+        return std::vector<Vector3>
         {
             Center + Vector3(-Extents.x, -Extents.y, -Extents.z),
             Center + Vector3( Extents.x, -Extents.y, -Extents.z),
@@ -113,7 +113,6 @@ namespace Silent::Math
 
     bool AxisAlignedBoundingBox::Intersects(const OrientedBoundingBox& obb) const
     {
-        constexpr uint  AXIS_COUNT       = 3;
         constexpr float DEFAULT_PROJ_MIN = std::numeric_limits<float>::max();
         constexpr float DEFAULT_PROJ_MAX = std::numeric_limits<float>::lowest();
 
@@ -122,30 +121,30 @@ namespace Silent::Math
         auto aabbMax = Center + Extents;
 
         // Check for overlap on each axis.
-        for (int i = 0; i < AXIS_COUNT; i++)
+        for (int i = 0; i < Vector3::AXIS_COUNT; i++)
         {
-            auto axis = glm::vec3();
+            auto axis = Vector3::Zero;
 
             // X axis.
             if (i == 0)
             {
-                axis = glm::vec3(1.0f, 0.0f, 0.0f);
+                axis = Vector3::UnitX;
             }
             // Y axis.
             else if (i == 1)
             {
-                axis = glm::vec3(0.0f, 1.0f, 0.0f);
+                axis = Vector3::UnitY;
             }
             // Z axis.
             else if (i == 2)
             {
-                axis = glm::vec3(0.0f, 0.0f, 1.0f);
+                axis = Vector3::UnitZ;
             }
 
-            float aabbProjMin = glm::dot(aabbMin, axis);
-            float aabbProjMax = glm::dot(aabbMax, axis);
+            float aabbProjMin = Vector3::Dot(aabbMin, axis);
+            float aabbProjMax = Vector3::Dot(aabbMax, axis);
 
-            // Ensure aabbProjMin is always less than aabbProjMax.
+            // Ensure `aabbProjMin` is always less than `aabbProjMax`.
             if (aabbProjMin > aabbProjMax)
             {
                 std::swap(aabbProjMin, aabbProjMax);
@@ -154,10 +153,10 @@ namespace Silent::Math
             float obbProjMin = DEFAULT_PROJ_MIN;
             float obbProjMax = DEFAULT_PROJ_MAX;
 
-            // Project OBB corners onto axis i.
+            // Project OBB corners onto axis `i`.
             for (const auto& corner : obb.GetCorners())
             {
-                float proj = glm::dot(corner, axis);
+                float proj = Vector3::Dot(corner, axis);
                 obbProjMin = std::min(obbProjMin, proj);
                 obbProjMax = std::max(obbProjMax, proj);
             }
@@ -255,7 +254,7 @@ namespace Silent::Math
     void AxisAlignedBoundingBox::Merge(const AxisAlignedBoundingBox& aabb)
     {
         Center = (Center + aabb.Center) / 2.0f;
-        Extents = glm::max(Extents, aabb.Extents);
+        Extents.Max(aabb.Extents);
     }
 
     bool AxisAlignedBoundingBox::operator==(const AxisAlignedBoundingBox& aabb) const
