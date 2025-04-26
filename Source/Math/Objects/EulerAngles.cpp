@@ -23,11 +23,16 @@ namespace Silent::Math
         z = FP_ANGLE_FROM_RAD(0.0f);
     }
 
-    bool EulerAngles::Compare(const EulerAngles& eulerAngles0, const EulerAngles& eulerAngles1, short epsilon)
+    EulerAngles EulerAngles::InterpConstant(const EulerAngles& from, const EulerAngles& to, short angularVel)
     {
-        return Compare(eulerAngles0.x, eulerAngles1.x, epsilon) &&
-               Compare(eulerAngles0.y, eulerAngles1.y, epsilon) &&
-               Compare(eulerAngles0.z, eulerAngles1.z, epsilon);
+        return EulerAngles(InterpConstant(from.x, to.x, angularVel),
+                           InterpConstant(from.y, to.y, angularVel),
+                           InterpConstant(from.z, to.z, angularVel));
+    }
+
+    void EulerAngles::InterpConstant(const EulerAngles& to, short angularVel)
+    {
+        *this = InterpConstant(*this, to, angularVel);
     }
 
     EulerAngles EulerAngles::Lerp(const EulerAngles& from, const EulerAngles& to, float alpha, short epsilon)
@@ -55,16 +60,11 @@ namespace Silent::Math
         *this = Slerp(*this, to, alpha);
     }
 
-    EulerAngles EulerAngles::InterpConstant(const EulerAngles& from, const EulerAngles& to, short angularVel)
+    bool EulerAngles::Compare(const EulerAngles& eulerAngles0, const EulerAngles& eulerAngles1, short epsilon)
     {
-        return EulerAngles(InterpConstant(from.x, to.x, angularVel),
-                           InterpConstant(from.y, to.y, angularVel),
-                           InterpConstant(from.z, to.z, angularVel));
-    }
-
-    void EulerAngles::InterpConstant(const EulerAngles& to, short angularVel)
-    {
-        *this = InterpConstant(*this, to, angularVel);
+        return Compare(eulerAngles0.x, eulerAngles1.x, epsilon) &&
+               Compare(eulerAngles0.y, eulerAngles1.y, epsilon) &&
+               Compare(eulerAngles0.z, eulerAngles1.z, epsilon);
     }
 
     Vector3 EulerAngles::ToDirection() const
@@ -176,10 +176,15 @@ namespace Silent::Math
         return EulerAngles((short)round((float)x / scalar), (short)round((float)y / scalar), (short)round((float)z / scalar));
     }
 
-    bool EulerAngles::Compare(short angle0, short angle1, short epsilon)
+    short EulerAngles::InterpConstant(short from, short to, short angularVel)
     {
-        short delta = angle1 - angle0;
-        return abs(delta) <= epsilon;
+        if (Compare(from, to, angularVel))
+        {
+            return to;
+        }
+
+        int sign = GetSign(to - from);
+        return (short)(from + (angularVel * sign));
     }
 
     short EulerAngles::Lerp(short from, short to, float alpha, short epsilon)
@@ -193,14 +198,9 @@ namespace Silent::Math
         return (short)round(from + (angleDelta * std::clamp(alpha, 0.0f, 1.0f)));
     }
 
-    short EulerAngles::InterpConstant(short from, short to, short angularVel)
+    bool EulerAngles::Compare(short angle0, short angle1, short epsilon)
     {
-        if (Compare(from, to, angularVel))
-        {
-            return to;
-        }
-
-        int sign = GetSign(to - from);
-        return (short)(from + (angularVel * sign));
+        short delta = angle1 - angle0;
+        return abs(delta) <= epsilon;
     }
 }

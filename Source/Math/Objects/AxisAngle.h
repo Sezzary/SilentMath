@@ -23,9 +23,10 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr AxisAngle() = default;
+        constexpr AxisAngle()                                 = default;
         constexpr AxisAngle(const Vector3& axis, short angle) : Axis(axis), Angle(angle) {};
-                  AxisAngle(const Vector3& dir);
+
+        AxisAngle(const Vector3& dir);
 
         // Utilities
 

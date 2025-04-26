@@ -16,13 +16,16 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr Quaternion() = default;
-        constexpr Quaternion(const glm::quat& quat) : glm::quat(quat) {}
-        constexpr Quaternion(float x, float y, float z, float w)      { this->x = x; this->y = y; this->z = z; this->w = w; }
-        constexpr Quaternion(const Vector3& vec, float scalar)        { this->x = vec.x; this->y = vec.y; this->z = vec.z; this->w = scalar; }
-                  Quaternion(const Vector3& dir);
+        constexpr Quaternion()                                   = default;
+        constexpr Quaternion(const glm::quat& quat)              : glm::quat(quat) {}
+        constexpr Quaternion(float x, float y, float z, float w) : glm::quat(w, x, y, z) {}
+        constexpr Quaternion(const Vector3& vec, float scalar)   : glm::quat(scalar, vec.ToGlmVec3()) {}
+
+        Quaternion(const Vector3& dir);
 
         // Utilities
+
+        static short AngularDistance(const Quaternion& from, const Quaternion& to);
 
         static Quaternion Invert(const Quaternion& quat);
         void              Invert();

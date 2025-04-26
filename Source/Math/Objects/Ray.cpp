@@ -41,7 +41,6 @@ namespace Silent::Math
 
         return nearIntersect;*/
         return std::nullopt;
-
     }
 
     std::optional<float> Ray::Intersects(const OrientedBoundingBox& obb) const

@@ -7,12 +7,13 @@ namespace Silent::Math
     class Quaternion;
     class Vector3;
 
+    // NOTE: Angle components in fixed-point Q1.15 format.
     class EulerAngles
     {
     private:
         // Constants
 
-        static constexpr auto DEFAULT_EPSILON = (short)3;
+        static constexpr short DEFAULT_EPSILON = 3;
 
     public:
         // Fields
@@ -27,19 +28,21 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr EulerAngles() = default;
-        constexpr EulerAngles(short x, short y, short z) { this->x = x; this->y = y; this->z = z; }
-                  EulerAngles(const Vector3& dir);
+        constexpr EulerAngles()                          = default;
+        constexpr EulerAngles(short x, short y, short z) : x(x), y(y), z(z) {}
+
+        EulerAngles(const Vector3& dir);
 
         // Utilities
 
-        static bool        Compare(const EulerAngles& eulerAngles0, const EulerAngles& eulerAngles1, short epsilon = DEFAULT_EPSILON);
+        static EulerAngles InterpConstant(const EulerAngles& from, const EulerAngles& eulerTo, short angularVel);
+        void               InterpConstant(const EulerAngles& to, short angularVel);
         static EulerAngles Lerp(const EulerAngles& from, const EulerAngles& to, float alpha, short epsilon = DEFAULT_EPSILON);
         void               Lerp(const EulerAngles& to, float alpha, short epsilon = DEFAULT_EPSILON);
         static EulerAngles Slerp(const EulerAngles& from, const EulerAngles& to, float alpha);
         void               Slerp(const EulerAngles& to, float alpha);
-        static EulerAngles InterpConstant(const EulerAngles& from, const EulerAngles& eulerTo, short angularVel);
-        void               InterpConstant(const EulerAngles& to, short angularVel);
+
+        static bool Compare(const EulerAngles& eulerAngles0, const EulerAngles& eulerAngles1, short epsilon = DEFAULT_EPSILON);
 
         // Converters
 
@@ -69,8 +72,8 @@ namespace Silent::Math
     private:
         // Helpers
 
-        static bool  Compare(short angle0, short angle1, short epsilon = DEFAULT_EPSILON);
-        static short Lerp(short from, short to, float alpha, short epsilon = DEFAULT_EPSILON);
         static short InterpConstant(short from, short to, short angularVel);
+        static short Lerp(short from, short to, float alpha, short epsilon = DEFAULT_EPSILON);
+        static bool  Compare(short angle0, short angle1, short epsilon = DEFAULT_EPSILON);
     };
 }

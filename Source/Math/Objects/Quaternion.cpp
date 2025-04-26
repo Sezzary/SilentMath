@@ -32,6 +32,15 @@ namespace Silent::Math
         z = axis.z * sinHalfAngle;
     }
 
+    short Quaternion::AngularDistance(const Quaternion& from, const Quaternion& to)
+    {
+        float dot = glm::dot(from.ToGlmQuat(), to.ToGlmQuat());
+        dot = glm::clamp(dot, -1.0f, 1.0f);
+
+        float rad = glm::acos(dot) * 2.0f;
+        return FP_ANGLE_FROM_RAD(rad);
+    }
+
     Quaternion Quaternion::Invert(const Quaternion& quat)
     {
         return Quaternion(glm::inverse(quat.ToGlmQuat()));

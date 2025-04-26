@@ -23,10 +23,10 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr Vector3() = default;
-        constexpr Vector3(const glm::vec3& vec) : glm::vec3(vec) {}
-        constexpr Vector3(float x)                               { this->x = x; this->y = x; this->z = x; }
-        constexpr Vector3(float x, float y, float z)             { this->x = x; this->y = y; this->z = z; }
+        constexpr Vector3()                          = default;
+        constexpr Vector3(const glm::vec3& vec)      : glm::vec3(vec)     {}
+        constexpr Vector3(float x)                   : glm::vec3(x)       {}
+        constexpr Vector3(float x, float y, float z) : glm::vec3(x, y, z) {}
 
         // Utilities
 

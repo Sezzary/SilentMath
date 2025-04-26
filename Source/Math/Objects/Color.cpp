@@ -87,10 +87,9 @@ namespace Silent::Math
                      (float)(packedRgba & BIT_MASK) / (float)BIT_MASK);
     }
 
-    // TODO
     Color Color::Lerp(const Color& color0, const Color& color1, float alpha)
     {
-        return Color();//glm::lerp(color0, color1, alpha));
+        return Color(glm::lerp(color0.ToGlmVec4(), color1.ToGlmVec4(), alpha));
     }
 
     void Color::Lerp(const Color& color, float alpha)
@@ -154,6 +153,16 @@ namespace Silent::Math
     uint Color::ToPackedRgba() const
     {
         return (FP_COLOR(R()) << 24) | (FP_COLOR(G()) << 16) | (FP_COLOR(B()) << 8) | FP_COLOR(A());
+    }
+
+    const glm::vec4 Color::ToGlmVec4() const
+    {
+        return *(const glm::vec4*)this;
+    }
+
+    glm::vec4 Color::ToGlmVec4()
+    {
+        return *(glm::vec4*)this;
     }
 
     bool Color::operator ==(const Color& color) const
