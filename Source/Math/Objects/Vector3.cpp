@@ -12,6 +12,16 @@ namespace Silent::Math
     const Vector3 Vector3::UnitY = Vector3(0.0f, 1.0f, 0.0f);
     const Vector3 Vector3::UnitZ = Vector3(0.0f, 0.0f, 1.0f);
 
+    float Vector3::Length() const
+    {
+        return glm::length(ToGlmVec3());
+    }
+
+    float Vector3::LengthSquared() const
+    {
+        return glm::length2(ToGlmVec3());
+    }
+
     float Vector3::Distance(const Vector3& from, const Vector3& to)
     {
         return glm::distance(from.ToGlmVec3(), to.ToGlmVec3());
@@ -30,26 +40,6 @@ namespace Silent::Math
     Vector3 Vector3::Cross(const Vector3& vec0, const Vector3& vec1)
     {
         return Vector3(glm::cross(vec0.ToGlmVec3(), vec1.ToGlmVec3()));
-    }
-
-    float Vector3::Length(const Vector3& vec)
-    {
-        return glm::length(vec.ToGlmVec3());
-    }
-
-    float Vector3::Length() const
-    {
-        return Vector3::Length(*this);
-    }
-
-    float Vector3::LengthSquared(const Vector3& vec)
-    {
-        return glm::length2(vec.ToGlmVec3());
-    }
-
-    float Vector3::LengthSquared() const
-    {
-        return Vector3::LengthSquared(*this);
     }
 
     Vector3 Vector3::Min(const Vector3& vec0, const Vector3& vec1)

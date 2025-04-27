@@ -13,6 +13,16 @@ namespace Silent::Math
     const Vector3i Vector3i::UnitY = Vector3i(0, 1, 0);
     const Vector3i Vector3i::UnitZ = Vector3i(0, 0, 1);
 
+    float Vector3i::Length() const
+    {
+        return ToVector3().Length();
+    }
+
+    float Vector3i::LengthSquared() const
+    {
+        return ToVector3().LengthSquared();
+    }
+
     float Vector3i::Distance(const Vector3i& from, const Vector3i& to)
     {
         return Vector3::Distance(from.ToVector3(), to.ToVector3());
@@ -21,26 +31,6 @@ namespace Silent::Math
     float Vector3i::DistanceSquared(const Vector3i& from, const Vector3i& to)
     {
         return Vector3::DistanceSquared(from.ToVector3(), to.ToVector3());
-    }
-
-    float Vector3i::Length(const Vector3i& vec)
-    {
-        return vec.ToVector3().Length();
-    }
-
-    float Vector3i::Length() const
-    {
-        return Vector3i::Length(*this);
-    }
-
-    float Vector3i::LengthSquared(const Vector3i& vec)
-    {
-        return vec.ToVector3().LengthSquared();
-    }
-
-    float Vector3i::LengthSquared() const
-    {
-        return Vector3i::LengthSquared(*this);
     }
 
     Vector3i Vector3i::Min(const Vector3i& vec0, const Vector3i& vec1)

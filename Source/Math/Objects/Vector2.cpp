@@ -11,6 +11,16 @@ namespace Silent::Math
     const Vector2 Vector2::UnitX = Vector2(1.0f, 0.0f);
     const Vector2 Vector2::UnitY = Vector2(0.0f, 1.0f);
 
+    float Vector2::Length() const
+    {
+        return glm::length(ToGlmVec2());
+    }
+
+    float Vector2::LengthSquared() const
+    {
+        return glm::length2(ToGlmVec2());
+    }
+
     float Vector2::Distance(const Vector2& from, const Vector2& to)
     {
         return glm::distance(from.ToGlmVec2(), to.ToGlmVec2());
@@ -29,26 +39,6 @@ namespace Silent::Math
     float Vector2::Cross(const Vector2& vec0, const Vector2& vec1)
     {
         return (vec0.x * vec1.y) - (vec0.y * vec1.x);
-    }
-
-    float Vector2::Length(const Vector2& vec)
-    {
-        return glm::length(vec.ToGlmVec2());
-    }
-
-    float Vector2::Length() const
-    {
-        return Vector2::Length(*this);
-    }
-
-    float Vector2::LengthSquared(const Vector2& vec)
-    {
-        return glm::length2(vec.ToGlmVec2());
-    }
-
-    float Vector2::LengthSquared() const
-    {
-        return Vector2::LengthSquared(*this);
     }
 
     Vector2 Vector2::Min(const Vector2& vec0, const Vector2& vec1)
