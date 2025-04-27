@@ -65,11 +65,13 @@ namespace Silent::Math
         Vector2i& operator-=(const Vector2i& vec);
         Vector2i& operator*=(const Vector2i& vec);
         Vector2i& operator*=(float scalar);
+        Vector2i& operator/=(const Vector2i& vec);
         Vector2i& operator/=(float scalar);
         Vector2i  operator+(const Vector2i& vec) const;
         Vector2i  operator-(const Vector2i& vec) const;
         Vector2i  operator*(const Vector2i& vec) const;
         Vector2i  operator*(float scalar) const;
+        Vector2i  operator/(const Vector2i& vec) const;
         Vector2i  operator/(float scalar) const;
         Vector2i  operator-() const;
     };

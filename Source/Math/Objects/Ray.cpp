@@ -28,7 +28,7 @@ namespace Silent::Math
 
     std::optional<float> Ray::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
-        /*auto invDir = 1.0f / Direction;
+        auto invDir = Vector3::One / Direction;
         auto intersectMin = ((aabb.Center - aabb.Extents) - Origin) * invDir;
         auto intersectMax = ((aabb.Center + aabb.Extents) - Origin) * invDir;
 
@@ -39,8 +39,7 @@ namespace Silent::Math
             return std::nullopt;
         }
 
-        return nearIntersect;*/
-        return std::nullopt;
+        return nearIntersect;
     }
 
     std::optional<float> Ray::Intersects(const OrientedBoundingBox& obb) const

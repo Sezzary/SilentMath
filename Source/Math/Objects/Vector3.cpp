@@ -84,7 +84,7 @@ namespace Silent::Math
 
     Vector3 Vector3::Lerp(const Vector3& from, const Vector3& to, float alpha)
     {
-        return Vector3(glm::lerp(from.ToGlmVec3(), to.ToGlmVec3(), alpha));
+        return Vector3(std::lerp(from.ToGlmVec3(), to.ToGlmVec3(), alpha));
     }
 
     void Vector3::Lerp(const Vector3& to, float alpha)
@@ -181,6 +181,12 @@ namespace Silent::Math
         return *this;
     }
 
+    Vector3& Vector3::operator/=(const Vector3& vec)
+    {
+        ToGlmVec3() /= vec.ToGlmVec3();
+        return *this;
+    }
+
     Vector3& Vector3::operator/=(float scalar)
     {
         ToGlmVec3() /= scalar;
@@ -205,6 +211,11 @@ namespace Silent::Math
     Vector3 Vector3::operator*(float scalar) const
     {
         return Vector3(ToGlmVec3() * scalar);
+    }
+
+    Vector3 Vector3::operator/(const Vector3& vec) const
+    {
+        return Vector3(ToGlmVec3() / vec.ToGlmVec3());
     }
 
     Vector3 Vector3::operator/(float scalar) const

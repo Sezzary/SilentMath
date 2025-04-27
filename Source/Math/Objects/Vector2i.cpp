@@ -68,7 +68,7 @@ namespace Silent::Math
         auto toFloat = glm::vec2(to.ToGlmVec2i());
 
         auto vecFloat = glm::lerp(fromFloat, toFloat, alpha);
-        return Vector2i(glm::ivec2(glm::round(vecFloat)));
+        return Vector2i(glm::ivec2(round(vecFloat)));
     }
 
     void Vector2i::Lerp(const Vector2i& to, float alpha)
@@ -142,14 +142,14 @@ namespace Silent::Math
     Vector2i& Vector2i::operator*=(float scalar)
     {
         auto vecFloat = glm::vec2(ToGlmVec2i()) * scalar;
-        *this = Vector2i(glm::round(vecFloat));
+        *this = Vector2i(round(vecFloat));
         return *this;
     }
 
     Vector2i& Vector2i::operator/=(float scalar)
     {
         auto vecFloat = glm::vec2(ToGlmVec2i()) / scalar;
-        *this = Vector2i(glm::round(vecFloat));
+        *this = Vector2i(round(vecFloat));
         return *this;
     }
 
@@ -171,13 +171,13 @@ namespace Silent::Math
     Vector2i Vector2i::operator*(float scalar) const
     {
         auto vecFloat = glm::vec2(ToGlmVec2i()) * scalar;
-        return Vector2i(glm::round(vecFloat));
+        return Vector2i(round(vecFloat));
     }
 
     Vector2i Vector2i::operator/(float scalar) const
     {
         auto vecFloat = glm::vec2(ToGlmVec2i()) / scalar;
-        return Vector2i(glm::round(vecFloat));
+        return Vector2i(round(vecFloat));
     }
 
     Vector2i Vector2i::operator-() const

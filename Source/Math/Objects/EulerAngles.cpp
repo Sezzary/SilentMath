@@ -18,8 +18,8 @@ namespace Silent::Math
     {
         auto dirNorm = Vector3::Normalize(dir);
 
-        x = FP_ANGLE_FROM_RAD(-glm::asin(dirNorm.y));
-        y = FP_ANGLE_FROM_RAD(glm::atan2(dirNorm.x, dirNorm.z));
+        x = FP_ANGLE_FROM_RAD(-asin(dirNorm.y));
+        y = FP_ANGLE_FROM_RAD(atan2(dirNorm.x, dirNorm.z));
         z = FP_ANGLE_FROM_RAD(0.0f);
     }
 

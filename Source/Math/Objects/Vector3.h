@@ -73,11 +73,13 @@ namespace Silent::Math
         Vector3& operator-=(const Vector3& vec);
         Vector3& operator*=(const Vector3& vec);
         Vector3& operator*=(float scalar);
+        Vector3& operator/=(const Vector3& vec);
         Vector3& operator/=(float scalar);
         Vector3  operator+(const Vector3& vec) const;
         Vector3  operator-(const Vector3& vec) const;
         Vector3  operator*(const Vector3& vec) const;
         Vector3  operator*(float scalar) const;
+        Vector3  operator/(const Vector3& vec) const;
         Vector3  operator/(float scalar) const;
         Vector3  operator-() const;
     };
