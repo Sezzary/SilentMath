@@ -21,6 +21,7 @@ endif()
 
 # Set compiler options for Debug and Release modes.
 target_compile_options(Math PRIVATE
+    #-include "${CMAKE_CURRENT_LIST_DIR}/Source/Framework.h"
     $<$<CONFIG:DEBUG>:-DDEBUG_MODE>
     $<$<CONFIG:RELEASE>:-O3>)
 
@@ -44,13 +45,16 @@ target_include_directories(Math PRIVATE
 # Add library header paths.
 target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/SDL/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
 
 # Add library directories.
 add_subdirectory(Libraries/glm)
+add_subdirectory(Libraries/SDL)
 add_subdirectory(Libraries/spdlog)
 
 # Add libraries.
 target_link_libraries(Math PRIVATE
     glm
+    SDL3-static
     spdlog)

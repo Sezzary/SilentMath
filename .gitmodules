@@ -1,6 +1,9 @@
 [submodule "Libraries/glm"]
     path = Libraries/glm
     url = https://github.com/g-truc/glm.git
+[submodule "Libraries/SDL"]
+	path = Libraries/SDL
+	url = https://github.com/libsdl-org/SDL.git
 [submodule "Libraries/spdlog"]
     path = Libraries/spdlog
     url = https://github.com/gabime/spdlog.git

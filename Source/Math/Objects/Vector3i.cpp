@@ -67,7 +67,7 @@ namespace Silent::Math
     {
         auto fromFloat = glm::vec3(from.ToGlmVec3i());
         auto toFloat = glm::vec3(to.ToGlmVec3i());
-        auto vecFloat = std::lerp(fromFloat, toFloat, alpha);
+        auto vecFloat = glm::lerp(fromFloat, toFloat, alpha);
         return Vector3i(glm::ivec3(round(vecFloat)));
     }
 
