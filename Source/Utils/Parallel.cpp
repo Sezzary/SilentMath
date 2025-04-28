@@ -20,6 +20,34 @@ namespace Silent::Utils
         _deinitialize = false;
     }
 
+    ParallelTaskManager::~ParallelTaskManager()
+    {
+        Log("Deinitializing threads...");
+
+        // LOCK: Restrict shutdown flag access.
+        {
+            auto taskLock = std::lock_guard(_taskMutex);
+
+            _deinitialize = true;
+        }
+
+        // Notify all threads they should stop.
+        _taskCond.notify_all();
+
+        // Join all threads.
+        for (auto& thread : _threads)
+        {
+            try
+            {
+                thread.join();
+            }
+            catch (const std::exception& ex)
+            {
+                Log("Failed to join thread: " + std::string(ex.what()), LogLevel::Error);
+            }
+        }
+    }
+
     ParallelTaskManager& ParallelTaskManager::Get()
     {
         static auto instance = ParallelTaskManager();
@@ -60,34 +88,6 @@ namespace Silent::Utils
 
         // Return future to wait on task group completion if needed.
         return promise->get_future();
-    }
-
-    void ParallelTaskManager::Deinitialize()
-    {
-        Log("Deinitializing threads...");
-
-        // LOCK: Restrict shutdown flag access.
-        {
-            auto taskLock = std::lock_guard(_taskMutex);
-
-            _deinitialize = true;
-        }
-
-        // Notify all threads they should stop.
-        _taskCond.notify_all();
-
-        // Join all threads.
-        for (auto& thread : _threads)
-        {
-            try
-            {
-                thread.join();
-            }
-            catch (const std::exception& ex)
-            {
-                Log("Failed to join thread: " + std::string(ex.what()), LogLevel::Error);
-            }
-        }
     }
 
     void ParallelTaskManager::Worker()

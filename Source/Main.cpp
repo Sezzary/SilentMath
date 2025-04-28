@@ -7,4 +7,8 @@ using namespace Silent::Utils;
 
 int main()
 {
+    while (true)
+    {
+        
+    }
 }

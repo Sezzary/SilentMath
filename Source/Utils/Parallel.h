@@ -17,10 +17,12 @@ namespace Silent::Utils
         std::condition_variable  _taskCond     = {};
         bool                     _deinitialize = false;
 
-        // Constructors
+        // Constructors, destructors
 
         ParallelTaskManager();
         ParallelTaskManager(const ParallelTaskManager& parallel) = delete;
+
+        ~ParallelTaskManager();
 
     public:
         // Getters
@@ -34,8 +36,6 @@ namespace Silent::Utils
 
         std::future<void> AddTask(const ParallelTask& task);
         std::future<void> AddTasks(const ParallelTasks& tasks);
-
-        void Deinitialize();
 
     private:
         // Helpers
