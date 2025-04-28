@@ -46,7 +46,7 @@ namespace Silent::Utils
 
         // Operators
         
-        ParallelTaskManager& operator =(const ParallelTaskManager& parallel) = delete;
+        ParallelTaskManager& operator=(const ParallelTaskManager& parallel) = delete;
     };
 
     extern ParallelTaskManager& g_Parallel;

@@ -6,8 +6,10 @@ using namespace Silent::Utils;
 
 int main()
 {
-    while (true)
-    {
-        
-    }
+    auto app = ApplicationManager();
+
+    // Run application.
+    app.Initialize();
+    app.Run();
+    app.Deinitialize();
 }

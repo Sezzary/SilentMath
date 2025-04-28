@@ -10,6 +10,12 @@ namespace Silent::Utils
     }
 
     template <typename T>
+    void Erase(std::span<T>& span, uint elementIdx)
+    {
+        span.erase(span.begin() + elementIdx);
+    }
+
+    template <typename T>
     bool Contains(const std::span<T>& span, const T& element)
     {
         auto it = std::find(span.begin(), span.end(), element);
@@ -34,15 +40,15 @@ namespace Silent::Utils
         return std::span<T>(cArray, size);
     }
 
-    template<typename TContainer>
-    std::span<const typename TContainer::value_type> ToSpan(const TContainer& container)
+    template<typename T>
+    std::span<const typename T::value_type> ToSpan(const T& container)
     {
-        return std::span<const typename TContainer::value_type>(std::begin(container), std::end(container));
+        return std::span<const typename T::value_type>(std::begin(container), std::end(container));
     }
-    
-    template<typename TContainer>
-    std::span<typename TContainer::value_type> ToSpan(TContainer& container)
+
+    template<typename T>
+    std::span<typename T::value_type> ToSpan(T& container)
     {
-        return std::span<typename TContainer::value_type>(std::begin(container), std::end(container));
+        return std::span<typename T::value_type>(std::begin(container), std::end(container));
     }
 }
