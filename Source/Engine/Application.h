@@ -1,7 +1,5 @@
 #pragma once
 
-struct SDL_Window;
-
 namespace Silent
 {
     class ApplicationManager
@@ -13,7 +11,9 @@ namespace Silent
     
         // Fields
 
-        SDL_Window* _window = nullptr;
+        SDL_Window* _window    = nullptr;
+        SDL_Event   _event     = {};
+        bool        _isRunning = false;
 
     public:
         // Constructors
@@ -23,7 +23,13 @@ namespace Silent
         // Utilities
 
         void Initialize();
-        void Run();
         void Deinitialize();
+        void Run();
+
+    private:
+        // Helpers
+
+        void Update();
+        void Render();
     };
 }

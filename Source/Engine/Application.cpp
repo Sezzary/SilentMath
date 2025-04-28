@@ -7,54 +7,51 @@ namespace Silent
 {
     void ApplicationManager::Initialize()
     {
-        // SDL.
+        // Initialize SDL.
+        Log("Initializing SDL...");
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
-        // Time.
-        g_Time.Initialize();
+        // Create window.
+        _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN);
+        Assert(_window != nullptr, "Failed to create window.");
 
+        _isRunning = true;
         Log("Initialization complete.");
+    }
+
+    void ApplicationManager::Deinitialize()
+    {
+        // Deinitialize SDL.
+        SDL_DestroyWindow(_window);
+        SDL_Quit();
+
+        Log("Deinitialization complete.");
     }
 
     void ApplicationManager::Run()
     {
-        // Create window.
-        _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN);
-        Assert(_window != nullptr, "Failed to create window.");
+        g_Time.Reset();
 
-        // Keep window open until closed by user.
-        SDL_Event e;
-        bool quit = false;
-        while (!quit)
-        {
-            while (SDL_PollEvent(&e) != 0)
-            {
-                if (e.type == SDL_EVENT_QUIT)
-                {
-                    quit = true;
-                }
-            }
-        }
-
-        // SDL.
-        SDL_DestroyWindow(_window);
-        SDL_Quit();
-
-        while (true)
+        while (_isRunning)
         {
             g_Time.Update();
 
-            // Update game state.
-            // Render.
+            Update();
+            Render();
 
             g_Time.WaitForNextTick();
         }
     }
 
-    void ApplicationManager::Deinitialize()
+    void ApplicationManager::Update()
+    {
+        SDL_PollEvent(&_event);
+        _isRunning = _event.type != SDL_EVENT_QUIT;
+    }
+
+    void ApplicationManager::Render()
     {
 
-        Log("Deinitialization complete.");
     }
 }

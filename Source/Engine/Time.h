@@ -37,7 +37,7 @@ namespace Silent
 
         // Utilities
 
-        void Initialize();
+        void Reset();
         void Update();
         void WaitForNextTick() const;
 

@@ -44,10 +44,8 @@ namespace Silent
         return (ticks % intervalTicks) == offsetTicks;
     }
 
-    void TimeController::Initialize()
+    void TimeController::Reset()
     {
-        Log("Initializing time...");
-
         _initMicrosecs = GetEpochMicrosecs();
     }
 
