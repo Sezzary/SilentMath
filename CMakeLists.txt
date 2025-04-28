@@ -53,8 +53,12 @@ add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/SDL)
 add_subdirectory(Libraries/spdlog)
 
+# Find packages.
+find_package(Vulkan REQUIRED)
+
 # Add libraries.
 target_link_libraries(Math PRIVATE
     glm
     SDL3-static
-    spdlog)
+    spdlog
+    Vulkan::Vulkan)

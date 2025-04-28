@@ -13,16 +13,16 @@ namespace Silent::Math
     std::optional<float> Ray::Intersects(const BoundingSphere& sphere) const
     {
         auto posDelta = sphere.Center - Origin;
-        auto projLength = Vector3::Dot(posDelta, Direction);
+        float projLength = Vector3::Dot(posDelta, Direction);
 
-        auto distSqr = posDelta.LengthSquared() - SQUARE(projLength);
-        auto radiusSqr = SQUARE(sphere.Radius);
+        float distSqr = posDelta.LengthSquared() - SQUARE(projLength);
+        float radiusSqr = SQUARE(sphere.Radius);
         if (distSqr > radiusSqr)
         {
             return std::nullopt;
         }
     
-        auto intersectOffset = sqrt(radiusSqr - distSqr);
+        float intersectOffset = sqrt(radiusSqr - distSqr);
         return projLength - intersectOffset;
     }
 

@@ -50,13 +50,14 @@ namespace Silent::Math
             return 0;
         }
 
-        // Project normal onto plane defined by axis.
+        // Project normal onto plane defined by `axis`.
         auto axisNorm = Vector3::Normalize(axis);
         auto projNormal = normal - (axisNorm * Vector3::Dot(normal, axisNorm));
 
         // Calculate angle in 2D plane formed by projected normal.
         float rad = atan2(projNormal.x, projNormal.z);
-        if (Vector3::Dot(projNormal, axisNorm) < 0.0f)
+        float dot = Vector3::Dot(projNormal, axisNorm);
+        if (dot < 0.0f)
         {
             rad += PI;
         }
@@ -102,20 +103,19 @@ namespace Silent::Math
         }
 
         // Ensure axis is normalized.
-        auto axisNorm = axis;
-        axisNorm.Normalize();
+        auto axisNorm = Vector3::Normalize(axis);
 
-        // Compute line.
+        // Compute `line`.
         auto line = lineEnd - lineStart;
 
-        // Project line and from onto plane perpendicular to input axis.
+        // Project `line` and `from` onto plane perpendicular to `axis`.
         auto linePerp = line - (axisNorm * Vector3::Dot(line, axisNorm));
         auto fromPerp = from - (axisNorm * Vector3::Dot(from, axisNorm));
 
-        // Compute alpha from line projection.
+        // Compute `alpha` from line projection.
         float alpha = Vector3::Dot(linePerp, fromPerp - lineStart) / Vector3::Dot(linePerp, linePerp);
 
-        // If closest point is out of range, return start or end point.
+        // If closest point is out of range, return `lineStart` or `lineEnd`.
         if (alpha <= 0.0f)
         {
             return lineStart;
@@ -125,7 +125,7 @@ namespace Silent::Math
             return lineEnd;
         }
 
-        // Return closest point on line perpendicular to input axis.
+        // Return closest point on line perpendicular to `axis`.
         return Vector3::Translate(lineStart, line, alpha);
     }
 
@@ -138,7 +138,7 @@ namespace Silent::Math
 
         auto refDir = ref - origin;
 
-        // Project `refDir` onto plane defined by axis.
+        // Project `refDir` onto plane defined by `axis`.
         auto axisNorm = Vector3::Normalize(axis);
         auto projRefDir = refDir - (axisNorm * Vector3::Dot(refDir, axisNorm));
     
@@ -159,7 +159,7 @@ namespace Silent::Math
 
         auto refDir = ref - origin;
 
-        // Project `refDir` onto plane orthogonal to axis.
+        // Project `refDir` onto plane orthogonal to `axis`.
         auto axisNorm = Vector3::Normalize(axis);
         auto projRefDir = refDir - (axisNorm * Vector3::Dot(refDir, axisNorm));
 

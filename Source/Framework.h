@@ -45,6 +45,9 @@
 // spdlog
 #include <spdlog/spdlog.h>
 
+// Vulkan
+#include <vulkan/vulkan.hpp>
+
 // =========
 // RESOURCES
 // =========
