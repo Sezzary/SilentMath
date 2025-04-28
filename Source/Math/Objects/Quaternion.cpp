@@ -12,7 +12,7 @@ namespace Silent::Math
     {
         auto dirNorm = Vector3::Normalize(dir);
         float dot = Vector3::Dot(Vector3::UnitZ, dirNorm);
-        float rad = acos(dot);
+        float rad = glm::acos(dot);
 
         if (rad < EPSILON)
         {
@@ -24,9 +24,9 @@ namespace Silent::Math
         axis.Normalize();
 
         float halfAngle = rad / 2.0f;
-        float sinHalfAngle = sin(halfAngle);
+        float sinHalfAngle = glm::sin(halfAngle);
 
-        w = cos(halfAngle);
+        w = glm::cos(halfAngle);
         x = axis.x * sinHalfAngle;
         y = axis.y * sinHalfAngle;
         z = axis.z * sinHalfAngle;
@@ -37,7 +37,7 @@ namespace Silent::Math
         float dot = glm::dot(from.ToGlmQuat(), to.ToGlmQuat());
         dot = glm::clamp(dot, -1.0f, 1.0f);
 
-        float rad = acos(dot) * 2.0f;
+        float rad = glm::acos(dot) * 2.0f;
         return FP_ANGLE_FROM_RAD(rad);
     }
 
@@ -98,7 +98,7 @@ namespace Silent::Math
         }
 
         // Compute angle.
-        float rad = acos(w) * 2.0f;
+        float rad = glm::acos(w) * 2.0f;
 
         return AxisAngle(axis, FP_ANGLE_FROM_RAD(rad));
     }

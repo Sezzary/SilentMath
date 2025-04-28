@@ -39,7 +39,7 @@ namespace Silent::Math
             return 0;
         }
 
-        float rad = acos(Vector3::Dot(normal, -axis));
+        float rad = glm::acos(Vector3::Dot(normal, -axis));
         return FP_ANGLE_FROM_RAD(rad);
     }
 
@@ -55,7 +55,7 @@ namespace Silent::Math
         auto projNormal = normal - (axisNorm * Vector3::Dot(normal, axisNorm));
 
         // Calculate angle in 2D plane formed by projected normal.
-        float rad = atan2(projNormal.x, projNormal.z);
+        float rad = glm::atan2(projNormal.x, projNormal.z);
         float dot = Vector3::Dot(projNormal, axisNorm);
         if (dot < 0.0f)
         {

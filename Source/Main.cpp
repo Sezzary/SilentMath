@@ -1,7 +1,6 @@
 #include "Framework.h"
 
-#include "Utils/BitField.h"
-#include "Utils/Parallel.h"
+#include "Engine/Application.h"
 
 using namespace Silent::Utils;
 
