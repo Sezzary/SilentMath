@@ -39,7 +39,7 @@ namespace Silent::Utils::Debug
 
     void Assert(bool cond, const std::string& msg)
     {
-        if constexpr (!IS_DEBUG)
+        if constexpr (IS_DEBUG)
         {
             return;
         }
