@@ -10,11 +10,13 @@ namespace Silent
         static constexpr uint TPS = 60;
 
     private:
+        static constexpr uint TICK_INTERVAL_MICROSECS = 1000000 / TPS;
+
         // Fields
 
         uint  _ticks               = 0;
         ulong _prevUptimeMicrosecs = 0;
-        ulong _initMicrosecs       = 0;
+        ulong _baseMicrosecs       = 0;
 
         // Constructors
 
@@ -45,7 +47,6 @@ namespace Silent
         // Helpers
 
         ulong GetEpochMicrosecs() const;
-        uint  GetTickIntervalMicrosecs() const;
 
         // Operators
         

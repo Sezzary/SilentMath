@@ -2,6 +2,9 @@
 #include "Engine/Application.h"
 
 #include "Engine/Time.h"
+#include "Engine/Renderer/Renderer.h"
+
+using namespace Silent::Renderer;
 
 namespace Silent
 {
@@ -13,8 +16,13 @@ namespace Silent
         Assert(sdlStatus, "Failed to initialize SDL.");
 
         // Create window.
-        _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN);
+        _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
+
+        // Vulkan test.
+        uint extCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extCount, nullptr);
+        Log("Extension supported: " + std::to_string(extCount));
 
         _isRunning = true;
         Log("Initialization complete.");
@@ -23,6 +31,7 @@ namespace Silent
     void ApplicationManager::Deinitialize()
     {
         // Deinitialize SDL.
+        Log("Deinitializing SDL...");
         SDL_DestroyWindow(_window);
         SDL_Quit();
 
@@ -52,6 +61,6 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
-
+        g_Renderer.Update();
     }
 }

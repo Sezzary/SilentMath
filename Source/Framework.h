@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <functional>
 #include <future>
+#include <iostream>
 #include <limits>
 #include <optional>
 #include <queue>
@@ -23,6 +24,7 @@
 #include <set>
 #include <span>
 #include <stack>
+#include <stdexcept>
 #include <stdlib.h>
 #include <string>
 #include <sys/types.h>
@@ -41,6 +43,7 @@
 
 // SDL
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 
 // spdlog
 #include <spdlog/spdlog.h>

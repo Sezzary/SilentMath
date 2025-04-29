@@ -29,7 +29,7 @@ namespace Silent
 
     ulong TimeController::GetUptimeMicrosecs() const
     {
-        return GetEpochMicrosecs() - _initMicrosecs;
+        return GetEpochMicrosecs() - _baseMicrosecs;
     }
 
     bool TimeController::TestInterval(uint intervalTicks, uint offsetTicks) const
@@ -40,13 +40,13 @@ namespace Silent
             Log("Attempted to test time interval with offset greater than or equal to interval.");
         }
         
-        ulong ticks = GetUptimeMicrosecs() / GetTickIntervalMicrosecs();
+        ulong ticks = GetUptimeMicrosecs() / TICK_INTERVAL_MICROSECS;
         return (ticks % intervalTicks) == offsetTicks;
     }
 
     void TimeController::Reset()
     {
-        _initMicrosecs = GetEpochMicrosecs();
+        _baseMicrosecs = GetEpochMicrosecs();
     }
 
     void TimeController::Update()
@@ -55,12 +55,12 @@ namespace Silent
         ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
 
         // Calculate ticks for elapsed period.
-        _ticks = elapsedMicrosecs / GetTickIntervalMicrosecs();
+        _ticks = (uint)(elapsedMicrosecs / TICK_INTERVAL_MICROSECS);
 
         // Set previous uptime if new ticks accumulated.
         if (_ticks != 0)
         {
-            uint consumedTime = _ticks * GetTickIntervalMicrosecs();
+            uint consumedTime = _ticks * TICK_INTERVAL_MICROSECS;
             _prevUptimeMicrosecs = uptimeMicrosecs;
         }
     }
@@ -71,8 +71,8 @@ namespace Silent
         ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
 
         // Sleep current thread for remaining time before next tick.
-        ulong remainingMicrosecs = GetTickIntervalMicrosecs() - (elapsedMicrosecs % GetTickIntervalMicrosecs());
-        if (remainingMicrosecs > 0 && remainingMicrosecs < GetTickIntervalMicrosecs())
+        ulong remainingMicrosecs = TICK_INTERVAL_MICROSECS - (elapsedMicrosecs % TICK_INTERVAL_MICROSECS);
+        if (remainingMicrosecs > 0 && remainingMicrosecs < TICK_INTERVAL_MICROSECS)
         {
             std::this_thread::sleep_for(std::chrono::microseconds(remainingMicrosecs));
         }
@@ -81,10 +81,5 @@ namespace Silent
     ulong TimeController::GetEpochMicrosecs() const
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-    }
-    
-    uint TimeController::GetTickIntervalMicrosecs() const
-    {
-        return 1000000 / TPS;
     }
 }
