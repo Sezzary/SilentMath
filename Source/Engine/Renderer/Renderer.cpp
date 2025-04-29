@@ -3,6 +3,11 @@
 
 namespace Silent::Renderer
 {
+    bool QueueFamilyIndices::IsComplete()
+    {
+        return GraphicsFamily != NO_VALUE;
+    }
+
     void HelloTriangleApplication::Run()
     {
         InitializeWindow();
@@ -54,6 +59,19 @@ namespace Silent::Renderer
         return true;
     }
 
+    bool HelloTriangleApplication::IsDeviceSuitable(VkPhysicalDevice device) const
+    {
+        /*auto deviceProperties = VkPhysicalDeviceProperties{};
+        vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+        auto deviceFeatures = VkPhysicalDeviceFeatures{};
+        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);*/
+
+        // TODO: Pick best GPU.
+
+        return FindQueueFamilies(device).IsComplete();
+    }
+
     void HelloTriangleApplication::InitializeWindow()
     {
         // Initialize SDL.
@@ -74,16 +92,70 @@ namespace Silent::Renderer
         SetupDebugMessenger();
     }
 
+    void HelloTriangleApplication::PickPhysicalDevice()
+    {
+        uint deviceCount = 0;
+        vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
+        if (deviceCount == 0)
+        {
+            throw std::runtime_error("Failed to find GPUs with Vulkan support.");
+        }
+
+        auto devices = std::vector<VkPhysicalDevice>(deviceCount);
+        vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
+
+        for (const auto& device : devices)
+        {
+            if (IsDeviceSuitable(device))
+            {
+                _physicalDevice = device;
+                break;
+            }
+        }
+        
+        if (_physicalDevice == VK_NULL_HANDLE)
+        {
+            throw std::runtime_error("failed to find a suitable GPU!");
+        }
+    }
+
+    QueueFamilyIndices HelloTriangleApplication::FindQueueFamilies(VkPhysicalDevice device)
+    {
+        auto idxs = QueueFamilyIndices {};
+
+        uint queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        auto queueFamilies = std::vector<VkQueueFamilyProperties>(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+        for (int i = 0; i < queueFamilies.size(); i++)
+        {
+            const auto& queueFamily = queueFamilies[i];
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+            {
+                idxs.GraphicsFamily = i;
+            }
+
+            if (idxs.IsComplete())
+            {
+                break;
+            }
+        }
+
+        return idxs;
+    }
+
     void HelloTriangleApplication::Cleanup()
     {
         // Deinitialize messenger extension object.
         if (ENABLE_VALIDATION_LAYERS)
         {
-            DestroyDebugUtilsMessengerExt(_vulkan, _debugMessenger, nullptr);
+            DestroyDebugUtilsMessengerExt(_instance, _debugMessenger, nullptr);
         }
 
         // Deinitialize Vulkan.
-        vkDestroyInstance(_vulkan, nullptr);
+        vkDestroyInstance(_instance, nullptr);
 
         // Deinitialize SDL.
         Log("Deinitializing SDL...");
@@ -161,7 +233,7 @@ namespace Silent::Renderer
             Log(ext.extensionName);
         }
 
-        if (vkCreateInstance(&createInfo, nullptr, &_vulkan) != VK_SUCCESS)
+        if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to create Vulkan instance.");
         }
@@ -191,7 +263,7 @@ namespace Silent::Renderer
         auto createInfo = VkDebugUtilsMessengerCreateInfoEXT{};
         PopulateDebugMessengerCreateInfo(createInfo);
 
-        if (CreateDebugUtilsMessengerExt(_vulkan, &createInfo, nullptr, &_debugMessenger) != VK_SUCCESS)
+        if (CreateDebugUtilsMessengerExt(_instance, &createInfo, nullptr, &_debugMessenger) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to set up debug messenger.");
         }

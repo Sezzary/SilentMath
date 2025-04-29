@@ -18,6 +18,7 @@
 #include <future>
 #include <iostream>
 #include <limits>
+#include <map>
 #include <optional>
 #include <queue>
 #include <random>
@@ -29,6 +30,7 @@
 #include <string>
 #include <sys/types.h>
 #include <thread>
+#include <unordered_map>
 #include <unordered_set>
 #include <variant>
 #include <vector>

@@ -2,14 +2,21 @@
 
 namespace Silent::Renderer
 {
+    struct QueueFamilyIndices
+    {
+        uint GraphicsFamily = (uint)NO_VALUE;
+
+        bool IsComplete();
+    };
+
     class HelloTriangleApplication
     {
     public:
-    #ifdef _DEBUG
+#ifdef _DEBUG
         static constexpr bool ENABLE_VALIDATION_LAYERS = true;
-    #else
+#else
         static constexpr bool ENABLE_VALIDATION_LAYERS = false;
-    #endif
+#endif
 
         static constexpr int WIDTH  = 800;
         static constexpr int HEIGHT = 600;
@@ -23,7 +30,8 @@ namespace Silent::Renderer
 
         SDL_Window*              _window         = nullptr;
         SDL_Event                _event          = {};
-        VkInstance               _vulkan;
+        VkInstance               _instance;
+        VkPhysicalDevice         _physicalDevice = VK_NULL_HANDLE;
         VkDebugUtilsMessengerEXT _debugMessenger;
         bool                     _isRunning      = true;
 
@@ -37,15 +45,19 @@ namespace Silent::Renderer
         // Inquirers
 
         bool CheckValidationLayerSupport() const;
+        bool IsDeviceSuitable(VkPhysicalDevice device) const;
 
         // Utilities
 
-        void InitializeWindow();
-        void InitializeVulkan();
-        void Cleanup();
+        void               InitializeWindow();
+        void               InitializeVulkan();
+        void               PickPhysicalDevice();
+        QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+        void               Cleanup();
 
         void MainLoop();
         void CreateInstance();
+
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
 
