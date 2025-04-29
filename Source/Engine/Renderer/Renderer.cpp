@@ -59,7 +59,7 @@ namespace Silent::Renderer
         return true;
     }
 
-    bool HelloTriangleApplication::IsDeviceSuitable(VkPhysicalDevice device) const
+    bool HelloTriangleApplication::IsDeviceSuitable(VkPhysicalDevice device)
     {
         /*auto deviceProperties = VkPhysicalDeviceProperties{};
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -90,6 +90,8 @@ namespace Silent::Renderer
     {
         CreateInstance();
         SetupDebugMessenger();
+        PickPhysicalDevice();
+        CreateLogicalDevice();
     }
 
     void HelloTriangleApplication::PickPhysicalDevice()
@@ -103,7 +105,6 @@ namespace Silent::Renderer
 
         auto devices = std::vector<VkPhysicalDevice>(deviceCount);
         vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-
         for (const auto& device : devices)
         {
             if (IsDeviceSuitable(device))
@@ -148,13 +149,14 @@ namespace Silent::Renderer
 
     void HelloTriangleApplication::Cleanup()
     {
-        // Deinitialize messenger extension object.
+        // Deinitialize Vulkan.
+        vkDestroyDevice(_device, nullptr);
+
         if (ENABLE_VALIDATION_LAYERS)
         {
             DestroyDebugUtilsMessengerExt(_instance, _debugMessenger, nullptr);
         }
 
-        // Deinitialize Vulkan.
         vkDestroyInstance(_instance, nullptr);
 
         // Deinitialize SDL.
@@ -239,16 +241,44 @@ namespace Silent::Renderer
         }
     }
 
+    void HelloTriangleApplication::CreateLogicalDevice()
+    {
+        auto idxs = FindQueueFamilies(_physicalDevice);
+        float queuePriority = 1.0f;
+
+        auto queueCreateInfo = VkDeviceQueueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = idxs.GraphicsFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+
+        auto deviceFeatures = VkPhysicalDeviceFeatures{};
+
+        auto createInfo = VkDeviceCreateInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.pQueueCreateInfos = &queueCreateInfo;
+        createInfo.queueCreateInfoCount = 1;
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        createInfo.enabledExtensionCount = 0;
+
+        if (vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create logical device.");
+        }
+
+        vkGetDeviceQueue(_device, idxs.GraphicsFamily, 0, &_graphicsQueue);
+    }
+
     void HelloTriangleApplication::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
     {
         createInfo = VkDebugUtilsMessengerCreateInfoEXT{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
         createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-                                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+                                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
         createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+                                 VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                 VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
         createInfo.pfnUserCallback = DebugCallback;
         createInfo.pUserData = nullptr;
     }

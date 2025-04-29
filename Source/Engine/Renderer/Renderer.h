@@ -32,6 +32,8 @@ namespace Silent::Renderer
         SDL_Event                _event          = {};
         VkInstance               _instance;
         VkPhysicalDevice         _physicalDevice = VK_NULL_HANDLE;
+        VkDevice                 _device;
+        VkQueue                  _graphicsQueue;
         VkDebugUtilsMessengerEXT _debugMessenger;
         bool                     _isRunning      = true;
 
@@ -45,7 +47,7 @@ namespace Silent::Renderer
         // Inquirers
 
         bool CheckValidationLayerSupport() const;
-        bool IsDeviceSuitable(VkPhysicalDevice device) const;
+        bool IsDeviceSuitable(VkPhysicalDevice device);
 
         // Utilities
 
@@ -57,6 +59,7 @@ namespace Silent::Renderer
 
         void MainLoop();
         void CreateInstance();
+        void CreateLogicalDevice();
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
