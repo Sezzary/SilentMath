@@ -5,6 +5,7 @@ namespace Silent::Renderer
     struct QueueFamilyIndices
     {
         uint GraphicsFamily = (uint)NO_VALUE;
+        uint PresentFamily  = (uint)NO_VALUE;
 
         bool IsComplete();
     };
@@ -30,11 +31,17 @@ namespace Silent::Renderer
 
         SDL_Window*              _window         = nullptr;
         SDL_Event                _event          = {};
+
         VkInstance               _instance;
+        VkDebugUtilsMessengerEXT _debugMessenger;
+        VkSurfaceKHR             _surface;
+
         VkPhysicalDevice         _physicalDevice = VK_NULL_HANDLE;
         VkDevice                 _device;
+
         VkQueue                  _graphicsQueue;
-        VkDebugUtilsMessengerEXT _debugMessenger;
+        VkQueue                  _presentQueue;
+
         bool                     _isRunning      = true;
 
         void Run();
@@ -60,6 +67,7 @@ namespace Silent::Renderer
         void MainLoop();
         void CreateInstance();
         void CreateLogicalDevice();
+        void CreateSurface();
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();

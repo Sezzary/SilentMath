@@ -5,7 +5,7 @@ namespace Silent::Renderer
 {
     bool QueueFamilyIndices::IsComplete()
     {
-        return GraphicsFamily != NO_VALUE;
+        return GraphicsFamily != NO_VALUE && PresentFamily != NO_VALUE;
     }
 
     void HelloTriangleApplication::Run()
@@ -90,6 +90,7 @@ namespace Silent::Renderer
     {
         CreateInstance();
         SetupDebugMessenger();
+        CreateSurface();
         PickPhysicalDevice();
         CreateLogicalDevice();
     }
@@ -133,10 +134,22 @@ namespace Silent::Renderer
         for (int i = 0; i < queueFamilies.size(); i++)
         {
             const auto& queueFamily = queueFamilies[i];
+
+            // Check for graphics queue family.
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
             {
                 idxs.GraphicsFamily = i;
             }
+
+            // Check for present queue family.
+            bool presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(_device, i, _surface, &presentSupport);
+            if (presentSupport)
+            {
+                idxs.PresentFamily = i;
+            }
+
+            // TODO: Could prefer physical device that supports drawing and presentation in the same queue for improved performance.
 
             if (idxs.IsComplete())
             {
@@ -157,6 +170,7 @@ namespace Silent::Renderer
             DestroyDebugUtilsMessengerExt(_instance, _debugMessenger, nullptr);
         }
 
+        vkDestroySurfaceKHR(_instance, _surface, nullptr);
         vkDestroyInstance(_instance, nullptr);
 
         // Deinitialize SDL.
@@ -244,20 +258,26 @@ namespace Silent::Renderer
     void HelloTriangleApplication::CreateLogicalDevice()
     {
         auto idxs = FindQueueFamilies(_physicalDevice);
+        auto queueCreateInfos = std::vector<VkDeviceQueueCreateInfo>{};
+        auto uniqueQueueFamilies = std::set<uint>{ idxs.GraphicsFamily, idxs.PresentFamily };
+        
         float queuePriority = 1.0f;
-
-        auto queueCreateInfo = VkDeviceQueueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = idxs.GraphicsFamily;
-        queueCreateInfo.queueCount = 1;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+        for (uint queueFamily : uniqueQueueFamilies)
+        {
+            auto queueCreateInfo = VkDeviceQueueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = queueFamily;
+            queueCreateInfo.queueCount = 1;
+            queueCreateInfo.pQueuePriorities = &queuePriority;
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
 
         auto deviceFeatures = VkPhysicalDeviceFeatures{};
 
         auto createInfo = VkDeviceCreateInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        createInfo.pQueueCreateInfos = &queueCreateInfo;
-        createInfo.queueCreateInfoCount = 1;
+        createInfo.queueCreateInfoCount = queueCreateInfos.size();
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
         createInfo.pEnabledFeatures = &deviceFeatures;
         createInfo.enabledExtensionCount = 0;
 
@@ -267,6 +287,15 @@ namespace Silent::Renderer
         }
 
         vkGetDeviceQueue(_device, idxs.GraphicsFamily, 0, &_graphicsQueue);
+        vkGetDeviceQueue(_device, idxs.PresentFamily, 0, &_presentQueue);
+    }
+
+    void HelloTriangleApplication::CreateSurface()
+    {
+        if (!SDL_Vulkan_CreateSurface(_window, _instance, nullptr, &_surface))
+        {
+            throw std::runtime_error("Failed to create window surface.");
+        }
     }
 
     void HelloTriangleApplication::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
