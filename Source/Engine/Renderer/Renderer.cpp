@@ -124,11 +124,15 @@ namespace Silent::Renderer
         CreateRenderPass();
         CreateGraphicsPipeline();
         CreateFramebuffers();
+        CreateCommandPool();
+        CreateCommandBuffer();
     }
 
     void HelloTriangleApplication::Cleanup()
     {
         // Deinitialize Vulkan.
+        vkDestroyCommandPool(_device, _commandPool, nullptr);
+
         for (auto framebuffer : _swapChainFramebuffers)
         {
             vkDestroyFramebuffer(_device, framebuffer, nullptr);
@@ -715,6 +719,35 @@ namespace Silent::Renderer
             }
         }
     }
+    
+    void HelloTriangleApplication::CreateCommandPool()
+    {
+        auto queueFamilyIdxs = FindQueueFamilies(_physicalDevice);
+
+        auto poolInfo = VkCommandPoolCreateInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        poolInfo.queueFamilyIndex = queueFamilyIdxs.GraphicsFamily;
+
+        if (vkCreateCommandPool(_device, &poolInfo, nullptr, &_commandPool) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create command pool.");
+        }
+    }
+
+    void HelloTriangleApplication::CreateCommandBuffer()
+    {
+        auto allocInfo = VkCommandBufferAllocateInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandPool = _commandPool;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = 1;
+        
+        if (vkAllocateCommandBuffers(_device, &allocInfo, &_commandBuffer) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to allocate command buffers.");
+        }
+    }
 
     VkShaderModule HelloTriangleApplication::CreateShaderModule(const std::vector<char>& code)
     {
@@ -730,6 +763,56 @@ namespace Silent::Renderer
         }
 
         return shaderModule;
+    }
+
+    void HelloTriangleApplication::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx)
+    {
+        auto beginInfo = VkCommandBufferBeginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = 0; // Optional.
+        beginInfo.pInheritanceInfo = nullptr; // Optional.
+        
+        if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to begin recording command buffer.");
+        }
+
+        auto clearColor = VkClearValue{ { { 0.0f, 0.0f, 0.0f, 1.0f } } };
+
+        auto renderPassInfo = VkRenderPassBeginInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.renderPass = _renderPass;
+        renderPassInfo.framebuffer = _swapChainFramebuffers[imageIdx];
+        renderPassInfo.renderArea.offset = { 0, 0 };
+        renderPassInfo.renderArea.extent = _swapChainExtent;
+        renderPassInfo.clearValueCount = 1;
+        renderPassInfo.pClearValues = &clearColor;
+
+        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
+
+        auto viewport = VkViewport{};
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        viewport.width = (float)_swapChainExtent.width;
+        viewport.height = (float)_swapChainExtent.height;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+        
+        auto scissor = VkRect2D{};
+        scissor.offset = { 0, 0 };
+        scissor.extent = _swapChainExtent;
+        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+
+        vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+        vkCmdEndRenderPass(commandBuffer);
+
+        if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to record command buffer.");
+        }
     }
 
     void HelloTriangleApplication::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)

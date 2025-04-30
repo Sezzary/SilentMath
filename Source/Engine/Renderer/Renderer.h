@@ -65,6 +65,8 @@ namespace Silent::Renderer
         VkPipelineLayout         _pipelineLayout;
         VkPipeline               _graphicsPipeline;
 
+        VkCommandPool            _commandPool;
+        VkCommandBuffer          _commandBuffer;
         bool                     _isRunning      = true;
 
         void Run();
@@ -103,7 +105,11 @@ namespace Silent::Renderer
         void           CreateRenderPass();
         void           CreateGraphicsPipeline();
         void           CreateFramebuffers();
+        void           CreateCommandPool();
+        void           CreateCommandBuffer();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
+
+        void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
