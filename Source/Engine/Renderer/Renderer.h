@@ -60,7 +60,9 @@ namespace Silent::Renderer
         VkFormat                 _swapChainImageFormat;
         VkExtent2D               _swapChainExtent;
 
+        VkRenderPass             _renderPass;
         VkPipelineLayout         _pipelineLayout;
+        VkPipeline               _graphicsPipeline;
 
         bool                     _isRunning      = true;
 
@@ -97,6 +99,7 @@ namespace Silent::Renderer
         void           CreateSurface();
         void           CreateSwapChain();
         void           CreateImageViews();
+        void           CreateRenderPass();
         void           CreateGraphicsPipeline();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
 
