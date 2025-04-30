@@ -121,6 +121,34 @@ namespace Silent::Renderer
         CreateLogicalDevice();
         CreateSwapChain();
         CreateImageViews();
+        CreateGraphicsPipeline();
+    }
+
+    void HelloTriangleApplication::Cleanup()
+    {
+        // Deinitialize Vulkan.
+        for (auto imageView : _swapChainImageViews)
+        {
+            vkDestroyImageView(_device, imageView, nullptr);
+        }
+
+        vkDestroySwapchainKHR(_device, _swapChain, nullptr);
+        vkDestroyDevice(_device, nullptr);
+
+        if (ENABLE_VALIDATION_LAYERS)
+        {
+            DestroyDebugUtilsMessengerExt(_instance, _debugMessenger, nullptr);
+        }
+
+        vkDestroySurfaceKHR(_instance, _surface, nullptr);
+        vkDestroyInstance(_instance, nullptr);
+
+        // Deinitialize SDL.
+        Log("Deinitializing SDL...");
+        SDL_DestroyWindow(_window);
+        SDL_Quit();
+
+        Log("Deinitialization complete.");
     }
 
     void HelloTriangleApplication::PickPhysicalDevice()
@@ -257,33 +285,6 @@ namespace Silent::Renderer
         }
     
         return details;
-    }
-
-    void HelloTriangleApplication::Cleanup()
-    {
-        // Deinitialize Vulkan.
-        for (auto imageView : _swapChainImageViews)
-        {
-            vkDestroyImageView(_device, imageView, nullptr);
-        }
-
-        vkDestroySwapchainKHR(_device, _swapChain, nullptr);
-        vkDestroyDevice(_device, nullptr);
-
-        if (ENABLE_VALIDATION_LAYERS)
-        {
-            DestroyDebugUtilsMessengerExt(_instance, _debugMessenger, nullptr);
-        }
-
-        vkDestroySurfaceKHR(_instance, _surface, nullptr);
-        vkDestroyInstance(_instance, nullptr);
-
-        // Deinitialize SDL.
-        Log("Deinitializing SDL...");
-        SDL_DestroyWindow(_window);
-        SDL_Quit();
-
-        Log("Deinitialization complete.");
     }
 
     void HelloTriangleApplication::MainLoop()
@@ -491,6 +492,48 @@ namespace Silent::Renderer
         }
     }
 
+    void HelloTriangleApplication::CreateGraphicsPipeline()
+    {
+        auto vertShaderCode = ReadFile("shaders/Vert.spv");
+        auto fragShaderCode = ReadFile("shaders/Frag.spv");
+
+        auto vertShaderModule = CreateShaderModule(vertShaderCode);
+        auto fragShaderModule = CreateShaderModule(fragShaderCode);
+
+        auto vertShaderStageInfo = VkPipelineShaderStageCreateInfo{};
+        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        vertShaderStageInfo.module = vertShaderModule;
+        vertShaderStageInfo.pName = "main";
+
+        auto fragShaderStageInfo = VkPipelineShaderStageCreateInfo{};
+        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragShaderStageInfo.module = fragShaderModule;
+        fragShaderStageInfo.pName = "main";
+
+        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+        
+        vkDestroyShaderModule(_device, fragShaderModule, nullptr);
+        vkDestroyShaderModule(_device, vertShaderModule, nullptr);
+    }
+
+    VkShaderModule CreateShaderModule(const std::vector<char>& code)
+    {
+        auto createInfo = VkShaderModuleCreateInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.codeSize = code.size();
+        createInfo.pCode = reinterpret_cast<const uint32*>(code.data());
+
+        auto shaderModule = VkShaderModule{};
+        if (vkCreateShaderModule(_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create shader module.");
+        }
+
+        return shaderModule;
+    }
+
     void HelloTriangleApplication::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
     {
         createInfo = VkDebugUtilsMessengerCreateInfoEXT{};
@@ -552,6 +595,24 @@ namespace Silent::Renderer
         {
             func(instance, debugMessenger, pAllocator);
         }
+    }
+
+    std::vector<char> ReadFile(const std::string& fileName)
+    {
+        auto file = std::ifstream(fileName, std::ios::ate | std::ios::binary);
+        if (!file.is_open())
+        {
+            throw std::runtime_error("Failed to open file.");
+        }
+
+        uint fileSize = file.tellg();
+        auto buffer = std::vector<char>(fileSize);
+
+        file.seekg(0);
+        file.read(buffer.data(), fileSize);
+        file.close();
+
+        return buffer;
     }
 
     Renderer g_Renderer = Renderer();

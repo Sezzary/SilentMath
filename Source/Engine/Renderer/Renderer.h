@@ -77,23 +77,26 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void                    InitializeWindow();
-        void                    InitializeVulkan();
+        void InitializeWindow();
+        void InitializeVulkan();
+        void Cleanup();
+
         void                    PickPhysicalDevice();
         VkSurfaceFormatKHR      ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR        ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
         VkExtent2D              ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
         QueueFamilyIndices      FindQueueFamilies(VkPhysicalDevice device);
         SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
-        void                    Cleanup();
 
         void MainLoop();
 
-        void CreateInstance();
-        void CreateLogicalDevice();
-        void CreateSurface();
-        void CreateSwapChain();
-        void CreateImageViews();
+        void           CreateInstance();
+        void           CreateLogicalDevice();
+        void           CreateSurface();
+        void           CreateSwapChain();
+        void           CreateImageViews();
+        void           CreateGraphicsPipeline();
+        VkShaderModule CreateShaderModule(const std::vector<char>& code);
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
@@ -104,9 +107,10 @@ namespace Silent::Renderer
                                                             void* pUserData);
     };
 
-    VkResult CreateDebugUtilsMessengerExt(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-                                          const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
-    void     DestroyDebugUtilsMessengerExt(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+    VkResult          CreateDebugUtilsMessengerExt(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                                   const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
+    void              DestroyDebugUtilsMessengerExt(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+    std::vector<char> ReadFile(const std::string& fileName);
 
     class Renderer
     {
