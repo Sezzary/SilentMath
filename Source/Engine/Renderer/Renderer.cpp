@@ -123,11 +123,17 @@ namespace Silent::Renderer
         CreateImageViews();
         CreateRenderPass();
         CreateGraphicsPipeline();
+        CreateFramebuffers();
     }
 
     void HelloTriangleApplication::Cleanup()
     {
         // Deinitialize Vulkan.
+        for (auto framebuffer : _swapChainFramebuffers)
+        {
+            vkDestroyFramebuffer(_device, framebuffer, nullptr);
+        }
+
         vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
         vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
         vkDestroyRenderPass(_device, _renderPass, nullptr);
@@ -682,6 +688,32 @@ namespace Silent::Renderer
 
         vkDestroyShaderModule(_device, fragShaderModule, nullptr);
         vkDestroyShaderModule(_device, vertShaderModule, nullptr);
+    }
+
+    void HelloTriangleApplication::CreateFramebuffers()
+    {
+        _swapChainFramebuffers.resize(_swapChainImageViews.size());
+        for (int i = 0; i < _swapChainImageViews.size(); i++)
+        {
+            VkImageView attachments[] =
+            {
+                _swapChainImageViews[i]
+            };
+        
+            auto framebufferInfo = VkFramebufferCreateInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = _renderPass;
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = _swapChainExtent.width;
+            framebufferInfo.height = _swapChainExtent.height;
+            framebufferInfo.layers = 1;
+        
+            if (vkCreateFramebuffer(_device, &framebufferInfo, nullptr, &_swapChainFramebuffers[i]) != VK_SUCCESS)
+            {
+                throw std::runtime_error("Failed to create framebuffer.");
+            }
+        }
     }
 
     VkShaderModule HelloTriangleApplication::CreateShaderModule(const std::vector<char>& code)

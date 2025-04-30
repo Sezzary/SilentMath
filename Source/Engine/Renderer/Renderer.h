@@ -54,11 +54,12 @@ namespace Silent::Renderer
         VkQueue                  _graphicsQueue;
         VkQueue                  _presentQueue;
 
-        VkSwapchainKHR           _swapChain;
-        std::vector<VkImage>     _swapChainImages      = {};
-        std::vector<VkImageView> _swapChainImageViews  = {};
-        VkFormat                 _swapChainImageFormat;
-        VkExtent2D               _swapChainExtent;
+        VkSwapchainKHR             _swapChain;
+        VkFormat                   _swapChainImageFormat;
+        VkExtent2D                 _swapChainExtent;
+        std::vector<VkImage>       _swapChainImages       = {};
+        std::vector<VkImageView>   _swapChainImageViews   = {};
+        std::vector<VkFramebuffer> _swapChainFramebuffers = {};
 
         VkRenderPass             _renderPass;
         VkPipelineLayout         _pipelineLayout;
@@ -101,6 +102,7 @@ namespace Silent::Renderer
         void           CreateImageViews();
         void           CreateRenderPass();
         void           CreateGraphicsPipeline();
+        void           CreateFramebuffers();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
