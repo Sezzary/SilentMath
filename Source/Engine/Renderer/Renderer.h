@@ -44,30 +44,35 @@ namespace Silent::Renderer
         SDL_Window*              _window         = nullptr;
         SDL_Event                _event          = {};
 
-        VkInstance               _instance;
-        VkDebugUtilsMessengerEXT _debugMessenger;
-        VkSurfaceKHR             _surface;
+        VkInstance               _instance       = nullptr;
+        VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
+        VkSurfaceKHR             _surface        = nullptr;
 
         VkPhysicalDevice         _physicalDevice = VK_NULL_HANDLE;
-        VkDevice                 _device;
+        VkDevice                 _device         = nullptr;
 
-        VkQueue                  _graphicsQueue;
-        VkQueue                  _presentQueue;
+        VkQueue                  _graphicsQueue  = nullptr;
+        VkQueue                  _presentQueue   = nullptr;
 
-        VkSwapchainKHR             _swapChain;
-        VkFormat                   _swapChainImageFormat;
-        VkExtent2D                 _swapChainExtent;
+        VkSwapchainKHR             _swapChain             = nullptr;
+        VkFormat                   _swapChainImageFormat  = {};
+        VkExtent2D                 _swapChainExtent       = {};
         std::vector<VkImage>       _swapChainImages       = {};
         std::vector<VkImageView>   _swapChainImageViews   = {};
         std::vector<VkFramebuffer> _swapChainFramebuffers = {};
 
-        VkRenderPass             _renderPass;
-        VkPipelineLayout         _pipelineLayout;
-        VkPipeline               _graphicsPipeline;
+        VkRenderPass             _renderPass       = nullptr;
+        VkPipelineLayout         _pipelineLayout   = nullptr;
+        VkPipeline               _graphicsPipeline = nullptr;
 
-        VkCommandPool            _commandPool;
-        VkCommandBuffer          _commandBuffer;
-        bool                     _isRunning      = true;
+        VkCommandPool            _commandPool   = nullptr;
+        VkCommandBuffer          _commandBuffer = nullptr;
+
+        VkSemaphore _imageAvailableSemaphore = nullptr;
+        VkSemaphore _renderFinishedSemaphore = nullptr;
+        VkFence     _inFlightFence           = nullptr;
+
+        bool                     _isRunning     = true;
 
         void Run();
 
@@ -96,6 +101,7 @@ namespace Silent::Renderer
         SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
 
         void MainLoop();
+        void DrawFrame();
 
         void           CreateInstance();
         void           CreateLogicalDevice();
@@ -107,6 +113,7 @@ namespace Silent::Renderer
         void           CreateFramebuffers();
         void           CreateCommandPool();
         void           CreateCommandBuffer();
+        void           CreateSyncObjects();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
 
         void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
