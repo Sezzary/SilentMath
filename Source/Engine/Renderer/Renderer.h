@@ -10,6 +10,13 @@ namespace Silent::Renderer
         bool IsComplete();
     };
 
+    struct SwapChainSupportDetails
+    {
+        VkSurfaceCapabilitiesKHR        Capabilities;
+        std::vector<VkSurfaceFormatKHR> Formats      = {};
+        std::vector<VkPresentModeKHR>   PresentModes = {};
+    };
+
     class HelloTriangleApplication
     {
     public:
@@ -27,6 +34,11 @@ namespace Silent::Renderer
             "VK_LAYER_KHRONOS_validation"
         };
 
+        static constexpr std::array<const char*, 1> DEVICE_EXTENSIONS =
+        {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+
         static constexpr char WINDOW_NAME[] = "Hello Triangle";
 
         SDL_Window*              _window         = nullptr;
@@ -42,6 +54,12 @@ namespace Silent::Renderer
         VkQueue                  _graphicsQueue;
         VkQueue                  _presentQueue;
 
+        VkSwapchainKHR           _swapChain;
+        std::vector<VkImage>     _swapChainImages      = {};
+        VkFormat                 _swapChainImageFormat;
+        VkExtent2D               _swapChainExtent;
+
+
         bool                     _isRunning      = true;
 
         void Run();
@@ -54,20 +72,26 @@ namespace Silent::Renderer
         // Inquirers
 
         bool CheckValidationLayerSupport() const;
+        bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
         bool IsDeviceSuitable(VkPhysicalDevice device);
 
         // Utilities
 
-        void               InitializeWindow();
-        void               InitializeVulkan();
-        void               PickPhysicalDevice();
-        QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-        void               Cleanup();
+        void                    InitializeWindow();
+        void                    InitializeVulkan();
+        void                    PickPhysicalDevice();
+        VkSurfaceFormatKHR      ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+        VkPresentModeKHR        ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+        VkExtent2D              ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+        QueueFamilyIndices      FindQueueFamilies(VkPhysicalDevice device);
+        SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+        void                    Cleanup();
 
         void MainLoop();
         void CreateInstance();
         void CreateLogicalDevice();
         void CreateSurface();
+        void CreateSwapChain();
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
