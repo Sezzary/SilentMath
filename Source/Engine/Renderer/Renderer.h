@@ -60,6 +60,8 @@ namespace Silent::Renderer
         VkFormat                 _swapChainImageFormat;
         VkExtent2D               _swapChainExtent;
 
+        VkPipelineLayout         _pipelineLayout;
+
         bool                     _isRunning      = true;
 
         void Run();
