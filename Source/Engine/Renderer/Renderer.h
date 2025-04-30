@@ -56,9 +56,9 @@ namespace Silent::Renderer
 
         VkSwapchainKHR           _swapChain;
         std::vector<VkImage>     _swapChainImages      = {};
+        std::vector<VkImageView> _swapChainImageViews  = {};
         VkFormat                 _swapChainImageFormat;
         VkExtent2D               _swapChainExtent;
-
 
         bool                     _isRunning      = true;
 
@@ -88,10 +88,12 @@ namespace Silent::Renderer
         void                    Cleanup();
 
         void MainLoop();
+
         void CreateInstance();
         void CreateLogicalDevice();
         void CreateSurface();
         void CreateSwapChain();
+        void CreateImageViews();
 
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
