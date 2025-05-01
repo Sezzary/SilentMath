@@ -21,6 +21,10 @@ namespace Silent
         _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
 
+        // Input.
+        Log("Initializing input...");
+        _input.Initialize();
+
         // Renderer.
         Log("Initializing renderer...");
         _renderer.Initialize(*_window);
@@ -31,10 +35,13 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
-        // Deinitialize renderer.
+        // Input.
+        _input.Deinitialize();
+
+        // Renderer.
         _renderer.Deinitialize();
 
-        // Deinitialize SDL.
+        // SDL.
         Log("Deinitializing SDL...");
         SDL_DestroyWindow(_window);
         SDL_Quit();
@@ -61,6 +68,9 @@ namespace Silent
     {
         // Poll events.
         SDL_PollEvent(&_event);
+
+        // Update input state.
+        _input.Update();
 
         // TODO: Update game state here.
 

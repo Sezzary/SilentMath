@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Input/Input.h"
 
+using namespace Silent::Input;
 using namespace Silent::Renderer;
 
 namespace Silent
@@ -18,6 +20,7 @@ namespace Silent
         bool            _isRunning = false;
         SDL_Window*     _window    = nullptr;
         SDL_Event       _event     = {};
+        InputManager    _input     = InputManager();
         RendererManager _renderer  = RendererManager();
 
     public:
