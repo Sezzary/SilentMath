@@ -24,7 +24,7 @@ namespace Silent
 
     uint TimeController::GetTicks() const
     {
-        return std::min(_ticks, TPS);
+        return std::min(_ticks, TPS / 2);
     }
 
     ulong TimeController::GetUptimeMicrosecs() const

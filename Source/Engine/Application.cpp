@@ -57,16 +57,36 @@ namespace Silent
         }
     }
 
-    // TODO: Parallelism.
-
     void ApplicationManager::Update()
     {
+        // Poll events.
         SDL_PollEvent(&_event);
+
+        // TODO: Update game state here.
+
         _isRunning = _event.type != SDL_EVENT_QUIT;
     }
 
     void ApplicationManager::Render()
     {
+        if (g_Time.GetTicks() <= 0)
+        {
+            return;
+        }
+
+        // Wait for previous frame to finish rendering.
+        static auto prevFrameFuture = std::future<void>();
+        if (prevFrameFuture.valid())
+        {
+            prevFrameFuture.wait();
+        }
+
+        // TODO: Parallelism requires storing a separate render buffer for game data
+        // so that it doesn't get overwritten by `ApplicationManager::Update` while 
+        // `_renderer.Update` runs in the background.
+
+        // Render scene.
         _renderer.Update();
+        //prevFrameFuture = g_Parallel.AddTask([this]() { _renderer.Update(); });
     }
 }
