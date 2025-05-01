@@ -2,10 +2,22 @@
 
 namespace Silent::Input
 {
-    struct RawInput
+    class      Action;
+    enum class ActionId;
+
+    enum class ControlAxisId
     {
-        std::vector<bool> KeyStates     = {};
-        Vector2           MousePosition = {};
+        Move,
+        Camera,
+
+        Count
+    };
+
+    struct EventData
+    {
+        std::vector<float> States            = {}; // Index = `EventId`.
+        Vector2            MousePosition     = {};
+        Vector2            PrevMousePosition = {};
     };
 
     class InputManager
@@ -13,7 +25,9 @@ namespace Silent::Input
     private:
         // Fields
 
-        RawInput _rawInput = {};
+        EventData                            _events      = {};
+        //std::unordered_map<ActionId, Action> _actionMap   = {};
+        std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 
     public:
         // Constructors
@@ -29,8 +43,8 @@ namespace Silent::Input
     private:
         // Helpers
 
-        void ReadKeyboard(int& keyStateIdx);
-        void ReadMouse(int& keyStateIdx);
-        void ReadController(int& keyStateIdx);
+        void ReadKeyboard(int& eventStateIdx);
+        void ReadMouse(int& eventStateIdx);
+        void ReadController(int& eventStateIdx);
     };
 }

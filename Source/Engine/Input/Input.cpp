@@ -1,7 +1,8 @@
 #include "Framework.h"
 #include "Engine/Input/Input.h"
 
-#include "Engine/Input/Keys.h"
+#include "Engine/Input/Action.h"
+#include "Engine/Input/Events.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
@@ -10,7 +11,9 @@ namespace Silent::Input
 {
     void InputManager::Initialize()
     {
-        _rawInput.KeyStates.resize((int)KeyId::Count);
+        _events.States.resize((int)EventId::Count);
+        //_actionMap.reserve((int)ActionId::Count);
+        _controlAxes.resize((int)ControlAxisId::Count);
     }
 
     void InputManager::Deinitialize()
@@ -20,78 +23,125 @@ namespace Silent::Input
 
     void InputManager::Update()
     {
-        // Update key states.
-        int keyStateIdx = 0;
-        ReadKeyboard(keyStateIdx);
-        ReadMouse(keyStateIdx);
-        ReadController(keyStateIdx);
+        // Update event states.
+        int eventStateIdx = 0;
+        ReadKeyboard(eventStateIdx);
+        ReadMouse(eventStateIdx);
+        ReadController(eventStateIdx);
     }
 
-    void InputManager::ReadKeyboard(int& keyStateIdx)
+    void InputManager::ReadKeyboard(int& eventStateIdx)
     {
         int         keyboardStateCount = 0;
         const bool* keyboardState      = SDL_GetKeyboardState(&keyboardStateCount);
-        SDL_Keymod  modState           = SDL_GetModState();
+        auto        modState           = SDL_GetModState();
 
-        // Set key states.
-        for (int scanCode : VALID_KEYBOARD_SCAN_CODES)
+        // Set keyboard key event states.
+        for (auto scanCode : VALID_KEYBOARD_SCAN_CODES)
         {
-            if (keyboardStateCount <= 0)
+            if (scanCode < keyboardStateCount)
             {
-                break;
-            }
-            else if (scanCode >= keyboardStateCount)
-            {
-                continue;
+                _events.States[eventStateIdx] = keyboardState[scanCode] ? 1.0f : 0.0f;
             }
 
-            _rawInput.KeyStates[keyStateIdx] = keyboardState[scanCode];
-            keyStateIdx++;
+            eventStateIdx++;
         }
 
-        // Set modifier key states.
+        // Set keyboard modifier event states.
         for (int modCode : VALID_KEYBOARD_MOD_CODES)
         {
-            _rawInput.KeyStates[keyStateIdx] = modState & modCode;
-            keyStateIdx++;
+            _events.States[eventStateIdx] = (modState & modCode) ? 1.0f : 0.0f;
+            eventStateIdx++;
         }
     }
 
-    void InputManager::ReadMouse(int& keyStateIdx)
+    void InputManager::ReadMouse(int& eventStateIdx)
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
         
-        // Set button states.
+        // Set mouse button event states.
         for (int butCode : VALID_MOUSE_BUT_CODES)
         {
-            _rawInput.KeyStates[keyStateIdx] = butState & SDL_BUTTON_MASK(butCode);
-            keyStateIdx++;
+            _events.States[eventStateIdx] = (butState & SDL_BUTTON_MASK(butCode)) ? 1.0f : 0.0f;
+            eventStateIdx++;
         }
 
-        // Set axis states.
-        _rawInput.MousePosition = pos;
+        // Set mouse position state.
+        _events.PrevMousePosition = _events.MousePosition;
+        _events.MousePosition     = pos;
+
+        // TODO: Need to adjust for sensitivity.
+        // Set camera axis. NOTE: Gamepad takes priority over keyboard/mouse.
+        //_controlAxes[(int)ControlAxisId::Camera] = _events.PrevMousePosition - events.MousePosition;
     }
 
-    void InputManager::ReadController(int& keyStateIdx)
+    void InputManager::ReadController(int& eventStateIdx)
     {
-        // TODO
-        /*SDL_GameController* controller = SDL_GameControllerOpen(0);
+        constexpr float AXIS_DEADZONE = ((float)SHRT_MAX / 6.0f) / (float)SHRT_MAX;
 
-        if (controller != nullptr)
+        auto* gamepad = SDL_OpenGamepad(0);
+
+        // Set gamepad button event states.
+        for (auto butCode : VALID_GAMEPAD_BUT_CODES)
         {
-            if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A))
+            if (gamepad != nullptr)
             {
-                // A button is pressed
+                _events.States[eventStateIdx] = SDL_GetGamepadButton(gamepad, butCode) ? 1.0f : 0.0f;
             }
-        
-            float leftAxis = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
-            if (leftAxis < -0.1f)
-            {
 
+            eventStateIdx++;
+        }
+
+        // Set gamepad stick axis event states.
+        int i = 0;
+        for (auto axisCode : VALID_GAMEPAD_STICK_AXIS_CODES)
+        {
+            if (gamepad != nullptr)
+            {
+                float val = (float)SDL_GetGamepadAxis(gamepad, axisCode) / (float)SHRT_MAX;
+
+                _events.States[eventStateIdx + i]       = (val <= -AXIS_DEADZONE) ? abs(val) : 0.0f;
+                _events.States[eventStateIdx + (i + 1)] = (val >=  AXIS_DEADZONE) ? abs(val) : 0.0f;
+
+                // Set control axes. NOTE: Gamepad takes priority over keyboard/mouse.
+                if (((i + 1) % 2) != 0)
+                {
+                    _controlAxes[i].x = val;
+                }
+                else
+                {
+                    _controlAxes[i].y = val;
+                }
+            }
+
+            i++;
+            eventStateIdx++;
+        }
+        eventStateIdx += VALID_GAMEPAD_STICK_AXIS_CODES.size();
+
+        // Set gamepad trigger axis event states.
+        for (auto axisCode : VALID_GAMEPAD_TRIG_AXIS_CODES)
+        {
+            if (gamepad != nullptr)
+            {
+                float val = (float)SDL_GetGamepadAxis(gamepad, axisCode) / (float)SHRT_MAX;
+
+                _events.States[eventStateIdx] = (val >= AXIS_DEADZONE) ? val : 0.0f;
+            }
+
+            eventStateIdx++;
+        }
+
+        // Account for deadzone in control axes.
+        for (auto& axis : _controlAxes)
+        {
+            if (axis.Length() < AXIS_DEADZONE)
+            {
+                axis = Vector2::Zero;
             }
         }
         
-        SDL_GameControllerClose(controller);*/
+        SDL_CloseGamepad(gamepad);
     }
 }
