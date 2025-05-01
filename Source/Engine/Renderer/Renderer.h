@@ -12,12 +12,12 @@ namespace Silent::Renderer
 
     struct SwapChainSupportDetails
     {
-        VkSurfaceCapabilitiesKHR        Capabilities = nullptr;
+        VkSurfaceCapabilitiesKHR        Capabilities = {};
         std::vector<VkSurfaceFormatKHR> Formats      = {};
         std::vector<VkPresentModeKHR>   PresentModes = {};
     };
 
-    class HelloTriangleApplication
+    class RendererManager
     {
     public:
 #ifdef _DEBUG
@@ -42,7 +42,6 @@ namespace Silent::Renderer
         static constexpr char WINDOW_NAME[] = "Hello Triangle";
 
         SDL_Window*              _window         = nullptr;
-        SDL_Event                _event          = {};
 
         VkInstance               _instance       = nullptr;
         VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
@@ -72,9 +71,15 @@ namespace Silent::Renderer
         VkSemaphore _renderFinishedSemaphore = nullptr;
         VkFence     _inFlightFence           = nullptr;
 
-        bool                     _isRunning     = true;
+        // Constructors
 
-        void Run();
+        RendererManager() = default;
+
+        // Utilities
+
+        void Initialize(SDL_Window& window);
+        void Deinitialize();
+        void Update();
 
     private:
         // Getters
@@ -89,9 +94,7 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void InitializeWindow();
-        void InitializeVulkan();
-        void Cleanup();
+        void DrawFrame();
 
         void                    PickPhysicalDevice();
         VkSurfaceFormatKHR      ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -99,9 +102,6 @@ namespace Silent::Renderer
         VkExtent2D              ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
         QueueFamilyIndices      FindQueueFamilies(VkPhysicalDevice device);
         SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
-
-        void MainLoop();
-        void DrawFrame();
 
         void           CreateInstance();
         void           CreateLogicalDevice();
@@ -117,7 +117,6 @@ namespace Silent::Renderer
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
 
         void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
-
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
 
@@ -131,18 +130,4 @@ namespace Silent::Renderer
                                                    const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
     void              DestroyDebugUtilsMessengerExt(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
     std::vector<char> ReadFile(const std::string& fileName);
-
-    class Renderer
-    {
-    public:
-        // Constructors
-
-        Renderer() = default;
-
-        // Utilities
-
-        void Update();
-    };
-
-    extern Renderer g_Renderer;
 }

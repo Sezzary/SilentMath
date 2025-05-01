@@ -1,17 +1,16 @@
 #include "Framework.h"
 
 #include "Engine/Application.h"
-#include "Engine/Renderer/Renderer.h"
-
-using namespace Silent::Renderer;
 
 int main()
 {
-    auto app = HelloTriangleApplication();
+    auto app = ApplicationManager();
 
     try
     {
+        app.Initialize();
         app.Run();
+        app.Deinitialize();
     }
     catch (const std::exception& ex)
     {
@@ -20,13 +19,4 @@ int main()
     }
 
     return EXIT_SUCCESS;
-
-    /*auto app = ApplicationManager();
-
-    // Run application.
-    app.Initialize();
-    app.Run();
-    app.Deinitialize();
-
-    return EXIT_SUCCESS;*/
 }

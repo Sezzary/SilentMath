@@ -3,21 +3,27 @@
 
 #include "Engine/Time.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Utils/Parallel.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Utils;
 
 namespace Silent
 {
     void ApplicationManager::Initialize()
     {
-        // Initialize SDL.
+        // SDL.
         Log("Initializing SDL...");
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
-        // Create window.
+        // Window.
         _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
+
+        // Renderer.
+        Log("Initializing renderer...");
+        _renderer.Initialize(*_window);
 
         _isRunning = true;
         Log("Initialization complete.");
@@ -25,6 +31,9 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
+        // Deinitialize renderer.
+        _renderer.Deinitialize();
+
         // Deinitialize SDL.
         Log("Deinitializing SDL...");
         SDL_DestroyWindow(_window);
@@ -48,6 +57,8 @@ namespace Silent
         }
     }
 
+    // TODO: Parallelism.
+
     void ApplicationManager::Update()
     {
         SDL_PollEvent(&_event);
@@ -56,6 +67,6 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
-        g_Renderer.Update();
+        _renderer.Update();
     }
 }

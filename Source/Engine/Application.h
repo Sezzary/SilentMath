@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Engine/Renderer/Renderer.h"
+
+using namespace Silent::Renderer;
+
 namespace Silent
 {
     class ApplicationManager
@@ -11,9 +15,10 @@ namespace Silent
     
         // Fields
 
-        SDL_Window* _window    = nullptr;
-        SDL_Event   _event     = {};
-        bool        _isRunning = false;
+        bool            _isRunning = false;
+        SDL_Window*     _window    = nullptr;
+        SDL_Event       _event     = {};
+        RendererManager _renderer  = RendererManager();
 
     public:
         // Constructors

@@ -7,113 +7,11 @@ namespace Silent::Renderer
     {
         return GraphicsFamily != NO_VALUE && PresentFamily != NO_VALUE;
     }
-
-    void HelloTriangleApplication::Run()
-    {
-        InitializeWindow();
-        InitializeVulkan();
-        MainLoop();
-        Cleanup();
-    }
-
-    std::vector<const char*> HelloTriangleApplication::GetRequiredExtensions()
-    {
-        uint sdlExtCount = 0;
-        auto* sdlExts = SDL_Vulkan_GetInstanceExtensions(&sdlExtCount);
-
-        auto exts = std::vector<const char*>(sdlExts, sdlExts + sdlExtCount);
-        if (ENABLE_VALIDATION_LAYERS)
-        {
-            exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-        }
-
-        return exts;
-    }
-
-    bool HelloTriangleApplication::CheckValidationLayerSupport() const
-    {
-        uint layerCount;
-        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
     
-        auto availableLayers = std::vector<VkLayerProperties>(layerCount);
-        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-    
-        for (const char* layerName : VALIDATION_LAYERS)
-        {
-            bool isLayerFound = false;
-            for (const auto& layerProperties : availableLayers)
-            {
-                if (strcmp(layerName, layerProperties.layerName) == 0)
-                {
-                    isLayerFound = true;
-                    break;
-                }
-            }
-    
-            if (!isLayerFound)
-            {
-                return false;
-            }
-        }
-    
-        return true;
-    }
-
-    bool HelloTriangleApplication::CheckDeviceExtensionSupport(VkPhysicalDevice device)
+    void RendererManager::Initialize(SDL_Window& window)
     {
-        uint extCount;
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extCount, nullptr);
-    
-        auto availableExts = std::vector<VkExtensionProperties>(extCount);
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extCount, availableExts.data());
-    
-        auto requiredExts = std::set<std::string>(DEVICE_EXTENSIONS.begin(), DEVICE_EXTENSIONS.end());
-        for (const auto& ext : availableExts)
-        {
-            requiredExts.erase(ext.extensionName);
-        }
-    
-        return requiredExts.empty();
-    }
+        _window = &window;
 
-    bool HelloTriangleApplication::IsDeviceSuitable(VkPhysicalDevice device)
-    {
-        /*auto deviceProperties = VkPhysicalDeviceProperties{};
-        vkGetPhysicalDeviceProperties(device, &deviceProperties);
-
-        auto deviceFeatures = VkPhysicalDeviceFeatures{};
-        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);*/
-
-        // TODO: Pick best GPU.
-
-        bool isExtSupported = CheckDeviceExtensionSupport(device);
-
-        bool isSwapChainAdequate = false;
-        if (isExtSupported)
-        {
-            auto swapChainSupport = QuerySwapChainSupport(device);
-            isSwapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentModes.empty();
-        }
-
-        return FindQueueFamilies(device).IsComplete() && isExtSupported && isSwapChainAdequate;
-    }
-
-    void HelloTriangleApplication::InitializeWindow()
-    {
-        // Initialize SDL.
-        Log("Initializing SDL...");
-        bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
-        Assert(sdlStatus, "Failed to initialize SDL.");
-
-        // Create window.
-        _window = SDL_CreateWindow("Hello Triangle", WIDTH, HEIGHT, SDL_WINDOW_VULKAN);
-        Assert(_window != nullptr, "Failed to create window.");
-
-        Log("Initialization complete.");
-    }
-
-    void HelloTriangleApplication::InitializeVulkan()
-    {
         CreateInstance();
         SetupDebugMessenger();
         CreateSurface();
@@ -129,9 +27,10 @@ namespace Silent::Renderer
         CreateSyncObjects();
     }
 
-    void HelloTriangleApplication::Cleanup()
+    void RendererManager::Deinitialize()
     {
-        // Deinitialize Vulkan.
+        vkDeviceWaitIdle(_device);
+
         vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
         vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
         vkDestroyFence(_device, _inFlightFence, nullptr);
@@ -161,16 +60,96 @@ namespace Silent::Renderer
 
         vkDestroySurfaceKHR(_instance, _surface, nullptr);
         vkDestroyInstance(_instance, nullptr);
-
-        // Deinitialize SDL.
-        Log("Deinitializing SDL...");
-        SDL_DestroyWindow(_window);
-        SDL_Quit();
-
-        Log("Deinitialization complete.");
     }
 
-    void HelloTriangleApplication::PickPhysicalDevice()
+    void RendererManager::Update()
+    {
+        DrawFrame();
+    }
+
+    std::vector<const char*> RendererManager::GetRequiredExtensions()
+    {
+        uint sdlExtCount = 0;
+        auto* sdlExts = SDL_Vulkan_GetInstanceExtensions(&sdlExtCount);
+
+        auto exts = std::vector<const char*>(sdlExts, sdlExts + sdlExtCount);
+        if (ENABLE_VALIDATION_LAYERS)
+        {
+            exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+
+        return exts;
+    }
+
+    bool RendererManager::CheckValidationLayerSupport() const
+    {
+        uint layerCount;
+        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+    
+        auto availableLayers = std::vector<VkLayerProperties>(layerCount);
+        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+    
+        for (const char* layerName : VALIDATION_LAYERS)
+        {
+            bool isLayerFound = false;
+            for (const auto& layerProperties : availableLayers)
+            {
+                if (strcmp(layerName, layerProperties.layerName) == 0)
+                {
+                    isLayerFound = true;
+                    break;
+                }
+            }
+    
+            if (!isLayerFound)
+            {
+                return false;
+            }
+        }
+    
+        return true;
+    }
+
+    bool RendererManager::CheckDeviceExtensionSupport(VkPhysicalDevice device)
+    {
+        uint extCount;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extCount, nullptr);
+    
+        auto availableExts = std::vector<VkExtensionProperties>(extCount);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extCount, availableExts.data());
+    
+        auto requiredExts = std::set<std::string>(DEVICE_EXTENSIONS.begin(), DEVICE_EXTENSIONS.end());
+        for (const auto& ext : availableExts)
+        {
+            requiredExts.erase(ext.extensionName);
+        }
+    
+        return requiredExts.empty();
+    }
+
+    bool RendererManager::IsDeviceSuitable(VkPhysicalDevice device)
+    {
+        /*auto deviceProperties = VkPhysicalDeviceProperties{};
+        vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+        auto deviceFeatures = VkPhysicalDeviceFeatures{};
+        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);*/
+
+        // TODO: Pick best GPU.
+
+        bool isExtSupported = CheckDeviceExtensionSupport(device);
+
+        bool isSwapChainAdequate = false;
+        if (isExtSupported)
+        {
+            auto swapChainSupport = QuerySwapChainSupport(device);
+            isSwapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentModes.empty();
+        }
+
+        return FindQueueFamilies(device).IsComplete() && isExtSupported && isSwapChainAdequate;
+    }
+
+    void RendererManager::PickPhysicalDevice()
     {
         uint deviceCount = 0;
         vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
@@ -196,7 +175,7 @@ namespace Silent::Renderer
         }
     }
 
-    VkSurfaceFormatKHR HelloTriangleApplication::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+    VkSurfaceFormatKHR RendererManager::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
     {
         for (const auto& availableFormat : availableFormats)
         {
@@ -210,7 +189,7 @@ namespace Silent::Renderer
         return availableFormats.front();
     }
 
-    VkPresentModeKHR HelloTriangleApplication::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+    VkPresentModeKHR RendererManager::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
     {
         for (const auto& availablePresentMode : availablePresentModes)
         {
@@ -223,7 +202,7 @@ namespace Silent::Renderer
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    VkExtent2D HelloTriangleApplication::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+    VkExtent2D RendererManager::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
     {
         if (capabilities.currentExtent.width != UINT_MAX)
         {
@@ -242,7 +221,7 @@ namespace Silent::Renderer
         return actualExtent;
     }
 
-    QueueFamilyIndices HelloTriangleApplication::FindQueueFamilies(VkPhysicalDevice device)
+    QueueFamilyIndices RendererManager::FindQueueFamilies(VkPhysicalDevice device)
     {
         auto idxs = QueueFamilyIndices {};
 
@@ -281,7 +260,7 @@ namespace Silent::Renderer
         return idxs;
     }
 
-    SwapChainSupportDetails HelloTriangleApplication::QuerySwapChainSupport(VkPhysicalDevice device)
+    SwapChainSupportDetails RendererManager::QuerySwapChainSupport(VkPhysicalDevice device)
     {
         auto details = SwapChainSupportDetails{};
 
@@ -306,20 +285,7 @@ namespace Silent::Renderer
         return details;
     }
 
-    void HelloTriangleApplication::MainLoop()
-    {
-        while (_isRunning)
-        {
-            SDL_PollEvent(&_event);
-            DrawFrame();
-
-            _isRunning = _event.type != SDL_EVENT_QUIT;
-        }
-
-        vkDeviceWaitIdle(_device);
-    }
-
-    void HelloTriangleApplication::DrawFrame()
+    void RendererManager::DrawFrame()
     {
         vkWaitForFences(_device, 1, &_inFlightFence, VK_TRUE, UINT64_MAX);
         vkResetFences(_device, 1, &_inFlightFence);
@@ -363,7 +329,7 @@ namespace Silent::Renderer
         vkQueuePresentKHR(_presentQueue, &presentInfo);
     }
 
-    void HelloTriangleApplication::CreateInstance()
+    void RendererManager::CreateInstance()
     {
         if (ENABLE_VALIDATION_LAYERS && !CheckValidationLayerSupport())
         {
@@ -419,7 +385,7 @@ namespace Silent::Renderer
         Log("Available Vulkan extensions (" + std::to_string(extCount) + "):");
         for (const auto& ext : exts)
         {
-            Log(ext.extensionName);
+            Log(std::string("    ") + ext.extensionName);
         }
 
         if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS)
@@ -428,7 +394,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::CreateLogicalDevice()
+    void RendererManager::CreateLogicalDevice()
     {
         auto idxs = FindQueueFamilies(_physicalDevice);
         auto queueCreateInfos = std::vector<VkDeviceQueueCreateInfo>{};
@@ -464,7 +430,7 @@ namespace Silent::Renderer
         vkGetDeviceQueue(_device, idxs.PresentFamily, 0, &_presentQueue);
     }
 
-    void HelloTriangleApplication::CreateSurface()
+    void RendererManager::CreateSurface()
     {
         if (!SDL_Vulkan_CreateSurface(_window, _instance, nullptr, &_surface))
         {
@@ -472,7 +438,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::CreateSwapChain()
+    void RendererManager::CreateSwapChain()
     {
         auto swapChainSupport = QuerySwapChainSupport(_physicalDevice);
     
@@ -532,7 +498,7 @@ namespace Silent::Renderer
         _swapChainExtent = extent;
     }
 
-    void HelloTriangleApplication::CreateImageViews()
+    void RendererManager::CreateImageViews()
     {
         _swapChainImageViews.resize(_swapChainImages.size());
         for (int i = 0; i < _swapChainImages.size(); i++)
@@ -559,7 +525,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::CreateRenderPass()
+    void RendererManager::CreateRenderPass()
     {
         auto colorAttachment = VkAttachmentDescription{};
         colorAttachment.format = _swapChainImageFormat;
@@ -603,7 +569,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::CreateGraphicsPipeline()
+    void RendererManager::CreateGraphicsPipeline()
     {
         auto vertShaderCode = ReadFile("Shaders/Vert.spv");
         auto fragShaderCode = ReadFile("Shaders/Frag.spv");
@@ -756,7 +722,7 @@ namespace Silent::Renderer
         vkDestroyShaderModule(_device, vertShaderModule, nullptr);
     }
 
-    void HelloTriangleApplication::CreateFramebuffers()
+    void RendererManager::CreateFramebuffers()
     {
         _swapChainFramebuffers.resize(_swapChainImageViews.size());
         for (int i = 0; i < _swapChainImageViews.size(); i++)
@@ -782,7 +748,7 @@ namespace Silent::Renderer
         }
     }
     
-    void HelloTriangleApplication::CreateCommandPool()
+    void RendererManager::CreateCommandPool()
     {
         auto queueFamilyIdxs = FindQueueFamilies(_physicalDevice);
 
@@ -797,7 +763,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::CreateCommandBuffer()
+    void RendererManager::CreateCommandBuffer()
     {
         auto allocInfo = VkCommandBufferAllocateInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -811,7 +777,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::CreateSyncObjects()
+    void RendererManager::CreateSyncObjects()
     {
         auto semaphoreInfo = VkSemaphoreCreateInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -828,7 +794,7 @@ namespace Silent::Renderer
         }
     }
 
-    VkShaderModule HelloTriangleApplication::CreateShaderModule(const std::vector<char>& code)
+    VkShaderModule RendererManager::CreateShaderModule(const std::vector<char>& code)
     {
         auto createInfo = VkShaderModuleCreateInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -844,7 +810,7 @@ namespace Silent::Renderer
         return shaderModule;
     }
 
-    void HelloTriangleApplication::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx)
+    void RendererManager::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx)
     {
         auto beginInfo = VkCommandBufferBeginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -894,7 +860,7 @@ namespace Silent::Renderer
         }
     }
 
-    void HelloTriangleApplication::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
+    void RendererManager::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
     {
         createInfo = VkDebugUtilsMessengerCreateInfoEXT{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -908,7 +874,7 @@ namespace Silent::Renderer
         createInfo.pUserData = nullptr;
     }
 
-    void HelloTriangleApplication::SetupDebugMessenger()
+    void RendererManager::SetupDebugMessenger()
     {
         if (!ENABLE_VALIDATION_LAYERS)
         {
@@ -924,7 +890,7 @@ namespace Silent::Renderer
         }
     }
 
-    VKAPI_ATTR VkBool32 VKAPI_CALL HelloTriangleApplication::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+    VKAPI_ATTR VkBool32 VKAPI_CALL RendererManager::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                                                                            VkDebugUtilsMessageTypeFlagsEXT messageType,
                                                                            const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                                            void* pUserData)
@@ -965,7 +931,7 @@ namespace Silent::Renderer
             throw std::runtime_error("Failed to open file.");
         }
 
-        uint fileSize = file.tellg();
+        uint fileSize = (uint)file.tellg();
         auto buffer = std::vector<char>(fileSize);
 
         file.seekg(0);
@@ -973,12 +939,5 @@ namespace Silent::Renderer
         file.close();
 
         return buffer;
-    }
-
-    Renderer g_Renderer = Renderer();
-
-    void Renderer::Update()
-    {
-
     }
 }
