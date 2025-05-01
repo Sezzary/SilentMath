@@ -71,6 +71,6 @@ namespace Silent::Utils::Debug
         auto endTime = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
         
-        Log("Exec: " + std::to_string(duration.count()), LogLevel::Info, true);
+        Log("Execution (μs): " + std::to_string(duration.count()), LogLevel::Info, true);
     }
 }

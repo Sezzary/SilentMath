@@ -315,6 +315,8 @@ namespace Silent::Renderer
 
             _isRunning = _event.type != SDL_EVENT_QUIT;
         }
+
+        vkDeviceWaitIdle(_device);
     }
 
     void HelloTriangleApplication::DrawFrame()
@@ -328,19 +330,17 @@ namespace Silent::Renderer
         vkResetCommandBuffer(_commandBuffer, 0);
         RecordCommandBuffer(_commandBuffer, imageIdx);
 
+        VkSemaphore waitSemaphores[] = { _imageAvailableSemaphore };
+        VkSemaphore signalSemaphores[] = { _renderFinishedSemaphore };
+        VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        
         auto submitInfo = VkSubmitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        
-        VkSemaphore waitSemaphores[] = { _imageAvailableSemaphore };
-        VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
-
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &_commandBuffer;
-
-        VkSemaphore signalSemaphores[] = { _renderFinishedSemaphore };
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
 

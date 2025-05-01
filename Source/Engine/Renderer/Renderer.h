@@ -12,7 +12,7 @@ namespace Silent::Renderer
 
     struct SwapChainSupportDetails
     {
-        VkSurfaceCapabilitiesKHR        Capabilities;
+        VkSurfaceCapabilitiesKHR        Capabilities = nullptr;
         std::vector<VkSurfaceFormatKHR> Formats      = {};
         std::vector<VkPresentModeKHR>   PresentModes = {};
     };
