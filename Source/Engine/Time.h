@@ -2,7 +2,7 @@
 
 namespace Silent
 {
-    class TimeController
+    class TimeManager
     {
     public:
         // Constants
@@ -20,13 +20,13 @@ namespace Silent
 
         // Constructors
 
-        TimeController()                           = default;
-        TimeController(const TimeController& time) = delete;
+        TimeManager()                        = default;
+        TimeManager(const TimeManager& time) = delete;
 
     public:
         // Getters
 
-        static TimeController& Get();
+        static TimeManager& Get();
 
         float GetDeltaTime() const;
         uint  GetTicksPerSecond() const;
@@ -50,8 +50,8 @@ namespace Silent
 
         // Operators
         
-        TimeController& operator=(const TimeController& time) = delete;
+        TimeManager& operator=(const TimeManager& time) = delete;
     };
 
-    extern TimeController& g_Time;
+    extern TimeManager& g_Time;
 }

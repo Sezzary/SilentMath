@@ -144,15 +144,17 @@ namespace Silent::Input
         // Set gamepad stick axis event states and control axes. NOTE: Gamepad takes priority over keyboard/mouse.
         for (int i = 0; i < stickAxes.size(); i++)
         {
-            // Account for circular deadzone.
-            auto axis = (stickAxes[i].Length() >= AXIS_DEADZONE) ? stickAxes[i] : Vector2::Zero;
+            if (gamepad != nullptr)
+            {
+                auto axis = (stickAxes[i].Length() >= AXIS_DEADZONE) ? stickAxes[i] : Vector2::Zero;
 
-            _events.States[eventStateIdx + i]       = (axis.x <  0.0f) ? abs(axis.x) : 0.0f;
-            _events.States[eventStateIdx + (i + 1)] = (axis.x >= 0.0f) ? abs(axis.x) : 0.0f;
-            _events.States[eventStateIdx + (i + 2)] = (axis.y <  0.0f) ? abs(axis.y) : 0.0f;
-            _events.States[eventStateIdx + (i + 3)] = (axis.y >= 0.0f) ? abs(axis.y) : 0.0f;
-
-            _controlAxes[i] = axis;
+                _events.States[eventStateIdx + i]       = (axis.x <  0.0f) ? abs(axis.x) : 0.0f;
+                _events.States[eventStateIdx + (i + 1)] = (axis.x >= 0.0f) ? abs(axis.x) : 0.0f;
+                _events.States[eventStateIdx + (i + 2)] = (axis.y <  0.0f) ? abs(axis.y) : 0.0f;
+                _events.States[eventStateIdx + (i + 3)] = (axis.y >= 0.0f) ? abs(axis.y) : 0.0f;
+    
+                _controlAxes[i] = axis;
+            }
 
             eventStateIdx += Vector2::AXIS_COUNT * 2;
         }

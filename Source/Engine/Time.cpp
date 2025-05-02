@@ -7,32 +7,32 @@ using namespace Silent::Utils;
 
 namespace Silent
 {
-    TimeController& g_Time = TimeController::Get();
+    TimeManager& g_Time = TimeManager::Get();
 
-    TimeController& TimeController::Get()
+    TimeManager& TimeManager::Get()
     {
-        static auto instance = TimeController();
+        static auto instance = TimeManager();
         return instance;
     }
 
-    float TimeController::GetDeltaTime() const
+    float TimeManager::GetDeltaTime() const
     {
         ulong uptimeMicrosecs = GetUptimeMicrosecs();
         ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
         return (float)elapsedMicrosecs / 1000000.0f;
     }
 
-    uint TimeController::GetTicks() const
+    uint TimeManager::GetTicks() const
     {
         return std::min(_ticks, TPS / 2);
     }
 
-    ulong TimeController::GetUptimeMicrosecs() const
+    ulong TimeManager::GetUptimeMicrosecs() const
     {
         return GetEpochMicrosecs() - _baseMicrosecs;
     }
 
-    bool TimeController::TestInterval(uint intervalTicks, uint offsetTicks) const
+    bool TimeManager::TestInterval(uint intervalTicks, uint offsetTicks) const
     {
         if (offsetTicks >= intervalTicks)
         {
@@ -44,12 +44,12 @@ namespace Silent
         return (ticks % intervalTicks) == offsetTicks;
     }
 
-    void TimeController::Reset()
+    void TimeManager::Reset()
     {
         _baseMicrosecs = GetEpochMicrosecs();
     }
 
-    void TimeController::Update()
+    void TimeManager::Update()
     {
         ulong uptimeMicrosecs = GetUptimeMicrosecs();
         ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
@@ -65,7 +65,7 @@ namespace Silent
         }
     }
 
-    void TimeController::WaitForNextTick() const
+    void TimeManager::WaitForNextTick() const
     {
         ulong uptimeMicrosecs = GetUptimeMicrosecs();
         ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
@@ -78,7 +78,7 @@ namespace Silent
         }
     }
 
-    ulong TimeController::GetEpochMicrosecs() const
+    ulong TimeManager::GetEpochMicrosecs() const
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     }
