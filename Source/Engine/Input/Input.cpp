@@ -35,7 +35,7 @@ namespace Silent::Input
         ReadController(eventStateIdx);
     }
 
-    void InputManager::Rumble(float power, float durationSec, RumbleMode mode) const
+    void InputManager::Rumble(float power, float durationSec) const
     {
         auto* gamepad = SDL_OpenGamepad(0);
         if (gamepad == nullptr)
@@ -43,11 +43,10 @@ namespace Silent::Input
             return;
         }
 
-        ushort freqLeft   = (mode == RumbleMode::Left  || mode == RumbleMode::Dual) ? (power * USHRT_MAX) : 0;
-        ushort freqRight  = (mode == RumbleMode::Right || mode == RumbleMode::Dual) ? (power * USHRT_MAX) : 0;
+        ushort freq       = (ushort)(power * USHRT_MAX);
         uint   durationMs = (uint)round(durationSec * 1000);
 
-        if (!SDL_RumbleGamepad(gamepad, freqLeft, freqRight, durationMs))
+        if (!SDL_RumbleGamepad(gamepad, freq, freq, durationMs))
         {
             Log("Failed to rumble gamepad: " + std::string(SDL_GetError()), LogLevel::Error);
         }
@@ -121,9 +120,9 @@ namespace Silent::Input
         int  j         = 0;
 
         // Collect stick axes.
-        for (int i = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size; i++)
+        for (int i = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
         {
-            int axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
+            auto axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
 
             if (gamepad != nullptr)
             {

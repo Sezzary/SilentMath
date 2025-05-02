@@ -13,13 +13,6 @@ namespace Silent::Input
         Count
     };
 
-	enum class RumbleMode
-	{
-		Left,
-		Right,
-		Dual
-	};
-
     struct RumbleData
     {
         float PowerFrom     = 0.0f;
@@ -48,13 +41,20 @@ namespace Silent::Input
 
         InputManager() = default;
 
+        // Inquirers
+
+        bool IsActionClicked(ActionId actionId) const;
+        bool IsActionHeld(ActionId actionId) const;
+        bool IsActionReleased(ActionId actionId) const;
+        bool IsActionPulsed(ActionId actionId) const;
+
         // Utilities
 
         void Initialize();
         void Deinitialize();
         void Update();
 
-        void Rumble(float power, float durationSec, RumbleMode mode) const;
+        void Rumble(float power, float durationSec) const;
 
     private:
         // Helpers
