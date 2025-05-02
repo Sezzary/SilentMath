@@ -13,6 +13,18 @@ namespace Silent::Input
         Count
     };
 
+	enum class RumbleMode
+	{
+		Left,
+		Right,
+		Dual
+	};
+
+    struct RumbleData
+    {
+        // TODO
+    };
+
     struct EventData
     {
         std::vector<float> States            = {}; // Index = `EventId`.
@@ -39,6 +51,8 @@ namespace Silent::Input
         void Initialize();
         void Deinitialize();
         void Update();
+
+        void Rumble() const;
 
     private:
         // Helpers

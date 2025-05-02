@@ -37,9 +37,9 @@ namespace Silent::Input
         // Inquirers
 
         bool IsClicked() const;
-        bool IsHeld(float delaySecs = 0.0f) const;
-        bool IsPulsed(float delaySecs, float initialDelaySecs = 0.0f) const;
-        bool IsReleased(float delaySecsMax = INFINITY) const;
+        bool IsHeld(float delaySec = 0.0f) const;
+        bool IsPulsed(float delaySec, float initialDelaySec = 0.0f) const;
+        bool IsReleased(float delaySecMax = INFINITY) const;
 
         // Utilities
 

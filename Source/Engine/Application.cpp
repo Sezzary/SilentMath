@@ -66,15 +66,27 @@ namespace Silent
 
     void ApplicationManager::Update()
     {
-        // Poll events.
-        SDL_PollEvent(&_event);
-
         // Update input state.
         _input.Update();
 
         // TODO: Update game state here.
 
-        _isRunning = _event.type != SDL_EVENT_QUIT;
+        // Poll events.
+        while (SDL_PollEvent(&_event))
+        {
+            // Handle each event
+            switch (_event.type)
+            {
+                case SDL_QUIT:
+                {
+                    _isRunning = false;
+                    break;
+                }
+
+                default:
+                    break;
+            }
+        }
     }
 
     void ApplicationManager::Render()

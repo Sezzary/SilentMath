@@ -11,6 +11,11 @@ namespace Silent::Input
 {
     void InputManager::Initialize()
     {
+        if (!SDL_Init(SDL_INIT_GAMEPAD))
+        {
+            Log("Failed to initialize gamepad subsystem: " + std::string(SDL_GetError()), LogLevel::Error);
+        }
+
         _events.States.resize((int)EventId::Count);
         //_actionMap.reserve((int)ActionId::Count);
         _controlAxes.resize((int)ControlAxisId::Count);
@@ -28,6 +33,26 @@ namespace Silent::Input
         ReadKeyboard(eventStateIdx);
         ReadMouse(eventStateIdx);
         ReadController(eventStateIdx);
+    }
+
+    void InputManager::Rumble(float power, float durationSec, RumbleMode mode) const
+    {
+        auto* gamepad = SDL_OpenGamepad(0);
+        if (gamepad == nullptr)
+        {
+            return;
+        }
+
+        ushort freqLeft   = (mode == RumbleMode::Left  || mode == RumbleMode::Dual) ? (power * USHRT_MAX) : 0;
+        ushort freqRight  = (mode == RumbleMode::Right || mode == RumbleMode::Dual) ? (power * USHRT_MAX) : 0;
+        uint   durationMs = (uint)round(durationSec * 1000);
+
+        if (!SDL_RumbleGamepad(gamepad, freqLeft, freqRight, durationMs))
+        {
+            Log("Failed to rumble gamepad: " + std::string(SDL_GetError()), LogLevel::Error);
+        }
+
+        SDL_CloseGamepad(gamepad);
     }
 
     void InputManager::ReadKeyboard(int& eventStateIdx)
@@ -101,6 +126,7 @@ namespace Silent::Input
             {
                 float val = (float)SDL_GetGamepadAxis(gamepad, axisCode) / (float)SHRT_MAX;
 
+                // TODO: Needs circular deadzone.
                 _events.States[eventStateIdx + i]       = (val <= -AXIS_DEADZONE) ? abs(val) : 0.0f;
                 _events.States[eventStateIdx + (i + 1)] = (val >=  AXIS_DEADZONE) ? abs(val) : 0.0f;
 
@@ -120,6 +146,15 @@ namespace Silent::Input
         }
         eventStateIdx += VALID_GAMEPAD_STICK_AXIS_CODES.size();
 
+        // Account for deadzone in control axes.
+        for (auto& axis : _controlAxes)
+        {
+            if (axis.Length() < AXIS_DEADZONE)
+            {
+                axis = Vector2::Zero;
+            }
+        }
+
         // Set gamepad trigger axis event states.
         for (auto axisCode : VALID_GAMEPAD_TRIG_AXIS_CODES)
         {
@@ -133,15 +168,6 @@ namespace Silent::Input
             eventStateIdx++;
         }
 
-        // Account for deadzone in control axes.
-        for (auto& axis : _controlAxes)
-        {
-            if (axis.Length() < AXIS_DEADZONE)
-            {
-                axis = Vector2::Zero;
-            }
-        }
-        
         SDL_CloseGamepad(gamepad);
     }
 }
