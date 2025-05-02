@@ -22,14 +22,15 @@ namespace Silent::Input
 
     struct RumbleData
     {
-        // TODO
+        float PowerFrom     = 0.0f;
+        float PowerTo       = 0.0f;
+        uint  DurationTicks = 0;
     };
 
     struct EventData
     {
-        std::vector<float> States            = {}; // Index = `EventId`.
-        Vector2            MousePosition     = {};
-        Vector2            PrevMousePosition = {};
+        std::vector<float> States        = {}; // Index = `EventId`.
+        Vector2            MousePosition = {};
     };
 
     class InputManager
@@ -38,6 +39,7 @@ namespace Silent::Input
         // Fields
 
         EventData                            _events      = {};
+        RumbleData                           _rumble      = {};
         //std::unordered_map<ActionId, Action> _actionMap   = {};
         std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 
@@ -52,7 +54,7 @@ namespace Silent::Input
         void Deinitialize();
         void Update();
 
-        void Rumble() const;
+        void Rumble(float power, float durationSec, RumbleMode mode) const;
 
     private:
         // Helpers
