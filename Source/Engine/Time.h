@@ -10,13 +10,13 @@ namespace Silent
         static constexpr uint TPS = 60;
 
     private:
-        static constexpr uint TICK_INTERVAL_MICROSECS = 1000000 / TPS;
+        static constexpr uint TICK_INTERVAL_MICROSEC = 1000000 / TPS;
 
         // Fields
 
-        uint  _ticks               = 0;
-        ulong _prevUptimeMicrosecs = 0;
-        ulong _baseMicrosecs       = 0;
+        uint   _ticks              = 0;
+        uint64 _prevUptimeMicrosec = 0;
+        uint64 _baseMicrosec       = 0;
 
         // Constructors
 
@@ -30,7 +30,6 @@ namespace Silent
 
         float GetDeltaTime() const;
         uint  GetTicks() const;
-        ulong GetUptimeMicrosecs() const;
 
         // Inquirers
 
@@ -45,7 +44,8 @@ namespace Silent
     private:
         // Helpers
 
-        ulong GetEpochMicrosecs() const;
+        uint64 GetUptimeMicrosec() const;
+        uint64 GetEpochMicrosec() const;
 
         // Operators
         
@@ -54,6 +54,6 @@ namespace Silent
 
     extern TimeManager& g_Time;
 
-    uint  SecToTick(float sec);
+    uint  SecToTicks(float sec);
     float TicksToSec(uint ticks);
 }

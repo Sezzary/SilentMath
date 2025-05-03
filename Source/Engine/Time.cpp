@@ -17,19 +17,14 @@ namespace Silent
 
     float TimeManager::GetDeltaTime() const
     {
-        ulong uptimeMicrosecs = GetUptimeMicrosecs();
-        ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
-        return (float)elapsedMicrosecs / 1000000.0f;
+        uint64 uptimeMicrosec  = GetUptimeMicrosec();
+        uint64 elapsedMicrosec = uptimeMicrosec - _prevUptimeMicrosec;
+        return (float)elapsedMicrosec / 1000000.0f;
     }
 
     uint TimeManager::GetTicks() const
     {
         return std::min(_ticks, TPS / 2);
-    }
-
-    ulong TimeManager::GetUptimeMicrosecs() const
-    {
-        return GetEpochMicrosecs() - _baseMicrosecs;
     }
 
     bool TimeManager::TestInterval(uint intervalTicks, uint offsetTicks) const
@@ -40,52 +35,59 @@ namespace Silent
             Log("Attempted to test time interval with offset greater than or equal to interval.");
         }
         
-        ulong ticks = GetUptimeMicrosecs() / TICK_INTERVAL_MICROSECS;
+        uint64 ticks = GetUptimeMicrosec() / TICK_INTERVAL_MICROSEC;
         return (ticks % intervalTicks) == offsetTicks;
     }
 
     void TimeManager::Reset()
     {
-        _baseMicrosecs = GetEpochMicrosecs();
+        _baseMicrosec = GetEpochMicrosec();
     }
 
     void TimeManager::Update()
     {
-        ulong uptimeMicrosecs = GetUptimeMicrosecs();
-        ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
+        uint64 uptimeMicrosec  = GetUptimeMicrosec();
+        uint64 elapsedMicrosec = uptimeMicrosec - _prevUptimeMicrosec;
 
         // Calculate ticks for elapsed period.
-        _ticks = (uint)(elapsedMicrosecs / TICK_INTERVAL_MICROSECS);
+        _ticks = (uint)(elapsedMicrosec / TICK_INTERVAL_MICROSEC);
 
         // Set previous uptime if new ticks accumulated.
         if (_ticks != 0)
         {
-            uint consumedTime = _ticks * TICK_INTERVAL_MICROSECS;
-            _prevUptimeMicrosecs = uptimeMicrosecs;
+            uint consumedTime = _ticks * TICK_INTERVAL_MICROSEC;
+            _prevUptimeMicrosec = uptimeMicrosec;
         }
     }
 
     void TimeManager::WaitForNextTick() const
     {
-        ulong uptimeMicrosecs = GetUptimeMicrosecs();
-        ulong elapsedMicrosecs = uptimeMicrosecs - _prevUptimeMicrosecs;
+        uint64 uptimeMicrosec  = GetUptimeMicrosec();
+        uint64 elapsedMicrosec = uptimeMicrosec - _prevUptimeMicrosec;
 
         // Sleep current thread for remaining time before next tick.
-        ulong remainingMicrosecs = TICK_INTERVAL_MICROSECS - (elapsedMicrosecs % TICK_INTERVAL_MICROSECS);
-        if (remainingMicrosecs > 0 && remainingMicrosecs < TICK_INTERVAL_MICROSECS)
+        uint64 remainingMicrosec = TICK_INTERVAL_MICROSEC - (elapsedMicrosec % TICK_INTERVAL_MICROSEC);
+        if (remainingMicrosec > 0 && remainingMicrosec < TICK_INTERVAL_MICROSEC)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(remainingMicrosecs));
+            std::this_thread::sleep_for(std::chrono::microseconds(remainingMicrosec));
         }
     }
 
-    ulong TimeManager::GetEpochMicrosecs() const
+    uint64 TimeManager::GetUptimeMicrosec() const
+    {
+        return GetEpochMicrosec() - _baseMicrosec;
+    }
+
+    uint64 TimeManager::GetEpochMicrosec() const
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     }
 
-    uint SecToTick(float sec)
+    uint SecToTicks(float sec)
     {
-        return (uint)round(sec / (1.0f / (float)g_Time.TPS));
+        constexpr float SEC_PER_TICK = 1.0f / (float)g_Time.TPS;
+
+        return (uint)round(sec / SEC_PER_TICK);
     }
 
     float TicksToSec(uint ticks)

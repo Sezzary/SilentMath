@@ -62,18 +62,18 @@ namespace Silent::Input
     
     bool Action::IsClicked(float valMin) const
     {
-		return _value > valMin && _prevValue <= valMin;
+        return _value > valMin && _prevValue <= valMin;
     }
 
     bool Action::IsHeld(float delaySec, float valMin) const
     {
-		if (_value <= valMin)
+        if (_value <= valMin)
         {
-			return false;
+            return false;
         }
 
-		uint delayTicks = (delaySec == 0.0f) ? 0 : SecToTick(delaySec);
-		return _ticksActive >= delayTicks;
+        uint delayTicks = (delaySec == 0.0f) ? 0 : SecToTicks(delaySec);
+        return _ticksActive >= delayTicks;
     }
 
     // NOTE: To avoid stutter on second pulse, ensure `initialDelaySec` is `delaySec` multiple.
@@ -89,8 +89,8 @@ namespace Silent::Input
             return false;
         }
 
-        float activeDelaySec   = (_ticksActive > SecToTick(initialDelaySec)) ? delaySec : initialDelaySec;
-        uint  activeDelayTicks = SecToTick(activeDelaySec);
+        float activeDelaySec   = (_ticksActive > SecToTicks(initialDelaySec)) ? delaySec : initialDelaySec;
+        uint  activeDelayTicks = SecToTicks(activeDelaySec);
 
         uint delayTicks     = (uint)floor(_ticksActive / activeDelayTicks) * activeDelayTicks;
         uint prevDelayTicks = (uint)floor(_prevTicksActive / activeDelayTicks) * activeDelayTicks;
@@ -99,7 +99,7 @@ namespace Silent::Input
 
     bool Action::IsReleased(float delaySecMax, float valMin) const
     {
-        uint delayTicksMax = (delaySecMax == INFINITY) ? UINT_MAX : SecToTick(delaySecMax);
+        uint delayTicksMax = (delaySecMax == INFINITY) ? UINT_MAX : SecToTicks(delaySecMax);
         return _value <= valMin && _prevValue > valMin && _ticksActive <= delayTicksMax;
     }
 
@@ -110,7 +110,8 @@ namespace Silent::Input
 
     void Action::Update(float val)
     {
-        UpdateValue(val);
+        _prevValue = _value;
+        _value     = val;
 
         if (IsClicked())
         {
@@ -140,16 +141,10 @@ namespace Silent::Input
 
     void Action::Clear()
     {
-		_value           = 0.0f;
-		_prevValue       = 0.0f;
-		_ticksActive     = 0;
-		_prevTicksActive = 0;
-		_ticksInactive   = 0;
-    }
-
-    void Action::UpdateValue(float val)
-    {
-		_prevValue = _value;
-		_value     = val;
+        _value           = 0.0f;
+        _prevValue       = 0.0f;
+        _ticksActive     = 0;
+        _prevTicksActive = 0;
+        _ticksInactive   = 0;
     }
 }

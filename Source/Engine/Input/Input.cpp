@@ -49,6 +49,8 @@ namespace Silent::Input
             _actions.insert({ actionId, Action(actionId) });
         }
 
+        _bindings.SetBindingProfile(BindingProfileId::GamepadCustom, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0);
+
         // Initialize bindings.
         _bindings.Initialize();
     }
@@ -60,13 +62,14 @@ namespace Silent::Input
 
     void InputManager::Update()
     {
-        // Update event states.
+        // Capture events.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
         ReadMouse(eventStateIdx);
         ReadController(eventStateIdx);
 
         // Update actions.
+        UpdateActions();
 
     }
 
@@ -209,5 +212,22 @@ namespace Silent::Input
         }
 
         SDL_CloseGamepad(gamepad);
+    }
+
+    void InputManager::UpdateActions()
+    {
+        for (auto& [keyActionId, action] : _actions)
+        {
+            // Get event state with highest value.
+            float eventState = 0.0f;
+            auto  eventIds   = _bindings.GetBoundEventIds(BindingProfileId::KeyboardMouseDefault0, keyActionId);
+            for (const auto& eventId : eventIds)
+            {
+                eventState = std::max(eventState, _events.States[(int)eventId]);
+            }
+
+            // Update action according to event state.
+            action.Update(eventState);
+        }
     }
 }

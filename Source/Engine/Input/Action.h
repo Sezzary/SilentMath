@@ -75,12 +75,5 @@ namespace Silent::Input
         void Update(bool val);
         void Update(float val);
         void Clear();
-
-        private:
-        
-    private:
-        // Helpers
-
-        void UpdateValue(float val);
     };
 }
