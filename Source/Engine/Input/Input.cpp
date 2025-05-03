@@ -154,6 +154,8 @@ namespace Silent::Input
         auto stickAxes = std::vector<Vector2>(VALID_GAMEPAD_STICK_AXIS_CODES.size() / Vector2::AXIS_COUNT);
         int  j         = 0;
 
+        // TODO: Maybe scale based on deadzone size.
+
         // Collect stick axes.
         for (int i = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
         {
