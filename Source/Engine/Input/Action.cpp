@@ -5,6 +5,36 @@
 
 namespace Silent::Input
 {
+    extern const std::vector<ActionId> GENERAL_ACTION_IDS
+    {
+        In::Up,
+        In::Down,
+        In::Left,
+        In::Right
+    };
+
+    extern const std::vector<ActionId> MENU_ACTION_IDS
+    {
+        In::Enter,
+        In::Cancel,
+        In::Skip
+    };
+
+    extern const std::vector<ActionId> GAME_ACTION_IDS
+    {
+        In::Action,
+        In::Aim,
+        In::Light,
+        In::Run,
+        In::View,
+        In::StepLeft,
+        In::StepRight,
+        In::Pause,
+        In::Item,
+        In::Map,
+        In::Option
+    };
+
     Action::Action(ActionId actionId)
     {
         _id = actionId;

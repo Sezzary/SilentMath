@@ -85,7 +85,7 @@ namespace Silent::Input
         return _conflicts.at(actionId);
     }
     
-    void BindingProfileId::Initialize()
+    void BindingManager::Initialize()
     {
         // Initialize default bindings.
         _bindings.reserve((int)BindingProfileId::Count);
