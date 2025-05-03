@@ -12,20 +12,22 @@ namespace Silent
 {
     void ApplicationManager::Initialize()
     {
-        // SDL.
+        Log("Starting Silent Engine.");
+
+        // Initialize SDL.
         Log("Initializing SDL...");
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
-        // Window.
+        // Create window.
         _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
 
-        // Input.
+        // Initialize input.
         Log("Initializing input...");
         _input.Initialize();
 
-        // Renderer.
+        // Initialize renderer.
         Log("Initializing renderer...");
         _renderer.Initialize(*_window);
 
@@ -35,13 +37,15 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
-        // Input.
+        // Deinitialize input.
+        Log("Deinitializing input...");
         _input.Deinitialize();
 
-        // Renderer.
+        // Deinitialize renderer.
+        Log("Deinitializing renderer...");
         _renderer.Deinitialize();
 
-        // SDL.
+        // Deinitialize SDL.
         Log("Deinitializing SDL...");
         SDL_DestroyWindow(_window);
         SDL_Quit();

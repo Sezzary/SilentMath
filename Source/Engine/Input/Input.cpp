@@ -2,6 +2,7 @@
 #include "Engine/Input/Input.h"
 
 #include "Engine/Input/Action.h"
+#include "Engine/Input/Bindings.h"
 #include "Engine/Input/Events.h"
 #include "Utils/Utils.h"
 
@@ -9,6 +10,26 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
+    bool InputManager::IsActionClicked(ActionId actionId, float valMin) const
+    {
+        return _actions.at(actionId).IsClicked(valMin);
+    }
+
+    bool InputManager::IsActionHeld(ActionId actionId, float delaySec, float valMin) const
+    {
+        return _actions.at(actionId).IsHeld(delaySec, valMin);
+    }
+
+    bool InputManager::IsActionPulsed(ActionId actionId, float delaySec, float initialDelaySec, float valMin) const
+    {
+        return _actions.at(actionId).IsPulsed(delaySec, initialDelaySec, valMin);
+    }
+
+    bool InputManager::IsActionReleased(ActionId actionId, float delaySecMax, float valMin) const
+    {
+        return _actions.at(actionId).IsReleased(delaySecMax, valMin);
+    }
+
     void InputManager::Initialize()
     {
         if (!SDL_Init(SDL_INIT_GAMEPAD))
@@ -16,9 +37,20 @@ namespace Silent::Input
             Log("Failed to initialize gamepad subsystem: " + std::string(SDL_GetError()), LogLevel::Error);
         }
 
+        // Initialize event state and control axis sizes.
         _events.States.resize((int)EventId::Count);
-        //_actionMap.reserve((int)ActionId::Count);
         _controlAxes.resize((int)ControlAxisId::Count);
+
+        // Initialize actions.
+        _actions.reserve((int)ActionId::Count);
+        for (int i = 0; i < (int)ActionId::Count; i++)
+        {
+            auto actionId = (ActionId)i;
+            _actions.insert({ actionId, Action(actionId) });
+        }
+
+        // Initialize bindings.
+        _bindings.Initialize();
     }
 
     void InputManager::Deinitialize()
@@ -33,6 +65,9 @@ namespace Silent::Input
         ReadKeyboard(eventStateIdx);
         ReadMouse(eventStateIdx);
         ReadController(eventStateIdx);
+
+        // Update actions.
+
     }
 
     void InputManager::Rumble(float power, float durationSec) const

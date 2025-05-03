@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Engine/Input/Action.h"
+#include "Engine/Input/Bindings.h"
+
 namespace Silent::Input
 {
-    class      Action;
-    enum class ActionId;
-
     enum class ControlAxisId
     {
         Move,
@@ -33,7 +33,8 @@ namespace Silent::Input
 
         EventData                            _events      = {};
         RumbleData                           _rumble      = {};
-        //std::unordered_map<ActionId, Action> _actionMap   = {};
+        BindingManager                       _bindings    = {};
+        std::unordered_map<ActionId, Action> _actions     = {};
         std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 
     public:
@@ -43,10 +44,10 @@ namespace Silent::Input
 
         // Inquirers
 
-        bool IsActionClicked(ActionId actionId) const;
-        bool IsActionHeld(ActionId actionId) const;
-        bool IsActionReleased(ActionId actionId) const;
-        bool IsActionPulsed(ActionId actionId) const;
+        bool IsActionClicked(ActionId actionId, float valMin = 0.0f) const;
+        bool IsActionHeld(ActionId actionId, float delaySec = 0.0f, float valMin = 0.0f) const;
+        bool IsActionPulsed(ActionId actionId, float delaySec, float initialDelaySec = 0.0f, float valMin = 0.0f) const;
+        bool IsActionReleased(ActionId actionId, float delaySecMax = INFINITY, float valMin = 0.0f) const;
 
         // Utilities
 

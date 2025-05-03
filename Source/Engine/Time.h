@@ -29,7 +29,6 @@ namespace Silent
         static TimeManager& Get();
 
         float GetDeltaTime() const;
-        uint  GetTicksPerSecond() const;
         uint  GetTicks() const;
         ulong GetUptimeMicrosecs() const;
 

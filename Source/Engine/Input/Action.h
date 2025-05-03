@@ -4,17 +4,46 @@ namespace Silent::Input
 {
     typedef enum class ActionId
     {
-        Forward,
+        // General
+
+        Up,
+        Down,
+        Left,
+        Right,
+
+        // Menu
+
+        Enter,
+        Cancel,
+        Skip,
+
+        // Game
+        
+        Action,
+        Aim,
+        Light,
+        Run,
+        View,
+        StepLeft,
+        StepRight,
+        Pause,
+        Item,
+        Map,
+        Option,
 
         Count
     } In;
+
+    extern const std::vector<ActionId> GENERAL_ACTION_IDS;
+    extern const std::vector<ActionId> MENU_ACTION_IDS;
+    extern const std::vector<ActionId> GAME_ACTION_IDS;
 
     class Action
     {
     private:
         // Fields
         
-        ActionId _id              = In::Forward;
+        ActionId _id              = In::Up;
         float    _value           = 0.0f;
         float    _prevValue       = 0.0f;
         ulong    _ticksActive     = 0;
@@ -29,22 +58,31 @@ namespace Silent::Input
 
         // Getters
 
-        ActionId	 GetId() const;
-        float		 GetValue() const;
-        unsigned int GetTimeActive() const;
-        unsigned int GetTimeInactive() const;
+        ActionId GetId() const;
+        float	 GetValue() const;
+        uint     GetSecActive() const;
+        uint     GetSecInactive() const;
         
         // Inquirers
-
-        bool IsClicked() const;
-        bool IsHeld(float delaySec = 0.0f) const;
-        bool IsPulsed(float delaySec, float initialDelaySec = 0.0f) const;
-        bool IsReleased(float delaySecMax = INFINITY) const;
+        
+        bool IsClicked(float valMin = 0.0f) const;
+        bool IsHeld(float delaySec = 0.0f, float valMin = 0.0f) const;
+        bool IsPulsed(float delaySec, float initialDelaySec = 0.0f, float valMin = 0.0f) const;
+        bool IsReleased(float delaySecMax = INFINITY, float valMin = 0.0f) const;
 
         // Utilities
 
-        void Update(bool value);
-        void Update(float value);
+        void Update(bool val);
+        void Update(float val);
         void Clear();
+
+        private:
+        
+    private:
+        // Helpers
+
+        void  UpdateValue(float val);
+        uint  SecToTick(float sec) const;
+        float TicksToSec(uint ticks) const;
     };
 }
