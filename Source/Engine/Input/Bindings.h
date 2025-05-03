@@ -9,9 +9,14 @@ namespace Silent::Input
 
 	enum class BindingProfileId
 	{
-		KeyboardMouseDefault,
+		KeyboardMouseDefault0,
+		KeyboardMouseDefault1,
+		KeyboardMouseDefault2,
 		KeyboardMouseCustom,
-        GamepadDefault,
+
+        GamepadDefault0,
+        GamepadDefault1,
+        GamepadDefault2,
         GamepadCustom,
 
 		Count
@@ -22,8 +27,12 @@ namespace Silent::Input
     private:
         // Constants
 
-        static const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE;
-        static const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE;
+        static const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+        static const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1;
+        static const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2;
+        static const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_0;
+        static const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_1;
+        static const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_2;
 
         // Fields
 

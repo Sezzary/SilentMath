@@ -6,26 +6,76 @@
 
 namespace Silent::Input
 {
-    const BindingProfile BindingManager::DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE =
+    const BindingProfile BindingManager::DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 =
+    {
+        { In::Up,        EventId::Up },
+        { In::Down,      EventId::Down },
+        { In::Left,      EventId::Left },
+        { In::Right,     EventId::Right },
+
+        { In::Action,    EventId::Ctrl },
+        { In::Aim,       EventId::Space },
+        { In::Light,     EventId::L },
+        { In::Run,       EventId::Z },
+        { In::View,      EventId::Pad0 },
+        { In::StepLeft,  EventId::A },
+        { In::StepRight, EventId::D },
+        { In::Pause,     EventId::P },
+        { In::Item,      EventId::I },
+        { In::Map,       EventId::M },
+        { In::Option,    EventId::O },
+        
+        { In::Enter,     EventId::Return },
+        { In::Cancel,    EventId::Escape },
+        { In::Skip,      EventId::Escape }
+    };
+
+    const BindingProfile BindingManager::DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1 =
     {
         { In::Up,        EventId::W },
         { In::Down,      EventId::S },
         { In::Left,      EventId::A },
         { In::Right,     EventId::D },
-        { In::StepLeft,  EventId::Q },
-        { In::StepRight, EventId::E },
+
         { In::Action,    EventId::Ctrl },
         { In::Aim,       EventId::Space },
-        { In::Run,       EventId::K },
-        { In::View,      EventId::L },
-        { In::Light,     EventId::N },
-        { In::Map,       EventId::M },
-        { In::Skip,      EventId::U },
-        { In::Item,      EventId::I },
-        { In::Option,    EventId::O },
+        { In::Light,     EventId::L },
+        { In::Run,       EventId::J },
+        { In::View,      EventId::K },
+        { In::StepLeft,  EventId::Q },
+        { In::StepRight, EventId::E },
         { In::Pause,     EventId::P },
+        { In::Item,      EventId::I },
+        { In::Map,       EventId::M },
+        { In::Option,    EventId::O },
+        
         { In::Enter,     EventId::Return },
-        { In::Cancel,    EventId::Escape }
+        { In::Cancel,    EventId::Escape },
+        { In::Skip,      EventId::Escape }
+    };
+
+    const BindingProfile BindingManager::DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2 =
+    {
+        { In::Up,        EventId::W },
+        { In::Down,      EventId::S },
+        { In::Left,      EventId::A },
+        { In::Right,     EventId::D },
+
+        { In::Action,    EventId::ClickLeft }, // F
+        { In::Aim,       EventId::ClickRight },
+        { In::Light,     EventId::L },
+        { In::Run,       EventId::Shift },
+        { In::View,      EventId::Ctrl },
+        { In::StepLeft,  EventId::Q },
+        { In::StepRight, EventId::E },
+        { In::Pause,     EventId::P },
+        { In::Item,      EventId::I },
+        { In::Map,       EventId::M },
+        { In::Option,    EventId::O },
+        
+        { In::Enter,     EventId::Return },
+        { In::Cancel,    EventId::Escape },
+        { In::Skip,      EventId::Escape }
     };
 
     EventId BindingManager::GetBoundEventId(BindingProfileId profileId, ActionId actionId)
@@ -88,13 +138,16 @@ namespace Silent::Input
     void BindingManager::Initialize()
     {
         // Initialize default bindings.
-        _bindings.reserve((int)BindingProfileId::Count);
         _bindings =
         {
-            { BindingProfileId::KeyboardMouseDefault, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE },
-            { BindingProfileId::KeyboardMouseCustom,  DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE },
-            { BindingProfileId::GamepadDefault,       DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE },
-            { BindingProfileId::GamepadCustom,        DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE }
+            { BindingProfileId::KeyboardMouseDefault0, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 },
+            { BindingProfileId::KeyboardMouseDefault1, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1 },
+            { BindingProfileId::KeyboardMouseDefault2, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2 },
+            { BindingProfileId::KeyboardMouseCustom,   DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 },
+            { BindingProfileId::GamepadDefault0,       DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 },
+            { BindingProfileId::GamepadDefault1,       DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1 },
+            { BindingProfileId::GamepadDefault2,       DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2 },
+            { BindingProfileId::GamepadCustom,         DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 }
         };
 
         // Initialize conflicts.
