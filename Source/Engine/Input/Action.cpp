@@ -152,14 +152,4 @@ namespace Silent::Input
 		_prevValue = _value;
 		_value     = val;
     }
-
-    uint Action::SecToTick(float sec) const
-    {
-        return (uint)round(sec / (1.0f / (float)g_Time.TPS));
-    }
-
-    float Action::TicksToSec(uint ticks) const
-    {
-        return (float)ticks / (float)g_Time.TPS;
-    }
 }

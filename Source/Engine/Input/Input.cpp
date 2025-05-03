@@ -182,10 +182,10 @@ namespace Silent::Input
             {
                 auto axis = (stickAxes[i].Length() >= AXIS_DEADZONE) ? stickAxes[i] : Vector2::Zero;
 
-                _events.States[eventStateIdx + i]       = (axis.x <  0.0f) ? abs(axis.x) : 0.0f;
-                _events.States[eventStateIdx + (i + 1)] = (axis.x >= 0.0f) ? abs(axis.x) : 0.0f;
-                _events.States[eventStateIdx + (i + 2)] = (axis.y <  0.0f) ? abs(axis.y) : 0.0f;
-                _events.States[eventStateIdx + (i + 3)] = (axis.y >= 0.0f) ? abs(axis.y) : 0.0f;
+                _events.States[eventStateIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
+                _events.States[eventStateIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
+                _events.States[eventStateIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
+                _events.States[eventStateIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
     
                 _controlAxes[i] = axis;
             }

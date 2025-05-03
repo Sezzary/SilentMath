@@ -81,8 +81,6 @@ namespace Silent::Input
     private:
         // Helpers
 
-        void  UpdateValue(float val);
-        uint  SecToTick(float sec) const;
-        float TicksToSec(uint ticks) const;
+        void UpdateValue(float val);
     };
 }

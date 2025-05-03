@@ -53,4 +53,7 @@ namespace Silent
     };
 
     extern TimeManager& g_Time;
+
+    uint  SecToTick(float sec);
+    float TicksToSec(uint ticks);
 }
