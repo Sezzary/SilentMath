@@ -37,9 +37,6 @@ namespace Silent::Input
         std::unordered_map<ActionId, Action> _actions     = {};
         std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 
-        BindingProfileId _keyboardMouseProfileId = BindingProfileId::KeyboardMouseDefault0;
-        BindingProfileId _gamepadProfileId       = BindingProfileId::GamepadDefault0;
-
     public:
         // Constructors
 

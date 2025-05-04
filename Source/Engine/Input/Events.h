@@ -6,6 +6,8 @@ namespace Silent::Input
     {
         None = NO_VALUE,
 
+        // Keyboard
+
         A,
         B,
         C,
@@ -95,14 +97,17 @@ namespace Silent::Input
         Pad9,
         Pad0,
         PadPeriod,
-
         Ctrl,
         Shift,
         Alt,
 
+        // Mouse
+
         ClickLeft,
         ClickMiddle,
         ClickRight,
+
+        // Gamepad
 
         South,
         East,
@@ -127,7 +132,6 @@ namespace Silent::Input
         GamepadMisc2,
         GamepadMisc3,
         GamepadMisc4,
-        
         StickLeftXNeg,
         StickLeftXPos,
         StickLeftYNeg,
@@ -136,12 +140,14 @@ namespace Silent::Input
         StickRightXPos,
         StickRightYNeg,
         StickRightYPos,
-
         TriggerLeft,
         TriggerRight,
 
         Count
     };
+
+    extern const std::vector<EventId> KEYBOARD_MOUSE_EVENT_IDS;
+    extern const std::vector<EventId> GAMEPAD_EVENT_IDS;
 
     extern const std::vector<SDL_Scancode>      VALID_KEYBOARD_SCAN_CODES;
     extern const std::vector<int>               VALID_KEYBOARD_MOD_CODES;
