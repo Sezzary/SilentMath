@@ -72,12 +72,26 @@ namespace Silent
     void ConfigurationManager::SaveSettings()
     {
         auto path = GetAppDir() / SETTINGS_PATH;
+
         // TODO
     }
 
     void ConfigurationManager::LoadSettings()
     {
         auto path = GetAppDir() / SETTINGS_PATH;
-        // TODO
+        
+        // Open settings file.
+        auto inputFile = std::ifstream(path);
+        if (!inputFile.is_open())
+        {
+            Log("Failed to load saved settings. Loading defaults.", LogLevel::Info);
+            return;
+        }
+
+        // Parse into JSON object.
+        auto file = json();
+        inputFile >> file;
+        
+        // TODO: Load data into `_settings`.
     }
 }
