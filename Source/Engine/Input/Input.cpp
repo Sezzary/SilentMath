@@ -120,7 +120,7 @@ namespace Silent::Input
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
-        
+
         auto res = Vector2i::Zero;
         if (!SDL_GetWindowSize(&window, &res.x, &res.y))
         {
@@ -133,6 +133,25 @@ namespace Silent::Input
             _events.States[eventStateIdx] = (butState & SDL_BUTTON_MASK(butCode)) ? 1.0f : 0.0f;
             eventStateIdx++;
         }
+
+        // Set mouse scroll events.
+        auto sdlEvent = SDL_Event{};
+        while (SDL_PollEvent(&sdlEvent))
+        {
+            if (sdlEvent.type != SDL_EVENT_MOUSE_WHEEL)
+            {
+                continue;
+            }
+
+            auto axis = Vector2(sdlEvent.wheel.x, sdlEvent.wheel.y);
+            
+            _events.States[eventStateIdx]     = (axis.x < 0.0f) ? std::clamp(abs(axis.x), 0.0f, 1.0f) : 0.0f;
+            _events.States[eventStateIdx + 1] = (axis.x > 0.0f) ? std::clamp(abs(axis.x), 0.0f, 1.0f) : 0.0f;
+            _events.States[eventStateIdx + 2] = (axis.y < 0.0f) ? std::clamp(abs(axis.y), 0.0f, 1.0f) : 0.0f;
+            _events.States[eventStateIdx + 3] = (axis.y > 0.0f) ? std::clamp(abs(axis.y), 0.0f, 1.0f) : 0.0f;
+            break;
+        }
+        eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
 
         // Set mouse position state.
         _events.PrevMousePosition = _events.MousePosition;

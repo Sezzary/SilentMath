@@ -70,11 +70,6 @@ namespace Silent
 
     void ApplicationManager::Update()
     {
-        // Update input state.
-        _input.Update(*_window);
-
-        // TODO: Update game state here.
-
         // Poll events.
         while (SDL_PollEvent(&_event))
         {
@@ -91,6 +86,11 @@ namespace Silent
                     break;
             }
         }
+
+        // Update input state.
+        _input.Update(*_window);
+
+        // TODO: Update game state here.
     }
 
     void ApplicationManager::Render()
