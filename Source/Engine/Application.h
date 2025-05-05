@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/Configuration.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Input/Input.h"
 
@@ -17,17 +18,19 @@ namespace Silent
     
         // Fields
 
-        bool            _isRunning = false;
-        SDL_Window*     _window    = nullptr;
-        SDL_Event       _event     = {};
-        InputManager    _input     = InputManager();
-        RendererManager _renderer  = RendererManager();
+        bool        _isRunning = false;
+        SDL_Window* _window    = nullptr;
+        SDL_Event   _event     = {};
+
+        ConfigurationManager _config    = ConfigurationManager();
+        InputManager         _input     = InputManager();
+        RendererManager      _renderer  = RendererManager();
 
     public:
         // Constructors
 
         ApplicationManager() = default;
-        
+
         // Utilities
 
         void Initialize();
