@@ -1,0 +1,31 @@
+{
+    "configurations":
+    [
+        {
+            "name": "Win32",
+            "includePath":
+            [
+                "${workspaceFolder}/**",
+                "${env:VK_SDK_PATH}/Include"
+            ],
+            "defines":
+            [
+                "_DEBUG"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "compilerPath": "cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++23",
+            "intelliSenseMode": "windows-msvc-x64",
+            "browse":
+            {
+                "path":
+                [
+                    "${workspaceFolder}",
+                    "${env:VK_SDK_PATH}/Include"
+                ]
+            }
+        }
+    ],
+    "version": 4
+}
