@@ -196,6 +196,11 @@ namespace Silent::Math
         return Vector2(ToGlmVec2() * scalar);
     }
 
+    Vector2 Vector2::operator/(const Vector2& vec) const
+    {
+        return Vector2(ToGlmVec2() / vec.ToGlmVec2());
+    }
+
     Vector2 Vector2::operator/(float scalar) const
     {
         return Vector2(ToGlmVec2() / scalar);

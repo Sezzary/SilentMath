@@ -105,9 +105,14 @@ namespace Silent::Input
         EventId::Ctrl,
         EventId::Shift,
         EventId::Alt,
+
         EventId::ClickLeft,
         EventId::ClickMiddle,
-        EventId::ClickRight
+        EventId::ClickRight,
+        EventId::MouseUp,
+        EventId::MouseDown,
+        EventId::MouseLeft,
+        EventId::MouseRight
     };
 
     const std::vector<EventId> GAMEPAD_EVENT_IDS =

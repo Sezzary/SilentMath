@@ -22,8 +22,9 @@ namespace Silent::Input
 
     struct EventData
     {
-        std::vector<float> States        = {}; // Index = `EventId`.
-        Vector2            MousePosition = {};
+        std::vector<float> States            = {}; // Index = `EventId`.
+        Vector2            MousePosition     = {};
+        Vector2            PrevMousePosition = {};
     };
 
     class InputManager
@@ -31,9 +32,9 @@ namespace Silent::Input
     private:
         // Fields
 
+        BindingManager                       _bindings    = {};
         EventData                            _events      = {};
         RumbleData                           _rumble      = {};
-        BindingManager                       _bindings    = {};
         std::unordered_map<ActionId, Action> _actions     = {};
         std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 
@@ -53,7 +54,7 @@ namespace Silent::Input
 
         void Initialize();
         void Deinitialize();
-        void Update();
+        void Update(SDL_Window& window);
 
         void Rumble(float power, float durationSec) const;
 
@@ -61,8 +62,8 @@ namespace Silent::Input
         // Helpers
 
         void ReadKeyboard(int& eventStateIdx);
-        void ReadMouse(int& eventStateIdx);
-        void ReadController(int& eventStateIdx);
+        void ReadMouse(int& eventStateIdx, SDL_Window& window);
+        void ReadGamepad(int& eventStateIdx);
 
         void UpdateActions();
     };

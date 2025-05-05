@@ -71,7 +71,7 @@ namespace Silent
     void ApplicationManager::Update()
     {
         // Update input state.
-        _input.Update();
+        _input.Update(*_window);
 
         // TODO: Update game state here.
 

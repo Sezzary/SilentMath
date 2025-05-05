@@ -60,17 +60,16 @@ namespace Silent::Input
         
     }
 
-    void InputManager::Update()
+    void InputManager::Update(SDL_Window& window)
     {
         // Capture events.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
-        ReadMouse(eventStateIdx);
-        ReadController(eventStateIdx);
+        ReadMouse(eventStateIdx, window);
+        ReadGamepad(eventStateIdx);
 
         // Update actions.
         UpdateActions();
-
     }
 
     void InputManager::Rumble(float power, float durationSec) const
@@ -117,11 +116,17 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReadMouse(int& eventStateIdx)
+    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window)
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
         
+        auto res = Vector2i::Zero;
+        if (!SDL_GetWindowSize(&window, &res.x, &res.y))
+        {
+            Log("Failed to get window size: " + std::string(SDL_GetError()), LogLevel::Error);
+        }
+
         // Set mouse button event states.
         for (int butCode : VALID_MOUSE_BUT_CODES)
         {
@@ -130,14 +135,25 @@ namespace Silent::Input
         }
 
         // Set mouse position state.
+        _events.PrevMousePosition = _events.MousePosition;
         _events.MousePosition = pos;
 
-        // TODO: Need to adjust for sensitivity.
+        auto axis = (_events.PrevMousePosition / res.ToVector2()) / (_events.MousePosition / res.ToVector2());
+        float sensitivity = 1.0f;//(g_Config.MouseSensitivity * 0.1f) + 0.4f; // TODO
+        axis *= sensitivity;
+        
+        // Set mouse movement event states.
+        _events.States[eventStateIdx]     = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
+        _events.States[eventStateIdx + 1] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
+        _events.States[eventStateIdx + 2] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
+        _events.States[eventStateIdx + 3] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
+        eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
+        
         // Set camera axis. NOTE: Gamepad takes priority over keyboard/mouse.
-        //_controlAxes[(int)ControlAxisId::Camera] = _events.PrevMousePosition - events.MousePosition;
+        _controlAxes[(int)ControlAxisId::Camera] = axis;
     }
 
-    void InputManager::ReadController(int& eventStateIdx)
+    void InputManager::ReadGamepad(int& eventStateIdx)
     {
         constexpr float AXIS_DEADZONE = ((float)SHRT_MAX / 6.0f) / (float)SHRT_MAX;
 
@@ -180,7 +196,7 @@ namespace Silent::Input
             }
         }
 
-        // Set gamepad stick axis event states and control axes. NOTE: Gamepad takes priority over keyboard/mouse.
+        // Set gamepad stick axis event states and control axes.
         for (int i = 0; i < stickAxes.size(); i++)
         {
             if (gamepad != nullptr)
@@ -197,6 +213,9 @@ namespace Silent::Input
 
             eventStateIdx += Vector2::AXIS_COUNT * 2;
         }
+        
+        // Set camera axis. NOTE: Gamepad takes priority over keyboard/mouse.
+        _controlAxes[(int)ControlAxisId::Camera] = stickAxes.front();
 
         // Set gamepad trigger axis event states.
         for (auto axisCode : VALID_GAMEPAD_TRIG_AXIS_CODES)

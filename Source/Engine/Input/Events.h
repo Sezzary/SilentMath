@@ -104,12 +104,12 @@ namespace Silent::Input
         ClickLeft,
         ClickMiddle,
         ClickRight,
-        /*ScrollUp,
-        ScrollDown,
         MouseUp,
         MouseDown,
         MouseLeft,
-        MouseRight,*/
+        MouseRight,
+        /*ScrollUp,
+        ScrollDown,*/
 
         // Gamepad
 
