@@ -50,8 +50,8 @@ namespace Silent::Input
         // TODO
         // Split kb/m and gamepad bindings. Get one or the other. as default, always fall back on binding 0 for each.
         
-        std::vector<EventId>  GetBoundEventIds(BindingProfileId profileId, ActionId actionId);
-        const BindingProfile& GetBindingProfile(BindingProfileId profileId);
+        const std::vector<EventId>& GetBoundEventIds(BindingProfileId profileId, ActionId actionId) const;
+        const BindingProfile&       GetBindingProfile(BindingProfileId profileId) const;
 
         // Setters
 

@@ -16,12 +16,12 @@ namespace Silent::Math
 
     // Geometric
 
-	short   GetSurfaceSlopeAngle(const Vector3& normal, const Vector3& axis = Vector3::UnitY);
-	short   GetSurfaceAspectAngle(const Vector3& normal, const Vector3& axis = Vector3::UnitY);
-	float	GetDistanceToLine(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd);
-	Vector3 GetClosestPointOnLine(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd);
-	Vector3 GetClosestPointOnLinePerp(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd, const Vector3& axis = Vector3::UnitY);
+    short   GetSurfaceSlopeAngle(const Vector3& normal, const Vector3& axis = Vector3::UnitY);
+    short   GetSurfaceAspectAngle(const Vector3& normal, const Vector3& axis = Vector3::UnitY);
+    float   GetDistanceToLine(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd);
+    Vector3 GetClosestPointOnLine(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd);
+    Vector3 GetClosestPointOnLinePerp(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd, const Vector3& axis = Vector3::UnitY);
 
-	bool IsPointInFront(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis = Vector3::UnitY);
-	bool IsPointOnLeft(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis = Vector3::UnitY);
+    bool IsPointInFront(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis = Vector3::UnitY);
+    bool IsPointOnLeft(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis = Vector3::UnitY);
 }

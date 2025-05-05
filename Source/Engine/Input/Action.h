@@ -46,9 +46,9 @@ namespace Silent::Input
         ActionId _id              = In::Up;
         float    _value           = 0.0f;
         float    _prevValue       = 0.0f;
-        ulong    _ticksActive     = 0;
-        ulong    _prevTicksActive = 0;
-        ulong    _ticksInactive   = 0;
+        uint     _ticksActive     = 0;
+        uint     _prevTicksActive = 0;
+        uint     _ticksInactive   = 0;
 
     public:
         // Constructors
@@ -59,9 +59,9 @@ namespace Silent::Input
         // Getters
 
         ActionId GetId() const;
-        float	 GetValue() const;
-        uint     GetSecActive() const;
-        uint     GetSecInactive() const;
+        float    GetValue() const;
+        float    GetSecActive() const;
+        float    GetSecInactive() const;
         
         // Inquirers
         

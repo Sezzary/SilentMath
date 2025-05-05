@@ -50,12 +50,12 @@ namespace Silent::Input
         return _value;
     }
     
-    uint Action::GetSecActive() const
+    float Action::GetSecActive() const
     {
         return TicksToSec(_ticksActive);
     }
     
-    uint Action::GetSecInactive() const
+    float Action::GetSecInactive() const
     {
         return TicksToSec(_ticksInactive);
     }

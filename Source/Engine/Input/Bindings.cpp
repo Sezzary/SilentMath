@@ -98,7 +98,7 @@ namespace Silent::Input
         { In::StepLeft,  { EventId::ShoulderLeft } },
         { In::StepRight, { EventId::ShoulderRight} },
         { In::Pause,     { EventId::Start } },
-        { In::Item,      { EventId::Select } },
+        { In::Item,      { EventId::Back } },
         { In::Map,       { EventId::North } },
         { In::Option,    { EventId::O } }
     };
@@ -122,7 +122,7 @@ namespace Silent::Input
         { In::StepLeft,  { EventId::TriggerLeft } },
         { In::StepRight, { EventId::TriggerRight} },
         { In::Pause,     { EventId::Start } },
-        { In::Item,      { EventId::Select } },
+        { In::Item,      { EventId::Back } },
         { In::Map,       { EventId::North } },
         { In::Option,    { EventId::O } }
     };
@@ -147,7 +147,7 @@ namespace Silent::Input
         { In::StepRight, { EventId::ShoulderRight} },
         { In::Pause,     { EventId::Start } },
         { In::Item,      { EventId::North } },
-        { In::Map,       { EventId::Select } },
+        { In::Map,       { EventId::Back } },
         { In::Option,    { EventId::O } }
     };
 
@@ -167,13 +167,15 @@ namespace Silent::Input
         BindingProfileId::GamepadCustom
     };
 
-    std::vector<EventId> BindingManager::GetBoundEventIds(BindingProfileId profileId, ActionId actionId)
+    const std::vector<EventId>& BindingManager::GetBoundEventIds(BindingProfileId profileId, ActionId actionId) const
     {
+        static const auto EMPTY = std::vector<EventId>{};
+
         // Find binding profile.
         auto profileIt = _bindings.find(profileId);
         if (profileIt == _bindings.end())
         {
-            return {};
+            return EMPTY;
         }
 
         // Get binding profile.
@@ -183,15 +185,15 @@ namespace Silent::Input
         auto eventIt = profile.find(actionId);
         if (eventIt == profile.end())
         {
-            return {};
+            return EMPTY;
         }
 
         // Return bound event IDs.
-        auto [keyActionId, eventIds] = *eventIt;
+        const auto& [keyActionId, eventIds] = *eventIt;
         return eventIds;
     }
 
-    const BindingProfile& BindingManager::GetBindingProfile(BindingProfileId profileId)
+    const BindingProfile& BindingManager::GetBindingProfile(BindingProfileId profileId) const
     {
         // Find binding profile.
         auto profileIt = _bindings.find(profileId);

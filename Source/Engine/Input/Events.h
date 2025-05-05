@@ -4,8 +4,6 @@ namespace Silent::Input
 {
     enum class EventId
     {
-        None = NO_VALUE,
-
         // Keyboard
 
         A,
@@ -106,6 +104,13 @@ namespace Silent::Input
         ClickLeft,
         ClickMiddle,
         ClickRight,
+        ScrollUp,
+        ScrollDown,
+        // TODO
+        /*MouseUp,
+        MouseDown,
+        MouseLeft,
+        MouseRight,*/
 
         // Gamepad
 
@@ -113,7 +118,7 @@ namespace Silent::Input
         East,
         West,
         North,
-        Select,
+        Back,
         Start,
         StickLeft,
         StickRight,

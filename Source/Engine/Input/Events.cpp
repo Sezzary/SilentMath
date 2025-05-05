@@ -3,6 +3,14 @@
 
 namespace Silent::Input
 {
+    enum class VendorType
+    {
+        Generic,
+        Xbox,
+        Nintendo,
+        Sony
+    };
+
     const std::vector<EventId> KEYBOARD_MOUSE_EVENT_IDS =
     {
         EventId::A,
@@ -108,7 +116,7 @@ namespace Silent::Input
         EventId::East,
         EventId::West,
         EventId::North,
-        EventId::Select,
+        EventId::Back,
         EventId::Start,
         EventId::StickLeft,
         EventId::StickRight,
@@ -287,148 +295,202 @@ namespace Silent::Input
         SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
     };
 
-    static const auto KEY_NAME_MAP = std::unordered_map<EventId, std::string>
+    static const auto KEY_NAME_MAP = std::unordered_map<EventId, std::vector<std::string>>
     {   
-        { EventId::None,           "None" },
-        { EventId::A,              "A" },
-        { EventId::B,              "B" },
-        { EventId::C,              "C" },
-        { EventId::D,              "D" },
-        { EventId::E,              "E" },
-        { EventId::F,              "F" },
-        { EventId::G,              "G" },
-        { EventId::H,              "H" },
-        { EventId::I,              "I" },
-        { EventId::J,              "J" },
-        { EventId::K,              "K" },
-        { EventId::L,              "L" },
-        { EventId::M,              "M" },
-        { EventId::N,              "N" },
-        { EventId::O,              "O" },
-        { EventId::P,              "P" },
-        { EventId::Q,              "Q" },
-        { EventId::R,              "R" },
-        { EventId::S,              "S" },
-        { EventId::T,              "T" },
-        { EventId::U,              "U" },
-        { EventId::V,              "V" },
-        { EventId::W,              "W" },
-        { EventId::X,              "X" },
-        { EventId::Y,              "Y" },
-        { EventId::Z,              "Z" },
-        { EventId::Row1,           "1" },
-        { EventId::Row2,           "2" },
-        { EventId::Row3,           "3" },
-        { EventId::Row4,           "4" },
-        { EventId::Row5,           "5" },
-        { EventId::Row6,           "6" },
-        { EventId::Row7,           "7" },
-        { EventId::Row8,           "8" },
-        { EventId::Row9,           "9" },
-        { EventId::Row0,           "0" },
-        { EventId::Return,         "Return" },
-        { EventId::Escape,         "Escape" },
-        { EventId::Backspace,      "Backspace" },
-        { EventId::Tab,            "Tab" },
-        { EventId::Space,          "Space" },
-        { EventId::Minus,          "Minus" },
-        { EventId::Equals,         "Equals" },
-        { EventId::BracketLeft,    "Left Bracket" },
-        { EventId::BracketRight,   "Right Bracket" },
-        { EventId::BackSlash,      "Back Slash" },
-        { EventId::Semicolon,      "Semicolon" },
-        { EventId::Apostrophe,     "Apostrophe" },
-        { EventId::Comma,          "Comma" },
-        { EventId::Period,         "Period" },
-        { EventId::Slash,          "Slash" },
-        { EventId::F1,             "F1" },
-        { EventId::F2,             "F2" },
-        { EventId::F3,             "F3" },
-        { EventId::F4,             "F4" },
-        { EventId::F5,             "F5" },
-        { EventId::F6,             "F6" },
-        { EventId::F7,             "F7" },
-        { EventId::F8,             "F8" },
-        { EventId::F9,             "F9" },
-        { EventId::F10,            "F10" },
-        { EventId::F11,            "F11" },
-        { EventId::F12,            "F12" },
-        { EventId::PrintScreen,    "PrintScreen" },
-        { EventId::Home,           "Home" },
-        { EventId::PageUp,         "Page Up" },
-        { EventId::Delete,         "Delete" },
-        { EventId::End,            "End" },
-        { EventId::PageDown,       "Page Down" },
-        { EventId::Right,          "Right" },
-        { EventId::Left,           "Left" },
-        { EventId::Down,           "Down" },
-        { EventId::Up,             "Up" },
-        { EventId::PadDivide,      "Numpad Divide" },
-        { EventId::PadMultiply,    "Numpad Multiply" },
-        { EventId::PadMinus,       "Numpad Minus" },
-        { EventId::PadPlus,        "Numpad Plus" },
-        { EventId::PadEnter,       "Numpad Enter" },
-        { EventId::Pad1,           "Numpad 1" },
-        { EventId::Pad2,           "Numpad 2" },
-        { EventId::Pad3,           "Numpad 3" },
-        { EventId::Pad4,           "Numpad 4" },
-        { EventId::Pad5,           "Numpad 5" },
-        { EventId::Pad6,           "Numpad 6" },
-        { EventId::Pad7,           "Numpad 7" },
-        { EventId::Pad8,           "Numpad 8" },
-        { EventId::Pad9,           "Numpad 9" },
-        { EventId::Pad0,           "Numpad 0" },
-        { EventId::PadPeriod,      "Numpad Period" },
-        { EventId::Ctrl,           "Ctrl" },
-        { EventId::Shift,          "Shift" },
-        { EventId::Alt,            "Alt" },
-        { EventId::ClickLeft,      "Left Click" },
-        { EventId::ClickMiddle,    "Middle Click" },
-        { EventId::ClickRight,     "Right Click" },
-        { EventId::South,          "South" },
-        { EventId::East,           "East" },
-        { EventId::West,           "West" },
-        { EventId::North,          "North" },
-        { EventId::Select,         "Select"},
-        { EventId::Start,          "Start"},
-        { EventId::StickLeft,      "Left Stick In" },
-        { EventId::StickRight,     "Right Stick In" },
-        { EventId::ShoulderLeft,   "Left Shoulder" },
-        { EventId::ShoulderRight,  "Right Shoulder" },
-        { EventId::DpadUp,         "D-Pad Up" },
-        { EventId::DpadDown,       "D-Pad Down" },
-        { EventId::DpadLeft,       "D-Pad Left" },
-        { EventId::DpadRight,      "D-Pad Right" },
-        { EventId::PaddleRight0,   "Right Priamry Paddle" },
-        { EventId::PaddleLeft0,    "Left Primary Paddle" },
-        { EventId::PaddleRight1,   "Right Secondary Paddle" },
-        { EventId::PaddelLeft1,    "Left Secondary Paddle" },
-        { EventId::GamepadMisc0,   "Gamepad Misc 1" },
-        { EventId::GamepadMisc1,   "Gamepad Misc 2" },
-        { EventId::GamepadMisc2,   "Gamepad Misc 3" },
-        { EventId::GamepadMisc3,   "Gamepad Misc 4" },
-        { EventId::GamepadMisc4,   "Gamepad Misc 5" },
-        { EventId::StickLeftXNeg,  "Left Stick X-" },
-        { EventId::StickLeftXPos,  "Left Stick X+" },
-        { EventId::StickLeftYNeg,  "Left Stick Y-" },
-        { EventId::StickLeftYPos,  "Left Stick Y+" },
-        { EventId::StickRightXNeg, "Right Stick X-" },
-        { EventId::StickRightXPos, "Right Stick X+" },
-        { EventId::StickRightYNeg, "Right Stick Y-" },
-        { EventId::StickRightYPos, "Right Stick Y+" },
-        { EventId::TriggerLeft,    "Left Trigger" },
-        { EventId::TriggerRight,   "Right Trigger" }
+        { EventId::A,              { "A" } },
+        { EventId::B,              { "B" } },
+        { EventId::C,              { "C" } },
+        { EventId::D,              { "D" } },
+        { EventId::E,              { "E" } },
+        { EventId::F,              { "F" } },
+        { EventId::G,              { "G" } },
+        { EventId::H,              { "H" } },
+        { EventId::I,              { "I" } },
+        { EventId::J,              { "J" } },
+        { EventId::K,              { "K" } },
+        { EventId::L,              { "L" } },
+        { EventId::M,              { "M" } },
+        { EventId::N,              { "N" } },
+        { EventId::O,              { "O" } },
+        { EventId::P,              { "P" } },
+        { EventId::Q,              { "Q" } },
+        { EventId::R,              { "R" } },
+        { EventId::S,              { "S" } },
+        { EventId::T,              { "T" } },
+        { EventId::U,              { "U" } },
+        { EventId::V,              { "V" } },
+        { EventId::W,              { "W" } },
+        { EventId::X,              { "X" } },
+        { EventId::Y,              { "Y" } },
+        { EventId::Z,              { "Z" } },
+        { EventId::Row1,           { "1" } },
+        { EventId::Row2,           { "2" } },
+        { EventId::Row3,           { "3" } },
+        { EventId::Row4,           { "4" } },
+        { EventId::Row5,           { "5" } },
+        { EventId::Row6,           { "6" } },
+        { EventId::Row7,           { "7" } },
+        { EventId::Row8,           { "8" } },
+        { EventId::Row9,           { "9" } },
+        { EventId::Row0,           { "0" } },
+        { EventId::Return,         { "Return" } },
+        { EventId::Escape,         { "Escape" } },
+        { EventId::Backspace,      { "Backspace" } },
+        { EventId::Tab,            { "Tab" } },
+        { EventId::Space,          { "Space" } },
+        { EventId::Minus,          { "Minus" } },
+        { EventId::Equals,         { "Equals" } },
+        { EventId::BracketLeft,    { "Left Bracket" } },
+        { EventId::BracketRight,   { "Right Bracket" } },
+        { EventId::BackSlash,      { "Back Slash" } },
+        { EventId::Semicolon,      { "Semicolon" } },
+        { EventId::Apostrophe,     { "Apostrophe" } },
+        { EventId::Comma,          { "Comma" } },
+        { EventId::Period,         { "Period" } },
+        { EventId::Slash,          { "Slash" } },
+        { EventId::F1,             { "F1" } },
+        { EventId::F2,             { "F2" } },
+        { EventId::F3,             { "F3" } },
+        { EventId::F4,             { "F4" } },
+        { EventId::F5,             { "F5" } },
+        { EventId::F6,             { "F6" } },
+        { EventId::F7,             { "F7" } },
+        { EventId::F8,             { "F8" } },
+        { EventId::F9,             { "F9" } },
+        { EventId::F10,            { "F10" } },
+        { EventId::F11,            { "F11" } },
+        { EventId::F12,            { "F12" } },
+        { EventId::PrintScreen,    { "PrintScreen" } },
+        { EventId::Home,           { "Home" } },
+        { EventId::PageUp,         { "Page Up" } },
+        { EventId::Delete,         { "Delete" } },
+        { EventId::End,            { "End" } },
+        { EventId::PageDown,       { "Page Down" } },
+        { EventId::Right,          { "Right" } },
+        { EventId::Left,           { "Left" } },
+        { EventId::Down,           { "Down" } },
+        { EventId::Up,             { "Up" } },
+        { EventId::PadDivide,      { "Numpad Divide" } },
+        { EventId::PadMultiply,    { "Numpad Multiply" } },
+        { EventId::PadMinus,       { "Numpad Minus" } },
+        { EventId::PadPlus,        { "Numpad Plus" } },
+        { EventId::PadEnter,       { "Numpad Enter" } },
+        { EventId::Pad1,           { "Numpad 1" } },
+        { EventId::Pad2,           { "Numpad 2" } },
+        { EventId::Pad3,           { "Numpad 3" } },
+        { EventId::Pad4,           { "Numpad 4" } },
+        { EventId::Pad5,           { "Numpad 5" } },
+        { EventId::Pad6,           { "Numpad 6" } },
+        { EventId::Pad7,           { "Numpad 7" } },
+        { EventId::Pad8,           { "Numpad 8" } },
+        { EventId::Pad9,           { "Numpad 9" } },
+        { EventId::Pad0,           { "Numpad 0" } },
+        { EventId::PadPeriod,      { "Numpad Period" } },
+        { EventId::Ctrl,           { "Ctrl" } },
+        { EventId::Shift,          { "Shift" } },
+        { EventId::Alt,            { "Alt" } },
+
+        { EventId::ClickLeft,      { "Left Click" } },
+        { EventId::ClickMiddle,    { "Middle Click" } },
+        { EventId::ClickRight,     { "Right Click" } },
+
+        { EventId::South,          { "South", "Gamepad A", "Gamepad B", "Cross" } },
+        { EventId::East,           { "East", "Gamepad B", "Gamepad A", "Circle" } },
+        { EventId::West,           { "West", "Gamepad X", "Gamepad Y", "Square" } },
+        { EventId::North,          { "North", "Gamepad Y", "Gamepad X", "Triangle" } },
+        { EventId::Back,           { "Back", "Back", "Select", "Select" } },
+        { EventId::Start,          { "Start" } },
+        { EventId::StickLeft,      { "Left Stick In" } },
+        { EventId::StickRight,     { "Right Stick In" } },
+        { EventId::ShoulderLeft,   { "Left Shoulder", "LB", "L", "L1" } },
+        { EventId::ShoulderRight,  { "Right Shoulder", "RB", "R", "R1" } },
+        { EventId::DpadUp,         { "D-Pad Up" } },
+        { EventId::DpadDown,       { "D-Pad Down" } },
+        { EventId::DpadLeft,       { "D-Pad Left" } },
+        { EventId::DpadRight,      { "D-Pad Right" } },
+        { EventId::PaddleRight0,   { "Right Priamry Paddle" } },
+        { EventId::PaddleLeft0,    { "Left Primary Paddle" } },
+        { EventId::PaddleRight1,   { "Right Secondary Paddle" } },
+        { EventId::PaddelLeft1,    { "Left Secondary Paddle" } },
+        { EventId::GamepadMisc0,   { "Gamepad Misc 1" } },
+        { EventId::GamepadMisc1,   { "Gamepad Misc 2" } },
+        { EventId::GamepadMisc2,   { "Gamepad Misc 3" } },
+        { EventId::GamepadMisc3,   { "Gamepad Misc 4" } },
+        { EventId::GamepadMisc4,   { "Gamepad Misc 5" } },
+        { EventId::StickLeftXNeg,  { "Left Stick X-" } },
+        { EventId::StickLeftXPos,  { "Left Stick X+" } },
+        { EventId::StickLeftYNeg,  { "Left Stick Y-" } },
+        { EventId::StickLeftYPos,  { "Left Stick Y+" } },
+        { EventId::StickRightXNeg, { "Right Stick X-" } },
+        { EventId::StickRightXPos, { "Right Stick X+" } },
+        { EventId::StickRightYNeg, { "Right Stick Y-" } },
+        { EventId::StickRightYPos, { "Right Stick Y+" } },
+        { EventId::TriggerLeft,    { "Left Trigger", "LT", "ZL", "L2" } },
+        { EventId::TriggerRight,   { "Right Trigger", "RT", "ZR", "R2" } }
     };
+
+    static VendorType GetGamepadVendorType()
+    {
+        constexpr ushort XBOX_VENDOR_ID     = 0x045E;
+        constexpr ushort NINTENDO_VENDOR_ID = 0x057E;
+        constexpr ushort SONY_VENDOR_ID     = 0x054C;
+
+        auto* gamepad = SDL_OpenGamepad(0);
+
+        // Determine vendor type.
+        auto type = VendorType::Generic;
+        switch (SDL_GetGamepadVendor(gamepad))
+        {
+            case XBOX_VENDOR_ID:
+            {
+                type = VendorType::Xbox;
+                break;
+            }
+
+            case NINTENDO_VENDOR_ID:
+            {
+                type = VendorType::Nintendo;
+                break;
+            }
+
+            case SONY_VENDOR_ID:
+            {
+                type = VendorType::Sony;
+                break;
+            }
+
+            default:
+            {
+                type = VendorType::Generic;
+                break;
+            }
+        }
+
+        SDL_CloseGamepad(gamepad);
+        return type;
+    }
 
     const std::string& GetEventName(EventId eventId)
     {
+        constexpr char DEFAULT_NAME[] = "None";
+
         auto it = KEY_NAME_MAP.find(eventId);
         if (it != KEY_NAME_MAP.end())
         {
-            const auto& [keyEventId, name] = *it;
-            return name;
+            const auto& [keyEventId, names] = *it;
+
+            if (names.size() > 1)
+            {
+                int nameIdx = (int)GetGamepadVendorType();
+                if (nameIdx < names.size())
+                {
+                    return names[nameIdx];
+                }
+            }
+
+            return names.front();
         }
 
-        return KEY_NAME_MAP.at(EventId::None);
+        return DEFAULT_NAME;
     }
 }
