@@ -29,7 +29,7 @@ namespace Silent
 
         // Initialize input.
         Log("Initializing input...");
-        _input.Initialize();
+        _input.Initialize(_config.GetSettings());
 
         // Initialize renderer.
         Log("Initializing renderer...");

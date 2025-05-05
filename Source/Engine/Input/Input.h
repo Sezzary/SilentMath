@@ -3,6 +3,10 @@
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
 
+namespace Silent { struct SettingsData; }
+
+using namespace Silent;
+
 namespace Silent::Input
 {
     enum class ControlAxisId
@@ -52,7 +56,7 @@ namespace Silent::Input
 
         // Utilities
 
-        void Initialize();
+        void Initialize(const SettingsData& settings);
         void Deinitialize();
         void Update(SDL_Window& window, const Vector2& wheelAxis);
 

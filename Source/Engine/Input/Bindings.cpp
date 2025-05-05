@@ -18,7 +18,7 @@ namespace Silent::Input
         { In::Cancel,    { EventId::Escape } },
         { In::Skip,      { EventId::Escape } },
 
-        { In::Action,    { EventId::Ctrl } },
+        { In::Action,    { EventId::Ctrl, EventId::ClickLeft } },
         { In::Aim,       { EventId::Space } },
         { In::Light,     { EventId::L } },
         { In::Run,       { EventId::J } },
@@ -66,7 +66,7 @@ namespace Silent::Input
         { In::Cancel,    { EventId::Escape } },
         { In::Skip,      { EventId::Escape } },
 
-        { In::Action,    { EventId::Ctrl } },
+        { In::Action,    { EventId::Ctrl, EventId::ClickLeft } },
         { In::Aim,       { EventId::Space } },
         { In::Light,     { EventId::L } },
         { In::Run,       { EventId::Z } },
@@ -210,15 +210,9 @@ namespace Silent::Input
         _bindings[profileId][actionId] = { eventId };
     }
 
-    void BindingManager::SetBindingProfile(BindingProfileId profileId, const BindingProfile& profile)
+    void BindingManager::SetConflict(ActionId actionId, bool hasConflict)
     {
-        // Overwrite or add new binding profile.
-        _bindings[profileId] = profile;
-    }
-
-    void BindingManager::SetConflict(ActionId actionId, bool val)
-    {
-        _conflicts[actionId] = val;
+        _conflicts[actionId] = hasConflict;
     }
 
     bool BindingManager::TestConflict(ActionId actionId) const
@@ -226,7 +220,7 @@ namespace Silent::Input
         return _conflicts.at(actionId);
     }
     
-    void BindingManager::Initialize()
+    void BindingManager::Initialize(const BindingProfile& customKeyboardMouseBindings, const BindingProfile& customGamepadBindings)
     {
         // Initialize bindings.
         _bindings =
@@ -234,11 +228,12 @@ namespace Silent::Input
             { BindingProfileId::KeyboardMouseDefault0, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 },
             { BindingProfileId::KeyboardMouseDefault1, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1 },
             { BindingProfileId::KeyboardMouseDefault2, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2 },
-            { BindingProfileId::KeyboardMouseCustom,   DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0 },
+            { BindingProfileId::KeyboardMouseCustom,   customKeyboardMouseBindings },
+
             { BindingProfileId::GamepadDefault0,       DEFAULT_GAMEPAD_BINDING_PROFILE_0 },
             { BindingProfileId::GamepadDefault1,       DEFAULT_GAMEPAD_BINDING_PROFILE_1 },
             { BindingProfileId::GamepadDefault2,       DEFAULT_GAMEPAD_BINDING_PROFILE_2 },
-            { BindingProfileId::GamepadCustom,         DEFAULT_GAMEPAD_BINDING_PROFILE_0 }
+            { BindingProfileId::GamepadCustom,         customGamepadBindings }
         };
 
         // Initialize conflicts.

@@ -16,10 +16,14 @@ namespace Silent::Input
 
     enum class BindingProfileId
     {
+        // Keyboard/mouse
+
         KeyboardMouseDefault0,
         KeyboardMouseDefault1,
         KeyboardMouseDefault2,
         KeyboardMouseCustom,
+
+        // Gamepad
 
         GamepadDefault0,
         GamepadDefault1,
@@ -56,8 +60,7 @@ namespace Silent::Input
         // Setters
 
         void SetEventBinding(BindingProfileId profileId, ActionId actionId, EventId eventId);
-        void SetBindingProfile(BindingProfileId profileId, const BindingProfile& profile);
-        void SetConflict(ActionId actionId, bool val);
+        void SetConflict(ActionId actionId, bool hasConflict);
 
         // Inquirers
 
@@ -65,6 +68,6 @@ namespace Silent::Input
 
         // Utilities
 
-        void Initialize();
+        void Initialize(const BindingProfile& customKeyboardMouseBindings, const BindingProfile& customGamepadBindings);
     };
 }

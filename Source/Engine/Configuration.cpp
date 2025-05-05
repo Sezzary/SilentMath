@@ -27,7 +27,7 @@ namespace Silent
         {
             case OsType::Windows:
             {
-                // Get `APPDATA` path for Windows.
+                // Get `APPDATA` path.
                 if (_dupenv_s(&value, &length, "APPDATA") == 0 && value != nullptr)
                 {
                     auto path = std::filesystem::path(value);
@@ -39,7 +39,7 @@ namespace Silent
 
             case OsType::MacOs:
             {
-                // Get `HOME` path for macOS.
+                // Get `HOME` path.
                 if (_dupenv_s(&value, &length, "HOME") == 0 && value != nullptr)
                 {
                     auto path = std::filesystem::path(value);
@@ -51,7 +51,7 @@ namespace Silent
 
             case OsType::Linux:
             {
-                // Get `HOME` path for Linux.
+                // Get `HOME` path.
                 if (_dupenv_s(&value, &length, "HOME") == 0 && value != nullptr)
                 {
                     auto path = std::filesystem::path(value);
@@ -73,7 +73,20 @@ namespace Silent
     {
         auto path = GetAppDir() / SETTINGS_PATH;
 
-        // TODO
+        // Open settings file.
+        auto inputFile = std::ifstream(path);
+        if (!inputFile.is_open())
+        {
+            // TODO: Create default.
+            CreateSettingsFile();
+            return;
+        }
+
+        // Parse into JSON object.
+        auto jsonFile = json();
+        inputFile >> jsonFile;
+
+        // TODO: Save settings.
     }
 
     void ConfigurationManager::LoadSettings()
@@ -84,14 +97,20 @@ namespace Silent
         auto inputFile = std::ifstream(path);
         if (!inputFile.is_open())
         {
-            Log("Failed to load saved settings. Loading defaults.", LogLevel::Info);
+            Log("Failed to load settings. Loading defaults.", LogLevel::Info);
+            CreateSettingsFile();
             return;
         }
 
         // Parse into JSON object.
-        auto file = json();
-        inputFile >> file;
+        auto jsonFile = json();
+        inputFile >> jsonFile;
         
         // TODO: Load data into `_settings`.
+    }
+
+    void ConfigurationManager::CreateSettingsFile()
+    {
+
     }
 }

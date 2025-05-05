@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Engine/Input/Input.h"
 
+#include "Engine/Configuration.h"
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
 #include "Engine/Input/Events.h"
@@ -30,14 +31,14 @@ namespace Silent::Input
         return _actions.at(actionId).IsReleased(delaySecMax, valMin);
     }
 
-    void InputManager::Initialize()
+    void InputManager::Initialize(const SettingsData& settings)
     {
         if (!SDL_Init(SDL_INIT_GAMEPAD))
         {
             Log("Failed to initialize gamepad subsystem: " + std::string(SDL_GetError()), LogLevel::Error);
         }
 
-        // Initialize event state and control axis sizes.
+        // Initialize event states and control axes.
         _events.States.resize((int)EventId::Count);
         _controlAxes.resize((int)ControlAxisId::Count);
 
@@ -49,10 +50,8 @@ namespace Silent::Input
             _actions.insert({ actionId, Action(actionId) });
         }
 
-        _bindings.SetBindingProfile(BindingProfileId::GamepadCustom, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0);
-
         // Initialize bindings.
-        _bindings.Initialize();
+        _bindings.Initialize(settings.KeyboardMouseBindings, settings.GamepadBindings);
     }
 
     void InputManager::Deinitialize()

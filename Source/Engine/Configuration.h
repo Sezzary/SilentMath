@@ -17,8 +17,9 @@ namespace Silent
     {
         // Input
 
-        int            MouseSensitivity = 0;
-        //BindingProfile Bindings         = {};
+        int            MouseSensitivity      = 0;
+        BindingProfile KeyboardMouseBindings = DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+        BindingProfile GamepadBindings       = DEFAULT_GAMEPAD_BINDING_PROFILE_0;
     };
 
     class ConfigurationManager
@@ -29,7 +30,7 @@ namespace Silent
 #if defined(_WIN32) || defined(_WIN64)
         static constexpr auto OS_TYPE = OsType::Windows;
 #elif defined(__APPLE__)
-        static constexpr auto OS_TYPE = OsType::Mac;
+        static constexpr auto OS_TYPE = OsType::MacOs;
 #elif defined(__linux__)
         static constexpr auto OS_TYPE = OsType::Linux;
 #endif
@@ -57,6 +58,7 @@ namespace Silent
         void Initialize();
         void SaveSettings();
         void LoadSettings();
+        void CreateSettingsFile();
 
     private:
         // Helpers
