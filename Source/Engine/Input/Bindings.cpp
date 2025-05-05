@@ -81,10 +81,10 @@ namespace Silent::Input
 
     const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_0 =
     {
-        { In::Up,        { EventId::DpadUp, EventId::StickLeftYNeg } },
-        { In::Down,      { EventId::DpadDown, EventId::StickLeftYPos } },
-        { In::Left,      { EventId::DpadLeft, EventId::StickLeftXNeg } },
-        { In::Right,     { EventId::DpadRight, EventId::StickLeftXPos } },
+        { In::Up,        { EventId::DpadUp, EventId::StickLeftUp } },
+        { In::Down,      { EventId::DpadDown, EventId::StickLeftDown } },
+        { In::Left,      { EventId::DpadLeft, EventId::StickLeftLeft } },
+        { In::Right,     { EventId::DpadRight, EventId::StickLeftRight } },
 
         { In::Enter,     { EventId::South, EventId::Start } },
         { In::Cancel,    { EventId::North, EventId::East, EventId::West } },
@@ -105,10 +105,10 @@ namespace Silent::Input
 
     const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_1 =
     {
-        { In::Up,        { EventId::DpadUp, EventId::StickLeftYNeg } },
-        { In::Down,      { EventId::DpadDown, EventId::StickLeftYPos } },
-        { In::Left,      { EventId::DpadLeft, EventId::StickLeftXNeg } },
-        { In::Right,     { EventId::DpadRight, EventId::StickLeftXPos } },
+        { In::Up,        { EventId::DpadUp, EventId::StickLeftUp } },
+        { In::Down,      { EventId::DpadDown, EventId::StickLeftDown } },
+        { In::Left,      { EventId::DpadLeft, EventId::StickLeftLeft } },
+        { In::Right,     { EventId::DpadRight, EventId::StickLeftRight } },
         
         { In::Enter,     { EventId::South, EventId::Start } },
         { In::Cancel,    { EventId::North, EventId::West, EventId::East } },
@@ -129,10 +129,10 @@ namespace Silent::Input
 
     const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_2 =
     {
-        { In::Up,        { EventId::DpadUp, EventId::StickLeftYNeg } },
-        { In::Down,      { EventId::DpadDown, EventId::StickLeftYPos } },
-        { In::Left,      { EventId::DpadLeft, EventId::StickLeftXNeg } },
-        { In::Right,     { EventId::DpadRight, EventId::StickLeftXPos } },
+        { In::Up,        { EventId::DpadUp, EventId::StickLeftUp } },
+        { In::Down,      { EventId::DpadDown, EventId::StickLeftDown } },
+        { In::Left,      { EventId::DpadLeft, EventId::StickLeftLeft } },
+        { In::Right,     { EventId::DpadRight, EventId::StickLeftRight } },
         
         { In::Enter,     { EventId::South, EventId::Start } },
         { In::Cancel,    { EventId::North, EventId::West, EventId::East } },
@@ -179,7 +179,7 @@ namespace Silent::Input
         }
 
         // Get binding profile.
-        const auto& [keyConfigType, profile] = *profileIt;
+        const auto& [keyProfileId, profile] = *profileIt;
 
         // Find event-action binding.
         auto eventIt = profile.find(actionId);
@@ -200,7 +200,7 @@ namespace Silent::Input
         Assert(profileIt != _bindings.end(), "Attempted to get missing binding profile " + std::to_string((int)profileId) + ".");
 
         // Return binding profile.
-        const auto& [keyConfigType, profile] = *profileIt;
+        const auto& [keyProfileId, profile] = *profileIt;
         return profile;
     }
 
