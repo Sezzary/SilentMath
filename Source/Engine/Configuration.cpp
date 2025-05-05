@@ -7,24 +7,9 @@ using namespace Silent::Input;
 
 namespace Silent
 {
-    std::filesystem::path ConfigurationManager::GetConfigPath() const
+    std::filesystem::path ConfigurationManager::GetAppDir() const
     {
-        /*switch (OS_TYPE)
-        {
-            case OsType::Windows:
-                return std::filesystem::path(getenv("APPDATA")) / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
-
-            case OsType::MacOs:
-                return std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
-
-            case OsType::Linux:
-                return std::filesystem::path(getenv("HOME")) / ".config" / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
-
-            default:
-                break;
-        }*/
-
-        return {};
+        return _appDir;
     }
     
     SettingsData& ConfigurationManager::GetSettings()
@@ -32,15 +17,67 @@ namespace Silent
         return _settings;
     }
 
-    void ConfigurationManager::Save()
+    void ConfigurationManager::Initialize()
     {
-        auto path = GetConfigPath();
+        char*  value  = nullptr;
+        size_t length = 0;
+
+        // Set application directory.
+        switch (OS_TYPE)
+        {
+            case OsType::Windows:
+            {
+                // Get `APPDATA` path for Windows.
+                if (_dupenv_s(&value, &length, "APPDATA") == 0 && value != nullptr)
+                {
+                    auto path = std::filesystem::path(value);
+                    free(value);
+                    _appDir = path / APP_NAME; 
+                }
+                break;
+            }
+
+            case OsType::MacOs:
+            {
+                // Get `HOME` path for macOS.
+                if (_dupenv_s(&value, &length, "HOME") == 0 && value != nullptr)
+                {
+                    auto path = std::filesystem::path(value);
+                    free(value);
+                    _appDir = path / APP_NAME; 
+                }
+                break;
+            }
+
+            case OsType::Linux:
+            {
+                // Get `HOME` path for Linux.
+                if (_dupenv_s(&value, &length, "HOME") == 0 && value != nullptr)
+                {
+                    auto path = std::filesystem::path(value);
+                    free(value);
+                    _appDir = path / APP_NAME; 
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+        Assert(!_appDir.empty(), "Failed to initialize `ConfigurationManager`.");
+
+        LoadSettings();
+    }
+
+    void ConfigurationManager::SaveSettings()
+    {
+        auto path = GetAppDir() / SETTINGS_PATH;
         // TODO
     }
 
-    void ConfigurationManager::Load()
+    void ConfigurationManager::LoadSettings()
     {
-        auto path = GetConfigPath();
+        auto path = GetAppDir() / SETTINGS_PATH;
         // TODO
     }
 }

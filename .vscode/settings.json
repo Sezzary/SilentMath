@@ -89,6 +89,12 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "resumable": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "csignal": "cpp",
+        "numeric": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp"
     }
 }

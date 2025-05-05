@@ -23,6 +23,10 @@ namespace Silent
         _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
 
+        // Initialize configuration.
+        Log("Initializing configuration...");
+        _config.Initialize();
+
         // Initialize input.
         Log("Initializing input...");
         _input.Initialize();

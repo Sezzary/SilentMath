@@ -35,12 +35,13 @@ namespace Silent
 #endif
 
     private:
-        static constexpr char APP_FOLDER_NAME[]    = "SilentEngine";
-        static constexpr char SETTINGS_FILE_NAME[] = "Settings.json";
+        static constexpr char APP_NAME[]      = "SilentEngine";
+        static constexpr char SETTINGS_PATH[] = "Settings.json";
 
         // Fields
 
-        SettingsData _settings = {};
+        std::filesystem::path _appDir   = {};
+        SettingsData          _settings = {};
 
     public:
         // Constructors
@@ -53,13 +54,14 @@ namespace Silent
 
         // Utilities
 
-        void Save();
-        void Load();
+        void Initialize();
+        void SaveSettings();
+        void LoadSettings();
 
     private:
         // Helpers
 
         OsType                GetOsType() const;
-        std::filesystem::path GetConfigPath() const;
+        std::filesystem::path GetAppDir() const;
     };
 }
