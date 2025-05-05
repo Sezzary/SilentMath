@@ -35,6 +35,7 @@ namespace Silent
 #endif
 
     private:
+        static constexpr char APP_FOLDER_NAME    = "SilentEngine";
         static constexpr char SETTINGS_FILE_NAME = "Settings.json";
 
         // Fields

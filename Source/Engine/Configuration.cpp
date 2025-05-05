@@ -12,13 +12,13 @@ namespace Silent
         switch (SETTINGS_FILE_NAME)
         {
             case OsType::Windows:
-                return std::filesystem::path(getenv("APPDATA")) / "SilentEngine" / SETTINGS_FILE_NAME;
+                return std::filesystem::path(getenv("APPDATA")) / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
 
             case OsType::MacOs:
-                return std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / "SilentEngine" / SETTINGS_FILE_NAME;
+                return std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
 
             case OsType::Linux:
-                return std::filesystem::path(getenv("HOME")) / ".config" / "SilentEngine" / SETTINGS_FILE_NAME;
+                return std::filesystem::path(getenv("HOME")) / ".config" / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
 
             default:
                 break;
