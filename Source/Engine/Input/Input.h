@@ -54,7 +54,7 @@ namespace Silent::Input
 
         void Initialize();
         void Deinitialize();
-        void Update(SDL_Window& window);
+        void Update(SDL_Window& window, const Vector2& wheelAxis);
 
         void Rumble(float power, float durationSec) const;
 
@@ -62,7 +62,7 @@ namespace Silent::Input
         // Helpers
 
         void ReadKeyboard(int& eventStateIdx);
-        void ReadMouse(int& eventStateIdx, SDL_Window& window);
+        void ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis);
         void ReadGamepad(int& eventStateIdx);
 
         void UpdateActions();

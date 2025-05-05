@@ -60,12 +60,12 @@ namespace Silent::Input
         
     }
 
-    void InputManager::Update(SDL_Window& window)
+    void InputManager::Update(SDL_Window& window, const Vector2& wheelAxis)
     {
         // Capture events.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
-        ReadMouse(eventStateIdx, window);
+        ReadMouse(eventStateIdx, window, wheelAxis);
         ReadGamepad(eventStateIdx);
 
         // Update actions.
@@ -116,7 +116,7 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window)
+    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis)
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
@@ -135,22 +135,10 @@ namespace Silent::Input
         }
 
         // Set mouse scroll events.
-        auto sdlEvent = SDL_Event{};
-        while (SDL_PollEvent(&sdlEvent))
-        {
-            if (sdlEvent.type != SDL_EVENT_MOUSE_WHEEL)
-            {
-                continue;
-            }
-
-            auto axis = Vector2(sdlEvent.wheel.x, sdlEvent.wheel.y);
-            
-            _events.States[eventStateIdx]     = (axis.x < 0.0f) ? std::clamp(abs(axis.x), 0.0f, 1.0f) : 0.0f;
-            _events.States[eventStateIdx + 1] = (axis.x > 0.0f) ? std::clamp(abs(axis.x), 0.0f, 1.0f) : 0.0f;
-            _events.States[eventStateIdx + 2] = (axis.y < 0.0f) ? std::clamp(abs(axis.y), 0.0f, 1.0f) : 0.0f;
-            _events.States[eventStateIdx + 3] = (axis.y > 0.0f) ? std::clamp(abs(axis.y), 0.0f, 1.0f) : 0.0f;
-            break;
-        }
+        _events.States[eventStateIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
+        _events.States[eventStateIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
+        _events.States[eventStateIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
+        _events.States[eventStateIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
         eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
 
         // Set mouse position state.
