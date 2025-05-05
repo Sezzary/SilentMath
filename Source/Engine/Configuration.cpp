@@ -9,7 +9,7 @@ namespace Silent
 {
     std::filesystem::path ConfigurationManager::GetConfigPath() const
     {
-        switch (SETTINGS_FILE_NAME)
+        /*switch (OS_TYPE)
         {
             case OsType::Windows:
                 return std::filesystem::path(getenv("APPDATA")) / APP_FOLDER_NAME / SETTINGS_FILE_NAME;
@@ -22,7 +22,7 @@ namespace Silent
 
             default:
                 break;
-        }
+        }*/
 
         return {};
     }

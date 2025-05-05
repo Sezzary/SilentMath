@@ -44,6 +44,9 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+// json
+#include <nlohmann/json.hpp>
+
 // SDL
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>

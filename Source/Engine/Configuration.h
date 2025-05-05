@@ -17,8 +17,8 @@ namespace Silent
     {
         // Input
 
-        int            MouseSensitivity = DEFAULT_MOUSE_SENSITIVITY;
-        BindingProfile Bindings         = {};
+        int            MouseSensitivity = 0;
+        //BindingProfile Bindings         = {};
     };
 
     class ConfigurationManager
@@ -35,8 +35,8 @@ namespace Silent
 #endif
 
     private:
-        static constexpr char APP_FOLDER_NAME    = "SilentEngine";
-        static constexpr char SETTINGS_FILE_NAME = "Settings.json";
+        static constexpr char APP_FOLDER_NAME[]    = "SilentEngine";
+        static constexpr char SETTINGS_FILE_NAME[] = "Settings.json";
 
         // Fields
 
@@ -59,7 +59,7 @@ namespace Silent
     private:
         // Helpers
 
-        OsType                GetOsType() const
+        OsType                GetOsType() const;
         std::filesystem::path GetConfigPath() const;
     };
 }
