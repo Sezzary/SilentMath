@@ -44,8 +44,8 @@ namespace Silent::Input
         // Fields
         
         ActionId _id              = In::Up;
-        float    _value           = 0.0f;
-        float    _prevValue       = 0.0f;
+        float    _state           = 0.0f;
+        float    _prevState       = 0.0f;
         uint     _ticksActive     = 0;
         uint     _prevTicksActive = 0;
         uint     _ticksInactive   = 0;
@@ -59,21 +59,21 @@ namespace Silent::Input
         // Getters
 
         ActionId GetId() const;
-        float    GetValue() const;
+        float    GetState() const;
         float    GetSecActive() const;
         float    GetSecInactive() const;
         
         // Inquirers
         
-        bool IsClicked(float valMin = 0.0f) const;
-        bool IsHeld(float delaySec = 0.0f, float valMin = 0.0f) const;
-        bool IsPulsed(float delaySec, float initialDelaySec = 0.0f, float valMin = 0.0f) const;
-        bool IsReleased(float delaySecMax = INFINITY, float valMin = 0.0f) const;
+        bool IsClicked(float stateMin = 0.0f) const;
+        bool IsHeld(float delaySec = 0.0f, float stateMin = 0.0f) const;
+        bool IsPulsed(float delaySec, float initialDelaySec = 0.0f, float stateMin = 0.0f) const;
+        bool IsReleased(float delaySecMax = INFINITY, float stateMin = 0.0f) const;
 
         // Utilities
 
-        void Update(bool val);
-        void Update(float val);
+        void Update(bool state);
+        void Update(float state);
         void Clear();
     };
 }

@@ -45,9 +45,9 @@ namespace Silent::Input
         return _id;
     }
     
-    float Action::GetValue() const
+    float Action::GetState() const
     {
-        return _value;
+        return _state;
     }
     
     float Action::GetSecActive() const
@@ -60,14 +60,14 @@ namespace Silent::Input
         return TicksToSec(_ticksInactive);
     }
     
-    bool Action::IsClicked(float valMin) const
+    bool Action::IsClicked(float stateMin) const
     {
-        return _value > valMin && _prevValue <= valMin;
+        return _state > stateMin && _prevState <= stateMin;
     }
 
-    bool Action::IsHeld(float delaySec, float valMin) const
+    bool Action::IsHeld(float delaySec, float stateMin) const
     {
-        if (_value <= valMin)
+        if (_state <= stateMin)
         {
             return false;
         }
@@ -77,14 +77,14 @@ namespace Silent::Input
     }
 
     // NOTE: To avoid stutter on second pulse, ensure `initialDelaySec` is `delaySec` multiple.
-    bool Action::IsPulsed(float delaySec, float initialDelaySec, float valMin) const
+    bool Action::IsPulsed(float delaySec, float initialDelaySec, float stateMin) const
     {
-        if (IsClicked(valMin))
+        if (IsClicked(stateMin))
         {
             return true;
         }
 
-        if (!IsHeld(valMin) || _prevTicksActive == 0 || _ticksActive == _prevTicksActive)
+        if (!IsHeld(stateMin) || _prevTicksActive == 0 || _ticksActive == _prevTicksActive)
         {
             return false;
         }
@@ -97,21 +97,21 @@ namespace Silent::Input
         return delayTicks > prevDelayTicks;
     }
 
-    bool Action::IsReleased(float delaySecMax, float valMin) const
+    bool Action::IsReleased(float delaySecMax, float stateMin) const
     {
         uint delayTicksMax = (delaySecMax == INFINITY) ? UINT_MAX : SecToTicks(delaySecMax);
-        return _value <= valMin && _prevValue > valMin && _ticksActive <= delayTicksMax;
+        return _state <= stateMin && _prevState > stateMin && _ticksActive <= delayTicksMax;
     }
 
-    void Action::Update(bool val)
+    void Action::Update(bool state)
     {
-        Update(val ? 1.0f : 0.0f);
+        Update(state ? 1.0f : 0.0f);
     }
 
-    void Action::Update(float val)
+    void Action::Update(float state)
     {
-        _prevValue = _value;
-        _value     = val;
+        _prevState = _state;
+        _state     = state;
 
         if (IsClicked())
         {
@@ -141,8 +141,8 @@ namespace Silent::Input
 
     void Action::Clear()
     {
-        _value           = 0.0f;
-        _prevValue       = 0.0f;
+        _state           = 0.0f;
+        _prevState       = 0.0f;
         _ticksActive     = 0;
         _prevTicksActive = 0;
         _ticksInactive   = 0;

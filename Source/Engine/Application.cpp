@@ -74,7 +74,7 @@ namespace Silent
 
     void ApplicationManager::Update()
     {
-        auto wheelAxis = Vector2::Zero;
+        auto mouseWheelAxis = Vector2::Zero;
 
         // Poll events.
         while (SDL_PollEvent(&_event))
@@ -91,7 +91,7 @@ namespace Silent
 
                 case SDL_EVENT_MOUSE_WHEEL:
                 {
-                    wheelAxis = Vector2(_event.wheel.x, _event.wheel.y);
+                    mouseWheelAxis = Vector2(_event.wheel.x, _event.wheel.y);
                     break;
                 }
 
@@ -101,7 +101,7 @@ namespace Silent
         }
 
         // Update input state.
-        _input.Update(*_window, wheelAxis);
+        _input.Update(*_window, _config.GetSettings(), mouseWheelAxis);
 
         // TODO: Update game state here.
     }

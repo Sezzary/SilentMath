@@ -5,8 +5,6 @@
 
 namespace Silent { struct SettingsData; }
 
-using namespace Silent;
-
 namespace Silent::Input
 {
     enum class ControlAxisId
@@ -17,11 +15,11 @@ namespace Silent::Input
         Count
     };
 
-    struct RumbleData
+    enum class RumbleMode
     {
-        float PowerFrom     = 0.0f;
-        float PowerTo       = 0.0f;
-        uint  DurationTicks = 0;
+        Low,
+        High,
+        LowAndHigh
     };
 
     struct EventData
@@ -29,6 +27,15 @@ namespace Silent::Input
         std::vector<float> States            = {}; // Index = `EventId`.
         Vector2            MousePosition     = {};
         Vector2            PrevMousePosition = {};
+    };
+
+    struct RumbleData
+    {
+        RumbleMode Mode          = RumbleMode::Low;
+        float      IntensityFrom = 0.0f;
+        float      IntensityTo   = 0.0f;
+        uint       DurationTicks = 0;
+        uint       Ticks         = 0;
     };
 
     class InputManager
@@ -54,21 +61,24 @@ namespace Silent::Input
         bool IsActionPulsed(ActionId actionId, float delaySec, float initialDelaySec = 0.0f, float valMin = 0.0f) const;
         bool IsActionReleased(ActionId actionId, float delaySecMax = INFINITY, float valMin = 0.0f) const;
 
+        // Setters
+
+        void SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec);
+
         // Utilities
 
         void Initialize(const SettingsData& settings);
         void Deinitialize();
-        void Update(SDL_Window& window, const Vector2& wheelAxis);
-
-        void Rumble(float power, float durationSec) const;
+        void Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis);
 
     private:
         // Helpers
 
         void ReadKeyboard(int& eventStateIdx);
-        void ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis);
-        void ReadGamepad(int& eventStateIdx);
+        void ReadMouse(int& eventStateIdx, SDL_Window& window, const SettingsData& settings, const Vector2& wheelAxis);
+        void ReadGamepad(int& eventStateIdx, SDL_Gamepad* gamepad);
 
+        void UpdateRumble(SDL_Gamepad* gamepad);
         void UpdateActions();
     };
 }

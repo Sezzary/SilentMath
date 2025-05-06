@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Engine/Input/Input.h"
 
+#include "Engine/Time.h"
 #include "Engine/Configuration.h"
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
@@ -31,6 +32,15 @@ namespace Silent::Input
         return _actions.at(actionId).IsReleased(delaySecMax, valMin);
     }
 
+    void InputManager::SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec)
+    {
+        _rumble.Mode          = mode;
+        _rumble.IntensityFrom = intensityFrom;
+        _rumble.IntensityTo   = intensityTo;
+        _rumble.DurationTicks =
+        _rumble.Ticks         = SecToTicks(durationSec);
+    }
+
     void InputManager::Initialize(const SettingsData& settings)
     {
         if (!SDL_Init(SDL_INIT_GAMEPAD))
@@ -56,36 +66,22 @@ namespace Silent::Input
 
     void InputManager::Deinitialize()
     {
-        
+        // TODO: Might not be necessary.
     }
 
-    void InputManager::Update(SDL_Window& window, const Vector2& wheelAxis)
+    void InputManager::Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis)
     {
+        auto* gamepad = SDL_OpenGamepad(0);
+
         // Capture events.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
-        ReadMouse(eventStateIdx, window, wheelAxis);
-        ReadGamepad(eventStateIdx);
+        ReadMouse(eventStateIdx, window, settings, mouseWheelAxis);
+        ReadGamepad(eventStateIdx, gamepad);
 
-        // Update actions.
+        // Update components.
+        UpdateRumble(gamepad);
         UpdateActions();
-    }
-
-    void InputManager::Rumble(float power, float durationSec) const
-    {
-        auto* gamepad = SDL_OpenGamepad(0);
-        if (gamepad == nullptr)
-        {
-            return;
-        }
-
-        ushort freq       = (ushort)(power * USHRT_MAX);
-        uint   durationMs = (uint)round(durationSec * 1000);
-
-        if (!SDL_RumbleGamepad(gamepad, freq, freq, durationMs))
-        {
-            Log("Failed to rumble gamepad: " + std::string(SDL_GetError()), LogLevel::Error);
-        }
 
         SDL_CloseGamepad(gamepad);
     }
@@ -115,7 +111,7 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis)
+    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const SettingsData& settings, const Vector2& wheelAxis)
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
@@ -144,9 +140,9 @@ namespace Silent::Input
         _events.PrevMousePosition = _events.MousePosition;
         _events.MousePosition = pos;
 
-        auto axis = (_events.PrevMousePosition / res.ToVector2()) / (_events.MousePosition / res.ToVector2());
-        float sensitivity = 1.0f;//(g_Config.MouseSensitivity * 0.1f) + 0.4f; // TODO
-        axis *= sensitivity;
+        auto  axis        = (_events.PrevMousePosition / res.ToVector2()) / (_events.MousePosition / res.ToVector2());
+        float sensitivity = (settings.MouseSensitivity * 0.1f) + 0.4f;
+        axis              *= sensitivity;
         
         // Set mouse movement event states.
         _events.States[eventStateIdx]     = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
@@ -159,11 +155,9 @@ namespace Silent::Input
         _controlAxes[(int)ControlAxisId::Camera] = axis;
     }
 
-    void InputManager::ReadGamepad(int& eventStateIdx)
+    void InputManager::ReadGamepad(int& eventStateIdx, SDL_Gamepad* gamepad)
     {
         constexpr float AXIS_DEADZONE = ((float)SHRT_MAX / 6.0f) / (float)SHRT_MAX;
-
-        auto* gamepad = SDL_OpenGamepad(0);
 
         // Set gamepad button event states.
         for (auto butCode : VALID_GAMEPAD_BUT_CODES)
@@ -235,8 +229,44 @@ namespace Silent::Input
 
             eventStateIdx++;
         }
+    }
 
-        SDL_CloseGamepad(gamepad);
+    void InputManager::UpdateRumble(SDL_Gamepad* gamepad)
+    {
+        if (_rumble.Ticks == 0)
+        {
+            return;
+        }
+
+        if (gamepad == nullptr)
+        {
+            _rumble = {};
+            return;
+        }
+
+        // Compute power.
+        float alpha     = (float)_rumble.Ticks / (float)_rumble.DurationTicks;
+        float intensity = std::lerp(alpha, _rumble.IntensityFrom, _rumble.IntensityTo);
+
+        // Compute frequencies.
+        ushort freqLow  = (_rumble.Mode == RumbleMode::Low  || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
+        ushort freqHigh = (_rumble.Mode == RumbleMode::High || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
+
+        // Compute duration.
+        uint durationMs = (uint)round(TicksToSec(_rumble.DurationTicks) * 1000);
+        
+        // Rumble gamepad.
+        if (!SDL_RumbleGamepad(gamepad, freqLow, freqHigh, durationMs))
+        {
+            Log("Failed to rumble gamepad: " + std::string(SDL_GetError()), LogLevel::Error);
+        }
+
+        // Clear if rumble is complete.
+        _rumble.Ticks--;
+        if (_rumble.Ticks == 0)
+        {
+            _rumble = {};
+        }
     }
 
     void InputManager::UpdateActions()
@@ -251,7 +281,7 @@ namespace Silent::Input
                 eventState = std::max(eventState, _events.States[(int)eventId]);
             }
 
-            // Update action according to event state.
+            // Update action state.
             action.Update(eventState);
         }
     }

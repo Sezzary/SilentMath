@@ -17,7 +17,7 @@ namespace Silent
     {
         // Input
 
-        int            MouseSensitivity      = 0;
+        int            MouseSensitivity      = 6;
         BindingProfile KeyboardMouseBindings = DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
         BindingProfile GamepadBindings       = DEFAULT_GAMEPAD_BINDING_PROFILE_0;
     };
