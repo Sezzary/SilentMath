@@ -54,12 +54,9 @@ namespace Silent::Input
 
         InputManager() = default;
 
-        // Inquirers
+        // Getters
 
-        bool IsActionClicked(ActionId actionId, float valMin = 0.0f) const;
-        bool IsActionHeld(ActionId actionId, float delaySec = 0.0f, float valMin = 0.0f) const;
-        bool IsActionPulsed(ActionId actionId, float delaySec, float initialDelaySec = 0.0f, float valMin = 0.0f) const;
-        bool IsActionReleased(ActionId actionId, float delaySecMax = INFINITY, float valMin = 0.0f) const;
+        const Action& GetAction(ActionId actionId) const;
 
         // Setters
 

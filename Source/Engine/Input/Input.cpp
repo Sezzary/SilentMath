@@ -12,24 +12,9 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
-    bool InputManager::IsActionClicked(ActionId actionId, float valMin) const
+    const Action& InputManager::GetAction(ActionId actionId) const
     {
-        return _actions.at(actionId).IsClicked(valMin);
-    }
-
-    bool InputManager::IsActionHeld(ActionId actionId, float delaySec, float valMin) const
-    {
-        return _actions.at(actionId).IsHeld(delaySec, valMin);
-    }
-
-    bool InputManager::IsActionPulsed(ActionId actionId, float delaySec, float initialDelaySec, float valMin) const
-    {
-        return _actions.at(actionId).IsPulsed(delaySec, initialDelaySec, valMin);
-    }
-
-    bool InputManager::IsActionReleased(ActionId actionId, float delaySecMax, float valMin) const
-    {
-        return _actions.at(actionId).IsReleased(delaySecMax, valMin);
+        return _actions.at(actionId);
     }
 
     void InputManager::SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec)
