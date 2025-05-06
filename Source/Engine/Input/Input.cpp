@@ -12,6 +12,8 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
+    InputManager g_Input = InputManager();
+
     const Action& InputManager::GetAction(ActionId actionId) const
     {
         return _actions.at(actionId);

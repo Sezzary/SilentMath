@@ -1,10 +1,12 @@
 #include "Framework.h"
 #include "Engine/Application.h"
 
+#include "Engine/Input/Input.h"
 #include "Engine/Time.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Utils/Parallel.h"
 
+using namespace Silent::Input;
 using namespace Silent::Renderer;
 using namespace Silent::Utils;
 
@@ -29,7 +31,7 @@ namespace Silent
 
         // Initialize input.
         Log("Initializing input...");
-        _input.Initialize(_config.GetSettings());
+        g_Input.Initialize(_config.GetSettings());
 
         // Initialize renderer.
         Log("Initializing renderer...");
@@ -43,7 +45,7 @@ namespace Silent
     {
         // Deinitialize input.
         Log("Deinitializing input...");
-        _input.Deinitialize();
+        g_Input.Deinitialize();
 
         // Deinitialize renderer.
         Log("Deinitializing renderer...");
@@ -101,7 +103,7 @@ namespace Silent
         }
 
         // Update input state.
-        _input.Update(*_window, _config.GetSettings(), mouseWheelAxis);
+        g_Input.Update(*_window, _config.GetSettings(), mouseWheelAxis);
 
         // TODO: Update game state here.
     }

@@ -78,4 +78,6 @@ namespace Silent::Input
         void UpdateRumble(SDL_Gamepad* gamepad);
         void UpdateActions();
     };
+
+    extern InputManager g_Input;
 }

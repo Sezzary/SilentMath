@@ -2,9 +2,7 @@
 
 #include "Engine/Configuration.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Input/Input.h"
 
-using namespace Silent::Input;
 using namespace Silent::Renderer;
 
 namespace Silent
@@ -22,9 +20,8 @@ namespace Silent
         SDL_Window* _window    = nullptr;
         SDL_Event   _event     = {};
 
-        ConfigurationManager _config    = ConfigurationManager();
-        InputManager         _input     = InputManager();
-        RendererManager      _renderer  = RendererManager();
+        ConfigurationManager _config   = ConfigurationManager();
+        RendererManager      _renderer = RendererManager();
 
     public:
         // Constructors
