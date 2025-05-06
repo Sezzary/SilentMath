@@ -18,15 +18,12 @@ namespace Silent
         uint64 _prevUptimeMicrosec = 0;
         uint64 _baseMicrosec       = 0;
 
+    public:
         // Constructors
 
-        TimeManager()                        = default;
-        TimeManager(const TimeManager& time) = delete;
+        TimeManager() = default;
 
-    public:
         // Getters
-
-        static TimeManager& Get();
 
         float GetDeltaTime() const;
         uint  GetTicks() const;
@@ -46,13 +43,9 @@ namespace Silent
 
         uint64 GetUptimeMicrosec() const;
         uint64 GetEpochMicrosec() const;
-
-        // Operators
-        
-        TimeManager& operator=(const TimeManager& time) = delete;
     };
 
-    extern TimeManager& g_Time;
+    extern TimeManager g_Time;
 
     uint  SecToTicks(float sec);
     float TicksToSec(uint ticks);

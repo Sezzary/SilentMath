@@ -11,23 +11,17 @@ namespace Silent::Utils
     private:
         // Fields
 
-        std::vector<std::thread> _threads      = {};
-        std::queue<ParallelTask> _tasks        = {};
-        std::mutex               _taskMutex    = {};
-        std::condition_variable  _taskCond     = {};
-        bool                     _deinitialize = false;
+        std::vector<std::jthread> _threads      = {};
+        std::queue<ParallelTask>  _tasks        = {};
+        std::mutex                _taskMutex    = {};
+        std::condition_variable   _taskCond     = {};
+        bool                      _deinitialize = false;
 
+    public:
         // Constructors, destructors
 
         ParallelTaskManager();
-        ParallelTaskManager(const ParallelTaskManager& parallel) = delete;
-
         ~ParallelTaskManager();
-
-    public:
-        // Getters
-
-        static ParallelTaskManager& Get();
 
         uint GetThreadCount() const;
         uint GetCoreCount() const;
@@ -43,11 +37,7 @@ namespace Silent::Utils
         void Worker();
         void AddTask(const ParallelTask& task, std::shared_ptr<std::atomic<int>> counter, std::shared_ptr<std::promise<void>> promise);
         void HandleTask(const ParallelTask& task, std::atomic<int>& counter, std::promise<void>& promise);
-
-        // Operators
-        
-        ParallelTaskManager& operator=(const ParallelTaskManager& parallel) = delete;
     };
 
-    extern ParallelTaskManager& g_Parallel;
+    extern ParallelTaskManager g_Parallel;
 }

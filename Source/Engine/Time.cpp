@@ -7,13 +7,7 @@ using namespace Silent::Utils;
 
 namespace Silent
 {
-    TimeManager& g_Time = TimeManager::Get();
-
-    TimeManager& TimeManager::Get()
-    {
-        static auto instance = TimeManager();
-        return instance;
-    }
+    TimeManager g_Time = TimeManager();
 
     float TimeManager::GetDeltaTime() const
     {

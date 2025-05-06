@@ -3,7 +3,7 @@
 
 namespace Silent::Utils
 {
-    ParallelTaskManager& g_Parallel = ParallelTaskManager::Get();
+    ParallelTaskManager g_Parallel = ParallelTaskManager();
 
     ParallelTaskManager::ParallelTaskManager()
     {
@@ -14,7 +14,7 @@ namespace Silent::Utils
         // Create threads.
         for (int i = 0; (uint)i < threadCount; i++)
         {
-            _threads.push_back(std::thread(&ParallelTaskManager::Worker, this));
+            _threads.push_back(std::jthread(&ParallelTaskManager::Worker, this));
         }
 
         _deinitialize = false;
@@ -33,25 +33,6 @@ namespace Silent::Utils
 
         // Notify all threads they should stop.
         _taskCond.notify_all();
-
-        // Join all threads.
-        for (auto& thread : _threads)
-        {
-            try
-            {
-                thread.join();
-            }
-            catch (const std::exception& ex)
-            {
-                Log("Failed to join thread: " + std::string(ex.what()), LogLevel::Error);
-            }
-        }
-    }
-
-    ParallelTaskManager& ParallelTaskManager::Get()
-    {
-        static auto instance = ParallelTaskManager();
-        return instance;
     }
 
     uint ParallelTaskManager::GetThreadCount() const
@@ -61,7 +42,7 @@ namespace Silent::Utils
 
     uint ParallelTaskManager::GetCoreCount() const
     {
-        return std::max(std::thread::hardware_concurrency(), 1u);
+        return std::max(std::jthread::hardware_concurrency(), 1u);
     }
 
     std::future<void> ParallelTaskManager::AddTask(const ParallelTask& task)
@@ -117,6 +98,9 @@ namespace Silent::Utils
             {
                 task();
             }
+
+            // Periodically check for interruption.
+            std::this_thread::yield();
         }
     }
 
