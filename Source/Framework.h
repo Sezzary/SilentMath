@@ -44,6 +44,9 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+// imgui
+#include <imgui.h>
+
 // json
 #include <nlohmann/json.hpp>
 
