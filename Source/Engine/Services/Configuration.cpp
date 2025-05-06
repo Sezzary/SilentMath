@@ -1,11 +1,11 @@
 #include "Framework.h"
-#include "Engine/Configuration.h"
+#include "Engine/Services/Configuration.h"
 
 #include "Engine/Input/Bindings.h"
 
 using namespace Silent::Input;
 
-namespace Silent
+namespace Silent::Services
 {
     std::filesystem::path ConfigurationManager::GetAppDir() const
     {
@@ -19,7 +19,7 @@ namespace Silent
 
     void ConfigurationManager::Initialize()
     {
-        char*  value  = nullptr;
+        char*  val    = nullptr;
         size_t length = 0;
 
         // Set application directory.
@@ -28,10 +28,10 @@ namespace Silent
             case OsType::Windows:
             {
                 // Get `APPDATA` path.
-                if (_dupenv_s(&value, &length, "APPDATA") == 0 && value != nullptr)
+                if (_dupenv_s(&val, &length, "APPDATA") == 0 && val != nullptr)
                 {
-                    auto path = std::filesystem::path(value);
-                    free(value);
+                    auto path = std::filesystem::path(val);
+                    free(val);
                     _appDir = path / APP_NAME; 
                 }
                 break;
@@ -40,10 +40,10 @@ namespace Silent
             case OsType::MacOs:
             {
                 // Get `HOME` path.
-                if (_dupenv_s(&value, &length, "HOME") == 0 && value != nullptr)
+                if (_dupenv_s(&val, &length, "HOME") == 0 && val != nullptr)
                 {
-                    auto path = std::filesystem::path(value);
-                    free(value);
+                    auto path = std::filesystem::path(val);
+                    free(val);
                     _appDir = path / APP_NAME; 
                 }
                 break;
@@ -52,10 +52,10 @@ namespace Silent
             case OsType::Linux:
             {
                 // Get `HOME` path.
-                if (_dupenv_s(&value, &length, "HOME") == 0 && value != nullptr)
+                if (_dupenv_s(&val, &length, "HOME") == 0 && val != nullptr)
                 {
-                    auto path = std::filesystem::path(value);
-                    free(value);
+                    auto path = std::filesystem::path(val);
+                    free(val);
                     _appDir = path / APP_NAME; 
                 }
                 break;

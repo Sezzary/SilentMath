@@ -3,7 +3,9 @@
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
 
-namespace Silent { struct SettingsData; }
+namespace Silent::Services { struct SettingsData; }
+
+using namespace Silent::Services;
 
 namespace Silent::Input
 {

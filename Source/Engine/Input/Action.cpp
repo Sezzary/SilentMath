@@ -1,7 +1,9 @@
 #include "Framework.h"
 #include "Engine/Input/Action.h"
 
-#include "Engine/Time.h"
+#include "Engine/Services/Time.h"
+
+using namespace Silent::Services;
 
 namespace Silent::Input
 {

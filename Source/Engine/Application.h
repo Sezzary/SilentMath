@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Engine/Configuration.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Services/Configuration.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Services;
 
 namespace Silent
 {

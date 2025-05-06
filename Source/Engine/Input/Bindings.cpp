@@ -3,7 +3,9 @@
 
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Events.h"
-#include "Engine/Time.h"
+#include "Engine/Services/Time.h"
+
+using namespace Silent::Services;
 
 namespace Silent::Input
 {

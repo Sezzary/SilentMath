@@ -2,12 +2,14 @@
 #include "Engine/Application.h"
 
 #include "Engine/Input/Input.h"
-#include "Engine/Time.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Time.h"
 #include "Utils/Parallel.h"
 
 using namespace Silent::Input;
 using namespace Silent::Renderer;
+using namespace Silent::Services;
 using namespace Silent::Utils;
 
 namespace Silent

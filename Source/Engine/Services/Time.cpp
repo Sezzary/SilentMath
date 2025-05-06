@@ -1,11 +1,11 @@
 #include "Framework.h"
-#include "Engine/Time.h"
+#include "Engine/Services/Time.h"
 
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
 
-namespace Silent
+namespace Silent::Services
 {
     TimeManager g_Time = TimeManager();
 

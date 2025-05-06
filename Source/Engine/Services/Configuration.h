@@ -4,7 +4,7 @@
 
 using namespace Silent::Input;
 
-namespace Silent
+namespace Silent::Services
 {
     enum class OsType
     {
