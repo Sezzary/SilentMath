@@ -20,7 +20,7 @@ namespace Silent::Input
         { In::Cancel,    { EventId::Escape } },
         { In::Skip,      { EventId::Escape } },
 
-        { In::Action,    { EventId::Ctrl, EventId::ClickLeft } },
+        { In::Action,    { EventId::Ctrl, EventId::MouseClickLeft } },
         { In::Aim,       { EventId::Space } },
         { In::Light,     { EventId::L } },
         { In::Run,       { EventId::J } },
@@ -44,8 +44,8 @@ namespace Silent::Input
         { In::Cancel,    { EventId::Escape } },
         { In::Skip,      { EventId::Escape } },
 
-        { In::Action,    { EventId::ClickLeft, EventId::F } },
-        { In::Aim,       { EventId::ClickRight } },
+        { In::Action,    { EventId::MouseClickLeft, EventId::F } },
+        { In::Aim,       { EventId::MouseClickRight } },
         { In::Light,     { EventId::L } },
         { In::Run,       { EventId::Shift } },
         { In::View,      { EventId::Ctrl } },
@@ -68,7 +68,7 @@ namespace Silent::Input
         { In::Cancel,    { EventId::Escape } },
         { In::Skip,      { EventId::Escape } },
 
-        { In::Action,    { EventId::Ctrl, EventId::ClickLeft } },
+        { In::Action,    { EventId::Ctrl, EventId::MouseClickLeft } },
         { In::Aim,       { EventId::Space } },
         { In::Light,     { EventId::L } },
         { In::Run,       { EventId::Z } },
@@ -100,7 +100,7 @@ namespace Silent::Input
         { In::StepLeft,  { EventId::ShoulderLeft } },
         { In::StepRight, { EventId::ShoulderRight} },
         { In::Pause,     { EventId::Start } },
-        { In::Item,      { EventId::Back } },
+        { In::Item,      { EventId::Select } },
         { In::Map,       { EventId::North } },
         { In::Option,    { EventId::O } }
     };
@@ -124,7 +124,7 @@ namespace Silent::Input
         { In::StepLeft,  { EventId::TriggerLeft } },
         { In::StepRight, { EventId::TriggerRight} },
         { In::Pause,     { EventId::Start } },
-        { In::Item,      { EventId::Back } },
+        { In::Item,      { EventId::Select } },
         { In::Map,       { EventId::North } },
         { In::Option,    { EventId::O } }
     };
@@ -149,7 +149,7 @@ namespace Silent::Input
         { In::StepRight, { EventId::ShoulderRight} },
         { In::Pause,     { EventId::Start } },
         { In::Item,      { EventId::North } },
-        { In::Map,       { EventId::Back } },
+        { In::Map,       { EventId::Select } },
         { In::Option,    { EventId::O } }
     };
 

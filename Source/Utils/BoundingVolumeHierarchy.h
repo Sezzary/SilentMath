@@ -20,8 +20,8 @@ namespace Silent::Utils
         Accurate  // O(n²): Slow build, optimal quality. Top-down approach with exhaustive surface area heuristic.
     };
 
-    // Dynamic bounding volume hierarchy using AABBs.
-    typedef class BoundingVolumeHierarchy
+    /** @brief Dynamic bounding volume hierarchy using AABBs. */
+    class BoundingVolumeHierarchy
     {
     private:
         struct Node
@@ -95,5 +95,5 @@ namespace Silent::Utils
 
         void Validate() const;
         void Validate(int nodeId) const;
-    } Bvh;
+    };
 }

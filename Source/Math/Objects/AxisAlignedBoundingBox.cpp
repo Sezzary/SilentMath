@@ -246,15 +246,14 @@ namespace Silent::Math
 
     AxisAlignedBoundingBox AxisAlignedBoundingBox::Merge(const AxisAlignedBoundingBox& aabb0, const AxisAlignedBoundingBox& aabb1)
     {
-        auto mergedAabb = aabb0;
-        mergedAabb.Merge(aabb1);
-        return mergedAabb;
+        auto min = Vector3::Min(aabb0.GetMin(), aabb1.GetMin());
+        auto max = Vector3::Max(aabb0.GetMax(), aabb1.GetMax());
+        return AxisAlignedBoundingBox((max + min) / 2.0f, (max - min) / 2.0f);
     }
 
     void AxisAlignedBoundingBox::Merge(const AxisAlignedBoundingBox& aabb)
     {
-        Center = (Center + aabb.Center) / 2.0f;
-        Extents.Max(aabb.Extents);
+        *this = AxisAlignedBoundingBox::Merge(*this, aabb);
     }
 
     bool AxisAlignedBoundingBox::operator==(const AxisAlignedBoundingBox& aabb) const

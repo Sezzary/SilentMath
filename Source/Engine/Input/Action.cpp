@@ -37,6 +37,109 @@ namespace Silent::Input
         In::Option
     };
 
+    extern const std::vector<ActionId> KEYBOARD_ACTION_IDS
+    {
+        ActionId::A,
+        ActionId::B,
+        ActionId::C,
+        ActionId::D,
+        ActionId::E,
+        ActionId::F,
+        ActionId::G,
+        ActionId::H,
+        ActionId::I,
+        ActionId::J,
+        ActionId::K,
+        ActionId::L,
+        ActionId::M,
+        ActionId::N,
+        ActionId::O,
+        ActionId::P,
+        ActionId::Q,
+        ActionId::R,
+        ActionId::S,
+        ActionId::T,
+        ActionId::U,
+        ActionId::V,
+        ActionId::W,
+        ActionId::X,
+        ActionId::Y,
+        ActionId::Z,
+        ActionId::Num1,
+        ActionId::Num2,
+        ActionId::Num3,
+        ActionId::Num4,
+        ActionId::Num5,
+        ActionId::Num6,
+        ActionId::Num7,
+        ActionId::Num8,
+        ActionId::Num9,
+        ActionId::Num0,
+        ActionId::Return,
+        ActionId::Escape, 
+        ActionId::Backspace,
+        ActionId::Tab,
+        ActionId::Space,
+        ActionId::Minus,
+        ActionId::Equals,
+        ActionId::BracketLeft,
+        ActionId::BracketRight,
+        ActionId::Backslash,
+        ActionId::Semicolon,
+        ActionId::Apostrophe,
+        ActionId::Comma,
+        ActionId::Period, 
+        ActionId::Slash,
+        ActionId::ArrowUp,
+        ActionId::ArrowDown,
+        ActionId::ArrowLeft,
+        ActionId::ArrowRight,
+        ActionId::Ctrl,
+        ActionId::Shift,
+        ActionId::Alt
+    };
+
+    extern const std::vector<ActionId> MOUSE_ACTION_IDS
+    {
+        ActionId::MouseClickLeft,
+        ActionId::MouseClickMiddle,
+        ActionId::MouseClickRight,
+        ActionId::MouseScrollUp,
+        ActionId::MouseScrollDown,
+        ActionId::MouseUp,
+        ActionId::MouseDown,
+        ActionId::MouseLeft,
+        ActionId::MouseRight
+    };
+
+    extern const std::vector<ActionId> GAMEPAD_ACTION_IDS
+    {
+        ActionId::GamepadNorth,
+        ActionId::GamepadSouth,
+        ActionId::GamepadEast,
+        ActionId::GamepadWest,
+        ActionId::GamepadStart,
+        ActionId::GamepadSelect,
+        ActionId::GamepadShoulderLeft,
+        ActionId::GamepadTriggerLeft,
+        ActionId::GamepadShoulderRight,
+        ActionId::GamepadTriggerRight,
+        ActionId::GamepadDpadUp,
+        ActionId::GamepadDpadDown,
+        ActionId::GamepadDpadLeft,
+        ActionId::GamepadDpadRight,
+        ActionId::GamepadStickLeftIn,
+        ActionId::GamepadStickLeftUp,
+        ActionId::GamepadStickLeftDown,
+        ActionId::GamepadStickLeftLeft,
+        ActionId::GamepadStickLeftRight,
+        ActionId::GamepadStickRightIn,
+        ActionId::GamepadStickRightUp,
+        ActionId::GamepadStickRightDown,
+        ActionId::GamepadStickRightLeft,
+        ActionId::GamepadStickRightRight
+    };
+
     Action::Action(ActionId actionId)
     {
         _id = actionId;
