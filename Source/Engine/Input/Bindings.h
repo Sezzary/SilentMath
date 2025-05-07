@@ -10,31 +10,47 @@ namespace Silent::Input
     extern const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
     extern const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1;
     extern const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2;
+
     extern const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_0;
     extern const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_1;
     extern const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_2;
 
+    extern const BindingProfile RAW_KEYBOARD_BINDING_PROFILE;
+    extern const BindingProfile RAW_MOUSE_BINDING_PROFILE;
+    extern const BindingProfile RAW_GAMEPAD_BINDING_PROFILE;
+
     enum class BindingProfileId
     {
-        // Keyboard/mouse
+        // Custom
 
-        KeyboardMouseDefault0,
-        KeyboardMouseDefault1,
-        KeyboardMouseDefault2,
-        KeyboardMouseCustom,
+        CustomKeyboardMouse,
+        CustomGamepad,
 
-        // Gamepad
+        // Default keyboard/mouse
 
-        GamepadDefault0,
-        GamepadDefault1,
-        GamepadDefault2,
-        GamepadCustom,
+        DefaultKeyboardMouse0,
+        DefaultKeyboardMouse1,
+        DefaultKeyboardMouse2,
+
+        // Default gamepad
+
+        DefaultGamepad0,
+        DefaultGamepad1,
+        DefaultGamepad2,
+
+        // Raw
+
+        RawKeyboard,
+        RawMouse,
+        RawGamepad,
 
         Count
     };
 
-    extern const std::vector<BindingProfileId> KEYBOARD_MOUSE_BINDING_PROFILE_IDS;
-    extern const std::vector<BindingProfileId> GAMEPAD_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> DEFAULT_GAMEPAD_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS;
 
     class BindingManager
     {

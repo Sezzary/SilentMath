@@ -263,11 +263,11 @@ namespace Silent::Input
         {
             // Get event state with highest value.
             float eventState = 0.0f;
-            auto  eventIds   = _bindings.GetBoundEventIds(BindingProfileId::KeyboardMouseDefault0, keyActionId);
+            /*auto  eventIds   = _bindings.GetBoundEventIds(BindingProfileId::DefaultKeyboardMouse0, keyActionId);
             for (const auto& eventId : eventIds)
             {
                 eventState = std::max(eventState, _events.States[(int)eventId]);
-            }
+            }*/
 
             // Update action state.
             action.Update(eventState);
