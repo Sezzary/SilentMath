@@ -12,7 +12,7 @@ namespace Silent::Input
     enum class ControlAxisId
     {
         Move,
-        Camera,
+        Camera, // TODO: Should be influenced by both right stick and mouse.
 
         Count
     };
@@ -45,6 +45,8 @@ namespace Silent::Input
     private:
         // Fields
 
+        SDL_Gamepad* _gamepad = nullptr;
+
         BindingManager                       _bindings    = {};
         EventData                            _events      = {};
         RumbleData                           _rumble      = {};
@@ -75,10 +77,12 @@ namespace Silent::Input
 
         void ReadKeyboard(int& eventStateIdx);
         void ReadMouse(int& eventStateIdx, SDL_Window& window, const SettingsData& settings, const Vector2& wheelAxis);
-        void ReadGamepad(int& eventStateIdx, SDL_Gamepad* gamepad);
+        void ReadGamepad(int& eventStateIdx);
 
-        void UpdateRumble(SDL_Gamepad* gamepad);
+        void UpdateRumble();
         void UpdateActions();
+
+        void ReconnectGamepad();
     };
 
     extern InputManager g_Input;

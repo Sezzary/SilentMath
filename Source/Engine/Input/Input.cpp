@@ -36,6 +36,9 @@ namespace Silent::Input
             Log("Failed to initialize gamepad subsystem: " + std::string(SDL_GetError()), LogLevel::Error);
         }
 
+        // Initialize gamepad.
+        _gamepad = SDL_OpenGamepad(0);
+
         // Initialize event states and control axes.
         _events.States.resize((int)EventId::Count);
         _controlAxes.resize((int)ControlAxisId::Count);
@@ -54,24 +57,22 @@ namespace Silent::Input
 
     void InputManager::Deinitialize()
     {
-        // TODO: Might not be necessary.
+        SDL_CloseGamepad(_gamepad);
     }
 
     void InputManager::Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis)
     {
-        auto* gamepad = SDL_OpenGamepad(0);
+        ReconnectGamepad();
 
-        // Capture events.
+        // Capture event states.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
         ReadMouse(eventStateIdx, window, settings, mouseWheelAxis);
-        ReadGamepad(eventStateIdx, gamepad);
+        ReadGamepad(eventStateIdx);
 
         // Update components.
-        UpdateRumble(gamepad);
+        UpdateRumble();
         UpdateActions();
-
-        SDL_CloseGamepad(gamepad);
     }
 
     void InputManager::ReadKeyboard(int& eventStateIdx)
@@ -143,16 +144,16 @@ namespace Silent::Input
         _controlAxes[(int)ControlAxisId::Camera] = axis;
     }
 
-    void InputManager::ReadGamepad(int& eventStateIdx, SDL_Gamepad* gamepad)
+    void InputManager::ReadGamepad(int& eventStateIdx)
     {
         constexpr float AXIS_DEADZONE = ((float)SHRT_MAX / 6.0f) / (float)SHRT_MAX;
 
         // Set gamepad button event states.
         for (auto butCode : VALID_GAMEPAD_BUT_CODES)
         {
-            if (gamepad != nullptr)
+            if (_gamepad != nullptr)
             {
-                _events.States[eventStateIdx] = SDL_GetGamepadButton(gamepad, butCode) ? 1.0f : 0.0f;
+                _events.States[eventStateIdx] = SDL_GetGamepadButton(_gamepad, butCode) ? 1.0f : 0.0f;
             }
 
             eventStateIdx++;
@@ -168,9 +169,9 @@ namespace Silent::Input
         {
             auto axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
 
-            if (gamepad != nullptr)
+            if (_gamepad != nullptr)
             {
-                float val = (float)SDL_GetGamepadAxis(gamepad, axisCode) / (float)SHRT_MAX;
+                float val = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
 
                 if ((i % Vector2::AXIS_COUNT) == 0)
                 {
@@ -187,7 +188,7 @@ namespace Silent::Input
         // Set gamepad stick axis event states and control axes.
         for (int i = 0; i < stickAxes.size(); i++)
         {
-            if (gamepad != nullptr)
+            if (_gamepad != nullptr)
             {
                 auto axis = (stickAxes[i].Length() >= AXIS_DEADZONE) ? stickAxes[i] : Vector2::Zero;
 
@@ -208,9 +209,9 @@ namespace Silent::Input
         // Set gamepad trigger axis event states.
         for (auto axisCode : VALID_GAMEPAD_TRIG_AXIS_CODES)
         {
-            if (gamepad != nullptr)
+            if (_gamepad != nullptr)
             {
-                float val = (float)SDL_GetGamepadAxis(gamepad, axisCode) / (float)SHRT_MAX;
+                float val = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
 
                 _events.States[eventStateIdx] = (val >= AXIS_DEADZONE) ? val : 0.0f;
             }
@@ -219,22 +220,22 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::UpdateRumble(SDL_Gamepad* gamepad)
+    void InputManager::UpdateRumble()
     {
         if (_rumble.Ticks == 0)
         {
             return;
         }
 
-        if (gamepad == nullptr)
+        if (_gamepad == nullptr)
         {
             _rumble = {};
             return;
         }
 
-        // Compute power.
+        // Compute intensity.
         float alpha     = (float)_rumble.Ticks / (float)_rumble.DurationTicks;
-        float intensity = std::lerp(alpha, _rumble.IntensityFrom, _rumble.IntensityTo);
+        float intensity = std::lerp(_rumble.IntensityFrom, _rumble.IntensityTo, alpha);
 
         // Compute frequencies.
         ushort freqLow  = (_rumble.Mode == RumbleMode::Low  || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
@@ -244,7 +245,7 @@ namespace Silent::Input
         uint durationMs = (uint)round(TicksToSec(_rumble.DurationTicks) * 1000);
         
         // Rumble gamepad.
-        if (!SDL_RumbleGamepad(gamepad, freqLow, freqHigh, durationMs))
+        if (!SDL_RumbleGamepad(_gamepad, freqLow, freqHigh, durationMs))
         {
             Log("Failed to rumble gamepad: " + std::string(SDL_GetError()), LogLevel::Error);
         }
@@ -259,18 +260,86 @@ namespace Silent::Input
 
     void InputManager::UpdateActions()
     {
+        const auto& settings = g_Config.GetSettings();
+
+        // 1) Update user action states.
         for (auto& [keyActionId, action] : _actions)
         {
-            // Get event state with highest value.
             float eventState = 0.0f;
-            /*auto  eventIds   = _bindings.GetBoundEventIds(BindingProfileId::DefaultKeyboardMouse0, keyActionId);
-            for (const auto& eventId : eventIds)
-            {
-                eventState = std::max(eventState, _events.States[(int)eventId]);
-            }*/
 
-            // Update action state.
+            // 1.1) Get highest gamepad event state.
+            if (_gamepad != nullptr)
+            {
+                auto eventIds = _bindings.GetBoundEventIds(settings.ActiveKeyboardMouseProfileId, keyActionId);
+                for (const auto& eventId : eventIds)
+                {
+                    eventState = std::max(eventState, _events.States[(int)eventId]);
+                }
+            }
+
+            // 1.2) If no gamepad event state, get highest keyboard/mouse event state.
+            if (eventState == 0.0f)
+            {
+                auto eventIds = _bindings.GetBoundEventIds(settings.ActiveGamepadProfileId, keyActionId);
+                for (const auto& eventId : eventIds)
+                {
+                    eventState = std::max(eventState, _events.States[(int)eventId]);
+                }
+            }
+
+            // 1.3) Update user action state.
             action.Update(eventState);
+        }
+
+        // 2) Update raw action states.
+        for (auto profileId : RAW_EVENT_BINDING_PROFILE_IDS)
+        {
+            const auto& profile = _bindings.GetBindingProfile(profileId);
+            for (auto& [keyActionId0, eventIds] : profile)
+            {
+                auto& action = _actions.at(keyActionId0);
+                
+                // 1.1) Get highest raw event state.
+                float eventState = 0.0f;
+                for (auto eventId : eventIds)
+                {
+                    eventState = std::max(eventState, _events.States[(int)eventId]);
+                }
+
+                // 2.2) Update raw action state.
+                action.Update(eventState);
+            }
+        }
+    }
+
+    void InputManager::ReconnectGamepad()
+    {
+        constexpr auto GAMEPAD_RECONNECT_INTERVAL_SEC = 2.0f;
+
+        if (SDL_GamepadConnected(_gamepad))
+        {
+            return;
+        }
+
+        // Deinitialize disconnected gamepad.
+        if (_gamepad != nullptr)
+        {
+            SDL_CloseGamepad(_gamepad);
+            _gamepad = nullptr;
+
+            Log("Gamepad disconnected.");
+        }
+        // Attempt to reinitialize gamepad intermittently.
+        else
+        {
+            if (g_Time.TestInterval(SecToTicks(GAMEPAD_RECONNECT_INTERVAL_SEC)))
+            {
+                _gamepad = SDL_OpenGamepad(0);
+                if (_gamepad != nullptr)
+                {
+                    Log("Gamepad reconnected.");
+                }
+            }
         }
     }
 }

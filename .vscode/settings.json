@@ -95,6 +95,7 @@
         "csignal": "cpp",
         "numeric": "cpp",
         "ranges": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "cinttypes": "cpp"
     }
 }

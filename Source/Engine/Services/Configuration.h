@@ -17,9 +17,11 @@ namespace Silent::Services
     {
         // Input
 
-        int            MouseSensitivity      = 6;
-        BindingProfile KeyboardMouseBindings = DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
-        BindingProfile GamepadBindings       = DEFAULT_GAMEPAD_BINDING_PROFILE_0;
+        int              MouseSensitivity             = 6;
+        BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::DefaultKeyboardMouse0;
+        BindingProfileId ActiveGamepadProfileId       = BindingProfileId::DefaultGamepad0;
+        BindingProfile   KeyboardMouseBindings        = DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+        BindingProfile   GamepadBindings              = DEFAULT_GAMEPAD_BINDING_PROFILE_0;
     };
 
     class ConfigurationManager
@@ -66,4 +68,6 @@ namespace Silent::Services
         OsType                GetOsType() const;
         std::filesystem::path GetAppDir() const;
     };
+
+    extern ConfigurationManager g_Config;
 }

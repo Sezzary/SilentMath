@@ -7,6 +7,8 @@ using namespace Silent::Input;
 
 namespace Silent::Services
 {
+    ConfigurationManager g_Config = ConfigurationManager();
+
     std::filesystem::path ConfigurationManager::GetAppDir() const
     {
         return _appDir;

@@ -155,14 +155,14 @@ namespace Silent::Input
         return _state;
     }
     
-    float Action::GetSecActive() const
+    uint Action::GetTicksActive() const
     {
-        return TicksToSec(_ticksActive);
+        return _ticksActive;
     }
     
-    float Action::GetSecInactive() const
+    uint Action::GetTicksInactive() const
     {
-        return TicksToSec(_ticksInactive);
+        return _ticksInactive;
     }
     
     bool Action::IsClicked(float stateMin) const

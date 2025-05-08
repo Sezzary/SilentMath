@@ -256,14 +256,9 @@ namespace Silent::Input
         { In::GamepadStickRightRight, { EventId::GamepadStickRightRight } }
     };
 
-    const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS
-    {
-        BindingProfileId::CustomKeyboardMouse,
-        BindingProfileId::CustomGamepad
-    };
-
     const std::vector<BindingProfileId> KEYBOARD_MOUSE_BINDING_PROFILE_IDS
     {
+        BindingProfileId::CustomKeyboardMouse,
         BindingProfileId::DefaultKeyboardMouse0,
         BindingProfileId::DefaultKeyboardMouse1,
         BindingProfileId::DefaultKeyboardMouse2
@@ -271,6 +266,7 @@ namespace Silent::Input
 
     const std::vector<BindingProfileId> GAMEPAD_BINDING_PROFILE_IDS
     {
+        BindingProfileId::CustomGamepad,
         BindingProfileId::DefaultGamepad0,
         BindingProfileId::DefaultGamepad1,
         BindingProfileId::DefaultGamepad2
