@@ -2,6 +2,7 @@
 
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
+#include "Engine/Input/Text.h"
 
 namespace Silent::Services { struct SettingsData; }
 
@@ -47,7 +48,8 @@ namespace Silent::Input
 
         SDL_Gamepad* _gamepad = nullptr;
 
-        BindingManager                       _bindings    = {};
+        TextManager                          _text        = TextManager();
+        BindingManager                       _bindings    = BindingManager();
         EventData                            _events      = {};
         RumbleData                           _rumble      = {};
         std::unordered_map<ActionId, Action> _actions     = {};
@@ -82,7 +84,7 @@ namespace Silent::Input
         void UpdateRumble();
         void UpdateActions();
 
-        void ReconnectGamepad();
+        void HandleGamepadDisconnect();
     };
 
     extern InputManager g_Input;

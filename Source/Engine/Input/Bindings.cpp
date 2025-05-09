@@ -153,7 +153,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O } }
     };
 
-    extern const BindingProfile RAW_KEYBOARD_BINDING_PROFILE
+    const BindingProfile RAW_KEYBOARD_BINDING_PROFILE
     {
         { In::A,            { EventId::A } },
         { In::B,            { EventId::B } },
@@ -196,6 +196,9 @@ namespace Silent::Input
         { In::Backspace,    { EventId::Backspace } },
         { In::Tab,          { EventId::Tab } },
         { In::Space,        { EventId::Space } },
+        { In::Home,         { EventId::Home } },
+        { In::End,          { EventId::End } },
+        { In::Delete,       { EventId::Delete } },
         { In::Minus,        { EventId::Minus, EventId::PadMinus } },
         { In::Equals,       { EventId::Equals, EventId::PadPlus } },
         { In::BracketLeft,  { EventId::BracketLeft } },
@@ -215,7 +218,7 @@ namespace Silent::Input
         { In::Alt,          { EventId::Alt } }
     };
 
-    extern const BindingProfile RAW_MOUSE_BINDING_PROFILE
+    const BindingProfile RAW_MOUSE_BINDING_PROFILE
     {
         { In::MouseClickLeft,   { EventId::MouseClickLeft } },
         { In::MouseClickMiddle, { EventId::MouseClickMiddle } },
@@ -228,7 +231,7 @@ namespace Silent::Input
         { In::MouseRight,       { EventId::MouseRight } }
     };
 
-    extern const BindingProfile RAW_GAMEPAD_BINDING_PROFILE
+    const BindingProfile RAW_GAMEPAD_BINDING_PROFILE
     {
         { In::GamepadNorth,           { EventId::GamepadNorth } },
         { In::GamepadSouth,           { EventId::GamepadSouth } },
@@ -272,7 +275,7 @@ namespace Silent::Input
         BindingProfileId::DefaultGamepad2
     };
 
-    extern const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS
+    const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS
     {
         BindingProfileId::RawKeyboard,
         BindingProfileId::RawMouse,

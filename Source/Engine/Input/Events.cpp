@@ -415,7 +415,7 @@ namespace Silent::Input
         { EventId::GamepadEast,            { "East", "Gamepad B", "Gamepad A", "Circle" } },
         { EventId::GamepadWest,            { "West", "Gamepad X", "Gamepad Y", "Square" } },
         { EventId::GamepadNorth,           { "North", "Gamepad Y", "Gamepad X", "Triangle" } },
-        { EventId::GamepadSelect,          { "Back", "Back", "Select", "Select" } },
+        { EventId::GamepadSelect,          { "Select", "Back", "Select", "Select" } },
         { EventId::GamepadStart,           { "Start" } },
         { EventId::GamepadStickLeft,       { "Left Stick In" } },
         { EventId::GamepadStickRight,      { "Right Stick In" } },

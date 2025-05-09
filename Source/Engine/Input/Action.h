@@ -35,7 +35,7 @@ namespace Silent::Input
 
         A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
         Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9, Num0,
-        Return, Escape, Backspace, Tab, Space,
+        Return, Escape, Backspace, Tab, Space, Home, End, Delete,
         Minus, Equals, BracketLeft, BracketRight, Backslash, Semicolon, Apostrophe, Comma, Period, Slash,
         ArrowUp, ArrowDown, ArrowLeft, ArrowRight,
         Ctrl, Shift, Alt,
@@ -88,6 +88,7 @@ namespace Silent::Input
     extern const std::vector<ActionId> KEYBOARD_ACTION_IDS;
     extern const std::vector<ActionId> MOUSE_ACTION_IDS;
     extern const std::vector<ActionId> GAMEPAD_ACTION_IDS;
+    extern const std::vector<ActionId> PRINTABLE_ACTION_IDS;
 
     class Action
     {

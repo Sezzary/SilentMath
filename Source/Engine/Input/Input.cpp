@@ -4,6 +4,7 @@
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
 #include "Engine/Input/Events.h"
+#include "Engine/Input/Text.h"
 #include "Engine/Services/Configuration.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Utils.h"
@@ -62,7 +63,10 @@ namespace Silent::Input
 
     void InputManager::Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis)
     {
-        ReconnectGamepad();
+        if (!SDL_GamepadConnected(_gamepad))
+        {
+            HandleGamepadDisconnect();
+        }
 
         // Capture event states.
         int eventStateIdx = 0;
@@ -312,14 +316,9 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReconnectGamepad()
+    void InputManager::HandleGamepadDisconnect()
     {
         constexpr auto GAMEPAD_RECONNECT_INTERVAL_SEC = 2.0f;
-
-        if (SDL_GamepadConnected(_gamepad))
-        {
-            return;
-        }
 
         // Deinitialize disconnected gamepad.
         if (_gamepad != nullptr)
