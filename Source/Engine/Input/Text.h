@@ -25,12 +25,12 @@ namespace Silent::Input
 
         // Getters
         
-        const std::string& GetTextBuffer(const std::string& id) const;
+        const std::string& GetTextBuffer(const std::string& bufferId) const;
         
         // Utilities
 
-        void UpdateTextBuffer(const std::string& id, const std::unordered_map<ActionId, Action>& actions);
-        void ClearTextBuffer(const std::string& id);
+        void UpdateTextBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
+        void ClearTextBuffer(const std::string& bufferId);
 
     private:
         // Helpers

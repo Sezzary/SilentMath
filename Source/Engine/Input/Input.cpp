@@ -127,11 +127,12 @@ namespace Silent::Input
         _events.States[eventStateIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
         _events.States[eventStateIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
         _events.States[eventStateIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
+
         eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
 
         // Set mouse position state.
         _events.PrevMousePosition = _events.MousePosition;
-        _events.MousePosition = pos;
+        _events.MousePosition     = pos;
 
         auto  axis        = (_events.PrevMousePosition / res.ToVector2()) / (_events.MousePosition / res.ToVector2());
         float sensitivity = (settings.MouseSensitivity * 0.1f) + 0.4f;
@@ -142,6 +143,7 @@ namespace Silent::Input
         _events.States[eventStateIdx + 1] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
         _events.States[eventStateIdx + 2] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
         _events.States[eventStateIdx + 3] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
+
         eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
         
         // Set camera axis. NOTE: Gamepad takes priority over keyboard/mouse.
@@ -155,36 +157,46 @@ namespace Silent::Input
         // Set gamepad button event states.
         for (auto butCode : VALID_GAMEPAD_BUT_CODES)
         {
+            float state = 0.0f;
             if (_gamepad != nullptr)
             {
-                _events.States[eventStateIdx] = SDL_GetGamepadButton(_gamepad, butCode) ? 1.0f : 0.0f;
+                state = SDL_GetGamepadButton(_gamepad, butCode) ? 1.0f : 0.0f;
             }
+            _events.States[eventStateIdx] = state;
 
             eventStateIdx++;
         }
 
+        // Collect stick axes.
         auto stickAxes = std::vector<Vector2>(VALID_GAMEPAD_STICK_AXIS_CODES.size() / Vector2::AXIS_COUNT);
         int  j         = 0;
-
-        // TODO: Maybe scale based on deadzone size.
-
-        // Collect stick axes.
         for (int i = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
         {
-            auto axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
-
             if (_gamepad != nullptr)
             {
-                float val = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
+                auto  axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
+                float state    = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
 
+                auto& axis = stickAxes[j];
                 if ((i % Vector2::AXIS_COUNT) == 0)
                 {
-                    stickAxes[j].x = val;
+                    axis.x = state;
                 }
                 else
                 {
-                    stickAxes[j].y = val;
+                    axis.y = state;
                     j++;
+
+                    // Remap to range.
+                    if (axis.Length() >= AXIS_DEADZONE)
+                    {
+                        float remappedLength = Remap(axis.Length(), AXIS_DEADZONE, 1.0f, 0.0f, 1.0f);
+                        axis = Vector2::Normalize(axis) * remappedLength;
+                    }
+                    else
+                    {
+                        axis = Vector2::Zero;
+                    }
                 }
             }
         }
@@ -192,17 +204,13 @@ namespace Silent::Input
         // Set gamepad stick axis event states and control axes.
         for (int i = 0; i < stickAxes.size(); i++)
         {
-            if (_gamepad != nullptr)
-            {
-                auto axis = (stickAxes[i].Length() >= AXIS_DEADZONE) ? stickAxes[i] : Vector2::Zero;
+            const auto& axis = stickAxes[i];
 
-                _events.States[eventStateIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
-                _events.States[eventStateIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
-                _events.States[eventStateIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
-                _events.States[eventStateIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
-    
-                _controlAxes[i] = axis;
-            }
+            _events.States[eventStateIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
+            _events.States[eventStateIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
+            _events.States[eventStateIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
+            _events.States[eventStateIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
+            _controlAxes[i]                         = axis;
 
             eventStateIdx += Vector2::AXIS_COUNT * 2;
         }
@@ -213,12 +221,17 @@ namespace Silent::Input
         // Set gamepad trigger axis event states.
         for (auto axisCode : VALID_GAMEPAD_TRIG_AXIS_CODES)
         {
+            float state = 0.0f;
             if (_gamepad != nullptr)
             {
-                float val = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
-
-                _events.States[eventStateIdx] = (val >= AXIS_DEADZONE) ? val : 0.0f;
+                // Remap state.
+                state = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
+                if (state >= AXIS_DEADZONE)
+                {
+                    state = Remap(state, AXIS_DEADZONE, 1.0f, 0.0f, 1.0f);
+                }
             }
+            _events.States[eventStateIdx] = state;
 
             eventStateIdx++;
         }

@@ -8,7 +8,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
-    static const std::unordered_map<ActionId, std::pair<char, char>> PRINTABLE_ACTION_CHARS =
+    static const auto PRINTABLE_ACTION_CHARS = std::unordered_map<ActionId, std::pair<char, char>>
     {
         { In::A,            { 'a', 'A' } },
         { In::B,            { 'b', 'B' } },
@@ -59,11 +59,11 @@ namespace Silent::Input
         { In::Slash,        { '/', '?' } }
     };
 
-    const std::string& TextManager::GetTextBuffer(const std::string& id) const
+    const std::string& TextManager::GetTextBuffer(const std::string& bufferId) const
     {
         constexpr char EMPTY[] = "";
 
-        auto it = _buffers.find(id);
+        auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
         {
             return EMPTY;
@@ -73,12 +73,12 @@ namespace Silent::Input
         return buffer;
     }
 
-    void TextManager::UpdateTextBuffer(const std::string& id, const std::unordered_map<ActionId, Action>& actions)
+    void TextManager::UpdateTextBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
     {
         // Get buffer data.
-        auto& buffer        = _buffers[id];
-        uint& cursor        = _cursors[id];
-        auto& prevActionIds = _prevActionIds[id];
+        auto& buffer        = _buffers[bufferId];
+        uint& cursor        = _cursors[bufferId];
+        auto& prevActionIds = _prevActionIds[bufferId];
 
         // Move cursor.
         auto& leftAction  = actions.at(In::ArrowLeft);
@@ -150,7 +150,7 @@ namespace Silent::Input
             {
                 if (isShiftHeld && isCtrlHeld)
                 {
-                    ClearTextBuffer(id);
+                    ClearTextBuffer(bufferId);
                 }
                 else if (isCtrlHeld)
                 {
@@ -229,13 +229,13 @@ namespace Silent::Input
             }
         }
 
-        _prevActionIds.erase(id);
+        _prevActionIds.erase(bufferId);
     }
 
-    void TextManager::ClearTextBuffer(const std::string& id)
+    void TextManager::ClearTextBuffer(const std::string& bufferId)
     {
-        _buffers.erase(id);
-        _cursors.erase(id);
-        _prevActionIds.erase(id);
+        _buffers.erase(bufferId);
+        _cursors.erase(bufferId);
+        _prevActionIds.erase(bufferId);
     }
 }
