@@ -249,21 +249,21 @@ namespace Silent::Input
         SDL_SCANCODE_KP_PERIOD
     };
 
-    const std::vector<int> VALID_KEYBOARD_MOD_CODES =
+    const std::vector<int> VALID_KEYBOARD_MODIFIER_CODES =
     {
         SDL_KMOD_CTRL,
         SDL_KMOD_SHIFT,
         SDL_KMOD_ALT
     };
 
-    const std::vector<int> VALID_MOUSE_BUT_CODES =
+    const std::vector<int> VALID_MOUSE_BUTTON_CODES =
     {
         SDL_BUTTON_LEFT,
         SDL_BUTTON_MIDDLE,
         SDL_BUTTON_RIGHT
     };
 
-    const std::vector<SDL_GamepadButton> VALID_GAMEPAD_BUT_CODES =
+    const std::vector<SDL_GamepadButton> VALID_GAMEPAD_BUTTON_CODES =
     {
         SDL_GAMEPAD_BUTTON_SOUTH,
         SDL_GAMEPAD_BUTTON_EAST,
@@ -298,7 +298,7 @@ namespace Silent::Input
         SDL_GAMEPAD_AXIS_RIGHTY
     };
     
-    const std::vector<SDL_GamepadAxis> VALID_GAMEPAD_TRIG_AXIS_CODES =
+    const std::vector<SDL_GamepadAxis> VALID_GAMEPAD_TRIGGER_AXIS_CODES =
     {
         SDL_GAMEPAD_AXIS_LEFT_TRIGGER,
         SDL_GAMEPAD_AXIS_RIGHT_TRIGGER

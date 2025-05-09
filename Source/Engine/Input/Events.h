@@ -156,11 +156,11 @@ namespace Silent::Input
     extern const std::vector<EventId> GAMEPAD_EVENT_IDS;
 
     extern const std::vector<SDL_Scancode>      VALID_KEYBOARD_SCAN_CODES;
-    extern const std::vector<int>               VALID_KEYBOARD_MOD_CODES;
-    extern const std::vector<int>               VALID_MOUSE_BUT_CODES;
-    extern const std::vector<SDL_GamepadButton> VALID_GAMEPAD_BUT_CODES;
+    extern const std::vector<int>               VALID_KEYBOARD_MODIFIER_CODES;
+    extern const std::vector<int>               VALID_MOUSE_BUTTON_CODES;
+    extern const std::vector<SDL_GamepadButton> VALID_GAMEPAD_BUTTON_CODES;
     extern const std::vector<SDL_GamepadAxis>   VALID_GAMEPAD_STICK_AXIS_CODES;
-    extern const std::vector<SDL_GamepadAxis>   VALID_GAMEPAD_TRIG_AXIS_CODES;
+    extern const std::vector<SDL_GamepadAxis>   VALID_GAMEPAD_TRIGGER_AXIS_CODES;
 
     const std::string& GetEventName(EventId eventId);
 }

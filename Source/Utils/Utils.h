@@ -4,15 +4,9 @@ namespace Silent::Utils
 {
     template <typename T>
     requires std::is_arithmetic_v<T>
-    int GetSign(T value)
+    int GetSign(T val)
     {
-        return (value >= 0) ? 1 : -1;
-    }
-
-    template <typename T>
-    void Erase(std::span<T>& span, uint elementIdx)
-    {
-        span.erase(span.begin() + elementIdx);
+        return (val >= 0) ? 1 : -1;
     }
 
     template <typename T>

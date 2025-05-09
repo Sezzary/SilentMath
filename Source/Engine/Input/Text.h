@@ -25,17 +25,18 @@ namespace Silent::Input
 
         // Getters
         
-        const std::string& GetTextBuffer(const std::string& bufferId) const;
+        const std::string& GetBuffer(const std::string& bufferId) const;
         
         // Utilities
 
-        void UpdateTextBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
-        void ClearTextBuffer(const std::string& bufferId);
+        void UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
+        void ClearBuffer(const std::string& bufferId);
 
     private:
         // Helpers
 
-        void HandleCursorMove();
-        void HandleCharacterClear();
+        bool HandleCursorMove(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterClear(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterAdd(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
     };
 }

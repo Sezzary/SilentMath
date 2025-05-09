@@ -59,9 +59,9 @@ namespace Silent::Input
         { In::Slash,        { '/', '?' } }
     };
 
-    const std::string& TextManager::GetTextBuffer(const std::string& bufferId) const
+    const std::string& TextManager::GetBuffer(const std::string& bufferId) const
     {
-        constexpr char EMPTY[] = "";
+        static const auto EMPTY = std::string();
 
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
@@ -73,16 +73,42 @@ namespace Silent::Input
         return buffer;
     }
 
-    void TextManager::UpdateTextBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    void TextManager::UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
     {
-        // Get buffer data.
-        auto& buffer        = _buffers[bufferId];
-        uint& cursor        = _cursors[bufferId];
-        auto& prevActionIds = _prevActionIds[bufferId];
-
         // Move cursor.
+        if (HandleCursorMove(bufferId, actions))
+        {
+            return;
+        }
+
+        // Clear characters.
+        if (HandleCharacterClear(bufferId, actions))
+        {
+            return;
+        }
+
+        // Add character.
+        if (HandleCharacterAdd(bufferId, actions))
+        {
+            return;
+        }
+    }
+
+    void TextManager::ClearBuffer(const std::string& bufferId)
+    {
+        _buffers.erase(bufferId);
+        _cursors.erase(bufferId);
+        _prevActionIds.erase(bufferId);
+    }
+    
+    bool TextManager::HandleCursorMove(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    {
+        auto& buffer = _buffers[bufferId];
+        uint& cursor = _cursors[bufferId];
+
         auto& leftAction  = actions.at(In::ArrowLeft);
         auto& rightAction = actions.at(In::ArrowRight);
+
         if (leftAction.IsHeld() || rightAction.IsHeld())
         {
             if (leftAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
@@ -100,38 +126,51 @@ namespace Silent::Input
                 }
             }
 
-            return;
+            return true;
         }
 
-        // Query modifier actions.
-        bool isShiftHeld = actions.at(In::Shift).IsHeld();
-        bool isCtrlHeld  = actions.at(In::Ctrl).IsHeld();
+        return false;
+    }
 
-        // Clear characters.
-        const auto& bsAction  = actions.at(In::Backspace);
-        const auto& delAction = actions.at(In::Delete);
+    bool TextManager::HandleCharacterClear(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    {
+        auto& buffer = _buffers[bufferId];
+        uint& cursor = _cursors[bufferId];
+
+        const auto& bsAction    = actions.at(In::Backspace);
+        const auto& delAction   = actions.at(In::Delete);
+        const auto& shiftAction = actions.at(In::Shift);
+        const auto& ctrlAction  = actions.at(In::Ctrl);
+
         if (bsAction.IsHeld())
         {
             if (!buffer.empty() && bsAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
-                if (isShiftHeld && isCtrlHeld)
+                // Erase back to start.
+                if (shiftAction.IsHeld() && ctrlAction.IsHeld())
                 {
-                    ClearTextBuffer(id);
+                    while (cursor > 0)
+                    {
+                        buffer.erase(0, cursor);
+                        cursor = 0;
+                    }
                 }
-                else if (isCtrlHeld)
+                // Erase back to previous space.
+                else if (ctrlAction.IsHeld())
                 {
-                    char currentChar = '.';
-                    while (cursor > 0 && currentChar != ' ')
+                    char curChar = '.';
+                    while (cursor > 0 && curChar != ' ')
                     {
                         buffer.erase(buffer.begin() + (cursor - 1));
 
                         cursor--;
                         if (cursor > 0)
                         {
-                            currentChar = buffer.at(cursor - 1);
+                            curChar = buffer.at(cursor - 1);
                         }
                     }
                 }
+                // Erase back single character.
                 else
                 {
                     if (cursor > 0)
@@ -142,30 +181,33 @@ namespace Silent::Input
                 }
             }
 
-            return;
+            return true;
         }
         else if (delAction.IsHeld())
         {
             if (!buffer.empty() && delAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
-                if (isShiftHeld && isCtrlHeld)
+                // Erase forward to end.
+                if (shiftAction.IsHeld() && ctrlAction.IsHeld())
                 {
-                    ClearTextBuffer(bufferId);
+                    buffer.erase(cursor, buffer.size() - cursor);
                 }
-                else if (isCtrlHeld)
+                // Erase forward to next space.
+                else if (ctrlAction.IsHeld())
                 {
-                    char currentChar = '.';
-                    while (cursor < buffer.size() && currentChar != ' ')
+                    char curChar = '.';
+                    while (cursor < buffer.size() && curChar != ' ')
                     {
                         buffer.erase(buffer.begin() + cursor);
 
                         cursor++;
                         if (cursor < buffer.size())
                         {
-                            currentChar = buffer.at(cursor);
+                            curChar = buffer.at(cursor);
                         }
                     }
                 }
+                // Erase forward single character.
                 else
                 {
                     if (cursor < buffer.size())
@@ -176,41 +218,50 @@ namespace Silent::Input
                 }
             }
 
-            return;
+            return true;
         }
 
-        static auto prevActionId = std::optional<ActionId>();
+        return false;
+    }
 
-        bool hasChar = false;
+    bool TextManager::HandleCharacterAdd(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    {
+        auto& buffer        = _buffers[bufferId];
+        uint& cursor        = _cursors[bufferId];
+        auto& prevActionIds = _prevActionIds[bufferId];
+
+        const auto& shiftAction = actions.at(In::Shift);
+
+        bool hasNewChar = false;
         for (auto actionId : PRINTABLE_ACTION_IDS)
         {
             const auto& action = actions.at(actionId);
             const auto& chars  = PRINTABLE_ACTION_CHARS.at(actionId);
 
-            if (!hasChar && action.IsHeld())
+            if (!hasNewChar && action.IsHeld())
             {
-                // New character.
+                // New action.
                 if (!Contains(ToSpan(prevActionIds), actionId))
                 {
-                    // Append.
+                    // Add character.
                     if (action.IsClicked())
                     {
-                        buffer += isShiftHeld ? chars.second : chars.first;
+                        buffer.insert(buffer.begin() + cursor, shiftAction.IsHeld() ? chars.second : chars.first);
+                        cursor++;
                     }
 
                     prevActionIds.push_back(actionId);
-                    hasChar = true;
-                    break;
+                    hasNewChar = true;
                 }
-                // Held character.
+                // Held action.
                 else if (!prevActionIds.empty() && prevActionIds.back() == actionId)
                 {
-                    // Append.
+                    // Add character.
                     if (action.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
                     {
-                        buffer += isShiftHeld ? chars.second : chars.first;
-                        hasChar = true;
-                        break;
+                        buffer.insert(buffer.begin() + cursor, shiftAction.IsHeld() ? chars.second : chars.first);
+                        cursor++;
+                        hasNewChar = true;
                     }
                 }
             }
@@ -221,21 +272,13 @@ namespace Silent::Input
                     auto prevActionId = prevActionIds[i];
                     if (prevActionId == actionId)
                     {
-                        // TODO
-                        //Erase(ToSpan(prevActionIds), i);
+                        prevActionIds.erase(prevActionIds.begin() + i);
                         break;
                     }
                 }
             }
         }
 
-        _prevActionIds.erase(bufferId);
-    }
-
-    void TextManager::ClearTextBuffer(const std::string& bufferId)
-    {
-        _buffers.erase(bufferId);
-        _cursors.erase(bufferId);
-        _prevActionIds.erase(bufferId);
+        return hasNewChar;
     }
 }

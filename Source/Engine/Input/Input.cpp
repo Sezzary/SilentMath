@@ -21,6 +21,11 @@ namespace Silent::Input
         return _actions.at(actionId);
     }
 
+    const std::string& InputManager::GetText(const std::string& textId) const
+    {
+        return _text.GetBuffer(textId);
+    }
+
     void InputManager::SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec)
     {
         _rumble.Mode          = mode;
@@ -78,6 +83,16 @@ namespace Silent::Input
         UpdateRumble();
         UpdateActions();
     }
+    
+    void InputManager::UpdateText(const std::string& textId)
+    {
+        _text.UpdateBuffer(textId, _actions);
+    }
+
+    void InputManager::ClearText(const std::string& textId)
+    {
+        _text.ClearBuffer(textId);
+    }
 
     void InputManager::ReadKeyboard(int& eventStateIdx)
     {
@@ -97,7 +112,7 @@ namespace Silent::Input
         }
 
         // Set keyboard modifier event states.
-        for (int modCode : VALID_KEYBOARD_MOD_CODES)
+        for (int modCode : VALID_KEYBOARD_MODIFIER_CODES)
         {
             _events.States[eventStateIdx] = (modState & modCode) ? 1.0f : 0.0f;
             eventStateIdx++;
@@ -116,7 +131,7 @@ namespace Silent::Input
         }
 
         // Set mouse button event states.
-        for (int butCode : VALID_MOUSE_BUT_CODES)
+        for (int butCode : VALID_MOUSE_BUTTON_CODES)
         {
             _events.States[eventStateIdx] = (butState & SDL_BUTTON_MASK(butCode)) ? 1.0f : 0.0f;
             eventStateIdx++;
@@ -152,10 +167,10 @@ namespace Silent::Input
 
     void InputManager::ReadGamepad(int& eventStateIdx)
     {
-        constexpr float AXIS_DEADZONE = ((float)SHRT_MAX / 6.0f) / (float)SHRT_MAX;
+        constexpr float AXIS_DEADZONE = ((float)SHRT_MAX / 8.0f) / (float)SHRT_MAX;
 
         // Set gamepad button event states.
-        for (auto butCode : VALID_GAMEPAD_BUT_CODES)
+        for (auto butCode : VALID_GAMEPAD_BUTTON_CODES)
         {
             float state = 0.0f;
             if (_gamepad != nullptr)
@@ -172,31 +187,33 @@ namespace Silent::Input
         int  j         = 0;
         for (int i = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
         {
-            if (_gamepad != nullptr)
+            if (_gamepad == nullptr)
             {
-                auto  axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
-                float state    = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
+                break;
+            }
 
-                auto& axis = stickAxes[j];
-                if ((i % Vector2::AXIS_COUNT) == 0)
+            auto  axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
+            float state    = (float)SDL_GetGamepadAxis(_gamepad, axisCode) / (float)SHRT_MAX;
+
+            auto& axis = stickAxes[j];
+            if ((i % Vector2::AXIS_COUNT) == 0)
+            {
+                axis.x = state;
+            }
+            else
+            {
+                axis.y = state;
+                j++;
+
+                // Remap to range.
+                if (axis.Length() >= AXIS_DEADZONE)
                 {
-                    axis.x = state;
+                    float remappedLength = Remap(axis.Length(), AXIS_DEADZONE, 1.0f, 0.0f, 1.0f);
+                    axis = Vector2::Normalize(axis) * remappedLength;
                 }
                 else
                 {
-                    axis.y = state;
-                    j++;
-
-                    // Remap to range.
-                    if (axis.Length() >= AXIS_DEADZONE)
-                    {
-                        float remappedLength = Remap(axis.Length(), AXIS_DEADZONE, 1.0f, 0.0f, 1.0f);
-                        axis = Vector2::Normalize(axis) * remappedLength;
-                    }
-                    else
-                    {
-                        axis = Vector2::Zero;
-                    }
+                    axis = Vector2::Zero;
                 }
             }
         }
@@ -219,7 +236,7 @@ namespace Silent::Input
         _controlAxes[(int)ControlAxisId::Camera] = stickAxes.front();
 
         // Set gamepad trigger axis event states.
-        for (auto axisCode : VALID_GAMEPAD_TRIG_AXIS_CODES)
+        for (auto axisCode : VALID_GAMEPAD_TRIGGER_AXIS_CODES)
         {
             float state = 0.0f;
             if (_gamepad != nullptr)

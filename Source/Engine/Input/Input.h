@@ -62,8 +62,9 @@ namespace Silent::Input
 
         // Getters
 
-        const Action& GetAction(ActionId actionId) const;
-
+        const Action&      GetAction(ActionId actionId) const;
+        const std::string& GetText(const std::string& textId) const;
+        
         // Setters
 
         void SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec);
@@ -73,6 +74,9 @@ namespace Silent::Input
         void Initialize(const SettingsData& settings);
         void Deinitialize();
         void Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis);
+
+        void UpdateText(const std::string& textId);
+        void ClearText(const std::string& textId);
 
     private:
         // Helpers
