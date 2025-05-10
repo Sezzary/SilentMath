@@ -6,11 +6,14 @@ namespace Silent::Input
 {
     struct TextBufferData
     {
-        std::string                          Text          = {};
-        std::string                          PreviewText   = {};
-        uint                                 Cursor        = 0;
-        std::vector<ActionId>                PrevActionIds = {};
-        std::optional<std::pair<uint, uint>> Selection     = {};
+        std::string             Text      = {};
+        std::string             Selection = {};
+        std::string             Copy      = {};
+        std::stack<std::string> Undo      = {};
+        std::stack<std::string> Redo      = {};
+
+        uint                  Cursor        = 0;
+        std::vector<ActionId> PrevActionIds = {};
     };
 
     class TextManager
@@ -43,8 +46,9 @@ namespace Silent::Input
     private:
         // Helpers
 
-        bool HandleCursorMove(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCharacterClear(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCharacterAdd(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCursorMove(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterClear(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterAdd(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleHistory(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
     };
 }

@@ -89,20 +89,35 @@ namespace Silent::Input
 
     void TextManager::UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
     {
+        auto it = _buffers.find(bufferId);
+        if (it == _buffers.end())
+        {
+            Log("Attempted to update missing text buffer '" + bufferId + "'.", LogLevel::Warning);
+            return;
+        }
+
+        auto& [keyId, buffer] = *it;
+
         // Move cursor.
-        if (HandleCursorMove(bufferId, actions))
+        if (HandleCursorMove(buffer, actions))
         {
             return;
         }
 
         // Clear characters.
-        if (HandleCharacterClear(bufferId, actions))
+        if (HandleCharacterClear(buffer, actions))
         {
             return;
         }
 
         // Add character.
-        if (HandleCharacterAdd(bufferId, actions))
+        if (HandleCharacterAdd(buffer, actions))
+        {
+            return;
+        }
+
+        // Undo/redo.
+        if (HandleHistory(buffer, actions))
         {
             return;
         }
@@ -113,10 +128,8 @@ namespace Silent::Input
         _buffers.erase(bufferId);
     }
 
-    bool TextManager::HandleCursorMove(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCursorMove(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
-        auto& buffer = _buffers[bufferId];
-
         const auto& leftAction  = actions.at(In::ArrowLeft);
         const auto& rightAction = actions.at(In::ArrowRight);
         const auto& ctrlAction  = actions.at(In::Ctrl);
@@ -182,14 +195,12 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterClear(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCharacterClear(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
-        auto& buffer = _buffers[bufferId];
-
-        const auto& bsAction    = actions.at(In::Backspace);
-        const auto& delAction   = actions.at(In::Delete);
         const auto& shiftAction = actions.at(In::Shift);
         const auto& ctrlAction  = actions.at(In::Ctrl);
+        const auto& bsAction    = actions.at(In::Backspace);
+        const auto& delAction   = actions.at(In::Delete);
 
         if (bsAction.IsHeld())
         {
@@ -268,10 +279,8 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterAdd(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCharacterAdd(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
-        auto& buffer = _buffers[bufferId];
-
         const auto& shiftAction = actions.at(In::Shift);
 
         bool hasNewChar = false;
@@ -314,5 +323,32 @@ namespace Silent::Input
         }
 
         return hasNewChar;
+    }
+    
+    bool TextManager::HandleHistory(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
+    {
+        const auto& shiftAction = actions.at(In::Shift);
+        const auto& ctrlAction  = actions.at(In::Ctrl);
+        const auto& zAction     = actions.at(In::Z);
+
+        if (!ctrlAction.IsHeld() || !zAction.IsHeld())
+        {
+            return false;
+        }
+
+        const bool isRedo   = shiftAction.IsHeld();
+        const bool isPulsed = isRedo ? shiftAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC) :
+                                       ctrlAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC);
+        if (isPulsed)
+        {
+            auto& stack = isRedo ? buffer.Redo : buffer.Undo;
+            if (!stack.empty())
+            {
+                buffer.Text = stack.top();
+                stack.pop();
+            }
+        }
+
+        return true;
     }
 }
