@@ -21,9 +21,14 @@ namespace Silent::Input
         return _actions.at(actionId);
     }
 
+    const Vector2& InputManager::GetCursorPosition() const
+    {
+        return _events.CursorPosition;
+    }
+
     const std::string& InputManager::GetText(const std::string& textId) const
     {
-        return _text.GetBuffer(textId);
+        return _text.GetText(textId);
     }
 
     const uint InputManager::GetTextCursorPosition(const std::string& textId) const
@@ -38,6 +43,17 @@ namespace Silent::Input
         _rumble.IntensityTo   = intensityTo;
         _rumble.DurationTicks =
         _rumble.Ticks         = SecToTicks(durationSec);
+    }
+
+    bool InputManager::IsUsingGamepad() const
+    {
+        if (_gamepad == nullptr)
+        {
+            return false;
+        }
+
+        // TODO: Check if the last input was from a gamepad or keyboard/mouse.
+        return true;
     }
 
     void InputManager::Initialize(const SettingsData& settings)
@@ -89,9 +105,9 @@ namespace Silent::Input
         UpdateActions();
     }
     
-    void InputManager::UpdateText(const std::string& textId)
+    void InputManager::UpdateText(const std::string& textId, uint lengthMax)
     {
-        _text.UpdateBuffer(textId, _actions);
+        _text.UpdateBuffer(textId, lengthMax, _actions);
     }
 
     void InputManager::ClearText(const std::string& textId)
@@ -151,10 +167,10 @@ namespace Silent::Input
         eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
 
         // Set mouse position state.
-        _events.PrevMousePosition = _events.MousePosition;
-        _events.MousePosition     = pos;
+        _events.PrevCursorPosition = _events.CursorPosition;
+        _events.CursorPosition     = pos;
 
-        auto  axis        = (_events.PrevMousePosition / res.ToVector2()) / (_events.MousePosition / res.ToVector2());
+        auto  axis        = (_events.PrevCursorPosition / res.ToVector2()) / (_events.CursorPosition / res.ToVector2());
         float sensitivity = (settings.MouseSensitivity * 0.1f) + 0.4f;
         axis              *= sensitivity;
         

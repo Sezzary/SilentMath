@@ -4,11 +4,10 @@
 
 namespace Silent::Math
 {
-    constexpr uint Q4_SHIFT       = 4;                                       /** Used for: Q27.4 positions. */
-    constexpr uint Q8_SHIFT       = 8;                                       /** Used for: Q8.8 range limits. Q24.8 meters. */
-    constexpr uint Q12_SHIFT      = 12;                                      /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
-    constexpr uint FP_ANGLE_COUNT = (std::numeric_limits<short>::max() -
-                                     std::numeric_limits<short>::min()) + 1; /** Number of fixed-point angles in Q1.15 format. */
+    constexpr uint Q4_SHIFT       = 4;              /** Used for: Q27.4 positions. */
+    constexpr uint Q8_SHIFT       = 8;              /** Used for: Q8.8 range limits. Q24.8 meters. */
+    constexpr uint Q12_SHIFT      = 12;             /** Used for: Q3.12 alphas. Q19.12 timers, trigonometry. */
+    constexpr uint FP_ANGLE_COUNT = 1 << Q12_SHIFT; /** Number of fixed-point angles in Q1.15 format. */
 
     constexpr float PI       = glm::pi<float>();
     constexpr float PI_MUL_4 = PI * 4.0f;

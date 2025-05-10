@@ -67,8 +67,8 @@ namespace Silent::Math
 
     float GetDistanceToLine(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd)
     {
-        auto target = GetClosestPointOnLine(from, lineStart, lineEnd);
-        return Vector3::Distance(from, target);
+        auto to = GetClosestPointOnLine(from, lineStart, lineEnd);
+        return Vector3::Distance(from, to);
     }
 
     Vector3 GetClosestPointOnLine(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd)
@@ -129,35 +129,35 @@ namespace Silent::Math
         return Vector3::Translate(lineStart, line, alpha);
     }
 
-    bool IsPointInFront(const Vector3& origin, const Vector3& target, const Vector3& ref, const Vector3& axis)
+    bool IsPointInFront(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis)
     {
-        if (origin == target)
+        if (from == to)
         {
             return true;
         }
 
-        auto refDir = ref - origin;
+        auto refDir = ref - from;
 
         // Project `refDir` onto plane defined by `axis`.
         auto axisNorm = Vector3::Normalize(axis);
         auto projRefDir = refDir - (axisNorm * Vector3::Dot(refDir, axisNorm));
     
         // Project target direction onto same plane.
-        auto targetDir = target - origin;
+        auto targetDir = to - from;
         auto projTargetDir = targetDir - (axisNorm * Vector3::Dot(targetDir, axisNorm));
     
         float dot = Vector3::Dot(projRefDir, projTargetDir);
         return dot > 0.0f;
     }
 
-    bool IsPointOnLeft(const Vector3& origin, const Vector3& target, const Vector3& ref, const Vector3& axis)
+    bool IsPointOnLeft(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis)
     {
-        if (origin == target)
+        if (from == to)
         {
             return true;
         }
 
-        auto refDir = ref - origin;
+        auto refDir = ref - from;
 
         // Project `refDir` onto plane orthogonal to `axis`.
         auto axisNorm = Vector3::Normalize(axis);
@@ -167,7 +167,7 @@ namespace Silent::Math
         auto headingNormal = Vector3(projRefDir.z, 0.0f, -projRefDir.x);
 
         // Project `targetDir` onto same plane.
-        auto targetDir = target - origin;
+        auto targetDir = to - from;
         auto projTargetDir = targetDir - (axisNorm * Vector3::Dot(targetDir, axisNorm));
 
         float dot = Vector3::Dot(headingNormal, projTargetDir);

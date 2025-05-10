@@ -12,10 +12,10 @@ namespace Silent::Math
 {
     std::optional<float> Ray::Intersects(const BoundingSphere& sphere) const
     {
-        auto posDelta = sphere.Center - Origin;
+        auto  posDelta   = sphere.Center - Origin;
         float projLength = Vector3::Dot(posDelta, Direction);
 
-        float distSqr = posDelta.LengthSquared() - SQUARE(projLength);
+        float distSqr   = posDelta.LengthSquared() - SQUARE(projLength);
         float radiusSqr = SQUARE(sphere.Radius);
         if (distSqr > radiusSqr)
         {
@@ -28,12 +28,12 @@ namespace Silent::Math
 
     std::optional<float> Ray::Intersects(const AxisAlignedBoundingBox& aabb) const
     {
-        auto invDir = Vector3::One / Direction;
+        auto invDir       = Vector3::One / Direction;
         auto intersectMin = ((aabb.Center - aabb.Extents) - Origin) * invDir;
         auto intersectMax = ((aabb.Center + aabb.Extents) - Origin) * invDir;
 
         float nearIntersect = std::max({ intersectMin.x, intersectMin.y, intersectMin.z });
-        float farIntersect = std::min({ intersectMax.x, intersectMax.y, intersectMax.z });
+        float farIntersect  = std::min({ intersectMax.x, intersectMax.y, intersectMax.z });
         if (nearIntersect > farIntersect || farIntersect < 0.0f)
         {
             return std::nullopt;
@@ -49,8 +49,8 @@ namespace Silent::Math
 
         // Compute local ray.
         auto localOrigin = Vector3::Transform(Origin, invTransformMat);
-        auto localDir = Vector3::Rotate(Direction, invTransformMat);
-        auto localRay = Ray(localOrigin, localDir);
+        auto localDir    = Vector3::Rotate(Direction, invTransformMat);
+        auto localRay    = Ray(localOrigin, localDir);
 
         // Test AABB intersection in local space.
         auto aabb = AxisAlignedBoundingBox(Vector3::Zero, obb.Extents);

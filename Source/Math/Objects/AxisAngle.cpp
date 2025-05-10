@@ -25,14 +25,14 @@ namespace Silent::Math
         float rad = glm::acos(dot);
 
         // Set axis angle.
-        Axis = axis;
+        Axis  = axis;
         Angle = FP_ANGLE_FROM_RAD(rad);
     }
 
     AxisAngle AxisAngle::Lerp(const AxisAngle& from, const AxisAngle& to, float alpha)
     {
         auto quatFrom = from.ToQuaternion();
-        auto quatTo = to.ToQuaternion();
+        auto quatTo   = to.ToQuaternion();
 
         auto quat = Quaternion::Lerp(quatFrom, quatTo, alpha);
         return quat.ToAxisAngle();
@@ -46,7 +46,7 @@ namespace Silent::Math
     AxisAngle AxisAngle::Slerp(const AxisAngle& from, const AxisAngle& to, float alpha)
     {
         auto quatFrom = from.ToQuaternion();
-        auto quatTo = to.ToQuaternion();
+        auto quatTo   = to.ToQuaternion();
 
         auto quat = Quaternion::Slerp(quatFrom, quatTo, alpha);
         return quat.ToAxisAngle();
@@ -73,7 +73,7 @@ namespace Silent::Math
     {
         float rad = FP_ANGLE_TO_RAD(Angle);
 
-        float halfAngle = rad / 2.0f;
+        float halfAngle    = rad / 2.0f;
         float sinHalfAngle = glm::sin(halfAngle);
         float cosHalfAngle = glm::cos(halfAngle);
 
@@ -85,9 +85,9 @@ namespace Silent::Math
 
     Matrix AxisAngle::ToRotationMatrix() const
     {
-        float rad = FP_ANGLE_TO_RAD(Angle);
-        float sinAngle = glm::sin(rad);
-        float cosAngle = glm::cos(rad);
+        float rad         = FP_ANGLE_TO_RAD(Angle);
+        float sinAngle    = glm::sin(rad);
+        float cosAngle    = glm::cos(rad);
         float oneMinusCos = 1.0f - cosAngle;
     
         return Matrix(cosAngle + SQUARE(Axis.x) * oneMinusCos,
@@ -123,7 +123,7 @@ namespace Silent::Math
     
     AxisAngle& AxisAngle::operator=(const AxisAngle& axisAngle)
     {
-        Axis = axisAngle.Axis;
+        Axis  = axisAngle.Axis;
         Angle = axisAngle.Angle;
         return *this;
     }

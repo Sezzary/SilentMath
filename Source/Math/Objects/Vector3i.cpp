@@ -65,10 +65,11 @@ namespace Silent::Math
 
     Vector3i Vector3i::Lerp(const Vector3i& from, const Vector3i& to, float alpha)
     {
-        auto fromFloat = glm::vec3(from.ToGlmVec3i());
-        auto toFloat = glm::vec3(to.ToGlmVec3i());
-        auto vecFloat = glm::lerp(fromFloat, toFloat, alpha);
-        return Vector3i(glm::ivec3(round(vecFloat)));
+        auto fromFlt = glm::vec3(from.ToGlmVec3i());
+        auto toFlt   = glm::vec3(to.ToGlmVec3i());
+
+        auto vecFlt = glm::lerp(fromFlt, toFlt, alpha);
+        return Vector3i(glm::ivec3(round(vecFlt)));
     }
 
     void Vector3i::Lerp(const Vector3i& to, float alpha)
@@ -142,14 +143,14 @@ namespace Silent::Math
     Vector3i& Vector3i::operator*=(float scalar)
     {
         auto vecFloat = glm::vec3(ToGlmVec3i()) * scalar;
-        *this = Vector3i(round(vecFloat));
+        *this         = Vector3i(round(vecFloat));
         return *this;
     }
 
     Vector3i& Vector3i::operator/=(float scalar)
     {
         auto vecFloat = glm::vec3(ToGlmVec3i()) / scalar;
-        *this = Vector3i(round(vecFloat));
+        *this         = Vector3i(round(vecFloat));
         return *this;
     }
 
@@ -170,14 +171,14 @@ namespace Silent::Math
 
     Vector3i Vector3i::operator*(float scalar) const
     {
-        auto vecFloat = glm::vec3(ToGlmVec3i()) * scalar;
-        return Vector3i(round(vecFloat));
+        auto vecFlt = glm::vec3(ToGlmVec3i()) * scalar;
+        return Vector3i(round(vecFlt));
     }
 
     Vector3i Vector3i::operator/(float scalar) const
     {
-        auto vecFloat = glm::vec3(ToGlmVec3i()) / scalar;
-        return Vector3i(round(vecFloat));
+        auto vecFlt = glm::vec3(ToGlmVec3i()) / scalar;
+        return Vector3i(round(vecFlt));
     }
 
     Vector3i Vector3i::operator-() const

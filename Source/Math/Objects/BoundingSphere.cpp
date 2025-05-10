@@ -36,8 +36,8 @@ namespace Silent::Math
 
     bool BoundingSphere::Intersects(const OrientedBoundingBox& obb) const
     {
-        auto rotMat = obb.Rotation.ToRotationMatrix();
-        auto centerDelta = obb.Center - Center;
+        auto rotMat       = obb.Rotation.ToRotationMatrix();
+        auto centerDelta  = obb.Center - Center;
         auto closestPoint = obb.Center;
 
         // Project sphere center onto each OBB axis.
@@ -46,7 +46,7 @@ namespace Silent::Math
             auto axis = Vector3(rotMat[i].x, rotMat[i].y, rotMat[i].z);
 
             float proj = Vector3::Dot(centerDelta, axis);
-            proj = glm::clamp(proj, -obb.Extents[i], obb.Extents[i]);
+            proj       = glm::clamp(proj, -obb.Extents[i], obb.Extents[i]);
 
             closestPoint += proj * axis;
         }
@@ -81,8 +81,8 @@ namespace Silent::Math
         auto aabbMin = aabb.GetMin();
         auto aabbMax = aabb.GetMax();
     
-        auto closestPoint = Vector3::Clamp(Center, aabbMin, aabbMax);
-        float distSqr = Vector3::DistanceSquared(closestPoint, Center);
+        auto  closestPoint = Vector3::Clamp(Center, aabbMin, aabbMax);
+        float distSqr      = Vector3::DistanceSquared(closestPoint, Center);
         if (distSqr > SQUARE(Radius))
         {
             return ContainmentType::None;
@@ -106,7 +106,7 @@ namespace Silent::Math
         for (const auto& corner : obb.GetCorners())
         {
             auto centerDelta = corner - Center;
-            float distSqr = Vector3::Dot(centerDelta, centerDelta);
+            float distSqr    = Vector3::Dot(centerDelta, centerDelta);
             if (distSqr > SQUARE(Radius))
             {
                 allInside = false;

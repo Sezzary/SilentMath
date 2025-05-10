@@ -55,7 +55,7 @@ namespace Silent::Math
     {
         // Compute angle.
         float trace = (*this)[0][0] + (*this)[1][1] + (*this)[2][2];
-        float rad = glm::cos((trace - 1.0f) / 2.0f);
+        float rad   = glm::cos((trace - 1.0f) / 2.0f);
 
         // Compute axis.
         auto axis = Vector3::Zero;

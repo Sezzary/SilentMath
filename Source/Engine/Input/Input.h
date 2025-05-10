@@ -27,9 +27,9 @@ namespace Silent::Input
 
     struct EventData
     {
-        std::vector<float> States            = {}; // Index = `EventId`.
-        Vector2            MousePosition     = {};
-        Vector2            PrevMousePosition = {};
+        std::vector<float> States             = {}; // Index = `EventId`.
+        Vector2            CursorPosition     = {};
+        Vector2            PrevCursorPosition = {};
     };
 
     struct RumbleData
@@ -63,6 +63,7 @@ namespace Silent::Input
         // Getters
 
         const Action&      GetAction(ActionId actionId) const;
+        const Vector2&     GetCursorPosition() const;
         const std::string& GetText(const std::string& textId) const;
         const uint         GetTextCursorPosition(const std::string& textId) const;
         
@@ -70,13 +71,17 @@ namespace Silent::Input
 
         void SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec);
 
+        // Inquirers
+
+        bool IsUsingGamepad() const;
+
         // Utilities
 
         void Initialize(const SettingsData& settings);
         void Deinitialize();
         void Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis);
 
-        void UpdateText(const std::string& textId);
+        void UpdateText(const std::string& textId, uint lengthMax = UINT_MAX);
         void ClearText(const std::string& textId);
 
     private:

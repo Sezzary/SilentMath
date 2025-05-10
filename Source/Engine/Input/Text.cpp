@@ -66,7 +66,7 @@ namespace Silent::Input
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
         {
-            Log("Attempted to get text for missing buffer '" + bufferId + "'.", LogLevel::Warning);
+            Log("Attempted to get text for missing text buffer '" + bufferId + "'.", LogLevel::Warning);
             return EMPTY;
         }
 
@@ -79,7 +79,7 @@ namespace Silent::Input
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
         {
-            Log("Attempted to get text cursor position for missing buffer '" + bufferId + "'.", LogLevel::Warning);
+            Log("Attempted to get text cursor position for missing text buffer '" + bufferId + "'.", LogLevel::Warning);
             return 0;
         }
 
@@ -87,7 +87,7 @@ namespace Silent::Input
         return buffer.Cursor;
     }
 
-    void TextManager::UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
+    void TextManager::UpdateBuffer(const std::string& bufferId, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
     {
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
@@ -111,7 +111,7 @@ namespace Silent::Input
         }
 
         // Add character.
-        if (HandleCharacterAdd(buffer, actions))
+        if (HandleCharacterAdd(buffer, lengthMax, actions))
         {
             return;
         }
@@ -125,6 +125,13 @@ namespace Silent::Input
 
     void TextManager::ClearBuffer(const std::string& bufferId)
     {
+        auto it = _buffers.find(bufferId);
+        if (it == _buffers.end())
+        {
+            Log("Attempted to clear missing text buffer '" + bufferId + "'.", LogLevel::Warning);
+            return;
+        }
+
         _buffers.erase(bufferId);
     }
 
@@ -133,6 +140,8 @@ namespace Silent::Input
         const auto& leftAction  = actions.at(In::ArrowLeft);
         const auto& rightAction = actions.at(In::ArrowRight);
         const auto& ctrlAction  = actions.at(In::Ctrl);
+
+        // TODO: Selection.
 
         if (leftAction.IsHeld() || rightAction.IsHeld())
         {
@@ -206,6 +215,8 @@ namespace Silent::Input
         {
             if (!buffer.Text.empty() && bsAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
+                PushUndo(buffer);
+
                 // Erase back to start.
                 if (shiftAction.IsHeld() && ctrlAction.IsHeld())
                 {
@@ -244,6 +255,8 @@ namespace Silent::Input
         {
             if (!buffer.Text.empty() && delAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
+                PushUndo(buffer);
+
                 // Erase forward to end.
                 if (shiftAction.IsHeld() && ctrlAction.IsHeld())
                 {
@@ -279,9 +292,14 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterAdd(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCharacterAdd(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& shiftAction = actions.at(In::Shift);
+
+        if (lengthMax >= buffer.Text.size())
+        {
+            return false;
+        }
 
         bool hasNewChar = false;
         for (auto actionId : PRINTABLE_ACTION_IDS)
@@ -297,6 +315,8 @@ namespace Silent::Input
                     // Add character.
                     if (action.IsClicked())
                     {
+                        PushUndo(buffer);
+
                         buffer.Text.insert(buffer.Text.begin() + buffer.Cursor, shiftAction.IsHeld() ? chars.second : chars.first);
                         buffer.Cursor++;
                     }
@@ -310,6 +330,8 @@ namespace Silent::Input
                     // Add character.
                     if (action.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
                     {
+                        PushUndo(buffer);
+
                         buffer.Text.insert(buffer.Text.begin() + buffer.Cursor, shiftAction.IsHeld() ? chars.second : chars.first);
                         buffer.Cursor++;
                         hasNewChar = true;
@@ -324,7 +346,76 @@ namespace Silent::Input
 
         return hasNewChar;
     }
-    
+
+    bool TextManager::HandleCutCopyPaste(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    {
+        if (buffer.Copy.empty() && !buffer.Selection.has_value())
+        {
+            return false;
+        }
+
+        const auto& ctrlAction = actions.at(In::Ctrl);
+        const auto& xAction    = actions.at(In::X);
+        const auto& cAction    = actions.at(In::C);
+        const auto& vAction    = actions.at(In::V);
+
+        if (ctrlAction.IsHeld())
+        {
+            // Cut selection.
+            if (xAction.IsClicked())
+            {
+                if (buffer.Selection.has_value())
+                {
+                    buffer.Copy = std::string(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
+                    buffer.Text.erase(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
+
+                    buffer.Cursor    = buffer.Selection->first;
+                    buffer.Selection = std::nullopt;
+                    return true;
+                }
+            }
+            // Copy selection.
+            else if (cAction.IsClicked())
+            {
+                if (buffer.Selection.has_value())
+                {
+                    buffer.Copy = std::string(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
+                    return true;
+                }
+            }
+            // Paste selection.
+            else if (vAction.IsClicked())
+            {
+                if (!buffer.Copy.empty() && (buffer.Text.size() + buffer.Copy.size()) <= lengthMax)
+                {
+                    // Replace selection.
+                    if (buffer.Selection.has_value())
+                    {
+                        uint selectLength = buffer.Selection->second - buffer.Selection->first;
+                        if (((buffer.Text.size() + buffer.Copy.size()) - selectLength) <= lengthMax)
+                        {
+                            buffer.Text.erase(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
+                            buffer.Text.insert(buffer.Selection->first, buffer.Copy);
+
+                            buffer.Cursor    = buffer.Selection->first + buffer.Copy.size();
+                            buffer.Selection = std::nullopt;
+                            return true;
+                        }
+                    }
+                    // Insert at cursor.
+                    else
+                    {
+                        buffer.Text.insert(buffer.Cursor, buffer.Copy);
+                        buffer.Cursor += buffer.Copy.size();
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     bool TextManager::HandleHistory(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& shiftAction = actions.at(In::Shift);
@@ -336,19 +427,35 @@ namespace Silent::Input
             return false;
         }
 
-        const bool isRedo   = shiftAction.IsHeld();
-        const bool isPulsed = isRedo ? shiftAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC) :
-                                       ctrlAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC);
-        if (isPulsed)
+        if (zAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC))
         {
-            auto& stack = isRedo ? buffer.Redo : buffer.Undo;
-            if (!stack.empty())
+            auto& fromStack = shiftAction.IsHeld() ? buffer.Redo : buffer.Undo;
+            auto& toStack   = shiftAction.IsHeld() ? buffer.Undo : buffer.Redo;
+
+            if (!fromStack.empty())
             {
-                buffer.Text = stack.top();
-                stack.pop();
+                toStack.push_back(buffer.Text);
+                if (toStack.size() > HISTORY_SIZE_MAX)
+                {
+                    toStack.pop_front();
+                }
+
+                buffer.Text = fromStack.back();
+                fromStack.pop_back();
             }
         }
 
         return true;
+    }
+
+    void TextManager::PushUndo(TextBufferData& buffer)
+    {
+        if (buffer.Undo.size() >= HISTORY_SIZE_MAX)
+        {
+            buffer.Undo.pop_front();
+        }
+        buffer.Undo.push_back(buffer.Text);
+
+        buffer.Redo.clear();
     }
 }

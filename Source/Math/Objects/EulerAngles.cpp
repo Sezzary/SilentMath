@@ -50,7 +50,8 @@ namespace Silent::Math
     EulerAngles EulerAngles::Slerp(const EulerAngles& from, const EulerAngles& to, float alpha)
     {
         auto quatFrom = from.ToQuaternion();
-        auto quatTo = to.ToQuaternion();
+        auto quatTo   = to.ToQuaternion();
+
         auto quat = Quaternion::Slerp(quatFrom, quatTo, alpha);
         return quat.ToEulerAngles();
     }
@@ -194,8 +195,8 @@ namespace Silent::Math
             return to;
         }
 
-        short angleDelta = to - from;
-        return (short)round(from + (angleDelta * std::clamp(alpha, 0.0f, 1.0f)));
+        short delta = to - from;
+        return (short)round(from + (delta * std::clamp(alpha, 0.0f, 1.0f)));
     }
 
     bool EulerAngles::Compare(short angle0, short angle1, short epsilon)

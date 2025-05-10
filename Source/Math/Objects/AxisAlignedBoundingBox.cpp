@@ -24,13 +24,13 @@ namespace Silent::Math
         }
 
         // Construct AABB.
-        Center = (pointMin + pointMax) / 2.0f;
+        Center  = (pointMin + pointMax) / 2.0f;
         Extents = (pointMax - pointMin) / 2.0f;
     }
 
     AxisAlignedBoundingBox::AxisAlignedBoundingBox(const BoundingSphere& sphere)
     {
-        Center = sphere.Center;
+        Center  = sphere.Center;
         Extents = Vector3(sphere.Radius);
     }
 

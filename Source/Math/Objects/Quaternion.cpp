@@ -10,9 +10,9 @@ namespace Silent::Math
 
     Quaternion::Quaternion(const Vector3& dir)
     {
-        auto dirNorm = Vector3::Normalize(dir);
-        float dot = Vector3::Dot(Vector3::UnitZ, dirNorm);
-        float rad = glm::acos(dot);
+        auto  dirNorm = Vector3::Normalize(dir);
+        float dot     = Vector3::Dot(Vector3::UnitZ, dirNorm);
+        float rad     = glm::acos(dot);
 
         if (rad < EPSILON)
         {
@@ -23,7 +23,7 @@ namespace Silent::Math
         auto axis = Vector3::Cross(Vector3::UnitZ, dirNorm);
         axis.Normalize();
 
-        float halfAngle = rad / 2.0f;
+        float halfAngle    = rad / 2.0f;
         float sinHalfAngle = glm::sin(halfAngle);
 
         w = glm::cos(halfAngle);
@@ -35,7 +35,7 @@ namespace Silent::Math
     short Quaternion::AngularDistance(const Quaternion& from, const Quaternion& to)
     {
         float dot = glm::dot(from.ToGlmQuat(), to.ToGlmQuat());
-        dot = glm::clamp(dot, -1.0f, 1.0f);
+        dot       = glm::clamp(dot, -1.0f, 1.0f);
 
         float rad = glm::acos(dot) * 2.0f;
         return FP_ANGLE_FROM_RAD(rad);
