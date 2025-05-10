@@ -4,6 +4,15 @@
 
 namespace Silent::Input
 {
+    struct TextBufferData
+    {
+        std::string                          Text          = {};
+        std::string                          PreviewText   = {};
+        uint                                 Cursor        = 0;
+        std::vector<ActionId>                PrevActionIds = {};
+        std::optional<std::pair<uint, uint>> Selection     = {};
+    };
+
     class TextManager
     {
     private:
@@ -14,9 +23,7 @@ namespace Silent::Input
 
         // Fields
 
-        std::unordered_map<std::string, std::string>           _buffers       = {}; // Key = ID, value = buffer
-        std::unordered_map<std::string, unsigned int>          _cursors       = {}; // Key = ID, value = position cursor.
-        std::unordered_map<std::string, std::vector<ActionId>> _prevActionIds = {}; // Key = ID, value = previous action IDs.
+        std::unordered_map<std::string, TextBufferData> _buffers = {}; // Key = ID, value = text buffer.
 
     public:
         // Constructors
@@ -25,7 +32,8 @@ namespace Silent::Input
 
         // Getters
         
-        const std::string& GetBuffer(const std::string& bufferId) const;
+        const std::string& GetText(const std::string& bufferId) const;
+        uint               GetCursorPosition(const std::string& bufferId) const;
         
         // Utilities
 

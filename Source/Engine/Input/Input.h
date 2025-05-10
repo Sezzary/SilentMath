@@ -64,6 +64,7 @@ namespace Silent::Input
 
         const Action&      GetAction(ActionId actionId) const;
         const std::string& GetText(const std::string& textId) const;
+        const uint         GetTextCursorPosition(const std::string& textId) const;
         
         // Setters
 

@@ -26,6 +26,11 @@ namespace Silent::Input
         return _text.GetBuffer(textId);
     }
 
+    const uint InputManager::GetTextCursorPosition(const std::string& textId) const
+    {
+        return _text.GetCursorPosition(textId);
+    }
+
     void InputManager::SetRumble(RumbleMode mode, float intensityFrom, float intensityTo, float durationSec)
     {
         _rumble.Mode          = mode;
