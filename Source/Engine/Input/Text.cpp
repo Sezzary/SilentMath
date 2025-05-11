@@ -99,7 +99,7 @@ namespace Silent::Input
         auto& [keyId, buffer] = *it;
 
         // Move cursor.
-        if (HandleCursorMove(buffer, actions))
+        if (HandleCursorSelection(buffer, actions))
         {
             return;
         }
@@ -135,11 +135,12 @@ namespace Silent::Input
         _buffers.erase(bufferId);
     }
 
-    bool TextManager::HandleCursorMove(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& leftAction  = actions.at(In::ArrowLeft);
         const auto& rightAction = actions.at(In::ArrowRight);
         const auto& ctrlAction  = actions.at(In::Ctrl);
+        const auto& aAction     = actions.at(In::A);
 
         // TODO: Selection.
 
@@ -204,7 +205,7 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterClear(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCharacterClear(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& shiftAction = actions.at(In::Shift);
         const auto& ctrlAction  = actions.at(In::Ctrl);
@@ -217,8 +218,18 @@ namespace Silent::Input
             {
                 PushUndo(buffer);
 
+                // Erase selection.
+                if (buffer.Selection.has_value() && ctrlAction.IsHeld())
+                {
+                    auto start = buffer.Text.begin() + buffer.Selection->first;
+                    auto end   = buffer.Text.begin() + buffer.Selection->second;
+                    buffer.Text.erase(start, end);
+
+                    buffer.Cursor    = buffer.Selection->first;
+                    buffer.Selection = std::nullopt;
+                }
                 // Erase back to start.
-                if (shiftAction.IsHeld() && ctrlAction.IsHeld())
+                else if (shiftAction.IsHeld() && ctrlAction.IsHeld())
                 {
                     buffer.Text.erase(0, buffer.Cursor);
                     buffer.Cursor = 0;
@@ -251,14 +262,24 @@ namespace Silent::Input
 
             return true;
         }
-        else if (delAction.IsHeld())
+        else if (!buffer.Text.empty() && delAction.IsHeld())
         {
             if (!buffer.Text.empty() && delAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
                 PushUndo(buffer);
 
+                // Erase selection.
+                if (buffer.Selection.has_value() && ctrlAction.IsHeld())
+                {
+                    auto start = buffer.Text.begin() + buffer.Selection->first;
+                    auto end   = buffer.Text.begin() + buffer.Selection->second;
+                    buffer.Text.erase(start, end);
+
+                    buffer.Cursor    = buffer.Selection->first;
+                    buffer.Selection = std::nullopt;
+                }
                 // Erase forward to end.
-                if (shiftAction.IsHeld() && ctrlAction.IsHeld())
+                else if (shiftAction.IsHeld() && ctrlAction.IsHeld())
                 {
                     buffer.Text.erase(buffer.Cursor, buffer.Text.size() - buffer.Cursor);
                 }
@@ -292,7 +313,7 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterAdd(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCharacterAdd(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& shiftAction = actions.at(In::Shift);
 
@@ -310,7 +331,7 @@ namespace Silent::Input
             if (!hasNewChar && action.IsHeld())
             {
                 // New action.
-                if (!Contains(ToSpan(buffer.PrevActionIds), actionId))
+                if (!Contains(ToSpan(_prevActionIds), actionId))
                 {
                     // Add character.
                     if (action.IsClicked())
@@ -321,11 +342,11 @@ namespace Silent::Input
                         buffer.Cursor++;
                     }
 
-                    buffer.PrevActionIds.push_back(actionId);
+                    _prevActionIds.push_back(actionId);
                     hasNewChar = true;
                 }
                 // Held action.
-                else if (!buffer.PrevActionIds.empty() && buffer.PrevActionIds.back() == actionId)
+                else if (!_prevActionIds.empty() && _prevActionIds.back() == actionId)
                 {
                     // Add character.
                     if (action.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
@@ -340,16 +361,16 @@ namespace Silent::Input
             }
             else if (action.IsReleased())
             {
-                std::erase(buffer.PrevActionIds, actionId);
+                std::erase(_prevActionIds, actionId);
             }
         }
 
         return hasNewChar;
     }
 
-    bool TextManager::HandleCutCopyPaste(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCutCopyPaste(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
     {
-        if (buffer.Clipboard.empty() && !buffer.Selection.has_value())
+        if (_clipboard.empty() && !buffer.Selection.has_value())
         {
             return false;
         }
@@ -366,9 +387,9 @@ namespace Silent::Input
             {
                 if (buffer.Selection.has_value())
                 {
-                    auto start       = buffer.Text.begin() + buffer.Selection->first;
-                    auto end         = buffer.Text.begin() + buffer.Selection->second;
-                    buffer.Clipboard = std::string(start, end);
+                    auto start = buffer.Text.begin() + buffer.Selection->first;
+                    auto end   = buffer.Text.begin() + buffer.Selection->second;
+                    _clipboard = std::string(start, end);
                     buffer.Text.erase(start, end);
 
                     buffer.Cursor    = buffer.Selection->first;
@@ -381,29 +402,29 @@ namespace Silent::Input
             {
                 if (buffer.Selection.has_value())
                 {
-                    auto start       = buffer.Text.begin() + buffer.Selection->first;
-                    auto end         = buffer.Text.begin() + buffer.Selection->second;
-                    buffer.Clipboard = std::string(start, end);
+                    auto start = buffer.Text.begin() + buffer.Selection->first;
+                    auto end   = buffer.Text.begin() + buffer.Selection->second;
+                    _clipboard = std::string(start, end);
                     return true;
                 }
             }
             // Paste copy.
             else if (vAction.IsClicked())
             {
-                if (!buffer.Clipboard.empty() && (buffer.Text.size() + buffer.Clipboard.size()) <= lengthMax)
+                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= lengthMax)
                 {
                     // Replace selection.
                     if (buffer.Selection.has_value())
                     {
                         uint selectLength = buffer.Selection->second - buffer.Selection->first;
-                        if (((buffer.Text.size() + buffer.Clipboard.size()) - selectLength) <= lengthMax)
+                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= lengthMax)
                         {
                             auto start = buffer.Text.begin() + buffer.Selection->first;
                             auto end   = buffer.Text.begin() + buffer.Selection->second;
                             buffer.Text.erase(start, end);
-                            buffer.Text.insert(buffer.Selection->first, buffer.Clipboard);
+                            buffer.Text.insert(buffer.Selection->first, _clipboard);
 
-                            buffer.Cursor    = buffer.Selection->first + buffer.Clipboard.size();
+                            buffer.Cursor    = buffer.Selection->first + _clipboard.size();
                             buffer.Selection = std::nullopt;
                             return true;
                         }
@@ -411,8 +432,8 @@ namespace Silent::Input
                     // Insert at cursor.
                     else
                     {
-                        buffer.Text.insert(buffer.Cursor, buffer.Clipboard);
-                        buffer.Cursor += buffer.Clipboard.size();
+                        buffer.Text.insert(buffer.Cursor, _clipboard);
+                        buffer.Cursor += _clipboard.size();
                         return true;
                     }
                 }
@@ -422,7 +443,7 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleHistory(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& shiftAction = actions.at(In::Shift);
         const auto& ctrlAction  = actions.at(In::Ctrl);
@@ -454,7 +475,7 @@ namespace Silent::Input
         return true;
     }
 
-    void TextManager::PushUndo(TextBufferData& buffer)
+    void TextManager::PushUndo(TextBuffer& buffer)
     {
         if (buffer.Undo.size() >= HISTORY_SIZE_MAX)
         {

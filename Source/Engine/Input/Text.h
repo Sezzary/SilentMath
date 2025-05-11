@@ -4,16 +4,13 @@
 
 namespace Silent::Input
 {
-    struct TextBufferData
+    struct TextBuffer
     {
         std::string                          Text      = {};
-        std::string                          Clipboard = {};
         std::optional<std::pair<uint, uint>> Selection = {}; // First = selection start, second = selection end.
         std::deque<std::string>              Undo      = {};
         std::deque<std::string>              Redo      = {};
-
-        uint                  Cursor        = 0;
-        std::vector<ActionId> PrevActionIds = {};
+        uint                                 Cursor    = 0;
     };
 
     class TextManager
@@ -27,7 +24,9 @@ namespace Silent::Input
 
         // Fields
 
-        std::unordered_map<std::string, TextBufferData> _buffers = {}; // Key = ID, value = text buffer.
+        std::unordered_map<std::string, TextBuffer> _buffers       = {}; // Key = ID, value = text buffer.
+        std::string                                 _clipboard     = {};
+        std::vector<ActionId>                       _prevActionIds = {};
 
     public:
         // Constructors
@@ -35,7 +34,7 @@ namespace Silent::Input
         TextManager() = default;
 
         // Getters
-        
+
         const std::string& GetText(const std::string& bufferId) const;
         uint               GetCursorPosition(const std::string& bufferId) const;
         
@@ -47,12 +46,12 @@ namespace Silent::Input
     private:
         // Helpers
 
-        bool HandleCursorMove(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCharacterClear(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCharacterAdd(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCutCopyPaste(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleHistory(TextBufferData& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterClear(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterAdd(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCutCopyPaste(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
 
-        void PushUndo(TextBufferData& buffer);
+        void PushUndo(TextBuffer& buffer);
     };
 }

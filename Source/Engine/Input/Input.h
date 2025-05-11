@@ -25,14 +25,14 @@ namespace Silent::Input
         LowAndHigh
     };
 
-    struct EventData
+    struct Event
     {
         std::vector<float> States             = {}; // Index = `EventId`.
         Vector2            CursorPosition     = {};
         Vector2            PrevCursorPosition = {};
     };
 
-    struct RumbleData
+    struct Rumble
     {
         RumbleMode Mode          = RumbleMode::Low;
         float      IntensityFrom = 0.0f;
@@ -50,8 +50,8 @@ namespace Silent::Input
 
         TextManager                          _text        = TextManager();
         BindingManager                       _bindings    = BindingManager();
-        EventData                            _events      = {};
-        RumbleData                           _rumble      = {};
+        Event                            _events      = {};
+        Rumble                           _rumble      = {};
         std::unordered_map<ActionId, Action> _actions     = {};
         std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 
