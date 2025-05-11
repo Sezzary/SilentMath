@@ -50,8 +50,8 @@ namespace Silent::Input
 
         TextManager                          _text        = TextManager();
         BindingManager                       _bindings    = BindingManager();
-        Event                            _events      = {};
-        Rumble                           _rumble      = {};
+        Event                                _events      = {};
+        Rumble                               _rumble      = {};
         std::unordered_map<ActionId, Action> _actions     = {};
         std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
 

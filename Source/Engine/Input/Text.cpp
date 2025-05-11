@@ -139,62 +139,97 @@ namespace Silent::Input
     {
         const auto& leftAction  = actions.at(In::ArrowLeft);
         const auto& rightAction = actions.at(In::ArrowRight);
+        const auto& shiftAction = actions.at(In::Shift);
         const auto& ctrlAction  = actions.at(In::Ctrl);
         const auto& aAction     = actions.at(In::A);
 
-        // TODO: Selection.
+        // Select all.
+        if (ctrlAction.IsHeld() && aAction.IsClicked())
+        {
+            buffer.Selection = std::pair(0, buffer.Text.size());
+            buffer.Cursor    = buffer.Text.size();
+            return true;
+        }
 
+        // Move left/right.
         if (leftAction.IsHeld() || rightAction.IsHeld())
         {
-            if (leftAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+            if (buffer.Cursor > 0 && leftAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
-                if (buffer.Cursor > 0)
-                {
-                    // Move back to previous word.
-                    if (ctrlAction.IsHeld())
-                    {
-                        // Skip spaces before word.
-                        while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] == ' ')
-                        {
-                            buffer.Cursor--;
-                        }
+                uint prevCursor = buffer.Cursor;
 
-                        // Skip word.
-                        while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] != ' ')
-                        {
-                            buffer.Cursor--;
-                        }
-                    }
-                    // Move back to previous character.
-                    else
+                // Move back to previous word.
+                if (ctrlAction.IsHeld())
+                {
+                    uint prevCursor = buffer.Cursor;
+
+                    // Skip spaces before word.
+                    while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] == ' ')
                     {
                         buffer.Cursor--;
                     }
-                }
-            }
-            else if (rightAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
-            {
-                if (buffer.Cursor < buffer.Text.size())
-                {
-                    // Move forward to next word.
-                    if (ctrlAction.IsHeld())
-                    {
-                        // Skip current word.
-                        while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] != ' ')
-                        {
-                            buffer.Cursor++;
-                        }
 
-                        // Skip spaces after word.
-                        while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] == ' ')
-                        {
-                            buffer.Cursor++;
-                        }
+                    // Skip word.
+                    while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] != ' ')
+                    {
+                        buffer.Cursor--;
                     }
-                    // More forward to next character.
+
+                }
+                // Move back to previous character.
+                else
+                {
+                    buffer.Cursor--;
+                }
+
+                // Expand selection back.
+                if (shiftAction.IsHeld())
+                {
+                    if (buffer.Selection.has_value())
+                    {
+                        buffer.Selection->first = buffer.Cursor;
+                    }
                     else
                     {
+                        buffer.Selection = std::pair(buffer.Cursor, prevCursor);
+                    }
+                }
+            }
+            else if (buffer.Cursor < buffer.Text.size() && rightAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+            {
+                uint prevCursor = buffer.Cursor;
+
+                // Move forward to next word.
+                if (ctrlAction.IsHeld())
+                {
+                    // Skip current word.
+                    while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] != ' ')
+                    {
                         buffer.Cursor++;
+                    }
+
+                    // Skip spaces after word.
+                    while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] == ' ')
+                    {
+                        buffer.Cursor++;
+                    }
+                }
+                // More forward to next character.
+                else
+                {
+                    buffer.Cursor++;
+                }
+
+                // Expand selection forward.
+                if (shiftAction.IsHeld())
+                {
+                    if (buffer.Selection.has_value())
+                    {
+                        buffer.Selection->second = buffer.Cursor;
+                    }
+                    else
+                    {
+                        buffer.Selection = std::pair(prevCursor, buffer.Cursor);
                     }
                 }
             }
