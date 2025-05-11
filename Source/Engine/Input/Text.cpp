@@ -381,10 +381,11 @@ namespace Silent::Input
 
     bool TextManager::HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
-        const auto& leftAction  = actions.at(In::ArrowLeft);
-        const auto& rightAction = actions.at(In::ArrowRight);
+        const auto& escAction   = actions.at(In::Escape);
         const auto& shiftAction = actions.at(In::Shift);
         const auto& ctrlAction  = actions.at(In::Ctrl);
+        const auto& leftAction  = actions.at(In::ArrowLeft);
+        const auto& rightAction = actions.at(In::ArrowRight);
         const auto& aAction     = actions.at(In::A);
 
         // Select all.
@@ -392,6 +393,12 @@ namespace Silent::Input
         {
             buffer.Selection = std::pair(0, buffer.Text.size());
             buffer.Cursor    = buffer.Text.size();
+            return true;
+        }
+        // Deselect all.
+        else if (escAction.IsClicked())
+        {
+            buffer.Selection = std::nullopt;
             return true;
         }
 
@@ -490,27 +497,25 @@ namespace Silent::Input
         const auto& ctrlAction  = actions.at(In::Ctrl);
         const auto& zAction     = actions.at(In::Z);
 
-        if (!ctrlAction.IsHeld() || !zAction.IsHeld())
-        {
-            return false;
-        }
-
         // Undo/redo.
-        if (zAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC))
+        if (ctrlAction.IsHeld() && zAction.IsHeld())
         {
-            auto& fromStack = shiftAction.IsHeld() ? buffer.Redo : buffer.Undo;
-            auto& toStack   = shiftAction.IsHeld() ? buffer.Undo : buffer.Redo;
-
-            if (!fromStack.empty())
+            if (zAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC))
             {
-                toStack.push_back(buffer.Text);
-                if (toStack.size() > HISTORY_SIZE_MAX)
-                {
-                    toStack.pop_front();
-                }
+                auto& fromStack = shiftAction.IsHeld() ? buffer.Redo : buffer.Undo;
+                auto& toStack   = shiftAction.IsHeld() ? buffer.Undo : buffer.Redo;
 
-                buffer.Text = fromStack.back();
-                fromStack.pop_back();
+                if (!fromStack.empty())
+                {
+                    toStack.push_back(buffer.Text);
+                    if (toStack.size() > HISTORY_SIZE_MAX)
+                    {
+                        toStack.pop_front();
+                    }
+
+                    buffer.Text = fromStack.back();
+                    fromStack.pop_back();
+                }
             }
         }
 
