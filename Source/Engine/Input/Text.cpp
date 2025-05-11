@@ -349,7 +349,7 @@ namespace Silent::Input
 
     bool TextManager::HandleCutCopyPaste(TextBufferData& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
     {
-        if (buffer.Copy.empty() && !buffer.Selection.has_value())
+        if (buffer.Clipboard.empty() && !buffer.Selection.has_value())
         {
             return false;
         }
@@ -366,8 +366,10 @@ namespace Silent::Input
             {
                 if (buffer.Selection.has_value())
                 {
-                    buffer.Copy = std::string(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
-                    buffer.Text.erase(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
+                    auto start       = buffer.Text.begin() + buffer.Selection->first;
+                    auto end         = buffer.Text.begin() + buffer.Selection->second;
+                    buffer.Clipboard = std::string(start, end);
+                    buffer.Text.erase(start, end);
 
                     buffer.Cursor    = buffer.Selection->first;
                     buffer.Selection = std::nullopt;
@@ -379,25 +381,29 @@ namespace Silent::Input
             {
                 if (buffer.Selection.has_value())
                 {
-                    buffer.Copy = std::string(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
+                    auto start       = buffer.Text.begin() + buffer.Selection->first;
+                    auto end         = buffer.Text.begin() + buffer.Selection->second;
+                    buffer.Clipboard = std::string(start, end);
                     return true;
                 }
             }
-            // Paste selection.
+            // Paste copy.
             else if (vAction.IsClicked())
             {
-                if (!buffer.Copy.empty() && (buffer.Text.size() + buffer.Copy.size()) <= lengthMax)
+                if (!buffer.Clipboard.empty() && (buffer.Text.size() + buffer.Clipboard.size()) <= lengthMax)
                 {
                     // Replace selection.
                     if (buffer.Selection.has_value())
                     {
                         uint selectLength = buffer.Selection->second - buffer.Selection->first;
-                        if (((buffer.Text.size() + buffer.Copy.size()) - selectLength) <= lengthMax)
+                        if (((buffer.Text.size() + buffer.Clipboard.size()) - selectLength) <= lengthMax)
                         {
-                            buffer.Text.erase(buffer.Text.begin() + buffer.Selection->first, buffer.Text.begin() + buffer.Selection->second);
-                            buffer.Text.insert(buffer.Selection->first, buffer.Copy);
+                            auto start = buffer.Text.begin() + buffer.Selection->first;
+                            auto end   = buffer.Text.begin() + buffer.Selection->second;
+                            buffer.Text.erase(start, end);
+                            buffer.Text.insert(buffer.Selection->first, buffer.Clipboard);
 
-                            buffer.Cursor    = buffer.Selection->first + buffer.Copy.size();
+                            buffer.Cursor    = buffer.Selection->first + buffer.Clipboard.size();
                             buffer.Selection = std::nullopt;
                             return true;
                         }
@@ -405,8 +411,8 @@ namespace Silent::Input
                     // Insert at cursor.
                     else
                     {
-                        buffer.Text.insert(buffer.Cursor, buffer.Copy);
-                        buffer.Cursor += buffer.Copy.size();
+                        buffer.Text.insert(buffer.Cursor, buffer.Clipboard);
+                        buffer.Cursor += buffer.Clipboard.size();
                         return true;
                     }
                 }

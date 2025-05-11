@@ -7,7 +7,7 @@ namespace Silent::Input
     struct TextBufferData
     {
         std::string                          Text      = {};
-        std::string                          Copy      = {};
+        std::string                          Clipboard = {};
         std::optional<std::pair<uint, uint>> Selection = {}; // First = selection start, second = selection end.
         std::deque<std::string>              Undo      = {};
         std::deque<std::string>              Redo      = {};
