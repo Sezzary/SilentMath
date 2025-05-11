@@ -46,10 +46,10 @@ namespace Silent::Input
     private:
         // Helpers
 
-        bool HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCharacterClear(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleClipboard(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
         bool HandleCharacterAdd(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleCutCopyPaste(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCharacterClear(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
+        bool HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
         bool HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
 
         void PushUndo(TextBuffer& buffer);

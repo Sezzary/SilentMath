@@ -98,14 +98,8 @@ namespace Silent::Input
 
         auto& [keyId, buffer] = *it;
 
-        // Move cursor.
-        if (HandleCursorSelection(buffer, actions))
-        {
-            return;
-        }
-
-        // Clear characters.
-        if (HandleCharacterClear(buffer, actions))
+        // Cut, copy, paste.
+        if (HandleClipboard(buffer, lengthMax, actions))
         {
             return;
         }
@@ -116,7 +110,19 @@ namespace Silent::Input
             return;
         }
 
-        // Undo/redo.
+        // Clear characters.
+        if (HandleCharacterClear(buffer, actions))
+        {
+            return;
+        }
+
+        // Move cursor, make selection.
+        if (HandleCursorSelection(buffer, actions))
+        {
+            return;
+        }
+
+        // Undo, redo.
         if (HandleHistory(buffer, actions))
         {
             return;
@@ -135,109 +141,134 @@ namespace Silent::Input
         _buffers.erase(bufferId);
     }
 
-    bool TextManager::HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleClipboard(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
     {
-        const auto& leftAction  = actions.at(In::ArrowLeft);
-        const auto& rightAction = actions.at(In::ArrowRight);
-        const auto& shiftAction = actions.at(In::Shift);
-        const auto& ctrlAction  = actions.at(In::Ctrl);
-        const auto& aAction     = actions.at(In::A);
-
-        // Select all.
-        if (ctrlAction.IsHeld() && aAction.IsClicked())
+        if (_clipboard.empty() && !buffer.Selection.has_value())
         {
-            buffer.Selection = std::pair(0, buffer.Text.size());
-            buffer.Cursor    = buffer.Text.size();
-            return true;
+            return false;
         }
 
-        // Move left/right.
-        if (leftAction.IsHeld() || rightAction.IsHeld())
+        const auto& ctrlAction = actions.at(In::Ctrl);
+        const auto& xAction    = actions.at(In::X);
+        const auto& cAction    = actions.at(In::C);
+        const auto& vAction    = actions.at(In::V);
+
+        if (ctrlAction.IsHeld())
         {
-            if (buffer.Cursor > 0 && leftAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+            // Cut selection.
+            if (xAction.IsClicked())
             {
-                uint prevCursor = buffer.Cursor;
-
-                // Move back to previous word.
-                if (ctrlAction.IsHeld())
+                if (buffer.Selection.has_value())
                 {
-                    uint prevCursor = buffer.Cursor;
+                    auto start = buffer.Text.begin() + buffer.Selection->first;
+                    auto end   = buffer.Text.begin() + buffer.Selection->second;
+                    _clipboard = std::string(start, end);
+                    buffer.Text.erase(start, end);
 
-                    // Skip spaces before word.
-                    while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] == ' ')
-                    {
-                        buffer.Cursor--;
-                    }
-
-                    // Skip word.
-                    while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] != ' ')
-                    {
-                        buffer.Cursor--;
-                    }
-
+                    buffer.Cursor    = buffer.Selection->first;
+                    buffer.Selection = std::nullopt;
+                    return true;
                 }
-                // Move back to previous character.
-                else
+            }
+            // Copy selection.
+            else if (cAction.IsClicked())
+            {
+                if (buffer.Selection.has_value())
                 {
-                    buffer.Cursor--;
+                    auto start = buffer.Text.begin() + buffer.Selection->first;
+                    auto end   = buffer.Text.begin() + buffer.Selection->second;
+                    _clipboard = std::string(start, end);
+                    return true;
                 }
-
-                // Expand selection back.
-                if (shiftAction.IsHeld())
+            }
+            // Paste copy.
+            else if (vAction.IsClicked())
+            {
+                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= lengthMax)
                 {
+                    // Replace selection.
                     if (buffer.Selection.has_value())
                     {
-                        buffer.Selection->first = buffer.Cursor;
+                        uint selectLength = buffer.Selection->second - buffer.Selection->first;
+                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= lengthMax)
+                        {
+                            auto start = buffer.Text.begin() + buffer.Selection->first;
+                            auto end   = buffer.Text.begin() + buffer.Selection->second;
+                            buffer.Text.erase(start, end);
+                            buffer.Text.insert(buffer.Selection->first, _clipboard);
+
+                            buffer.Cursor    = buffer.Selection->first + _clipboard.size();
+                            buffer.Selection = std::nullopt;
+                            return true;
+                        }
                     }
+                    // Insert at cursor.
                     else
                     {
-                        buffer.Selection = std::pair(buffer.Cursor, prevCursor);
+                        buffer.Text.insert(buffer.Cursor, _clipboard);
+                        buffer.Cursor += _clipboard.size();
+                        return true;
                     }
                 }
             }
-            else if (buffer.Cursor < buffer.Text.size() && rightAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
-            {
-                uint prevCursor = buffer.Cursor;
-
-                // Move forward to next word.
-                if (ctrlAction.IsHeld())
-                {
-                    // Skip current word.
-                    while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] != ' ')
-                    {
-                        buffer.Cursor++;
-                    }
-
-                    // Skip spaces after word.
-                    while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] == ' ')
-                    {
-                        buffer.Cursor++;
-                    }
-                }
-                // More forward to next character.
-                else
-                {
-                    buffer.Cursor++;
-                }
-
-                // Expand selection forward.
-                if (shiftAction.IsHeld())
-                {
-                    if (buffer.Selection.has_value())
-                    {
-                        buffer.Selection->second = buffer.Cursor;
-                    }
-                    else
-                    {
-                        buffer.Selection = std::pair(prevCursor, buffer.Cursor);
-                    }
-                }
-            }
-
-            return true;
         }
 
         return false;
+    }
+
+    bool TextManager::HandleCharacterAdd(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    {
+        const auto& shiftAction = actions.at(In::Shift);
+
+        if (lengthMax >= buffer.Text.size())
+        {
+            return false;
+        }
+
+        bool hasNewChar = false;
+        for (auto actionId : PRINTABLE_ACTION_IDS)
+        {
+            const auto& action = actions.at(actionId);
+            const auto& chars  = PRINTABLE_ACTION_CHARS.at(actionId);
+
+            if (!hasNewChar && action.IsHeld())
+            {
+                // New action.
+                if (!Contains(ToSpan(_prevActionIds), actionId))
+                {
+                    // Add character.
+                    if (action.IsClicked())
+                    {
+                        PushUndo(buffer);
+
+                        buffer.Text.insert(buffer.Text.begin() + buffer.Cursor, shiftAction.IsHeld() ? chars.second : chars.first);
+                        buffer.Cursor++;
+                    }
+
+                    _prevActionIds.push_back(actionId);
+                    hasNewChar = true;
+                }
+                // Held action.
+                else if (!_prevActionIds.empty() && _prevActionIds.back() == actionId)
+                {
+                    // Add character.
+                    if (action.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+                    {
+                        PushUndo(buffer);
+
+                        buffer.Text.insert(buffer.Text.begin() + buffer.Cursor, shiftAction.IsHeld() ? chars.second : chars.first);
+                        buffer.Cursor++;
+                        hasNewChar = true;
+                    }
+                }
+            }
+            else if (action.IsReleased())
+            {
+                std::erase(_prevActionIds, actionId);
+            }
+        }
+
+        return hasNewChar;
     }
 
     bool TextManager::HandleCharacterClear(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
@@ -348,131 +379,106 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterAdd(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
+        const auto& leftAction  = actions.at(In::ArrowLeft);
+        const auto& rightAction = actions.at(In::ArrowRight);
         const auto& shiftAction = actions.at(In::Shift);
+        const auto& ctrlAction  = actions.at(In::Ctrl);
+        const auto& aAction     = actions.at(In::A);
 
-        if (lengthMax >= buffer.Text.size())
+        // Select all.
+        if (ctrlAction.IsHeld() && aAction.IsClicked())
         {
-            return false;
+            buffer.Selection = std::pair(0, buffer.Text.size());
+            buffer.Cursor    = buffer.Text.size();
+            return true;
         }
 
-        bool hasNewChar = false;
-        for (auto actionId : PRINTABLE_ACTION_IDS)
+        // Move left/right.
+        if (leftAction.IsHeld() || rightAction.IsHeld())
         {
-            const auto& action = actions.at(actionId);
-            const auto& chars  = PRINTABLE_ACTION_CHARS.at(actionId);
-
-            if (!hasNewChar && action.IsHeld())
+            if (buffer.Cursor > 0 && leftAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
-                // New action.
-                if (!Contains(ToSpan(_prevActionIds), actionId))
-                {
-                    // Add character.
-                    if (action.IsClicked())
-                    {
-                        PushUndo(buffer);
+                uint prevCursor = buffer.Cursor;
 
-                        buffer.Text.insert(buffer.Text.begin() + buffer.Cursor, shiftAction.IsHeld() ? chars.second : chars.first);
-                        buffer.Cursor++;
+                // Move back to previous word.
+                if (ctrlAction.IsHeld())
+                {
+                    uint prevCursor = buffer.Cursor;
+
+                    // Skip spaces before word.
+                    while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] == ' ')
+                    {
+                        buffer.Cursor--;
                     }
 
-                    _prevActionIds.push_back(actionId);
-                    hasNewChar = true;
-                }
-                // Held action.
-                else if (!_prevActionIds.empty() && _prevActionIds.back() == actionId)
-                {
-                    // Add character.
-                    if (action.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+                    // Skip word.
+                    while (buffer.Cursor > 0 && buffer.Text[buffer.Cursor - 1] != ' ')
                     {
-                        PushUndo(buffer);
-
-                        buffer.Text.insert(buffer.Text.begin() + buffer.Cursor, shiftAction.IsHeld() ? chars.second : chars.first);
-                        buffer.Cursor++;
-                        hasNewChar = true;
+                        buffer.Cursor--;
                     }
+
                 }
-            }
-            else if (action.IsReleased())
-            {
-                std::erase(_prevActionIds, actionId);
-            }
-        }
-
-        return hasNewChar;
-    }
-
-    bool TextManager::HandleCutCopyPaste(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
-    {
-        if (_clipboard.empty() && !buffer.Selection.has_value())
-        {
-            return false;
-        }
-
-        const auto& ctrlAction = actions.at(In::Ctrl);
-        const auto& xAction    = actions.at(In::X);
-        const auto& cAction    = actions.at(In::C);
-        const auto& vAction    = actions.at(In::V);
-
-        if (ctrlAction.IsHeld())
-        {
-            // Cut selection.
-            if (xAction.IsClicked())
-            {
-                if (buffer.Selection.has_value())
+                // Move back to previous character.
+                else
                 {
-                    auto start = buffer.Text.begin() + buffer.Selection->first;
-                    auto end   = buffer.Text.begin() + buffer.Selection->second;
-                    _clipboard = std::string(start, end);
-                    buffer.Text.erase(start, end);
-
-                    buffer.Cursor    = buffer.Selection->first;
-                    buffer.Selection = std::nullopt;
-                    return true;
+                    buffer.Cursor--;
                 }
-            }
-            // Copy selection.
-            else if (cAction.IsClicked())
-            {
-                if (buffer.Selection.has_value())
+
+                // Expand selection back.
+                if (shiftAction.IsHeld())
                 {
-                    auto start = buffer.Text.begin() + buffer.Selection->first;
-                    auto end   = buffer.Text.begin() + buffer.Selection->second;
-                    _clipboard = std::string(start, end);
-                    return true;
-                }
-            }
-            // Paste copy.
-            else if (vAction.IsClicked())
-            {
-                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= lengthMax)
-                {
-                    // Replace selection.
                     if (buffer.Selection.has_value())
                     {
-                        uint selectLength = buffer.Selection->second - buffer.Selection->first;
-                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= lengthMax)
-                        {
-                            auto start = buffer.Text.begin() + buffer.Selection->first;
-                            auto end   = buffer.Text.begin() + buffer.Selection->second;
-                            buffer.Text.erase(start, end);
-                            buffer.Text.insert(buffer.Selection->first, _clipboard);
-
-                            buffer.Cursor    = buffer.Selection->first + _clipboard.size();
-                            buffer.Selection = std::nullopt;
-                            return true;
-                        }
+                        buffer.Selection->first = buffer.Cursor;
                     }
-                    // Insert at cursor.
                     else
                     {
-                        buffer.Text.insert(buffer.Cursor, _clipboard);
-                        buffer.Cursor += _clipboard.size();
-                        return true;
+                        buffer.Selection = std::pair(buffer.Cursor, prevCursor);
                     }
                 }
             }
+            else if (buffer.Cursor < buffer.Text.size() && rightAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+            {
+                uint prevCursor = buffer.Cursor;
+
+                // Move forward to next word.
+                if (ctrlAction.IsHeld())
+                {
+                    // Skip current word.
+                    while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] != ' ')
+                    {
+                        buffer.Cursor++;
+                    }
+
+                    // Skip spaces after word.
+                    while (buffer.Cursor < buffer.Text.size() && buffer.Text[buffer.Cursor] == ' ')
+                    {
+                        buffer.Cursor++;
+                    }
+                }
+                // More forward to next character.
+                else
+                {
+                    buffer.Cursor++;
+                }
+
+                // Expand selection forward.
+                if (shiftAction.IsHeld())
+                {
+                    if (buffer.Selection.has_value())
+                    {
+                        buffer.Selection->second = buffer.Cursor;
+                    }
+                    else
+                    {
+                        buffer.Selection = std::pair(prevCursor, buffer.Cursor);
+                    }
+                }
+            }
+
+            return true;
         }
 
         return false;
@@ -489,6 +495,7 @@ namespace Silent::Input
             return false;
         }
 
+        // Undo/redo.
         if (zAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC))
         {
             auto& fromStack = shiftAction.IsHeld() ? buffer.Redo : buffer.Undo;
