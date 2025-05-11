@@ -87,7 +87,14 @@ namespace Silent::Input
         return buffer.Cursor;
     }
 
-    void TextManager::UpdateBuffer(const std::string& bufferId, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    void TextManager::AddBuffer(const std::string& bufferId, unsigned int lengthMax)
+    {
+        auto buffer = TextBuffer{};
+        buffer.LengthMax = lengthMax;
+        _buffers.emplace(bufferId, std::move(buffer));
+    }
+
+    void TextManager::UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
     {
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
@@ -99,13 +106,13 @@ namespace Silent::Input
         auto& [keyId, buffer] = *it;
 
         // Cut, copy, paste.
-        if (HandleClipboard(buffer, lengthMax, actions))
+        if (HandleClipboard(buffer, actions))
         {
             return;
         }
 
         // Add character.
-        if (HandleCharacterAdd(buffer, lengthMax, actions))
+        if (HandleCharacterAdd(buffer, actions))
         {
             return;
         }
@@ -129,7 +136,7 @@ namespace Silent::Input
         }
     }
 
-    void TextManager::ClearBuffer(const std::string& bufferId)
+    void TextManager::RemoveBuffer(const std::string& bufferId)
     {
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
@@ -141,7 +148,7 @@ namespace Silent::Input
         _buffers.erase(bufferId);
     }
 
-    bool TextManager::HandleClipboard(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleClipboard(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         if (_clipboard.empty() && !buffer.Selection.has_value())
         {
@@ -184,13 +191,13 @@ namespace Silent::Input
             // Paste copy.
             else if (vAction.IsClicked())
             {
-                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= lengthMax)
+                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= buffer.LengthMax)
                 {
                     // Replace selection.
                     if (buffer.Selection.has_value())
                     {
                         uint selectLength = buffer.Selection->second - buffer.Selection->first;
-                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= lengthMax)
+                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= buffer.LengthMax)
                         {
                             auto start = buffer.Text.begin() + buffer.Selection->first;
                             auto end   = buffer.Text.begin() + buffer.Selection->second;
@@ -216,17 +223,17 @@ namespace Silent::Input
         return false;
     }
 
-    bool TextManager::HandleCharacterAdd(TextBuffer& buffer, uint lengthMax, const std::unordered_map<ActionId, Action>& actions)
+    bool TextManager::HandleCharacterAdd(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& shiftAction = actions.at(In::Shift);
 
-        if (lengthMax >= buffer.Text.size())
+        if (buffer.LengthMax >= buffer.Text.size())
         {
             return false;
         }
 
         bool hasNewChar = false;
-        for (auto actionId : PRINTABLE_ACTION_IDS)
+        for (auto actionId : ACTION_ID_GROUPS.at(ActionGroupId::Printable))
         {
             const auto& action = actions.at(actionId);
             const auto& chars  = PRINTABLE_ACTION_CHARS.at(actionId);

@@ -104,15 +104,20 @@ namespace Silent::Input
         UpdateRumble();
         UpdateActions();
     }
-    
-    void InputManager::UpdateText(const std::string& textId, uint lengthMax)
+
+    void InputManager::InsertText(const std::string& textId, uint lengthMax = UINT_MAX)
     {
-        _text.UpdateBuffer(textId, lengthMax, _actions);
+        _text.InsertBuffer(textId, lengthMax);
+    }
+    
+    void InputManager::UpdateText(const std::string& textId)
+    {
+        _text.UpdateBuffer(textId, _actions);
     }
 
-    void InputManager::ClearText(const std::string& textId)
+    void InputManager::RemoveText(const std::string& textId)
     {
-        _text.ClearBuffer(textId);
+        _text.RemoveBuffer(textId);
     }
 
     void InputManager::ReadKeyboard(int& eventStateIdx)

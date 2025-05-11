@@ -82,13 +82,20 @@ namespace Silent::Input
         Count
     } In;
 
-    extern const std::vector<ActionId> GENERAL_ACTION_IDS;
-    extern const std::vector<ActionId> MENU_ACTION_IDS;
-    extern const std::vector<ActionId> GAME_ACTION_IDS;
-    extern const std::vector<ActionId> KEYBOARD_ACTION_IDS;
-    extern const std::vector<ActionId> MOUSE_ACTION_IDS;
-    extern const std::vector<ActionId> GAMEPAD_ACTION_IDS;
-    extern const std::vector<ActionId> PRINTABLE_ACTION_IDS;
+    enum class ActionGroupId
+    {
+        General,
+        Menu,
+        Game,
+
+        RawKeyboard,
+        RawMouse,
+        RawGamepad,
+
+        Printable
+    };
+
+    extern const std::unordered_map<ActionGroupId, std::vector<ActionId>> ACTION_ID_GROUPS;
 
     class Action
     {

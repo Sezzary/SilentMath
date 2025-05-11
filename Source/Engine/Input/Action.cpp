@@ -7,191 +7,115 @@ using namespace Silent::Services;
 
 namespace Silent::Input
 {
-    const std::vector<ActionId> GENERAL_ACTION_IDS
+    const std::unordered_map<ActionGroupId, std::vector<ActionId>> ACTION_ID_GROUPS
     {
-        In::Up,
-        In::Down,
-        In::Left,
-        In::Right
-    };
-
-    const std::vector<ActionId> MENU_ACTION_IDS
-    {
-        In::Enter,
-        In::Cancel,
-        In::Skip
-    };
-
-    const std::vector<ActionId> GAME_ACTION_IDS
-    {
-        In::Action,
-        In::Aim,
-        In::Light,
-        In::Run,
-        In::View,
-        In::StepLeft,
-        In::StepRight,
-        In::Pause,
-        In::Item,
-        In::Map,
-        In::Option
-    };
-
-    const std::vector<ActionId> KEYBOARD_ACTION_IDS
-    {
-        In::A,
-        In::B,
-        In::C,
-        In::D,
-        In::E,
-        In::F,
-        In::G,
-        In::H,
-        In::I,
-        In::J,
-        In::K,
-        In::L,
-        In::M,
-        In::N,
-        In::O,
-        In::P,
-        In::Q,
-        In::R,
-        In::S,
-        In::T,
-        In::U,
-        In::V,
-        In::W,
-        In::X,
-        In::Y,
-        In::Z,
-        In::Num1,
-        In::Num2,
-        In::Num3,
-        In::Num4,
-        In::Num5,
-        In::Num6,
-        In::Num7,
-        In::Num8,
-        In::Num9,
-        In::Num0,
-        In::Return,
-        In::Escape, 
-        In::Backspace,
-        In::Tab,
-        In::Space,
-        In::Home,
-        In::End,
-        In::Delete,
-        In::Minus,
-        In::Equals,
-        In::BracketLeft,
-        In::BracketRight,
-        In::Backslash,
-        In::Semicolon,
-        In::Apostrophe,
-        In::Comma,
-        In::Period,
-        In::Slash,
-        In::ArrowUp,
-        In::ArrowDown,
-        In::ArrowLeft,
-        In::ArrowRight,
-        In::Ctrl,
-        In::Shift,
-        In::Alt
-    };
-
-    const std::vector<ActionId> MOUSE_ACTION_IDS
-    {
-        In::MouseClickLeft,
-        In::MouseClickMiddle,
-        In::MouseClickRight,
-        In::MouseScrollUp,
-        In::MouseScrollDown,
-        In::MouseUp,
-        In::MouseDown,
-        In::MouseLeft,
-        In::MouseRight
-    };
-
-    const std::vector<ActionId> GAMEPAD_ACTION_IDS
-    {
-        In::GamepadNorth,
-        In::GamepadSouth,
-        In::GamepadEast,
-        In::GamepadWest,
-        In::GamepadStart,
-        In::GamepadSelect,
-        In::GamepadShoulderLeft,
-        In::GamepadTriggerLeft,
-        In::GamepadShoulderRight,
-        In::GamepadTriggerRight,
-        In::GamepadDpadUp,
-        In::GamepadDpadDown,
-        In::GamepadDpadLeft,
-        In::GamepadDpadRight,
-        In::GamepadStickLeftIn,
-        In::GamepadStickLeftUp,
-        In::GamepadStickLeftDown,
-        In::GamepadStickLeftLeft,
-        In::GamepadStickLeftRight,
-        In::GamepadStickRightIn,
-        In::GamepadStickRightUp,
-        In::GamepadStickRightDown,
-        In::GamepadStickRightLeft,
-        In::GamepadStickRightRight
-    };
-
-    const std::vector<ActionId> PRINTABLE_ACTION_IDS =
-    {
-        In::A,
-        In::B,
-        In::C,
-        In::D,
-        In::E,
-        In::F,
-        In::G,
-        In::H,
-        In::I,
-        In::J,
-        In::K,
-        In::L,
-        In::M,
-        In::N,
-        In::O,
-        In::P,
-        In::Q,
-        In::R,
-        In::S,
-        In::T,
-        In::U,
-        In::V,
-        In::W,
-        In::X,
-        In::Y,
-        In::Z,
-        In::Num1,
-        In::Num2,
-        In::Num3,
-        In::Num4,
-        In::Num5,
-        In::Num6,
-        In::Num7,
-        In::Num8,
-        In::Num9,
-        In::Num0,
-        In::Space,
-        In::Minus,
-        In::Equals,
-        In::BracketLeft,
-        In::BracketRight,
-        In::Backslash,
-        In::Semicolon,
-        In::Apostrophe,
-        In::Comma,
-        In::Period,
-        In::Slash
+        {
+            ActionGroupId::General,
+            {
+                In::Up,
+                In::Down,
+                In::Left,
+                In::Right
+            }
+        },
+        {
+            ActionGroupId::Menu,
+            {
+                In::Enter,
+                In::Cancel,
+                In::Skip
+            }
+        },
+        {
+            ActionGroupId::Game,
+            {
+                In::Action,
+                In::Aim,
+                In::Light,
+                In::Run,
+                In::View,
+                In::StepLeft,
+                In::StepRight,
+                In::Pause,
+                In::Item,
+                In::Map,
+                In::Option
+            }
+        },
+        {
+            ActionGroupId::RawKeyboard,
+            {
+                In::A, In::B, In::C, In::D, In::E, In::F, In::G, In::H, In::I, In::J, In::K, In::L, In::M,
+                In::N, In::O, In::P, In::Q, In::R, In::S, In::T, In::U, In::V, In::W, In::X, In::Y, In::Z,
+                In::Num1, In::Num2, In::Num3, In::Num4, In::Num5, In::Num6, In::Num7, In::Num8, In::Num9, In::Num0,
+                In::Return, In::Escape, In::Backspace, In::Tab, In::Space, In::Home, In::End, In::Delete,
+                In::Minus, In::Equals, In::BracketLeft, In::BracketRight, In::Backslash, In::Semicolon, In::Apostrophe, In::Comma, In::Period, In::Slash,
+                In::ArrowUp, In::ArrowDown, In::ArrowLeft, In::ArrowRight,
+                In::Ctrl, In::Shift, In::Alt
+            }
+        },
+        {
+            ActionGroupId::RawMouse,
+            {
+                In::MouseClickLeft,
+                In::MouseClickMiddle,
+                In::MouseClickRight,
+                In::MouseScrollUp,
+                In::MouseScrollDown,
+                In::MouseUp,
+                In::MouseDown,
+                In::MouseLeft,
+                In::MouseRight
+            }
+        },
+        {
+            ActionGroupId::RawGamepad,
+            {
+                In::GamepadNorth,
+                In::GamepadSouth,
+                In::GamepadEast,
+                In::GamepadWest,
+                In::GamepadStart,
+                In::GamepadSelect,
+                In::GamepadShoulderLeft,
+                In::GamepadTriggerLeft,
+                In::GamepadShoulderRight,
+                In::GamepadTriggerRight,
+                In::GamepadDpadUp,
+                In::GamepadDpadDown,
+                In::GamepadDpadLeft,
+                In::GamepadDpadRight,
+                In::GamepadStickLeftIn,
+                In::GamepadStickLeftUp,
+                In::GamepadStickLeftDown,
+                In::GamepadStickLeftLeft,
+                In::GamepadStickLeftRight,
+                In::GamepadStickRightIn,
+                In::GamepadStickRightUp,
+                In::GamepadStickRightDown,
+                In::GamepadStickRightLeft,
+                In::GamepadStickRightRight
+            }
+        },
+        {
+            ActionGroupId::Printable,
+            {
+                In::A, In::B, In::C, In::D, In::E, In::F, In::G, In::H, In::I, In::J, In::K, In::L, In::M,
+                In::N, In::O, In::P, In::Q, In::R, In::S, In::T, In::U, In::V, In::W, In::X, In::Y, In::Z,
+                In::Num1, In::Num2, In::Num3, In::Num4, In::Num5, In::Num6, In::Num7, In::Num8, In::Num9, In::Num0,
+                In::Space,
+                In::Minus,
+                In::Equals,
+                In::BracketLeft,
+                In::BracketRight,
+                In::Backslash,
+                In::Semicolon,
+                In::Apostrophe,
+                In::Comma,
+                In::Period,
+                In::Slash
+            }
+        }
     };
 
     Action::Action(ActionId actionId)
