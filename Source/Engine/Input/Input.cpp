@@ -21,6 +21,11 @@ namespace Silent::Input
         return _actions.at(actionId);
     }
 
+    const Vector2& InputManager::GetAnalogAxis(AnalogAxisId axisId) const
+    {
+        return _analogAxes[(int)axisId];
+    }
+
     const Vector2& InputManager::GetCursorPosition() const
     {
         return _events.CursorPosition;
@@ -31,7 +36,7 @@ namespace Silent::Input
         return _text.GetText(textId);
     }
 
-    const uint InputManager::GetTextCursorPosition(const std::string& textId) const
+    uint InputManager::GetTextCursorPosition(const std::string& textId) const
     {
         return _text.GetCursorPosition(textId);
     }
@@ -68,7 +73,7 @@ namespace Silent::Input
 
         // Initialize event states and control axes.
         _events.States.resize((int)EventId::Count);
-        _controlAxes.resize((int)ControlAxisId::Count);
+        _analogAxes.resize((int)AnalogAxisId::Count);
 
         // Initialize actions.
         _actions.reserve((int)ActionId::Count);
@@ -105,9 +110,9 @@ namespace Silent::Input
         UpdateActions();
     }
 
-    void InputManager::InsertText(const std::string& textId, uint lengthMax)
+    void InputManager::InsertText(const std::string& textId, uint lineWidthMax, uint charCountMax)
     {
-        _text.InsertBuffer(textId, lengthMax);
+        _text.InsertBuffer(textId, lineWidthMax, charCountMax);
     }
     
     void InputManager::UpdateText(const std::string& textId)
@@ -187,8 +192,11 @@ namespace Silent::Input
 
         eventStateIdx += SQUARE(Vector2::AXIS_COUNT);
         
-        // Set camera axis. NOTE: Gamepad takes priority over keyboard/mouse.
-        _controlAxes[(int)ControlAxisId::Camera] = axis;
+        // Set camera axis. NOTE: Gamepad stick takes priority over mouse.
+        _analogAxes[(int)AnalogAxisId::Camera] = axis;
+
+        // Set raw mouse axis.
+        _analogAxes[(int)AnalogAxisId::Mouse] = axis;
     }
 
     void InputManager::ReadGamepad(int& eventStateIdx)
@@ -253,13 +261,20 @@ namespace Silent::Input
             _events.States[eventStateIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
             _events.States[eventStateIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
             _events.States[eventStateIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
-            _controlAxes[i]                         = axis;
+            _analogAxes[i]                          = axis;
 
             eventStateIdx += Vector2::AXIS_COUNT * 2;
         }
         
-        // Set camera axis. NOTE: Gamepad takes priority over keyboard/mouse.
-        _controlAxes[(int)ControlAxisId::Camera] = stickAxes.front();
+        // Set camera axis. NOTE: Gamepad stick takes priority over mouse.
+        if (stickAxes.front() != Vector2::Zero)
+        {
+            _analogAxes[(int)AnalogAxisId::Camera] = stickAxes.front();
+        }
+
+        // Set raw gamepad stick axes.
+        _analogAxes[(int)AnalogAxisId::StickLeft]  = stickAxes.front();
+        _analogAxes[(int)AnalogAxisId::StickRight] = stickAxes.back();
 
         // Set gamepad trigger axis event states.
         for (auto axisCode : VALID_GAMEPAD_TRIGGER_AXIS_CODES)

@@ -86,7 +86,6 @@ namespace Silent
             // Handle each event
             switch (_event.type)
             {
-                
                 case SDL_EVENT_QUIT:
                 {
                     _isRunning = false;

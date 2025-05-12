@@ -10,12 +10,11 @@ namespace Silent::Input
         std::optional<std::pair<uint, uint>> Selection = {}; // First = selection start, second = selection end.
         std::deque<std::string>              Undo      = {};
         std::deque<std::string>              Redo      = {};
+        uint                                 Cursor    = 0;
 
-        uint              Cursor     = 0;
-        std::vector<uint> LineStarts = {};
-
-        uint LengthMax     = 0;
-        uint LineLengthMax = 0;
+        std::vector<uint> LineStarts   = {};
+        uint              LineWidthMax = 0;
+        uint              CharCountMax = 0;
     };
 
     class TextManager
@@ -24,7 +23,7 @@ namespace Silent::Input
         // Constants
 
         static constexpr float PULSE_DELAY_SEC         = 0.1f;
-        static constexpr float PULSE_INITIAL_DELAY_SEC = 0.4f;
+        static constexpr float PULSE_INITIAL_DELAY_SEC = 0.3f;
         static constexpr uint  HISTORY_SIZE_MAX        = 128;
 
         // Fields
@@ -46,7 +45,7 @@ namespace Silent::Input
         
         // Utilities
 
-        void InsertBuffer(const std::string& bufferId, uint lengthMax);
+        void InsertBuffer(const std::string& bufferId, uint lineWidthMax, uint charCountMax);
         void UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions);
         void RemoveBuffer(const std::string& bufferId);
 
@@ -60,5 +59,6 @@ namespace Silent::Input
         bool HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
 
         void PushUndo(TextBuffer& buffer);
+        void UpdateLineStarts(TextBuffer& buffer);
     };
 }

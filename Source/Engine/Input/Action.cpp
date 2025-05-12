@@ -43,7 +43,7 @@ namespace Silent::Input
             }
         },
         {
-            ActionGroupId::RawKeyboard,
+            ActionGroupId::Keyboard,
             {
                 In::A, In::B, In::C, In::D, In::E, In::F, In::G, In::H, In::I, In::J, In::K, In::L, In::M,
                 In::N, In::O, In::P, In::Q, In::R, In::S, In::T, In::U, In::V, In::W, In::X, In::Y, In::Z,
@@ -55,7 +55,7 @@ namespace Silent::Input
             }
         },
         {
-            ActionGroupId::RawMouse,
+            ActionGroupId::Mouse,
             {
                 In::MouseClickLeft,
                 In::MouseClickMiddle,
@@ -69,7 +69,7 @@ namespace Silent::Input
             }
         },
         {
-            ActionGroupId::RawGamepad,
+            ActionGroupId::Gamepad,
             {
                 In::GamepadNorth,
                 In::GamepadSouth,

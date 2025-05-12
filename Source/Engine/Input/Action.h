@@ -88,9 +88,9 @@ namespace Silent::Input
         Menu,
         Game,
 
-        RawKeyboard,
-        RawMouse,
-        RawGamepad,
+        Keyboard,
+        Mouse,
+        Gamepad,
 
         Printable
     };

@@ -46,6 +46,7 @@ namespace Silent::Input
         { In::Num8,         { '8', '*' } },
         { In::Num9,         { '9', '(' } },
         { In::Num0,         { '0', ')' } },
+        { In::Return,       { '\n', '\n' } },
         { In::Space,        { ' ', ' ' } },
         { In::Minus,        { '-', '_' } },
         { In::Equals,       { '=', '+' } },
@@ -74,20 +75,21 @@ namespace Silent::Input
         return buffer.Text;
     }
 
-    // TODO: Implement multi-line text.
     std::vector<std::string> TextManager::GetTextLines(const std::string& bufferId) const
     {
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
         {
-            Log("Attempted to get text lines missing text buffer '" + bufferId + "'.", LogLevel::Warning);
+            Log("Attempted to get text lines for missing text buffer '" + bufferId + "'.", LogLevel::Warning);
             return {};
         }
 
         const auto& [keyId, buffer] = *it;
 
-        // Collect lines.
         auto lines = std::vector<std::string>{};
+        lines.reserve(buffer.Text.size() / buffer.LineWidthMax);
+
+        // Collect lines.
         for (int i = 0; i < buffer.LineStarts.size(); i++)
         {
             uint lineStart = buffer.LineStarts[i];
@@ -115,11 +117,13 @@ namespace Silent::Input
         return buffer.Cursor;
     }
 
-    void TextManager::InsertBuffer(const std::string& bufferId, unsigned int lengthMax)
+    void TextManager::InsertBuffer(const std::string& bufferId, uint lineWidthMax, uint charCountMax)
     {
-        auto buffer = TextBuffer{};
-        buffer.LengthMax = lengthMax;
-        _buffers.emplace(bufferId, std::move(buffer));
+        _buffers.try_emplace(bufferId);
+
+        auto& buffer        = _buffers.at(bufferId);
+        buffer.LineWidthMax = lineWidthMax;
+        buffer.CharCountMax = charCountMax;
     }
 
     void TextManager::UpdateBuffer(const std::string& bufferId, const std::unordered_map<ActionId, Action>& actions)
@@ -133,32 +137,36 @@ namespace Silent::Input
 
         auto& [keyId, buffer] = *it;
 
+        // Undo, redo.
+        if (HandleHistory(buffer, actions))
+        {
+            UpdateLineStarts(buffer);
+            return;
+        }
+
         // Cut, copy, paste.
         if (HandleClipboard(buffer, actions))
         {
+            UpdateLineStarts(buffer);
             return;
         }
 
         // Add character.
         if (HandleCharacterAdd(buffer, actions))
         {
+            UpdateLineStarts(buffer);
             return;
         }
 
         // Clear characters.
         if (HandleCharacterClear(buffer, actions))
         {
+            UpdateLineStarts(buffer);
             return;
         }
 
         // Move cursor, make selection.
         if (HandleCursorSelection(buffer, actions))
-        {
-            return;
-        }
-
-        // Undo, redo.
-        if (HandleHistory(buffer, actions))
         {
             return;
         }
@@ -200,7 +208,6 @@ namespace Silent::Input
 
                     buffer.Text = fromStack.back();
                     fromStack.pop_back();
-
                 }
             }
 
@@ -253,13 +260,13 @@ namespace Silent::Input
             // Paste copy.
             else if (vAction.IsClicked())
             {
-                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= buffer.LengthMax)
+                if (!_clipboard.empty() && (buffer.Text.size() + _clipboard.size()) <= buffer.CharCountMax)
                 {
                     // Replace selection.
                     if (buffer.Selection.has_value())
                     {
                         uint selectLength = buffer.Selection->second - buffer.Selection->first;
-                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= buffer.LengthMax)
+                        if (((buffer.Text.size() + _clipboard.size()) - selectLength) <= buffer.CharCountMax)
                         {
                             auto start = buffer.Text.begin() + buffer.Selection->first;
                             auto end   = buffer.Text.begin() + buffer.Selection->second;
@@ -289,7 +296,7 @@ namespace Silent::Input
     {
         const auto& shiftAction = actions.at(In::Shift);
 
-        if (buffer.Text.size() >= buffer.LengthMax)
+        if (buffer.Text.size() >= buffer.CharCountMax)
         {
             return false;
         }
@@ -302,6 +309,8 @@ namespace Silent::Input
 
             if (!hasNewChar && action.IsHeld())
             {
+                // TODO: Special handling for newline.
+
                 // New action.
                 if (!Contains(ToSpan(_prevActionIds), actionId))
                 {
@@ -602,5 +611,47 @@ namespace Silent::Input
         buffer.Undo.push_back(buffer.Text);
 
         buffer.Redo.clear();
+    }
+
+    void TextManager::UpdateLineStarts(TextBuffer& buffer)
+    {
+        buffer.LineStarts.clear();
+        buffer.LineStarts.push_back(0);
+
+        uint lineStart = 0;
+        uint wordStart = 0;
+
+        uint i = 0;
+        while (i < buffer.Text.size())
+        {
+            // Track word boundaries.
+            if (buffer.Text[i] == ' ' || buffer.Text[i] == '\n')
+            {
+                // Wrap before word.
+                uint wordEnd = i;
+                if ((wordEnd - lineStart) > buffer.LineWidthMax)
+                {
+                    buffer.LineStarts.push_back(wordStart);
+                    lineStart = wordStart;
+                }
+
+                // Handle newline explicitly.
+                if (buffer.Text[i] == '\n')
+                {
+                    buffer.LineStarts.push_back(i + 1);
+                    lineStart = i + 1;
+                }
+
+                wordStart = i + 1;
+            }
+
+            i++;
+        }
+
+        // Final wrap if needed.
+        if ((buffer.Text.size() - lineStart) > buffer.LineWidthMax)
+        {
+            buffer.LineStarts.push_back(wordStart);
+        }
     }
 }

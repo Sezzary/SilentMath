@@ -10,10 +10,14 @@ using namespace Silent::Services;
 
 namespace Silent::Input
 {
-    enum class ControlAxisId
+    enum class AnalogAxisId
     {
         Move,
-        Camera, // TODO: Should be influenced by both right stick and mouse.
+        Camera,
+
+        Mouse,
+        StickLeft,
+        StickRight,
 
         Count
     };
@@ -48,12 +52,12 @@ namespace Silent::Input
 
         SDL_Gamepad* _gamepad = nullptr;
 
-        TextManager                          _text        = TextManager();
-        BindingManager                       _bindings    = BindingManager();
-        Event                                _events      = {};
-        Rumble                               _rumble      = {};
-        std::unordered_map<ActionId, Action> _actions     = {};
-        std::vector<Vector2>                 _controlAxes = {}; // Index = `ControlAxisId`.
+        TextManager                          _text       = TextManager();
+        BindingManager                       _bindings   = BindingManager();
+        Event                                _events     = {};
+        Rumble                               _rumble     = {};
+        std::unordered_map<ActionId, Action> _actions    = {};
+        std::vector<Vector2>                 _analogAxes = {}; // Index = `AnalogAxisId`.
 
     public:
         // Constructors
@@ -63,9 +67,10 @@ namespace Silent::Input
         // Getters
 
         const Action&      GetAction(ActionId actionId) const;
+        const Vector2&     GetAnalogAxis(AnalogAxisId axisId) const;
         const Vector2&     GetCursorPosition() const;
         const std::string& GetText(const std::string& textId) const;
-        const uint         GetTextCursorPosition(const std::string& textId) const;
+        uint               GetTextCursorPosition(const std::string& textId) const;
 
         // Setters
 
@@ -81,7 +86,7 @@ namespace Silent::Input
         void Deinitialize();
         void Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis);
 
-        void InsertText(const std::string& textId, uint lengthMax = UINT_MAX);
+        void InsertText(const std::string& textId, uint lineWidthMax = 50, uint charCountMax = UINT_MAX);
         void UpdateText(const std::string& textId);
         void RemoveText(const std::string& textId);
 
