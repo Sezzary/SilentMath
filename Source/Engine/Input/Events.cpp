@@ -489,7 +489,7 @@ namespace Silent::Input
 
     const std::string& GetEventName(EventId eventId)
     {
-        constexpr char DEFAULT_NAME[] = "None";
+        static const auto DEFAULT_NAME = std::string("None");
 
         auto it = KEY_NAME_MAP.find(eventId);
         if (it != KEY_NAME_MAP.end())

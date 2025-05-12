@@ -5,6 +5,7 @@
 #include "Math/Objects/BoundingSphere.h"
 #include "Math/Objects/OrientedBoundingBox.h"
 #include "Math/Objects/Vector3.h"
+#include "Math/Objects/Quaternion.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
@@ -26,17 +27,6 @@ namespace Silent::Math
         // Construct AABB.
         Center  = (pointMin + pointMax) / 2.0f;
         Extents = (pointMax - pointMin) / 2.0f;
-    }
-
-    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const BoundingSphere& sphere)
-    {
-        Center  = sphere.Center;
-        Extents = Vector3(sphere.Radius);
-    }
-
-    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const OrientedBoundingBox& obb)
-    {
-        *this = AxisAlignedBoundingBox(ToSpan(obb.GetCorners()));
     }
 
     float AxisAlignedBoundingBox::GetWidth() const
@@ -254,6 +244,11 @@ namespace Silent::Math
     void AxisAlignedBoundingBox::Merge(const AxisAlignedBoundingBox& aabb)
     {
         *this = AxisAlignedBoundingBox::Merge(*this, aabb);
+    }
+
+    OrientedBoundingBox AxisAlignedBoundingBox::ToObb() const
+    {
+        return OrientedBoundingBox(Center, Extents, Quaternion::Identity);
     }
 
     bool AxisAlignedBoundingBox::operator==(const AxisAlignedBoundingBox& aabb) const

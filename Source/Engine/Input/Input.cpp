@@ -105,7 +105,7 @@ namespace Silent::Input
         UpdateActions();
     }
 
-    void InputManager::InsertText(const std::string& textId, uint lengthMax = UINT_MAX)
+    void InputManager::InsertText(const std::string& textId, uint lengthMax)
     {
         _text.InsertBuffer(textId, lengthMax);
     }

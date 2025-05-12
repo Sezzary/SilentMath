@@ -74,6 +74,34 @@ namespace Silent::Input
         return buffer.Text;
     }
 
+    // TODO: Implement multi-line text.
+    std::vector<std::string> TextManager::GetTextLines(const std::string& bufferId) const
+    {
+        auto it = _buffers.find(bufferId);
+        if (it == _buffers.end())
+        {
+            Log("Attempted to get text lines missing text buffer '" + bufferId + "'.", LogLevel::Warning);
+            return {};
+        }
+
+        const auto& [keyId, buffer] = *it;
+
+        // Collect lines.
+        auto lines = std::vector<std::string>{};
+        for (int i = 0; i < buffer.LineStarts.size(); i++)
+        {
+            uint lineStart = buffer.LineStarts[i];
+            uint lineEnd   = (i < (buffer.LineStarts.size() - 1)) ? buffer.LineStarts[i + 1] : buffer.Text.size();
+
+            auto start = buffer.Text.begin() + lineStart;
+            auto end   = buffer.Text.begin() + lineEnd;
+            auto line  = std::string(start, end);
+            lines.push_back(line);
+        }
+
+        return lines;
+    }
+
     uint TextManager::GetCursorPosition(const std::string& bufferId) const
     {
         auto it = _buffers.find(bufferId);
@@ -87,7 +115,7 @@ namespace Silent::Input
         return buffer.Cursor;
     }
 
-    void TextManager::AddBuffer(const std::string& bufferId, unsigned int lengthMax)
+    void TextManager::InsertBuffer(const std::string& bufferId, unsigned int lengthMax)
     {
         auto buffer = TextBuffer{};
         buffer.LengthMax = lengthMax;
@@ -146,6 +174,40 @@ namespace Silent::Input
         }
 
         _buffers.erase(bufferId);
+    }
+
+    bool TextManager::HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
+    {
+        const auto& shiftAction = actions.at(In::Shift);
+        const auto& ctrlAction  = actions.at(In::Ctrl);
+        const auto& zAction     = actions.at(In::Z);
+
+        // Undo/redo.
+        if (ctrlAction.IsHeld() && zAction.IsHeld())
+        {
+            if (zAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
+            {
+                auto& fromStack = shiftAction.IsHeld() ? buffer.Redo : buffer.Undo;
+                auto& toStack   = shiftAction.IsHeld() ? buffer.Undo : buffer.Redo;
+
+                if (!fromStack.empty())
+                {
+                    toStack.push_back(buffer.Text);
+                    if (toStack.size() > HISTORY_SIZE_MAX)
+                    {
+                        toStack.pop_front();
+                    }
+
+                    buffer.Text = fromStack.back();
+                    fromStack.pop_back();
+
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     bool TextManager::HandleClipboard(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
@@ -227,7 +289,7 @@ namespace Silent::Input
     {
         const auto& shiftAction = actions.at(In::Shift);
 
-        if (buffer.LengthMax >= buffer.Text.size())
+        if (buffer.Text.size() >= buffer.LengthMax)
         {
             return false;
         }
@@ -389,11 +451,18 @@ namespace Silent::Input
     bool TextManager::HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
     {
         const auto& escAction   = actions.at(In::Escape);
+        const auto& homeAction  = actions.at(In::Home);
+        const auto& endAction   = actions.at(In::End);
         const auto& shiftAction = actions.at(In::Shift);
         const auto& ctrlAction  = actions.at(In::Ctrl);
         const auto& leftAction  = actions.at(In::ArrowLeft);
         const auto& rightAction = actions.at(In::ArrowRight);
         const auto& aAction     = actions.at(In::A);
+
+        if (buffer.Text.empty())
+        {
+            return false;
+        }
 
         // Select all.
         if (ctrlAction.IsHeld() && aAction.IsClicked())
@@ -406,6 +475,33 @@ namespace Silent::Input
         else if (escAction.IsClicked())
         {
             buffer.Selection = std::nullopt;
+            return true;
+        }
+
+        // Move or select to start/end.
+        if (homeAction.IsClicked() || endAction.IsClicked())
+        {
+            // To start.
+            if (homeAction.IsClicked())
+            {
+                if (shiftAction.IsHeld())
+                {
+                    buffer.Selection = std::pair(0, buffer.Cursor);
+                }
+
+                buffer.Cursor = 0;
+            }
+            // To end.
+            else if (endAction.IsClicked())
+            {
+                if (shiftAction.IsHeld())
+                {
+                    buffer.Selection = std::pair(buffer.Cursor, buffer.Text.size());
+                }
+
+                buffer.Cursor = buffer.Text.size();
+            }
+
             return true;
         }
 
@@ -432,7 +528,6 @@ namespace Silent::Input
                     {
                         buffer.Cursor--;
                     }
-
                 }
                 // Move back to previous character.
                 else
@@ -496,37 +591,6 @@ namespace Silent::Input
         }
 
         return false;
-    }
-
-    bool TextManager::HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions)
-    {
-        const auto& shiftAction = actions.at(In::Shift);
-        const auto& ctrlAction  = actions.at(In::Ctrl);
-        const auto& zAction     = actions.at(In::Z);
-
-        // Undo/redo.
-        if (ctrlAction.IsHeld() && zAction.IsHeld())
-        {
-            if (zAction.IsPulsed(PULSE_INITIAL_DELAY_SEC, PULSE_DELAY_SEC))
-            {
-                auto& fromStack = shiftAction.IsHeld() ? buffer.Redo : buffer.Undo;
-                auto& toStack   = shiftAction.IsHeld() ? buffer.Undo : buffer.Redo;
-
-                if (!fromStack.empty())
-                {
-                    toStack.push_back(buffer.Text);
-                    if (toStack.size() > HISTORY_SIZE_MAX)
-                    {
-                        toStack.pop_front();
-                    }
-
-                    buffer.Text = fromStack.back();
-                    fromStack.pop_back();
-                }
-            }
-        }
-
-        return true;
     }
 
     void TextManager::PushUndo(TextBuffer& buffer)

@@ -10,8 +10,12 @@ namespace Silent::Input
         std::optional<std::pair<uint, uint>> Selection = {}; // First = selection start, second = selection end.
         std::deque<std::string>              Undo      = {};
         std::deque<std::string>              Redo      = {};
-        uint                                 Cursor    = 0;
-        uint                                 LengthMax = 0;
+
+        uint              Cursor     = 0;
+        std::vector<uint> LineStarts = {};
+
+        uint LengthMax     = 0;
+        uint LineLengthMax = 0;
     };
 
     class TextManager
@@ -36,8 +40,9 @@ namespace Silent::Input
 
         // Getters
 
-        const std::string& GetText(const std::string& bufferId) const;
-        uint               GetCursorPosition(const std::string& bufferId) const;
+        const std::string&       GetText(const std::string& bufferId) const;
+        std::vector<std::string> GetTextLines(const std::string& bufferId) const;
+        uint                     GetCursorPosition(const std::string& bufferId) const;
         
         // Utilities
 
@@ -48,11 +53,11 @@ namespace Silent::Input
     private:
         // Helpers
 
+        bool HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
         bool HandleClipboard(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
         bool HandleCharacterAdd(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
         bool HandleCharacterClear(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
         bool HandleCursorSelection(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
-        bool HandleHistory(TextBuffer& buffer, const std::unordered_map<ActionId, Action>& actions);
 
         void PushUndo(TextBuffer& buffer);
     };

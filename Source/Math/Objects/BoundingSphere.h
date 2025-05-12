@@ -38,6 +38,10 @@ namespace Silent::Math
         ContainmentType Contains(const AxisAlignedBoundingBox& aabb) const;
         ContainmentType Contains(const OrientedBoundingBox& obb) const;
 
+        // Converters
+
+        AxisAlignedBoundingBox ToAabb() const;
+
         // Operators
 
         bool            operator==(const BoundingSphere& sphere) const;

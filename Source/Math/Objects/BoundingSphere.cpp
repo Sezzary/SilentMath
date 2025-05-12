@@ -127,6 +127,11 @@ namespace Silent::Math
         return ContainmentType::None;
     }
     
+    AxisAlignedBoundingBox BoundingSphere::ToAabb() const
+    {
+        return AxisAlignedBoundingBox(Center, Vector3(Radius));
+    }
+
     bool BoundingSphere::operator==(const BoundingSphere& sphere) const
     {
         return Center == sphere.Center && Radius == sphere.Radius;

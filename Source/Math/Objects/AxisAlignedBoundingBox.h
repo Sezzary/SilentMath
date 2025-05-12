@@ -26,8 +26,6 @@ namespace Silent::Math
         constexpr AxisAlignedBoundingBox(const Vector3& center, const Vector3& extents) : Center(center), Extents(extents) {}
 
         AxisAlignedBoundingBox(const std::span<const Vector3>& points);
-        AxisAlignedBoundingBox(const BoundingSphere& sphere);
-        AxisAlignedBoundingBox(const OrientedBoundingBox& obb);
 
         // Getters
 
@@ -56,6 +54,10 @@ namespace Silent::Math
 
         static AxisAlignedBoundingBox Merge(const AxisAlignedBoundingBox& aabb0, const AxisAlignedBoundingBox& aabb1);
         void                          Merge(const AxisAlignedBoundingBox& aabb);
+
+        // Converters
+
+        OrientedBoundingBox ToObb() const;
 
         // Operators
 

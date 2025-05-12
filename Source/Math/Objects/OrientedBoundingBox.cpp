@@ -5,6 +5,9 @@
 #include "Math/Objects/AxisAlignedBoundingBox.h"
 #include "Math/Objects/BoundingSphere.h"
 #include "Math/Objects/Matrix.h"
+#include "Utils/Utils.h"
+
+using namespace Silent::Utils;
 
 namespace Silent::Math
 {
@@ -182,6 +185,12 @@ namespace Silent::Math
         }*/
 
         return ContainmentType::Contains;
+    }
+
+    AxisAlignedBoundingBox OrientedBoundingBox::ToAabb() const
+    {
+        auto corners = GetCorners();
+        return AxisAlignedBoundingBox(ToSpan(corners));
     }
 
     bool OrientedBoundingBox::operator==(const OrientedBoundingBox& obb) const
