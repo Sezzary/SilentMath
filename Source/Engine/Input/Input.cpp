@@ -36,6 +36,11 @@ namespace Silent::Input
         return _text.GetText(textId);
     }
 
+    std::vector<std::string> InputManager::GetTextLines(const std::string& bufferId, uint low, uint high) const
+    {
+        return _text.GetTextLines(bufferId, low, high);
+    }
+
     uint InputManager::GetTextCursorPosition(const std::string& textId) const
     {
         return _text.GetCursorPosition(textId);

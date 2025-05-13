@@ -75,7 +75,7 @@ namespace Silent::Input
         return buffer.Text;
     }
 
-    std::vector<std::string> TextManager::GetTextLines(const std::string& bufferId) const
+    std::vector<std::string> TextManager::GetTextLines(const std::string& bufferId, uint low, uint high) const
     {
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
@@ -85,12 +85,23 @@ namespace Silent::Input
         }
 
         const auto& [keyId, buffer] = *it;
+        if (buffer.Text.empty())
+        {
+            return {};
+        }
 
-        auto lines = std::vector<std::string>{};
-        lines.reserve(buffer.Text.size() / buffer.LineWidthMax);
+        // Compute line range.
+        uint lineLow  = (low  == (uint)NO_VALUE) ? 0                        : std::clamp<uint>(low,  0, buffer.LineStarts.size());
+        uint lineHigh = (high == (uint)NO_VALUE) ? buffer.LineStarts.size() : std::clamp<uint>(high, 0, buffer.LineStarts.size());
+        if (lineLow > lineHigh)
+        {
+            std::swap(lineLow, lineHigh);
+        }
 
         // Collect lines.
-        for (int i = 0; i < buffer.LineStarts.size(); i++)
+        auto lines = std::vector<std::string>{};
+        lines.reserve((lineHigh - lineLow) / buffer.LineWidthMax);
+        for (int i = lineLow; i < lineHigh; i++)
         {
             uint lineStart = buffer.LineStarts[i];
             uint lineEnd   = (i < (buffer.LineStarts.size() - 1)) ? buffer.LineStarts[i + 1] : buffer.Text.size();
@@ -109,7 +120,7 @@ namespace Silent::Input
         auto it = _buffers.find(bufferId);
         if (it == _buffers.end())
         {
-            Log("Attempted to get text cursor position for missing text buffer '" + bufferId + "'.", LogLevel::Warning);
+            Log("Attempted to get cursor position for missing text buffer '" + bufferId + "'.", LogLevel::Warning);
             return 0;
         }
 
@@ -119,6 +130,14 @@ namespace Silent::Input
 
     void TextManager::InsertBuffer(const std::string& bufferId, uint lineWidthMax, uint charCountMax)
     {
+        if (lineWidthMax == 0 || charCountMax == 0)
+        {
+            Log("Attempted to insert invalid text buffer '" + bufferId +
+                "' with max line width " + std::to_string(lineWidthMax) +
+                " and character limit " + std::to_string(charCountMax) + ".", LogLevel::Warning);
+            return;
+        }
+
         _buffers.try_emplace(bufferId);
 
         auto& buffer        = _buffers.at(bufferId);

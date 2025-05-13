@@ -10,8 +10,8 @@ namespace Silent::Math
     constexpr uint FP_ANGLE_COUNT = 1 << Q12_SHIFT; /** Number of fixed-point angles in Q1.15 format. */
 
     constexpr float PI       = glm::pi<float>();
-    constexpr float PI_MUL_4 = PI * 4.0f;
     constexpr float PI_MUL_2 = PI * 2.0f;
+    constexpr float PI_MUL_4 = PI * 4.0f;
     constexpr float PI_DIV_2 = PI / 2.0f;
     constexpr float PI_DIV_4 = PI / 4.0f;
     constexpr float SQRT_2   = 1.41421356237f;

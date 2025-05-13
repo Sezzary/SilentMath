@@ -40,7 +40,7 @@ namespace Silent::Input
         // Getters
 
         const std::string&       GetText(const std::string& bufferId) const;
-        std::vector<std::string> GetTextLines(const std::string& bufferId) const;
+        std::vector<std::string> GetTextLines(const std::string& bufferId, uint low, uint high) const;
         uint                     GetCursorPosition(const std::string& bufferId) const;
         
         // Utilities
