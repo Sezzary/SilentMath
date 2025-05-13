@@ -506,6 +506,8 @@ namespace Silent::Input
             return true;
         }
 
+        // TODO: Move up/down.
+
         // Move or select to start/end.
         if (homeAction.IsClicked() || endAction.IsClicked())
         {
