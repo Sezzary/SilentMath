@@ -19,7 +19,7 @@ namespace Silent::Renderer
 
     class RendererManager
     {
-    public:
+    private:
 #ifdef _DEBUG
         static constexpr bool ENABLE_VALIDATION_LAYERS = true;
 #else
@@ -71,19 +71,31 @@ namespace Silent::Renderer
         VkSemaphore _renderFinishedSemaphore = nullptr;
         VkFence     _inFlightFence           = nullptr;
 
+        VkDescriptorPool _descPool = nullptr;
+
+        std::vector<std::function<void()>> _guiDrawCalls;
+
+    public:
         // Constructors
 
         RendererManager() = default;
 
         // Utilities
 
+        VkCommandBuffer beginSingleTimeCommands();
+        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+        void init_imgui();
+
         void Initialize(SDL_Window& window);
         void Deinitialize();
         void Update();
 
+        void SubmitGui(std::function<void()> drawFunc);
+
     private:
         // Getters
 
+        VkInstance               GetInstance();
         std::vector<const char*> GetRequiredExtensions();
 
         // Inquirers
@@ -95,6 +107,7 @@ namespace Silent::Renderer
         // Utilities
 
         void DrawFrame();
+        void DrawGui();
 
         void                    PickPhysicalDevice();
         VkSurfaceFormatKHR      ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -115,6 +128,8 @@ namespace Silent::Renderer
         void           CreateCommandBuffer();
         void           CreateSyncObjects();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
+        void           CreateDescriptorPool();
+        void           CreateImGuiContext();
 
         void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);

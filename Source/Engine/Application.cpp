@@ -83,7 +83,13 @@ namespace Silent
         // Poll events.
         while (SDL_PollEvent(&_event))
         {
-            // Handle each event
+            if constexpr (IS_DEBUG)
+            {
+                // Capture events for ImGui.
+                ImGui_ImplSDL3_ProcessEvent(&_event);
+            }
+
+            // Handle each event.
             switch (_event.type)
             {
                 case SDL_EVENT_QUIT:
@@ -107,6 +113,25 @@ namespace Silent
         g_Input.Update(*_window, _config.GetSettings(), mouseWheelAxis);
 
         // TODO: Update game state here.
+
+        // DEBUG
+
+        if (g_Input.GetAction(In::A).IsReleased())
+        {
+            Log("y");
+        }
+        else
+        {
+            Log("n");
+        }
+
+        _renderer.SubmitGui(
+            []()
+            {
+                ImGui::Begin("My Window");
+                ImGui::Text("Hello!");
+                ImGui::End();
+            });
     }
 
     void ApplicationManager::Render()
@@ -117,10 +142,10 @@ namespace Silent
         }
 
         // Wait for previous frame to finish rendering.
-        static auto prevFrameFuture = std::future<void>();
-        if (prevFrameFuture.valid())
+        static auto prevFrameFut = std::future<void>();
+        if (prevFrameFut.valid())
         {
-            prevFrameFuture.wait();
+            prevFrameFut.wait();
         }
 
         // TODO: Parallelism requires storing a separate render buffer for game data
@@ -129,6 +154,6 @@ namespace Silent
 
         // Render scene.
         _renderer.Update();
-        //prevFrameFuture = g_Parallel.AddTask([this]() { _renderer.Update(); });
+        //prevFrameFut = g_Parallel.AddTask([this]() { _renderer.Update(); });
     }
 }

@@ -190,7 +190,7 @@ namespace Silent::Input
             _events.IsUsingGamepad = false;
         }
 
-        // Set mouse scroll events.
+        // Set mouse scroll event states.
         _events.States[eventStateIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
         _events.States[eventStateIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
         _events.States[eventStateIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
@@ -374,30 +374,30 @@ namespace Silent::Input
         // 1) Update user action states.
         for (auto& [keyActionId, action] : _actions)
         {
-            float eventState = 0.0f;
+            float state = 0.0f;
 
-            // 1.1) Get highest gamepad event state.
+            // 1.1) Get max gamepad event state.
             if (_gamepad != nullptr)
             {
                 auto eventIds = _bindings.GetBoundEventIds(settings.ActiveKeyboardMouseProfileId, keyActionId);
                 for (const auto& eventId : eventIds)
                 {
-                    eventState = std::max(eventState, _events.States[(int)eventId]);
+                    state = std::max(state, _events.States[(int)eventId]);
                 }
             }
 
-            // 1.2) If no gamepad event state, get highest keyboard/mouse event state.
-            if (eventState == 0.0f)
+            // 1.2) If no valid gamepad event state, get max keyboard/mouse event state.
+            if (state == 0.0f)
             {
                 auto eventIds = _bindings.GetBoundEventIds(settings.ActiveGamepadProfileId, keyActionId);
                 for (const auto& eventId : eventIds)
                 {
-                    eventState = std::max(eventState, _events.States[(int)eventId]);
+                    state = std::max(state, _events.States[(int)eventId]);
                 }
             }
 
             // 1.3) Update user action state.
-            action.Update(eventState);
+            action.Update(state);
         }
 
         // 2) Update raw action states.
@@ -408,15 +408,15 @@ namespace Silent::Input
             {
                 auto& action = _actions.at(keyActionId0);
                 
-                // 1.1) Get highest raw event state.
-                float eventState = 0.0f;
+                // 1.1) Get max raw event state.
+                float state = 0.0f;
                 for (auto eventId : eventIds)
                 {
-                    eventState = std::max(eventState, _events.States[(int)eventId]);
+                    state = std::max(state, _events.States[(int)eventId]);
                 }
 
                 // 2.2) Update raw action state.
-                action.Update(eventState);
+                action.Update(state);
             }
         }
     }
