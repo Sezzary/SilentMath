@@ -79,9 +79,7 @@ namespace Silent::Services
 
     uint SecToTicks(float sec)
     {
-        constexpr float SEC_PER_TICK = 1.0f / (float)g_Time.TPS;
-
-        return (uint)round(sec / SEC_PER_TICK);
+        return (uint)round(sec * g_Time.TPS);
     }
 
     float TicksToSec(uint ticks)
