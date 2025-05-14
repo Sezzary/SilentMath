@@ -14,6 +14,13 @@ file(GLOB_RECURSE SOURCES "Source/*.cpp")
 add_executable(Math ${SOURCES})
 set_target_properties(Math PROPERTIES OUTPUT_NAME "Math" DEBUG_POSTFIX "_d")
 
+# Add ImGui.
+file(GLOB IMGUI_SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_vulkan.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl.cpp")
+target_sources(Math PRIVATE ${IMGUI_SOURCES})
+
 # Set Debug build definitions.
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_definitions(-D_DEBUG)
@@ -46,6 +53,7 @@ target_include_directories(Math PRIVATE
 target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/json/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/SDL/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
