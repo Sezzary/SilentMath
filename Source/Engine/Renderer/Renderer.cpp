@@ -3,6 +3,8 @@
 
 namespace Silent::Renderer
 {
+    RendererManager g_Renderer = RendererManager();
+
     bool QueueFamilyIndices::IsComplete()
     {
         return GraphicsFamily != NO_VALUE && PresentFamily != NO_VALUE;
@@ -19,19 +21,18 @@ namespace Silent::Renderer
 
     VkCommandBuffer RendererManager::beginSingleTimeCommands()
     {
-        VkCommandBufferAllocateInfo allocInfo{};
+        auto allocInfo               = VkCommandBufferAllocateInfo{};
         allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandPool        = _commandPool;
         allocInfo.commandBufferCount = 1;
 
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer = nullptr;
         vkAllocateCommandBuffers(_device, &allocInfo, &commandBuffer);
 
-        VkCommandBufferBeginInfo beginInfo{};
+        auto beginInfo  = VkCommandBufferBeginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
         vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
         return commandBuffer;
@@ -41,73 +42,60 @@ namespace Silent::Renderer
     {
         vkEndCommandBuffer(commandBuffer);
 
-        VkSubmitInfo submitInfo{};
+        auto submitInfo               = VkSubmitInfo{};
         submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers    = &commandBuffer;
-
         vkQueueSubmit(_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(_graphicsQueue);
 
+        vkQueueWaitIdle(_graphicsQueue);
         vkFreeCommandBuffers(_device, _commandPool, 1, &commandBuffer);
     }
 
-    void RendererManager::init_imgui()
+    void RendererManager::InitializeImGui()
     {
-        //1: create descriptor pool for IMGUI
-        // the size of the pool is very oversize, but it's copied from imgui demo itself.
         VkDescriptorPoolSize poolSizes[] =
         {
-            { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+            { VK_DESCRIPTOR_TYPE_SAMPLER,                1000 },
             { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,          1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,   1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,   1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1000 },
             { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
             { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       1000 }
         };
 
-        auto poolInfo          = VkDescriptorPoolCreateInfo{};
-        poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        poolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        poolInfo.maxSets       = 1000;
-        poolInfo.poolSizeCount = std::size(poolSizes);
-        poolInfo.pPoolSizes    = poolSizes;
-
-        VkDescriptorPool imguiPool;
+        VkDescriptorPool imguiPool = nullptr;
+        auto             poolInfo  = VkDescriptorPoolCreateInfo{};
+        poolInfo.sType             = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.flags             = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        poolInfo.maxSets           = 1000;
+        poolInfo.poolSizeCount     = std::size(poolSizes);
+        poolInfo.pPoolSizes        = poolSizes;
         vkCreateDescriptorPool(_device, &poolInfo, nullptr, &imguiPool);
 
-        // 2: initialize imgui library
-
-        //this initializes the core structures of imgui
         ImGui::CreateContext();
-
-        //this initializes imgui for SDL
         ImGui_ImplSDL3_InitForVulkan(_window);
 
-        //this initializes imgui for Vulkan
-        ImGui_ImplVulkan_InitInfo initInfo = {};
-        initInfo.Instance = _instance;
+        auto initInfo           = ImGui_ImplVulkan_InitInfo{};
+        initInfo.Instance       = _instance;
         initInfo.PhysicalDevice = _physicalDevice;
-        initInfo.Device = _device;
-        initInfo.Queue = _graphicsQueue;
+        initInfo.Device         = _device;
+        initInfo.Queue          = _graphicsQueue;
         initInfo.DescriptorPool = imguiPool;
-        initInfo.RenderPass = _renderPass;
-        initInfo.MinImageCount = 3;
-        initInfo.ImageCount = 3;
-        initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-
+        initInfo.RenderPass     = _renderPass;
+        initInfo.MinImageCount  = 3;
+        initInfo.ImageCount     = 3;
+        initInfo.MSAASamples    = VK_SAMPLE_COUNT_1_BIT;
         ImGui_ImplVulkan_Init(&initInfo);
 
-        VkCommandBuffer cmd = beginSingleTimeCommands(); // You need to write this helper
-
+        auto cmd = beginSingleTimeCommands();
         ImGui_ImplVulkan_CreateFontsTexture();
-
-        endSingleTimeCommands(cmd); // And this helper too
+        endSingleTimeCommands(cmd);
     }
 
     void RendererManager::Initialize(SDL_Window& window)
@@ -127,9 +115,13 @@ namespace Silent::Renderer
         CreateCommandPool();
         CreateCommandBuffer();
         CreateSyncObjects();
-        //CreateDescriptorPool();
-        //CreateImGuiContext();
-        init_imgui();
+        
+        if constexpr (IS_DEBUG)
+        {
+            //CreateDescriptorPool();
+            //CreateImGuiContext();
+            InitializeImGui();
+        }
     }
 
     void RendererManager::Deinitialize()
@@ -175,7 +167,10 @@ namespace Silent::Renderer
     
     void RendererManager::SubmitGui(std::function<void()> drawFunc)
     {
-        _guiDrawCalls.push_back(drawFunc);
+        if constexpr (IS_DEBUG)
+        {
+            _guiDrawCalls.push_back(drawFunc);
+        }
     }
 
     VkInstance RendererManager::GetInstance()
@@ -1019,7 +1014,11 @@ namespace Silent::Renderer
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
 
-        ImGui::Render();
+        if constexpr (IS_DEBUG)
+        {
+            ImGui::Render();
+        }
+
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         // App draw.
@@ -1041,8 +1040,10 @@ namespace Silent::Renderer
 
         vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
-        // ImGui draw.
-        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+        if constexpr (IS_DEBUG)
+        {
+            ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+        }
 
         vkCmdEndRenderPass(commandBuffer);
 

@@ -84,7 +84,7 @@ namespace Silent::Renderer
 
         VkCommandBuffer beginSingleTimeCommands();
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-        void init_imgui();
+        void InitializeImGui();
 
         void Initialize(SDL_Window& window);
         void Deinitialize();
@@ -140,6 +140,8 @@ namespace Silent::Renderer
                                                             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                             void* pUserData);
     };
+
+    extern RendererManager g_Renderer;
 
     VkResult          CreateDebugUtilsMessengerExt(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
                                                    const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);

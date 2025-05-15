@@ -37,7 +37,7 @@ namespace Silent
 
         // Initialize renderer.
         Log("Initializing renderer...");
-        _renderer.Initialize(*_window);
+        g_Renderer.Initialize(*_window);
 
         _isRunning = true;
         Log("Initialization complete.");
@@ -51,7 +51,7 @@ namespace Silent
 
         // Deinitialize renderer.
         Log("Deinitializing renderer...");
-        _renderer.Deinitialize();
+        g_Renderer.Deinitialize();
 
         // Deinitialize SDL.
         Log("Deinitializing SDL...");
@@ -125,8 +125,7 @@ namespace Silent
             Log("n");
         }
 
-        _renderer.SubmitGui(
-            []()
+        CreateGui([]()
             {
                 ImGui::Begin("My Window");
                 ImGui::Text("Hello!");
@@ -150,10 +149,10 @@ namespace Silent
 
         // TODO: Parallelism requires storing a separate render buffer for game data
         // so that it doesn't get overwritten by `ApplicationManager::Update` while 
-        // `_renderer.Update` runs in the background.
+        // `g_Renderer.Update` runs in the background.
 
         // Render scene.
-        _renderer.Update();
-        //prevFrameFut = g_Parallel.AddTask([this]() { _renderer.Update(); });
+        g_Renderer.Update();
+        //prevFrameFut = g_Parallel.AddTask([this]() { g_Renderer.Update(); });
     }
 }

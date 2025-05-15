@@ -19,4 +19,5 @@ namespace Silent::Utils::Debug
     void Assert(bool cond, const std::string& msg);
     void StartTimer();
     void EndTimer();
+    void CreateGui(std::function<void()> drawFunc);
 }

@@ -21,8 +21,7 @@ namespace Silent
         SDL_Window* _window    = nullptr;
         SDL_Event   _event     = {};
 
-        ConfigurationManager _config   = ConfigurationManager();
-        RendererManager      _renderer = RendererManager();
+        ConfigurationManager _config = ConfigurationManager();
 
     public:
         // Constructors
