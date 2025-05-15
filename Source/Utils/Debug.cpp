@@ -11,12 +11,19 @@ namespace Silent::Utils::Debug
 
     void Log(const std::string& msg, LogLevel level, bool allowSpam)
     {
-        static auto prevMsg = std::string();
-        if (prevMsg == msg && !allowSpam)
+        static auto mutex = std::mutex();
+
+        // LOCK: Restrict previous message access.
         {
-            return;
+            auto lock = std::lock_guard(mutex);
+
+            static auto prevMsg = std::string();
+            if (prevMsg == msg && !allowSpam)
+            {
+                return;
+            }
+            prevMsg = msg;
         }
-        prevMsg = msg;
 
         switch (level)
         {
@@ -65,9 +72,8 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            auto endTime = std::chrono::high_resolution_clock::now();
+            auto endTime  = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
-
             Log("Execution (μs): " + std::to_string(duration.count()), LogLevel::Info, true);
         }
     }
