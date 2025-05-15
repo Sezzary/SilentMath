@@ -14,7 +14,7 @@ file(GLOB_RECURSE SOURCES "Source/*.cpp")
 add_executable(Math ${SOURCES})
 set_target_properties(Math PROPERTIES OUTPUT_NAME "Math" DEBUG_POSTFIX "_d")
 
-# Add ImGui.
+# Add ImGui sources.
 file(GLOB IMGUI_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_vulkan.cpp"

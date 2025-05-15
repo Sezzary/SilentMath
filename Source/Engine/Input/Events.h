@@ -152,6 +152,14 @@ namespace Silent::Input
         Count
     };
 
+    enum class EventGroupId
+    {
+        KeyboardMouse,
+        Gamepad
+    };
+
+    extern const std::unordered_map<EventGroupId, std::vector<EventId>> EVENT_ID_GROUPS;
+
     extern const std::vector<EventId> KEYBOARD_MOUSE_EVENT_IDS;
     extern const std::vector<EventId> GAMEPAD_EVENT_IDS;
 

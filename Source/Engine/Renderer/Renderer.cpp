@@ -136,13 +136,13 @@ namespace Silent::Renderer
 
     VkInstance RendererManager::GetInstance()
     {
-        return _instance;   
+        return _instance;
     }
 
     std::vector<const char*> RendererManager::GetRequiredExtensions()
     {
-        uint sdlExtCount = 0;
-        auto* sdlExts = SDL_Vulkan_GetInstanceExtensions(&sdlExtCount);
+        uint  sdlExtCount = 0;
+        auto* sdlExts     = SDL_Vulkan_GetInstanceExtensions(&sdlExtCount);
 
         auto exts = std::vector<const char*>(sdlExts, sdlExts + sdlExtCount);
         if (ENABLE_VALIDATION_LAYERS)
@@ -215,7 +215,7 @@ namespace Silent::Renderer
         if (isExtSupported)
         {
             auto swapChainSupport = QuerySwapChainSupport(device);
-            isSwapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentModes.empty();
+            isSwapChainAdequate   = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentModes.empty();
         }
 
         return FindQueueFamilies(device).IsComplete() && isExtSupported && isSwapChainAdequate;

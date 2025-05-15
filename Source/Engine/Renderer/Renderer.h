@@ -2,6 +2,11 @@
 
 namespace Silent::Renderer
 {
+    enum class DebugPage
+    {
+        None
+    };
+
     struct QueueFamilyIndices
     {
         uint GraphicsFamily = (uint)NO_VALUE;

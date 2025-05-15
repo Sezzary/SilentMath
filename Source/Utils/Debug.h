@@ -20,4 +20,15 @@ namespace Silent::Utils::Debug
     void StartTimer();
     void EndTimer();
     void CreateGui(std::function<void()> drawFunc);
+
+    /*void CreateLine(const Vector2& from, const Vector2& to, const Color& color, DebugPage page = DebugPage::None);
+    void CreateLine(const Vector3& from, const Vector3& to, const Color& color, DebugPage page = DebugPage::None);
+    void CreateTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, DebugPage page = DebugPage::None);
+    void CreateTarget(const Vector3& center, const Quaternion& orient, float radius, const Color& color, DebugPage page = DebugPage::None);
+    void CreateBox(const AxisAlignedBoundingBox& aabb, const Color& color, bool isWireframe = true, DebugPage page = DebugPage::None);
+    void CreateBox(const OrientedBoundingBox& obb, const Color& color, bool isWireframe = true, DebugPage page = DebugPage::None);
+    void CreateSphere(const Vector3& center, float radius, const Color& color, bool isWireframe = true, DebugPage page = DebugPage::None);
+    void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe = true, DebugPage page = DebugPage::None);
+    void CreateCylinder(const Vector3& center, const Quaternion& orient, float radius, float length, const Color& color, bool isWireframe = true, DebugPage page = DebugPage::None);
+    void CreateCone(const Vector3& center, const Quaternion& orient, float radius, float length, const Color& color, bool isWireframe = true, DebugPage page = DebugPage::None);*/
 }
