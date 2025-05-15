@@ -23,10 +23,14 @@ namespace Silent
 
         ConfigurationManager _config = ConfigurationManager();
 
+        Vector2 _mouseWheelAxis = Vector2::Zero;
+
     public:
         // Constructors
 
         ApplicationManager() = default;
+
+        ConfigurationManager& GetConfig();
 
         // Utilities
 
@@ -39,5 +43,6 @@ namespace Silent
 
         void Update();
         void Render();
+        void PollEvents();
     };
 }

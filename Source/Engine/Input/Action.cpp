@@ -118,6 +118,20 @@ namespace Silent::Input
         }
     };
 
+    const std::vector<ActionGroupId> USER_ACTION_GROUP_IDS =
+    {
+        ActionGroupId::General,
+        ActionGroupId::Menu,
+        ActionGroupId::Game
+    };
+
+    const std::vector<ActionGroupId> RAW_ACTION_GROUP_IDS =
+    {
+        ActionGroupId::Keyboard,
+        ActionGroupId::Mouse,
+        ActionGroupId::Gamepad
+    };
+
     Action::Action(ActionId actionId)
     {
         _id = actionId;

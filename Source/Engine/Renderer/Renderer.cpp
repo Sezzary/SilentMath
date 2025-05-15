@@ -51,8 +51,8 @@ namespace Silent::Renderer
         initInfo.PipelineCache  = nullptr;
         initInfo.DescriptorPool = _descPool;
         initInfo.RenderPass     = _renderPass;
-        initInfo.MinImageCount  = _swapChainImages.size();
-        initInfo.ImageCount     = _swapChainImages.size();
+        initInfo.MinImageCount  = (uint32)_swapChainImages.size();
+        initInfo.ImageCount     = (uint32)_swapChainImages.size();
         initInfo.MSAASamples    = VK_SAMPLE_COUNT_1_BIT;
         ImGui_ImplVulkan_Init(&initInfo);
 
@@ -710,17 +710,17 @@ namespace Silent::Renderer
         auto vertShaderModule = CreateShaderModule(vertShaderCode);
         auto fragShaderModule = CreateShaderModule(fragShaderCode);
 
-        auto vertShaderStageInfo = VkPipelineShaderStageCreateInfo{};
-        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        auto vertShaderStageInfo   = VkPipelineShaderStageCreateInfo{};
+        vertShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertShaderStageInfo.stage  = VK_SHADER_STAGE_VERTEX_BIT;
         vertShaderStageInfo.module = vertShaderModule;
-        vertShaderStageInfo.pName = "main";
+        vertShaderStageInfo.pName  = "main";
 
-        auto fragShaderStageInfo = VkPipelineShaderStageCreateInfo{};
-        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        auto fragShaderStageInfo   = VkPipelineShaderStageCreateInfo{};
+        fragShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragShaderStageInfo.stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
         fragShaderStageInfo.module = fragShaderModule;
-        fragShaderStageInfo.pName = "main";
+        fragShaderStageInfo.pName  = "main";
 
         VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
@@ -1031,16 +1031,16 @@ namespace Silent::Renderer
 
     void RendererManager::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
     {
-        createInfo = VkDebugUtilsMessengerCreateInfoEXT{};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        createInfo                 = VkDebugUtilsMessengerCreateInfoEXT{};
+        createInfo.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
         createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
                                      VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
                                      VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                                 VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                                 VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        createInfo.messageType     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                     VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                     VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
         createInfo.pfnUserCallback = DebugCallback;
-        createInfo.pUserData = nullptr;
+        createInfo.pUserData       = nullptr;
     }
 
     void RendererManager::SetupDebugMessenger()

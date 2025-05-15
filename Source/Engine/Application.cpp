@@ -14,9 +14,18 @@ using namespace Silent::Utils;
 
 namespace Silent
 {
+    ConfigurationManager& ApplicationManager::GetConfig()
+    {
+        return _config;
+    }
+
     void ApplicationManager::Initialize()
     {
         Log("Starting Silent Engine.");
+
+        // Initialize configuration.
+        Log("Initializing configuration...");
+        _config.Initialize();
 
         // Initialize SDL.
         Log("Initializing SDL...");
@@ -26,10 +35,6 @@ namespace Silent
         // Create window.
         _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
-
-        // Initialize configuration.
-        Log("Initializing configuration...");
-        _config.Initialize();
 
         // Initialize input.
         Log("Initializing input...");
@@ -78,46 +83,10 @@ namespace Silent
 
     void ApplicationManager::Update()
     {
-        auto mouseWheelAxis = Vector2::Zero;
-
-        // Poll events.
-        while (SDL_PollEvent(&_event))
-        {
-            if constexpr (IS_DEBUG)
-            {
-                // Capture events for ImGui.
-                ImGui_ImplSDL3_ProcessEvent(&_event);
-            }
-
-            // Handle each event.
-            switch (_event.type)
-            {
-                case SDL_EVENT_QUIT:
-                {
-                    _isRunning = false;
-                    break;
-                }
-
-                if (_event.type == SDL_EVENT_WINDOW_RESIZED)
-                {
-                    int newWidth  = _event.window.data1;
-                    int newHeight = _event.window.data2;
-                    g_Renderer.SignalResizedFramebuffer();
-                }
-
-                case SDL_EVENT_MOUSE_WHEEL:
-                {
-                    mouseWheelAxis = Vector2(_event.wheel.x, _event.wheel.y);
-                    break;
-                }
-
-                default:
-                    break;
-            }
-        }
+        PollEvents();
 
         // Update input state.
-        g_Input.Update(*_window, _config.GetSettings(), mouseWheelAxis);
+        g_Input.Update(*_window, _config.GetSettings(), _mouseWheelAxis);
 
         // TODO: Update game state here.
 
@@ -161,5 +130,42 @@ namespace Silent
         // Render scene.
         g_Renderer.Update();
         //prevFrameFut = g_Parallel.AddTask([this]() { g_Renderer.Update(); });
+    }
+
+    void ApplicationManager::PollEvents()
+    {
+        while (SDL_PollEvent(&_event))
+        {
+            if constexpr (IS_DEBUG)
+            {
+                ImGui_ImplSDL3_ProcessEvent(&_event);
+            }
+
+            switch (_event.type)
+            {
+                case SDL_EVENT_QUIT:
+                {
+                    _isRunning = false;
+                    break;
+                }
+
+                case SDL_EVENT_WINDOW_RESIZED:
+                {
+                    g_Renderer.SignalResizedFramebuffer();
+                    break;
+                }
+
+                case SDL_EVENT_MOUSE_WHEEL:
+                {
+                    _mouseWheelAxis = Vector2(_event.wheel.x, _event.wheel.y);
+                    break;
+                }
+
+                default:
+                {
+                    break;
+                }
+            }
+        }
     }
 }
