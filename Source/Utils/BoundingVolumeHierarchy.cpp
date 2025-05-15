@@ -107,13 +107,13 @@ namespace Silent::Utils
         }
 
         // Allocate new leaf.
-        int leafId = GetNewNodeId();
-        auto& leaf = _nodes[leafId];
+        int  leafId = GetNewNodeId();
+        auto& leaf  = _nodes[leafId];
 
         // Set initial parameters.
         leaf.ObjectId = objectId;
-        leaf.Aabb = AxisAlignedBoundingBox(aabb.Center, aabb.Extents + Vector3(boundary));
-        leaf.Height = 0;
+        leaf.Aabb     = AxisAlignedBoundingBox(aabb.Center, aabb.Extents + Vector3(boundary));
+        leaf.Height   = 0;
 
         // Insert new leaf.
         InsertLeaf(leafId);
@@ -136,8 +136,8 @@ namespace Silent::Utils
         // Test if object AABB is inside node AABB.
         if (leaf.Aabb.Contains(aabb) == ContainmentType::Contains)
         {
-            auto deltaExtents = leaf.Aabb.Extents - aabb.Extents;
-            float threshold = boundary * 2;
+            auto  deltaExtents = leaf.Aabb.Extents - aabb.Extents;
+            float threshold    = boundary * 2;
 
             // Test if object AABB is significantly smaller than node AABB.
             if (deltaExtents.x < threshold &&
@@ -249,27 +249,26 @@ namespace Silent::Utils
         int siblingId = _rootId;
         while (!_nodes[siblingId].IsLeaf())
         {
-            const auto& sibling = _nodes[siblingId];
-            int leftChildId = sibling.LeftChildId;
-            int rightChildId = sibling.RightChildId;
+            const auto& sibling      = _nodes[siblingId];
+            int         leftChildId  = sibling.LeftChildId;
+            int         rightChildId = sibling.RightChildId;
 
             float inheritCost = leaf.Aabb.GetSurfaceArea() * 2;
 
             // Calculate cost of creating new parent for sibling and new leaf.
-            auto mergedAabb = AxisAlignedBoundingBox::Merge(sibling.Aabb, leaf.Aabb);
+            auto  mergedAabb = AxisAlignedBoundingBox::Merge(sibling.Aabb, leaf.Aabb);
             float mergedArea = mergedAabb.GetSurfaceArea();
-            float cost = mergedArea * 2;
+            float cost       = mergedArea * 2;
 
             // Calculate cost of descending into left child.
             float leftCost = INFINITY;
             if (leftChildId != NO_VALUE)
             {
                 const auto& leftChild = _nodes[leftChildId];
-                auto aabb = AxisAlignedBoundingBox::Merge(leftChild.Aabb, leaf.Aabb);
-                float newArea = aabb.GetSurfaceArea();
+                auto        aabb      = AxisAlignedBoundingBox::Merge(leftChild.Aabb, leaf.Aabb);
+                float       newArea   = aabb.GetSurfaceArea();
 
-                leftCost = leftChild.IsLeaf() ? (newArea + inheritCost) :
-                                                ((newArea - leftChild.Aabb.GetSurfaceArea()) + inheritCost);
+                leftCost = leftChild.IsLeaf() ? (newArea + inheritCost) : ((newArea - leftChild.Aabb.GetSurfaceArea()) + inheritCost);
             }
 
             // Calculate cost of descending into right child.
@@ -277,11 +276,10 @@ namespace Silent::Utils
             if (rightChildId != NO_VALUE)
             {
                 const auto& rightChild = _nodes[rightChildId];
-                auto aabb = AxisAlignedBoundingBox::Merge(rightChild.Aabb, leaf.Aabb);
-                float newArea = aabb.GetSurfaceArea();
+                auto        aabb       = AxisAlignedBoundingBox::Merge(rightChild.Aabb, leaf.Aabb);
+                float       newArea    = aabb.GetSurfaceArea();
 
-                rightCost = rightChild.IsLeaf() ? (newArea + inheritCost) :
-                                                  ((newArea - rightChild.Aabb.GetSurfaceArea()) + inheritCost);
+                rightCost = rightChild.IsLeaf() ? (newArea + inheritCost) : ((newArea - rightChild.Aabb.GetSurfaceArea()) + inheritCost);
             }
 
             // Test if descent is worthwhile according to minimum cost.
@@ -321,7 +319,7 @@ namespace Silent::Utils
         // Get sibling leaf and new leaf.
         int siblingId = GetBestSiblingLeafId(leafId);
         auto& sibling = _nodes[siblingId];
-        auto& leaf = _nodes[leafId];
+        auto& leaf    = _nodes[leafId];
 
         // Calculate merged AABB of sibling leaf and new leaf.
         auto aabb = AxisAlignedBoundingBox::Merge(sibling.Aabb, leaf.Aabb);
@@ -330,13 +328,13 @@ namespace Silent::Utils
         int prevParentId = sibling.ParentId;
 
         // Update nodes.
-        parent.Aabb = aabb;
-        parent.Height = sibling.Height + 1;
-        parent.ParentId = prevParentId;
-        parent.LeftChildId = siblingId;
+        parent.Aabb         = aabb;
+        parent.Height       = sibling.Height + 1;
+        parent.ParentId     = prevParentId;
+        parent.LeftChildId  = siblingId;
         parent.RightChildId = leafId;
-        sibling.ParentId = parentId;
-        leaf.ParentId = parentId;
+        sibling.ParentId    = parentId;
+        leaf.ParentId       = parentId;
 
         if (prevParentId == NO_VALUE)
         {
@@ -404,7 +402,7 @@ namespace Silent::Utils
                 else
                 {
                     // No grandparent; sibling becomes root.
-                    _rootId = siblingId;
+                    _rootId          = siblingId;
                     sibling.ParentId = NO_VALUE;
                 }
 
@@ -442,21 +440,21 @@ namespace Silent::Utils
                 const auto& leftChild = _nodes[parent.LeftChildId];
                 const auto& rightChild = _nodes[parent.RightChildId];
 
-                parent.Aabb = AxisAlignedBoundingBox::Merge(leftChild.Aabb, rightChild.Aabb);
+                parent.Aabb   = AxisAlignedBoundingBox::Merge(leftChild.Aabb, rightChild.Aabb);
                 parent.Height = std::max(leftChild.Height, rightChild.Height) + 1;
             }
             else if (parent.LeftChildId != NO_VALUE)
             {
                 const auto& leftChild = _nodes[parent.LeftChildId];
 
-                parent.Aabb = leftChild.Aabb;
+                parent.Aabb   = leftChild.Aabb;
                 parent.Height = leftChild.Height + 1;
             }
             else if (parent.RightChildId != NO_VALUE)
             {
                 const auto& rightChild = _nodes[parent.RightChildId];
 
-                parent.Aabb = rightChild.Aabb;
+                parent.Aabb   = rightChild.Aabb;
                 parent.Height = rightChild.Height + 1;
             }
 
@@ -527,9 +525,9 @@ namespace Silent::Utils
             auto& nodeG = _nodes[nodeIdG];
 
             // Swap A and C.
-            nodeC.ParentId = nodeA.ParentId;
+            nodeC.ParentId    = nodeA.ParentId;
             nodeC.LeftChildId = nodeId;
-            nodeA.ParentId = nodeIdC;
+            nodeA.ParentId    = nodeIdC;
 
             // Make A's previous parent point to C.
             if (nodeC.ParentId != NO_VALUE)
@@ -552,19 +550,19 @@ namespace Silent::Utils
             // Rotate.
             if (nodeF.Height > nodeG.Height)
             {
-                nodeA.Aabb = AxisAlignedBoundingBox::Merge(nodeB.Aabb, nodeG.Aabb);
-                nodeC.Aabb = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeF.Aabb);
+                nodeA.Aabb   = AxisAlignedBoundingBox::Merge(nodeB.Aabb, nodeG.Aabb);
+                nodeC.Aabb   = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeF.Aabb);
                 nodeA.Height = std::max(nodeB.Height, nodeG.Height) + 1;
                 nodeC.Height = std::max(nodeA.Height, nodeF.Height) + 1;
 
-                nodeG.ParentId = nodeId;
+                nodeG.ParentId     = nodeId;
                 nodeC.RightChildId = nodeIdF;
                 nodeA.RightChildId = nodeIdG;
             }
             else
             {
-                nodeA.Aabb = AxisAlignedBoundingBox::Merge(nodeB.Aabb, nodeF.Aabb);
-                nodeC.Aabb = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeG.Aabb);
+                nodeA.Aabb   = AxisAlignedBoundingBox::Merge(nodeB.Aabb, nodeF.Aabb);
+                nodeC.Aabb   = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeG.Aabb);
                 nodeA.Height = std::max(nodeB.Height, nodeF.Height) + 1;
                 nodeC.Height = std::max(nodeA.Height, nodeG.Height) + 1;
 
@@ -589,9 +587,9 @@ namespace Silent::Utils
             auto& nodeE = _nodes[nodeIdE];
 
             // Swap A and B.
-            nodeB.ParentId = nodeA.ParentId;
+            nodeB.ParentId    = nodeA.ParentId;
             nodeB.LeftChildId = nodeId;
-            nodeA.ParentId = nodeIdB;
+            nodeA.ParentId    = nodeIdB;
 
             // Make A's previous parent point to B.
             if (nodeB.ParentId != NO_VALUE)
@@ -614,25 +612,25 @@ namespace Silent::Utils
             // Rotate.
             if (nodeD.Height > nodeE.Height)
             {
-                nodeA.Aabb = AxisAlignedBoundingBox::Merge(nodeC.Aabb, nodeE.Aabb);
-                nodeB.Aabb = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeD.Aabb);
+                nodeA.Aabb   = AxisAlignedBoundingBox::Merge(nodeC.Aabb, nodeE.Aabb);
+                nodeB.Aabb   = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeD.Aabb);
                 nodeA.Height = std::max(nodeC.Height, nodeE.Height) + 1;
                 nodeB.Height = std::max(nodeA.Height, nodeD.Height) + 1;
 
                 nodeB.RightChildId = nodeIdD;
-                nodeA.LeftChildId = nodeIdE;
-                nodeE.ParentId = nodeId;
+                nodeA.LeftChildId  = nodeIdE;
+                nodeE.ParentId     = nodeId;
             }
             else
             {
-                nodeA.Aabb = AxisAlignedBoundingBox::Merge(nodeC.Aabb, nodeD.Aabb);
-                nodeB.Aabb = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeE.Aabb);
+                nodeA.Aabb  = AxisAlignedBoundingBox::Merge(nodeC.Aabb, nodeD.Aabb);
+                nodeB.Aabb  = AxisAlignedBoundingBox::Merge(nodeA.Aabb, nodeE.Aabb);
                 nodeA.Height = std::max(nodeC.Height, nodeD.Height) + 1;
                 nodeB.Height = std::max(nodeA.Height, nodeE.Height) + 1;
 
                 nodeB.RightChildId = nodeIdE;
-                nodeA.LeftChildId = nodeIdD;
-                nodeD.ParentId = nodeId;
+                nodeA.LeftChildId  = nodeIdD;
+                nodeD.ParentId     = nodeId;
             }
 
             return nodeIdB;
@@ -679,7 +677,7 @@ namespace Silent::Utils
             int leafId = (int)_nodes.size();
 
             node.ObjectId = objectIds[start];
-            node.Height = 0;
+            node.Height   = 0;
 
             // Add new leaf.
             _nodes.push_back(node);
@@ -700,7 +698,7 @@ namespace Silent::Utils
                 }
 
                 float bestCost = INFINITY;
-                int range = (strategy == BvhBuildStrategy::Balanced) ? BALANCED_STRAT_SPLIT_RANGE_MAX : (end - start);
+                int   range    = (strategy == BvhBuildStrategy::Balanced) ? BALANCED_STRAT_SPLIT_RANGE_MAX : (end - start);
 
                 // Balanced or accurate strategy: surface area heuristic.
                 for (int split = std::max(start + 1, bestSplit - range); split < std::min(end, bestSplit + range); split++)
@@ -722,7 +720,7 @@ namespace Silent::Utils
                     // Calculate cost.
                     float area0 = aabb0.GetSurfaceArea();
                     float area1 = aabb1.GetSurfaceArea();
-                    float cost = (area0 * (split - start)) + (area1 * (end - split));
+                    float cost  = (area0 * (split - start)) + (area1 * (end - split));
 
                     // Track best split.
                     if (cost < bestCost)
@@ -738,7 +736,7 @@ namespace Silent::Utils
             int bestSplit = getBestSplit();
 
             // Create children recursively.
-            node.LeftChildId = Build(objectIds, aabbs, start, bestSplit, strategy);
+            node.LeftChildId  = Build(objectIds, aabbs, start, bestSplit, strategy);
             node.RightChildId = Build(objectIds, aabbs, bestSplit, end, strategy);
 
             // Set parent ID for children.

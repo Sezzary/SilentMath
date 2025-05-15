@@ -10,92 +10,55 @@ namespace Silent::Renderer
         return GraphicsFamily != NO_VALUE && PresentFamily != NO_VALUE;
     }
 
-    static void CheckVkResult(VkResult error)
-    {
-        if (error != VK_SUCCESS)
-        {
-            Log("Vulkan error: " + error);
-            abort();
-        }
-    }
-
-    VkCommandBuffer RendererManager::beginSingleTimeCommands()
-    {
-        auto allocInfo               = VkCommandBufferAllocateInfo{};
-        allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool        = _commandPool;
-        allocInfo.commandBufferCount = 1;
-
-        VkCommandBuffer commandBuffer = nullptr;
-        vkAllocateCommandBuffers(_device, &allocInfo, &commandBuffer);
-
-        auto beginInfo  = VkCommandBufferBeginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-        return commandBuffer;
-    }
-
-    void RendererManager::endSingleTimeCommands(VkCommandBuffer commandBuffer)
-    {
-        vkEndCommandBuffer(commandBuffer);
-
-        auto submitInfo               = VkSubmitInfo{};
-        submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers    = &commandBuffer;
-        vkQueueSubmit(_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-
-        vkQueueWaitIdle(_graphicsQueue);
-        vkFreeCommandBuffers(_device, _commandPool, 1, &commandBuffer);
-    }
-
     void RendererManager::InitializeImGui()
     {
+        constexpr uint DEFAULT_SIZE = 1000;
+
         VkDescriptorPoolSize poolSizes[] =
         {
-            { VK_DESCRIPTOR_TYPE_SAMPLER,                1000 },
-            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,          1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,   1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,   1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       1000 }
+            { VK_DESCRIPTOR_TYPE_SAMPLER,                DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,          DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,   DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,   DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, DEFAULT_SIZE },
+            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       DEFAULT_SIZE }
         };
 
-        VkDescriptorPool imguiPool = nullptr;
-        auto             poolInfo  = VkDescriptorPoolCreateInfo{};
+        auto poolInfo              = VkDescriptorPoolCreateInfo{};
         poolInfo.sType             = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         poolInfo.flags             = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        poolInfo.maxSets           = 1000;
+        poolInfo.maxSets           = DEFAULT_SIZE;
         poolInfo.poolSizeCount     = std::size(poolSizes);
         poolInfo.pPoolSizes        = poolSizes;
-        vkCreateDescriptorPool(_device, &poolInfo, nullptr, &imguiPool);
+        vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descPool);
 
         ImGui::CreateContext();
         ImGui_ImplSDL3_InitForVulkan(_window);
+
+        auto idxs = FindQueueFamilies(_physicalDevice);
 
         auto initInfo           = ImGui_ImplVulkan_InitInfo{};
         initInfo.Instance       = _instance;
         initInfo.PhysicalDevice = _physicalDevice;
         initInfo.Device         = _device;
+        initInfo.QueueFamily    = idxs.GraphicsFamily;
         initInfo.Queue          = _graphicsQueue;
-        initInfo.DescriptorPool = imguiPool;
+        initInfo.PipelineCache  = nullptr;
+        initInfo.DescriptorPool = _descPool;
         initInfo.RenderPass     = _renderPass;
-        initInfo.MinImageCount  = 3;
-        initInfo.ImageCount     = 3;
+        initInfo.MinImageCount  = _swapChainImages.size();
+        initInfo.ImageCount     = _swapChainImages.size();
         initInfo.MSAASamples    = VK_SAMPLE_COUNT_1_BIT;
         ImGui_ImplVulkan_Init(&initInfo);
 
-        auto cmd = beginSingleTimeCommands();
+        auto cmd = BeginSingleTimeCommands();
         ImGui_ImplVulkan_CreateFontsTexture();
-        endSingleTimeCommands(cmd);
+        EndSingleTimeCommands(cmd);
     }
 
     void RendererManager::Initialize(SDL_Window& window)
@@ -118,8 +81,6 @@ namespace Silent::Renderer
         
         if constexpr (IS_DEBUG)
         {
-            //CreateDescriptorPool();
-            //CreateImGuiContext();
             InitializeImGui();
         }
     }
@@ -446,12 +407,14 @@ namespace Silent::Renderer
 		ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
+        // Draw GUIs.
         for (auto& drawFunc : _guiDrawCalls)
         {
             drawFunc();
         }
         _guiDrawCalls.clear();
 
+        // DEMO
         ImGui::ShowDemoWindow();
 
         ImGui::Render();
@@ -939,58 +902,6 @@ namespace Silent::Renderer
         return shaderModule;
     }
 
-    void RendererManager::CreateImGuiContext()
-    {
-        auto idxs = FindQueueFamilies(_physicalDevice);
-
-        auto initInfo            = ImGui_ImplVulkan_InitInfo{};
-        initInfo.Instance        = _instance;
-        initInfo.PhysicalDevice  = _physicalDevice;
-        initInfo.Device          = _device;
-        initInfo.QueueFamily     = idxs.GraphicsFamily;
-        initInfo.Queue           = _graphicsQueue;
-        initInfo.PipelineCache   = VK_NULL_HANDLE;
-        initInfo.DescriptorPool  = _descPool;
-        initInfo.Allocator       = nullptr;
-        initInfo.MinImageCount   = (uint32)_swapChainImages.size();
-        initInfo.ImageCount      = (uint32)_swapChainImages.size();
-        initInfo.MSAASamples     = VK_SAMPLE_COUNT_1_BIT;
-        initInfo.CheckVkResultFn = CheckVkResult;
-
-        // Initialize ImGui.
-        ImGui::CreateContext();
-        auto& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        ImGui_ImplVulkan_Init(&initInfo);
-    }
-
-    void RendererManager::CreateDescriptorPool()
-    {
-        VkDescriptorPoolSize poolSizes[] =
-        {
-            { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
-        };
-
-        auto poolInfo = VkDescriptorPoolCreateInfo{};
-        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        poolInfo.maxSets = IM_ARRAYSIZE(poolSizes) * 1000;
-        poolInfo.poolSizeCount = (uint32)IM_ARRAYSIZE(poolSizes);
-        poolInfo.pPoolSizes = poolSizes;
-
-        vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descPool);
-    }
-
     void RendererManager::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx)
     {
         auto beginInfo = VkCommandBufferBeginInfo{};
@@ -1081,6 +992,39 @@ namespace Silent::Renderer
         {
             throw std::runtime_error("Failed to set up debug messenger.");
         }
+    }
+
+    VkCommandBuffer RendererManager::BeginSingleTimeCommands()
+    {
+        auto allocInfo               = VkCommandBufferAllocateInfo{};
+        allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandPool        = _commandPool;
+        allocInfo.commandBufferCount = 1;
+
+        VkCommandBuffer commandBuffer = nullptr;
+        vkAllocateCommandBuffers(_device, &allocInfo, &commandBuffer);
+
+        auto beginInfo  = VkCommandBufferBeginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+        return commandBuffer;
+    }
+
+    void RendererManager::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
+    {
+        vkEndCommandBuffer(commandBuffer);
+
+        auto submitInfo               = VkSubmitInfo{};
+        submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers    = &commandBuffer;
+        vkQueueSubmit(_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+
+        vkQueueWaitIdle(_graphicsQueue);
+        vkFreeCommandBuffers(_device, _commandPool, 1, &commandBuffer);
     }
 
     VKAPI_ATTR VkBool32 VKAPI_CALL RendererManager::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,

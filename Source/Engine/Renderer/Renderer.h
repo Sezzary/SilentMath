@@ -82,10 +82,6 @@ namespace Silent::Renderer
 
         // Utilities
 
-        VkCommandBuffer beginSingleTimeCommands();
-        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-        void InitializeImGui();
-
         void Initialize(SDL_Window& window);
         void Deinitialize();
         void Update();
@@ -106,6 +102,7 @@ namespace Silent::Renderer
 
         // Utilities
 
+        void InitializeImGui();
         void DrawFrame();
         void DrawGui();
 
@@ -128,12 +125,12 @@ namespace Silent::Renderer
         void           CreateCommandBuffer();
         void           CreateSyncObjects();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
-        void           CreateDescriptorPool();
-        void           CreateImGuiContext();
 
-        void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
-        void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-        void SetupDebugMessenger();
+        void            RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
+        void            PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+        void            SetupDebugMessenger();
+        VkCommandBuffer BeginSingleTimeCommands();
+        void            EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
         static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                                                             VkDebugUtilsMessageTypeFlagsEXT messageType,
