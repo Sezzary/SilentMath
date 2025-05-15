@@ -77,9 +77,11 @@ namespace Silent::Renderer
         std::vector<VkSemaphore> _renderFinishedSemaphores = {};
         std::vector<VkFence>     _inFlightFences           = {};
 
+        bool _isFramebufferResized = false;
+
         VkDescriptorPool _descPool = nullptr;
 
-        uint32 _currentFrame = 0;
+        uint32 _activeFrame = 0;
 
         std::vector<std::function<void()>> _guiDrawCalls;
 
@@ -93,7 +95,8 @@ namespace Silent::Renderer
         void Initialize(SDL_Window& window);
         void Deinitialize();
         void Update();
-
+        
+        void SignalResizedFramebuffer();
         void SubmitGui(std::function<void()> drawFunc);
 
     private:
@@ -125,6 +128,7 @@ namespace Silent::Renderer
         void           CreateLogicalDevice();
         void           CreateSurface();
         void           CreateSwapChain();
+        void           RecreateSwapChain();
         void           CreateImageViews();
         void           CreateRenderPass();
         void           CreateGraphicsPipeline();
@@ -133,6 +137,8 @@ namespace Silent::Renderer
         void           CreateCommandBuffers();
         void           CreateSyncObjects();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
+
+        void CleanupSwapChain();
 
         void            RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx);
         void            PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);

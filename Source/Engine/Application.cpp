@@ -98,6 +98,13 @@ namespace Silent
                     break;
                 }
 
+                if (_event.type == SDL_EVENT_WINDOW_RESIZED)
+                {
+                    int newWidth  = _event.window.data1;
+                    int newHeight = _event.window.data2;
+                    g_Renderer.SignalResizedFramebuffer();
+                }
+
                 case SDL_EVENT_MOUSE_WHEEL:
                 {
                     mouseWheelAxis = Vector2(_event.wheel.x, _event.wheel.y);

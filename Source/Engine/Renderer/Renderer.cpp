@@ -87,7 +87,11 @@ namespace Silent::Renderer
 
     void RendererManager::Deinitialize()
     {
-        vkDeviceWaitIdle(_device);
+        CleanupSwapChain();
+
+        vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
+        vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
+        vkDestroyRenderPass(_device, _renderPass, nullptr);
 
         for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
@@ -102,10 +106,6 @@ namespace Silent::Renderer
         {
             vkDestroyFramebuffer(_device, framebuffer, nullptr);
         }
-
-        vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
-        vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
-        vkDestroyRenderPass(_device, _renderPass, nullptr);
 
         for (auto imageView : _swapChainImageViews)
         {
@@ -129,7 +129,12 @@ namespace Silent::Renderer
         DrawGui();
         DrawFrame();
     }
-    
+
+    void RendererManager::SignalResizedFramebuffer()
+    {
+        _isFramebufferResized = true;
+    }
+
     void RendererManager::SubmitGui(std::function<void()> drawFunc)
     {
         if constexpr (IS_DEBUG)
@@ -363,17 +368,28 @@ namespace Silent::Renderer
 
     void RendererManager::DrawFrame()
     {
-        vkWaitForFences(_device, 1, &_inFlightFences[_currentFrame], VK_TRUE, UINT64_MAX);
-        vkResetFences(_device, 1, &_inFlightFences[_currentFrame]);
+        vkWaitForFences(_device, 1, &_inFlightFences[_activeFrame], VK_TRUE, UINT64_MAX);
 
         uint32 imageIdx = 0;
-        vkAcquireNextImageKHR(_device, _swapChain, UINT64_MAX, _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIdx);
+        auto   result   = vkAcquireNextImageKHR(_device, _swapChain, UINT64_MAX, _imageAvailableSemaphores[_activeFrame], VK_NULL_HANDLE, &imageIdx);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR)
+        {
+            _isFramebufferResized = false;
+            RecreateSwapChain();
+            return;
+        }
+        else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+        {
+            throw std::runtime_error("Failed to acquire swap chain image.");
+        }
 
-        vkResetCommandBuffer(_commandBuffers[_currentFrame], 0);
-        RecordCommandBuffer(_commandBuffers[_currentFrame], imageIdx);
+        vkResetFences(_device, 1, &_inFlightFences[_activeFrame]);
 
-        VkSemaphore          waitSemaphores[]   = { _imageAvailableSemaphores[_currentFrame] };
-        VkSemaphore          signalSemaphores[] = { _renderFinishedSemaphores[_currentFrame] };
+        vkResetCommandBuffer(_commandBuffers[_activeFrame], 0);
+        RecordCommandBuffer(_commandBuffers[_activeFrame], imageIdx);
+
+        VkSemaphore          waitSemaphores[]   = { _imageAvailableSemaphores[_activeFrame] };
+        VkSemaphore          signalSemaphores[] = { _renderFinishedSemaphores[_activeFrame] };
         VkPipelineStageFlags waitStages[]       = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
         auto submitInfo                 = VkSubmitInfo{};
@@ -382,11 +398,11 @@ namespace Silent::Renderer
         submitInfo.pWaitSemaphores      = waitSemaphores;
         submitInfo.pWaitDstStageMask    = waitStages;
         submitInfo.commandBufferCount   = 1;
-        submitInfo.pCommandBuffers      = &_commandBuffers[_currentFrame];
+        submitInfo.pCommandBuffers      = &_commandBuffers[_activeFrame];
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores    = signalSemaphores;
 
-        if (vkQueueSubmit(_graphicsQueue, 1, &submitInfo, _inFlightFences[_currentFrame]) != VK_SUCCESS)
+        if (vkQueueSubmit(_graphicsQueue, 1, &submitInfo, _inFlightFences[_activeFrame]) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to submit draw command buffer.");
         }
@@ -403,7 +419,7 @@ namespace Silent::Renderer
         presentInfo.pResults           = nullptr; // Optional.
         vkQueuePresentKHR(_presentQueue, &presentInfo);
 
-        _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+        _activeFrame = (_activeFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
 
     void RendererManager::DrawGui()
@@ -423,7 +439,7 @@ namespace Silent::Renderer
         ImGui::ShowDemoWindow();
 
         ImGui::Render();
-        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), _commandBuffers[_currentFrame]);
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), _commandBuffers[_activeFrame]);
     }
 
     void RendererManager::CreateInstance()
@@ -593,6 +609,26 @@ namespace Silent::Renderer
         
         _swapChainImageFormat = surfaceFormat.format;
         _swapChainExtent = extent;
+    }
+
+    void RendererManager::RecreateSwapChain()
+    {
+        int width  = 0;
+        int height = 0;
+        SDL_GetWindowSizeInPixels(_window, &width, &height);
+        while (width == 0 || height == 0)
+        {
+            SDL_GetWindowSizeInPixels(_window, &width, &height);
+            SDL_WaitEvent(nullptr);
+        }
+
+        vkDeviceWaitIdle(_device);
+
+        CleanupSwapChain();
+
+        CreateSwapChain();
+        CreateImageViews();
+        CreateFramebuffers();
     }
 
     void RendererManager::CreateImageViews()
@@ -914,6 +950,21 @@ namespace Silent::Renderer
         }
 
         return shaderModule;
+    }
+
+    void RendererManager::CleanupSwapChain()
+    {
+        for (auto framebuffer : _swapChainFramebuffers)
+        {
+            vkDestroyFramebuffer(_device, framebuffer, nullptr);
+        }
+
+        for (auto imageView : _swapChainImageViews)
+        {
+            vkDestroyImageView(_device, imageView, nullptr);
+        }
+
+        vkDestroySwapchainKHR(_device, _swapChain, nullptr);
     }
 
     void RendererManager::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32 imageIdx)
