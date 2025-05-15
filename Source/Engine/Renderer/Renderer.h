@@ -31,6 +31,7 @@ namespace Silent::Renderer
         static constexpr bool ENABLE_VALIDATION_LAYERS = false;
 #endif
 
+        static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
         static constexpr int WIDTH  = 800;
         static constexpr int HEIGHT = 600;
 
@@ -69,14 +70,16 @@ namespace Silent::Renderer
         VkPipelineLayout         _pipelineLayout   = nullptr;
         VkPipeline               _graphicsPipeline = nullptr;
 
-        VkCommandPool            _commandPool   = nullptr;
-        VkCommandBuffer          _commandBuffer = nullptr;
+        VkCommandPool                _commandPool    = nullptr;
+        std::vector<VkCommandBuffer> _commandBuffers = {};
 
-        VkSemaphore _imageAvailableSemaphore = nullptr;
-        VkSemaphore _renderFinishedSemaphore = nullptr;
-        VkFence     _inFlightFence           = nullptr;
+        std::vector<VkSemaphore> _imageAvailableSemaphores = {};
+        std::vector<VkSemaphore> _renderFinishedSemaphores = {};
+        std::vector<VkFence>     _inFlightFences           = {};
 
         VkDescriptorPool _descPool = nullptr;
+
+        uint32 _currentFrame = 0;
 
         std::vector<std::function<void()>> _guiDrawCalls;
 
@@ -127,7 +130,7 @@ namespace Silent::Renderer
         void           CreateGraphicsPipeline();
         void           CreateFramebuffers();
         void           CreateCommandPool();
-        void           CreateCommandBuffer();
+        void           CreateCommandBuffers();
         void           CreateSyncObjects();
         VkShaderModule CreateShaderModule(const std::vector<char>& code);
 
