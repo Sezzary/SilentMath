@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Input/Action.h"
-#include "Engine/Input/Bindings.h"
+#include "Engine/Input/Binding.h"
 #include "Engine/Input/Text.h"
 
 namespace Silent::Services { struct Options; }

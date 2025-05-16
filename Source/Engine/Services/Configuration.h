@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Input/Bindings.h"
+#include "Engine/Input/Binding.h"
 
 using namespace Silent::Input;
 

@@ -3,8 +3,8 @@
 
 #include "Engine/Application.h"
 #include "Engine/Input/Action.h"
-#include "Engine/Input/Bindings.h"
-#include "Engine/Input/Events.h"
+#include "Engine/Input/Binding.h"
+#include "Engine/Input/Event.h"
 #include "Engine/Input/Text.h"
 #include "Engine/Services/Configuration.h"
 #include "Engine/Services/Time.h"

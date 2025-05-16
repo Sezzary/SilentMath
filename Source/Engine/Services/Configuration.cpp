@@ -2,7 +2,7 @@
 #include "Engine/Services/Configuration.h"
 
 #include "Engine/Input/Action.h"
-#include "Engine/Input/Bindings.h"
+#include "Engine/Input/Binding.h"
 
 using namespace Silent::Input;
 

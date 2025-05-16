@@ -1,8 +1,8 @@
 #include "Framework.h"
-#include "Engine/Input/Bindings.h"
+#include "Engine/Input/Binding.h"
 
 #include "Engine/Input/Action.h"
-#include "Engine/Input/Events.h"
+#include "Engine/Input/Event.h"
 #include "Engine/Services/Time.h"
 
 using namespace Silent::Services;
