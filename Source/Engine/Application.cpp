@@ -19,6 +19,11 @@ namespace Silent
         return _config;
     }
 
+    InputManager& ApplicationManager::GetInput()
+    {
+        return _input;
+    }
+
     void ApplicationManager::Initialize()
     {
         Log("Starting Silent Engine.");
@@ -38,7 +43,7 @@ namespace Silent
 
         // Initialize input.
         Log("Initializing input...");
-        g_Input.Initialize(_config.GetSettings());
+        _input.Initialize(_config.GetSettings());
 
         // Initialize renderer.
         Log("Initializing renderer...");
@@ -52,7 +57,7 @@ namespace Silent
     {
         // Deinitialize input.
         Log("Deinitializing input...");
-        g_Input.Deinitialize();
+        _input.Deinitialize();
 
         // Deinitialize renderer.
         Log("Deinitializing renderer...");
@@ -86,13 +91,13 @@ namespace Silent
         PollEvents();
 
         // Update input state.
-        g_Input.Update(*_window, _config.GetSettings(), _mouseWheelAxis);
+        _input.Update(*_window, _config.GetSettings(), _mouseWheelAxis);
 
         // TODO: Update game state here.
 
         // DEBUG
 
-        if (g_Input.GetAction(In::A).IsReleased())
+        if (_input.GetAction(In::A).IsHeld())
         {
             Log("y");
         }

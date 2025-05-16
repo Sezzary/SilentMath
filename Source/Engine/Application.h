@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Configuration.h"
 
+using namespace Silent::Input;
 using namespace Silent::Renderer;
 using namespace Silent::Services;
 
@@ -22,6 +24,7 @@ namespace Silent
         SDL_Event   _event     = {};
 
         ConfigurationManager _config = ConfigurationManager();
+        InputManager         _input  = InputManager();
 
         Vector2 _mouseWheelAxis = Vector2::Zero;
 
@@ -31,6 +34,7 @@ namespace Silent
         ApplicationManager() = default;
 
         ConfigurationManager& GetConfig();
+        InputManager&         GetInput();
 
         // Utilities
 

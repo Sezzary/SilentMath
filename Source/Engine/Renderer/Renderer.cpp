@@ -29,12 +29,12 @@ namespace Silent::Renderer
             { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       DEFAULT_SIZE }
         };
 
-        auto poolInfo              = VkDescriptorPoolCreateInfo{};
-        poolInfo.sType             = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        poolInfo.flags             = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        poolInfo.maxSets           = DEFAULT_SIZE;
-        poolInfo.poolSizeCount     = std::size(poolSizes);
-        poolInfo.pPoolSizes        = poolSizes;
+        auto poolInfo          = VkDescriptorPoolCreateInfo{};
+        poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        poolInfo.maxSets       = DEFAULT_SIZE;
+        poolInfo.poolSizeCount = std::size(poolSizes);
+        poolInfo.pPoolSizes    = poolSizes;
         vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descPool);
 
         ImGui::CreateContext();

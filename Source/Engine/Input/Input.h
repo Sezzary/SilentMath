@@ -104,6 +104,4 @@ namespace Silent::Input
 
         void HandleGamepadDisconnect();
     };
-
-    extern InputManager g_Input;
 }
