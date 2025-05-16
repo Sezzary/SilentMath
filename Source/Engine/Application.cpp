@@ -40,8 +40,8 @@ namespace Silent
         const auto& options = g_Config.GetOptions();
 
         // Create window.
-        int flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | (options.IsFullscreen ? SDL_WINDOW_FULLSCREEN : 0);
-        _window   = SDL_CreateWindow(WINDOW_NAME, options.ScreenResolution.x, options.ScreenResolution.y, flags);
+        int flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | (options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+        _window   = SDL_CreateWindow(WINDOW_NAME, options.WindowSize.x, options.WindowSize.y, flags);
         Assert(_window != nullptr, "Failed to create window.");
 
         // Initialize input.
@@ -169,7 +169,7 @@ namespace Silent
                     int width  = 0;
                     int height = 0;
                     SDL_GetWindowSizeInPixels(_window, &width, &height);
-                    g_Config.GetOptions().ScreenResolution = Vector2i(width, height);
+                    g_Config.GetOptions().WindowSize = Vector2i(width, height);
                     g_Config.SaveOptions();
 
                     // Update framebuffer.

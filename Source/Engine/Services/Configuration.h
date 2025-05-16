@@ -13,34 +13,28 @@ namespace Silent::Services
         Linux
     };
 
+    enum class RenderScaleType
+    {
+        Native,
+        Half,
+        Quarter,
+        Classic
+    };
+
+    enum class AspectRatioType
+    {
+        Native,
+        Classic
+    };
+
     struct Options
     {
-        static constexpr bool DEFAULT_IS_FULLSCREEN     = false;
-        static constexpr auto DEFAULT_SCREEN_RESOLUTION = Vector2i(800, 600);
-
-        static constexpr int  DEFAULT_BRIGHTNESS_LEVEL    = 3;
-        static constexpr bool DEFAULT_ENABLE_VIBRATION    = true;
-        static constexpr bool DEFAULT_ENABLE_AUTO_LOAD    = false;
-        static constexpr int  DEFAULT_SOUND_TYPE          = 0;
-        static constexpr int  DEFAULT_BGM_VOLUME          = 16;
-        static constexpr int  DEFAULT_SE_VOLUME           = 16;
-        static constexpr int  DEFAULT_WEAPON_CONTROL      = 1;
-        static constexpr int  DEFAULT_BLOOD_COLOR         = 0;
-        static constexpr int  DEFAULT_VIEW_CONTROL        = 0;
-        static constexpr int  DEFAULT_RETREAT_TURN        = 0;
-        static constexpr int  DEFAULT_WALK_RUN_CONTROL    = 0;
-        static constexpr bool DEFAULT_DISABLE_AUTO_AIMING = false;
-        static constexpr int  DEFAULT_VIEW_MODE           = 0;
-        static constexpr int  DEFAULT_BULLET_ADJUST       = 0;
-
-        static constexpr auto DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID = BindingProfileId::DefaultKeyboardMouse0;
-        static constexpr auto DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID        = BindingProfileId::DefaultGamepad0;
-        static constexpr int  DEFAULT_MOUSE_SENSITIVITY                        = 6;
-
         // Graphics
 
-        bool     IsFullscreen     = false;
-        Vector2i ScreenResolution = Vector2i::Zero;
+        Vector2i        WindowSize       = Vector2i::Zero;
+        bool            EnableFullscreen = false;
+        RenderScaleType RenderScaleType  = RenderScaleType::Native;
+        AspectRatioType AspectRatioType  = AspectRatioType::Native;
 
         // Gameplay
 
