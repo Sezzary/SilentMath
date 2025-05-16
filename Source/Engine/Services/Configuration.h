@@ -24,6 +24,7 @@ namespace Silent::Services
     enum class AspectRatioType
     {
         Native,
+        Widescreen,
         Classic
     };
 
@@ -75,9 +76,10 @@ namespace Silent::Services
         static constexpr auto OS_TYPE = OsType::Linux;
 #endif
 
+        static constexpr int JSON_INDENT_SIZE = 4;
+
     private:
-        static constexpr char APP_FOLDER_NAME[] = "Silent Engine";
-        static constexpr char OPTIONS_PATH[]    = "Options.json";
+        static constexpr char OPTIONS_PATH[] = "Options.json";
 
         // Fields
 

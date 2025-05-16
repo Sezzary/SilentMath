@@ -19,6 +19,11 @@ namespace Silent
         return g_Config;
     }
 
+    SavegameManager& ApplicationManager::GetSavegame()
+    {
+        return _savegame;
+    }
+
     InputManager& ApplicationManager::GetInput()
     {
         return _input;
@@ -166,10 +171,9 @@ namespace Silent
                     auto& options = g_Config.GetOptions();
 
                     // Update options.
-                    int width  = 0;
-                    int height = 0;
-                    SDL_GetWindowSizeInPixels(_window, &width, &height);
-                    g_Config.GetOptions().WindowSize = Vector2i(width, height);
+                    auto res = Vector2i::Zero;
+                    SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+                    g_Config.GetOptions().WindowSize = res;
                     g_Config.SaveOptions();
 
                     // Update framebuffer.

@@ -3,6 +3,7 @@
 #include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Configuration.h"
+#include "Engine/Services/Savegame.h"
 
 using namespace Silent::Input;
 using namespace Silent::Renderer;
@@ -24,7 +25,8 @@ namespace Silent
         SDL_Event   _event     = {};
 
         //ConfigurationManager _config = ConfigurationManager(); // TODO
-        InputManager         _input  = InputManager();
+        SavegameManager      _savegame = SavegameManager();
+        InputManager         _input    = InputManager();
 
         Vector2 _mouseWheelAxis = Vector2::Zero;
 
@@ -34,6 +36,7 @@ namespace Silent
         ApplicationManager() = default;
 
         ConfigurationManager& GetConfig();
+        SavegameManager&      GetSavegame();
         InputManager&         GetInput();
 
         // Utilities

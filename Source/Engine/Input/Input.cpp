@@ -165,12 +165,6 @@ namespace Silent::Input
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
 
-        auto res = Vector2i::Zero;
-        if (!SDL_GetWindowSize(&window, &res.x, &res.y))
-        {
-            Log("Failed to get window size: " + std::string(SDL_GetError()), LogLevel::Error);
-        }
-
         // Set mouse button event states.
         for (int butCode : VALID_MOUSE_BUTTON_CODES)
         {
@@ -199,6 +193,12 @@ namespace Silent::Input
         // Set mouse position state.
         _events.PrevCursorPosition = _events.CursorPosition;
         _events.CursorPosition     = pos;
+
+        auto res = Vector2i::Zero;
+        if (!SDL_GetWindowSize(&window, &res.x, &res.y))
+        {
+            Log("Failed to get window size: " + std::string(SDL_GetError()), LogLevel::Error);
+        }
 
         float sensitivity = (options.MouseSensitivity * 0.1f) + 0.4f;
         auto  moveAxis    = ((_events.PrevCursorPosition / res.ToVector2()) / (_events.CursorPosition / res.ToVector2())) * sensitivity;

@@ -72,6 +72,8 @@ namespace Silent::Services
 
     void ConfigurationManager::Initialize()
     {
+        constexpr char APP_FOLDER_NAME[] = "Silent Engine";
+
         char*  val    = nullptr;
         size_t length = 0;
 
@@ -126,8 +128,6 @@ namespace Silent::Services
 
     void ConfigurationManager::SaveOptions()
     {
-        constexpr int INDENT_SIZE = 4;
-
         // Collect user keyboard/mouse action-event bindings.
         auto kbMouseBindsJson = json();
         for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
@@ -198,7 +198,7 @@ namespace Silent::Services
             }
         };
 
-        // Ensure application directory exists.
+        // Ensure directory exists.
         auto path = GetAppDir() / OPTIONS_PATH;
         std::filesystem::create_directories(path.parent_path());
 
@@ -206,7 +206,7 @@ namespace Silent::Services
         auto outputFile = std::ofstream(path);
         if (outputFile.is_open())
         {
-            outputFile << optionsJson.dump(INDENT_SIZE);
+            outputFile << optionsJson.dump(JSON_INDENT_SIZE);
             outputFile.close();
         }
     }
@@ -280,7 +280,7 @@ namespace Silent::Services
                     events.reserve(eventsJson.size());
                     for (const auto& eventJson : eventsJson)
                     {
-                        events.push_back((EventId)(eventJson.get<int>()));
+                        events.push_back((EventId)eventJson.get<int>());
                     }
 
                     _options.KeyboardMouseBindings[actionId] = !events.empty() ? std::move(events) :
@@ -300,7 +300,7 @@ namespace Silent::Services
                     events.reserve(eventsJson.size());
                     for (const auto& eventJson : eventsJson)
                     {
-                        events.push_back((EventId)(eventJson.get<int>()));
+                        events.push_back((EventId)eventJson.get<int>());
                     }
 
                     _options.GamepadBindings[actionId] = !events.empty() ? std::move(events) :
