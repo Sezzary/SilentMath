@@ -59,7 +59,7 @@ namespace Silent::Input
         return _events.IsUsingGamepad;
     }
 
-    void InputManager::Initialize(const Settings& settings)
+    void InputManager::Initialize(const Options& options)
     {
         if (!SDL_Init(SDL_INIT_GAMEPAD))
         {
@@ -82,7 +82,7 @@ namespace Silent::Input
         }
 
         // Initialize bindings.
-        _bindings.Initialize(settings.KeyboardMouseBindings, settings.GamepadBindings);
+        _bindings.Initialize(options.KeyboardMouseBindings, options.GamepadBindings);
     }
 
     void InputManager::Deinitialize()
@@ -90,7 +90,7 @@ namespace Silent::Input
         SDL_CloseGamepad(_gamepad);
     }
 
-    void InputManager::Update(SDL_Window& window, const Settings& settings, const Vector2& mouseWheelAxis)
+    void InputManager::Update(SDL_Window& window, const Options& options, const Vector2& mouseWheelAxis)
     {
         if (!SDL_GamepadConnected(_gamepad))
         {
@@ -100,7 +100,7 @@ namespace Silent::Input
         // Capture event states.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
-        ReadMouse(eventStateIdx, window, settings, mouseWheelAxis);
+        ReadMouse(eventStateIdx, window, options, mouseWheelAxis);
         ReadGamepad(eventStateIdx);
 
         // Update components.
@@ -160,7 +160,7 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Settings& settings, const Vector2& wheelAxis)
+    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Options& options, const Vector2& wheelAxis)
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
@@ -200,7 +200,7 @@ namespace Silent::Input
         _events.PrevCursorPosition = _events.CursorPosition;
         _events.CursorPosition     = pos;
 
-        float sensitivity = (settings.MouseSensitivity * 0.1f) + 0.4f;
+        float sensitivity = (options.MouseSensitivity * 0.1f) + 0.4f;
         auto  moveAxis    = ((_events.PrevCursorPosition / res.ToVector2()) / (_events.CursorPosition / res.ToVector2())) * sensitivity;
         if (moveAxis != Vector2::Zero)
         {
@@ -368,7 +368,7 @@ namespace Silent::Input
 
     void InputManager::UpdateActions()
     {
-        const auto& settings = g_Config.GetSettings();
+        const auto& options = g_Config.GetOptions();
 
         // 1) Update user action states.
         for (auto& [keyActionId, action] : _actions)
@@ -378,7 +378,7 @@ namespace Silent::Input
             // 1.1) Get max gamepad event state.
             if (_gamepad != nullptr)
             {
-                auto eventIds = _bindings.GetBoundEventIds(settings.ActiveKeyboardMouseProfileId, keyActionId);
+                auto eventIds = _bindings.GetBoundEventIds(options.ActiveKeyboardMouseProfileId, keyActionId);
                 for (const auto& eventId : eventIds)
                 {
                     state = std::max(state, _events.States[(int)eventId]);
@@ -388,7 +388,7 @@ namespace Silent::Input
             // 1.2) If no valid gamepad event state, get max keyboard/mouse event state.
             if (state == 0.0f)
             {
-                auto eventIds = _bindings.GetBoundEventIds(settings.ActiveGamepadProfileId, keyActionId);
+                auto eventIds = _bindings.GetBoundEventIds(options.ActiveGamepadProfileId, keyActionId);
                 for (const auto& eventId : eventIds)
                 {
                     state = std::max(state, _events.States[(int)eventId]);

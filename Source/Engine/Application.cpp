@@ -37,15 +37,16 @@ namespace Silent
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
-        const auto& settings = g_Config.GetSettings();
+        const auto& options = g_Config.GetOptions();
 
         // Create window.
-        _window = SDL_CreateWindow(WINDOW_NAME, settings.ScreenResolution.x, settings.ScreenResolution.y, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+        int flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | (options.IsFullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+        _window   = SDL_CreateWindow(WINDOW_NAME, options.ScreenResolution.x, options.ScreenResolution.y, flags);
         Assert(_window != nullptr, "Failed to create window.");
 
         // Initialize input.
         Log("Initializing input...");
-        _input.Initialize(g_Config.GetSettings());
+        _input.Initialize(g_Config.GetOptions());
 
         // Initialize renderer.
         Log("Initializing renderer...");
@@ -93,7 +94,7 @@ namespace Silent
         PollEvents();
 
         // Update input state.
-        _input.Update(*_window, g_Config.GetSettings(), _mouseWheelAxis);
+        _input.Update(*_window, g_Config.GetOptions(), _mouseWheelAxis);
 
         // TODO: Update game state here.
 
@@ -157,7 +158,21 @@ namespace Silent
                 }
 
                 case SDL_EVENT_WINDOW_RESIZED:
+                case SDL_EVENT_WINDOW_MINIMIZED:
+                case SDL_EVENT_WINDOW_MAXIMIZED:
+                case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
+                case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                 {
+                    auto& options = g_Config.GetOptions();
+
+                    // Update options.
+                    int width  = 0;
+                    int height = 0;
+                    SDL_GetWindowSizeInPixels(_window, &width, &height);
+                    g_Config.GetOptions().ScreenResolution = Vector2i(width, height);
+                    g_Config.SaveOptions();
+
+                    // Update framebuffer.
                     g_Renderer.SignalResizedFramebuffer();
                     break;
                 }

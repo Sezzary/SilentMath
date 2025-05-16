@@ -4,7 +4,7 @@
 #include "Engine/Input/Bindings.h"
 #include "Engine/Input/Text.h"
 
-namespace Silent::Services { struct Settings; }
+namespace Silent::Services { struct Options; }
 
 using namespace Silent::Services;
 
@@ -84,9 +84,9 @@ namespace Silent::Input
 
         // Utilities
 
-        void Initialize(const Settings& settings);
+        void Initialize(const Options& options);
         void Deinitialize();
-        void Update(SDL_Window& window, const Settings& settings, const Vector2& mouseWheelAxis);
+        void Update(SDL_Window& window, const Options& options, const Vector2& mouseWheelAxis);
 
         void InsertText(const std::string& textId, uint lineWidthMax = 50, uint charCountMax = UINT_MAX);
         void UpdateText(const std::string& textId);
@@ -96,7 +96,7 @@ namespace Silent::Input
         // Helpers
 
         void ReadKeyboard(int& eventStateIdx);
-        void ReadMouse(int& eventStateIdx, SDL_Window& window, const Settings& settings, const Vector2& wheelAxis);
+        void ReadMouse(int& eventStateIdx, SDL_Window& window, const Options& options, const Vector2& wheelAxis);
         void ReadGamepad(int& eventStateIdx);
 
         void UpdateRumble();

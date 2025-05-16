@@ -80,6 +80,9 @@ namespace Silent::Utils::Debug
 
     void CreateGui(std::function<void()> drawFunc)
     {
-        g_Renderer.SubmitGui(drawFunc);
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer.SubmitGui(drawFunc);
+        }
     }
 }
