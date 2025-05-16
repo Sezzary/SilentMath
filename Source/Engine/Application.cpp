@@ -16,7 +16,7 @@ namespace Silent
 {
     ConfigurationManager& ApplicationManager::GetConfig()
     {
-        return _config;
+        return g_Config;
     }
 
     InputManager& ApplicationManager::GetInput()
@@ -30,14 +30,14 @@ namespace Silent
 
         // Initialize configuration.
         Log("Initializing configuration...");
-        _config.Initialize();
+        g_Config.Initialize();
 
         // Initialize SDL.
         Log("Initializing SDL...");
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
-        const auto& settings = _config.GetSettings();
+        const auto& settings = g_Config.GetSettings();
 
         // Create window.
         _window = SDL_CreateWindow(WINDOW_NAME, settings.ScreenResolution.x, settings.ScreenResolution.y, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
@@ -45,7 +45,7 @@ namespace Silent
 
         // Initialize input.
         Log("Initializing input...");
-        _input.Initialize(_config.GetSettings());
+        _input.Initialize(g_Config.GetSettings());
 
         // Initialize renderer.
         Log("Initializing renderer...");
@@ -93,7 +93,7 @@ namespace Silent
         PollEvents();
 
         // Update input state.
-        _input.Update(*_window, _config.GetSettings(), _mouseWheelAxis);
+        _input.Update(*_window, g_Config.GetSettings(), _mouseWheelAxis);
 
         // TODO: Update game state here.
 

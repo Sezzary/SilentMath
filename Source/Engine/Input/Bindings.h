@@ -7,13 +7,13 @@ namespace Silent::Input
 {
     using BindingProfile = std::unordered_map<ActionId, std::vector<EventId>>; // Key = action ID, value = event IDs.
 
-    extern const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
-    extern const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_1;
-    extern const BindingProfile DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_2;
+    extern const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+    extern const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_1;
+    extern const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_2;
 
-    extern const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_0;
-    extern const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_1;
-    extern const BindingProfile DEFAULT_GAMEPAD_BINDING_PROFILE_2;
+    extern const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0;
+    extern const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_1;
+    extern const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_2;
 
     extern const BindingProfile RAW_KEYBOARD_BINDING_PROFILE;
     extern const BindingProfile RAW_MOUSE_BINDING_PROFILE;
@@ -44,8 +44,8 @@ namespace Silent::Input
         Count
     };
 
-    extern const std::vector<BindingProfileId> KEYBOARD_MOUSE_BINDING_PROFILE_IDS;
-    extern const std::vector<BindingProfileId> GAMEPAD_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> USER_KEYBOARD_MOUSE_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> USER_GAMEPAD_BINDING_PROFILE_IDS;
     extern const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS;
 
     class BindingManager

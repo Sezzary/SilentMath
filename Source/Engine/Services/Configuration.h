@@ -13,19 +13,25 @@ namespace Silent::Services
         Linux
     };
 
-    struct SettingsData
+    struct Settings
     {
+        static constexpr bool DEFAULT_IS_FULLSCREEN     = false;
+        static constexpr auto DEFAULT_SCREEN_RESOLUTION = Vector2i(800, 600);
+        static constexpr int  DEFAULT_MOUSE_SENSITIVITY = 6;
+        // etc.
+
         // Graphics
 
+        bool     IsFullscreen     = false;
         Vector2i ScreenResolution = Vector2i(800, 600);
 
         // Input
 
-        int              MouseSensitivity             = 6;
+        int              MouseSensitivity             = 0;
         BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::DefaultKeyboardMouse0;
         BindingProfileId ActiveGamepadProfileId       = BindingProfileId::DefaultGamepad0;
-        BindingProfile   KeyboardMouseBindings        = DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_0;
-        BindingProfile   GamepadBindings              = DEFAULT_GAMEPAD_BINDING_PROFILE_0;
+        BindingProfile   KeyboardMouseBindings        = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+        BindingProfile   GamepadBindings              = DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0;
     };
 
     class ConfigurationManager
@@ -42,13 +48,13 @@ namespace Silent::Services
 #endif
 
     private:
-        static constexpr char APP_NAME[]      = "SilentEngine";
-        static constexpr char SETTINGS_PATH[] = "Settings.json";
+        static constexpr char APP_FOLDER_NAME[] = "Silent Engine";
+        static constexpr char SETTINGS_PATH[]   = "Settings.json";
 
         // Fields
 
         std::filesystem::path _appDir   = {};
-        SettingsData          _settings = {};
+        Settings              _settings = {};
 
     public:
         // Constructors
@@ -57,7 +63,7 @@ namespace Silent::Services
 
         // Getters
 
-        SettingsData& GetSettings();
+        Settings& GetSettings();
 
         // Utilities
 
@@ -68,6 +74,8 @@ namespace Silent::Services
 
     private:
         // Helpers
+
+        void SetDefaultSettings();
 
         OsType                GetOsType() const;
         std::filesystem::path GetAppDir() const;

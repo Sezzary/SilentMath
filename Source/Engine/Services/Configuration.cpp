@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Engine/Services/Configuration.h"
 
+#include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
 
 using namespace Silent::Input;
@@ -9,12 +10,7 @@ namespace Silent::Services
 {
     ConfigurationManager g_Config = ConfigurationManager();
 
-    std::filesystem::path ConfigurationManager::GetAppDir() const
-    {
-        return _appDir;
-    }
-    
-    SettingsData& ConfigurationManager::GetSettings()
+    Settings& ConfigurationManager::GetSettings()
     {
         return _settings;
     }
@@ -34,7 +30,7 @@ namespace Silent::Services
                 {
                     auto path = std::filesystem::path(val);
                     free(val);
-                    _appDir = path / APP_NAME; 
+                    _appDir = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -46,7 +42,7 @@ namespace Silent::Services
                 {
                     auto path = std::filesystem::path(val);
                     free(val);
-                    _appDir = path / APP_NAME; 
+                    _appDir = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -58,13 +54,15 @@ namespace Silent::Services
                 {
                     auto path = std::filesystem::path(val);
                     free(val);
-                    _appDir = path / APP_NAME; 
+                    _appDir = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
 
             default:
+            {
                 break;
+            }
         }
         Assert(!_appDir.empty(), "Failed to initialize `ConfigurationManager`.");
 
@@ -73,22 +71,66 @@ namespace Silent::Services
 
     void ConfigurationManager::SaveSettings()
     {
-        auto path = GetAppDir() / SETTINGS_PATH;
+        constexpr int INDENT_SIZE = 4;
 
-        // Open settings file.
-        auto inputFile = std::ifstream(path);
-        if (!inputFile.is_open())
+        // Collect user keyboard/mouse action-event bindings.
+        auto kbMouseBindsJson = json();
+        for (const auto& [actionId, eventIds] : _settings.KeyboardMouseBindings)
         {
-            // TODO: Create default.
-            CreateSettingsFile();
-            return;
+            auto events = json::array();
+            for (const auto& eventId : eventIds)
+            {
+                events.push_back(eventId);
+            }
+
+            kbMouseBindsJson[std::to_string((int)actionId)] = events;
         }
 
-        // Parse into JSON object.
-        auto jsonFile = json();
-        inputFile >> jsonFile;
+        // Collect user gamepad action-event bindings.
+        auto gamepadBindsJson = json();
+        for (const auto& [actionId, eventIds] : _settings.KeyboardMouseBindings)
+        {
+            auto events = json::array();
+            for (const auto& eventId : eventIds)
+            {
+                events.push_back(eventId);
+            }
 
-        // TODO: Save settings.
+            gamepadBindsJson[std::to_string((int)actionId)] = events;
+        }
+
+        // Create settings JSON.
+        auto settingsJson = json
+        {
+            {
+                "Graphics",
+                {
+                    { "IsFullscreen",      _settings.IsFullscreen },
+                    { "ScreenResolutionX", _settings.ScreenResolution.x },
+                    { "ScreenResolutionY", _settings.ScreenResolution.y },
+                }
+            },
+            {
+                "Input",
+                {
+                    { "MouseSensitivity",      _settings.MouseSensitivity },
+                    { "KeyboardMouseBindings", kbMouseBindsJson },
+                    { "GamepadBindings",       gamepadBindsJson }
+                }
+            }
+        };
+
+        // Ensure application directory exists.
+        auto path = GetAppDir() / SETTINGS_PATH;
+        std::filesystem::create_directories(path.parent_path());
+
+        // Write settings file.
+        auto outputFile = std::ofstream(path);
+        if (outputFile.is_open())
+        {
+            outputFile << settingsJson.dump(INDENT_SIZE);
+            outputFile.close();
+        }
     }
 
     void ConfigurationManager::LoadSettings()
@@ -99,20 +141,103 @@ namespace Silent::Services
         auto inputFile = std::ifstream(path);
         if (!inputFile.is_open())
         {
-            Log("Failed to load settings. Loading defaults.", LogLevel::Info);
-            CreateSettingsFile();
+            Log("No settings file found. Creating new file.", LogLevel::Info);
+
+            SetDefaultSettings();
+            SaveSettings();
             return;
         }
 
         // Parse into JSON object.
-        auto jsonFile = json();
-        inputFile >> jsonFile;
-        
-        // TODO: Load data into `_settings`.
+        auto settingsJson = json();
+        inputFile >> settingsJson;
+
+        // Load graphics settings.
+        const auto& graphicsJson     = settingsJson["Graphics"];
+        _settings.IsFullscreen       = graphicsJson.value("IsFullscreen",      false);
+        _settings.ScreenResolution.x = graphicsJson.value("ScreenResolutionX", 800);
+        _settings.ScreenResolution.y = graphicsJson.value("ScreenResolutionY", 600);
+
+        // Load input settings.
+        const auto& input = settingsJson["Input"];
+        _settings.MouseSensitivity = input.value("MouseSensitivity", 6);
+
+        const auto& kbMouseBindsJson = input["KeyboardMouseBindings"];
+        const auto& gamepadBindsJson = input["GamepadBindings"];
+
+        // Load user action-event bindings.
+        for (auto actionGroupId : USER_ACTION_GROUP_IDS)
+        {
+            const auto& actionIds = ACTION_ID_GROUPS.at(actionGroupId);
+            for (auto actionId : actionIds)
+            {
+                auto actionStr = std::to_string((int)actionId);
+
+                // Keyboard/mouse.
+                if (kbMouseBindsJson.contains(actionStr))
+                {
+                    const auto& eventJson = kbMouseBindsJson[actionStr];
+                    auto        events    = std::vector<EventId>{};
+                    for (const auto& event : eventJson)
+                    {
+                        events.push_back((EventId)(event.get<int>()));
+                    }
+
+                    _settings.KeyboardMouseBindings[actionId] = std::move(events);
+                }
+                else
+                {
+                    try
+                    {
+                        _settings.KeyboardMouseBindings[actionId] = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0.at(actionId);
+                    }
+                    catch (const std::out_of_range& error)
+                    {
+                        Log("Attempted to load keyboard/mouse action-event binding for invalid action " + std::to_string((int)actionId) + ".", LogLevel::Warning);
+                    }
+                }
+
+                // Gamepad.
+                if (gamepadBindsJson.contains(actionStr))
+                {
+                    const auto& eventJson = gamepadBindsJson[actionStr];
+                    auto        events    = std::vector<EventId>{};
+                    for (const auto& event : eventJson)
+                    {
+                        events.push_back((EventId)(event.get<int>()));
+                    }
+
+                    _settings.KeyboardMouseBindings[actionId] = std::move(events);
+                }
+                else
+                {
+                    try
+                    {
+                        _settings.KeyboardMouseBindings[actionId] = DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0.at(actionId);
+                    }
+                    catch (const std::out_of_range& error)
+                    {
+                        Log("Attempted to load gamepad action-event binding for invalid action " + std::to_string((int)actionId) + ".", LogLevel::Warning);
+                    }
+                }
+            }
+        }
     }
 
-    void ConfigurationManager::CreateSettingsFile()
+    void ConfigurationManager::SetDefaultSettings()
     {
+        // Set graphics settings.
+        _settings.IsFullscreen     = Settings::DEFAULT_IS_FULLSCREEN;
+        _settings.ScreenResolution = Settings::DEFAULT_SCREEN_RESOLUTION;
 
+        // Set input settings.
+        _settings.MouseSensitivity      = Settings::DEFAULT_MOUSE_SENSITIVITY;
+        _settings.KeyboardMouseBindings = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+        _settings.GamepadBindings       = DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0;
+    }
+    
+    std::filesystem::path ConfigurationManager::GetAppDir() const
+    {
+        return _appDir;
     }
 }

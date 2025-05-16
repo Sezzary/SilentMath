@@ -2,9 +2,9 @@
 
 namespace Silent::Services
 {
-    struct SavegameData
+    struct Savegame
     {
-
+        // Good luck.
     };
 
     class SavegameManager

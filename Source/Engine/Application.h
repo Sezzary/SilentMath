@@ -23,7 +23,7 @@ namespace Silent
         SDL_Window* _window    = nullptr;
         SDL_Event   _event     = {};
 
-        ConfigurationManager _config = ConfigurationManager();
+        //ConfigurationManager _config = ConfigurationManager(); // TODO
         InputManager         _input  = InputManager();
 
         Vector2 _mouseWheelAxis = Vector2::Zero;

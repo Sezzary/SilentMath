@@ -59,7 +59,7 @@ namespace Silent::Input
         return _events.IsUsingGamepad;
     }
 
-    void InputManager::Initialize(const SettingsData& settings)
+    void InputManager::Initialize(const Settings& settings)
     {
         if (!SDL_Init(SDL_INIT_GAMEPAD))
         {
@@ -90,7 +90,7 @@ namespace Silent::Input
         SDL_CloseGamepad(_gamepad);
     }
 
-    void InputManager::Update(SDL_Window& window, const SettingsData& settings, const Vector2& mouseWheelAxis)
+    void InputManager::Update(SDL_Window& window, const Settings& settings, const Vector2& mouseWheelAxis)
     {
         if (!SDL_GamepadConnected(_gamepad))
         {
@@ -160,7 +160,7 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const SettingsData& settings, const Vector2& wheelAxis)
+    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Settings& settings, const Vector2& wheelAxis)
     {
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);

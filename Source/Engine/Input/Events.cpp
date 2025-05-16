@@ -310,7 +310,7 @@ namespace Silent::Input
         SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
     };
 
-    static const auto KEY_NAME_MAP = std::unordered_map<EventId, std::vector<std::string>>
+    static const auto EVENT_NAMES = std::unordered_map<EventId, std::vector<std::string>>
     {   
         { EventId::A,                      { "A" } },
         { EventId::B,                      { "B" } },
@@ -497,23 +497,23 @@ namespace Silent::Input
     {
         static const auto DEFAULT_NAME = std::string("None");
 
-        auto it = KEY_NAME_MAP.find(eventId);
-        if (it != KEY_NAME_MAP.end())
+        auto it = EVENT_NAMES.find(eventId);
+        if (it == EVENT_NAMES.end())
         {
-            const auto& [keyEventId, names] = *it;
-
-            if (names.size() > 1)
-            {
-                int nameIdx = (int)GetGamepadVendorType();
-                if (nameIdx < names.size())
-                {
-                    return names[nameIdx];
-                }
-            }
-
-            return names.front();
+            return DEFAULT_NAME;
         }
 
-        return DEFAULT_NAME;
+        const auto& [keyEventId, names] = *it;
+
+        // Pick vendor-appropriate name.
+        if (names.size() > 1)
+        {
+            int nameIdx = (int)GetGamepadVendorType();
+            if (nameIdx < names.size())
+            {
+                return names[nameIdx];
+            }
+        }
+        return names.front();
     }
 }
