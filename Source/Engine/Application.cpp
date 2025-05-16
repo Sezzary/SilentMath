@@ -37,8 +37,10 @@ namespace Silent
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
+        const auto& settings = _config.GetSettings();
+
         // Create window.
-        _window = SDL_CreateWindow(WINDOW_NAME, 800, 600, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+        _window = SDL_CreateWindow(WINDOW_NAME, settings.ScreenResolution.x, settings.ScreenResolution.y, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
         Assert(_window != nullptr, "Failed to create window.");
 
         // Initialize input.

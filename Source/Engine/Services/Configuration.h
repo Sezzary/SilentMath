@@ -15,6 +15,10 @@ namespace Silent::Services
 
     struct SettingsData
     {
+        // Graphics
+
+        Vector2i ScreenResolution = Vector2i(800, 600);
+
         // Input
 
         int              MouseSensitivity             = 6;

@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Engine/Input/Input.h"
 
+#include "Engine/Application.h"
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Bindings.h"
 #include "Engine/Input/Events.h"
