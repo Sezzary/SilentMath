@@ -35,8 +35,8 @@ namespace Silent::Services
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
     constexpr char KEY_BULLET_ADJUST[]                            = "BulletAdjust";
     constexpr char KEY_KEYBOARD_MOUSE_BINDINGS[]                  = "KeyboardMouseBindings";
-    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "GamepadBindings";  
     constexpr char KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID[] = "ActiveKeyboardMouseProfileId";
+    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "GamepadBindings";  
     constexpr char KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID[]        = "ActiveGamepadProfileId";
     constexpr char KEY_MOUSE_SENSITIVITY[]                        = "MouseSensitivity";
 
@@ -140,26 +140,26 @@ namespace Silent::Services
         auto kbMouseBindsJson = json();
         for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
         {
-            auto events = json::array();
+            auto eventsJson = json::array();
             for (const auto& eventId : eventIds)
             {
-                events.push_back(eventId);
+                eventsJson.push_back(eventId);
             }
 
-            kbMouseBindsJson[std::to_string((int)actionId)] = events;
+            kbMouseBindsJson[std::to_string((int)actionId)] = eventsJson;
         }
 
         // Collect user gamepad action-event bindings.
         auto gamepadBindsJson = json();
         for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
         {
-            auto events = json::array();
+            auto eventsJson = json::array();
             for (const auto& eventId : eventIds)
             {
-                events.push_back(eventId);
+                eventsJson.push_back(eventId);
             }
 
-            gamepadBindsJson[std::to_string((int)actionId)] = events;
+            gamepadBindsJson[std::to_string((int)actionId)] = eventsJson;
         }
 
         // Create options JSON.
@@ -202,8 +202,8 @@ namespace Silent::Services
                 KEY_INPUT,
                 {
                     { KEY_KEYBOARD_MOUSE_BINDINGS,                  kbMouseBindsJson },
-                    { KEY_GAMEPAD_BINDINGS,                         gamepadBindsJson },
                     { KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID, _options.ActiveKeyboardMouseProfileId },
+                    { KEY_GAMEPAD_BINDINGS,                         gamepadBindsJson },
                     { KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID,        _options.ActiveGamepadProfileId },
                     { KEY_MOUSE_SENSITIVITY,                        _options.MouseSensitivity }
                 }
@@ -332,7 +332,13 @@ namespace Silent::Services
 
     void ConfigurationManager::SetDefaultOptions()
     {
-        // Set graphics options.
+        SetDefaultGraphicsOptions();
+        SetDefaultGameplayOptions();
+        SetDefaultInputOptions();
+    }
+
+    void ConfigurationManager::SetDefaultGraphicsOptions()
+    {
         _options.WindowSize         = DEFAULT_WINDOW_SIZE;
         _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
         _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
@@ -342,8 +348,10 @@ namespace Silent::Services
         _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
         _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
         _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
+    }
 
-        // Set gameplay options.
+    void ConfigurationManager::SetDefaultGameplayOptions()
+    {
         _options.EnableVibration   = DEFAULT_ENABLE_VIBRATION;
         _options.EnableAutoLoad    = DEFAULT_ENABLE_AUTO_LOAD;
         _options.SoundType         = DEFAULT_SOUND_TYPE;
@@ -357,10 +365,14 @@ namespace Silent::Services
         _options.DisableAutoAiming = DEFAULT_DISABLE_AUTO_AIMING;
         _options.ViewMode          = DEFAULT_VIEW_MODE;
         _options.BulletAdjust      = DEFAULT_BULLET_ADJUST;
+    }
 
-        // Set input options.
-        _options.MouseSensitivity      = DEFAULT_MOUSE_SENSITIVITY;
-        _options.KeyboardMouseBindings = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0;
-        _options.GamepadBindings       = DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0;
+    void ConfigurationManager::SetDefaultInputOptions()
+    {
+        _options.KeyboardMouseBindings        = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0;
+        _options.ActiveKeyboardMouseProfileId = DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID;
+        _options.GamepadBindings              = DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0;
+        _options.ActiveGamepadProfileId       = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
+        _options.MouseSensitivity             = DEFAULT_MOUSE_SENSITIVITY;
     }
 }

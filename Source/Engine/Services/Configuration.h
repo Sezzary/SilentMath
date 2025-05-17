@@ -67,8 +67,8 @@ namespace Silent::Services
         // Input
 
         BindingProfile   KeyboardMouseBindings        = {};
-        BindingProfile   GamepadBindings              = {};
         BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::CustomKeyboardMouse;
+        BindingProfile   GamepadBindings              = {};
         BindingProfileId ActiveGamepadProfileId       = BindingProfileId::CustomKeyboardMouse;
         int              MouseSensitivity             = 0;
     };
@@ -116,6 +116,11 @@ namespace Silent::Services
         // Helpers
 
         void SetDefaultOptions();
+        void SetDefaultGraphicsOptions();
+        void SetDefaultGameplayOptions();
+        void SetDefaultInputOptions();
+        void SetDefaultInputKeyboardMouseBindingOptions();
+        void SetDefaultInputGamepadOptions();
     };
 
     extern ConfigurationManager g_Config;
