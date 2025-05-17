@@ -11,7 +11,10 @@
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
+#include <cstdarg>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <deque>
 #include <filesystem>
 #include <fstream>

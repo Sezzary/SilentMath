@@ -7,13 +7,31 @@ using namespace Silent::Renderer;
 
 namespace Silent::Utils::Debug
 {
+    static auto Messages  = std::vector<std::string>{};
     static auto StartTime = std::chrono::high_resolution_clock::time_point{};
+
+    void InitializeDebug()
+    {
+        if constexpr (IS_DEBUG)
+        {
+            // TODO: Save log to text file.
+        }     
+    }
+
+    void UpdateDebug()
+    {
+        if constexpr (IS_DEBUG)
+        {
+            // TODO: Print messages to ImGui window.
+
+            Messages.clear();
+        }
+    }
 
     void Log(const std::string& msg, LogLevel level, bool allowSpam)
     {
-        static auto mutex = std::mutex();
-
         // LOCK: Restrict previous message access.
+        static auto mutex = std::mutex();
         {
             auto lock = std::lock_guard(mutex);
 
@@ -48,6 +66,31 @@ namespace Silent::Utils::Debug
         }
     }
 
+    void Message(const char* msg, ...)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            constexpr int BUFFER_SIZE = 255;
+
+            // Initialize buffer.
+            char buffer[BUFFER_SIZE];
+            std::memset(buffer, 0, BUFFER_SIZE);
+
+            // Format string.
+            va_list args;
+            va_start(args, msg);
+            vsnprintf(buffer, BUFFER_SIZE, msg, args);
+            va_end(args);
+
+            // LOCK: Restrict `Messages` access.
+            static auto mutex = std::mutex();
+            {
+                auto lock = std::lock_guard(mutex);
+                Messages.push_back(buffer);
+            }
+        }
+    }
+
     void Assert(bool cond, const std::string& msg)
     {
         if constexpr (IS_DEBUG)
@@ -74,7 +117,7 @@ namespace Silent::Utils::Debug
         {
             auto endTime  = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
-            Log("Execution (μs): " + std::to_string(duration.count()), LogLevel::Info, true);
+            Message("Execution (μs): %d", duration.count());
         }
     }
 

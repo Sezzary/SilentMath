@@ -420,6 +420,36 @@ namespace Silent::Input
         }
     }
 
+    void InputManager::HandleHotkeys()
+    {
+        // Save screenshot.
+        static bool dbScreenshot = true;
+        if ((_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]) && dbScreenshot)
+        {
+            // TODO
+        }
+        dbScreenshot = !(_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]);
+
+        // Toggle fullscreen.
+        static bool dbFullscreen = true;
+        if ((_events.States[(int)EventId::Ctrl] && _events.States[(int)EventId::Return]) && dbFullscreen)
+        {
+            // TODO
+        }
+        dbFullscreen = !(_events.States[(int)EventId::Ctrl] && _events.States[(int)EventId::Return]);
+
+        if constexpr (IS_DEBUG)
+        {
+            // Toggle debug menu.
+            static bool dbDebug = true;
+            if (_events.States[(int)EventId::Grave] && dbDebug)
+            {
+                // TODO
+            }
+            dbDebug = !_events.States[(int)EventId::Grave];
+        }
+    }
+
     void InputManager::HandleGamepadDisconnect()
     {
         constexpr auto GAMEPAD_RECONNECT_INTERVAL_SEC = 2.0f;

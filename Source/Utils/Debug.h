@@ -15,7 +15,11 @@ namespace Silent::Utils::Debug
         Error
     };
 
+    void InitializeDebug();
+    void UpdateDebug();
+
     void Log(const std::string& msg, LogLevel level = LogLevel::Info, bool allowSpam = false);
+	void Message(const char* msg, ...);
     void Assert(bool cond, const std::string& msg);
     void StartTimer();
     void EndTimer();

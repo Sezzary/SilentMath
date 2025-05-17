@@ -102,6 +102,7 @@ namespace Silent::Input
         void UpdateRumble();
         void UpdateActions();
 
+        void HandleHotkeys();
         void HandleGamepadDisconnect();
     };
 }

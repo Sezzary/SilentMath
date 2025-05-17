@@ -47,6 +47,7 @@ namespace Silent::Input
         Backspace,
         Tab,
         Space,
+        Grave,
         Minus,
         Equals,
         BracketLeft,

@@ -368,7 +368,13 @@ namespace Silent::Renderer
 
     void RendererManager::DrawFrame()
     {
+        // Wait for previous frame to finish.
         vkWaitForFences(_device, 1, &_inFlightFences[_activeFrame], VK_TRUE, UINT64_MAX);
+
+        // TODO: Parallelism requires storing a separate render buffer for game data
+        // so that it doesn't get overwritten by `ApplicationManager::Update` while 
+        // `g_Renderer.Update` runs in the background. Depends how cleanly the OG engine
+        // handles its data, but the buffer update would have to occur right here.
 
         uint32 imageIdx = 0;
         auto   result   = vkAcquireNextImageKHR(_device, _swapChain, UINT64_MAX, _imageAvailableSemaphores[_activeFrame], VK_NULL_HANDLE, &imageIdx);

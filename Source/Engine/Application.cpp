@@ -32,12 +32,15 @@ namespace Silent
     void ApplicationManager::Initialize()
     {
         Log("Starting Silent Engine.");
+        
+        // Debug.
+        InitializeDebug();
 
-        // Initialize configuration.
+        // Configuration.
         Log("Initializing configuration...");
         g_Config.Initialize();
 
-        // Initialize SDL.
+        // SDL.
         Log("Initializing SDL...");
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
@@ -49,11 +52,11 @@ namespace Silent
         _window   = SDL_CreateWindow(WINDOW_NAME, options.WindowSize.x, options.WindowSize.y, flags);
         Assert(_window != nullptr, "Failed to create window.");
 
-        // Initialize input.
+        // Input.
         Log("Initializing input...");
         _input.Initialize(g_Config.GetOptions());
 
-        // Initialize renderer.
+        // Renderer.
         Log("Initializing renderer...");
         g_Renderer.Initialize(*_window);
 
@@ -63,15 +66,15 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
-        // Deinitialize input.
+        // Input.
         Log("Deinitializing input...");
         _input.Deinitialize();
 
-        // Deinitialize renderer.
+        // Renderer.
         Log("Deinitializing renderer...");
         g_Renderer.Deinitialize();
 
-        // Deinitialize SDL.
+        // SDL.
         Log("Deinitializing SDL...");
         SDL_DestroyWindow(_window);
         SDL_Quit();
@@ -103,6 +106,8 @@ namespace Silent
 
         // TODO: Update game state here.
 
+        UpdateDebug();
+
         // DEBUG
 
         if (_input.GetAction(In::A).IsHeld())
@@ -124,25 +129,14 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
+        // TODO: Can remove this for variable framerate?
         if (g_Time.GetTicks() <= 0)
         {
             return;
         }
 
-        // Wait for previous frame to finish rendering.
-        static auto prevFrameFut = std::future<void>();
-        if (prevFrameFut.valid())
-        {
-            prevFrameFut.wait();
-        }
-
-        // TODO: Parallelism requires storing a separate render buffer for game data
-        // so that it doesn't get overwritten by `ApplicationManager::Update` while 
-        // `g_Renderer.Update` runs in the background.
-
         // Render scene.
         g_Renderer.Update();
-        //prevFrameFut = g_Parallel.AddTask([this]() { g_Renderer.Update(); });
     }
 
     void ApplicationManager::PollEvents()
@@ -170,7 +164,7 @@ namespace Silent
                 {
                     auto& options = g_Config.GetOptions();
 
-                    // Update options.
+                    // Update window size in options.
                     auto res = Vector2i::Zero;
                     SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
                     g_Config.GetOptions().WindowSize = res;
