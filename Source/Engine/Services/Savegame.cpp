@@ -5,6 +5,9 @@
 
 namespace Silent::Services
 {
+    constexpr char KEY_RUN_DISTANCE[]  = "RunDistance";
+    constexpr char KEY_WALK_DISTANCE[] = "WalkDistance";
+
     const std::vector<std::string>& SavegameManager::GetSlotSavegameList(int slotIdx)
     {
         Assert(slotIdx > _slotSavegameLists.size(), "Attempted to get savegame list for invalid slot.");
