@@ -19,21 +19,20 @@ namespace Silent::Services
 
     void SavegameManager::Save(int slotIdx, int saveIdx)
     {
-        auto path = GetSavegamePath(slotIdx, saveIdx);
-
         // Create savegame JSON.
-        auto savegameJson = json{};
+        auto saveJson = json{}; // TODO
 
         // TODO: Parse data from `_savegame` into `savegameJson`.
-        
+
         // Ensure directory exists.
+        auto path = GetSavegamePath(slotIdx, saveIdx);
         std::filesystem::create_directories(path.parent_path());
 
         // Write savegame file.
         auto outputFile = std::ofstream(path);
         if (outputFile.is_open())
         {
-            outputFile << savegameJson.dump(ConfigurationManager::JSON_INDENT_SIZE);
+            outputFile << saveJson.dump(ConfigurationManager::JSON_INDENT_SIZE);
             outputFile.close();
         }
     }
