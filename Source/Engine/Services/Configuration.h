@@ -50,27 +50,34 @@ namespace Silent::Services
 
         // Gameplay
 
+        bool EnableAutoLoad  = false;
+        bool EnableSubtitles = false;
+        int  SoundType       = 0;
+        int  BgmVolume       = 0;
+        int  SeVolume        = 0;
+        int  BloodColor      = 0;
+        int  BulletAdjust    = 0;
+
+        // Input keyboard/mouse bindings
+
+        BindingProfile   KeyboardMouseBindings        = {};
+        BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::KeyboardMouseType1;
+
+        // Input gamepad bindings
+
+        BindingProfile   GamepadBindings        = {};
+        BindingProfileId ActiveGamepadProfileId = BindingProfileId::GamepadType1;
+
+        // Input controls
+
         bool EnableVibration   = false;
-        bool EnableAutoLoad    = false;
-        int  SoundType         = 0;
-        int  BgmVolume         = 0;
-        int  SeVolume          = 0;
+        int  MouseSensitivity  = 0;
         int  WeaponControl     = 0;
-        int  BloodColor        = 0;
         int  ViewControl       = 0;
         int  RetreatTurn       = 0;
         int  WalkRunControl    = 0;
         bool DisableAutoAiming = false;
         int  ViewMode          = 0;
-        int  BulletAdjust      = 0;
-
-        // Input
-
-        BindingProfile   KeyboardMouseBindings        = {};
-        BindingProfile   GamepadBindings              = {};
-        BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::KeyboardMouseType1;
-        BindingProfileId ActiveGamepadProfileId       = BindingProfileId::GamepadType1;
-        int              MouseSensitivity             = 0;
     };
 
     class ConfigurationManager
@@ -112,7 +119,7 @@ namespace Silent::Services
         void SetDefaultGameplayOptions();
         void SetDefaultInputKeyboardMouseCustomBindingOptions();
         void SetDefaultInputGamepadCustomBindingOptions();
-        void SetDefaultInputExtraOptions();
+        void SetDefaultInputControlOptions();
 
         // Utilities
 
