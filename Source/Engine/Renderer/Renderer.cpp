@@ -1132,9 +1132,9 @@ namespace Silent::Renderer
         }
     }
 
-    std::vector<char> ReadFile(const std::string& fileName)
+    std::vector<char> ReadFile(const std::string& filename)
     {
-        auto file = std::ifstream(fileName, std::ios::ate | std::ios::binary);
+        auto file = std::ifstream(filename, std::ios::ate | std::ios::binary);
         if (!file.is_open())
         {
             throw std::runtime_error("Failed to open file.");

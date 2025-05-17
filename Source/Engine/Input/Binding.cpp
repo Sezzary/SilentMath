@@ -296,7 +296,7 @@ namespace Silent::Input
         // Get binding profile.
         const auto& [keyProfileId, profile] = *profileIt;
 
-        // Find event-action binding.
+        // Find action-event binding.
         auto eventIt = profile.find(actionId);
         if (eventIt == profile.end())
         {
@@ -321,7 +321,7 @@ namespace Silent::Input
 
     void BindingManager::SetEventBinding(BindingProfileId profileId, ActionId actionId, EventId eventId)
     {
-        // Overwrite or add new event-action binding. For simplicity, can only set bind single event IDs.
+        // Overwrite or add new action-event binding. For simplicity, can only bind single event IDs.
         _bindings[profileId][actionId] = { eventId };
     }
 

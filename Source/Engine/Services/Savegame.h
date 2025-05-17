@@ -7,6 +7,8 @@ namespace Silent::Services
     struct Savegame
     {
         // TODO: Good luck.
+
+        std::string Description = {};
     };
 
     class SavegameManager
@@ -42,5 +44,6 @@ namespace Silent::Services
 
         std::filesystem::path GetSavegamePath(int slotIdx, int saveIdx) const;
         void                  SetDefaultSavegame();
+        void                  PopulateSlotSavegameLists();
     };
 }
