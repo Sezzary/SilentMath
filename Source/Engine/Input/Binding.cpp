@@ -9,7 +9,7 @@ using namespace Silent::Services;
 
 namespace Silent::Input
 {
-    const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0 =
+    const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 =
     {
         { In::Up,        { EventId::W, EventId::Up } },
         { In::Down,      { EventId::S, EventId::Down } },
@@ -33,7 +33,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O } }
     };
 
-    const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_1 =
+    const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 =
     {
         { In::Up,        { EventId::W, EventId::Up } },
         { In::Down,      { EventId::S, EventId::Down } },
@@ -57,7 +57,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O } }
     };
 
-    const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_2 =
+    const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 =
     {
         { In::Up,        { EventId::Up } },
         { In::Down,      { EventId::Down } },
@@ -81,7 +81,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O } }
     };
 
-    const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0 =
+    const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_1 =
     {
         { In::Up,        { EventId::GamepadDpadUp, EventId::GamepadStickLeftUp } },
         { In::Down,      { EventId::GamepadDpadDown, EventId::GamepadStickLeftDown } },
@@ -105,7 +105,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O } }
     };
 
-    const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_1 =
+    const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_2 =
     {
         { In::Up,        { EventId::GamepadDpadUp, EventId::GamepadStickLeftUp } },
         { In::Down,      { EventId::GamepadDpadDown, EventId::GamepadStickLeftDown } },
@@ -129,7 +129,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O } }
     };
 
-    const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_2 =
+    const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_3 =
     {
         { In::Up,        { EventId::GamepadDpadUp, EventId::GamepadStickLeftUp } },
         { In::Down,      { EventId::GamepadDpadDown, EventId::GamepadStickLeftDown } },
@@ -261,18 +261,18 @@ namespace Silent::Input
 
     const std::vector<BindingProfileId> USER_KEYBOARD_MOUSE_BINDING_PROFILE_IDS
     {
-        BindingProfileId::CustomKeyboardMouse,
-        BindingProfileId::DefaultKeyboardMouse0,
-        BindingProfileId::DefaultKeyboardMouse1,
-        BindingProfileId::DefaultKeyboardMouse2
+        BindingProfileId::KeyboardMouseType1,
+        BindingProfileId::KeyboardMouseType2,
+        BindingProfileId::KeyboardMouseType3,
+        BindingProfileId::KeyboardMouseCustom
     };
 
     const std::vector<BindingProfileId> USER_GAMEPAD_BINDING_PROFILE_IDS
     {
-        BindingProfileId::CustomGamepad,
-        BindingProfileId::DefaultGamepad0,
-        BindingProfileId::DefaultGamepad1,
-        BindingProfileId::DefaultGamepad2
+        BindingProfileId::GamepadType1,
+        BindingProfileId::GamepadType2,
+        BindingProfileId::GamepadType3,
+        BindingProfileId::GamepadCustom
     };
 
     const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS
@@ -335,28 +335,27 @@ namespace Silent::Input
         return _conflicts.at(actionId);
     }
     
-    void BindingManager::Initialize(const BindingProfile& customKeyboardMouseBindings, const BindingProfile& customGamepadBindings)
+    void BindingManager::Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds)
     {
-        // Initialize bindings.
+        // Bindings.
         _bindings =
         {
-            { BindingProfileId::CustomKeyboardMouse,   customKeyboardMouseBindings },
-            { BindingProfileId::CustomGamepad,         customGamepadBindings },
+            { BindingProfileId::KeyboardMouseType1,  USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
+            { BindingProfileId::KeyboardMouseType2,  USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 },
+            { BindingProfileId::KeyboardMouseType3,  USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 },
+            { BindingProfileId::KeyboardMouseCustom, customKeyboardMouseBinds },
 
-            { BindingProfileId::DefaultKeyboardMouse0, DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0 },
-            { BindingProfileId::DefaultKeyboardMouse1, DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_1 },
-            { BindingProfileId::DefaultKeyboardMouse2, DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_2 },
+            { BindingProfileId::GamepadType1,        USER_GAMEPAD_BINDING_PROFILE_TYPE_1 },
+            { BindingProfileId::GamepadType2,        USER_GAMEPAD_BINDING_PROFILE_TYPE_2 },
+            { BindingProfileId::GamepadType3,        USER_GAMEPAD_BINDING_PROFILE_TYPE_3 },
+            { BindingProfileId::GamepadCustom,       customGamepadBinds },
 
-            { BindingProfileId::DefaultGamepad0,       DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0 },
-            { BindingProfileId::DefaultGamepad1,       DEFAULT_USER_GAMEPAD_BINDING_PROFILE_1 },
-            { BindingProfileId::DefaultGamepad2,       DEFAULT_USER_GAMEPAD_BINDING_PROFILE_2 },
-
-            { BindingProfileId::RawKeyboard,           RAW_KEYBOARD_BINDING_PROFILE },
-            { BindingProfileId::RawMouse,              RAW_MOUSE_BINDING_PROFILE },
-            { BindingProfileId::RawGamepad,            RAW_GAMEPAD_BINDING_PROFILE }
+            { BindingProfileId::RawKeyboard,         RAW_KEYBOARD_BINDING_PROFILE },
+            { BindingProfileId::RawMouse,            RAW_MOUSE_BINDING_PROFILE },
+            { BindingProfileId::RawGamepad,          RAW_GAMEPAD_BINDING_PROFILE }
         };
 
-        // Initialize conflicts.
+        // Conflicts.
         _conflicts.reserve((int)ActionId::Count);
         for (int i = 0; i < (int)ActionId::Count; i++)
         {

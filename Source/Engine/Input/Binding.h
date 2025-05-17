@@ -7,13 +7,13 @@ namespace Silent::Input
 {
     using BindingProfile = std::unordered_map<ActionId, std::vector<EventId>>; // Key = action ID, value = event IDs.
 
-    extern const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_0;
-    extern const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_1;
-    extern const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE_2;
+    extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;
+    extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2;
+    extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3;
 
-    extern const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_0;
-    extern const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_1;
-    extern const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE_2;
+    extern const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_1;
+    extern const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_2;
+    extern const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_3;
 
     extern const BindingProfile RAW_KEYBOARD_BINDING_PROFILE;
     extern const BindingProfile RAW_MOUSE_BINDING_PROFILE;
@@ -23,17 +23,17 @@ namespace Silent::Input
     {
         // Keyboard/mouse
 
-        CustomKeyboardMouse,
-        DefaultKeyboardMouse0,
-        DefaultKeyboardMouse1,
-        DefaultKeyboardMouse2,
+        KeyboardMouseType1,
+        KeyboardMouseType2,
+        KeyboardMouseType3,
+        KeyboardMouseCustom,
 
         // Gamepad
 
-        CustomGamepad,
-        DefaultGamepad0,
-        DefaultGamepad1,
-        DefaultGamepad2,
+        GamepadType1,
+        GamepadType2,
+        GamepadType3,
+        GamepadCustom,
 
         // Raw
 
@@ -77,6 +77,6 @@ namespace Silent::Input
 
         // Utilities
 
-        void Initialize(const BindingProfile& customKeyboardMouseBindings, const BindingProfile& customGamepadBindings);
+        void Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds);
     };
 }
