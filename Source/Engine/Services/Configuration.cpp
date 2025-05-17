@@ -14,9 +14,13 @@ namespace Silent::Services
     constexpr char KEY_WINDOW_SIZE_X[]                            = "WindowSizeX";
     constexpr char KEY_WINDOW_SIZE_Y[]                            = "WindowSizeY";
     constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
+    constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
+    constexpr char KEY_TEXTURE_FILTER_TYPE[]                      = "TextureFilterType";
+    constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
+    constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
+    constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
     constexpr char KEY_RENDER_SCALE_TYPE[]                        = "RenderScaleType";
     constexpr char KEY_ASPECT_RATIO_TYPE[]                        = "AspectRatioType";
-    constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
     constexpr char KEY_ENABLE_VIBRATION[]                         = "EnableVibration";
     constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
     constexpr char KEY_SOUND_TYPE[]                               = "SoundType";
@@ -38,9 +42,13 @@ namespace Silent::Services
 
     constexpr auto DEFAULT_WINDOW_SIZE                              = Vector2i(800, 600);
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
+    constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
     constexpr auto DEFAULT_RENDER_SCALE_TYPE                        = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO_TYPE                        = AspectRatioType::Native;
-    constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
+    constexpr auto DEFAULT_TEXTURE_FILTER_TYPE                      = TextureFilteringType::Nearest;
+    constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
+    constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
+    constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_VIBRATION                         = true;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr int  DEFAULT_SOUND_TYPE                               = 0;
@@ -160,12 +168,16 @@ namespace Silent::Services
             {
                 KEY_GRAPHICS,
                 {
-                    { KEY_WINDOW_SIZE_X,     _options.WindowSize.x },
-                    { KEY_WINDOW_SIZE_Y,     _options.WindowSize.y },
-                    { KEY_ENABLE_FULLSCREEN, _options.EnableFullscreen },
-                    { KEY_RENDER_SCALE_TYPE, _options.RenderScaleType },
-                    { KEY_ASPECT_RATIO_TYPE, _options.AspectRatioType },
-                    { KEY_BRIGHTNESS_LEVEL,  _options.BrightnessLevel }
+                    { KEY_WINDOW_SIZE_X,        _options.WindowSize.x },
+                    { KEY_WINDOW_SIZE_Y,        _options.WindowSize.y },
+                    { KEY_ENABLE_FULLSCREEN,    _options.EnableFullscreen },
+                    { KEY_BRIGHTNESS_LEVEL,     _options.BrightnessLevel },
+                    { KEY_RENDER_SCALE_TYPE,    _options.RenderScaleType },
+                    { KEY_ASPECT_RATIO_TYPE,    _options.AspectRatioType },
+                    { KEY_TEXTURE_FILTER_TYPE,  _options.TextureFilterType },
+                    { KEY_ENABLE_DITHERING,     _options.EnableDithering },
+                    { KEY_ENABLE_CRT_FILTER,    _options.EnableCrtFilter },
+                    { KEY_ENABLE_VERTEX_JITTER, _options.EnableVertexJitter }
                 }
             },
             {
@@ -231,13 +243,17 @@ namespace Silent::Services
         inputFile >> optionsJson;
 
         // Load graphics options.
-        const auto& graphicsJson  = optionsJson[KEY_GRAPHICS];
-        _options.WindowSize.x     = graphicsJson.value(KEY_WINDOW_SIZE_X,     DEFAULT_WINDOW_SIZE.x);
-        _options.WindowSize.y     = graphicsJson.value(KEY_WINDOW_SIZE_Y,     DEFAULT_WINDOW_SIZE.y);
-        _options.EnableFullscreen = graphicsJson.value(KEY_ENABLE_FULLSCREEN, DEFAULT_ENABLE_FULLSCREEN);
-        _options.RenderScaleType  = graphicsJson.value(KEY_RENDER_SCALE_TYPE, DEFAULT_RENDER_SCALE_TYPE);
-        _options.AspectRatioType  = graphicsJson.value(KEY_ASPECT_RATIO_TYPE, DEFAULT_ASPECT_RATIO_TYPE);
-        _options.BrightnessLevel  = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,  DEFAULT_BRIGHTNESS_LEVEL);
+        const auto& graphicsJson    = optionsJson[KEY_GRAPHICS];
+        _options.WindowSize.x       = graphicsJson.value(KEY_WINDOW_SIZE_X,        DEFAULT_WINDOW_SIZE.x);
+        _options.WindowSize.y       = graphicsJson.value(KEY_WINDOW_SIZE_Y,        DEFAULT_WINDOW_SIZE.y);
+        _options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
+        _options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
+        _options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
+        _options.AspectRatioType    = graphicsJson.value(KEY_ASPECT_RATIO_TYPE,    DEFAULT_ASPECT_RATIO_TYPE);
+        _options.TextureFilterType  = graphicsJson.value(KEY_TEXTURE_FILTER_TYPE,  DEFAULT_TEXTURE_FILTER_TYPE);
+        _options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
+        _options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
+        _options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
 
         // Load gameplay options.
         const auto& gameplayJson   = optionsJson[KEY_GAMEPLAY];
@@ -317,11 +333,15 @@ namespace Silent::Services
     void ConfigurationManager::SetDefaultOptions()
     {
         // Set graphics options.
-        _options.WindowSize       = DEFAULT_WINDOW_SIZE;
-        _options.EnableFullscreen = DEFAULT_ENABLE_FULLSCREEN;
-        _options.RenderScaleType  = DEFAULT_RENDER_SCALE_TYPE;
-        _options.AspectRatioType  = DEFAULT_ASPECT_RATIO_TYPE;
-        _options.BrightnessLevel  = DEFAULT_BRIGHTNESS_LEVEL;
+        _options.WindowSize         = DEFAULT_WINDOW_SIZE;
+        _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
+        _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
+        _options.RenderScaleType    = DEFAULT_RENDER_SCALE_TYPE;
+        _options.AspectRatioType    = DEFAULT_ASPECT_RATIO_TYPE;
+        _options.TextureFilterType  = DEFAULT_TEXTURE_FILTER_TYPE;
+        _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
+        _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
+        _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
 
         // Set gameplay options.
         _options.EnableVibration   = DEFAULT_ENABLE_VIBRATION;

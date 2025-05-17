@@ -18,28 +18,38 @@ namespace Silent::Services
         Native,
         Half,
         Quarter,
-        Classic
+        Retro
     };
 
     enum class AspectRatioType
     {
         Native,
         Widescreen,
-        Classic
+        Retro
+    };
+
+    enum class TextureFilteringType
+    {
+        Nearest,
+        Bilinear
     };
 
     struct Options
     {
         // Graphics
 
-        Vector2i        WindowSize       = Vector2i::Zero;
-        bool            EnableFullscreen = false;
-        RenderScaleType RenderScaleType  = RenderScaleType::Native;
-        AspectRatioType AspectRatioType  = AspectRatioType::Native;
+        Vector2i             WindowSize         = Vector2i::Zero;
+        bool                 EnableFullscreen   = false;
+        int                  BrightnessLevel    = 0;
+        RenderScaleType      RenderScaleType    = RenderScaleType::Native;
+        AspectRatioType      AspectRatioType    = AspectRatioType::Native;
+        TextureFilteringType TextureFilterType  = TextureFilteringType::Nearest;
+        bool                 EnableDithering    = false;
+        bool                 EnableCrtFilter    = false;
+        bool                 EnableVertexJitter = false;
 
         // Gameplay
 
-        int  BrightnessLevel   = 0;
         bool EnableVibration   = false;
         bool EnableAutoLoad    = false;
         int  SoundType         = 0;
