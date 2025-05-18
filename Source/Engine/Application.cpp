@@ -49,9 +49,13 @@ namespace Silent
 
         const auto& options = _config.GetOptions();
 
+        // Compute window flags.
+        int fullscreenFlag = options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
+        int maximizedFlag  = options.EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
+        int flags          = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | fullscreenFlag | maximizedFlag;
+
         // Create window.
-        int flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | (options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0);
-        _window   = SDL_CreateWindow(WINDOW_NAME, options.WindowSize.x, options.WindowSize.y, flags);
+        _window = SDL_CreateWindow(WINDOW_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
         Assert(_window != nullptr, "Failed to create window.");
 
         // Input.
@@ -62,8 +66,9 @@ namespace Silent
         Log("Initializing renderer...");
         g_Renderer.Initialize(*_window);
 
-        _isRunning = true;
+        // Finish.
         Log("Initialization complete.");
+        _isRunning = true;
     }
 
     void ApplicationManager::Deinitialize()
@@ -81,6 +86,7 @@ namespace Silent
         SDL_DestroyWindow(_window);
         SDL_Quit();
 
+        // Finish.
         Log("Deinitialization complete.");
     }
 
@@ -97,6 +103,20 @@ namespace Silent
 
             g_Time.WaitForNextTick();
         }
+    }
+
+    void ApplicationManager::ToggleFullscreen()
+    {
+        auto& options = _config.GetOptions();
+
+        if (SDL_SetWindowFullscreen(_window, !options.EnableFullscreen))
+        {
+            Log("Failed to toggle fullscreen mode.", LogLevel::Warning);
+            return;
+        }
+
+        options.EnableFullscreen = !options.EnableFullscreen;
+        _config.SaveOptions();
     }
 
     void ApplicationManager::ToggleDebugMenu()
@@ -176,20 +196,54 @@ namespace Silent
                 }
 
                 case SDL_EVENT_WINDOW_RESIZED:
-                case SDL_EVENT_WINDOW_MINIMIZED:
+                {
+                    auto windowFlags = SDL_GetWindowFlags(_window);
+                    if (!(windowFlags & SDL_WINDOW_FULLSCREEN) &&
+                        !(windowFlags & SDL_WINDOW_MAXIMIZED))
+                    {
+                        auto& options = _config.GetOptions();
+
+                        // Update options.
+                        auto res = Vector2i::Zero;
+                        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+                        options.WindowedSize = res;
+                        _config.SaveOptions();
+
+                        // Update window state.
+                        g_Renderer.SignalResizedFramebuffer();
+                    }
+                    break;
+                }
+
                 case SDL_EVENT_WINDOW_MAXIMIZED:
+                case SDL_EVENT_WINDOW_RESTORED:
+                {
+                    auto& options = _config.GetOptions();
+
+                    Log("A", LogLevel::Info, true);
+
+                    // Update options.
+                    auto windowFlags        = SDL_GetWindowFlags(_window);
+                    options.EnableMaximized = windowFlags & SDL_WINDOW_MAXIMIZED;
+                    _config.SaveOptions();
+
+                    // Update window state.
+                    g_Renderer.SignalResizedFramebuffer();
+                    break;
+                }
+
                 case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                 case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                 {
                     auto& options = _config.GetOptions();
 
-                    // Update window size in options.
-                    auto res = Vector2i::Zero;
-                    SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
-                    _config.GetOptions().WindowSize = res;
+                    // Update options.
+                    bool isFullscreen        = _event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
+                    options.EnableFullscreen = isFullscreen;
                     _config.SaveOptions();
 
-                    // Update framebuffer.
+                    // Update window state.
+                    SDL_SetWindowFullscreen(_window, isFullscreen);
                     g_Renderer.SignalResizedFramebuffer();
                     break;
                 }

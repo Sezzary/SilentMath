@@ -143,6 +143,11 @@ namespace Silent::Renderer
         }
     }
 
+    void RendererManager::SaveScreenshot() const
+    {
+        // TODO
+    }
+
     VkInstance RendererManager::GetInstance()
     {
         return _instance;

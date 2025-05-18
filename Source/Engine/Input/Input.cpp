@@ -435,10 +435,7 @@ namespace Silent::Input
         static bool dbFullscreen = true;
         if (((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]) && dbFullscreen)
         {
-            /*auto& config = g_App.GetConfig();
-
-            config.GetOptions().EnableFullscreen = !config.GetOptions().EnableFullscreen;
-            config.SaveOptions();*/
+            g_App.ToggleFullscreen();
         }
         dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 
@@ -448,7 +445,7 @@ namespace Silent::Input
             static bool dbDebug = true;
             if (_events.States[(int)EventId::Grave] && dbDebug)
             {
-                //g_App.ToggleDebugMenu();
+                g_App.ToggleDebugMenu();
             }
             dbDebug = !_events.States[(int)EventId::Grave];
         }

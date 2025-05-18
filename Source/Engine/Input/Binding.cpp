@@ -321,7 +321,8 @@ namespace Silent::Input
 
     void BindingManager::SetEventBinding(BindingProfileId profileId, ActionId actionId, EventId eventId)
     {
-        // Overwrite or add new action-event binding. For simplicity, can only bind single event IDs.
+        // Overwrite or add new action-event binding.
+        // Unlike presets, custom bindings allow only a single event ID.
         _bindings[profileId][actionId] = { eventId };
     }
 
@@ -334,10 +335,9 @@ namespace Silent::Input
     {
         return _conflicts.at(actionId);
     }
-    
+
     void BindingManager::Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds)
     {
-        // Bindings.
         _bindings =
         {
             { BindingProfileId::KeyboardMouseType1,  USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
@@ -355,7 +355,8 @@ namespace Silent::Input
             { BindingProfileId::RawGamepad,          RAW_GAMEPAD_BINDING_PROFILE }
         };
 
-        // Conflicts.
+        // TODO: Probably not needed for this project. Conflicts are used to resolve overlapping
+        // profiles, but this port doesn't inherit such quirks.
         _conflicts.reserve((int)ActionId::Count);
         for (int i = 0; i < (int)ActionId::Count; i++)
         {

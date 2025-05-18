@@ -29,7 +29,7 @@ namespace Silent::Services
         // TODO: Parse data from `_savegame` into `savegameJson`.
 
         // Ensure directory exists.
-        auto path = GetSavegamePath(slotIdx, saveIdx);
+        auto path = GetSavegameFilePath(slotIdx, saveIdx);
         std::filesystem::create_directories(path.parent_path());
 
         // Write savegame file.
@@ -43,7 +43,7 @@ namespace Silent::Services
 
     void SavegameManager::Load(int slotIdx, int saveIdx)
     {
-        auto path = GetSavegamePath(slotIdx, saveIdx);
+        auto path = GetSavegameFilePath(slotIdx, saveIdx);
 
         // Open savegame file.
         auto inputFile = std::ifstream(path);
@@ -63,11 +63,11 @@ namespace Silent::Services
         // TODO: Parse data from `savegameJson` into `_savegame`.
     }
 
-    std::filesystem::path SavegameManager::GetSavegamePath(int slotIdx, int saveIdx) const
+    std::filesystem::path SavegameManager::GetSavegameFilePath(int slotIdx, int saveIdx) const
     {
-        Assert(slotIdx > _slotSavegameLists.size(), "Attempted to get save path for invalid slot.");
+        Assert(slotIdx > _slotSavegameLists.size(), "Attempted to get savegame file path for invalid slot.");
 
-        return g_App.GetConfig().GetAppDir() / ((slotIdx == 0) ? SLOT_1_DIR : SLOT_2_DIR) / (std::to_string(saveIdx) + ".json");
+        return g_App.GetConfig().GetAppDirPath() / ((slotIdx == 0) ? SLOT_1_DIR_PATH : SLOT_2_DIR_PATH) / (std::to_string(saveIdx) + ".json");
     }
 
     void SavegameManager::SetDefaultSavegame()
@@ -80,7 +80,7 @@ namespace Silent::Services
         constexpr char SLOT_DIR_PREFIX[] = "Slot ";
         constexpr char JSON_EXT[]        = ".json";
 
-        auto baseDir = g_App.GetConfig().GetAppDir();
+        auto baseDir = g_App.GetConfig().GetAppDirPath();
 
         for (int i = 0; i < _slotSavegameLists.size(); i++)
         {

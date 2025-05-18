@@ -36,9 +36,13 @@ namespace Silent::Services
 
     struct Options
     {
-        // Graphics
+        // Graphics (system)
 
-        Vector2i             WindowSize         = Vector2i::Zero;
+        Vector2i WindowedSize    = Vector2i::Zero;
+        bool     EnableMaximized = false;
+
+        // Graphics (user)
+
         bool                 EnableFullscreen   = false;
         int                  BrightnessLevel    = 0;
         RenderScaleType      RenderScaleType    = RenderScaleType::Native;
@@ -58,17 +62,17 @@ namespace Silent::Services
         int  BloodColor      = 0;
         int  BulletAdjust    = 0;
 
-        // Input keyboard/mouse bindings
+        // Input (keyboard/mouse bindings)
 
         BindingProfile   KeyboardMouseBindings        = {};
         BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::KeyboardMouseType1;
 
-        // Input gamepad bindings
+        // Input (gamepad bindings)
 
         BindingProfile   GamepadBindings        = {};
         BindingProfileId ActiveGamepadProfileId = BindingProfileId::GamepadType1;
 
-        // Input controls
+        // Input (controls)
 
         bool EnableVibration   = false;
         int  MouseSensitivity  = 0;
@@ -96,12 +100,12 @@ namespace Silent::Services
         static constexpr int JSON_INDENT_SIZE = 4;
 
     private:
-        static constexpr char OPTIONS_PATH[] = "Options.json";
+        static constexpr char OPTIONS_FILE_PATH[] = "Options.json";
 
         // Fields
 
-        std::filesystem::path _appDir  = {};
-        Options               _options = {};
+        std::filesystem::path _appDirPath = {};
+        Options               _options    = {};
 
     public:
         // Constructors
@@ -110,7 +114,7 @@ namespace Silent::Services
 
         // Getters
 
-        std::filesystem::path GetAppDir() const;
+        std::filesystem::path GetAppDirPath() const;
         Options&              GetOptions();
 
         // Setters

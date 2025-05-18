@@ -18,7 +18,7 @@ namespace Silent::Utils::Debug
     void InitializeDebug();
     void UpdateDebug();
 
-    void Log(const std::string& msg, LogLevel level = LogLevel::Info, bool allowSpam = false);
+    void Log(const std::string& msg, LogLevel level = LogLevel::Info, bool allowRepeat = false);
 	void Message(const char* msg, ...);
     void Assert(bool cond, const std::string& msg);
     void StartTimer();

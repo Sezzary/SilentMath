@@ -28,7 +28,7 @@ namespace Silent::Utils::Debug
         }
     }
 
-    void Log(const std::string& msg, LogLevel level, bool allowSpam)
+    void Log(const std::string& msg, LogLevel level, bool allowRepeat)
     {
         // LOCK: Restrict previous message access.
         static auto mutex = std::mutex();
@@ -36,7 +36,7 @@ namespace Silent::Utils::Debug
             auto lock = std::lock_guard(mutex);
 
             static auto prevMsg = std::string();
-            if (prevMsg == msg && !allowSpam)
+            if (prevMsg == msg && !allowRepeat)
             {
                 return;
             }

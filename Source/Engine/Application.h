@@ -46,6 +46,7 @@ namespace Silent
         void Deinitialize();
         void Run();
 
+        void ToggleFullscreen();
         void ToggleDebugMenu();
         void HandleDebugMenu();
 

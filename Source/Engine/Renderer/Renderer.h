@@ -98,6 +98,7 @@ namespace Silent::Renderer
         
         void SignalResizedFramebuffer();
         void SubmitGui(std::function<void()> drawFunc);
+        void SaveScreenshot() const;
 
     private:
         // Getters

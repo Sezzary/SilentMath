@@ -11,9 +11,10 @@ namespace Silent::Services
     constexpr char KEY_GRAPHICS[]                                 = "Graphics";
     constexpr char KEY_INPUT[]                                    = "Input";
     constexpr char KEY_GAMEPLAY[]                                 = "Gameplay";
-    constexpr char KEY_WINDOW_SIZE_X[]                            = "WindowSizeX";
-    constexpr char KEY_WINDOW_SIZE_Y[]                            = "WindowSizeY";
+    constexpr char KEY_WINDOWED_SIZE_X[]                          = "WindowedSizeX";
+    constexpr char KEY_WINDOWED_SIZE_Y[]                          = "WindowedSizeY";
     constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
+    constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
     constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
     constexpr char KEY_TEXTURE_FILTER_TYPE[]                      = "TextureFilterType";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
@@ -41,7 +42,8 @@ namespace Silent::Services
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
 
-    constexpr auto DEFAULT_WINDOW_SIZE                              = Vector2i(800, 600);
+    constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i(800, 600);
+    constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
     constexpr auto DEFAULT_RENDER_SCALE_TYPE                        = RenderScaleType::Native;
@@ -68,9 +70,9 @@ namespace Silent::Services
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
 
-    std::filesystem::path ConfigurationManager::GetAppDir() const
+    std::filesystem::path ConfigurationManager::GetAppDirPath() const
     {
-        return _appDir;
+        return _appDirPath;
     }
 
     Options& ConfigurationManager::GetOptions()
@@ -80,7 +82,8 @@ namespace Silent::Services
 
     void ConfigurationManager::SetDefaultGraphicsOptions()
     {
-        _options.WindowSize         = DEFAULT_WINDOW_SIZE;
+        _options.WindowedSize       = DEFAULT_WINDOWED_SIZE;
+        _options.EnableMaximized    = DEFAULT_ENABLE_MAXIMIZED;
         _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
         _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
         _options.RenderScaleType    = DEFAULT_RENDER_SCALE_TYPE;
@@ -128,7 +131,7 @@ namespace Silent::Services
     {
         constexpr char APP_FOLDER_NAME[] = "Silent Engine";
 
-        char*  val    = nullptr;
+        char*  buffer = nullptr;
         size_t length = 0;
 
         // Set application directory.
@@ -137,11 +140,11 @@ namespace Silent::Services
             case OsType::Windows:
             {
                 // Get `APPDATA` path.
-                if (_dupenv_s(&val, &length, "APPDATA") == 0 && val != nullptr)
+                if (_dupenv_s(&buffer, &length, "APPDATA") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(val);
-                    free(val);
-                    _appDir = path / APP_FOLDER_NAME; 
+                    auto path = std::filesystem::path(buffer);
+                    free(buffer);
+                    _appDirPath = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -149,11 +152,11 @@ namespace Silent::Services
             case OsType::MacOs:
             {
                 // Get `HOME` path.
-                if (_dupenv_s(&val, &length, "HOME") == 0 && val != nullptr)
+                if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(val);
-                    free(val);
-                    _appDir = path / APP_FOLDER_NAME; 
+                    auto path = std::filesystem::path(buffer);
+                    free(buffer);
+                    _appDirPath = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -161,11 +164,11 @@ namespace Silent::Services
             case OsType::Linux:
             {
                 // Get `HOME` path.
-                if (_dupenv_s(&val, &length, "HOME") == 0 && val != nullptr)
+                if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(val);
-                    free(val);
-                    _appDir = path / APP_FOLDER_NAME; 
+                    auto path = std::filesystem::path(buffer);
+                    free(buffer);
+                    _appDirPath = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -175,7 +178,7 @@ namespace Silent::Services
                 break;
             }
         }
-        Assert(!_appDir.empty(), "Failed to initialize `ConfigurationManager`.");
+        Assert(!_appDirPath.empty(), "Failed to initialize `ConfigurationManager`.");
 
         LoadOptions();
     }
@@ -214,8 +217,9 @@ namespace Silent::Services
             {
                 KEY_GRAPHICS,
                 {
-                    { KEY_WINDOW_SIZE_X,        _options.WindowSize.x },
-                    { KEY_WINDOW_SIZE_Y,        _options.WindowSize.y },
+                    { KEY_WINDOWED_SIZE_X,      _options.WindowedSize.x },
+                    { KEY_WINDOWED_SIZE_Y,      _options.WindowedSize.y },
+                    { KEY_ENABLE_MAXIMIZED,     _options.EnableMaximized },
                     { KEY_ENABLE_FULLSCREEN,    _options.EnableFullscreen },
                     { KEY_BRIGHTNESS_LEVEL,     _options.BrightnessLevel },
                     { KEY_RENDER_SCALE_TYPE,    _options.RenderScaleType },
@@ -258,8 +262,11 @@ namespace Silent::Services
         };
 
         // Ensure directory exists.
-        auto path = GetAppDir() / OPTIONS_PATH;
-        std::filesystem::create_directories(path.parent_path());
+        auto path = GetAppDirPath() / OPTIONS_FILE_PATH;
+        if (std::filesystem::create_directories(path.parent_path()))
+        {
+            Log("Created path " + path.string() + ".");
+        }
 
         // Write options JSON file.
         auto outputFile = std::ofstream(path);
@@ -272,7 +279,7 @@ namespace Silent::Services
 
     void ConfigurationManager::LoadOptions()
     {
-        auto path = GetAppDir() / OPTIONS_PATH;
+        auto path = GetAppDirPath() / OPTIONS_FILE_PATH;
         
         // Open options JSON file.
         auto inputFile = std::ifstream(path);
@@ -291,8 +298,9 @@ namespace Silent::Services
 
         // Load graphics options.
         const auto& graphicsJson    = optionsJson[KEY_GRAPHICS];
-        _options.WindowSize.x       = graphicsJson.value(KEY_WINDOW_SIZE_X,        DEFAULT_WINDOW_SIZE.x);
-        _options.WindowSize.y       = graphicsJson.value(KEY_WINDOW_SIZE_Y,        DEFAULT_WINDOW_SIZE.y);
+        _options.WindowedSize.x     = graphicsJson.value(KEY_WINDOWED_SIZE_X,      DEFAULT_WINDOWED_SIZE.x);
+        _options.WindowedSize.y     = graphicsJson.value(KEY_WINDOWED_SIZE_Y,      DEFAULT_WINDOWED_SIZE.y);
+        _options.EnableMaximized    = graphicsJson.value(KEY_ENABLE_MAXIMIZED,     DEFAULT_ENABLE_MAXIMIZED);
         _options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
         _options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
         _options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
