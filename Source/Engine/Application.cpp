@@ -18,7 +18,7 @@ namespace Silent
 
     ConfigurationManager& ApplicationManager::GetConfig()
     {
-        return g_Config;
+        return _config;
     }
 
     SavegameManager& ApplicationManager::GetSavegame()
@@ -40,14 +40,14 @@ namespace Silent
 
         // Configuration.
         Log("Initializing configuration...");
-        g_Config.Initialize();
+        _config.Initialize();
 
         // SDL.
         Log("Initializing SDL...");
         bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
         Assert(sdlStatus, "Failed to initialize SDL.");
 
-        const auto& options = g_Config.GetOptions();
+        const auto& options = _config.GetOptions();
 
         // Create window.
         int flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | (options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0);
@@ -56,7 +56,7 @@ namespace Silent
 
         // Input.
         Log("Initializing input...");
-        _input.Initialize(g_Config.GetOptions());
+        _input.Initialize(_config.GetOptions());
 
         // Renderer.
         Log("Initializing renderer...");
@@ -127,7 +127,7 @@ namespace Silent
         PollEvents();
 
         // Update input state.
-        _input.Update(*_window, g_Config.GetOptions(), _mouseWheelAxis);
+        _input.Update(*_window, _config.GetOptions(), _mouseWheelAxis);
 
         // TODO: Update game state here.
 
@@ -181,13 +181,13 @@ namespace Silent
                 case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                 case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                 {
-                    auto& options = g_Config.GetOptions();
+                    auto& options = _config.GetOptions();
 
                     // Update window size in options.
                     auto res = Vector2i::Zero;
                     SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
-                    g_Config.GetOptions().WindowSize = res;
-                    g_Config.SaveOptions();
+                    _config.GetOptions().WindowSize = res;
+                    _config.SaveOptions();
 
                     // Update framebuffer.
                     g_Renderer.SignalResizedFramebuffer();

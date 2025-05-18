@@ -68,8 +68,6 @@ namespace Silent::Services
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
 
-    ConfigurationManager g_Config = ConfigurationManager();
-
     std::filesystem::path ConfigurationManager::GetAppDir() const
     {
         return _appDir;

@@ -132,6 +132,4 @@ namespace Silent::Services
 
         void SetDefaultOptions();
     };
-
-    extern ConfigurationManager g_Config;
 }

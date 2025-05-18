@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Engine/Services/Savegame.h"
 
+#include "Engine/Application.h"
 #include "Engine/Services/Configuration.h"
 
 namespace Silent::Services
@@ -66,7 +67,7 @@ namespace Silent::Services
     {
         Assert(slotIdx > _slotSavegameLists.size(), "Attempted to get save path for invalid slot.");
 
-        return g_Config.GetAppDir() / ((slotIdx == 0) ? SLOT_1_DIR : SLOT_2_DIR) / (std::to_string(saveIdx) + ".json");
+        return g_App.GetConfig().GetAppDir() / ((slotIdx == 0) ? SLOT_1_DIR : SLOT_2_DIR) / (std::to_string(saveIdx) + ".json");
     }
 
     void SavegameManager::SetDefaultSavegame()
@@ -79,7 +80,7 @@ namespace Silent::Services
         constexpr char SLOT_DIR_PREFIX[] = "Slot ";
         constexpr char JSON_EXT[]        = ".json";
 
-        auto baseDir = g_Config.GetAppDir();
+        auto baseDir = g_App.GetConfig().GetAppDir();
 
         for (int i = 0; i < _slotSavegameLists.size(); i++)
         {

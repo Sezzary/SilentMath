@@ -368,7 +368,7 @@ namespace Silent::Input
 
     void InputManager::UpdateActions()
     {
-        const auto& options = g_Config.GetOptions();
+        const auto& options = g_App.GetConfig().GetOptions();
 
         // 1) Update user action states.
         for (auto& [keyActionId, action] : _actions)

@@ -25,7 +25,7 @@ namespace Silent
         SDL_Window* _window        = nullptr;
         SDL_Event   _event         = {};
 
-        //ConfigurationManager _config = ConfigurationManager(); // TODO
+        ConfigurationManager _config   = ConfigurationManager();
         SavegameManager      _savegame = SavegameManager();
         InputManager         _input    = InputManager();
 
