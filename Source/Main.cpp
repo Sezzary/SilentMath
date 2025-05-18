@@ -4,13 +4,11 @@
 
 int main()
 {
-    auto app = ApplicationManager();
-
     try
     {
-        app.Initialize();
-        app.Run();
-        app.Deinitialize();
+        g_App.Initialize();
+        g_App.Run();
+        g_App.Deinitialize();
     }
     catch (const std::exception& ex)
     {

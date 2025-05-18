@@ -14,6 +14,8 @@ using namespace Silent::Utils;
 
 namespace Silent
 {
+    ApplicationManager g_App = ApplicationManager();
+
     ConfigurationManager& ApplicationManager::GetConfig()
     {
         return g_Config;

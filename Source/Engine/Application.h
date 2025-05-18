@@ -56,4 +56,6 @@ namespace Silent
         void Render();
         void PollEvents();
     };
+
+    extern ApplicationManager g_App;
 }
