@@ -20,9 +20,10 @@ namespace Silent
     
         // Fields
 
-        bool        _isRunning = false;
-        SDL_Window* _window    = nullptr;
-        SDL_Event   _event     = {};
+        bool        _isRunning     = false;
+        bool        _showDebugMenu = false;
+        SDL_Window* _window        = nullptr;
+        SDL_Event   _event         = {};
 
         //ConfigurationManager _config = ConfigurationManager(); // TODO
         SavegameManager      _savegame = SavegameManager();
@@ -44,6 +45,9 @@ namespace Silent
         void Initialize();
         void Deinitialize();
         void Run();
+
+        void ToggleDebugMenu();
+        void HandleDebugMenu();
 
     private:
         // Helpers

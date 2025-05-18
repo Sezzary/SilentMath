@@ -426,17 +426,21 @@ namespace Silent::Input
         static bool dbScreenshot = true;
         if ((_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]) && dbScreenshot)
         {
-            // TODO
+            /*const auto& renderer = g_App.GetRenderer();
+            renderer.SaveScreenshot();*/
         }
         dbScreenshot = !(_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]);
 
         // Toggle fullscreen.
         static bool dbFullscreen = true;
-        if ((_events.States[(int)EventId::Ctrl] && _events.States[(int)EventId::Return]) && dbFullscreen)
+        if (((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]) && dbFullscreen)
         {
-            // TODO
+            /*auto& config = g_App.GetConfig();
+
+            config.GetOptions().EnableFullscreen = !config.GetOptions().EnableFullscreen;
+            config.SaveOptions();*/
         }
-        dbFullscreen = !(_events.States[(int)EventId::Ctrl] && _events.States[(int)EventId::Return]);
+        dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 
         if constexpr (IS_DEBUG)
         {
@@ -444,7 +448,7 @@ namespace Silent::Input
             static bool dbDebug = true;
             if (_events.States[(int)EventId::Grave] && dbDebug)
             {
-                // TODO
+                //g_App.ToggleDebugMenu();
             }
             dbDebug = !_events.States[(int)EventId::Grave];
         }
@@ -462,7 +466,7 @@ namespace Silent::Input
 
             Log("Gamepad disconnected.");
         }
-        // Attempt to reinitialize gamepad intermittently.
+        // Intermittently attempt reinitializing gamepad.
         else
         {
             if (g_Time.TestInterval(SecToTicks(GAMEPAD_RECONNECT_INTERVAL_SEC)))

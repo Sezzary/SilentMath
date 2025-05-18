@@ -97,6 +97,29 @@ namespace Silent
         }
     }
 
+    void ApplicationManager::ToggleDebugMenu()
+    {
+        _showDebugMenu = !_showDebugMenu;
+    }
+
+    void ApplicationManager::HandleDebugMenu()
+    {
+        if constexpr (IS_DEBUG)
+        {
+            if (!_showDebugMenu)
+            {
+                return;
+            }
+
+            CreateGui([]()
+                {
+                    ImGui::Begin("My Window");
+                    ImGui::Text("Hello. It's me. =^.^=");
+                    ImGui::End();
+                });
+        }
+    }
+
     void ApplicationManager::Update()
     {
         PollEvents();
@@ -106,25 +129,19 @@ namespace Silent
 
         // TODO: Update game state here.
 
+        HandleDebugMenu();
         UpdateDebug();
 
         // DEBUG
 
         if (_input.GetAction(In::A).IsHeld())
         {
-            Log("y");
+            Log("Yeah");
         }
         else
         {
-            Log("n");
+            Log("Nah");
         }
-
-        CreateGui([]()
-            {
-                ImGui::Begin("My Window");
-                ImGui::Text("Hello!");
-                ImGui::End();
-            });
     }
 
     void ApplicationManager::Render()

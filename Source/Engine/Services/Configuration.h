@@ -119,7 +119,7 @@ namespace Silent::Services
         void SetDefaultGameplayOptions();
         void SetDefaultInputKeyboardMouseCustomBindingOptions();
         void SetDefaultInputGamepadCustomBindingOptions();
-        void SetDefaultInputControlOptions();
+        void SetDefaultInputControlsOptions();
 
         // Utilities
 
