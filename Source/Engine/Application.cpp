@@ -198,20 +198,27 @@ namespace Silent
                 case SDL_EVENT_WINDOW_RESIZED:
                 {
                     auto windowFlags = SDL_GetWindowFlags(_window);
-                    if (!(windowFlags & SDL_WINDOW_FULLSCREEN) &&
-                        !(windowFlags & SDL_WINDOW_MAXIMIZED))
+                    if (windowFlags & SDL_WINDOW_FULLSCREEN ||
+                        windowFlags & SDL_WINDOW_MAXIMIZED)
                     {
-                        auto& options = _config.GetOptions();
-
-                        // Update options.
-                        auto res = Vector2i::Zero;
-                        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
-                        options.WindowedSize = res;
-                        _config.SaveOptions();
-
-                        // Update window state.
-                        g_Renderer.SignalResizedFramebuffer();
+                        break;
                     }
+
+                    auto& options = _config.GetOptions();
+                    
+                    auto res = Vector2i::Zero;
+                    SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+                    if (options.WindowedSize == res)
+                    {
+                        break;
+                    }
+
+                    // Update options.
+                    options.WindowedSize = res;
+                    _config.SaveOptions();
+
+                    // Update window state.
+                    g_Renderer.SignalResizedFramebuffer();
                     break;
                 }
 
@@ -219,8 +226,6 @@ namespace Silent
                 case SDL_EVENT_WINDOW_RESTORED:
                 {
                     auto& options = _config.GetOptions();
-
-                    Log("A", LogLevel::Info, true);
 
                     // Update options.
                     auto windowFlags        = SDL_GetWindowFlags(_window);
