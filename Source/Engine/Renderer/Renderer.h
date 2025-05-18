@@ -2,6 +2,12 @@
 
 namespace Silent::Renderer
 {
+    enum class RendererType
+    {
+        OpenGl,
+        Vulkan
+    };
+
     enum class DebugPage
     {
         None
@@ -31,9 +37,7 @@ namespace Silent::Renderer
         static constexpr bool ENABLE_VALIDATION_LAYERS = false;
 #endif
 
-        static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
-        static constexpr int WIDTH  = 800;
-        static constexpr int HEIGHT = 600;
+        static constexpr int FRAMES_IN_FLIGHT_MAX = 2;
 
         static constexpr std::array<const char*, 1> VALIDATION_LAYERS =
         {
@@ -147,10 +151,10 @@ namespace Silent::Renderer
         VkCommandBuffer BeginSingleTimeCommands();
         void            EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
-        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                            VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                            const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                            void* pUserData);
+        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT msgeverity,
+                                                            VkDebugUtilsMessageTypeFlagsEXT msgType,
+                                                            const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+                                                            void* userData);
     };
 
     extern RendererManager g_Renderer;

@@ -93,7 +93,7 @@ namespace Silent::Renderer
         vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
         vkDestroyRenderPass(_device, _renderPass, nullptr);
 
-        for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        for (int i = 0; i < FRAMES_IN_FLIGHT_MAX; i++)
         {
             vkDestroySemaphore(_device, _renderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(_device, _imageAvailableSemaphores[i], nullptr);
@@ -430,7 +430,7 @@ namespace Silent::Renderer
         presentInfo.pResults           = nullptr; // Optional.
         vkQueuePresentKHR(_presentQueue, &presentInfo);
 
-        _activeFrame = (_activeFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+        _activeFrame = (_activeFrame + 1) % FRAMES_IN_FLIGHT_MAX;
     }
 
     void RendererManager::DrawGui()
@@ -910,7 +910,7 @@ namespace Silent::Renderer
 
     void RendererManager::CreateCommandBuffers()
     {
-        _commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+        _commandBuffers.resize(FRAMES_IN_FLIGHT_MAX);
 
         auto allocInfo               = VkCommandBufferAllocateInfo{};
         allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -926,9 +926,9 @@ namespace Silent::Renderer
 
     void RendererManager::CreateSyncObjects()
     {
-        _imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-        _renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-        _inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+        _imageAvailableSemaphores.resize(FRAMES_IN_FLIGHT_MAX);
+        _renderFinishedSemaphores.resize(FRAMES_IN_FLIGHT_MAX);
+        _inFlightFences.resize(FRAMES_IN_FLIGHT_MAX);
 
         auto semaphoreInfo  = VkSemaphoreCreateInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -937,7 +937,7 @@ namespace Silent::Renderer
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        for (int i = 0; i < FRAMES_IN_FLIGHT_MAX; i++)
         {
             if (vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_imageAvailableSemaphores[i]) != VK_SUCCESS ||
                 vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_renderFinishedSemaphores[i]) != VK_SUCCESS ||
@@ -1104,13 +1104,13 @@ namespace Silent::Renderer
         vkFreeCommandBuffers(_device, _commandPool, 1, &commandBuffer);
     }
 
-    VKAPI_ATTR VkBool32 VKAPI_CALL RendererManager::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                                           VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                                           const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                                           void* pUserData)
+    VKAPI_ATTR VkBool32 VKAPI_CALL RendererManager::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT msgSeverity,
+                                                                  VkDebugUtilsMessageTypeFlagsEXT msgType,
+                                                                  const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+                                                                  void* userData)
     {
         // TODO: Log level.
-        Log("Validation layer: " + std::string(pCallbackData->pMessage));
+        Log("Validation layer: " + std::string(callbackData->pMessage));
         return VK_FALSE;
     }
 

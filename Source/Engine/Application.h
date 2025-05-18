@@ -23,7 +23,6 @@ namespace Silent
         bool        _isRunning     = false;
         bool        _showDebugMenu = false;
         SDL_Window* _window        = nullptr;
-        SDL_Event   _event         = {};
 
         ConfigurationManager _config   = ConfigurationManager();
         SavegameManager      _savegame = SavegameManager();

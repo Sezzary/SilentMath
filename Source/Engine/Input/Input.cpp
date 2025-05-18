@@ -436,6 +436,7 @@ namespace Silent::Input
         if (((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]) && dbFullscreen)
         {
             g_App.ToggleFullscreen();
+            Log("A", LogLevel::Info, true);
         }
         dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 

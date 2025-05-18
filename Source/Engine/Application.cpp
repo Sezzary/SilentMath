@@ -153,22 +153,10 @@ namespace Silent
 
         HandleDebugMenu();
         UpdateDebug();
-
-        // DEBUG
-
-        if (_input.GetAction(In::A).IsHeld())
-        {
-            Log("Yeah");
-        }
-        else
-        {
-            Log("Nah");
-        }
     }
 
     void ApplicationManager::Render()
     {
-        // TODO: Can remove this for variable framerate?
         if (g_Time.GetTicks() <= 0)
         {
             return;
@@ -180,14 +168,15 @@ namespace Silent
 
     void ApplicationManager::PollEvents()
     {
-        while (SDL_PollEvent(&_event))
+        auto event = SDL_Event{};
+        while (SDL_PollEvent(&event))
         {
             if constexpr (IS_DEBUG)
             {
-                ImGui_ImplSDL3_ProcessEvent(&_event);
+                ImGui_ImplSDL3_ProcessEvent(&event);
             }
 
-            switch (_event.type)
+            switch (event.type)
             {
                 case SDL_EVENT_QUIT:
                 {
@@ -243,7 +232,7 @@ namespace Silent
                     auto& options = _config.GetOptions();
 
                     // Update options.
-                    bool isFullscreen        = _event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
+                    bool isFullscreen        = event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
                     options.EnableFullscreen = isFullscreen;
                     _config.SaveOptions();
 
@@ -255,7 +244,7 @@ namespace Silent
 
                 case SDL_EVENT_MOUSE_WHEEL:
                 {
-                    _mouseWheelAxis = Vector2(_event.wheel.x, _event.wheel.y);
+                    _mouseWheelAxis = Vector2(event.wheel.x, event.wheel.y);
                     break;
                 }
 
