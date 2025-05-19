@@ -67,7 +67,7 @@ namespace Silent
 
         // Input.
         Log("Initializing input...");
-        _input.Initialize(_config.GetOptions());
+        _input.Initialize();
 
         // Finish.
         Log("Initialization complete.");
@@ -150,7 +150,7 @@ namespace Silent
         PollEvents();
 
         // Update input state.
-        _input.Update(*_window, _config.GetOptions(), _mouseWheelAxis);
+        _input.Update(*_window, _mouseWheelAxis);
 
         // TODO: Update game state here.
 

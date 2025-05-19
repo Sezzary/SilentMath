@@ -59,8 +59,10 @@ namespace Silent::Input
         return _events.IsUsingGamepad;
     }
 
-    void InputManager::Initialize(const Options& options)
+    void InputManager::Initialize()
     {
+        const auto& options = g_App.GetConfig().GetOptions();
+
         if (!SDL_Init(SDL_INIT_GAMEPAD))
         {
             Log("Failed to initialize gamepad subsystem: " + std::string(SDL_GetError()), LogLevel::Error);
@@ -90,7 +92,7 @@ namespace Silent::Input
         SDL_CloseGamepad(_gamepad);
     }
 
-    void InputManager::Update(SDL_Window& window, const Options& options, const Vector2& mouseWheelAxis)
+    void InputManager::Update(SDL_Window& window, const Vector2& mouseWheelAxis)
     {
         if (!SDL_GamepadConnected(_gamepad))
         {
@@ -100,7 +102,7 @@ namespace Silent::Input
         // Capture event states.
         int eventStateIdx = 0;
         ReadKeyboard(eventStateIdx);
-        ReadMouse(eventStateIdx, window, options, mouseWheelAxis);
+        ReadMouse(eventStateIdx, window, mouseWheelAxis);
         ReadGamepad(eventStateIdx);
 
         // Update components.
@@ -160,8 +162,10 @@ namespace Silent::Input
         }
     }
 
-    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Options& options, const Vector2& wheelAxis)
+    void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis)
     {
+        const auto& options = g_App.GetConfig().GetOptions();
+
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
 
@@ -294,7 +298,7 @@ namespace Silent::Input
             _analogAxes[i]                          = axis;
             eventStateIdx                          += Vector2::AXIS_COUNT * 2;
         }
-        
+
         // Set camera axis. NOTE: Right gamepad stick takes priority over mouse.
         if (stickAxes.back() != Vector2::Zero)
         {
@@ -351,7 +355,7 @@ namespace Silent::Input
 
         // Compute duration.
         uint durationMs = (uint)round(TicksToSec(_rumble.DurationTicks) * 1000);
-        
+
         // Rumble gamepad.
         if (!SDL_RumbleGamepad(_gamepad, freqLow, freqHigh, durationMs))
         {
@@ -406,7 +410,7 @@ namespace Silent::Input
             for (auto& [keyActionId0, eventIds] : profile)
             {
                 auto& action = _actions.at(keyActionId0);
-                
+
                 // 1.1) Get max raw event state.
                 float state = 0.0f;
                 for (auto eventId : eventIds)
