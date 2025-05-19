@@ -9,12 +9,12 @@ namespace Silent::Renderer
     private:
         // Fields
 
-        SDL_GLContext _context       = nullptr;
-        uint         _vertexShader   = 0;
-        uint         _fragmentShader = 0;
-        uint         _shaderProgram  = 0;
-        uint         _vao            = 0;
-        uint         _vbo            = 0;
+        SDL_GLContext _context        = nullptr;
+        uint          _vertexShader   = 0;
+        uint          _fragmentShader = 0;
+        uint          _shaderProgram  = 0;
+        uint          _vao            = 0;
+        uint          _vbo            = 0;
 
     public:
         // Constructors
@@ -34,6 +34,7 @@ namespace Silent::Renderer
         void UpdateViewport();
         void DrawFrame();
         void DrawDebugGui();
+        void DrawDebugObjects();
 
         void CreateShaderProgram();
         void CreateVertexBuffer();

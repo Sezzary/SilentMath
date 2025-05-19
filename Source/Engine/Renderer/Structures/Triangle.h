@@ -8,7 +8,7 @@ namespace Silent::Renderer
         static constexpr uint VERTEX_COUNT = 3;
 
     public:
-        Vector3   Vertices[VERTEX_COUNT] = {};
-        glm::vec4 Color                  = {};
+        Vector3 Vertices[VERTEX_COUNT] = {};
+        Vector4 Color                  = {};
     };
 }

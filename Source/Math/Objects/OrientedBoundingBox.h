@@ -16,6 +16,8 @@ namespace Silent::Math
         // Constants
 
         static constexpr uint CORNER_COUNT = 8;
+        static constexpr uint EDGE_COUNT   = 12;
+        static constexpr uint FACE_COUNT   = 6;
 
         // Fields
 

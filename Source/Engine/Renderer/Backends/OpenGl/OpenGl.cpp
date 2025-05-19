@@ -89,6 +89,9 @@ namespace Silent::Renderer
 
         // Swap buffers.
         SDL_GL_SwapWindow(_window);
+
+        // Clear scene.
+
     }
 
     void OpenGlRenderer::SaveScreenshot() const
@@ -150,6 +153,13 @@ namespace Silent::Renderer
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
+    void OpenGlRenderer::DrawDebugObjects()
+    {
+        // TODO
+        _debugLines.clear();
+        _debugTriangles.clear();
     }
 
     void OpenGlRenderer::CreateShaderProgram()
