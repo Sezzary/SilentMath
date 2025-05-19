@@ -1146,7 +1146,7 @@ namespace Silent::Renderer
         }
 
         uint fileSize = (uint)file.tellg();
-        auto buffer = std::vector<char>(fileSize);
+        auto buffer   = std::vector<char>(fileSize);
 
         file.seekg(0);
         file.read(buffer.data(), fileSize);

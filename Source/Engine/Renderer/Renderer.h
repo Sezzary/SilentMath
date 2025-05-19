@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Renderer/Backends/Vulkan/Vulkan.h"
+#include "Engine/Renderer/Base.h"
 
 namespace Silent::Renderer
 {

@@ -29,6 +29,6 @@ namespace Silent::Renderer
             }
         }
 
-        Assert(false, "Attempted to create unsupported renderer type.");
+        throw std::runtime_error("Attempted to create unsupported renderer type" + std::to_string((int)type) + ".");
     }
 }

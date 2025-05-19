@@ -95,11 +95,13 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            if (!cond)
+            if (cond)
             {
-                Log(msg, LogLevel::Error);
-                throw std::runtime_error("Assertion failed.");
+                return;
             }
+
+            Log(msg, LogLevel::Error);
+            throw std::runtime_error("Assertion failed.");
         }
     };
 
@@ -128,4 +130,68 @@ namespace Silent::Utils::Debug
             g_Renderer->SubmitGui(drawFunc);
         }
     }
+
+    /*void CreateLine(const Vector3& from, const Vector3& to, const Color& color, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateLine(from, to, color, page);
+        }
+    }
+
+    void CreateTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateTriangle(vert0, vert1, vert2, color, page);
+        }
+    }
+
+    void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateTarget(center, rot, radius, color, page);
+        }
+    }
+
+    void CreateBox(const AxisAlignedBoundingBox& aabb, const Color& color, bool isWireframe, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateBox(aabb, color, isWireframe, page);
+        }
+    }
+
+    void CreateBox(const OrientedBoundingBox& obb, const Color& color, bool isWireframe, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateBox(obb, color, isWireframe, page);
+        }
+    }
+
+    void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateSphere(sphere, color, isWireframe, page);
+        }
+    }
+
+    void CreateCylinder(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateCylinder(center, rot, radius, length, color, isWireframe, page);
+        }
+    }
+
+    void CreateCone(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
+    {
+        if constexpr (IS_DEBUG)
+        {
+            g_Renderer->CreateCone(center, rot, radius, length, color, isWireframe, page);
+        }
+    }*/
 }

@@ -112,14 +112,10 @@ namespace Silent
     {
         auto& options = _config.GetOptions();
 
-        if (SDL_SetWindowFullscreen(_window, !options.EnableFullscreen))
+        if (!SDL_SetWindowFullscreen(_window, !options.EnableFullscreen))
         {
             Log("Failed to toggle fullscreen mode.", LogLevel::Warning);
-            return;
         }
-
-        options.EnableFullscreen = !options.EnableFullscreen;
-        _config.SaveOptions();
     }
 
     void ApplicationManager::ToggleDebugMenu()
@@ -240,7 +236,6 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    SDL_SetWindowFullscreen(_window, isFullscreen);
                     g_Renderer->SignalResizedFramebuffer();
                     break;
                 }

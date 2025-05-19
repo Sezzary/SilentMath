@@ -9,22 +9,22 @@ namespace Silent::Renderer
     {
         
     }
-    
+
     void OpenGlRenderer::Deinitialize()
     {
         
     }
-    
+
     void OpenGlRenderer::Update()
     {
         
     }
-    
+
     void OpenGlRenderer::SignalResizedFramebuffer()
     {
         
     }
-    
+
     void OpenGlRenderer::SubmitGui(std::function<void()> drawFunc)
     {
         
