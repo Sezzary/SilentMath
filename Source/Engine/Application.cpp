@@ -49,22 +49,25 @@ namespace Silent
 
         const auto& options = _config.GetOptions();
 
-        // Compute window flags.
+        // Collect window flags.
+        int rendererFlag   = SDL_WINDOW_VULKAN;
         int fullscreenFlag = options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
         int maximizedFlag  = options.EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
-        int flags          = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | fullscreenFlag | maximizedFlag;
+        int flags          = SDL_WINDOW_RESIZABLE | rendererFlag | fullscreenFlag | maximizedFlag;
 
         // Create window.
         _window = SDL_CreateWindow(WINDOW_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
         Assert(_window != nullptr, "Failed to create window.");
 
+        // Renderer.
+        Log("Initializing renderer...");
+        g_Renderer = CreateRenderer(RendererType::Vulkan);
+        Assert(g_Renderer != nullptr, "Failed to create renderer.");
+        g_Renderer->Initialize(*_window);
+
         // Input.
         Log("Initializing input...");
         _input.Initialize(_config.GetOptions());
-
-        // Renderer.
-        Log("Initializing renderer...");
-        g_Renderer.Initialize(*_window);
 
         // Finish.
         Log("Initialization complete.");
@@ -79,7 +82,7 @@ namespace Silent
 
         // Renderer.
         Log("Deinitializing renderer...");
-        g_Renderer.Deinitialize();
+        g_Renderer->Deinitialize();
 
         // SDL.
         Log("Deinitializing SDL...");
@@ -163,7 +166,7 @@ namespace Silent
         }
 
         // Render scene.
-        g_Renderer.Update();
+        g_Renderer->Update();
     }
 
     void ApplicationManager::PollEvents()
@@ -207,7 +210,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    g_Renderer.SignalResizedFramebuffer();
+                    g_Renderer->SignalResizedFramebuffer();
                     break;
                 }
 
@@ -222,7 +225,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    g_Renderer.SignalResizedFramebuffer();
+                    g_Renderer->SignalResizedFramebuffer();
                     break;
                 }
 
@@ -238,7 +241,7 @@ namespace Silent
 
                     // Update window state.
                     SDL_SetWindowFullscreen(_window, isFullscreen);
-                    g_Renderer.SignalResizedFramebuffer();
+                    g_Renderer->SignalResizedFramebuffer();
                     break;
                 }
 

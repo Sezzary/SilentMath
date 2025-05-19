@@ -125,7 +125,7 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer.SubmitGui(drawFunc);
+            g_Renderer->SubmitGui(drawFunc);
         }
     }
 }
