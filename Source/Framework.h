@@ -39,6 +39,9 @@
 #include <variant>
 #include <vector>
 
+// GLAD
+#include <glad/glad.h>
+
 // GLM
 #define  GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>

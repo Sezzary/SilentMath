@@ -14,8 +14,9 @@ file(GLOB_RECURSE SOURCES "Source/*.cpp")
 add_executable(Math ${SOURCES})
 set_target_properties(Math PROPERTIES OUTPUT_NAME "Math" DEBUG_POSTFIX "_d")
 
-# Add ImGui sources.
+# Add library sources.
 file(GLOB IMGUI_SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/src/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_vulkan.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl3.cpp")
@@ -51,6 +52,7 @@ target_include_directories(Math PRIVATE
 
 # Add library header paths.
 target_include_directories(Math SYSTEM PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends
@@ -59,6 +61,7 @@ target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
 
 # Add library directories.
+add_subdirectory(Libraries/glad/cmake)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/json)
 add_subdirectory(Libraries/SDL)
