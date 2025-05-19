@@ -16,14 +16,14 @@ namespace Silent
 {
     ApplicationManager g_App = ApplicationManager();
 
-    ConfigurationManager& ApplicationManager::GetConfig()
-    {
-        return _config;
-    }
-
     RendererBase& ApplicationManager::GetRenderer()
     {
         return *_renderer;
+    }
+
+    ConfigurationManager& ApplicationManager::GetConfig()
+    {
+        return _config;
     }
 
     SavegameManager& ApplicationManager::GetSavegame()
@@ -49,8 +49,10 @@ namespace Silent
 
         // SDL.
         Log("Initializing SDL...");
-        bool sdlStatus = SDL_Init(SDL_INIT_VIDEO);
-        Assert(sdlStatus, "Failed to initialize SDL.");
+        if (!SDL_Init(SDL_INIT_VIDEO))
+        {
+            throw std::runtime_error("Failed to initialize SDL.");
+        }
 
         const auto& options = _config.GetOptions();
 
@@ -67,7 +69,10 @@ namespace Silent
         // Renderer.
         Log("Initializing renderer...");
         _renderer = CreateRenderer(RendererType::Vulkan);
-        Assert(_renderer != nullptr, "Failed to create renderer.");
+        if (_renderer == nullptr)
+        {
+            throw std::runtime_error("Failed to create renderer.");
+        }
         _renderer->Initialize(*_window);
 
         // Input.

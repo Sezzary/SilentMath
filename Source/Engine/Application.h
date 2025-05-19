@@ -24,8 +24,8 @@ namespace Silent
         bool        _showDebugMenu = false;
         SDL_Window* _window        = nullptr;
 
-        ConfigurationManager          _config   = ConfigurationManager();
         std::unique_ptr<RendererBase> _renderer = nullptr;
+        ConfigurationManager          _config   = ConfigurationManager();
         SavegameManager               _savegame = SavegameManager();
         InputManager                  _input    = InputManager();
 
@@ -36,8 +36,8 @@ namespace Silent
 
         ApplicationManager() = default;
 
-        ConfigurationManager& GetConfig();
         RendererBase&         GetRenderer();
+        ConfigurationManager& GetConfig();
         SavegameManager&      GetSavegame();
         InputManager&         GetInput();
 

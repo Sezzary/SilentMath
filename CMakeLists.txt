@@ -70,8 +70,6 @@ add_subdirectory(Libraries/spdlog)
 # Force-find Vulkan SDK path.
 set(Vulkan_INCLUDE_DIR "$ENV{VK_SDK_PATH}/Include")
 set(Vulkan_LIBRARY "$ENV{VK_SDK_PATH}/Lib/vulkan-1.lib")
-
-# Find packages.
 find_package(Vulkan REQUIRED)
 
 # Add libraries.
