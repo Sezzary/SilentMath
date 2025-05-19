@@ -7,8 +7,6 @@
 
 namespace Silent::Renderer
 {
-    std::unique_ptr<RendererBase> g_Renderer = nullptr;
-
     std::unique_ptr<RendererBase> CreateRenderer(RendererType type)
     {
         switch (type)
@@ -29,6 +27,6 @@ namespace Silent::Renderer
             }
         }
 
-        throw std::runtime_error("Attempted to create unsupported renderer type" + std::to_string((int)type) + ".");
+        return nullptr;
     }
 }

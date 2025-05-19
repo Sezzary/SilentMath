@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Utils/Debug.h"
 
+#include "Engine/Application.h"
 #include "Engine/Renderer/Renderer.h"
 
 using namespace Silent::Renderer;
@@ -127,7 +128,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->SubmitGui(drawFunc);
+            auto& renderer = g_App.GetRenderer();
+
+            renderer.SubmitGui(drawFunc);
         }
     }
 
@@ -135,7 +138,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateLine(from, to, color, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateLine(from, to, color, page);
         }
     }
 
@@ -143,7 +148,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateTriangle(vert0, vert1, vert2, color, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateTriangle(vert0, vert1, vert2, color, page);
         }
     }
 
@@ -151,7 +158,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateTarget(center, rot, radius, color, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateTarget(center, rot, radius, color, page);
         }
     }
 
@@ -159,7 +168,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateBox(aabb, color, isWireframe, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateBox(aabb, color, isWireframe, page);
         }
     }
 
@@ -167,7 +178,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateBox(obb, color, isWireframe, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateBox(obb, color, isWireframe, page);
         }
     }
 
@@ -175,7 +188,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateSphere(sphere, color, isWireframe, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateSphere(sphere, color, isWireframe, page);
         }
     }
 
@@ -183,7 +198,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateCylinder(center, rot, radius, length, color, isWireframe, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateCylinder(center, rot, radius, length, color, isWireframe, page);
         }
     }
 
@@ -191,7 +208,9 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG)
         {
-            g_Renderer->CreateCone(center, rot, radius, length, color, isWireframe, page);
+           auto& renderer = g_App.GetRenderer();
+
+           renderer.CreateCone(center, rot, radius, length, color, isWireframe, page);
         }
     }*/
 }

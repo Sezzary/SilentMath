@@ -10,7 +10,5 @@ namespace Silent::Renderer
         Vulkan
     };
 
-    extern std::unique_ptr<RendererBase> g_Renderer;
-
     std::unique_ptr<RendererBase> CreateRenderer(RendererType type);
 }

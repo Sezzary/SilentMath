@@ -24,9 +24,10 @@ namespace Silent
         bool        _showDebugMenu = false;
         SDL_Window* _window        = nullptr;
 
-        ConfigurationManager _config   = ConfigurationManager();
-        SavegameManager      _savegame = SavegameManager();
-        InputManager         _input    = InputManager();
+        ConfigurationManager          _config   = ConfigurationManager();
+        std::unique_ptr<RendererBase> _renderer = nullptr;
+        SavegameManager               _savegame = SavegameManager();
+        InputManager                  _input    = InputManager();
 
         Vector2 _mouseWheelAxis = Vector2::Zero;
 
@@ -36,6 +37,7 @@ namespace Silent
         ApplicationManager() = default;
 
         ConfigurationManager& GetConfig();
+        RendererBase&         GetRenderer();
         SavegameManager&      GetSavegame();
         InputManager&         GetInput();
 

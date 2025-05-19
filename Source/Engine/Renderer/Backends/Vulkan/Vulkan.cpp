@@ -378,7 +378,7 @@ namespace Silent::Renderer
 
         // TODO: Parallelism requires storing a separate render buffer for game data
         // so that it doesn't get overwritten by `ApplicationManager::Update` while 
-        // `g_Renderer->Update` runs in the background. Depends how cleanly the OG engine
+        // `RendererBase::Update` runs in the background. Depends how cleanly the OG engine
         // handles its data, but the buffer update would have to occur right here.
 
         uint32 imageIdx = 0;

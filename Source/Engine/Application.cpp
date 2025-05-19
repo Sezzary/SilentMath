@@ -21,6 +21,11 @@ namespace Silent
         return _config;
     }
 
+    RendererBase& ApplicationManager::GetRenderer()
+    {
+        return *_renderer;
+    }
+
     SavegameManager& ApplicationManager::GetSavegame()
     {
         return _savegame;
@@ -61,9 +66,9 @@ namespace Silent
 
         // Renderer.
         Log("Initializing renderer...");
-        g_Renderer = CreateRenderer(RendererType::Vulkan);
-        Assert(g_Renderer != nullptr, "Failed to create renderer.");
-        g_Renderer->Initialize(*_window);
+        _renderer = CreateRenderer(RendererType::Vulkan);
+        Assert(_renderer != nullptr, "Failed to create renderer.");
+        _renderer->Initialize(*_window);
 
         // Input.
         Log("Initializing input...");
@@ -82,7 +87,7 @@ namespace Silent
 
         // Renderer.
         Log("Deinitializing renderer...");
-        g_Renderer->Deinitialize();
+        _renderer->Deinitialize();
 
         // SDL.
         Log("Deinitializing SDL...");
@@ -162,7 +167,7 @@ namespace Silent
         }
 
         // Render scene.
-        g_Renderer->Update();
+        _renderer->Update();
     }
 
     void ApplicationManager::PollEvents()
@@ -206,7 +211,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    g_Renderer->SignalResizedFramebuffer();
+                    _renderer->SignalResizedFramebuffer();
                     break;
                 }
 
@@ -221,7 +226,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    g_Renderer->SignalResizedFramebuffer();
+                    _renderer->SignalResizedFramebuffer();
                     break;
                 }
 
@@ -236,7 +241,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    g_Renderer->SignalResizedFramebuffer();
+                    _renderer->SignalResizedFramebuffer();
                     break;
                 }
 
