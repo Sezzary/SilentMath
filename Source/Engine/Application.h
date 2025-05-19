@@ -20,9 +20,9 @@ namespace Silent
 
         // Fields
 
-        bool        _isRunning     = false;
-        bool        _showDebugMenu = false;
-        SDL_Window* _window        = nullptr;
+        bool        _isRunning      = false;
+        bool        _enableDebugGui = false;
+        SDL_Window* _window         = nullptr;
 
         std::unique_ptr<RendererBase> _renderer = nullptr;
         ConfigurationManager          _config   = ConfigurationManager();
@@ -48,7 +48,7 @@ namespace Silent
         void Run();
 
         void ToggleFullscreen();
-        void ToggleDebugMenu();
+        void ToggleDebugGui();
         void HandleDebugMenu();
 
     private:

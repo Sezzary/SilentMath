@@ -42,8 +42,6 @@ namespace Silent::Renderer
 
         static constexpr char WINDOW_NAME[] = "Hello Triangle";
 
-        SDL_Window*              _window         = nullptr;
-
         VkInstance               _instance       = nullptr;
         VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
         VkSurfaceKHR             _surface        = nullptr;
@@ -72,13 +70,9 @@ namespace Silent::Renderer
         std::vector<VkSemaphore> _renderFinishedSemaphores = {};
         std::vector<VkFence>     _inFlightFences           = {};
 
-        bool _isFramebufferResized = false;
-
         VkDescriptorPool _descPool = nullptr;
 
         uint32 _activeFrame = 0;
-
-        std::vector<std::function<void()>> _guiDrawCalls;
 
     public:
         // Constructors
@@ -91,9 +85,9 @@ namespace Silent::Renderer
         void Deinitialize() override;
         void Update() override;
         
-        void SignalResizedFramebuffer() override;
+        void SignalResize() override;
         void SaveScreenshot() const override;
-        void SubmitGui(std::function<void()> drawFunc) override;
+        void SubmitDebugGui(std::function<void()> drawFunc) override;
 
     private:
         // Getters

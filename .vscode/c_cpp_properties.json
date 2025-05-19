@@ -5,8 +5,9 @@
             "name": "Win32",
             "includePath":
             [
+                "${env:VK_SDK_PATH}/Include",
                 "${workspaceFolder}/**",
-                "${env:VK_SDK_PATH}/Include"
+                "${workspaceFolder}/Libraries/glad/include"
             ],
             "defines":
             [
@@ -21,8 +22,9 @@
             {
                 "path":
                 [
+                    "${env:VK_SDK_PATH}/Include",
                     "${workspaceFolder}",
-                    "${env:VK_SDK_PATH}/Include"
+                    "${workspaceFolder}/Libraries/glad/include"
                 ]
             }
         }

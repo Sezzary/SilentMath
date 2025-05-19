@@ -130,9 +130,9 @@ namespace Silent::Renderer
         DrawFrame();
     }
 
-    void VulkanRenderer::SignalResizedFramebuffer()
+    void VulkanRenderer::SignalResize()
     {
-        _isFramebufferResized = true;
+        _isResized = true;
     }
 
     void VulkanRenderer::SaveScreenshot() const
@@ -140,11 +140,11 @@ namespace Silent::Renderer
         // TODO
     }
 
-    void VulkanRenderer::SubmitGui(std::function<void()> drawFunc)
+    void VulkanRenderer::SubmitDebugGui(std::function<void()> drawFunc)
     {
         if constexpr (IS_DEBUG)
         {
-            _guiDrawCalls.push_back(drawFunc);
+            _debugGuiDrawCalls.push_back(drawFunc);
         }
     }
 
@@ -385,7 +385,7 @@ namespace Silent::Renderer
         auto   result   = vkAcquireNextImageKHR(_device, _swapChain, UINT64_MAX, _imageAvailableSemaphores[_activeFrame], VK_NULL_HANDLE, &imageIdx);
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            _isFramebufferResized = false;
+            _isResized = false;
             RecreateSwapChain();
             return;
         }
@@ -436,15 +436,15 @@ namespace Silent::Renderer
     void VulkanRenderer::DrawGui()
     {
         ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplSDL3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
         // Draw GUIs.
-        for (auto& drawFunc : _guiDrawCalls)
+        for (auto& drawFunc : _debugGuiDrawCalls)
         {
             drawFunc();
         }
-        _guiDrawCalls.clear();
+        _debugGuiDrawCalls.clear();
 
         // DEMO
         ImGui::ShowDemoWindow();

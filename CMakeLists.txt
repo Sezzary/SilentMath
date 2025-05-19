@@ -18,8 +18,9 @@ set_target_properties(Math PROPERTIES OUTPUT_NAME "Math" DEBUG_POSTFIX "_d")
 file(GLOB IMGUI_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/src/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_vulkan.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl3.cpp")
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_opengl3.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl3.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_vulkan.cpp")
 target_sources(Math PRIVATE ${IMGUI_SOURCES})
 
 # Set Debug build definitions.

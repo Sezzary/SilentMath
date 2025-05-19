@@ -217,7 +217,7 @@ namespace Silent::Input
         _events.States[eventStateIdx + 2] = (moveAxis.y < 0.0f) ? abs(moveAxis.y) : 0.0f;
         _events.States[eventStateIdx + 3] = (moveAxis.y > 0.0f) ? abs(moveAxis.y) : 0.0f;
         eventStateIdx                    += SQUARE(Vector2::AXIS_COUNT);
-        
+
         // Set camera axis. NOTE: Right gamepad stick takes priority over mouse.
         _analogAxes[(int)AnalogAxisId::Camera] = moveAxis;
 
@@ -450,7 +450,7 @@ namespace Silent::Input
             static bool dbDebug = true;
             if (_events.States[(int)EventId::Grave] && dbDebug)
             {
-                g_App.ToggleDebugMenu();
+                g_App.ToggleDebugGui();
             }
             dbDebug = !_events.States[(int)EventId::Grave];
         }

@@ -8,10 +8,14 @@ namespace Silent::Renderer
     {
     private:
         // Fields
-        
-        SDL_Window*                        _window               = nullptr;
-        bool                               _isFramebufferResized = false;
-        std::vector<std::function<void()>> _guiDrawCalls         = {};
+
+        SDL_GLContext _glContext = nullptr;
+
+        uint _vertexShader   = 0;
+        uint _fragmentShader = 0;
+        uint _shaderProgram  = 0;
+        uint _vao            = 0;
+        uint _vbo            = 0;
 
     public:
         // Constructors
@@ -24,15 +28,16 @@ namespace Silent::Renderer
         void Deinitialize() override;
         void Update() override;
         
-        void SignalResizedFramebuffer() override;
+        void SignalResize() override;
         void SaveScreenshot() const override;
-        void SubmitGui(std::function<void()> drawFunc) override;
+        void SubmitDebugGui(std::function<void()> drawFunc) override;
 
     private:
         // Utilities
     
         void InitializeDebugGui();
-        void DrawDebugGui();
+        void UpdateViewport();
         void DrawFrame();
+        void DrawDebugGui();
     };
 }

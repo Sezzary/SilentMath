@@ -57,7 +57,7 @@ namespace Silent
         const auto& options = _config.GetOptions();
 
         // Collect window flags.
-        int rendererFlag   = SDL_WINDOW_VULKAN;
+        int rendererFlag   = SDL_WINDOW_OPENGL;
         int fullscreenFlag = options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
         int maximizedFlag  = options.EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
         int flags          = SDL_WINDOW_RESIZABLE | rendererFlag | fullscreenFlag | maximizedFlag;
@@ -68,7 +68,7 @@ namespace Silent
 
         // Renderer.
         Log("Initializing renderer...");
-        _renderer = CreateRenderer(RendererType::Vulkan);
+        _renderer = CreateRenderer(RendererType::OpenGl);
         if (_renderer == nullptr)
         {
             throw std::runtime_error("Failed to create renderer.");
@@ -86,6 +86,8 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
+        Log("Exiting Silent Engine.");
+
         // Input.
         Log("Deinitializing input...");
         _input.Deinitialize();
@@ -128,19 +130,25 @@ namespace Silent
         }
     }
 
-    void ApplicationManager::ToggleDebugMenu()
+    void ApplicationManager::ToggleDebugGui()
     {
-        _showDebugMenu = !_showDebugMenu;
+        _enableDebugGui = !_enableDebugGui;
     }
 
     void ApplicationManager::HandleDebugMenu()
     {
         if constexpr (IS_DEBUG)
         {
-            if (!_showDebugMenu)
+            // DEMO
+            CreateGui([]()
+                {
+                    ImGui::ShowDemoWindow();
+                });
+
+            /*if (!_showDebugMenu)
             {
                 return;
-            }
+            }*/
 
             CreateGui([]()
                 {
@@ -216,7 +224,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    _renderer->SignalResizedFramebuffer();
+                    _renderer->SignalResize();
                     break;
                 }
 
@@ -231,7 +239,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    _renderer->SignalResizedFramebuffer();
+                    _renderer->SignalResize();
                     break;
                 }
 
@@ -246,7 +254,7 @@ namespace Silent
                     _config.SaveOptions();
 
                     // Update window state.
-                    _renderer->SignalResizedFramebuffer();
+                    _renderer->SignalResize();
                     break;
                 }
 

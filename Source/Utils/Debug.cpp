@@ -130,7 +130,7 @@ namespace Silent::Utils::Debug
         {
             auto& renderer = g_App.GetRenderer();
 
-            renderer.SubmitGui(drawFunc);
+            renderer.SubmitDebugGui(drawFunc);
         }
     }
 
