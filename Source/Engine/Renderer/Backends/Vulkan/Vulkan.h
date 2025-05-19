@@ -84,10 +84,7 @@ namespace Silent::Renderer
         void Initialize(SDL_Window& window) override;
         void Deinitialize() override;
         void Update() override;
-        
-        void SignalResize() override;
         void SaveScreenshot() const override;
-        void SubmitDebugGui(std::function<void()> drawFunc) override;
 
     private:
         // Getters

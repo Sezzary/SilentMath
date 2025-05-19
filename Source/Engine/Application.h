@@ -21,6 +21,7 @@ namespace Silent
         // Fields
 
         bool        _isRunning      = false;
+        bool        _isDebugMode    = false;
         bool        _enableDebugGui = false;
         SDL_Window* _window         = nullptr;
 
@@ -30,16 +31,25 @@ namespace Silent
         InputManager                  _input    = InputManager();
 
         Vector2 _mouseWheelAxis = Vector2::Zero;
+        
+        DebugPage _debugPage = DebugPage::None;
 
     public:
         // Constructors
 
         ApplicationManager() = default;
 
+        // Getters
+
         RendererBase&         GetRenderer();
         ConfigurationManager& GetConfig();
         SavegameManager&      GetSavegame();
         InputManager&         GetInput();
+        DebugPage             GetDebugPage();
+
+        // Inquirers
+
+        bool IsDebugMode() const;
 
         // Utilities
 

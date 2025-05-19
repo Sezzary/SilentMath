@@ -130,22 +130,9 @@ namespace Silent::Renderer
         DrawFrame();
     }
 
-    void VulkanRenderer::SignalResize()
-    {
-        _isResized = true;
-    }
-
     void VulkanRenderer::SaveScreenshot() const
     {
         // TODO
-    }
-
-    void VulkanRenderer::SubmitDebugGui(std::function<void()> drawFunc)
-    {
-        if constexpr (IS_DEBUG)
-        {
-            _debugGuiDrawCalls.push_back(drawFunc);
-        }
     }
 
     VkInstance VulkanRenderer::GetInstance()

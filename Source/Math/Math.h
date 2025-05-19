@@ -14,4 +14,5 @@
 #include "Math/Objects/Vector2i.h"
 #include "Math/Objects/Vector3.h"
 #include "Math/Objects/Vector3i.h"
+#include "Math/Objects/Vector4.h"
 #include "Math/Utils.h"

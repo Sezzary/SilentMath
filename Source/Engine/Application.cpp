@@ -36,6 +36,16 @@ namespace Silent
         return _input;
     }
 
+    DebugPage ApplicationManager::GetDebugPage()
+    {
+        return _debugPage;
+    }
+
+    bool ApplicationManager::IsDebugMode() const
+    {
+        return _isDebugMode;
+    }
+
     void ApplicationManager::Initialize()
     {
         Log("Starting Silent Engine.");

@@ -15,6 +15,11 @@ namespace Silent::Utils::Debug
         Error
     };
 
+    enum class DebugPage
+    {
+        None
+    };
+
     void InitializeDebug();
     void UpdateDebug();
 
