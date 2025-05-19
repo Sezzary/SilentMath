@@ -92,8 +92,8 @@ namespace Silent::Renderer
         void Update() override;
         
         void SignalResizedFramebuffer() override;
-        void SubmitGui(std::function<void()> drawFunc) override;
         void SaveScreenshot() const override;
+        void SubmitGui(std::function<void()> drawFunc) override;
 
     private:
         // Getters

@@ -21,8 +21,8 @@ namespace Silent::Renderer
         virtual void Update() = 0;
         
         virtual void SignalResizedFramebuffer() = 0;
-        virtual void SubmitGui(std::function<void()> drawFunc) = 0;
         virtual void SaveScreenshot() const = 0;
+        virtual void SubmitGui(std::function<void()> drawFunc) = 0;
 
         // Debug
 

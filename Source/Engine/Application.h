@@ -17,7 +17,7 @@ namespace Silent
         // Constants
 
         static constexpr char WINDOW_NAME[] = "Silent Engine";
-    
+
         // Fields
 
         bool        _isRunning     = false;
