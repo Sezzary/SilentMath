@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
+#include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 #include "Engine/Renderer/Base.h"
 
 namespace Silent::Renderer
@@ -9,13 +13,11 @@ namespace Silent::Renderer
     private:
         // Fields
 
-        SDL_GLContext _context            = nullptr;
-        uint          _vertexShader       = 0;
-        uint          _fragmentShader     = 0;
-        uint          _shaderProgram      = 0;
-        uint          _vertexArrayObject  = 0;
-        uint          _vertexBufferObject = 0;
-        uint          _ebo                = 0;
+        SDL_GLContext             _context      = nullptr;
+        ShaderManager             _shader       = ShaderManager();
+        VertexArrayManager        _vertexArray  = VertexArrayManager();
+        VertexBufferManager       _vertexBuffer = VertexBufferManager();
+        ElementArrayBufferManager _elementArray = ElementArrayBufferManager();
 
     public:
         // Constructors
@@ -37,8 +39,6 @@ namespace Silent::Renderer
         void DrawDebugGui();
         void DrawDebugObjects();
 
-        void CreateShaderProgram();
-        void CreateVertexBuffer();
         void CreateDebugGui();
     };
 }

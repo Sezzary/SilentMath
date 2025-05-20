@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations":
+    [
+        {
+            "name": "Launch (MSVC)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Build/Debug/Debug/Math_d.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal"
+        }
+    ]
+}

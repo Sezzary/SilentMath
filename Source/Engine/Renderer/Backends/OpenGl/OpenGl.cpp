@@ -2,27 +2,15 @@
 #include "Engine/Renderer/Backends/OpenGl/OpenGl.h"
 
 #include "Engine/Application.h"
+#include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
+#include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 #include "Engine/Renderer/Base.h"
 
 namespace Silent::Renderer
 {
-    // Vertex Shader source code
-    static const char* VERTEX_SHADDER_SOURCE = "#version 460 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-    //Fragment Shader source code
-    static const char* FRAGMENT_SHAER_SOURCE = "#version 460 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-    "}\n\0";
-
-    static const float VERTICES[] =
+    static float VERTICES[] =
     {
         -0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
         0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
@@ -32,7 +20,7 @@ namespace Silent::Renderer
         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
     };
 
-    static const uint VERTEX_INDICES[] =
+    static uint VERTEX_INDICES[] =
     {
         0, 3, 5, // Lower left triangle
         3, 2, 4, // Upper triangle
@@ -42,9 +30,6 @@ namespace Silent::Renderer
     void OpenGlRenderer::Initialize(SDL_Window& window)
     {
         _window = &window;
-
-        // Set OpenGL configuration.
-        gladLoadGL();
 
         // Create OpenGL context.
         _context = SDL_GL_CreateContext(_window);
@@ -72,8 +57,20 @@ namespace Silent::Renderer
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        CreateShaderProgram();
-        CreateVertexBuffer();
+        _shader.Initialize("Shaders/Default.vert", "Shaders/Default.frag");
+
+        _vertexArray.Initialize();
+        _vertexArray.Bind();
+
+        _vertexBuffer.Initialize(VERTICES, sizeof(VERTICES));
+        _elementArray.Initialize(VERTEX_INDICES, sizeof(VERTEX_INDICES));
+
+        _vertexArray.LinkVertexBuffer(_vertexBuffer, 0);
+        _vertexArray.Unbind();
+        _vertexBuffer.Unbind();
+        _elementArray.Unbind();
+
+        //CreateShaderProgram();
 
         if constexpr (IS_DEBUG)
         {
@@ -83,10 +80,10 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::Deinitialize()
     {
-        glDeleteVertexArrays(1, &_vertexArrayObject);
-        glDeleteBuffers(1, &_vertexBufferObject);
-        glDeleteBuffers(1, &_ebo);
-        glDeleteProgram(_shaderProgram);
+        _vertexArray.Delete();
+        _vertexBuffer.Delete();
+        _elementArray.Delete();
+        _shader.Delete();
     }
 
     void OpenGlRenderer::Update()
@@ -144,8 +141,9 @@ namespace Silent::Renderer
     {
         glClearColor(0.07f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(_shaderProgram);
-        glBindVertexArray(_vertexArrayObject);
+
+        _shader.Activate();
+        _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
     }
 
@@ -170,44 +168,6 @@ namespace Silent::Renderer
         // TODO
         _debugLines.clear();
         _debugTriangles.clear();
-    }
-
-    void OpenGlRenderer::CreateShaderProgram()
-    {
-        glShaderSource(_vertexShader, 1, &VERTEX_SHADDER_SOURCE, nullptr);
-        glCompileShader(_vertexShader);
-
-        glShaderSource(_fragmentShader, 1, &FRAGMENT_SHAER_SOURCE, nullptr);
-        glCompileShader(_fragmentShader);
-
-        glAttachShader(_shaderProgram, _vertexShader);
-        glAttachShader(_shaderProgram, _fragmentShader);
-        glLinkProgram(_shaderProgram);
-
-        glDeleteShader(_vertexShader);
-        glDeleteShader(_fragmentShader);
-    }
-
-    void OpenGlRenderer::CreateVertexBuffer()
-    {
-        glGenVertexArrays(1, &_vertexArrayObject);
-        glGenBuffers(1, &_vertexBufferObject);
-        glGenBuffers(1, &_ebo);
-
-        glBindVertexArray(_vertexArrayObject);
-
-        glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferObject);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VERTICES), VERTICES, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(VERTEX_INDICES), VERTEX_INDICES, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void OpenGlRenderer::CreateDebugGui()
