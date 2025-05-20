@@ -15,6 +15,7 @@ namespace Silent::Renderer
         uint          _shaderProgram      = 0;
         uint          _vertexArrayObject  = 0;
         uint          _vertexBufferObject = 0;
+        uint          _ebo                = 0;
 
     public:
         // Constructors

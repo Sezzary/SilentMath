@@ -89,7 +89,8 @@ namespace Silent::Math
 
     Color Color::Lerp(const Color& color0, const Color& color1, float alpha)
     {
-        return Color(glm::lerp(color0.ToGlmVec4(), color1.ToGlmVec4(), alpha));
+        return {}; // TODO
+        //return Color(glm::lerp(color0.ToGlmVec4(), color1.ToGlmVec4(), alpha));
     }
 
     void Color::Lerp(const Color& color, float alpha)

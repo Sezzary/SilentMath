@@ -25,8 +25,18 @@ namespace Silent::Renderer
     static const float VERTICES[] =
     {
         -0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
-         0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
-         0.0f,  0.5f * (float)sqrt(3) * 2 / 3, 0.0f
+        0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
+        0.0f,  0.5f * (float)sqrt(3) * 2 / 3, 0.0f,
+        -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+        0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+        0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+    };
+
+    static const uint VERTEX_INDICES[] =
+    {
+        0, 3, 5, // Lower left triangle
+        3, 2, 4, // Upper triangle
+        5, 4, 1  // Lower right triangle
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
@@ -75,6 +85,7 @@ namespace Silent::Renderer
     {
         glDeleteVertexArrays(1, &_vertexArrayObject);
         glDeleteBuffers(1, &_vertexBufferObject);
+        glDeleteBuffers(1, &_ebo);
         glDeleteProgram(_shaderProgram);
     }
 
@@ -135,7 +146,7 @@ namespace Silent::Renderer
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(_shaderProgram);
         glBindVertexArray(_vertexArrayObject);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
     }
 
     void OpenGlRenderer::DrawDebugGui()
@@ -181,17 +192,22 @@ namespace Silent::Renderer
     {
         glGenVertexArrays(1, &_vertexArrayObject);
         glGenBuffers(1, &_vertexBufferObject);
+        glGenBuffers(1, &_ebo);
 
         glBindVertexArray(_vertexArrayObject);
 
         glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferObject);
         glBufferData(GL_ARRAY_BUFFER, sizeof(VERTICES), VERTICES, GL_STATIC_DRAW);
 
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(VERTEX_INDICES), VERTEX_INDICES, GL_STATIC_DRAW);
+
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
         glEnableVertexAttribArray(0);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void OpenGlRenderer::CreateDebugGui()
