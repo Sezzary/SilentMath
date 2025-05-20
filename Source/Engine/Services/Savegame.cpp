@@ -26,7 +26,7 @@ namespace Silent::Services
         // Create savegame JSON.
         auto saveJson = json{}; // TODO
 
-        // TODO: Parse data from `_savegame` into `savegameJson`.
+        // TODO: Parse data from `_savegame` into `saveJson`.
 
         // Ensure directory exists.
         auto path = GetSavegameFilePath(slotIdx, saveIdx);
@@ -57,10 +57,10 @@ namespace Silent::Services
         }
         
         // Parse file into JSON object.
-        auto savegameJson = json();
-        inputFile >> savegameJson;
+        auto saveJson = json();
+        inputFile >> saveJson;
 
-        // TODO: Parse data from `savegameJson` into `_savegame`.
+        // TODO: Parse data from `saveJson` into `_savegame`.
     }
 
     std::filesystem::path SavegameManager::GetSavegameFilePath(int slotIdx, int saveIdx) const

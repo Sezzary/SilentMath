@@ -31,7 +31,7 @@ namespace Silent::Renderer
             {
                 .From  = from,
                 .To    = to,
-                .Color = Vector4(color.ToGlmVec4())
+                .Color = color.ToVector4()
             };
             _debugLines.push_back(line);
         }
@@ -54,7 +54,7 @@ namespace Silent::Renderer
                     vert1,
                     vert2
                 },
-                .Color = Vector4(color.ToGlmVec4())
+                .Color = color.ToVector4()
             };
             _debugTriangles.push_back(tri);
         }
@@ -142,12 +142,55 @@ namespace Silent::Renderer
     {
         if constexpr (IS_DEBUG)
         {
+            constexpr uint WIREFRAME_SEGMENT_COUNT = 24;
+
             if (page != g_App.GetDebugPage() && page != DebugPage::None)
             {
                 return;
             }
 
-            // TODO
+            // Wireframe.
+            if (isWireframe)
+            {
+                // Draw circles in XY, YZ, and XZ planes.
+                for (int plane = 0; plane < Vector3::AXIS_COUNT; plane++)
+                {
+                    for (int i = 0; i < WIREFRAME_SEGMENT_COUNT; i++)
+                    {
+                        float theta0 = (((float)i / WIREFRAME_SEGMENT_COUNT) * 2.0f) * PI;
+                        float theta1 = (((float)(i + 1) / WIREFRAME_SEGMENT_COUNT) * 2.0f) * PI;
+
+                        auto point0 = Vector3::Zero;
+                        auto point1 = Vector3::Zero;
+                        switch (plane)
+                        {
+                            // XY plane.
+                            case 0:
+                                point0 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta0), sphere.Radius * glm::sin(theta0), 0.0f);
+                                point1 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta1), sphere.Radius * glm::sin(theta1), 0.0f);
+                                break;
+
+                            // YZ plane.
+                            case 1:
+                                point0 = sphere.Center + Vector3(0.0f, sphere.Radius * glm::cos(theta0), sphere.Radius * glm::sin(theta0));
+                                point1 = sphere.Center + Vector3(0.0f, sphere.Radius * glm::cos(theta1), sphere.Radius * glm::sin(theta1));
+                                break;
+
+                            // ZX plane.
+                            case 2:
+                                point0 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta0), 0.0f, sphere.Radius * glm::sin(theta0));
+                                point1 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta1), 0.0f, sphere.Radius * glm::sin(theta1));
+                                break;
+                        }
+                        SubmitDebugLine(point0, point1, color, page);
+                    }
+                }
+            }
+            // Solid.
+            else
+            {
+                // TOO
+            }
         }
     }
 
@@ -160,7 +203,16 @@ namespace Silent::Renderer
                 return;
             }
 
-            // TODO
+            // Wireframe.
+            if (isWireframe)
+            {
+                // TODO
+            }
+            // Solid.
+            else
+            {
+                // TODO
+            }
         }
     }
 
@@ -173,7 +225,16 @@ namespace Silent::Renderer
                 return;
             }
 
-            // TODO
+            // Wireframe.
+            if (isWireframe)
+            {
+                // TODO
+            }
+            // Solid.
+            else
+            {
+                // TODO
+            }
         }
     }
 
@@ -186,7 +247,16 @@ namespace Silent::Renderer
                 return;
             }
 
-            // TODO
+            // Wireframe.
+            if (isWireframe)
+            {
+                // TODO
+            }
+            // Solid.
+            else
+            {
+                // TODO
+            }
         }
     }
 }

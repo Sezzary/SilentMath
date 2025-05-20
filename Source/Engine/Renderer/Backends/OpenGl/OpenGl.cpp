@@ -73,8 +73,8 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::Deinitialize()
     {
-        glDeleteVertexArrays(1, &_vao);
-        glDeleteBuffers(1, &_vbo);
+        glDeleteVertexArrays(1, &_vertexArrayObject);
+        glDeleteBuffers(1, &_vertexBufferObject);
         glDeleteProgram(_shaderProgram);
     }
 
@@ -90,8 +90,7 @@ namespace Silent::Renderer
         // Swap buffers.
         SDL_GL_SwapWindow(_window);
 
-        // Clear scene.
-
+        // Clear scene. TODO
     }
 
     void OpenGlRenderer::SaveScreenshot() const
@@ -135,7 +134,7 @@ namespace Silent::Renderer
         glClearColor(0.07f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(_shaderProgram);
-        glBindVertexArray(_vao);
+        glBindVertexArray(_vertexArrayObject);
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
@@ -180,12 +179,12 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::CreateVertexBuffer()
     {
-        glGenVertexArrays(1, &_vao);
-        glGenBuffers(1, &_vbo);
+        glGenVertexArrays(1, &_vertexArrayObject);
+        glGenBuffers(1, &_vertexBufferObject);
 
-        glBindVertexArray(_vao);
+        glBindVertexArray(_vertexArrayObject);
 
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferObject);
         glBufferData(GL_ARRAY_BUFFER, sizeof(VERTICES), VERTICES, GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);

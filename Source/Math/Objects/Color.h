@@ -59,8 +59,10 @@ namespace Silent::Math
 
         uint ToPackedRgba() const;
 
-        const glm::vec4 ToGlmVec4() const;
-        glm::vec4       ToGlmVec4();
+        const Vector4&   ToVector4() const;
+        Vector4&         ToVector4();
+        const glm::vec4& ToGlmVec4() const;
+        glm::vec4&       ToGlmVec4();
 
         // Operators
 

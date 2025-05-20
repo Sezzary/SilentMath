@@ -155,12 +155,22 @@ namespace Silent::Math
         return (FP_COLOR(R()) << 24) | (FP_COLOR(G()) << 16) | (FP_COLOR(B()) << 8) | FP_COLOR(A());
     }
 
-    const glm::vec4 Color::ToGlmVec4() const
+    const Vector4& Color::ToVector4() const
+    {
+        return *(const Vector4*)this;
+    }
+
+    Vector4& Color::ToVector4()
+    {
+        return *(Vector4*)this;
+    }
+
+    const glm::vec4& Color::ToGlmVec4() const
     {
         return *(const glm::vec4*)this;
     }
 
-    glm::vec4 Color::ToGlmVec4()
+    glm::vec4& Color::ToGlmVec4()
     {
         return *(glm::vec4*)this;
     }
