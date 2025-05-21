@@ -58,6 +58,7 @@ target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/json/include
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/PsyCross/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/SDL/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
 
@@ -65,6 +66,7 @@ target_include_directories(Math SYSTEM PRIVATE
 add_subdirectory(Libraries/glad/cmake)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/json)
+add_subdirectory(Libraries/PsyCross)
 add_subdirectory(Libraries/SDL)
 add_subdirectory(Libraries/spdlog)
 
@@ -76,6 +78,7 @@ find_package(Vulkan REQUIRED)
 # Add libraries.
 target_link_libraries(Math PRIVATE
     glm
+    #PsyCross
     SDL3-static
     spdlog
     Vulkan::Vulkan)

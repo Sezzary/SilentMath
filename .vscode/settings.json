@@ -96,6 +96,8 @@
         "numeric": "cpp",
         "ranges": "cpp",
         "valarray": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "ABS.C": "cpp",
+        "sdl.h": "c"
     }
 }
