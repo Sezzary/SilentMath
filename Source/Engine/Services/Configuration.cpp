@@ -11,6 +11,7 @@ namespace Silent::Services
     constexpr char KEY_GRAPHICS[]                                 = "Graphics";
     constexpr char KEY_INPUT[]                                    = "Input";
     constexpr char KEY_GAMEPLAY[]                                 = "Gameplay";
+    constexpr char KEY_SYSTEM[]                                   = "System";
     constexpr char KEY_WINDOWED_SIZE_X[]                          = "WindowedSizeX";
     constexpr char KEY_WINDOWED_SIZE_Y[]                          = "WindowedSizeY";
     constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
@@ -30,9 +31,9 @@ namespace Silent::Services
     constexpr char KEY_BLOOD_COLOR[]                              = "BloodColor";
     constexpr char KEY_BULLET_ADJUST[]                            = "BulletAdjust";
     constexpr char KEY_KEYBOARD_MOUSE_BINDINGS[]                  = "KeyboardMouseBindings";
-    constexpr char KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID[] = "ActiveKeyboardMouseProfileId";
-    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "GamepadBindings";  
-    constexpr char KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID[]        = "ActiveGamepadProfileId";
+    constexpr char KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID[] = "ActiveKeyboardMouseBindingProfileId";
+    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "GamepadBindings";
+    constexpr char KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID[]        = "ActiveGamepadBindingProfileId";
     constexpr char KEY_ENABLE_VIBRATION[]                         = "EnableVibration";
     constexpr char KEY_MOUSE_SENSITIVITY[]                        = "MouseSensitivity";
     constexpr char KEY_WEAPON_CONTROL[]                           = "WeaponControl";
@@ -41,6 +42,7 @@ namespace Silent::Services
     constexpr char KEY_WALK_RUN_CONTROL[]                         = "WalkRunControl";
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
+    constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
 
     constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i(800, 600);
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
@@ -69,6 +71,8 @@ namespace Silent::Services
     constexpr int  DEFAULT_WALK_RUN_CONTROL                         = 0;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
+    constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
+    constexpr bool DEFAULT_ENABLE_DEBUG_MODE                        = false;
 
     std::filesystem::path ConfigurationManager::GetAppDirPath() const
     {
@@ -105,7 +109,7 @@ namespace Silent::Services
         _options.BulletAdjust    = DEFAULT_BULLET_ADJUST;
     }
 
-    void ConfigurationManager::SetDefaultInputKeyboardMouseCustomBindingOptions()
+    void ConfigurationManager::SetDefaultInputKmBindingsOptions()
     {
         _options.KeyboardMouseBindings = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;
     }
@@ -125,6 +129,12 @@ namespace Silent::Services
         _options.WalkRunControl    = DEFAULT_WALK_RUN_CONTROL;
         _options.DisableAutoAiming = DEFAULT_DISABLE_AUTO_AIMING;
         _options.ViewMode          = DEFAULT_VIEW_MODE;
+    }
+
+    void ConfigurationManager::SetDefaultInputSystemOptions()
+    {
+        _options.EnableToasts    = DEFAULT_ENABLE_TOASTS;
+        _options.EnableDebugMode = DEFAULT_ENABLE_DEBUG_MODE;
     }
 
     void ConfigurationManager::Initialize()
@@ -185,7 +195,7 @@ namespace Silent::Services
 
     void ConfigurationManager::SaveOptions()
     {
-        // Collect custom keyboard/mouse action-event bindings.
+        // Create keyboard/mouse action-event bindings JSON.
         auto kmBindsJson = json();
         for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
         {
@@ -198,7 +208,7 @@ namespace Silent::Services
             kmBindsJson[std::to_string((int)actionId)] = eventsJson;
         }
 
-        // Collect custom gamepad action-event bindings.
+        // Create gamepad action-event bindings JSON.
         auto gamepadBindsJson = json();
         for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
         {
@@ -257,6 +267,12 @@ namespace Silent::Services
                     { KEY_WALK_RUN_CONTROL,                         _options.WalkRunControl },
                     { KEY_DISABLE_AUTO_AIMING,                      _options.DisableAutoAiming },
                     { KEY_VIEW_MODE,                                _options.ViewMode }
+                }
+            },
+            {
+                KEY_SYSTEM,
+                {
+                    { KEY_ENABLE_TOASTS, _options.EnableToasts }
                 }
             }
         };
@@ -382,17 +398,23 @@ namespace Silent::Services
                 }
             }
         }
+
+        // Load system options.
+        const auto& systemJson = optionsJson[KEY_SYSTEM];
+        _options.EnableToasts  = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
     }
 
     void ConfigurationManager::SetDefaultOptions()
     {
         SetDefaultGraphicsOptions();
         SetDefaultGameplayOptions();
-        SetDefaultInputKeyboardMouseCustomBindingOptions();
+        SetDefaultInputKmBindingsOptions();
         SetDefaultInputGamepadCustomBindingOptions();
         SetDefaultInputControlsOptions();
 
         _options.ActiveKeyboardMouseProfileId = DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID;
         _options.ActiveGamepadProfileId       = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
+
+        _options.EnableToasts = DEFAULT_ENABLE_TOASTS;
     }
 }

@@ -36,7 +36,7 @@ namespace Silent::Services
 
     struct Options
     {
-        // Graphics (system)
+        // Graphics (internal)
 
         Vector2i WindowedSize    = Vector2i::Zero;
         bool     EnableMaximized = false;
@@ -83,11 +83,10 @@ namespace Silent::Services
         bool DisableAutoAiming = false;
         int  ViewMode          = 0;
 
-        // System (TODO, just ideas for usability)
+        // System
 
         bool EnableToasts    = false; // Popup messages, e.g. "Gamepad connected", "Gamepad disconnected", etc.
         bool EnableDebugMode = false; // Wouldn't be saved in config file. User would have to turn it on manually each session.
-
     };
 
     class ConfigurationManager
@@ -127,9 +126,10 @@ namespace Silent::Services
 
         void SetDefaultGraphicsOptions();
         void SetDefaultGameplayOptions();
-        void SetDefaultInputKeyboardMouseCustomBindingOptions();
+        void SetDefaultInputKmBindingsOptions();
         void SetDefaultInputGamepadCustomBindingOptions();
         void SetDefaultInputControlsOptions();
+        void SetDefaultInputSystemOptions();
 
         // Utilities
 
