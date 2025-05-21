@@ -3,9 +3,9 @@
 namespace Silent::Utils::Debug
 {
 #ifdef _DEBUG
-    constexpr bool IS_DEBUG = true;
+    constexpr bool IS_DEBUG_BUILD = true;
 #else
-    constexpr bool IS_DEBUG = false;
+    constexpr bool IS_DEBUG_BUILD = false;
 #endif
 
     enum class LogLevel

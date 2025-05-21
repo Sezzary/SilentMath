@@ -13,20 +13,26 @@ namespace Silent::Utils::Debug
 
     void InitializeDebug()
     {
-        if constexpr (IS_DEBUG)
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
         {
-            // TODO: Save log to text file.
-        }     
+            return;
+        }
+
+        // TODO: Save log to text file.
     }
 
     void UpdateDebug()
     {
-        if constexpr (IS_DEBUG)
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
         {
-            // TODO: Print messages to ImGui window.
-
-            Messages.clear();
+            return;
         }
+
+        // TODO: Print messages to ImGui window.
+
+        Messages.clear();
     }
 
     void Log(const std::string& msg, LogLevel level, bool allowRepeat)
@@ -69,148 +75,125 @@ namespace Silent::Utils::Debug
 
     void Message(const char* msg, ...)
     {
-        if constexpr (IS_DEBUG)
+        constexpr int BUFFER_SIZE = 255;
+
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
         {
-            constexpr int BUFFER_SIZE = 255;
-
-            // Initialize buffer.
-            char buffer[BUFFER_SIZE];
-            std::memset(buffer, 0, BUFFER_SIZE);
-
-            // Format string.
-            va_list args;
-            va_start(args, msg);
-            vsnprintf(buffer, BUFFER_SIZE, msg, args);
-            va_end(args);
-
-            // LOCK: Restrict `Messages` access.
-            static auto mutex = std::mutex();
-            {
-                auto lock = std::lock_guard(mutex);
-                Messages.push_back(buffer);
-            }
+            return;
         }
+
+        // Initialize buffer.
+        char buffer[BUFFER_SIZE];
+        std::memset(buffer, 0, BUFFER_SIZE);
+
+        // Format string.
+        va_list args;
+        va_start(args, msg);
+        vsnprintf(buffer, BUFFER_SIZE, msg, args);
+        va_end(args);
+
+        // LOCK: Restrict `Messages` access.
+        static auto mutex = std::mutex();
+        {
+            auto lock = std::lock_guard(mutex);
+            Messages.push_back(buffer);
+        }
+
     }
 
     void Assert(bool cond, const std::string& msg)
     {
-        if constexpr (IS_DEBUG)
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
         {
-            if (cond)
-            {
-                return;
-            }
-
-            Log(msg, LogLevel::Error);
-            throw std::runtime_error("Assertion failed.");
+            return;
         }
+
+        if (cond)
+        {
+            return;
+        }
+
+        Log(msg, LogLevel::Error);
+        throw std::runtime_error("Assertion failed.");
     };
 
     void StartTimer()
     {
-        if constexpr (IS_DEBUG)
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
         {
-            StartTime = std::chrono::high_resolution_clock::now();
+            return;
         }
+
+        StartTime = std::chrono::high_resolution_clock::now();
     }
 
     void EndTimer()
     {
-        if constexpr (IS_DEBUG)
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
         {
-            auto endTime  = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
-            Message("Execution (μs): %d", duration.count());
+            return;
         }
+
+        auto endTime  = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
+        Message("Execution (μs): %d", duration.count());
     }
 
     void CreateGui(std::function<void()> drawFunc)
     {
-        if constexpr (IS_DEBUG)
-        {
-            auto& renderer = g_App.GetRenderer();
-
-            renderer.SubmitDebugGui(drawFunc);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.SubmitDebugGui(drawFunc);
     }
 
     /*void CreateLine(const Vector3& from, const Vector3& to, const Color& color, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateLine(from, to, color, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateLine(from, to, color, page);
     }
 
     void CreateTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateTriangle(vert0, vert1, vert2, color, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateTriangle(vert0, vert1, vert2, color, page);
     }
 
     void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateTarget(center, rot, radius, color, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateTarget(center, rot, radius, color, page);
     }
 
     void CreateBox(const AxisAlignedBoundingBox& aabb, const Color& color, bool isWireframe, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateBox(aabb, color, isWireframe, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateBox(aabb, color, isWireframe, page);
     }
 
     void CreateBox(const OrientedBoundingBox& obb, const Color& color, bool isWireframe, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateBox(obb, color, isWireframe, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateBox(obb, color, isWireframe, page);
     }
 
     void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateSphere(sphere, color, isWireframe, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateSphere(sphere, color, isWireframe, page);
     }
 
     void CreateCylinder(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateCylinder(center, rot, radius, length, color, isWireframe, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateCylinder(center, rot, radius, length, color, isWireframe, page);
     }
 
     void CreateCone(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
-        if constexpr (IS_DEBUG)
-        {
-           auto& renderer = g_App.GetRenderer();
-
-           renderer.CreateCone(center, rot, radius, length, color, isWireframe, page);
-        }
+        auto& renderer = g_App.GetRenderer();
+        renderer.CreateCone(center, rot, radius, length, color, isWireframe, page);
     }*/
 }

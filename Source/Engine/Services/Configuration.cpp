@@ -72,7 +72,6 @@ namespace Silent::Services
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
-    constexpr bool DEFAULT_ENABLE_DEBUG_MODE                        = false;
 
     std::filesystem::path ConfigurationManager::GetAppDirPath() const
     {
@@ -134,7 +133,7 @@ namespace Silent::Services
     void ConfigurationManager::SetDefaultInputSystemOptions()
     {
         _options.EnableToasts    = DEFAULT_ENABLE_TOASTS;
-        _options.EnableDebugMode = DEFAULT_ENABLE_DEBUG_MODE;
+        _options.EnableDebugMode = IS_DEBUG_BUILD;
     }
 
     void ConfigurationManager::Initialize()
@@ -408,13 +407,14 @@ namespace Silent::Services
     {
         SetDefaultGraphicsOptions();
         SetDefaultGameplayOptions();
+
         SetDefaultInputKmBindingsOptions();
-        SetDefaultInputGamepadCustomBindingOptions();
-        SetDefaultInputControlsOptions();
-
         _options.ActiveKeyboardMouseProfileId = DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID;
-        _options.ActiveGamepadProfileId       = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
 
-        _options.EnableToasts = DEFAULT_ENABLE_TOASTS;
+        SetDefaultInputGamepadCustomBindingOptions();
+        _options.ActiveGamepadProfileId = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
+
+        SetDefaultInputControlsOptions();
+        SetDefaultInputSystemOptions();
     }
 }

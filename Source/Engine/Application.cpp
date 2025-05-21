@@ -18,22 +18,22 @@ namespace Silent
 
     RendererBase& ApplicationManager::GetRenderer()
     {
-        return *_renderer;
-    }
-
-    ConfigurationManager& ApplicationManager::GetConfig()
-    {
-        return _config;
-    }
-
-    SavegameManager& ApplicationManager::GetSavegame()
-    {
-        return _savegame;
+        return *_work.Renderer;
     }
 
     InputManager& ApplicationManager::GetInput()
     {
-        return _input;
+        return _work.Input;
+    }
+
+    SavegameManager& ApplicationManager::GetSavegame()
+    {
+        return _work.Savegame;
+    }
+
+    ConfigurationManager& ApplicationManager::GetConfig()
+    {
+        return _work.Config;
     }
 
     DebugPage ApplicationManager::GetDebugPage()
@@ -41,9 +41,9 @@ namespace Silent
         return _debugPage;
     }
 
-    bool ApplicationManager::IsDebugMode() const
+    void ApplicationManager::SetDebugPage(DebugPage page)
     {
-        return _isDebugMode;
+        _debugPage = page;
     }
 
     void ApplicationManager::Initialize()
@@ -55,7 +55,7 @@ namespace Silent
 
         // Configuration.
         Log("Initializing configuration...");
-        _config.Initialize();
+        _work.Config.Initialize();
 
         // SDL.
         Log("Initializing SDL...");
@@ -64,7 +64,7 @@ namespace Silent
             throw std::runtime_error("Failed to initialize SDL.");
         }
 
-        const auto& options = _config.GetOptions();
+        const auto& options = _work.Config.GetOptions();
 
         // Collect window flags.
         int rendererFlag   = SDL_WINDOW_OPENGL;
@@ -78,16 +78,16 @@ namespace Silent
 
         // Renderer.
         Log("Initializing renderer...");
-        _renderer = CreateRenderer(RendererType::OpenGl);
-        if (_renderer == nullptr)
+        _work.Renderer = CreateRenderer(RendererType::OpenGl);
+        if (_work.Renderer == nullptr)
         {
             throw std::runtime_error("Failed to create renderer.");
         }
-        _renderer->Initialize(*_window);
+        _work.Renderer->Initialize(*_window);
 
         // Input.
         Log("Initializing input...");
-        _input.Initialize();
+        _work.Input.Initialize();
 
         // Finish.
         Log("Initialization complete.");
@@ -100,11 +100,11 @@ namespace Silent
 
         // Input.
         Log("Deinitializing input...");
-        _input.Deinitialize();
+        _work.Input.Deinitialize();
 
         // Renderer.
         Log("Deinitializing renderer...");
-        _renderer->Deinitialize();
+        _work.Renderer->Deinitialize();
 
         // SDL.
         Log("Deinitializing SDL...");
@@ -132,7 +132,7 @@ namespace Silent
 
     void ApplicationManager::ToggleFullscreen()
     {
-        auto& options = _config.GetOptions();
+        auto& options = _work.Config.GetOptions();
 
         if (!SDL_SetWindowFullscreen(_window, !options.EnableFullscreen))
         {
@@ -145,28 +145,26 @@ namespace Silent
         _enableDebugGui = !_enableDebugGui;
     }
 
-    void ApplicationManager::HandleDebugMenu()
+    void ApplicationManager::HandleDebugGui()
     {
-        if constexpr (IS_DEBUG)
+        const auto& options = _work.Config.GetOptions();
+        if (!options.EnableDebugMode || !_enableDebugGui)
         {
-            // DEMO
-            CreateGui([]()
-                {
-                    ImGui::ShowDemoWindow();
-                });
-
-            /*if (!_showDebugMenu)
-            {
-                return;
-            }*/
-
-            CreateGui([]()
-                {
-                    ImGui::Begin("My Window");
-                    ImGui::Text("Hello. It's me. =^.^=");
-                    ImGui::End();
-                });
+            return;
         }
+
+        // DEMO
+        CreateGui([]()
+            {
+                ImGui::ShowDemoWindow();
+            });
+
+        CreateGui([]()
+            {
+                ImGui::Begin("My Window");
+                ImGui::Text("Hello. It's me. =^.^=");
+                ImGui::End();
+            });
     }
 
     void ApplicationManager::Update()
@@ -174,11 +172,11 @@ namespace Silent
         PollEvents();
 
         // Update input state.
-        _input.Update(*_window, _mouseWheelAxis);
+        _work.Input.Update(*_window, _mouseWheelAxis);
 
         // TODO: Update game state here.
 
-        HandleDebugMenu();
+        HandleDebugGui();
         UpdateDebug();
     }
 
@@ -190,15 +188,17 @@ namespace Silent
         }
 
         // Render scene.
-        _renderer->Update();
+        _work.Renderer->Update();
     }
 
     void ApplicationManager::PollEvents()
     {
+        const auto& options = _work.Config.GetOptions();
+
         auto event = SDL_Event{};
         while (SDL_PollEvent(&event))
         {
-            if constexpr (IS_DEBUG)
+            if (options.EnableDebugMode && _enableDebugGui)
             {
                 ImGui_ImplSDL3_ProcessEvent(&event);
             }
@@ -220,7 +220,7 @@ namespace Silent
                         break;
                     }
 
-                    auto& options = _config.GetOptions();
+                    auto& options = _work.Config.GetOptions();
                     
                     auto res = Vector2i::Zero;
                     SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
@@ -231,40 +231,40 @@ namespace Silent
 
                     // Update options.
                     options.WindowedSize = res;
-                    _config.SaveOptions();
+                    _work.Config.SaveOptions();
 
                     // Update window state.
-                    _renderer->SignalResize();
+                    _work.Renderer->SignalResize();
                     break;
                 }
 
                 case SDL_EVENT_WINDOW_MAXIMIZED:
                 case SDL_EVENT_WINDOW_RESTORED:
                 {
-                    auto& options = _config.GetOptions();
+                    auto& options = _work.Config.GetOptions();
 
                     // Update options.
                     auto windowFlags        = SDL_GetWindowFlags(_window);
                     options.EnableMaximized = windowFlags & SDL_WINDOW_MAXIMIZED;
-                    _config.SaveOptions();
+                    _work.Config.SaveOptions();
 
                     // Update window state.
-                    _renderer->SignalResize();
+                    _work.Renderer->SignalResize();
                     break;
                 }
 
                 case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                 case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                 {
-                    auto& options = _config.GetOptions();
+                    auto& options = _work.Config.GetOptions();
 
                     // Update options.
                     bool isFullscreen        = event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
                     options.EnableFullscreen = isFullscreen;
-                    _config.SaveOptions();
+                    _work.Config.SaveOptions();
 
                     // Update window state.
-                    _renderer->SignalResize();
+                    _work.Renderer->SignalResize();
                     break;
                 }
 

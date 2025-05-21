@@ -93,7 +93,7 @@ namespace Silent::Utils
 
     void BitField::Set(uint bitIdx)
     {
-        if constexpr (IS_DEBUG)
+        if constexpr (IS_DEBUG_BUILD)
         {
             if (!IsBitIdxValid(bitIdx))
             {
@@ -121,7 +121,7 @@ namespace Silent::Utils
 
     void BitField::Clear(uint bitIdx)
     {
-        if constexpr (IS_DEBUG)
+        if constexpr (IS_DEBUG_BUILD)
         {
             if (!IsBitIdxValid(bitIdx))
             {
@@ -149,7 +149,7 @@ namespace Silent::Utils
 
     void BitField::Flip(uint bitIdx)
     {
-        if constexpr (IS_DEBUG)
+        if constexpr (IS_DEBUG_BUILD)
         {
             if (!IsBitIdxValid(bitIdx))
             {
@@ -207,7 +207,7 @@ namespace Silent::Utils
 
     bool BitField::Test(uint bitIdx) const
     {
-        if constexpr (IS_DEBUG)
+        if constexpr (IS_DEBUG_BUILD)
         {
             if (!IsBitIdxValid(bitIdx))
             {

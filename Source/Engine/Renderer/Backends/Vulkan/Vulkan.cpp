@@ -78,11 +78,8 @@ namespace Silent::Renderer
         CreateCommandPool();
         CreateCommandBuffers();
         CreateSyncObjects();
-        
-        if constexpr (IS_DEBUG)
-        {
-            InitializeImGui();
-        }
+
+        InitializeImGui();
     }
 
     void VulkanRenderer::Deinitialize()
@@ -989,10 +986,7 @@ namespace Silent::Renderer
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
 
-        if constexpr (IS_DEBUG)
-        {
-            ImGui::Render();
-        }
+        ImGui::Render();
 
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -1015,10 +1009,7 @@ namespace Silent::Renderer
 
         vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
-        if constexpr (IS_DEBUG)
-        {
-            ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
-        }
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
 
         vkCmdEndRenderPass(commandBuffer);
 

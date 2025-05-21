@@ -71,11 +71,7 @@ namespace Silent::Renderer
         _elementArray.Unbind();
 
         //CreateShaderProgram();
-
-        if constexpr (IS_DEBUG)
-        {
-            CreateDebugGui();
-        }
+        CreateDebugGui();
     }
 
     void OpenGlRenderer::Deinitialize()

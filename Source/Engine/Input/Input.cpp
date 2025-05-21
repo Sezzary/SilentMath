@@ -430,8 +430,8 @@ namespace Silent::Input
         static bool dbScreenshot = true;
         if ((_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]) && dbScreenshot)
         {
-            /*const auto& renderer = g_App.GetRenderer();
-            renderer.SaveScreenshot();*/
+            const auto& renderer = g_App.GetRenderer();
+            renderer.SaveScreenshot();
         }
         dbScreenshot = !(_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]);
 
@@ -440,19 +440,19 @@ namespace Silent::Input
         if (((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]) && dbFullscreen)
         {
             g_App.ToggleFullscreen();
-            Log("A", LogLevel::Info, true);
         }
         dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 
-        if constexpr (IS_DEBUG)
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (options.EnableDebugMode)
         {
-            // Toggle debug menu.
-            static bool dbDebug = true;
-            if (_events.States[(int)EventId::Grave] && dbDebug)
+            // Toggle debug GUI.
+            static bool dbDebugGui = true;
+            if (_events.States[(int)EventId::Grave] && dbDebugGui)
             {
                 g_App.ToggleDebugGui();
             }
-            dbDebug = !_events.States[(int)EventId::Grave];
+            dbDebugGui = !_events.States[(int)EventId::Grave];
         }
     }
 

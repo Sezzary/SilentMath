@@ -11,6 +11,16 @@ using namespace Silent::Services;
 
 namespace Silent
 {
+    struct ApplicationWork
+    {
+        // TODO: `g_SysWork`, `g_GameWork`, and probably other globals would go here.
+
+        std::unique_ptr<RendererBase> Renderer = nullptr;
+        InputManager                  Input    = InputManager();
+        SavegameManager               Savegame = SavegameManager();
+        ConfigurationManager          Config   = ConfigurationManager();
+    };
+
     class ApplicationManager
     {
     private:
@@ -20,19 +30,13 @@ namespace Silent
 
         // Fields
 
-        bool        _isRunning      = false;
-        bool        _isDebugMode    = false;
-        bool        _enableDebugGui = false;
         SDL_Window* _window         = nullptr;
+        Vector2     _mouseWheelAxis = Vector2::Zero;
 
-        std::unique_ptr<RendererBase> _renderer = nullptr;
-        ConfigurationManager          _config   = ConfigurationManager();
-        SavegameManager               _savegame = SavegameManager();
-        InputManager                  _input    = InputManager();
-
-        Vector2 _mouseWheelAxis = Vector2::Zero;
-        
-        DebugPage _debugPage = DebugPage::None;
+        ApplicationWork _work           = {};
+        bool            _isRunning      = false;
+        bool            _enableDebugGui = true; // TODO: Temporarily hard-set to `true`.
+        DebugPage       _debugPage      = DebugPage::None;
 
     public:
         // Constructors
@@ -42,14 +46,14 @@ namespace Silent
         // Getters
 
         RendererBase&         GetRenderer();
-        ConfigurationManager& GetConfig();
-        SavegameManager&      GetSavegame();
         InputManager&         GetInput();
+        SavegameManager&      GetSavegame();
+        ConfigurationManager& GetConfig();
         DebugPage             GetDebugPage();
 
-        // Inquirers
+        // Setters
 
-        bool IsDebugMode() const;
+        void SetDebugPage(DebugPage page);
 
         // Utilities
 
@@ -59,7 +63,7 @@ namespace Silent
 
         void ToggleFullscreen();
         void ToggleDebugGui();
-        void HandleDebugMenu();
+        void HandleDebugGui();
 
     private:
         // Helpers
