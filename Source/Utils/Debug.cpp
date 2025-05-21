@@ -13,12 +13,6 @@ namespace Silent::Utils::Debug
 
     void InitializeDebug()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
-        {
-            return;
-        }
-
         // TODO: Save log to text file.
     }
 
@@ -31,8 +25,19 @@ namespace Silent::Utils::Debug
         }
 
         // TODO: Print messages to ImGui window.
-
         Messages.clear();
+
+        CreateGui([]()
+            {
+                ImGui::ShowDemoWindow();
+            });
+
+        CreateGui([]()
+            {
+                ImGui::Begin("My Window");
+                ImGui::Text("Hello. It's me. =^.^=");
+                ImGui::End();
+            });
     }
 
     void Log(const std::string& msg, LogLevel level, bool allowRepeat)

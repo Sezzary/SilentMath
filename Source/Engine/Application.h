@@ -63,7 +63,6 @@ namespace Silent
 
         void ToggleFullscreen();
         void ToggleDebugGui();
-        void HandleDebugGui();
 
     private:
         // Helpers

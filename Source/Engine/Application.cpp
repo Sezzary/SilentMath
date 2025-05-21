@@ -145,28 +145,6 @@ namespace Silent
         _enableDebugGui = !_enableDebugGui;
     }
 
-    void ApplicationManager::HandleDebugGui()
-    {
-        const auto& options = _work.Config.GetOptions();
-        if (!options.EnableDebugMode || !_enableDebugGui)
-        {
-            return;
-        }
-
-        // DEMO
-        CreateGui([]()
-            {
-                ImGui::ShowDemoWindow();
-            });
-
-        CreateGui([]()
-            {
-                ImGui::Begin("My Window");
-                ImGui::Text("Hello. It's me. =^.^=");
-                ImGui::End();
-            });
-    }
-
     void ApplicationManager::Update()
     {
         PollEvents();
@@ -176,7 +154,6 @@ namespace Silent
 
         // TODO: Update game state here.
 
-        HandleDebugGui();
         UpdateDebug();
     }
 
