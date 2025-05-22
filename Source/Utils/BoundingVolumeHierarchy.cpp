@@ -102,7 +102,8 @@ namespace Silent::Utils
         auto it = _leafIdMap.find(objectId);
         if (it != _leafIdMap.end())
         {
-            Log("BVH: Attempted to insert leaf with existing object ID " + std::to_string(objectId) + ".", LogLevel::Warning, true);
+            Log("BVH: Attempted to insert leaf with existing object ID " + std::to_string(objectId) + ".",
+                LogLevel::Warning, LogMode::Debug, true);
             return;
         }
 
@@ -125,7 +126,8 @@ namespace Silent::Utils
         auto it = _leafIdMap.find(objectId);
         if (it == _leafIdMap.end())
         {
-            Log("BVH: Attempted to move missing leaf with object ID " + std::to_string(objectId) + ".", LogLevel::Warning, true);
+            Log("BVH: Attempted to move missing leaf with object ID " + std::to_string(objectId) + ".",
+                LogLevel::Warning, LogMode::Debug, true);
             return;
         }
 
@@ -159,7 +161,8 @@ namespace Silent::Utils
         auto it = _leafIdMap.find(objectId);
         if (it == _leafIdMap.end())
         {
-            Log("BVH: Attempted to remove missing leaf with object ID " + std::to_string(objectId) + ".", LogLevel::Warning, true);
+            Log("BVH: Attempted to remove missing leaf with object ID " + std::to_string(objectId) + ".",
+                LogLevel::Warning, LogMode::Debug, true);
             return;
         }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Silent::FlatBuffers { struct Savegame; }
+
 namespace Silent::Services
 {
     constexpr int SLOT_COUNT               = 2;
@@ -112,10 +114,9 @@ namespace Silent::Services
         // Helpers
 
         std::filesystem::path GetSavegameFilePath(int slotIdx, int saveIdx) const;
-        void                  SetDefaultSavegame();
         void                  PopulateSlotSavegameLists();
 
-        void FromSerialized();
-        void ToSerialized() const;
+        std::unique_ptr<Savegame>                       FromSavegameBuffer(const Silent::FlatBuffers::Savegame& saveBuffer) const;
+        std::unique_ptr<flatbuffers::FlatBufferBuilder> ToSavegameBuffer(const Savegame& save) const;
     };
 }

@@ -3,15 +3,16 @@
 
 #include "Engine/Application.h"
 #include "Engine/Services/Configuration.h"
+#include "Engine/Services/Savegame/Generated/Savegame_generated.h"
 
 namespace Silent::Services
 {
-    constexpr char KEY_RUN_DISTANCE[]  = "RunDistance";
-    constexpr char KEY_WALK_DISTANCE[] = "WalkDistance";
-
     const std::vector<std::string>& SavegameManager::GetSlotSavegameList(int slotIdx)
     {
-        Assert(slotIdx > _slotSavegameLists.size(), "Attempted to get savegame list for invalid slot.");
+        if (slotIdx > _slotSavegameLists.size())
+        {
+            throw std::invalid_argument("Attempted to get savegame list for invalid slot.");
+        }
 
         return _slotSavegameLists[slotIdx];
     }
@@ -23,20 +24,20 @@ namespace Silent::Services
 
     void SavegameManager::Save(int slotIdx, int saveIdx)
     {
-        // Create savegame JSON.
-        auto saveJson = json{}; // TODO
+        Log("Saving game to slot " + std::to_string(slotIdx + 1) + ", savegame " + std::to_string(saveIdx + 1) + ".", LogLevel::Info);
 
-        // TODO: Parse data from `_savegame` into `saveJson`.
+        // Create savegame buffer.
+        auto saveBuffer = ToSavegameBuffer(_savegame);
 
         // Ensure directory exists.
         auto path = GetSavegameFilePath(slotIdx, saveIdx);
         std::filesystem::create_directories(path.parent_path());
 
-        // Write savegame file.
+        // Write savegame buffer.
         auto outputFile = std::ofstream(path);
         if (outputFile.is_open())
         {
-            outputFile << saveJson.dump(ConfigurationManager::JSON_INDENT_SIZE);
+            outputFile.write((const char*)saveBuffer->GetBufferPointer(), saveBuffer->GetSize());
             outputFile.close();
         }
     }
@@ -45,40 +46,41 @@ namespace Silent::Services
     {
         auto path = GetSavegameFilePath(slotIdx, saveIdx);
 
-        // Open savegame file.
-        auto inputFile = std::ifstream(path);
+        // Open savegame buffer file.
+        auto inputFile = std::ifstream(path, std::ios::binary);
         if (!inputFile.is_open())
         {
-            Log("No save " + std::to_string(saveIdx) + " file found for slot " + std::to_string(slotIdx) + ". " + "Creating new save.", LogLevel::Info);
-
-            SetDefaultSavegame();
-            Save(slotIdx, saveIdx);
+            Log("Attempted to load missing savegame file for slot " + std::to_string(slotIdx) + ", save " + std::to_string(saveIdx) + ".",
+                LogLevel::Warning, LogMode::Debug);
             return;
         }
-        
-        // Parse file into JSON object.
-        auto saveJson = json();
-        inputFile >> saveJson;
 
-        // TODO: Parse data from `saveJson` into `_savegame`.
+        // Get file size.
+        inputFile.seekg(0, std::ios::end);
+        auto fileSize = inputFile.tellg();
+        inputFile.seekg(0, std::ios::beg);
+
+        // Read file into buffer object.
+        auto fileBuffer = std::vector<char>(fileSize);
+        inputFile.read(fileBuffer.data(), fileSize);
+        auto saveBuffer = flatbuffers::GetRoot<Silent::FlatBuffers::Savegame>(fileBuffer.data());
+
+        // Read savegame buffer.
+        _savegame = std::move(*FromSavegameBuffer(*saveBuffer));
     }
 
     std::filesystem::path SavegameManager::GetSavegameFilePath(int slotIdx, int saveIdx) const
     {
-        if (slotIdx > _slotSavegameLists.size())
+        if (slotIdx >= _slotSavegameLists.size())
         {
             throw std::invalid_argument("Attempted to get savegame file path for invalid slot.");
         }
 
         const auto& config = g_App.GetConfig();
-        return config.GetAppDirPath() / (SLOT_DIR_PATH_BASE + std::to_string(slotIdx)) / (std::to_string(saveIdx) + SAVEGAME_FILE_EXT);
+        return config.GetAppDirPath() / (SLOT_DIR_PATH_BASE + std::to_string(slotIdx + 1)) / (std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT);
     }
 
-    void SavegameManager::SetDefaultSavegame()
-    {
-        // TODO
-    }
-
+    // TODO: Will probably need a completely different approach when we know how the save system works.
     void SavegameManager::PopulateSlotSavegameLists()
     {
         constexpr char SLOT_DIR_PREFIX[] = "Slot ";
@@ -141,5 +143,17 @@ namespace Silent::Services
                 saves.push_back(desc);
             }
         }
+    }
+
+    std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const Silent::FlatBuffers::Savegame& saveBuffer) const
+    {
+        // TODO
+        return std::make_unique<Savegame>();
+    }
+
+    std::unique_ptr<flatbuffers::FlatBufferBuilder> SavegameManager::ToSavegameBuffer(const Savegame& save) const
+    {
+        // TODO
+        return std::make_unique<flatbuffers::FlatBufferBuilder>();
     }
 }

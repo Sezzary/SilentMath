@@ -62,6 +62,8 @@ namespace Silent::Services
         int  BloodColor      = 0;
         int  BulletAdjust    = 0;
 
+        // TOO: Enhancements options section? Would contain settings for things like bugfixes.
+
         // Input (keyboard/mouse bindings)
 
         BindingProfile   KeyboardMouseBindings        = {};
@@ -102,10 +104,9 @@ namespace Silent::Services
         static constexpr auto OS_TYPE = OsType::Linux;
 #endif
 
-        static constexpr int JSON_INDENT_SIZE = 4;
-
-    private:
-        static constexpr char OPTIONS_FILE_PATH[] = "Options.json";
+private:
+    static constexpr char OPTIONS_FILE_PATH[] = "Options.json";
+    static constexpr int  JSON_INDENT_SIZE    = 4;
 
         // Fields
 
@@ -142,7 +143,7 @@ namespace Silent::Services
 
         void SetDefaultOptions();
         
-        Options FromJson(const json& optionsJson) const;
-        json    ToJson(const Options& options) const;
+        Options FromOptionsJson(const json& optionsJson) const;
+        json    ToOptionsJson(const Options& options) const;
     };
 }

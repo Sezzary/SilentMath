@@ -195,7 +195,7 @@ namespace Silent::Services
     void ConfigurationManager::SaveOptions()
     {
         // Create options JSON.
-        auto optionsJson = ToJson(_options);
+        auto optionsJson = ToOptionsJson(_options);
 
         // Ensure directory exists.
         auto path = GetAppDirPath() / OPTIONS_FILE_PATH;
@@ -233,7 +233,7 @@ namespace Silent::Services
         inputFile >> optionsJson;
 
         // Read options JSON.
-        _options = FromJson(optionsJson);
+        _options = FromOptionsJson(optionsJson);
     }
 
     void ConfigurationManager::SetDefaultOptions()
@@ -250,8 +250,8 @@ namespace Silent::Services
         SetDefaultInputControlsOptions();
         SetDefaultInputSystemOptions();
     }
-    
-    Options ConfigurationManager::FromJson(const json& optionsJson) const
+
+    Options ConfigurationManager::FromOptionsJson(const json& optionsJson) const
     {
         auto options = Options{};
 
@@ -349,7 +349,7 @@ namespace Silent::Services
         return options;
     }
 
-    json ConfigurationManager::ToJson(const Options& options) const
+    json ConfigurationManager::ToOptionsJson(const Options& options) const
     {
         // Create keyboard/mouse action-event bindings JSON.
         auto kmBindsJson = json();

@@ -40,7 +40,7 @@ namespace Silent::Utils::Debug
             });
     }
 
-    void Log(const std::string& msg, LogLevel level, bool allowRepeat)
+    void Log(const std::string& msg, LogLevel level, LogMode mode, bool repeat)
     {
         // LOCK: Restrict previous message access.
         static auto mutex = std::mutex();
@@ -48,7 +48,7 @@ namespace Silent::Utils::Debug
             auto lock = std::lock_guard(mutex);
 
             static auto prevMsg = std::string();
-            if (prevMsg == msg && !allowRepeat)
+            if (prevMsg == msg && !repeat)
             {
                 return;
             }
@@ -80,7 +80,7 @@ namespace Silent::Utils::Debug
 
     void Message(const char* msg, ...)
     {
-        constexpr int BUFFER_SIZE = 255;
+        constexpr uint BUFFER_SIZE = 255;
 
         const auto& options = g_App.GetConfig().GetOptions();
         if (!options.EnableDebugMode)

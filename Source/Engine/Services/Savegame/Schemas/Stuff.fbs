@@ -1,0 +1,7 @@
+namespace Silent.FlatBuffers;
+
+table Stuff
+{
+    my_int: int32;
+    my_bool: bool;
+}

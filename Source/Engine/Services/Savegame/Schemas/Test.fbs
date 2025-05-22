@@ -1,7 +1,0 @@
-namespace Silent.Savegame;
-
-table Test
-{
-	test_int: int32;
-	test_bool: bool;
-}

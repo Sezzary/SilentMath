@@ -15,6 +15,13 @@ namespace Silent::Utils::Debug
         Error
     };
 
+    enum class LogMode
+    {
+        Debug,
+        Release,
+        DebugRelease
+    };
+
     enum class DebugPage
     {
         None
@@ -23,7 +30,7 @@ namespace Silent::Utils::Debug
     void InitializeDebug();
     void UpdateDebug();
 
-    void Log(const std::string& msg, LogLevel level = LogLevel::Info, bool allowRepeat = false);
+    void Log(const std::string& msg, LogLevel level = LogLevel::Info, LogMode mode = LogMode::DebugRelease, bool repeat = false);
 	void Message(const char* msg, ...);
     void Assert(bool cond, const std::string& msg);
     //void Except(const std::string& msg); // TODO?

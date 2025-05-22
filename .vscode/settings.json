@@ -98,6 +98,8 @@
         "valarray": "cpp",
         "cinttypes": "cpp",
         "ABS.C": "cpp",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "cwctype": "cpp",
+        "numbers": "cpp"
     }
 }
