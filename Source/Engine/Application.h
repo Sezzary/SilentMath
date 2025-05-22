@@ -3,14 +3,14 @@
 #include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Configuration.h"
-#include "Engine/Services/Savegame.h"
-
-using namespace Silent::Input;
-using namespace Silent::Renderer;
-using namespace Silent::Services;
+#include "Engine/Services/Savegame/Savegame.h"
 
 namespace Silent
 {
+    using namespace Input;
+    using namespace Renderer;
+    using namespace Services;
+
     struct ApplicationWork
     {
         // TODO: `g_SysWork`, `g_GameWork`, and probably other globals would go here.

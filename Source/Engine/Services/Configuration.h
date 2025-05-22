@@ -141,5 +141,8 @@ namespace Silent::Services
         // Helpers
 
         void SetDefaultOptions();
+        
+        Options FromJson(const json& optionsJson) const;
+        json    ToJson(const Options& options) const;
     };
 }

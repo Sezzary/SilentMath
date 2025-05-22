@@ -85,8 +85,8 @@ namespace Silent::Services
     private:
         // Constants
 
-        static constexpr char SLOT_1_DIR_PATH[] = "Savegame/Slot 1";
-        static constexpr char SLOT_2_DIR_PATH[] = "Savegame/Slot 2";
+        static constexpr char SLOT_DIR_PATH_BASE[] = "Savegame/Slot ";
+        static constexpr char SAVEGAME_FILE_EXT[]  = ".save";
 
         // Fields
 
@@ -114,5 +114,8 @@ namespace Silent::Services
         std::filesystem::path GetSavegameFilePath(int slotIdx, int saveIdx) const;
         void                  SetDefaultSavegame();
         void                  PopulateSlotSavegameLists();
+
+        void FromSerialized();
+        void ToSerialized() const;
     };
 }

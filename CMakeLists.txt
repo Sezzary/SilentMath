@@ -51,8 +51,18 @@ target_include_directories(Math PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Source
     ${CMAKE_CURRENT_LIST_DIR}/..)
 
+# Add library directories.
+add_subdirectory(Libraries/flatbuffers)
+add_subdirectory(Libraries/glad/cmake)
+add_subdirectory(Libraries/glm)
+add_subdirectory(Libraries/json)
+add_subdirectory(Libraries/PsyCross)
+add_subdirectory(Libraries/SDL)
+add_subdirectory(Libraries/spdlog)
+
 # Add library header paths.
 target_include_directories(Math SYSTEM PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/flatbuffers/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
@@ -62,14 +72,6 @@ target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/SDL/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
 
-# Add library directories.
-add_subdirectory(Libraries/glad/cmake)
-add_subdirectory(Libraries/glm)
-add_subdirectory(Libraries/json)
-add_subdirectory(Libraries/PsyCross)
-add_subdirectory(Libraries/SDL)
-add_subdirectory(Libraries/spdlog)
-
 # Force-find Vulkan SDK path.
 set(Vulkan_INCLUDE_DIR "$ENV{VK_SDK_PATH}/Include")
 set(Vulkan_LIBRARY "$ENV{VK_SDK_PATH}/Lib/vulkan-1.lib")
@@ -77,6 +79,7 @@ find_package(Vulkan REQUIRED)
 
 # Add libraries.
 target_link_libraries(Math PRIVATE
+    flatbuffers
     glm
     #PsyCross
     SDL3-static

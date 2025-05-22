@@ -39,6 +39,9 @@
 #include <variant>
 #include <vector>
 
+// FlatBuffers
+#include <flatbuffers/flatbuffers.h>
+
 // GLAD
 #include <glad/glad.h>
 

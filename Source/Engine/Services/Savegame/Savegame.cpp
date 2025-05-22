@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Engine/Services/Savegame.h"
+#include "Engine/Services/Savegame/Savegame.h"
 
 #include "Engine/Application.h"
 #include "Engine/Services/Configuration.h"
@@ -65,9 +65,13 @@ namespace Silent::Services
 
     std::filesystem::path SavegameManager::GetSavegameFilePath(int slotIdx, int saveIdx) const
     {
-        Assert(slotIdx > _slotSavegameLists.size(), "Attempted to get savegame file path for invalid slot.");
+        if (slotIdx > _slotSavegameLists.size())
+        {
+            throw std::invalid_argument("Attempted to get savegame file path for invalid slot.");
+        }
 
-        return g_App.GetConfig().GetAppDirPath() / ((slotIdx == 0) ? SLOT_1_DIR_PATH : SLOT_2_DIR_PATH) / (std::to_string(saveIdx) + ".json");
+        const auto& config = g_App.GetConfig();
+        return config.GetAppDirPath() / (SLOT_DIR_PATH_BASE + std::to_string(slotIdx)) / (std::to_string(saveIdx) + SAVEGAME_FILE_EXT);
     }
 
     void SavegameManager::SetDefaultSavegame()
@@ -78,25 +82,25 @@ namespace Silent::Services
     void SavegameManager::PopulateSlotSavegameLists()
     {
         constexpr char SLOT_DIR_PREFIX[] = "Slot ";
-        constexpr char JSON_EXT[]        = ".json";
 
-        auto baseDir = g_App.GetConfig().GetAppDirPath();
+        const auto& config = g_App.GetConfig();
+        auto baseDir       = config.GetAppDirPath();
 
         for (int i = 0; i < _slotSavegameLists.size(); i++)
         {
             auto paths = std::vector<std::filesystem::path>{};
             
-            // Collect JSON file paths.
+            // Collect savegame file paths.
             auto dir = baseDir / (SLOT_DIR_PREFIX + std::to_string(i + 1));
             for (const auto& entry : std::filesystem::directory_iterator(dir))
             {
-                if (entry.is_regular_file() && entry.path().extension() == JSON_EXT)
+                if (entry.is_regular_file() && entry.path().extension() == SAVEGAME_FILE_EXT)
                 {
                     paths.push_back(entry.path());
                 }
             }
 
-            // Sort JSON file paths numerically.
+            // Sort savegame file paths numerically.
             std::sort(paths.begin(), paths.end(), [](const std::filesystem::path& path0, const std::filesystem::path& path1)
             {
                 auto extractNumber = [](const std::filesystem::path& path)

@@ -194,87 +194,8 @@ namespace Silent::Services
 
     void ConfigurationManager::SaveOptions()
     {
-        // Create keyboard/mouse action-event bindings JSON.
-        auto kmBindsJson = json();
-        for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
-        {
-            auto eventsJson = json::array();
-            for (const auto& eventId : eventIds)
-            {
-                eventsJson.push_back(eventId);
-            }
-
-            kmBindsJson[std::to_string((int)actionId)] = eventsJson;
-        }
-
-        // Create gamepad action-event bindings JSON.
-        auto gamepadBindsJson = json();
-        for (const auto& [actionId, eventIds] : _options.KeyboardMouseBindings)
-        {
-            auto eventsJson = json::array();
-            for (const auto& eventId : eventIds)
-            {
-                eventsJson.push_back(eventId);
-            }
-
-            gamepadBindsJson[std::to_string((int)actionId)] = eventsJson;
-        }
-
         // Create options JSON.
-        auto optionsJson = json
-        {
-            {
-                KEY_GRAPHICS,
-                {
-                    { KEY_WINDOWED_SIZE_X,      _options.WindowedSize.x },
-                    { KEY_WINDOWED_SIZE_Y,      _options.WindowedSize.y },
-                    { KEY_ENABLE_MAXIMIZED,     _options.EnableMaximized },
-                    { KEY_ENABLE_FULLSCREEN,    _options.EnableFullscreen },
-                    { KEY_BRIGHTNESS_LEVEL,     _options.BrightnessLevel },
-                    { KEY_RENDER_SCALE_TYPE,    _options.RenderScaleType },
-                    { KEY_ASPECT_RATIO_TYPE,    _options.AspectRatioType },
-                    { KEY_TEXTURE_FILTER_TYPE,  _options.TextureFilterType },
-                    { KEY_ENABLE_DITHERING,     _options.EnableDithering },
-                    { KEY_ENABLE_CRT_FILTER,    _options.EnableCrtFilter },
-                    { KEY_ENABLE_VERTEX_JITTER, _options.EnableVertexJitter }
-                }
-            },
-            {
-                KEY_GAMEPLAY,
-                {
-                    { KEY_ENABLE_AUTO_LOAD, _options.EnableAutoLoad },
-                    { KEY_ENABLE_SUBTITLES, _options.EnableSubtitles },
-                    { KEY_SOUND_TYPE,       _options.SoundType },
-                    { KEY_BGM_VOLUME,       _options.BgmVolume },
-                    { KEY_SE_VOLUME,        _options.SeVolume },
-                    { KEY_BLOOD_COLOR,      _options.BloodColor },
-                    { KEY_BULLET_ADJUST,    _options.BulletAdjust }
-                }
-            },
-            {
-                KEY_INPUT,
-                {
-                    { KEY_KEYBOARD_MOUSE_BINDINGS,                  kmBindsJson },
-                    { KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID, _options.ActiveKeyboardMouseProfileId },
-                    { KEY_GAMEPAD_BINDINGS,                         gamepadBindsJson },
-                    { KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID,        _options.ActiveGamepadProfileId },
-                    { KEY_ENABLE_VIBRATION,                         _options.EnableVibration },
-                    { KEY_MOUSE_SENSITIVITY,                        _options.MouseSensitivity },
-                    { KEY_WEAPON_CONTROL,                           _options.WeaponControl },
-                    { KEY_VIEW_CONTROL,                             _options.ViewControl },
-                    { KEY_RETREAT_TURN,                             _options.RetreatTurn },
-                    { KEY_WALK_RUN_CONTROL,                         _options.WalkRunControl },
-                    { KEY_DISABLE_AUTO_AIMING,                      _options.DisableAutoAiming },
-                    { KEY_VIEW_MODE,                                _options.ViewMode }
-                }
-            },
-            {
-                KEY_SYSTEM,
-                {
-                    { KEY_ENABLE_TOASTS, _options.EnableToasts }
-                }
-            }
-        };
+        auto optionsJson = ToJson(_options);
 
         // Ensure directory exists.
         auto path = GetAppDirPath() / OPTIONS_FILE_PATH;
@@ -300,7 +221,7 @@ namespace Silent::Services
         auto inputFile = std::ifstream(path);
         if (!inputFile.is_open())
         {
-            Log("No options file found. Creating new file.", LogLevel::Info);
+            Log("No options file found. Creating file.", LogLevel::Info);
 
             SetDefaultOptions();
             SaveOptions();
@@ -311,42 +232,65 @@ namespace Silent::Services
         auto optionsJson = json();
         inputFile >> optionsJson;
 
+        // Read options JSON.
+        _options = FromJson(optionsJson);
+    }
+
+    void ConfigurationManager::SetDefaultOptions()
+    {
+        SetDefaultGraphicsOptions();
+        SetDefaultGameplayOptions();
+
+        SetDefaultInputKmBindingsOptions();
+        _options.ActiveKeyboardMouseProfileId = DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID;
+
+        SetDefaultInputGamepadCustomBindingOptions();
+        _options.ActiveGamepadProfileId = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
+
+        SetDefaultInputControlsOptions();
+        SetDefaultInputSystemOptions();
+    }
+    
+    Options ConfigurationManager::FromJson(const json& optionsJson) const
+    {
+        auto options = Options{};
+
         // Load graphics options.
-        const auto& graphicsJson    = optionsJson[KEY_GRAPHICS];
-        _options.WindowedSize.x     = graphicsJson.value(KEY_WINDOWED_SIZE_X,      DEFAULT_WINDOWED_SIZE.x);
-        _options.WindowedSize.y     = graphicsJson.value(KEY_WINDOWED_SIZE_Y,      DEFAULT_WINDOWED_SIZE.y);
-        _options.EnableMaximized    = graphicsJson.value(KEY_ENABLE_MAXIMIZED,     DEFAULT_ENABLE_MAXIMIZED);
-        _options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
-        _options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
-        _options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
-        _options.AspectRatioType    = graphicsJson.value(KEY_ASPECT_RATIO_TYPE,    DEFAULT_ASPECT_RATIO_TYPE);
-        _options.TextureFilterType  = graphicsJson.value(KEY_TEXTURE_FILTER_TYPE,  DEFAULT_TEXTURE_FILTER_TYPE);
-        _options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
-        _options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
-        _options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
+        const auto& graphicsJson   = optionsJson[KEY_GRAPHICS];
+        options.WindowedSize.x     = graphicsJson.value(KEY_WINDOWED_SIZE_X,      DEFAULT_WINDOWED_SIZE.x);
+        options.WindowedSize.y     = graphicsJson.value(KEY_WINDOWED_SIZE_Y,      DEFAULT_WINDOWED_SIZE.y);
+        options.EnableMaximized    = graphicsJson.value(KEY_ENABLE_MAXIMIZED,     DEFAULT_ENABLE_MAXIMIZED);
+        options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
+        options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
+        options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
+        options.AspectRatioType    = graphicsJson.value(KEY_ASPECT_RATIO_TYPE,    DEFAULT_ASPECT_RATIO_TYPE);
+        options.TextureFilterType  = graphicsJson.value(KEY_TEXTURE_FILTER_TYPE,  DEFAULT_TEXTURE_FILTER_TYPE);
+        options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
+        options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
+        options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
 
         // Load gameplay options.
         const auto& gameplayJson = optionsJson[KEY_GAMEPLAY];
-        _options.EnableAutoLoad  = gameplayJson.value(KEY_ENABLE_AUTO_LOAD, DEFAULT_ENABLE_AUTO_LOAD);
-        _options.EnableSubtitles = gameplayJson.value(KEY_ENABLE_SUBTITLES, DEFAULT_ENABLE_SUBTITLES);
-        _options.SoundType       = gameplayJson.value(KEY_SOUND_TYPE,       DEFAULT_SOUND_TYPE);
-        _options.BgmVolume       = gameplayJson.value(KEY_BGM_VOLUME,       DEFAULT_BGM_VOLUME);
-        _options.SeVolume        = gameplayJson.value(KEY_SE_VOLUME,        DEFAULT_SE_VOLUME);
-        _options.BloodColor      = gameplayJson.value(KEY_BLOOD_COLOR,      DEFAULT_BLOOD_COLOR);
-        _options.BulletAdjust    = gameplayJson.value(KEY_BULLET_ADJUST,    DEFAULT_BULLET_ADJUST);
+        options.EnableAutoLoad   = gameplayJson.value(KEY_ENABLE_AUTO_LOAD, DEFAULT_ENABLE_AUTO_LOAD);
+        options.EnableSubtitles  = gameplayJson.value(KEY_ENABLE_SUBTITLES, DEFAULT_ENABLE_SUBTITLES);
+        options.SoundType        = gameplayJson.value(KEY_SOUND_TYPE,       DEFAULT_SOUND_TYPE);
+        options.BgmVolume        = gameplayJson.value(KEY_BGM_VOLUME,       DEFAULT_BGM_VOLUME);
+        options.SeVolume         = gameplayJson.value(KEY_SE_VOLUME,        DEFAULT_SE_VOLUME);
+        options.BloodColor       = gameplayJson.value(KEY_BLOOD_COLOR,      DEFAULT_BLOOD_COLOR);
+        options.BulletAdjust     = gameplayJson.value(KEY_BULLET_ADJUST,    DEFAULT_BULLET_ADJUST);
 
         // Load input options.
-        const auto& inputJson                 = optionsJson[KEY_INPUT];
-        _options.ActiveKeyboardMouseProfileId = inputJson.value(KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID, DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID);
-        _options.ActiveGamepadProfileId       = inputJson.value(KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID,        DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID);
-        _options.EnableVibration              = inputJson.value(KEY_ENABLE_VIBRATION,                         DEFAULT_ENABLE_VIBRATION);
-        _options.MouseSensitivity             = inputJson.value(KEY_MOUSE_SENSITIVITY,                        DEFAULT_MOUSE_SENSITIVITY);
-        _options.WeaponControl                = inputJson.value(KEY_WEAPON_CONTROL,                           DEFAULT_WEAPON_CONTROL);
-        _options.ViewControl                  = inputJson.value(KEY_VIEW_CONTROL,                             DEFAULT_VIEW_CONTROL);
-        _options.RetreatTurn                  = inputJson.value(KEY_RETREAT_TURN,                             DEFAULT_RETREAT_TURN);
-        _options.WalkRunControl               = inputJson.value(KEY_WALK_RUN_CONTROL,                         DEFAULT_WALK_RUN_CONTROL);
-        _options.DisableAutoAiming            = inputJson.value(KEY_DISABLE_AUTO_AIMING,                      DEFAULT_DISABLE_AUTO_AIMING);
-        _options.ViewMode                     = inputJson.value(KEY_VIEW_MODE,                                DEFAULT_VIEW_MODE);
+        const auto& inputJson                = optionsJson[KEY_INPUT];
+        options.ActiveKeyboardMouseProfileId = inputJson.value(KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID, DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID);
+        options.ActiveGamepadProfileId       = inputJson.value(KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID,        DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID);
+        options.EnableVibration              = inputJson.value(KEY_ENABLE_VIBRATION,                         DEFAULT_ENABLE_VIBRATION);
+        options.MouseSensitivity             = inputJson.value(KEY_MOUSE_SENSITIVITY,                        DEFAULT_MOUSE_SENSITIVITY);
+        options.WeaponControl                = inputJson.value(KEY_WEAPON_CONTROL,                           DEFAULT_WEAPON_CONTROL);
+        options.ViewControl                  = inputJson.value(KEY_VIEW_CONTROL,                             DEFAULT_VIEW_CONTROL);
+        options.RetreatTurn                  = inputJson.value(KEY_RETREAT_TURN,                             DEFAULT_RETREAT_TURN);
+        options.WalkRunControl               = inputJson.value(KEY_WALK_RUN_CONTROL,                         DEFAULT_WALK_RUN_CONTROL);
+        options.DisableAutoAiming            = inputJson.value(KEY_DISABLE_AUTO_AIMING,                      DEFAULT_DISABLE_AUTO_AIMING);
+        options.ViewMode                     = inputJson.value(KEY_VIEW_MODE,                                DEFAULT_VIEW_MODE);
 
         // Load custom action-event bindings.
         const auto& kmBindsJson      = inputJson[KEY_KEYBOARD_MOUSE_BINDINGS];
@@ -370,11 +314,11 @@ namespace Silent::Services
                         events.push_back((EventId)eventJson.get<int>());
                     }
 
-                    _options.KeyboardMouseBindings[actionId] = !events.empty() ? std::move(events) : USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.KeyboardMouseBindings[actionId] = !events.empty() ? std::move(events) : USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1.at(actionId);
                 }
                 else
                 {
-                    _options.KeyboardMouseBindings[actionId] = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.KeyboardMouseBindings[actionId] = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1.at(actionId);
                 }
 
                 // Gamepad.
@@ -389,32 +333,104 @@ namespace Silent::Services
                         events.push_back((EventId)eventJson.get<int>());
                     }
 
-                    _options.GamepadBindings[actionId] = !events.empty() ? std::move(events) : USER_GAMEPAD_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.GamepadBindings[actionId] = !events.empty() ? std::move(events) : USER_GAMEPAD_BINDING_PROFILE_TYPE_1.at(actionId);
                 }
                 else
                 {
-                    _options.GamepadBindings[actionId] = USER_GAMEPAD_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.GamepadBindings[actionId] = USER_GAMEPAD_BINDING_PROFILE_TYPE_1.at(actionId);
                 }
             }
         }
 
         // Load system options.
         const auto& systemJson = optionsJson[KEY_SYSTEM];
-        _options.EnableToasts  = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
+        options.EnableToasts   = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
+
+        return options;
     }
 
-    void ConfigurationManager::SetDefaultOptions()
+    json ConfigurationManager::ToJson(const Options& options) const
     {
-        SetDefaultGraphicsOptions();
-        SetDefaultGameplayOptions();
+        // Create keyboard/mouse action-event bindings JSON.
+        auto kmBindsJson = json();
+        for (const auto& [actionId, eventIds] : options.KeyboardMouseBindings)
+        {
+            auto eventsJson = json::array();
+            for (const auto& eventId : eventIds)
+            {
+                eventsJson.push_back(eventId);
+            }
 
-        SetDefaultInputKmBindingsOptions();
-        _options.ActiveKeyboardMouseProfileId = DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID;
+            kmBindsJson[std::to_string((int)actionId)] = eventsJson;
+        }
 
-        SetDefaultInputGamepadCustomBindingOptions();
-        _options.ActiveGamepadProfileId = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
+        // Create gamepad action-event bindings JSON.
+        auto gamepadBindsJson = json();
+        for (const auto& [actionId, eventIds] : options.KeyboardMouseBindings)
+        {
+            auto eventsJson = json::array();
+            for (const auto& eventId : eventIds)
+            {
+                eventsJson.push_back(eventId);
+            }
 
-        SetDefaultInputControlsOptions();
-        SetDefaultInputSystemOptions();
+            gamepadBindsJson[std::to_string((int)actionId)] = eventsJson;
+        }
+
+        // Create options JSON.
+        return json
+        {
+            {
+                KEY_GRAPHICS,
+                {
+                    { KEY_WINDOWED_SIZE_X,      options.WindowedSize.x },
+                    { KEY_WINDOWED_SIZE_Y,      options.WindowedSize.y },
+                    { KEY_ENABLE_MAXIMIZED,     options.EnableMaximized },
+                    { KEY_ENABLE_FULLSCREEN,    options.EnableFullscreen },
+                    { KEY_BRIGHTNESS_LEVEL,     options.BrightnessLevel },
+                    { KEY_RENDER_SCALE_TYPE,    options.RenderScaleType },
+                    { KEY_ASPECT_RATIO_TYPE,    options.AspectRatioType },
+                    { KEY_TEXTURE_FILTER_TYPE,  options.TextureFilterType },
+                    { KEY_ENABLE_DITHERING,     options.EnableDithering },
+                    { KEY_ENABLE_CRT_FILTER,    options.EnableCrtFilter },
+                    { KEY_ENABLE_VERTEX_JITTER, options.EnableVertexJitter }
+                }
+            },
+            {
+                KEY_GAMEPLAY,
+                {
+                    { KEY_ENABLE_AUTO_LOAD, options.EnableAutoLoad },
+                    { KEY_ENABLE_SUBTITLES, options.EnableSubtitles },
+                    { KEY_SOUND_TYPE,       options.SoundType },
+                    { KEY_BGM_VOLUME,       options.BgmVolume },
+                    { KEY_SE_VOLUME,        options.SeVolume },
+                    { KEY_BLOOD_COLOR,      options.BloodColor },
+                    { KEY_BULLET_ADJUST,    options.BulletAdjust }
+                }
+            },
+            {
+                KEY_INPUT,
+                {
+                    { KEY_KEYBOARD_MOUSE_BINDINGS,                  kmBindsJson },
+                    { KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID, options.ActiveKeyboardMouseProfileId },
+                    { KEY_GAMEPAD_BINDINGS,                         gamepadBindsJson },
+                    { KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID,        options.ActiveGamepadProfileId },
+                    { KEY_ENABLE_VIBRATION,                         options.EnableVibration },
+                    { KEY_MOUSE_SENSITIVITY,                        options.MouseSensitivity },
+                    { KEY_WEAPON_CONTROL,                           options.WeaponControl },
+                    { KEY_VIEW_CONTROL,                             options.ViewControl },
+                    { KEY_RETREAT_TURN,                             options.RetreatTurn },
+                    { KEY_WALK_RUN_CONTROL,                         options.WalkRunControl },
+                    { KEY_DISABLE_AUTO_AIMING,                      options.DisableAutoAiming },
+                    { KEY_VIEW_MODE,                                options.ViewMode }
+                }
+            },
+            {
+                KEY_SYSTEM,
+                {
+                    { KEY_ENABLE_TOASTS, options.EnableToasts }
+                }
+            }
+        };
     }
 }

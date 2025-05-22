@@ -26,6 +26,7 @@ namespace Silent::Utils::Debug
     void Log(const std::string& msg, LogLevel level = LogLevel::Info, bool allowRepeat = false);
 	void Message(const char* msg, ...);
     void Assert(bool cond, const std::string& msg);
+    //void Except(const std::string& msg); // TODO?
     void StartTimer();
     void EndTimer();
     void CreateGui(std::function<void()> drawFunc);
