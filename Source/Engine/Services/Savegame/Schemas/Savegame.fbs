@@ -1,4 +1,4 @@
-namespace Silent.FlatBuffers;
+namespace Silent.Buffers;
 
 import "Stuff.fbs";
 import "Things.fbs";
@@ -9,4 +9,4 @@ table Savegame
     things: [Things];
 }
 
-root_type Silent.FlatBuffers.Savegame;
+root_type Silent.Buffers.Savegame;

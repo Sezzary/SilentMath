@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Silent::FlatBuffers { struct Savegame; }
+namespace Silent::Buffers { struct Savegame; }
 
 namespace Silent::Services
 {
@@ -116,7 +116,7 @@ namespace Silent::Services
         std::filesystem::path GetSavegameFilePath(int slotIdx, int saveIdx) const;
         void                  PopulateSlotSavegameLists();
 
-        std::unique_ptr<Savegame>                       FromSavegameBuffer(const Silent::FlatBuffers::Savegame& saveBuffer) const;
+        std::unique_ptr<Savegame>                       FromSavegameBuffer(const Silent::Buffers::Savegame& saveBuffer) const;
         std::unique_ptr<flatbuffers::FlatBufferBuilder> ToSavegameBuffer(const Savegame& save) const;
     };
 }

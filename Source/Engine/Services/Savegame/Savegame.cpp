@@ -50,7 +50,7 @@ namespace Silent::Services
         auto inputFile = std::ifstream(path, std::ios::binary);
         if (!inputFile.is_open())
         {
-            Log("Attempted to load missing savegame file for slot " + std::to_string(slotIdx) + ", save " + std::to_string(saveIdx) + ".",
+            Log("Attempted to load missing savegame file for slot " + std::to_string(slotIdx + 1) + ", save " + std::to_string(saveIdx + 1) + ".",
                 LogLevel::Warning, LogMode::Debug);
             return;
         }
@@ -63,7 +63,7 @@ namespace Silent::Services
         // Read file into buffer object.
         auto fileBuffer = std::vector<char>(fileSize);
         inputFile.read(fileBuffer.data(), fileSize);
-        auto saveBuffer = flatbuffers::GetRoot<Silent::FlatBuffers::Savegame>(fileBuffer.data());
+        auto* saveBuffer = flatbuffers::GetRoot<Silent::Buffers::Savegame>(fileBuffer.data());
 
         // Read savegame buffer.
         _savegame = std::move(*FromSavegameBuffer(*saveBuffer));
@@ -145,15 +145,21 @@ namespace Silent::Services
         }
     }
 
-    std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const Silent::FlatBuffers::Savegame& saveBuffer) const
+    std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const Silent::Buffers::Savegame& saveBuffer) const
     {
+        auto save = std::make_unique<Savegame>();
+
         // TODO
-        return std::make_unique<Savegame>();
+
+        return save;
     }
 
     std::unique_ptr<flatbuffers::FlatBufferBuilder> SavegameManager::ToSavegameBuffer(const Savegame& save) const
     {
+        auto saveBuffer = std::make_unique<flatbuffers::FlatBufferBuilder>();
+
         // TODO
-        return std::make_unique<flatbuffers::FlatBufferBuilder>();
+
+        return saveBuffer;
     }
 }

@@ -1,4 +1,4 @@
-namespace Silent.FlatBuffers;
+namespace Silent.Buffers;
 
 table Stuff
 {
