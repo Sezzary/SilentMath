@@ -169,7 +169,7 @@ namespace Silent::Input
             return false;
         }
 
-        uint delayTicks = (delaySec == 0.0f) ? 0 : SecToTicks(delaySec);
+        uint delayTicks = (delaySec == 0.0f) ? 0 : SEC_TO_TICK(delaySec);
         return _ticksActive >= delayTicks;
     }
 
@@ -186,8 +186,8 @@ namespace Silent::Input
             return false;
         }
 
-        float activeDelaySec   = (_ticksActive > SecToTicks(initialDelaySec)) ? delaySec : initialDelaySec;
-        uint  activeDelayTicks = SecToTicks(activeDelaySec);
+        float activeDelaySec   = (_ticksActive > SEC_TO_TICK(initialDelaySec)) ? delaySec : initialDelaySec;
+        uint  activeDelayTicks = SEC_TO_TICK(activeDelaySec);
 
         uint delayTicks     = (uint)floor(_ticksActive / activeDelayTicks) * activeDelayTicks;
         uint prevDelayTicks = (uint)floor(_prevTicksActive / activeDelayTicks) * activeDelayTicks;
@@ -196,7 +196,7 @@ namespace Silent::Input
 
     bool Action::IsReleased(float delaySecMax, float stateMin) const
     {
-        uint delayTicksMax = (delaySecMax == INFINITY) ? UINT_MAX : SecToTicks(delaySecMax);
+        uint delayTicksMax = (delaySecMax == INFINITY) ? UINT_MAX : SEC_TO_TICK(delaySecMax);
         return _state <= stateMin && _prevState > stateMin && _ticksActive <= delayTicksMax;
     }
 

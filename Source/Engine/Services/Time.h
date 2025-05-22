@@ -47,6 +47,13 @@ namespace Silent::Services
 
     extern TimeManager g_Time;
 
-    uint  SecToTicks(float sec);
-    float TicksToSec(uint ticks);
+    constexpr uint SEC_TO_TICK(float sec)
+    {
+        return (uint)ROUND(sec * g_Time.TPS);
+    }
+
+    constexpr float TICK_TO_SEC(uint ticks)
+    {
+        return (float)ticks / (float)g_Time.TPS;
+    }
 }

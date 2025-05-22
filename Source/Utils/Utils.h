@@ -16,6 +16,13 @@ namespace Silent::Utils
         return it != span.end();
     }
 
+    template <typename Container, typename Predicate>
+    void EraseIf(Container& container, Predicate pred)
+    {
+        container.erase(std::remove_if(container.begin(), container.end(), pred),
+                        container.end());
+    }
+
     template<typename T>
     std::span<const T> ToSpan(const T* rawArray, uint size)
     {

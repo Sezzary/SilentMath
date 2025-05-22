@@ -76,14 +76,4 @@ namespace Silent::Services
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
     }
-
-    uint SecToTicks(float sec)
-    {
-        return (uint)round(sec * g_Time.TPS);
-    }
-
-    float TicksToSec(uint ticks)
-    {
-        return (float)ticks / (float)g_Time.TPS;
-    }
 }

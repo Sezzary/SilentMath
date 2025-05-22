@@ -51,7 +51,7 @@ namespace Silent::Input
         _rumble.IntensityFrom = intensityFrom;
         _rumble.IntensityTo   = intensityTo;
         _rumble.DurationTicks =
-        _rumble.Ticks         = SecToTicks(durationSec);
+        _rumble.Ticks         = SEC_TO_TICK(durationSec);
     }
 
     bool InputManager::IsUsingGamepad() const
@@ -354,7 +354,7 @@ namespace Silent::Input
         ushort freqHigh = (_rumble.Mode == RumbleMode::High || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
 
         // Compute duration.
-        uint durationMs = (uint)round(TicksToSec(_rumble.DurationTicks) * 1000);
+        uint durationMs = (uint)round(TICK_TO_SEC(_rumble.DurationTicks) * 1000);
 
         // Rumble gamepad.
         if (!SDL_RumbleGamepad(_gamepad, freqLow, freqHigh, durationMs))
@@ -471,7 +471,7 @@ namespace Silent::Input
         // Intermittently attempt reinitializing gamepad.
         else
         {
-            if (g_Time.TestInterval(SecToTicks(GAMEPAD_RECONNECT_INTERVAL_SEC)))
+            if (g_Time.TestInterval(SEC_TO_TICK(GAMEPAD_RECONNECT_INTERVAL_SEC)))
             {
                 _gamepad = SDL_OpenGamepad(0);
                 if (_gamepad != nullptr)
