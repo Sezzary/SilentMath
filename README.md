@@ -3,7 +3,7 @@ Experimental implementations:
 - Input handling
 - Savegame hanling
 - Various utils pulled from other projects
-- Renderer (learning OpenGL, and *maybe* Vulkan, who knows if anything will come of it)
+- Renderer (learning OpenGL and *maybe* Vulkan, who knows if anything will come of it)
 - Window handling
 - Configuration handling
 - Timestep handling
@@ -19,4 +19,5 @@ Libraries in use:
 - OpenGL 4.6
 - SDL3
 - spdlog
+- stb
 - Vulkan

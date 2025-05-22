@@ -117,7 +117,7 @@ namespace Silent
 
     void ApplicationManager::Run()
     {
-        g_Time.Reset();
+        g_Time.Initialize();
 
         while (_isRunning)
         {

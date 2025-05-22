@@ -17,12 +17,13 @@ namespace Silent::Services
     constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
     constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
     constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
+    constexpr char KEY_FRAME_RATE_TYPE[]                          = "FrameRateType";
+    constexpr char KEY_RENDER_SCALE_TYPE[]                        = "RenderScaleType";
+    constexpr char KEY_ASPECT_RATIO_TYPE[]                        = "AspectRatioType";
     constexpr char KEY_TEXTURE_FILTER_TYPE[]                      = "TextureFilterType";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
-    constexpr char KEY_RENDER_SCALE_TYPE[]                        = "RenderScaleType";
-    constexpr char KEY_ASPECT_RATIO_TYPE[]                        = "AspectRatioType";
     constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
     constexpr char KEY_ENABLE_SUBTITLES[]                         = "EnableSubtitles";
     constexpr char KEY_SOUND_TYPE[]                               = "SoundType";
@@ -48,6 +49,7 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
+    constexpr auto DEFAULT_FRAME_RATE_TYPE                          = FrameRateType::Fps60;
     constexpr auto DEFAULT_RENDER_SCALE_TYPE                        = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO_TYPE                        = AspectRatioType::Native;
     constexpr auto DEFAULT_TEXTURE_FILTER_TYPE                      = TextureFilteringType::Nearest;
@@ -73,9 +75,9 @@ namespace Silent::Services
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
-    std::filesystem::path ConfigurationManager::GetAppDirPath() const
+    std::filesystem::path ConfigurationManager::GetWorkPath() const
     {
-        return _appDirPath;
+        return _workPath;
     }
 
     Options& ConfigurationManager::GetOptions()
@@ -89,6 +91,7 @@ namespace Silent::Services
         _options.EnableMaximized    = DEFAULT_ENABLE_MAXIMIZED;
         _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
         _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
+        _options.FrameRateType      = DEFAULT_FRAME_RATE_TYPE;
         _options.RenderScaleType    = DEFAULT_RENDER_SCALE_TYPE;
         _options.AspectRatioType    = DEFAULT_ASPECT_RATIO_TYPE;
         _options.TextureFilterType  = DEFAULT_TEXTURE_FILTER_TYPE;
@@ -143,7 +146,7 @@ namespace Silent::Services
         char*  buffer = nullptr;
         size_t length = 0;
 
-        // Set application directory.
+        // Set work path.
         switch (OS_TYPE)
         {
             case OsType::Windows:
@@ -153,7 +156,7 @@ namespace Silent::Services
                 {
                     auto path = std::filesystem::path(buffer);
                     free(buffer);
-                    _appDirPath = path / APP_FOLDER_NAME; 
+                    _workPath = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -165,7 +168,7 @@ namespace Silent::Services
                 {
                     auto path = std::filesystem::path(buffer);
                     free(buffer);
-                    _appDirPath = path / APP_FOLDER_NAME; 
+                    _workPath = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -177,7 +180,7 @@ namespace Silent::Services
                 {
                     auto path = std::filesystem::path(buffer);
                     free(buffer);
-                    _appDirPath = path / APP_FOLDER_NAME; 
+                    _workPath = path / APP_FOLDER_NAME; 
                 }
                 break;
             }
@@ -187,7 +190,9 @@ namespace Silent::Services
                 break;
             }
         }
-        Assert(!_appDirPath.empty(), "Failed to initialize `ConfigurationManager`.");
+        Assert(!_workPath.empty(), "Failed to initialize `ConfigurationManager`.");
+
+        // TODO: Create work path.
 
         LoadOptions();
     }
@@ -198,7 +203,7 @@ namespace Silent::Services
         auto optionsJson = ToOptionsJson(_options);
 
         // Ensure directory exists.
-        auto path = GetAppDirPath() / OPTIONS_FILE_PATH;
+        auto path = GetWorkPath() / OPTIONS_FILE_PATH;
         if (std::filesystem::create_directories(path.parent_path()))
         {
             Log("Created path " + path.string() + ".");
@@ -215,7 +220,7 @@ namespace Silent::Services
 
     void ConfigurationManager::LoadOptions()
     {
-        auto path = GetAppDirPath() / OPTIONS_FILE_PATH;
+        auto path = GetWorkPath() / OPTIONS_FILE_PATH;
         
         // Open options JSON file.
         auto inputFile = std::ifstream(path);
@@ -262,6 +267,7 @@ namespace Silent::Services
         options.EnableMaximized    = graphicsJson.value(KEY_ENABLE_MAXIMIZED,     DEFAULT_ENABLE_MAXIMIZED);
         options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
         options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
+        options.FrameRateType      = graphicsJson.value(KEY_FRAME_RATE_TYPE,      DEFAULT_FRAME_RATE_TYPE);
         options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
         options.AspectRatioType    = graphicsJson.value(KEY_ASPECT_RATIO_TYPE,    DEFAULT_ASPECT_RATIO_TYPE);
         options.TextureFilterType  = graphicsJson.value(KEY_TEXTURE_FILTER_TYPE,  DEFAULT_TEXTURE_FILTER_TYPE);
@@ -388,6 +394,7 @@ namespace Silent::Services
                     { KEY_ENABLE_MAXIMIZED,     options.EnableMaximized },
                     { KEY_ENABLE_FULLSCREEN,    options.EnableFullscreen },
                     { KEY_BRIGHTNESS_LEVEL,     options.BrightnessLevel },
+                    { KEY_FRAME_RATE_TYPE,      options.FrameRateType },
                     { KEY_RENDER_SCALE_TYPE,    options.RenderScaleType },
                     { KEY_ASPECT_RATIO_TYPE,    options.AspectRatioType },
                     { KEY_TEXTURE_FILTER_TYPE,  options.TextureFilterType },

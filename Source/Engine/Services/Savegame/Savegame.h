@@ -87,8 +87,8 @@ namespace Silent::Services
     private:
         // Constants
 
-        static constexpr char SLOT_DIR_PATH_BASE[] = "Savegame/Slot ";
-        static constexpr char SAVEGAME_FILE_EXT[]  = ".save";
+        static constexpr char SLOT_FOLDER_PATH_BASE[] = "Savegame/Slot ";
+        static constexpr char SAVEGAME_FILE_EXT[]     = ".save";
 
         // Fields
 

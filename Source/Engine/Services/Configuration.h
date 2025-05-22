@@ -13,6 +13,14 @@ namespace Silent::Services
         Linux
     };
 
+    enum class FrameRateType
+    {
+        Fps30,
+        Fps60,
+        Fps120,
+        Unlimited
+    };
+
     enum class RenderScaleType
     {
         Native,
@@ -45,6 +53,7 @@ namespace Silent::Services
 
         bool                 EnableFullscreen   = false;
         int                  BrightnessLevel    = 0;
+        FrameRateType        FrameRateType      = FrameRateType::Fps30;
         RenderScaleType      RenderScaleType    = RenderScaleType::Native;
         AspectRatioType      AspectRatioType    = AspectRatioType::Native;
         TextureFilteringType TextureFilterType  = TextureFilteringType::Nearest;
@@ -110,8 +119,8 @@ private:
 
         // Fields
 
-        std::filesystem::path _appDirPath = {};
-        Options               _options    = {};
+        std::filesystem::path _workPath = {};
+        Options               _options  = {};
 
     public:
         // Constructors
@@ -120,7 +129,7 @@ private:
 
         // Getters
 
-        std::filesystem::path GetAppDirPath() const;
+        std::filesystem::path GetWorkPath() const;
         Options&              GetOptions();
 
         // Setters

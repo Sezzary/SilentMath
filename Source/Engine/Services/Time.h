@@ -34,7 +34,7 @@ namespace Silent::Services
 
         // Utilities
 
-        void Reset();
+        void Initialize();
         void Update();
         void WaitForNextTick() const;
 
@@ -46,6 +46,9 @@ namespace Silent::Services
     };
 
     extern TimeManager g_Time;
+
+    std::string GetCurrentDateString();
+    std::string GetCurrentTimeString();
 
     constexpr uint SEC_TO_TICK(float sec)
     {

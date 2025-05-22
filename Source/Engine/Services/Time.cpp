@@ -33,7 +33,7 @@ namespace Silent::Services
         return (ticks % intervalTicks) == offsetTicks;
     }
 
-    void TimeManager::Reset()
+    void TimeManager::Initialize()
     {
         _baseMicrosec = GetEpochMicrosec();
     }
@@ -75,5 +75,30 @@ namespace Silent::Services
     uint64 TimeManager::GetEpochMicrosec() const
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+    }
+
+    std::string GetCurrentDateString()
+    {
+        auto now      = std::chrono::system_clock::now();
+        auto nowClock = std::chrono::system_clock::to_time_t(now);
+        auto tm       = *std::localtime(&nowClock);
+
+        // Format: YYYY-MM-DD.
+        auto strStream = std::ostringstream();
+        strStream << std::put_time(&tm, "%Y-%m-%d");
+        return strStream.str();
+    }
+
+    std::string GetCurrentTimeString()
+    {
+        auto now      = std::chrono::system_clock::now();
+        auto nowClock = std::chrono::system_clock::to_time_t(now);
+        auto tm       = *std::localtime(&nowClock);
+        auto millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+        // Format: HH-MM-SS_mmm.
+        auto strStream = std::ostringstream();
+        strStream << std::put_time(&tm, "%H-%M-%S") << "_" << std::setw(3) << std::setfill('0') << millisec.count();
+        return strStream.str();
     }
 }

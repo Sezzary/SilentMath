@@ -22,3 +22,6 @@
 [submodule "Libraries/spdlog"]
     path = Libraries/spdlog
     url = https://github.com/gabime/spdlog.git
+[submodule "Libraries/stb"]
+    path = Libraries/stb
+    url = https://github.com/nothings/stb.git

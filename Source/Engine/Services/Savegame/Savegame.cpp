@@ -19,7 +19,7 @@ namespace Silent::Services
 
     void SavegameManager::Initialize()
     {
-        // TODO: Load lists.
+        // TODO: Load lists, create empty paths.
     }
 
     void SavegameManager::Save(int slotIdx, int saveIdx)
@@ -77,7 +77,7 @@ namespace Silent::Services
         }
 
         const auto& config = g_App.GetConfig();
-        return config.GetAppDirPath() / (SLOT_DIR_PATH_BASE + std::to_string(slotIdx + 1)) / (std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT);
+        return config.GetWorkPath() / (SLOT_FOLDER_PATH_BASE + std::to_string(slotIdx + 1)) / (std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT);
     }
 
     // TODO: Will probably need a completely different approach when we know how the save system works.
@@ -86,7 +86,7 @@ namespace Silent::Services
         constexpr char SLOT_DIR_PREFIX[] = "Slot ";
 
         const auto& config = g_App.GetConfig();
-        auto baseDir       = config.GetAppDirPath();
+        auto baseDir       = config.GetWorkPath();
 
         for (int i = 0; i < _slotSavegameLists.size(); i++)
         {

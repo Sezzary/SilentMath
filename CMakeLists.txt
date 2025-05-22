@@ -70,7 +70,8 @@ target_include_directories(Math SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/json/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/PsyCross/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/SDL/include
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog)
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/spdlog
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/stb)
 
 # Force-find Vulkan SDK path.
 set(Vulkan_INCLUDE_DIR "$ENV{VK_SDK_PATH}/Include")

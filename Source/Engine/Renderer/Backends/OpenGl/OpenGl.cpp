@@ -7,6 +7,9 @@
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 #include "Engine/Renderer/Base.h"
+#include "Engine/Services/Time.h"
+
+using namespace Silent::Services;
 
 namespace Silent::Renderer
 {
@@ -99,23 +102,27 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::SaveScreenshot() const
     {
+        constexpr char SCREENSHOT_FILE_PATH_BASE[] = "Screenshots/Screenshot_";
+        constexpr char SCREENSHOT_FILE_EXT[]       = ".png";
+
+        const auto& config = g_App.GetConfig();
+
+        // Get image size.
         auto res = Vector2i::Zero;
         SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
         
-        // Fill buffer with pixel data from framebuffer (RGBA format with 4 bytes per pixel).
-        auto pixels = std::vector<uint8>((res.x * res.y) * 4);
-        glReadPixels(0, 0, res.x, res.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-        
-        // Flip image vertically to account for OpenGL coordinate system.
-        for (int y = 0; y < (res.y / 2); y++)
-        {
-            for (int x = 0; x < (res.x * 4); x++)
-            {
-                std::swap(pixels[(y * res.x) + x], pixels[(((res.y - y) - 1) * res.x) + x]);
-            }
-        }
+        // Ensure directory exists.
+        auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
+        auto path      = config.GetWorkPath() / (SCREENSHOT_FILE_PATH_BASE + timestamp + SCREENSHOT_FILE_EXT);
+        std::filesystem::create_directories(path.parent_path());
 
-        // TODO: Write file.
+        // Write screenshot file.
+        auto pixels = std::vector<uint8>((res.x * res.y) * 3);
+        glReadPixels(0, 0, res.x, res.y, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+        if (!stbi_write_png(path.string().c_str(), res.x, res.y, 3, pixels.data(), res.x * 3))
+        {
+            Log("Failed to save screenshot.", LogLevel::Error, LogMode::DebugRelease, true);
+        }
     }
 
     void OpenGlRenderer::UpdateViewport()
