@@ -8,7 +8,7 @@ namespace Silent::Renderer
         static constexpr uint VERTEX_COUNT = 3;
 
     public:
-        Vector3 Vertices[VERTEX_COUNT] = {};
-        Vector4 Color                  = {};
+        std::array<Vector3, VERTEX_COUNT> Vertices = {};
+        Color                             Col      = Color::Black;
     };
 }

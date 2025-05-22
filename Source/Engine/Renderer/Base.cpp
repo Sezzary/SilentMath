@@ -31,9 +31,9 @@ namespace Silent::Renderer
 
         auto line = Line
         {
-            .From  = from,
-            .To    = to,
-            .Color = color.ToVector4()
+            .From = from,
+            .To   = to,
+            .Col  = color
         };
         _debugLines.push_back(line);
     }
@@ -54,7 +54,7 @@ namespace Silent::Renderer
                 vert1,
                 vert2
             },
-            .Color = color.ToVector4()
+            .Col = color
         };
         _debugTriangles.push_back(tri);
     }
@@ -160,21 +160,27 @@ namespace Silent::Renderer
                     {
                         // XY plane.
                         case 0:
+                        {
                             point0 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta0), sphere.Radius * glm::sin(theta0), 0.0f);
                             point1 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta1), sphere.Radius * glm::sin(theta1), 0.0f);
                             break;
+                        }
 
                         // YZ plane.
                         case 1:
+                        {
                             point0 = sphere.Center + Vector3(0.0f, sphere.Radius * glm::cos(theta0), sphere.Radius * glm::sin(theta0));
                             point1 = sphere.Center + Vector3(0.0f, sphere.Radius * glm::cos(theta1), sphere.Radius * glm::sin(theta1));
                             break;
+                        }
 
                         // ZX plane.
                         case 2:
+                        {
                             point0 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta0), 0.0f, sphere.Radius * glm::sin(theta0));
                             point1 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta1), 0.0f, sphere.Radius * glm::sin(theta1));
                             break;
+                        }
                     }
                     SubmitDebugLine(point0, point1, color, page);
                 }
