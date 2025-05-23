@@ -1,18 +1,21 @@
 {
     "version": "2.0.0",
-    "tasks": [
+    "tasks":
+    [
         {
             "label": "Configure Debug",
             "type": "shell",
             "command": "cmake",
-            "args": [
+            "args":
+            [
                 "-S",
                 "${workspaceFolder}",
                 "-B",
                 "${workspaceFolder}/Build/Debug",
                 "-DCMAKE_BUILD_TYPE=Debug"
             ],
-            "group": {
+            "group":
+            {
                 "kind": "build",
                 "isDefault": true
             },
@@ -24,7 +27,8 @@
             "dependsOn": "Configure Debug",
             "type": "shell",
             "command": "cmake",
-            "args": [
+            "args":
+            [
                 "--build",
                 "${workspaceFolder}/Build/Debug"
             ],
@@ -40,14 +44,16 @@
             "label": "Configure Release",
             "type": "shell",
             "command": "cmake",
-            "args": [
+            "args":
+            [
                 "-S",
                 "${workspaceFolder}",
                 "-B",
                 "${workspaceFolder}/Build/Release",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
-            "group": {
+            "group":
+            {
                 "kind": "build",
                 "isDefault": false
             },
@@ -59,11 +65,13 @@
             "dependsOn": "Configure Release",
             "type": "shell",
             "command": "cmake",
-            "args": [
+            "args":
+            [
                 "--build",
                 "${workspaceFolder}/Build/Release"
             ],
-            "group": {
+            "group":
+            {
                 "kind": "build",
                 "isDefault": false
             },

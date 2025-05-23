@@ -1,7 +1,16 @@
 namespace Silent.Buffers;
 
-import "Stuff.fbs";
-import "Things.fbs";
+table Stuff
+{
+    my_int: int32;
+    my_bool: bool;
+}
+
+table Things
+{
+    my_int: int32;
+    my_bools: [bool];
+}
 
 table Savegame
 {

@@ -1,7 +1,0 @@
-namespace Silent.Buffers;
-
-table Stuff
-{
-    my_int: int32;
-    my_bool: bool;
-}

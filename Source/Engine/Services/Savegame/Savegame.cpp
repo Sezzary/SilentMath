@@ -3,7 +3,7 @@
 
 #include "Engine/Application.h"
 #include "Engine/Services/Configuration.h"
-#include "Engine/Services/Savegame/Generated/Savegame_generated.h"
+#include "Engine/Services/Savegame/Generated/savegame_generated.h"
 
 namespace Silent::Services
 {
