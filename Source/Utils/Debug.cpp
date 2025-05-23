@@ -25,7 +25,7 @@ namespace Silent::Utils::Debug
 
         // Set file and console log targets.
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        auto logger      = std::make_shared<spdlog::logger>(std::string(LOGGER_NAME), spdlog::sinks_init_list{ fileSink, consoleSink });
+        auto logger      = std::make_shared<spdlog::logger>(LOGGER_NAME, spdlog::sinks_init_list{ fileSink, consoleSink });
 
         spdlog::initialize_logger(logger);
         logger->set_level(spdlog::level::info);
@@ -60,6 +60,34 @@ namespace Silent::Utils::Debug
                 ImGui::Text("Hello. It's me. =^.^=");
                 ImGui::End();
             });
+    }
+
+    void Message(const char* msg, ...)
+    {
+        constexpr uint BUFFER_SIZE = 255;
+
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode)
+        {
+            return;
+        }
+
+        // Initialize buffer.
+        char buffer[BUFFER_SIZE];
+        std::memset(buffer, 0, BUFFER_SIZE);
+
+        // Format string.
+        va_list args;
+        va_start(args, msg);
+        vsnprintf(buffer, BUFFER_SIZE, msg, args);
+        va_end(args);
+
+        // LOCK: Restrict `Messages` access.
+        static auto mutex = std::mutex();
+        {
+            auto lock = std::lock_guard(mutex);
+            Messages.push_back(buffer);
+        }
     }
 
     void Log(const std::string& msg, LogLevel level, LogMode mode, bool repeat)
@@ -118,34 +146,6 @@ namespace Silent::Utils::Debug
         logger->flush();
     }
 
-    void Message(const char* msg, ...)
-    {
-        constexpr uint BUFFER_SIZE = 255;
-
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
-        {
-            return;
-        }
-
-        // Initialize buffer.
-        char buffer[BUFFER_SIZE];
-        std::memset(buffer, 0, BUFFER_SIZE);
-
-        // Format string.
-        va_list args;
-        va_start(args, msg);
-        vsnprintf(buffer, BUFFER_SIZE, msg, args);
-        va_end(args);
-
-        // LOCK: Restrict `Messages` access.
-        static auto mutex = std::mutex();
-        {
-            auto lock = std::lock_guard(mutex);
-            Messages.push_back(buffer);
-        }
-    }
-
     void Assert(bool cond, const std::string& msg)
     {
         if constexpr (IS_DEBUG_BUILD)
@@ -181,19 +181,19 @@ namespace Silent::Utils::Debug
         renderer.SubmitDebugGui(drawFunc);
     }
 
-    /*void CreateLine(const Vector3& from, const Vector3& to, const Color& color, DebugPage page)
+    void CreateLine(const Vector3& from, const Vector3& to, const Color& color, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateLine(from, to, color, page);
+        renderer.SubmitDebugLine(from, to, color, page);
     }
 
     void CreateTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateTriangle(vert0, vert1, vert2, color, page);
+        renderer.SubmitDebugTriangle(vert0, vert1, vert2, color, page);
     }
 
-    void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
+    /*void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
         renderer.CreateTarget(center, rot, radius, color, page);

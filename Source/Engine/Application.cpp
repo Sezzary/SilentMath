@@ -52,7 +52,7 @@ namespace Silent
         _work.Config.Initialize();
         InitializeDebug();
 
-        Log("Initializing...");
+        Log("Initializing Silent Engine.");
 
         // Options.
         _work.Config.LoadOptions();
