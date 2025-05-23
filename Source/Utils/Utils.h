@@ -9,11 +9,11 @@ namespace Silent::Utils
         return (val >= 0) ? 1 : -1;
     }
 
-    template <typename T>
-    bool Contains(const std::span<T>& span, const T& element)
+    template <typename Container, typename T>
+    bool Contains(const Container& container, const T& element)
     {
-        auto it = std::find(span.begin(), span.end(), element);
-        return it != span.end();
+        auto it = std::find(container.begin(), container.end(), element);
+        return it != container.end();
     }
 
     template <typename Container, typename Predicate>

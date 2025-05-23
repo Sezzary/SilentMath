@@ -331,7 +331,7 @@ namespace Silent::Input
                 // TODO: Special handling for newline.
 
                 // New action.
-                if (!Contains(ToSpan(_prevActionIds), actionId))
+                if (!Contains(_prevActionIds, actionId))
                 {
                     // Add character.
                     if (action.IsClicked())

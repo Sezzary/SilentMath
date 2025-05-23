@@ -101,7 +101,7 @@ namespace Silent::Utils::Debug
             }
         }
 
-        // LOCK: Restrict previous message access.
+        // LOCK: Restrict logger access.
         static auto mutex = std::mutex();
         {
             auto lock = std::lock_guard(mutex);
@@ -112,38 +112,38 @@ namespace Silent::Utils::Debug
                 return;
             }
             prevMsg = msg;
-        }
 
-        // Get logger instance.
-		auto logger = spdlog::get(LOGGER_NAME);
-		if (!logger)
-        {
-			return;
-        }
-
-        // Log message.
-        switch (level)
-        {
-            default:
-            case LogLevel::Info:
+            // Get logger instance.
+            auto logger = spdlog::get(LOGGER_NAME);
+            if (!logger)
             {
-                logger->info(msg);
-                break;
-            }
-            
-            case LogLevel::Warning:
-            {
-                logger->warn(msg);
-                break;
+                return;
             }
 
-            case LogLevel::Error:
+            // Log message.
+            switch (level)
             {
-                logger->error(msg);
-                break;
+                default:
+                case LogLevel::Info:
+                {
+                    logger->info(msg);
+                    break;
+                }
+                
+                case LogLevel::Warning:
+                {
+                    logger->warn(msg);
+                    break;
+                }
+
+                case LogLevel::Error:
+                {
+                    logger->error(msg);
+                    break;
+                }
             }
+            logger->flush();
         }
-        logger->flush();
     }
 
     void Assert(bool cond, const std::string& msg)

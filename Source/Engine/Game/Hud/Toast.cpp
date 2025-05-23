@@ -24,11 +24,12 @@ namespace Silent::Hud
             _toasts.erase(_toasts.begin());
         }
 
+        // TODO: Set position.
+
         // Create new toast.
         auto toast = Toast
         {
             .Message  = msg,
-            .Position = Vector2::Zero,
             .Col      = Color(color.R(), color.G(), color.B(), 1.0f),
             .Life     = SEC_TO_TICK(LIFE_SEC_MAX)
         };
@@ -45,6 +46,8 @@ namespace Silent::Hud
                 continue;
             }
             toast.Life--;
+
+            // TODO: Update position.
 
             // Update opacity.
             if (toast.Life <= SEC_TO_TICK(LIFE_SEC_START_FADING))
@@ -65,6 +68,7 @@ namespace Silent::Hud
         }
 
         // Render toasts.
+        auto pos = _stackPosition;
         for (const auto& toast : _toasts)
         {
             if (toast.Life <= 0)
@@ -73,6 +77,7 @@ namespace Silent::Hud
             }
 
             //g_App.GetRenderer().SubmitText(toast.Message, toast.Position, toast.Col);
+            // TODO: Update `pos`.
         }
     }
 
