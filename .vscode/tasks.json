@@ -23,24 +23,6 @@
             "detail": "Configure the project for Debug build"
         },
         {
-            "label": "Build Debug",
-            "dependsOn": "Configure Debug",
-            "type": "shell",
-            "command": "cmake",
-            "args":
-            [
-                "--build",
-                "${workspaceFolder}/Build/Debug"
-            ],
-            "group":
-            {
-                "kind": "build",
-                "isDefault": false
-            },
-            "problemMatcher": ["$msCompile"],
-            "detail": "Build the project in Debug configuration"
-        },
-        {
             "label": "Configure Release",
             "type": "shell",
             "command": "cmake",
@@ -61,6 +43,24 @@
             "detail": "Configure the project for Release build"
         },
         {
+            "label": "Build Debug",
+            "dependsOn": "Configure Debug",
+            "type": "shell",
+            "command": "cmake",
+            "args":
+            [
+                "--build",
+                "${workspaceFolder}/Build/Debug"
+            ],
+            "group":
+            {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": ["$msCompile"],
+            "detail": "Build the project in Debug configuration"
+        },
+        {
             "label": "Build Release",
             "dependsOn": "Configure Release",
             "type": "shell",
@@ -77,6 +77,22 @@
             },
             "problemMatcher": ["$msCompile"],
             "detail": "Build the project in Release configuration"
+        },
+        {
+            "label": "Generate savegame",
+            "type": "shell",
+            "command": "python",
+            "args":
+            [
+                "${workspaceFolder}/Tools/FlatBuffers/GenerateSavegame.py"
+            ],
+            "group":
+            {
+                "kind": "none",
+                "isDefault": false
+            },
+            "problemMatcher": ["$msCompile"],
+            "detail": "Generate the savegame buffer headers"
         }
     ]
 }

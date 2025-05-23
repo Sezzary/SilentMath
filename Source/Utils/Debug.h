@@ -33,7 +33,7 @@ namespace Silent::Utils::Debug
     void DeinitializeDebug();
     void UpdateDebug();
 
-	void Message(const char* msg, ...);
+	void Message(const std::string& msg, ...);
     void Log(const std::string& msg, LogLevel level = LogLevel::Info, LogMode mode = LogMode::DebugRelease, bool repeat = false);
     void Assert(bool cond, const std::string& msg);
     void StartTimer();

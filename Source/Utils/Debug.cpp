@@ -27,6 +27,7 @@ namespace Silent::Utils::Debug
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         auto logger      = std::make_shared<spdlog::logger>(LOGGER_NAME, spdlog::sinks_init_list{ fileSink, consoleSink });
 
+        // Initialize logger.
         spdlog::initialize_logger(logger);
         logger->set_level(spdlog::level::info);
         logger->flush_on(spdlog::level::info);
@@ -62,7 +63,7 @@ namespace Silent::Utils::Debug
             });
     }
 
-    void Message(const char* msg, ...)
+    void Message(const std::string& msg, ...)
     {
         constexpr uint BUFFER_SIZE = 255;
 
@@ -78,8 +79,8 @@ namespace Silent::Utils::Debug
 
         // Format string.
         va_list args;
-        va_start(args, msg);
-        vsnprintf(buffer, BUFFER_SIZE, msg, args);
+        va_start(args, msg.c_str());
+        vsnprintf(buffer, BUFFER_SIZE, msg.c_str(), args);
         va_end(args);
 
         // LOCK: Restrict `Messages` access.
