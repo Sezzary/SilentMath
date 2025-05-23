@@ -366,51 +366,58 @@ namespace Silent::Input
     {
         const auto& options = g_App.GetConfig().GetOptions();
 
+        // Get user action binding profiles.
+        auto gamepadProfile = _bindings.GetBindingProfile(options.ActiveGamepadProfileId);
+        auto kmProfile      = _bindings.GetBindingProfile(options.ActiveKeyboardMouseProfileId);
+
         // 1) Update user action states.
-        for (auto& [keyActionId, action] : _actions)
+        for (auto actionGroupId : USER_ACTION_GROUP_IDS)
         {
-            float state = 0.0f;
-
-            // 1.1) Get max gamepad event state.
-            if (_gamepad != nullptr)
+            const auto& actionIds = ACTION_ID_GROUPS.at(actionGroupId);
+            for (auto actionId : actionIds)
             {
-                auto eventIds = _bindings.GetBoundEventIds(options.ActiveKeyboardMouseProfileId, keyActionId);
-                for (const auto& eventId : eventIds)
-                {
-                    state = std::max(state, _events.States[(int)eventId]);
-                }
-            }
+                auto& action = _actions.at(actionId);
+                float state  = 0.0f;
 
-            // 1.2) If no valid gamepad event state, get max keyboard/mouse event state.
-            if (state == 0.0f)
-            {
-                auto eventIds = _bindings.GetBoundEventIds(options.ActiveGamepadProfileId, keyActionId);
-                for (const auto& eventId : eventIds)
+                // 1.1) Get highest gamepad event state.
+                if (_gamepad != nullptr)
                 {
-                    state = std::max(state, _events.States[(int)eventId]);
+                    auto gamepadEventIds = gamepadProfile.at(actionId);
+                    for (const auto& eventId : gamepadEventIds)
+                    {
+                        state = std::max(state, _events.States[(int)eventId]);
+                    }
                 }
-            }
 
-            // 1.3) Update user action state.
-            action.Update(state);
+                // 1.2) If no valid gamepad event state, get highest keyboard/mouse event state.
+                if (state == 0.0f)
+                {
+                    auto kmEventIds = kmProfile.at(actionId);
+                    for (const auto& eventId : kmEventIds)
+                    {
+                        state = std::max(state, _events.States[(int)eventId]);
+                    }
+                }
+
+                // 1.3) Use highest bound event state.
+                action.Update(state);
+            }
         }
 
         // 2) Update raw action states.
         for (auto profileId : RAW_EVENT_BINDING_PROFILE_IDS)
         {
             const auto& profile = _bindings.GetBindingProfile(profileId);
-            for (auto& [keyActionId0, eventIds] : profile)
+            for (auto& [keyActionId, eventIds] : profile)
             {
-                auto& action = _actions.at(keyActionId0);
+                auto& action = _actions.at(keyActionId);
 
-                // 1.1) Get max raw event state.
+                // Use highest bound event state.
                 float state = 0.0f;
                 for (auto eventId : eventIds)
                 {
                     state = std::max(state, _events.States[(int)eventId]);
                 }
-
-                // 2.2) Update raw action state.
                 action.Update(state);
             }
         }

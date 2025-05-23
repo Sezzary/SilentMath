@@ -3,8 +3,10 @@
 
 #include "Engine/Application.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Services/Time.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Services;
 
 namespace Silent::Utils::Debug
 {
@@ -12,6 +14,31 @@ namespace Silent::Utils::Debug
 
     static auto Messages  = std::vector<std::string>{};
     static auto StartTime = std::chrono::high_resolution_clock::time_point{};
+
+    void Scratchpad()
+    {
+        const auto& input = g_App.GetInput();
+
+        //Log("A val" + std::to_string(input.GetAction(In::A).GetState()), LogLevel::Info, LogMode::Debug, true);
+
+        if (input.GetAction(In::A).IsHeld())
+        {
+            if (g_Time.TestInterval(SEC_TO_TICK(0.25f)))
+            {
+                //Log("Holding A", LogLevel::Info, LogMode::Debug, true);
+            }
+        }
+
+        if (input.GetAction(In::A).IsClicked())
+        {
+            Log("Clicked A", LogLevel::Info, LogMode::Debug, true);
+        }
+
+        if (input.GetAction(In::A).IsReleased())
+        {
+            //Log("Released A", LogLevel::Info, LogMode::Debug, true);
+        }
+    }
 
     void InitializeDebug()
     {
@@ -41,6 +68,11 @@ namespace Silent::Utils::Debug
 
     void UpdateDebug()
     {
+        if constexpr (IS_DEBUG_BUILD)
+        {
+            Scratchpad();
+        }
+
         const auto& options = g_App.GetConfig().GetOptions();
         if (!options.EnableDebugMode)
         {
@@ -51,16 +83,16 @@ namespace Silent::Utils::Debug
         Messages.clear();
 
         CreateGui([]()
-            {
-                ImGui::ShowDemoWindow();
-            });
+        {
+            ImGui::ShowDemoWindow();
+        });
 
         CreateGui([]()
-            {
-                ImGui::Begin("My Window");
-                ImGui::Text("Hello. It's me. =^.^=");
-                ImGui::End();
-            });
+        {
+            ImGui::Begin("My Window");
+            ImGui::Text("Hello. It's me. =^.^=");
+            ImGui::End();
+        });
     }
 
     void Message(const std::string& msg, ...)
@@ -78,7 +110,7 @@ namespace Silent::Utils::Debug
         std::memset(buffer, 0, BUFFER_SIZE);
 
         // Format string.
-        va_list args;
+        va_list args = nullptr;
         va_start(args, msg.c_str());
         vsnprintf(buffer, BUFFER_SIZE, msg.c_str(), args);
         va_end(args);
@@ -194,39 +226,33 @@ namespace Silent::Utils::Debug
         renderer.SubmitDebugTriangle(vert0, vert1, vert2, color, page);
     }
 
-    /*void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
+    void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateTarget(center, rot, radius, color, page);
-    }
-
-    void CreateBox(const AxisAlignedBoundingBox& aabb, const Color& color, bool isWireframe, DebugPage page)
-    {
-        auto& renderer = g_App.GetRenderer();
-        renderer.CreateBox(aabb, color, isWireframe, page);
+        renderer.SubmitDebugTarget(center, rot, radius, color, page);
     }
 
     void CreateBox(const OrientedBoundingBox& obb, const Color& color, bool isWireframe, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateBox(obb, color, isWireframe, page);
+        renderer.SubmitDebugBox(obb, color, isWireframe, page);
     }
 
     void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateSphere(sphere, color, isWireframe, page);
+        renderer.SubmitDebugSphere(sphere, color, isWireframe, page);
     }
 
     void CreateCylinder(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateCylinder(center, rot, radius, length, color, isWireframe, page);
+        renderer.SubmitDebugCylinder(center, rot, radius, length, color, isWireframe, page);
     }
 
     void CreateCone(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
         auto& renderer = g_App.GetRenderer();
-        renderer.CreateCone(center, rot, radius, length, color, isWireframe, page);
-    }*/
+        renderer.SubmitDebugCone(center, rot, radius, length, color, isWireframe, page);
+    }
 }
