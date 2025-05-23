@@ -70,6 +70,10 @@ namespace Silent::Input
 
         // Initialize gamepad.
         _gamepad = SDL_OpenGamepad(0);
+        if (_gamepad != nullptr)
+        {
+            SetRumble(RumbleMode::LowAndHigh, 1.0f, 0.0f, 0.5f);
+        }
 
         // Initialize event states and control axes.
         _events.States.resize((int)EventId::Count);
@@ -334,12 +338,7 @@ namespace Silent::Input
 
     void InputManager::UpdateRumble()
     {
-        if (_rumble.Ticks == 0)
-        {
-            return;
-        }
-
-        if (_gamepad == nullptr)
+        if (_rumble.Ticks == 0 || _gamepad == nullptr)
         {
             _rumble = {};
             return;
@@ -360,13 +359,6 @@ namespace Silent::Input
         if (!SDL_RumbleGamepad(_gamepad, freqLow, freqHigh, durationMs))
         {
             Log("Failed to rumble gamepad: " + std::string(SDL_GetError()), LogLevel::Error);
-        }
-
-        // Clear if rumble is complete.
-        _rumble.Ticks--;
-        if (_rumble.Ticks == 0)
-        {
-            _rumble = {};
         }
     }
 
@@ -463,10 +455,10 @@ namespace Silent::Input
         // Deinitialize disconnected gamepad.
         if (_gamepad != nullptr)
         {
+            Log("Gamepad disconnected.");
+
             SDL_CloseGamepad(_gamepad);
             _gamepad = nullptr;
-
-            Log("Gamepad disconnected.");
         }
         // Intermittently attempt reinitializing gamepad.
         else
@@ -477,6 +469,8 @@ namespace Silent::Input
                 if (_gamepad != nullptr)
                 {
                     Log("Gamepad reconnected.");
+
+                    SetRumble(RumbleMode::LowAndHigh, 1.0f, 0.0f, 0.5f);
                 }
             }
         }
