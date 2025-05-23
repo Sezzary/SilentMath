@@ -48,17 +48,16 @@ namespace Silent
 
     void ApplicationManager::Initialize()
     {
-        Log("Starting Silent Engine.");
-        
-        // Debug.
+        // Config and debugging.
+        _work.Config.Initialize();
         InitializeDebug();
 
-        // Configuration.
-        Log("Initializing configuration...");
-        _work.Config.Initialize();
+        Log("Initializing...");
+
+        // Options.
+        _work.Config.LoadOptions();
 
         // SDL.
-        Log("Initializing SDL...");
         if (!SDL_Init(SDL_INIT_VIDEO))
         {
             throw std::runtime_error("Failed to initialize SDL.");
@@ -73,11 +72,13 @@ namespace Silent
         int flags          = SDL_WINDOW_RESIZABLE | rendererFlag | fullscreenFlag | maximizedFlag;
 
         // Create window.
-        _window = SDL_CreateWindow(WINDOW_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
-        Assert(_window != nullptr, "Failed to create window.");
+        _window = SDL_CreateWindow(_work.Config.APP_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
+        if (_window == nullptr)
+        {
+            throw std::runtime_error("Failed to create window.");
+        }
 
         // Renderer.
-        Log("Initializing renderer...");
         _work.Renderer = CreateRenderer(RendererType::OpenGl);
         if (_work.Renderer == nullptr)
         {
@@ -86,7 +87,6 @@ namespace Silent
         _work.Renderer->Initialize(*_window);
 
         // Input.
-        Log("Initializing input...");
         _work.Input.Initialize();
 
         // Finish.
@@ -96,18 +96,15 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
-        Log("Exiting Silent Engine.");
+        Log("Deinitializing...");
 
         // Input.
-        Log("Deinitializing input...");
         _work.Input.Deinitialize();
 
         // Renderer.
-        Log("Deinitializing renderer...");
         _work.Renderer->Deinitialize();
 
         // SDL.
-        Log("Deinitializing SDL...");
         SDL_DestroyWindow(_window);
         SDL_Quit();
 

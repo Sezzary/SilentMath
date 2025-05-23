@@ -12,9 +12,10 @@ int main()
     }
     catch (const std::exception& ex)
     {
-        Log(ex.what(), LogLevel::Error);
+        Log(std::string("Exception: ") + ex.what(), LogLevel::Error);
         return EXIT_FAILURE;
     }
 
+    DeinitializeDebug();
     return EXIT_SUCCESS;
 }

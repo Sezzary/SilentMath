@@ -70,10 +70,12 @@ using json = nlohmann::json;
 #include <SDL3/SDL_vulkan.h>
 
 // spdlog
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 // stb
-#include "stb_image_write.h"
+#include <stb_image_write.h>
 
 // Vulkan
 #include <vulkan/vulkan.hpp>

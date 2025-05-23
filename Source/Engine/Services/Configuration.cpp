@@ -75,9 +75,14 @@ namespace Silent::Services
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
-    std::filesystem::path ConfigurationManager::GetWorkPath() const
+    std::filesystem::path ConfigurationManager::GetWorkFolderPath() const
     {
-        return _workPath;
+        return _workFolderPath;
+    }
+
+    std::filesystem::path ConfigurationManager::GetScreenshotsFolderPath() const
+    {
+        return _screenshotsFolderPath;
     }
 
     Options& ConfigurationManager::GetOptions()
@@ -141,46 +146,62 @@ namespace Silent::Services
 
     void ConfigurationManager::Initialize()
     {
-        constexpr char APP_FOLDER_NAME[] = "Silent Engine";
-
         char*  buffer = nullptr;
         size_t length = 0;
 
-        // Set work path.
+        // Set paths.
         switch (OS_TYPE)
         {
             case OsType::Windows:
             {
-                // Get `APPDATA` path.
+                // Get `APPDATA` path for work.
                 if (_dupenv_s(&buffer, &length, "APPDATA") == 0 && buffer != nullptr)
                 {
                     auto path = std::filesystem::path(buffer);
-                    free(buffer);
-                    _workPath = path / APP_FOLDER_NAME; 
+                    _workFolderPath = path / APP_NAME; 
+                }
+
+                // Get `Pictures` folder path for screenshots.
+                if (_dupenv_s(&buffer, &length, "USERPROFILE") == 0 && buffer != nullptr)
+                {
+                    auto path = std::filesystem::path(buffer);
+                    _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
             }
 
             case OsType::MacOs:
             {
-                // Get `HOME` path.
+                // Get `HOME` path for work.
                 if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
                     auto path = std::filesystem::path(buffer);
-                    free(buffer);
-                    _workPath = path / APP_FOLDER_NAME; 
+                    _workFolderPath = path / APP_NAME; 
+                }
+
+                // Get `Pictures` folder path for screenshots.
+                if (buffer != nullptr)
+                {
+                    auto path = std::filesystem::path(buffer);
+                    _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
             }
 
             case OsType::Linux:
             {
-                // Get `HOME` path.
+                // Get `HOME` path for work.
                 if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
                     auto path = std::filesystem::path(buffer);
-                    free(buffer);
-                    _workPath = path / APP_FOLDER_NAME; 
+                    _workFolderPath = path / APP_NAME; 
+                }
+
+                // Get `Pictures` folder path for screenshots.
+                if (buffer != nullptr)
+                {
+                    auto path = std::filesystem::path(buffer);
+                    _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
             }
@@ -190,11 +211,20 @@ namespace Silent::Services
                 break;
             }
         }
-        Assert(!_workPath.empty(), "Failed to initialize `ConfigurationManager`.");
 
-        // TODO: Create work path.
+        // Create work folder.
+        if (_workFolderPath.empty())
+        {
+            throw std::runtime_error("Failed to define work folder path.");
+        }
+        std::filesystem::create_directories(_workFolderPath);
 
-        LoadOptions();
+        // Create screenshots folder.
+        if (_screenshotsFolderPath.empty())
+        {
+            throw std::runtime_error("Failed to define screenshots folder path.");
+        }
+        std::filesystem::create_directories(_screenshotsFolderPath);
     }
 
     void ConfigurationManager::SaveOptions()
@@ -203,11 +233,8 @@ namespace Silent::Services
         auto optionsJson = ToOptionsJson(_options);
 
         // Ensure directory exists.
-        auto path = GetWorkPath() / OPTIONS_FILE_PATH;
-        if (std::filesystem::create_directories(path.parent_path()))
-        {
-            Log("Created path " + path.string() + ".");
-        }
+        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILE_NAME) + JSON_FILE_EXT);
+        std::filesystem::create_directories(path.parent_path());
 
         // Write options JSON file.
         auto outputFile = std::ofstream(path);
@@ -220,7 +247,7 @@ namespace Silent::Services
 
     void ConfigurationManager::LoadOptions()
     {
-        auto path = GetWorkPath() / OPTIONS_FILE_PATH;
+        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILE_NAME) + JSON_FILE_EXT);
         
         // Open options JSON file.
         auto inputFile = std::ifstream(path);

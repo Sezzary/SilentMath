@@ -104,7 +104,17 @@ namespace Silent::Services
     {
     public:
         // Constants
-        
+
+        static constexpr char APP_NAME[]                  = "Silent Engine";
+        static constexpr char ASSETS_FOLDER_NAME[]        = "Assets";
+        static constexpr char SCREENSHOTS_FOLDER_NAME[]   = "Screenshots";
+        static constexpr char SLOT_FOLDER_NAME_BASE[]     = "Slot ";
+        static constexpr char OPTIONS_FILE_NAME[]         = "Options";
+        static constexpr char SCREENSHOT_FILE_NAME_BASE[] = "Screenshot_";
+        static constexpr char PNG_FILE_EXT[]              = ".png";
+        static constexpr char JSON_FILE_EXT[]             = ".json";
+        static constexpr int  JSON_INDENT_SIZE            = 4;
+
 #if defined(_WIN32) || defined(_WIN64)
         static constexpr auto OS_TYPE = OsType::Windows;
 #elif defined(__APPLE__)
@@ -114,13 +124,11 @@ namespace Silent::Services
 #endif
 
 private:
-    static constexpr char OPTIONS_FILE_PATH[] = "Options.json";
-    static constexpr int  JSON_INDENT_SIZE    = 4;
-
         // Fields
 
-        std::filesystem::path _workPath = {};
-        Options               _options  = {};
+        std::filesystem::path _workFolderPath        = {};
+        std::filesystem::path _screenshotsFolderPath = {};
+        Options               _options               = {};
 
     public:
         // Constructors
@@ -129,7 +137,8 @@ private:
 
         // Getters
 
-        std::filesystem::path GetWorkPath() const;
+        std::filesystem::path GetWorkFolderPath() const;
+        std::filesystem::path GetScreenshotsFolderPath() const;
         Options&              GetOptions();
 
         // Setters

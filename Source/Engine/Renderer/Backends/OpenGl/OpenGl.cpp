@@ -102,27 +102,28 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::SaveScreenshot() const
     {
-        constexpr char SCREENSHOT_FILE_PATH_BASE[] = "Screenshots/Screenshot_";
-        constexpr char SCREENSHOT_FILE_EXT[]       = ".png";
-
         const auto& config = g_App.GetConfig();
 
-        // Get image size.
+        // Get window size.
         auto res = Vector2i::Zero;
         SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
         
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
-        auto path      = config.GetWorkPath() / (SCREENSHOT_FILE_PATH_BASE + timestamp + SCREENSHOT_FILE_EXT);
+        auto filename  = (config.SCREENSHOT_FILE_NAME_BASE + timestamp) + config.PNG_FILE_EXT;
+        auto path      = config.GetWorkFolderPath() / config.SCREENSHOTS_FOLDER_NAME / filename;
         std::filesystem::create_directories(path.parent_path());
 
         // Write screenshot file.
         auto pixels = std::vector<uint8>((res.x * res.y) * 3);
         glReadPixels(0, 0, res.x, res.y, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
-        if (!stbi_write_png(path.string().c_str(), res.x, res.y, 3, pixels.data(), res.x * 3))
+        if (stbi_write_png(path.string().c_str(), res.x, res.y, 3, pixels.data(), res.x * 3))
         {
-            Log("Failed to save screenshot.", LogLevel::Error, LogMode::DebugRelease, true);
+            // TODO: Shutter SFX and postprocess flash effect.
+            return;
         }
+
+        Log("Failed to save screenshot.", LogLevel::Warning, LogMode::DebugRelease, true);
     }
 
     void OpenGlRenderer::UpdateViewport()

@@ -24,10 +24,6 @@ namespace Silent
     class ApplicationManager
     {
     private:
-        // Constants
-
-        static constexpr char WINDOW_NAME[] = "Silent Engine";
-
         // Fields
 
         SDL_Window* _window         = nullptr;

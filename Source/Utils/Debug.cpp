@@ -8,12 +8,34 @@ using namespace Silent::Renderer;
 
 namespace Silent::Utils::Debug
 {
+    constexpr char LOGGER_NAME[] = "Logger";
+
     static auto Messages  = std::vector<std::string>{};
     static auto StartTime = std::chrono::high_resolution_clock::time_point{};
 
     void InitializeDebug()
     {
-        // TODO: Save log to text file.
+        constexpr char LOG_FILE_NAME[] = "Log.txt";
+
+        const auto& config = g_App.GetConfig();
+
+        // `true` means new log is created at launch.
+        auto path     = config.GetWorkFolderPath() / LOG_FILE_NAME;
+        auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path.string(), true);
+
+        // Set file and console log targets.
+        auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        auto logger      = std::make_shared<spdlog::logger>(std::string(LOGGER_NAME), spdlog::sinks_init_list{ fileSink, consoleSink });
+
+        spdlog::initialize_logger(logger);
+        logger->set_level(spdlog::level::info);
+        logger->flush_on(spdlog::level::info);
+        logger->set_pattern("[%Y-%b-%d %T] [%^%l%$] %v");
+    }
+
+    void DeinitializeDebug()
+    {
+        spdlog::shutdown();
     }
 
     void UpdateDebug()
@@ -42,6 +64,15 @@ namespace Silent::Utils::Debug
 
     void Log(const std::string& msg, LogLevel level, LogMode mode, bool repeat)
     {
+        // Ignore debug mode messages in release mode.
+        if constexpr (!IS_DEBUG_BUILD)
+        {
+            if (mode == LogMode::Debug)
+            {
+                return;
+            }
+        }
+
         // LOCK: Restrict previous message access.
         static auto mutex = std::mutex();
         {
@@ -55,27 +86,36 @@ namespace Silent::Utils::Debug
             prevMsg = msg;
         }
 
+        // Get logger instance.
+		auto logger = spdlog::get(LOGGER_NAME);
+		if (!logger)
+        {
+			return;
+        }
+
+        // Log message.
         switch (level)
         {
             default:
             case LogLevel::Info:
             {
-                spdlog::info(msg);
+                logger->info(msg);
                 break;
             }
             
             case LogLevel::Warning:
             {
-                spdlog::warn(msg);
+                logger->warn(msg);
                 break;
             }
 
             case LogLevel::Error:
             {
-                spdlog::error(msg);
+                logger->error(msg);
                 break;
             }
         }
+        logger->flush();
     }
 
     void Message(const char* msg, ...)
@@ -104,48 +144,35 @@ namespace Silent::Utils::Debug
             auto lock = std::lock_guard(mutex);
             Messages.push_back(buffer);
         }
-
     }
 
     void Assert(bool cond, const std::string& msg)
     {
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
+        if constexpr (IS_DEBUG_BUILD)
         {
-            return;
+            if (!cond)
+            {
+                throw std::runtime_error("Assertion failed. " + msg);
+            }
         }
-
-        if (cond)
-        {
-            return;
-        }
-
-        Log(msg, LogLevel::Error);
-        throw std::runtime_error("Assertion failed.");
     };
 
     void StartTimer()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
+        if constexpr (IS_DEBUG_BUILD)
         {
-            return;
+            StartTime = std::chrono::high_resolution_clock::now();
         }
-
-        StartTime = std::chrono::high_resolution_clock::now();
     }
 
     void EndTimer()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
+        if constexpr (IS_DEBUG_BUILD)
         {
-            return;
+            auto endTime  = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
+            Message("Execution (μs): %d", duration.count());
         }
-
-        auto endTime  = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - StartTime);
-        Message("Execution (μs): %d", duration.count());
     }
 
     void CreateGui(std::function<void()> drawFunc)
