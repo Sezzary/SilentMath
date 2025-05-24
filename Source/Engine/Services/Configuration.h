@@ -97,7 +97,7 @@ namespace Silent::Services
         // System
 
         bool EnableToasts    = false; // Popup messages, e.g. "Gamepad connected", "Gamepad disconnected", etc.
-        bool EnableDebugMode = true;  // TODO: Temporarily hard-set to `true`. Wouldn't be saved in config file. User would have to turn it on manually each session.
+        bool EnableDebugMode = true;  // TODO: Temporarily hard-set to `true`. Wouldn't be saved in config file. User turns it on manually each session.
     };
 
     class ConfigurationManager
@@ -108,9 +108,9 @@ namespace Silent::Services
         static constexpr char APP_NAME[]                 = "Silent Engine";
         static constexpr char ASSETS_FOLDER_NAME[]       = "Assets";
         static constexpr char SAVEGAME_FOLDER_NAME[]     = "Savegame";
-        static constexpr char SCREENSHOTS_FOLDER_NAME[]  = "Screenshots";
         static constexpr char SLOT_FOLDER_NAME_BASE[]    = "Slot ";
         static constexpr char OPTIONS_FILENAME[]         = "Options";
+        static constexpr char SCREENSHOTS_FOLDER_NAME[]  = "Screenshots";
         static constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
         static constexpr char PNG_FILE_EXT[]             = ".png";
         static constexpr char JSON_FILE_EXT[]            = ".json";

@@ -4,7 +4,7 @@ namespace Silent::Buffers { struct Savegame; }
 
 namespace Silent::Services
 {
-    constexpr int SLOT_COUNT               = 2;
+    constexpr int SAVEGAME_SLOT_COUNT      = 2;
     constexpr int INVENTORY_ITEM_COUNT_MAX = 40;
 
     enum class GameDifficulty
@@ -92,8 +92,8 @@ namespace Silent::Services
 
         // Fields
 
-        Savegame                                         _savegame          = {};
-        std::array<std::vector<std::string>, SLOT_COUNT> _slotSavegameLists = {};
+        Savegame                                                  _savegame          = {};
+        std::array<std::vector<std::string>, SAVEGAME_SLOT_COUNT> _slotSavegameLists = {};
 
     public:
         // Constructors

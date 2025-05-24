@@ -3,6 +3,7 @@
 
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Binding.h"
+#include "Engine/Services/Savegame/Savegame.h"
 
 using namespace Silent::Input;
 
@@ -173,14 +174,14 @@ namespace Silent::Services
                 // Get `APPDATA` path for work.
                 if (_dupenv_s(&buffer, &length, "APPDATA") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(buffer);
+                    auto path       = std::filesystem::path(buffer);
                     _workFolderPath = path / APP_NAME; 
                 }
 
                 // Get `Pictures` folder path for screenshots.
                 if (_dupenv_s(&buffer, &length, "USERPROFILE") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(buffer);
+                    auto path              = std::filesystem::path(buffer);
                     _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
@@ -191,14 +192,14 @@ namespace Silent::Services
                 // Get `HOME` path for work.
                 if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(buffer);
+                    auto path       = std::filesystem::path(buffer);
                     _workFolderPath = path / APP_NAME; 
                 }
 
                 // Get `Pictures` folder path for screenshots.
                 if (buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(buffer);
+                    auto path              = std::filesystem::path(buffer);
                     _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
@@ -209,14 +210,14 @@ namespace Silent::Services
                 // Get `HOME` path for work.
                 if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(buffer);
+                    auto path       = std::filesystem::path(buffer);
                     _workFolderPath = path / APP_NAME; 
                 }
 
                 // Get `Pictures` folder path for screenshots.
                 if (buffer != nullptr)
                 {
-                    auto path = std::filesystem::path(buffer);
+                    auto path              = std::filesystem::path(buffer);
                     _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
@@ -234,12 +235,17 @@ namespace Silent::Services
             throw std::runtime_error("Failed to define app folder path.");
         }
 
-        // Create assets folder.
-        if (_assetsFolderPath.empty())
+        // Check assets folder.
+        if (!std::filesystem::exists(_assetsFolderPath))
         {
-            throw std::runtime_error("Failed to define assets folder path.");
+            throw std::runtime_error("Assets folder not found in executable directory.");
         }
-        std::filesystem::create_directories(_assetsFolderPath);
+
+        // Check screenshots folder.
+        if (_screenshotsFolderPath.empty())
+        {
+            throw std::runtime_error("Failed to define screenshots folder path.");
+        }
 
         // Create work folder.
         if (_workFolderPath.empty())
@@ -248,12 +254,13 @@ namespace Silent::Services
         }
         std::filesystem::create_directories(_workFolderPath);
 
-        // Create screenshots folder.
-        if (_screenshotsFolderPath.empty())
+        // Create savegame folders.
+        for (int i = 0; i < SAVEGAME_SLOT_COUNT; i++)
         {
-            throw std::runtime_error("Failed to define screenshots folder path.");
+            auto slotFolderName = ConfigurationManager::SLOT_FOLDER_NAME_BASE + std::to_string(i + 1);
+            auto slotPath       = _workFolderPath / ConfigurationManager::SAVEGAME_FOLDER_NAME / slotFolderName;
+            std::filesystem::create_directories(slotPath);
         }
-        std::filesystem::create_directories(_screenshotsFolderPath);
     }
 
     void ConfigurationManager::SaveOptions()
