@@ -110,7 +110,7 @@ namespace Silent::Renderer
         
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
-        auto filename  = (config.SCREENSHOT_FILE_NAME_BASE + timestamp) + config.PNG_FILE_EXT;
+        auto filename  = (config.SCREENSHOT_FILENAME_BASE + timestamp) + config.PNG_FILE_EXT;
         auto path      = config.GetWorkFolderPath() / config.SCREENSHOTS_FOLDER_NAME / filename;
         std::filesystem::create_directories(path.parent_path());
 

@@ -200,11 +200,6 @@ namespace Silent::Input
         return _state <= stateMin && _prevState > stateMin && _ticksActive <= delayTicksMax;
     }
 
-    void Action::Update(bool state)
-    {
-        Update(state ? 1.0f : 0.0f);
-    }
-
     void Action::Update(float state)
     {
         _prevState = _state;

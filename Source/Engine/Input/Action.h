@@ -133,7 +133,6 @@ namespace Silent::Input
 
         // Utilities
 
-        void Update(bool state);
         void Update(float state);
         void Clear();
     };

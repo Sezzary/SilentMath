@@ -46,7 +46,7 @@ def generate_savegame_headers():
             print(f"Processing {schema}")
             os.makedirs(OUTPUT_PATH, exist_ok=True)
 
-            # TODO: Setting output path doesn't work.
+            # TODO: Setting output path doesn't work. For now, headers generate in project root and must be manually moved.
             # Build command.
             schema_path = os.path.join(SCHEMAS_PATH, schema)
             command     = [ flatc_exe, "--cpp", schema_path ]#, "--output", str(OUTPUT_PATH) ]

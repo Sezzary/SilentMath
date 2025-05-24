@@ -4,9 +4,11 @@
 #include "Engine/Application.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Time.h"
+#include "Utils/Parallel.h"
 
 using namespace Silent::Renderer;
 using namespace Silent::Services;
+using namespace Silent::Utils;
 
 namespace Silent::Utils::Debug
 {
@@ -42,12 +44,12 @@ namespace Silent::Utils::Debug
 
     void InitializeDebug()
     {
-        constexpr char LOG_FILE_NAME[] = "Log.txt";
+        constexpr char LOG_FILENAME[] = "Log.txt";
 
         const auto& config = g_App.GetConfig();
 
         // `true` means new log is created at launch.
-        auto path     = config.GetWorkFolderPath() / LOG_FILE_NAME;
+        auto path     = config.GetWorkFolderPath() / LOG_FILENAME;
         auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path.string(), true);
 
         // Set file and console log targets.

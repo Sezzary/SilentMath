@@ -417,13 +417,14 @@ namespace Silent::Input
                 for (auto& [keyActionId, eventIds] : profile)
                 {
                     auto& action = _actions.at(keyActionId);
+                    float state  = 0.0f;
 
-                    // Use highest bound event state.
-                    float state = 0.0f;
                     for (auto eventId : eventIds)
                     {
                         state = std::max(state, _events.States[(int)eventId]);
                     }
+
+                    // Use highest bound event state.
                     action.Update(state);
                 }
             }

@@ -71,16 +71,16 @@ namespace Silent::Utils
 
         // Operators
 
-        bool      operator ==(const BitField& bitField) const;
-        bool      operator !=(const BitField& bitField) const;
-        BitField& operator =(const BitField& bitField) = default;
-        BitField& operator &=(const BitField& bitField);
-        BitField& operator |=(const BitField& bitField);
-        BitField& operator ^=(const BitField& bitField);
-        BitField  operator &(const BitField& bitField) const;
-        BitField  operator |(const BitField& bitField) const;
-        BitField  operator ^(const BitField& bitField) const;
-        BitField  operator ~() const;
+        bool      operator==(const BitField& bitField) const;
+        bool      operator!=(const BitField& bitField) const;
+        BitField& operator=(const BitField& bitField) = default;
+        BitField& operator&=(const BitField& bitField);
+        BitField& operator|=(const BitField& bitField);
+        BitField& operator^=(const BitField& bitField);
+        BitField  operator&(const BitField& bitField) const;
+        BitField  operator|(const BitField& bitField) const;
+        BitField  operator^(const BitField& bitField) const;
+        BitField  operator~() const;
 
     private:
         // Helpers
@@ -95,13 +95,18 @@ namespace std
     template<>
     struct hash<Silent::Utils::BitField>
     {
-        size_t operator()(const Silent::Utils::BitField& BitField) const
+        size_t operator()(const Silent::Utils::BitField& bitField) const
         {
-            size_t hashValue = 0;
-            for (auto chunk : BitField.GetChunks())
-                hashValue ^= hash<Silent::Utils::BitField::ChunkType>{}(chunk) + 0x9E3779B9 + (hashValue << 6) + (hashValue >> 2);
+            size_t hashVal = 0;
+            for (auto chunk : bitField.GetChunks())
+            {
+                hashVal ^= hash<Silent::Utils::BitField::ChunkType>{}(chunk) +
+                             0x9E3779B9 +
+                             (hashVal << 6) +
+                             (hashVal >> 2);
+            }
 
-            return hashValue;
+            return hashVal;
         }
     };
 }

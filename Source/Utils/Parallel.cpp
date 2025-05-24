@@ -22,8 +22,6 @@ namespace Silent::Utils
 
     ParallelTaskManager::~ParallelTaskManager()
     {
-        Log("Deinitializing threads...");
-
         // LOCK: Restrict shutdown flag access.
         {
             auto taskLock = std::lock_guard(_taskMutex);
@@ -80,7 +78,10 @@ namespace Silent::Utils
             // LOCK: Restrict task queue access.
             {
                 auto taskLock = std::unique_lock(_taskMutex);
-                _taskCond.wait(taskLock, [this] { return (_deinitialize || !_tasks.empty()); });
+                _taskCond.wait(taskLock, [this]
+                {
+                    return (_deinitialize || !_tasks.empty());
+                });
 
                 // Shutting down and no pending tasks; return early.
                 if (_deinitialize && _tasks.empty())
@@ -127,7 +128,7 @@ namespace Silent::Utils
         }
 
         // Check for task group completion.
-        if (counter.fetch_sub(1, std::memory_order_acq_rel) == 1)
+        if (counter.fetch_sub(1, std::memory_order::acq_rel) == 1)
         {
             promise.set_value();
         }

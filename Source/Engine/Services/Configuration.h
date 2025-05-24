@@ -105,15 +105,15 @@ namespace Silent::Services
     public:
         // Constants
 
-        static constexpr char APP_NAME[]                  = "Silent Engine";
-        static constexpr char ASSETS_FOLDER_NAME[]        = "Assets";
-        static constexpr char SCREENSHOTS_FOLDER_NAME[]   = "Screenshots";
-        static constexpr char SLOT_FOLDER_NAME_BASE[]     = "Slot ";
-        static constexpr char OPTIONS_FILE_NAME[]         = "Options";
-        static constexpr char SCREENSHOT_FILE_NAME_BASE[] = "Screenshot_";
-        static constexpr char PNG_FILE_EXT[]              = ".png";
-        static constexpr char JSON_FILE_EXT[]             = ".json";
-        static constexpr int  JSON_INDENT_SIZE            = 4;
+        static constexpr char APP_NAME[]                 = "Silent Engine";
+        static constexpr char ASSETS_FOLDER_NAME[]       = "Assets";
+        static constexpr char SCREENSHOTS_FOLDER_NAME[]  = "Screenshots";
+        static constexpr char SLOT_FOLDER_NAME_BASE[]    = "Slot ";
+        static constexpr char OPTIONS_FILENAME[]         = "Options";
+        static constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
+        static constexpr char PNG_FILE_EXT[]             = ".png";
+        static constexpr char JSON_FILE_EXT[]            = ".json";
+        static constexpr int  JSON_INDENT_SIZE           = 4;
 
 #if defined(_WIN32) || defined(_WIN64)
         static constexpr auto OS_TYPE = OsType::Windows;

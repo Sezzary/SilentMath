@@ -316,7 +316,7 @@ namespace Silent::Utils
         return bitString;
     }
 
-    bool BitField::operator ==(const BitField& bitField) const
+    bool BitField::operator==(const BitField& bitField) const
     {
         if (_size != bitField.GetSize())
         {
@@ -334,12 +334,12 @@ namespace Silent::Utils
         return true;
     }
 
-    bool BitField::operator !=(const BitField& bitField) const
+    bool BitField::operator!=(const BitField& bitField) const
     {
         return !(*this == bitField);
     }
 
-    BitField& BitField::operator &=(const BitField& bitField)
+    BitField& BitField::operator&=(const BitField& bitField)
     {
         for (int chunkIdx = 0; chunkIdx < std::min(_chunks.size(), bitField.GetChunks().size()); chunkIdx++)
         {
@@ -351,7 +351,7 @@ namespace Silent::Utils
         return *this;
     }
 
-    BitField& BitField::operator |=(const BitField& bitField)
+    BitField& BitField::operator|=(const BitField& bitField)
     {
         _chunks.resize(std::max(_chunks.size(), bitField.GetChunks().size()));
         _size = std::max(_size, bitField.GetSize());
@@ -364,7 +364,7 @@ namespace Silent::Utils
         return *this;
     }
 
-    BitField& BitField::operator ^=(const BitField& bitField)
+    BitField& BitField::operator^=(const BitField& bitField)
     {
         _chunks.resize(std::max(_chunks.size(), bitField.GetChunks().size()));
         _size = std::max(_size, bitField.GetSize());
@@ -377,7 +377,7 @@ namespace Silent::Utils
         return *this;
     }
 
-    BitField BitField::operator &(const BitField& bitField) const
+    BitField BitField::operator&(const BitField& bitField) const
     {
         auto chunks = std::vector<ChunkType>(std::min(_chunks.size(), bitField.GetChunks().size()));
 
@@ -389,7 +389,7 @@ namespace Silent::Utils
         return BitField(chunks, std::min(_size, bitField.GetSize()));
     }
 
-    BitField BitField::operator |(const BitField& bitField) const
+    BitField BitField::operator|(const BitField& bitField) const
     {
         auto chunks = std::vector<ChunkType>(std::max(_chunks.size(), bitField.GetChunks().size()));
 
@@ -406,7 +406,7 @@ namespace Silent::Utils
         return BitField(chunks, std::max(_size, bitField.GetSize()));
     }
 
-    BitField BitField::operator ^(const BitField& bitField) const
+    BitField BitField::operator^(const BitField& bitField) const
     {
         auto chunks = std::vector<ChunkType>(std::max(_chunks.size(), bitField.GetChunks().size()));
 
@@ -429,7 +429,7 @@ namespace Silent::Utils
         return BitField(chunks, std::max(_size, bitField.GetSize()));
     }
 
-    BitField BitField::operator ~() const
+    BitField BitField::operator~() const
     {
         auto newBitField = *this;
         newBitField.FlipAll();

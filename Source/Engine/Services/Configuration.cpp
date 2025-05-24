@@ -233,7 +233,7 @@ namespace Silent::Services
         auto optionsJson = ToOptionsJson(_options);
 
         // Ensure directory exists.
-        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILE_NAME) + JSON_FILE_EXT);
+        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
         std::filesystem::create_directories(path.parent_path());
 
         // Write options JSON file.
@@ -247,7 +247,7 @@ namespace Silent::Services
 
     void ConfigurationManager::LoadOptions()
     {
-        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILE_NAME) + JSON_FILE_EXT);
+        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
         
         // Open options JSON file.
         auto inputFile = std::ifstream(path);
