@@ -107,6 +107,7 @@ namespace Silent::Services
 
         static constexpr char APP_NAME[]                 = "Silent Engine";
         static constexpr char ASSETS_FOLDER_NAME[]       = "Assets";
+        static constexpr char SAVEGAME_FOLDER_NAME[]     = "Savegame";
         static constexpr char SCREENSHOTS_FOLDER_NAME[]  = "Screenshots";
         static constexpr char SLOT_FOLDER_NAME_BASE[]    = "Slot ";
         static constexpr char OPTIONS_FILENAME[]         = "Options";
@@ -126,6 +127,8 @@ namespace Silent::Services
 private:
         // Fields
 
+        std::filesystem::path _appFolderPath         = {};
+        std::filesystem::path _assetsFolderPath      = {};
         std::filesystem::path _workFolderPath        = {};
         std::filesystem::path _screenshotsFolderPath = {};
         Options               _options               = {};
@@ -137,9 +140,11 @@ private:
 
         // Getters
 
-        std::filesystem::path GetWorkFolderPath() const;
-        std::filesystem::path GetScreenshotsFolderPath() const;
-        Options&              GetOptions();
+        const std::filesystem::path& GetAppFolderPath() const;
+        const std::filesystem::path& GetAssetsFolderPath() const;
+        const std::filesystem::path& GetWorkFolderPath() const;
+        const std::filesystem::path& GetScreenshotsFolderPath() const;
+        Options&                     GetOptions();
 
         // Setters
 

@@ -75,12 +75,22 @@ namespace Silent::Services
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
-    std::filesystem::path ConfigurationManager::GetWorkFolderPath() const
+    const std::filesystem::path& ConfigurationManager::GetAppFolderPath() const
+    {
+        return _appFolderPath;
+    }
+
+    const std::filesystem::path& ConfigurationManager::GetAssetsFolderPath() const
+    {
+        return _assetsFolderPath;
+    }
+
+    const std::filesystem::path& ConfigurationManager::GetWorkFolderPath() const
     {
         return _workFolderPath;
     }
 
-    std::filesystem::path ConfigurationManager::GetScreenshotsFolderPath() const
+    const std::filesystem::path& ConfigurationManager::GetScreenshotsFolderPath() const
     {
         return _screenshotsFolderPath;
     }
@@ -149,7 +159,13 @@ namespace Silent::Services
         char*  buffer = nullptr;
         size_t length = 0;
 
-        // Set paths.
+        // Set app path.
+        _appFolderPath = std::filesystem::current_path();
+
+        // Set assets path.
+        _assetsFolderPath = _appFolderPath / ASSETS_FOLDER_NAME;
+
+        // Set work and screenshots paths.
         switch (OS_TYPE)
         {
             case OsType::Windows:
@@ -211,6 +227,19 @@ namespace Silent::Services
                 break;
             }
         }
+
+        // Check app folder.
+        if (_appFolderPath.empty())
+        {
+            throw std::runtime_error("Failed to define app folder path.");
+        }
+
+        // Create assets folder.
+        if (_assetsFolderPath.empty())
+        {
+            throw std::runtime_error("Failed to define assets folder path.");
+        }
+        std::filesystem::create_directories(_assetsFolderPath);
 
         // Create work folder.
         if (_workFolderPath.empty())
