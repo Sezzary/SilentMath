@@ -5,6 +5,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Parallel.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Renderer;
 using namespace Silent::Services;
@@ -62,7 +63,8 @@ namespace Silent::Utils::Debug
 
         // Initialize ImGui.
         ImGui::CreateContext();
-        ImGui::GetIO().IniFilename = (config.GetWorkFolderPath() / "ImGui.ini").string().c_str(); // TODO: Not working?
+        auto imguiPath             = (config.GetWorkFolderPath() / "imgui.ini").string();
+        ImGui::GetIO().IniFilename = CopyString(imguiPath.c_str(), imguiPath.size());
     }
 
     void DeinitializeDebug()

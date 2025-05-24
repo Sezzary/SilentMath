@@ -2,6 +2,8 @@
 
 namespace Silent::Utils
 {
+    char* CopyString(const char src[], uint size);
+
     template <typename T>
     requires std::is_arithmetic_v<T>
     int GetSign(T val)

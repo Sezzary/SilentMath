@@ -103,7 +103,7 @@ namespace Silent
 
     void ApplicationManager::Deinitialize()
     {
-        Log("Deinitializing...");
+        Log("Shutting down Silent Engine.");
 
         // Input.
         _work.Input.Deinitialize();
