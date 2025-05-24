@@ -8,6 +8,8 @@
 
 namespace Silent::Renderer
 {
+    constexpr char OPEN_GL_VERSION[] = "#version 460";
+
     class OpenGlRenderer : public RendererBase
     {
     private:

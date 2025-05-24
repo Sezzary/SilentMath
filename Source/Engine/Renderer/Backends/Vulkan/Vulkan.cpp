@@ -37,7 +37,6 @@ namespace Silent::Renderer
         poolInfo.pPoolSizes    = poolSizes;
         vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descPool);
 
-        ImGui::CreateContext();
         ImGui_ImplSDL3_InitForVulkan(_window);
 
         auto idxs = FindQueueFamilies(_physicalDevice);

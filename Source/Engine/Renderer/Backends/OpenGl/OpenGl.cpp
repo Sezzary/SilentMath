@@ -176,10 +176,7 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::CreateDebugGui()
     {
-        constexpr char VERSION[] = "#version 460";
-
-        ImGui::CreateContext();
         ImGui_ImplSDL3_InitForOpenGL(_window, _context);
-        ImGui_ImplOpenGL3_Init(VERSION);
+        ImGui_ImplOpenGL3_Init(OPEN_GL_VERSION);
     }
 }

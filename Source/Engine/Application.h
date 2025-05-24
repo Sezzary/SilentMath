@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/Assets/Assets.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Configuration.h"
@@ -7,6 +8,7 @@
 
 namespace Silent
 {
+    using namespace Assets;
     using namespace Input;
     using namespace Renderer;
     using namespace Services;
@@ -15,10 +17,11 @@ namespace Silent
     {
         // TODO: `g_SysWork`, `g_GameWork`, and probably other globals would go here.
 
-        std::unique_ptr<RendererBase> Renderer = nullptr;
         InputManager                  Input    = InputManager();
+        AssetManager                  Assets   = AssetManager();
         SavegameManager               Savegame = SavegameManager();
         ConfigurationManager          Config   = ConfigurationManager();
+        std::unique_ptr<RendererBase> Renderer = nullptr;
     };
 
     class ApplicationManager
@@ -41,10 +44,11 @@ namespace Silent
 
         // Getters
 
-        RendererBase&         GetRenderer();
         InputManager&         GetInput();
+        AssetManager&         GetAssets();
         SavegameManager&      GetSavegame();
         ConfigurationManager& GetConfig();
+        RendererBase&         GetRenderer();
         DebugPage             GetDebugPage();
 
         // Setters

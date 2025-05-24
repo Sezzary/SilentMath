@@ -54,7 +54,7 @@ namespace Silent::Utils
         auto counter = std::make_shared<std::atomic<int>>();
         auto promise = std::make_shared<std::promise<void>>();
 
-        counter->store((int)tasks.size(), std::memory_order_release);
+        counter->store((int)tasks.size(), std::memory_order::release);
 
         // Add group tasks.
         for (const auto& task : tasks)

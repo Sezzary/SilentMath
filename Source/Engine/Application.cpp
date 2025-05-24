@@ -16,9 +16,9 @@ namespace Silent
 {
     ApplicationManager g_App = ApplicationManager();
 
-    RendererBase& ApplicationManager::GetRenderer()
+    AssetManager& ApplicationManager::GetAssets()
     {
-        return *_work.Renderer;
+        return _work.Assets;
     }
 
     InputManager& ApplicationManager::GetInput()
@@ -36,6 +36,11 @@ namespace Silent
         return _work.Config;
     }
 
+    RendererBase& ApplicationManager::GetRenderer()
+    {
+        return *_work.Renderer;
+    }
+
     DebugPage ApplicationManager::GetDebugPage()
     {
         return _debugPage;
@@ -48,14 +53,16 @@ namespace Silent
 
     void ApplicationManager::Initialize()
     {
-        // Config and debugging.
         _work.Config.Initialize();
         InitializeDebug();
 
-        Log("Initializing...");
+        Log("Starting Silent Engine.");
 
         // Options.
         _work.Config.LoadOptions();
+
+        // Assets.
+        _work.Assets.Initialize(_work.Config.GetAssetsFolderPath().string());
 
         // SDL.
         if (!SDL_Init(SDL_INIT_VIDEO))

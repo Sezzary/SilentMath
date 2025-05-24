@@ -436,13 +436,13 @@ namespace Silent::Utils
         return newBitField;
     }
 
-    void BitField::Fill(bool value)
+    void BitField::Fill(bool val)
     {
-        auto fillChunk = value ? ~(ChunkType)0 : (ChunkType)0;
+        auto fillChunk = val ? ~(ChunkType)0 : (ChunkType)0;
         std::fill(_chunks.begin(), _chunks.end(), fillChunk);
 
         uint endBitCount = _size % CHUNK_SIZE;
-        if (endBitCount > 0 && value)
+        if (endBitCount > 0 && val)
         {
             _chunks.back() &= ((ChunkType)1 << endBitCount) - 1;
         }

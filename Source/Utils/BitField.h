@@ -85,7 +85,7 @@ namespace Silent::Utils
     private:
         // Helpers
 
-        void Fill(bool value);
+        void Fill(bool val);
         bool IsBitIdxValid(uint bitIdx) const;
     };
 }
