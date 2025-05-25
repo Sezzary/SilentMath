@@ -257,8 +257,8 @@ namespace Silent::Services
         // Create savegame folders.
         for (int i = 0; i < SAVEGAME_SLOT_COUNT; i++)
         {
-            auto slotFolderName = ConfigurationManager::SLOT_FOLDER_NAME_BASE + std::to_string(i + 1);
-            auto slotPath       = _workFolderPath / ConfigurationManager::SAVEGAME_FOLDER_NAME / slotFolderName;
+            auto saveFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(i + 1);
+            auto slotPath       = _workFolderPath / SAVEGAME_FOLDER_NAME / saveFolderName;
             std::filesystem::create_directories(slotPath);
         }
     }

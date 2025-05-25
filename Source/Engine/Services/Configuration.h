@@ -13,6 +13,31 @@ namespace Silent::Services
         Linux
     };
 
+    constexpr char APP_NAME[]                       = "Silent Engine";
+    constexpr char APP_VERSION[]                    = "0.1.0";
+
+#if defined(_WIN32) || defined(_WIN64)
+    constexpr auto OS_TYPE = OsType::Windows;
+#elif defined(__APPLE__)
+    constexpr auto OS_TYPE = OsType::MacOs;
+#elif defined(__linux__)
+    constexpr auto OS_TYPE = OsType::Linux;
+#endif
+
+    constexpr char ASSETS_FOLDER_NAME[]             = "Assets";
+    constexpr char SAVEGAME_FOLDER_NAME[]           = "Savegame";
+    constexpr char SCREENSHOTS_FOLDER_NAME[]        = "Screenshots";
+    constexpr char SAVEGAME_SLOT_FOLDER_NAME_BASE[] = "Slot ";
+
+    constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
+    constexpr char OPTIONS_FILENAME[]         = "Options";
+    
+    constexpr char JSON_FILE_EXT[]     = ".json";
+    constexpr char PNG_FILE_EXT[]      = ".png";
+    constexpr char SAVEGAME_FILE_EXT[] = ".save";
+    
+    constexpr uint JSON_INDENT_SIZE = 4;
+
     enum class FrameRateType
     {
         Fps30,
@@ -102,29 +127,7 @@ namespace Silent::Services
 
     class ConfigurationManager
     {
-    public:
-        // Constants
-
-        static constexpr char APP_NAME[]                 = "Silent Engine";
-        static constexpr char ASSETS_FOLDER_NAME[]       = "Assets";
-        static constexpr char SAVEGAME_FOLDER_NAME[]     = "Savegame";
-        static constexpr char SLOT_FOLDER_NAME_BASE[]    = "Slot ";
-        static constexpr char OPTIONS_FILENAME[]         = "Options";
-        static constexpr char SCREENSHOTS_FOLDER_NAME[]  = "Screenshots";
-        static constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
-        static constexpr char PNG_FILE_EXT[]             = ".png";
-        static constexpr char JSON_FILE_EXT[]            = ".json";
-        static constexpr int  JSON_INDENT_SIZE           = 4;
-
-#if defined(_WIN32) || defined(_WIN64)
-        static constexpr auto OS_TYPE = OsType::Windows;
-#elif defined(__APPLE__)
-        static constexpr auto OS_TYPE = OsType::MacOs;
-#elif defined(__linux__)
-        static constexpr auto OS_TYPE = OsType::Linux;
-#endif
-
-private:
+    private:
         // Fields
 
         std::filesystem::path _appFolderPath         = {};

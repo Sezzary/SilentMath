@@ -85,11 +85,6 @@ namespace Silent::Services
     class SavegameManager
     {
     private:
-        // Constants
-
-        static constexpr char SLOT_FOLDER_PATH_BASE[] = "Savegame/Slot ";
-        static constexpr char SAVEGAME_FILE_EXT[]     = ".save";
-
         // Fields
 
         Savegame                                                  _savegame          = {};

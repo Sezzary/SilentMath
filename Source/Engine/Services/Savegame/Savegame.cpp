@@ -77,7 +77,10 @@ namespace Silent::Services
         }
 
         const auto& config = g_App.GetConfig();
-        return config.GetWorkFolderPath() / (SLOT_FOLDER_PATH_BASE + std::to_string(slotIdx + 1)) / (std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT);
+
+        auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
+        auto saveFilename   = std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT;
+        return config.GetWorkFolderPath() / SAVEGAME_FOLDER_NAME / slotFolderName / saveFilename;
     }
 
     // TODO: Will probably need a completely different approach when we know how the save system works.
@@ -85,12 +88,14 @@ namespace Silent::Services
     {
         const auto& config = g_App.GetConfig();
 
-        for (int i = 0; i < _slotSavegameLists.size(); i++)
+        for (int slotIdx = 0; slotIdx < _slotSavegameLists.size(); slotIdx++)
         {
             auto paths = std::vector<std::filesystem::path>{};
             
+            auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
+            auto path           = config.GetWorkFolderPath() / slotFolderName;
+
             // Collect savegame file paths.
-            auto path = config.GetWorkFolderPath() / (config.SLOT_FOLDER_NAME_BASE + std::to_string(i + 1));
             for (const auto& entry : std::filesystem::directory_iterator(path))
             {
                 if (entry.is_regular_file() && entry.path().extension() == SAVEGAME_FILE_EXT)
@@ -121,7 +126,7 @@ namespace Silent::Services
             });
 
             // Populate savegame list.
-            auto& saves = _slotSavegameLists[i];
+            auto& saves = _slotSavegameLists[slotIdx];
             saves.clear();
             for (const auto& path : paths)
             {

@@ -79,7 +79,7 @@ namespace Silent
         int flags          = SDL_WINDOW_RESIZABLE | rendererFlag | fullscreenFlag | maximizedFlag;
 
         // Create window.
-        _window = SDL_CreateWindow(_work.Config.APP_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
+        _window = SDL_CreateWindow(APP_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
         if (_window == nullptr)
         {
             throw std::runtime_error("Failed to create window.");
