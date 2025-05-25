@@ -2,7 +2,9 @@
 
 namespace Silent::Utils
 {
-    char* CopyString(const char src[], uint size);
+    std::string	ToUpper(std::string str);
+	std::string	ToLower(std::string str);
+    char*       CopyString(const char src[], uint size);
 
     template <typename T>
     requires std::is_arithmetic_v<T>
@@ -11,18 +13,17 @@ namespace Silent::Utils
         return (val >= 0) ? 1 : -1;
     }
 
-    template <typename Container, typename T>
-    bool Contains(const Container& container, const T& element)
+    template <typename TContainer, typename TElement>
+    bool Contains(const TContainer& cont, const TElement& element)
     {
-        auto it = std::find(container.begin(), container.end(), element);
-        return it != container.end();
+        auto it = std::find(cont.begin(), cont.end(), element);
+        return it != cont.end();
     }
 
-    template <typename Container, typename Predicate>
-    void EraseIf(Container& container, Predicate pred)
+    template <typename TContainer, typename TPredicate>
+    void EraseIf(TContainer& cont, TPredicate pred)
     {
-        container.erase(std::remove_if(container.begin(), container.end(), pred),
-                        container.end());
+        cont.erase(std::remove_if(cont.begin(), cont.end(), pred), cont.end());
     }
 
     template<typename T>
@@ -44,14 +45,14 @@ namespace Silent::Utils
     }
 
     template<typename T>
-    std::span<const typename T::value_type> ToSpan(const T& container)
+    std::span<const typename T::value_type> ToSpan(const T& cont)
     {
-        return std::span<const typename T::value_type>(std::begin(container), std::end(container));
+        return std::span<const typename T::value_type>(std::begin(cont), std::end(cont));
     }
 
     template<typename T>
-    std::span<typename T::value_type> ToSpan(T& container)
+    std::span<typename T::value_type> ToSpan(T& cont)
     {
-        return std::span<typename T::value_type>(std::begin(container), std::end(container));
+        return std::span<typename T::value_type>(std::begin(cont), std::end(cont));
     }
 }

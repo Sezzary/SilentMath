@@ -62,7 +62,7 @@ namespace Silent
         _work.Config.LoadOptions();
 
         // Assets.
-        _work.Assets.Initialize(_work.Config.GetAssetsFolderPath().string());
+        _work.Assets.Initialize(_work.Config.GetAssetsFolderPath() / "SILENT");
 
         // SDL.
         if (!SDL_Init(SDL_INIT_VIDEO))

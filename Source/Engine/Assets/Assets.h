@@ -2,6 +2,22 @@
 
 namespace Silent::Assets
 {
+    enum class AssetType
+    {
+        Tim,
+        Vab,
+        Bin,
+        Dms,
+        Anm,
+        Plm,
+        Ipd,
+        Ilm,
+        Tmd,
+        Dat,
+        Kdt,
+        Cmp
+    };
+
     enum class AssetState
     {
         Unloaded,
@@ -12,12 +28,12 @@ namespace Silent::Assets
 
     struct Asset
     {
-        std::string Name      = {};
-        std::string Extension = {};
-        std::string Path      = {};
-
-        AssetState            State = AssetState::Unloaded;
-        std::shared_ptr<void> Data  = nullptr;
+        AssetType             Type = AssetType::Tim; // File extension type.
+        std::filesystem::path File = {};             // Absolute asset file path.
+        uint64                Size = 0;              // Raw file size in bytes.
+        
+        AssetState            State = AssetState::Unloaded; // NOT thread-safe load state.
+        std::shared_ptr<void> Data  = nullptr;              // Parsed engine object data.
     };
 
     class AssetManager
@@ -25,8 +41,7 @@ namespace Silent::Assets
     private:
         // Fields
 
-        std::unordered_map<std::string, Asset> _assets     = {}; // Key = name, value = asset.
-        std::string                            _assetsPath = {};
+        std::vector<Asset> _assets = {}; // Index = asset ID.
 
     public:
         // Constructors
@@ -35,14 +50,14 @@ namespace Silent::Assets
 
         // Getters
 
-        const Asset* GetAsset(const std::string& name) const;
+        const Asset* GetAsset(int assetIdx) const;
 
         // Utilities
 
-        void Initialize(const std::string& assetsPath);
+        void Initialize(const std::filesystem::path& assetsPath);
 
-        void LoadAsset(const std::string& name);
-        void UnloadAsset(const std::string& name);
+        void LoadAsset(int assetIdx);
+        void UnloadAsset(int assetIdx);
         void UnloadAllAssets();
     };
 }

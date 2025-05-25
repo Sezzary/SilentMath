@@ -2,125 +2,144 @@
 #include "Engine/Assets/Assets.h"
 
 #include "Utils/Parallel.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    const Asset* AssetManager::GetAsset(const std::string& name) const
+    static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
     {
-        auto it = _assets.find(name);
-        if (it != _assets.end())
-        {
-            return &it->second;
-        }
+        { ".TIM", AssetType::Tim },
+        { ".VAB", AssetType::Vab },
+        { ".BIN", AssetType::Bin },
+        { ".DMS", AssetType::Dms },
+        { ".ANM", AssetType::Anm },
+        { ".PLM", AssetType::Plm },
+        { ".IPD", AssetType::Ipd },
+        { ".ILM", AssetType::Ilm },
+        { ".TMD", AssetType::Tmd },
+        { ".DAT", AssetType::Dat },
+        { ".KDT", AssetType::Kdt },
+        { ".CMP", AssetType::Cmp }
+    };
 
-        Log("Attempted to get missing asset '" + name + "'.", LogLevel::Warning, LogMode::Debug);
-        return nullptr;
+    const Asset* AssetManager::GetAsset(int assetIdx) const
+    {
+        // Get asset.
+        if (assetIdx < 0 || assetIdx >= _assets.size())
+        {
+            Log("Attempted to get asset with invalid index " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
+            return nullptr;
+        }
+        const auto& asset = _assets[assetIdx];
+
+        return &asset;
     }
 
-    void AssetManager::Initialize(const std::string& assetsPath)
+    void AssetManager::Initialize(const std::filesystem::path& assetsPath)
     {
-        _assetsPath = assetsPath;
-        auto dirIt  = std::filesystem::recursive_directory_iterator(_assetsPath);
-
-        // Get file count and reserve assets size.
-        uint fileCount = 0;
-        for (auto it = std::filesystem::recursive_directory_iterator(_assetsPath); it != std::filesystem::recursive_directory_iterator(); it++)
+        // Collect files.
+        auto files = std::vector<std::filesystem::path>{};
+        for (auto& entry : std::filesystem::recursive_directory_iterator(assetsPath))
         {
-            if (it->is_regular_file())
+            if (entry.is_regular_file())
             {
-                fileCount++;
+                files.push_back(entry.path());
             }
         }
-        _assets.reserve(fileCount);
 
+        // Sort files alphabetically.
+        std::sort(files.begin(), files.end());
+        
         // Register assets.
-        for (const auto& entry : dirIt)
+        _assets.reserve(files.size());
+        for (int idx = 0; idx < files.size(); idx++)
         {
-            if (!entry.is_regular_file())
+            const auto& file = files[idx];
+
+            // Check if type is known.
+            auto ext = ToUpper(file.extension().string());
+            if (ASSET_TYPES.find(ext) == ASSET_TYPES.end())
             {
+                Log("Unknown type for asset file '" + file.string() + "'.", LogLevel::Warning, LogMode::Debug);
                 continue;
             }
 
-            auto name  = entry.path().filename().string();
+            // Add asset.
             auto asset = Asset
             {
-                .Name      = name,
-                .Extension = entry.path().extension().string(),
-                .Path      = entry.path().string(),
-                .State     = AssetState::Unloaded,
-                .Data      = nullptr
+                .Type  = ASSET_TYPES.at(ext),
+                .File  = file,
+                .Size  = std::filesystem::file_size(file),
+                .State = AssetState::Unloaded,
+                .Data  = nullptr
             };
-            _assets[asset.Name] = std::move(asset);
+            _assets.push_back(std::move(asset));
         }
     }
 
-    void AssetManager::LoadAsset(const std::string& name)
+    void AssetManager::LoadAsset(int assetIdx)
     {
-        // Find asset.
-        auto it = _assets.find(name);
-        if (it == _assets.end())
+        // Get asset.
+        if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Log("Attempted to load unregistered asset '" + name + "'.", LogLevel::Warning, LogMode::Debug);
-            std::cout << "Asset already loaded: " << name << std::endl;
+            Log("Attempted to load invalid asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return;
         }
+        auto& asset = _assets[assetIdx];
 
         // Check if already loading or loaded.
-        auto& asset = it->second;
         if (asset.State == AssetState::Loading || asset.State == AssetState::Loaded)
         {
-            Log("Attempted to load already loaded asset '" + name + "'.", LogLevel::Warning, LogMode::Debug);
+            Log("Attempted to load already loading/loaded asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return;
         }
 
-        // Check if asset path is valid.
-        if (!std::filesystem::exists(asset.Path))
+        // Check if file is valid.
+        if (!std::filesystem::exists(asset.File))
         {
-            Log("Attempted to load asset '" + asset.Name + " from invalid path: '" + asset.Path + "'.", LogLevel::Error);
+            Log("Attempted to load asset " + std::to_string(assetIdx) + " from invalid file '" + asset.File.string() + "'.", LogLevel::Error);
             asset.State = AssetState::Error;
             return;
         }
 
+        // Load file to engine object asynchronously.
         asset.State = AssetState::Loading;
-
-        // Load asset data to engine object asynchronously.
         g_Parallel.AddTask([&]()
         {
-            // TODO
+            // TODO: Parse to engine object.
 
             asset.State = AssetState::Loaded;
         });
     }
 
-    void AssetManager::UnloadAsset(const std::string& name)
+    void AssetManager::UnloadAsset(int assetIdx)
     {
-        // Find asset.
-        auto it = _assets.find(name);
-        if (it == _assets.end())
+        // Get asset.
+        if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Log("Attempted to unload unregistered asset '" + name + "'.", LogLevel::Warning, LogMode::Debug);
+            Log("Attempted to unload invalid asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return;
         }
+        auto& asset = _assets[assetIdx];
 
         // Check if already unloaded.
-        auto& asset = it->second;
         if (asset.State == AssetState::Unloaded)
         {
-            Log("Attempted to unload already unloaded asset '" + name + "'.", LogLevel::Warning, LogMode::Debug);
+            Log("Attempted to unload already unloaded asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return;
         }
 
         // Unload.
         asset.State = AssetState::Unloaded;
         asset.Data.reset();
-        Log("Asset '" + name + "' unloaded successfully.", LogLevel::Info, LogMode::Debug);
+        Log("Unloaded asset " + std::to_string(assetIdx) + ".", LogLevel::Info, LogMode::Debug);
     }
 
     void AssetManager::UnloadAllAssets()
     {
-        for (auto& [keyName, asset] : _assets)
+        for (auto& asset : _assets)
         {
             asset.State = AssetState::Unloaded;
             asset.Data.reset();
