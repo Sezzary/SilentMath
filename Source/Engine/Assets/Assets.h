@@ -4,18 +4,21 @@ namespace Silent::Assets
 {
     enum class AssetType
     {
-        Tim,
-        Vab,
-        Bin,
-        Dms,
-        Anm,
-        Plm,
-        Ipd,
-        Ilm,
-        Tmd,
-        Dat,
-        Kdt,
-        Cmp
+        Tim, // PsyQ SDK texture data.
+        Vab, // PsyQ SDK audio container data.
+        Bin, // Original compiled logic overlay data.
+        Dms, // Cutscene keyframe data.
+        Anm, // Animation data.
+        Plm, // Global static model data.
+        Ipd, // Local static model data.
+        Ilm, // Skeletal model data.
+        Tmd, // PsyQ SDK 3D model data. Used exclusively for inventory.
+        Dat, // Demo playback data.
+        Kdt, // Konami MIDI tracker data.
+        Cmp, // Unknown. "Compressed"?
+        Xa,  // Audio and FMV video data.
+
+        Count
     };
 
     enum class AssetState
@@ -32,7 +35,7 @@ namespace Silent::Assets
         std::filesystem::path File = {};             // Absolute asset file path.
         uint64                Size = 0;              // Raw file size in bytes.
         
-        AssetState            State = AssetState::Unloaded; // NOT thread-safe load state.
+        AssetState            State = AssetState::Unloaded; // Thread-safe load state. TODO: NOT thread-safe. Need to wrap this in `std::atomic`.
         std::shared_ptr<void> Data  = nullptr;              // Parsed engine object data.
     };
 
@@ -41,7 +44,7 @@ namespace Silent::Assets
     private:
         // Fields
 
-        std::vector<Asset> _assets = {}; // Index = asset ID.
+        std::vector<Asset> _assets = {};
 
     public:
         // Constructors

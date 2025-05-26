@@ -21,7 +21,89 @@ namespace Silent::Assets
         { ".TMD", AssetType::Tmd },
         { ".DAT", AssetType::Dat },
         { ".KDT", AssetType::Kdt },
-        { ".CMP", AssetType::Cmp }
+        { ".CMP", AssetType::Cmp },
+        { ""    , AssetType::Xa }
+    };
+
+    struct Dummy
+    {
+        int Value = 0;
+    };
+
+    std::unique_ptr<Dummy> ParseTim(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseVab(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseDms(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseAnm(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParsePlm(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseIpd(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseIlm(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseTmd(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseDat(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseKdt(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseCmp(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    std::unique_ptr<Dummy> ParseXa(const std::filesystem::path& file)
+    {
+        return std::make_unique<Dummy>();
+    }
+
+    static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::unique_ptr<Dummy>(const std::filesystem::path& file)>>
+    {
+        { AssetType::Tim, ParseTim },
+        { AssetType::Vab, ParseVab },
+        { AssetType::Dms, ParseDms },
+        { AssetType::Anm, ParseAnm },
+        { AssetType::Plm, ParsePlm },
+        { AssetType::Ipd, ParseIpd },
+        { AssetType::Ilm, ParseIlm },
+        { AssetType::Tmd, ParseTmd },
+        { AssetType::Dat, ParseDat },
+        { AssetType::Kdt, ParseKdt },
+        { AssetType::Cmp, ParseCmp },
+        { AssetType::Xa , ParseXa }
     };
 
     const Asset* AssetManager::GetAsset(int assetIdx) const
@@ -77,6 +159,8 @@ namespace Silent::Assets
             };
             _assets.push_back(std::move(asset));
         }
+
+        Log("Registered " + std::to_string(_assets.size()) + " assets from '" + assetsPath.string() + "'.", LogLevel::Info, LogMode::Debug);
     }
 
     void AssetManager::LoadAsset(int assetIdx)
@@ -104,13 +188,31 @@ namespace Silent::Assets
             return;
         }
 
-        // Load file to engine object asynchronously.
+        // Load asynchronously.
         asset.State = AssetState::Loading;
         g_Parallel.AddTask([&]()
         {
-            // TODO: Parse to engine object.
+            // Get parser function.
+            auto parserIt = PARSER_FUNCS.find(asset.Type);
+            if (parserIt == PARSER_FUNCS.end())
+            {
+                Log("Attempted to load asset type " + std::to_string((int)asset.Type) + ". No parser function found.", LogLevel::Error, LogMode::Debug);
+                asset.State = AssetState::Error;
+                return;
+            }
+            const auto& parser = parserIt->second;
 
-            asset.State = AssetState::Loaded;
+            // Parse file to engine object.
+            try
+            {
+                asset.Data  = parser(asset.File);
+                asset.State = AssetState::Loaded;
+            }
+            catch (const std::exception& ex)
+            {
+                Log("Failed to parse data for file " + std::to_string(assetIdx) + ": " + ex.what(), LogLevel::Error, LogMode::Debug);
+                asset.State = AssetState::Error;
+            }
         });
     }
 
