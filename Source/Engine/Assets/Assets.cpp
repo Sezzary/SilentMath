@@ -106,7 +106,7 @@ namespace Silent::Assets
         { AssetType::Xa , ParseXa }
     };
 
-    const Asset* AssetManager::GetAsset(int assetIdx) const
+    const std::shared_ptr<Asset> AssetManager::GetAsset(int assetIdx) const
     {
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
@@ -114,9 +114,14 @@ namespace Silent::Assets
             Log("Attempted to get invalid asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return nullptr;
         }
-        const auto& asset = _assets[assetIdx];
+        const auto asset = _assets[assetIdx];
 
-        return &asset;
+        return asset;
+    }
+
+    bool AssetManager::IsBusy() const
+    {
+        return _busyCount > 0;
     }
 
     void AssetManager::Initialize(const std::filesystem::path& assetsPath)
@@ -149,15 +154,13 @@ namespace Silent::Assets
             }
 
             // Add asset.
-            auto asset = Asset
-            {
-                .Type  = ASSET_TYPES.at(ext),
-                .File  = file,
-                .Size  = std::filesystem::file_size(file),
-                .State = AssetState::Unloaded,
-                .Data  = nullptr
-            };
-            _assets.push_back(std::move(asset));
+            _assets.emplace_back(std::make_shared<Asset>());
+            auto asset   = _assets.back();
+            asset->Type  = ASSET_TYPES.at(ext);
+            asset->File  = file;
+            asset->Size  = std::filesystem::file_size(file);
+            asset->State = AssetState::Unloaded;
+            asset->Data  = nullptr;
         }
 
         Log("Registered " + std::to_string(_assets.size()) + " assets from '" + assetsPath.string() + "'.", LogLevel::Info, LogMode::Debug);
@@ -174,45 +177,53 @@ namespace Silent::Assets
         auto& asset = _assets[assetIdx];
 
         // Check if already loading or loaded.
-        if (asset.State == AssetState::Loading || asset.State == AssetState::Loaded)
+        if (asset->State == AssetState::Loading || asset->State == AssetState::Loaded)
         {
             Log("Attempted to load already loading/loaded asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return;
         }
 
         // Check if file is valid.
-        if (!std::filesystem::exists(asset.File))
+        if (!std::filesystem::exists(asset->File))
         {
-            Log("Attempted to load asset " + std::to_string(assetIdx) + " from invalid file '" + asset.File.string() + "'.", LogLevel::Error);
-            asset.State = AssetState::Error;
+            Log("Attempted to load asset " + std::to_string(assetIdx) + " from invalid file '" + asset->File.string() + "'.", LogLevel::Error);
+            asset->State = AssetState::Error;
             return;
         }
 
+        // Set busy state.
+        _busyCount++;
+        asset->State = AssetState::Loading;
+
         // Load asynchronously.
-        asset.State = AssetState::Loading;
         g_Parallel.AddTask([&]()
         {
             // Get parser function.
-            auto parserIt = PARSER_FUNCS.find(asset.Type);
+            auto parserIt = PARSER_FUNCS.find(asset->Type);
             if (parserIt == PARSER_FUNCS.end())
             {
-                Log("Attempted to load asset type " + std::to_string((int)asset.Type) + ". No parser function found.", LogLevel::Error, LogMode::Debug);
-                asset.State = AssetState::Error;
+                Log("Attempted to load asset type " + std::to_string((int)asset->Type) + ". No parser function found.", LogLevel::Error, LogMode::Debug);
+
+                _busyCount--;
+                asset->State = AssetState::Error;
                 return;
             }
-            const auto& parser = parserIt->second;
+            const auto& parserFunc = parserIt->second;
 
             // Parse file to engine object.
             try
             {
-                asset.Data  = parser(asset.File);
-                asset.State = AssetState::Loaded;
+                asset->Data  = parserFunc(asset->File);
+                asset->State = AssetState::Loaded;
             }
             catch (const std::exception& ex)
             {
                 Log("Failed to parse data for file " + std::to_string(assetIdx) + ": " + ex.what(), LogLevel::Error, LogMode::Debug);
-                asset.State = AssetState::Error;
+
+                asset->State = AssetState::Error;
             }
+
+            _busyCount--;
         });
     }
 
@@ -227,15 +238,15 @@ namespace Silent::Assets
         auto& asset = _assets[assetIdx];
 
         // Check if already unloaded.
-        if (asset.State == AssetState::Unloaded)
+        if (asset->State == AssetState::Unloaded)
         {
             Log("Attempted to unload already unloaded asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return;
         }
 
         // Unload.
-        asset.State = AssetState::Unloaded;
-        asset.Data.reset();
+        asset->State = AssetState::Unloaded;
+        asset->Data.reset();
         Log("Unloaded asset " + std::to_string(assetIdx) + ".", LogLevel::Info, LogMode::Debug);
     }
 
@@ -243,8 +254,8 @@ namespace Silent::Assets
     {
         for (auto& asset : _assets)
         {
-            asset.State = AssetState::Unloaded;
-            asset.Data.reset();
+            asset->State = AssetState::Unloaded;
+            asset->Data.reset();
         }
 
         Log("All assets unloaded.", LogLevel::Info, LogMode::Debug);

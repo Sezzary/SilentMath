@@ -16,7 +16,7 @@ namespace Silent::Assets
         Dat, // Demo playback data.
         Kdt, // Konami MIDI tracker data.
         Cmp, // Unknown. "Compressed"?
-        Xa,  // Audio and FMV video data.
+        Xa,  // Audio data.
 
         Count
     };
@@ -32,11 +32,11 @@ namespace Silent::Assets
     struct Asset
     {
         AssetType             Type = AssetType::Tim; // File extension type.
-        std::filesystem::path File = {};             // Absolute asset file path.
+        std::filesystem::path File = {};             // Absolute file path.
         uint64                Size = 0;              // Raw file size in bytes.
         
-        AssetState            State = AssetState::Unloaded; // Thread-safe load state. TODO: NOT thread-safe. Need to wrap this in `std::atomic`.
-        std::shared_ptr<void> Data  = nullptr;              // Parsed engine object data.
+        std::atomic<AssetState> State = AssetState::Unloaded; // Thread-safe load state.
+        std::shared_ptr<void>   Data  = nullptr;              // Parsed engine object data.
     };
 
     class AssetManager
@@ -44,7 +44,8 @@ namespace Silent::Assets
     private:
         // Fields
 
-        std::vector<Asset> _assets = {};
+        std::vector<std::shared_ptr<Asset>> _assets    = {};
+        std::atomic<uint>                   _busyCount = 0;
 
     public:
         // Constructors
@@ -53,7 +54,11 @@ namespace Silent::Assets
 
         // Getters
 
-        const Asset* GetAsset(int assetIdx) const;
+        const std::shared_ptr<Asset> GetAsset(int assetIdx) const;
+
+        // Inquirers
+
+        bool IsBusy() const;
 
         // Utilities
 
