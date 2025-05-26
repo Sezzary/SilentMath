@@ -8,7 +8,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    struct Dummy
+    struct ParsedDataBase
     {
         int Value = 0;
     };
@@ -27,70 +27,70 @@ namespace Silent::Assets
         { ".DAT", AssetType::Dat },
         { ".KDT", AssetType::Kdt },
         { ".CMP", AssetType::Cmp },
-        { ""    , AssetType::Xa }
+        { "",     AssetType::Xa }
     };
 
-    static std::unique_ptr<Dummy> ParseTim(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseTim(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseVab(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseVab(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseDms(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseDms(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseAnm(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseAnm(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParsePlm(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParsePlm(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseIpd(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseIpd(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseIlm(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseIlm(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseTmd(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseTmd(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseDat(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseDat(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseKdt(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseKdt(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseCmp(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseCmp(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static std::unique_ptr<Dummy> ParseXa(const std::filesystem::path& file)
+    static std::shared_ptr<ParsedDataBase> ParseXa(const std::filesystem::path& file)
     {
-        return std::make_unique<Dummy>();
+        return std::make_unique<ParsedDataBase>();
     }
 
-    static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::unique_ptr<Dummy>(const std::filesystem::path& file)>>
+    static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<ParsedDataBase>(const std::filesystem::path& file)>>
     {
         { AssetType::Tim, ParseTim },
         { AssetType::Vab, ParseVab },
@@ -187,6 +187,7 @@ namespace Silent::Assets
         if (!std::filesystem::exists(asset->File))
         {
             Log("Attempted to load asset " + std::to_string(assetIdx) + " from invalid file '" + asset->File.string() + "'.", LogLevel::Error);
+
             asset->State = AssetState::Error;
             return;
         }
@@ -202,7 +203,8 @@ namespace Silent::Assets
             auto parserIt = PARSER_FUNCS.find(asset->Type);
             if (parserIt == PARSER_FUNCS.end())
             {
-                Log("Attempted to load asset type " + std::to_string((int)asset->Type) + ". No parser function found.", LogLevel::Error, LogMode::Debug);
+                Log("Attempted to load asset " + std::to_string(assetIdx) + ". No parser function for asset type " + std::to_string((int)asset->Type) + ".",
+                    LogLevel::Error, LogMode::Debug);
 
                 _busyCount--;
                 asset->State = AssetState::Error;
@@ -222,7 +224,6 @@ namespace Silent::Assets
 
                 asset->State = AssetState::Error;
             }
-
             _busyCount--;
         });
     }
@@ -247,6 +248,7 @@ namespace Silent::Assets
         // Unload.
         asset->State = AssetState::Unloaded;
         asset->Data.reset();
+
         Log("Unloaded asset " + std::to_string(assetIdx) + ".", LogLevel::Info, LogMode::Debug);
     }
 
