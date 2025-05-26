@@ -8,6 +8,11 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
+    struct Dummy
+    {
+        int Value = 0;
+    };
+
     static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
     {
         { ".TIM", AssetType::Tim },
@@ -25,67 +30,62 @@ namespace Silent::Assets
         { ""    , AssetType::Xa }
     };
 
-    struct Dummy
-    {
-        int Value = 0;
-    };
-
-    std::unique_ptr<Dummy> ParseTim(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseTim(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseVab(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseVab(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseDms(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseDms(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseAnm(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseAnm(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParsePlm(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParsePlm(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseIpd(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseIpd(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseIlm(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseIlm(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseTmd(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseTmd(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseDat(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseDat(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseKdt(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseKdt(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseCmp(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseCmp(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
 
-    std::unique_ptr<Dummy> ParseXa(const std::filesystem::path& file)
+    static std::unique_ptr<Dummy> ParseXa(const std::filesystem::path& file)
     {
         return std::make_unique<Dummy>();
     }
@@ -111,7 +111,7 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Log("Attempted to get asset with invalid index " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
+            Log("Attempted to get invalid asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
             return nullptr;
         }
         const auto& asset = _assets[assetIdx];
@@ -136,15 +136,15 @@ namespace Silent::Assets
         
         // Register assets.
         _assets.reserve(files.size());
-        for (int idx = 0; idx < files.size(); idx++)
+        for (int i = 0; i < files.size(); i++)
         {
-            const auto& file = files[idx];
+            const auto& file = files[i];
 
             // Check if type is known.
             auto ext = ToUpper(file.extension().string());
             if (ASSET_TYPES.find(ext) == ASSET_TYPES.end())
             {
-                Log("Unknown type for asset file '" + file.string() + "'.", LogLevel::Warning, LogMode::Debug);
+                Log("Unknown asset type for file '" + file.string() + "'.", LogLevel::Warning, LogMode::Debug);
                 continue;
             }
 
