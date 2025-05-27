@@ -10,7 +10,7 @@ namespace Silent::Assets
 {
     struct ParsedDataBase
     {
-        int Value = 0;
+        int Idk = 0;
     };
 
     static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
@@ -121,7 +121,7 @@ namespace Silent::Assets
 
     bool AssetManager::IsBusy() const
     {
-        return _busyCount > 0;
+        return _loadingCount > 0;
     }
 
     void AssetManager::Initialize(const std::filesystem::path& assetsPath)
@@ -192,25 +192,25 @@ namespace Silent::Assets
             return;
         }
 
-        // Set busy state.
-        _busyCount++;
+        // Set loading state.
+        _loadingCount++;
         asset->State = AssetState::Loading;
 
         // Load asynchronously.
         g_Parallel.AddTask([&]()
         {
             // Get parser function.
-            auto parserIt = PARSER_FUNCS.find(asset->Type);
-            if (parserIt == PARSER_FUNCS.end())
+            auto parserFuncIt = PARSER_FUNCS.find(asset->Type);
+            if (parserFuncIt == PARSER_FUNCS.end())
             {
-                Log("Attempted to load asset " + std::to_string(assetIdx) + ". No parser function for asset type " + std::to_string((int)asset->Type) + ".",
+                Log("Attempted to load asset " + std::to_string(assetIdx) + " with no parser function for asset type " + std::to_string((int)asset->Type) + ".",
                     LogLevel::Error, LogMode::Debug);
 
-                _busyCount--;
+                _loadingCount--;
                 asset->State = AssetState::Error;
                 return;
             }
-            const auto& parserFunc = parserIt->second;
+            const auto& parserFunc = parserFuncIt->second;
 
             // Parse file to engine object.
             try
@@ -224,7 +224,7 @@ namespace Silent::Assets
 
                 asset->State = AssetState::Error;
             }
-            _busyCount--;
+            _loadingCount--;
         });
     }
 

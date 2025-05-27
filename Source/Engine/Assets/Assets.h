@@ -44,8 +44,8 @@ namespace Silent::Assets
     private:
         // Fields
 
-        std::vector<std::shared_ptr<Asset>> _assets    = {};
-        std::atomic<uint>                   _busyCount = 0;
+        std::vector<std::shared_ptr<Asset>> _assets       = {};
+        std::atomic<uint>                   _loadingCount = 0;
 
     public:
         // Constructors
@@ -63,7 +63,6 @@ namespace Silent::Assets
         // Utilities
 
         void Initialize(const std::filesystem::path& assetsPath);
-
         void LoadAsset(int assetIdx);
         void UnloadAsset(int assetIdx);
         void UnloadAllAssets();
