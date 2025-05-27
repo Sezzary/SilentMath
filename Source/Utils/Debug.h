@@ -29,6 +29,13 @@ namespace Silent::Utils::Debug
         Cheats
     };
 
+    struct DebugData
+    {
+        bool EnableWireframeMode = false;
+    };
+
+    extern DebugData g_DebugData;
+
     void Scratchpad();
 
     void InitializeDebug();

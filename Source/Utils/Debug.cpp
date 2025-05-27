@@ -15,6 +15,8 @@ namespace Silent::Utils::Debug
 {
     constexpr char LOGGER_NAME[] = "Logger";
 
+    DebugData g_DebugData = {};
+
     static auto Messages  = std::vector<std::string>{};
     static auto StartTime = std::chrono::high_resolution_clock::time_point{};
 
@@ -95,12 +97,43 @@ namespace Silent::Utils::Debug
 
         CreateGui([]()
         {
-            ImGui::Begin("My Window");
-            ImGui::Text("Hello. It's me. =^.^=");
-            ImGui::End();
+            // Main tabs.
+            if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll))
+            {
+                // `Renderer` tab.
+                if (ImGui::BeginTabItem("Renderer"))
+                {
+                    ImGui::Checkbox("Wireframe mode", &g_DebugData.EnableWireframeMode);
+                    ImGui::EndTabItem();
+                }
+
+                // `Cheats` tab.
+                if (ImGui::BeginTabItem("Cheats"))
+                {
+                    ImGui::EndTabItem();
+                }
+
+                ImGui::EndTabBar();
+            }
+
+            // `Messages` section.
+            ImGui::SeparatorText("Messages");
+            {
+                ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+                if (ImGui::BeginChild("MessageBox", ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8),
+                    ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
+                {
+                    for (const auto& msg : Messages)
+                    {
+                        ImGui::Bullet();
+                        ImGui::TextWrapped(msg.c_str());
+                    }
+                }
+                ImGui::PopStyleColor();
+                ImGui::EndChild();
+            }
         });
 
-        // TODO: Print messages to ImGui window.
         Messages.clear();
     }
 
@@ -128,7 +161,7 @@ namespace Silent::Utils::Debug
         static auto mutex = std::mutex();
         {
             auto lock = std::lock_guard(mutex);
-            Messages.push_back(buffer);
+            Messages.push_back(std::string(buffer));
         }
     }
 
