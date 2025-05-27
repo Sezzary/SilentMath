@@ -50,7 +50,7 @@ namespace Silent::Utils::Debug
         const auto& config = g_App.GetConfig();
 
         // Set file and console log targets.
-        auto path        = config.GetAppFolderPath() / LOG_FILENAME;
+        auto path        = config.GetAppFolder() / LOG_FILENAME;
         auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path.string(), true); // `true` = create new log at launch.
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         auto logger      = std::make_shared<spdlog::logger>(LOGGER_NAME, spdlog::sinks_init_list{ fileSink, consoleSink });
@@ -63,7 +63,7 @@ namespace Silent::Utils::Debug
 
         // Initialize ImGui.
         ImGui::CreateContext();
-        auto imguiPath             = (config.GetWorkFolderPath() / "imgui.ini").string();
+        auto imguiPath             = (config.GetWorkFolder() / "imgui.ini").string();
         ImGui::GetIO().IniFilename = CopyString(imguiPath.c_str(), imguiPath.size());
     }
 

@@ -131,11 +131,11 @@ namespace Silent::Services
     private:
         // Fields
 
-        std::filesystem::path _appFolderPath         = {};
-        std::filesystem::path _assetsFolderPath      = {};
-        std::filesystem::path _workFolderPath        = {};
-        std::filesystem::path _screenshotsFolderPath = {};
-        Options               _options               = {};
+        std::filesystem::path _appFolder         = {};
+        std::filesystem::path _assetsFolder      = {};
+        std::filesystem::path _workFolder        = {};
+        std::filesystem::path _screenshotsFolder = {};
+        Options               _options           = {};
 
     public:
         // Constructors
@@ -144,10 +144,10 @@ namespace Silent::Services
 
         // Getters
 
-        const std::filesystem::path& GetAppFolderPath() const;
-        const std::filesystem::path& GetAssetsFolderPath() const;
-        const std::filesystem::path& GetWorkFolderPath() const;
-        const std::filesystem::path& GetScreenshotsFolderPath() const;
+        const std::filesystem::path& GetAppFolder() const;
+        const std::filesystem::path& GetAssetsFolder() const;
+        const std::filesystem::path& GetWorkFolder() const;
+        const std::filesystem::path& GetScreenshotsFolder() const;
         Options&                     GetOptions();
 
         // Setters

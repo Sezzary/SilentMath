@@ -79,24 +79,24 @@ namespace Silent::Services
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
-    const std::filesystem::path& ConfigurationManager::GetAppFolderPath() const
+    const std::filesystem::path& ConfigurationManager::GetAppFolder() const
     {
-        return _appFolderPath;
+        return _appFolder;
     }
 
-    const std::filesystem::path& ConfigurationManager::GetAssetsFolderPath() const
+    const std::filesystem::path& ConfigurationManager::GetAssetsFolder() const
     {
-        return _assetsFolderPath;
+        return _assetsFolder;
     }
 
-    const std::filesystem::path& ConfigurationManager::GetWorkFolderPath() const
+    const std::filesystem::path& ConfigurationManager::GetWorkFolder() const
     {
-        return _workFolderPath;
+        return _workFolder;
     }
 
-    const std::filesystem::path& ConfigurationManager::GetScreenshotsFolderPath() const
+    const std::filesystem::path& ConfigurationManager::GetScreenshotsFolder() const
     {
-        return _screenshotsFolderPath;
+        return _screenshotsFolder;
     }
 
     Options& ConfigurationManager::GetOptions()
@@ -165,10 +165,10 @@ namespace Silent::Services
         size_t length = 0;
 
         // Set app path.
-        _appFolderPath = std::filesystem::current_path();
+        _appFolder = std::filesystem::current_path();
 
         // Set assets path.
-        _assetsFolderPath = _appFolderPath / ASSETS_FOLDER_NAME;
+        _assetsFolder = _appFolder / ASSETS_FOLDER_NAME;
 
         // Set work and screenshots paths.
         switch (OS_TYPE)
@@ -178,15 +178,15 @@ namespace Silent::Services
                 // Get `APPDATA` path for work.
                 if (_dupenv_s(&buffer, &length, "APPDATA") == 0 && buffer != nullptr)
                 {
-                    auto path       = std::filesystem::path(buffer);
-                    _workFolderPath = path / APP_NAME; 
+                    auto path   = std::filesystem::path(buffer);
+                    _workFolder = path / APP_NAME; 
                 }
 
                 // Get `Pictures` folder path for screenshots.
                 if (_dupenv_s(&buffer, &length, "USERPROFILE") == 0 && buffer != nullptr)
                 {
-                    auto path              = std::filesystem::path(buffer);
-                    _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
+                    auto path          = std::filesystem::path(buffer);
+                    _screenshotsFolder = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
             }
@@ -196,15 +196,15 @@ namespace Silent::Services
                 // Get `HOME` path for work.
                 if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
-                    auto path       = std::filesystem::path(buffer);
-                    _workFolderPath = path / APP_NAME; 
+                    auto path   = std::filesystem::path(buffer);
+                    _workFolder = path / APP_NAME; 
                 }
 
                 // Get `Pictures` folder path for screenshots.
                 if (buffer != nullptr)
                 {
-                    auto path              = std::filesystem::path(buffer);
-                    _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
+                    auto path          = std::filesystem::path(buffer);
+                    _screenshotsFolder = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
             }
@@ -214,15 +214,15 @@ namespace Silent::Services
                 // Get `HOME` path for work.
                 if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
                 {
-                    auto path       = std::filesystem::path(buffer);
-                    _workFolderPath = path / APP_NAME; 
+                    auto path   = std::filesystem::path(buffer);
+                    _workFolder = path / APP_NAME; 
                 }
 
                 // Get `Pictures` folder path for screenshots.
                 if (buffer != nullptr)
                 {
-                    auto path              = std::filesystem::path(buffer);
-                    _screenshotsFolderPath = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
+                    auto path          = std::filesystem::path(buffer);
+                    _screenshotsFolder = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
                 }
                 break;
             }
@@ -234,35 +234,35 @@ namespace Silent::Services
         }
 
         // Check app folder.
-        if (_appFolderPath.empty())
+        if (_appFolder.empty())
         {
             throw std::runtime_error("Failed to define app folder path.");
         }
 
         // Check assets folder.
-        if (!std::filesystem::exists(_assetsFolderPath))
+        if (!std::filesystem::exists(_assetsFolder))
         {
             throw std::runtime_error("Assets folder not found in executable directory.");
         }
 
         // Check screenshots folder.
-        if (_screenshotsFolderPath.empty())
+        if (_screenshotsFolder.empty())
         {
             throw std::runtime_error("Failed to define screenshots folder path.");
         }
 
         // Create work folder.
-        if (_workFolderPath.empty())
+        if (_workFolder.empty())
         {
             throw std::runtime_error("Failed to define work folder path.");
         }
-        std::filesystem::create_directories(_workFolderPath);
+        std::filesystem::create_directories(_workFolder);
 
         // Create savegame folders.
         for (int i = 0; i < SAVEGAME_SLOT_COUNT; i++)
         {
             auto saveFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(i + 1);
-            auto slotPath       = _workFolderPath / SAVEGAME_FOLDER_NAME / saveFolderName;
+            auto slotPath       = _workFolder / SAVEGAME_FOLDER_NAME / saveFolderName;
             std::filesystem::create_directories(slotPath);
         }
     }
@@ -273,7 +273,7 @@ namespace Silent::Services
         auto optionsJson = ToOptionsJson(_options);
 
         // Ensure directory exists.
-        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
+        auto path = GetWorkFolder() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
         std::filesystem::create_directories(path.parent_path());
 
         // Write options JSON file.
@@ -287,7 +287,7 @@ namespace Silent::Services
 
     void ConfigurationManager::LoadOptions()
     {
-        auto path = GetWorkFolderPath() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
+        auto path = GetWorkFolder() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
         
         // Open options JSON file.
         auto inputFile = std::ifstream(path);

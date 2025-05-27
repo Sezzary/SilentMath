@@ -115,6 +115,7 @@ namespace Silent::Input
         // Update components.
         UpdateRumble();
         UpdateActions();
+        HandleHotkeys();
     }
 
     void InputManager::InsertText(const std::string& textId, uint lineWidthMax, uint charCountMax)
@@ -432,7 +433,7 @@ namespace Silent::Input
             }
         };
 
-        // Update action states in parallel.
+        // Update action states asynchronously.
         auto tasks = ParallelTasks
         {
             [&]() { updateUserActions(); },
@@ -449,6 +450,8 @@ namespace Silent::Input
         {
             const auto& renderer = g_App.GetRenderer();
             renderer.SaveScreenshot();
+
+            Log("Captured screenshot.", LogLevel::Info, LogMode::DebugRelease, true);
         }
         dbScreenshot = !(_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]);
 
@@ -457,6 +460,8 @@ namespace Silent::Input
         if (((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]) && dbFullscreen)
         {
             g_App.ToggleFullscreen();
+
+            Log("Toggled fullscreen.", LogLevel::Info, LogMode::DebugRelease, true);
         }
         dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 
@@ -470,6 +475,8 @@ namespace Silent::Input
                 g_App.ToggleDebugGui();
             }
             dbDebugGui = !_events.States[(int)EventId::Grave];
+
+            Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
         }
     }
 

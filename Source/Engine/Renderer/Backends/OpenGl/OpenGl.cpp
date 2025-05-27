@@ -103,6 +103,8 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::SaveScreenshot() const
     {
+        constexpr uint COLOR_CHANNEL_COUNT = 3; // RGB.
+
         const auto& config = g_App.GetConfig();
 
         // Get window size.
@@ -112,15 +114,28 @@ namespace Silent::Renderer
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
         auto filename  = (SCREENSHOT_FILENAME_BASE + timestamp) + PNG_FILE_EXT;
-        auto path      = config.GetWorkFolderPath() / SCREENSHOTS_FOLDER_NAME / filename;
+        auto path      = config.GetScreenshotsFolder() / filename;
         std::filesystem::create_directories(path.parent_path());
 
-        // Write screenshot file.
+        // Capture screenshot.
         auto pixels = std::vector<uint8>((res.x * res.y) * 3);
         glReadPixels(0, 0, res.x, res.y, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
-        if (stbi_write_png(path.string().c_str(), res.x, res.y, 3, pixels.data(), res.x * 3))
+
+        // Flip pixels vertically.
+        int rowSize = res.x * COLOR_CHANNEL_COUNT;
+        for (int y = 0; y < (res.y / 2); y++)
         {
-            // TODO: Shutter SFX and postprocess flash effect.
+            int oppositeY = (res.y - y) - 1;
+            for (int x = 0; x < rowSize; x++)
+            {
+                std::swap(pixels[(y * rowSize) + x], pixels[(oppositeY * rowSize) + x]);
+            }
+        }
+
+        // Write screenshot file.
+        if (stbi_write_png(path.string().c_str(), res.x, res.y, COLOR_CHANNEL_COUNT, pixels.data(), res.x * COLOR_CHANNEL_COUNT))
+        {
+            // TODO: Shutter SFX, postprocess flash effect, timeout?
             return;
         }
 

@@ -80,7 +80,7 @@ namespace Silent::Services
 
         auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
         auto saveFilename   = std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT;
-        return config.GetWorkFolderPath() / SAVEGAME_FOLDER_NAME / slotFolderName / saveFilename;
+        return config.GetWorkFolder() / SAVEGAME_FOLDER_NAME / slotFolderName / saveFilename;
     }
 
     // TODO: Will probably need a completely different approach when we know how the save system works.
@@ -93,7 +93,7 @@ namespace Silent::Services
             auto paths = std::vector<std::filesystem::path>{};
             
             auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
-            auto path           = config.GetWorkFolderPath() / slotFolderName;
+            auto path           = config.GetWorkFolder() / slotFolderName;
 
             // Collect savegame file paths.
             for (const auto& entry : std::filesystem::directory_iterator(path))

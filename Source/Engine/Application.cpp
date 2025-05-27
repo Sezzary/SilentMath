@@ -65,7 +65,7 @@ namespace Silent
         g_Parallel.Initialize();
 
         // Assets.
-        _work.Assets.Initialize(_work.Config.GetAssetsFolderPath() / "SILENT");
+        _work.Assets.Initialize(_work.Config.GetAssetsFolder() / "SILENT");
 
         // SDL.
         if (!SDL_Init(SDL_INIT_VIDEO))

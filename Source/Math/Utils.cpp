@@ -51,7 +51,7 @@ namespace Silent::Math
         }
 
         // Project normal onto plane defined by `axis`.
-        auto axisNorm = Vector3::Normalize(axis);
+        auto axisNorm   = Vector3::Normalize(axis);
         auto projNormal = normal - (axisNorm * Vector3::Dot(normal, axisNorm));
 
         // Calculate angle in 2D plane formed by projected normal.
@@ -78,7 +78,7 @@ namespace Silent::Math
             return lineStart;
         }
 
-        auto line = lineEnd - lineStart;
+        auto  line  = lineEnd - lineStart;
         float alpha = Vector3::Dot(line, from - lineStart) / Vector3::Dot(line, line);
 
         // If closest point is out of range, return line start or end point.
@@ -139,11 +139,11 @@ namespace Silent::Math
         auto refDir = ref - from;
 
         // Project `refDir` onto plane defined by `axis`.
-        auto axisNorm = Vector3::Normalize(axis);
+        auto axisNorm   = Vector3::Normalize(axis);
         auto projRefDir = refDir - (axisNorm * Vector3::Dot(refDir, axisNorm));
     
         // Project target direction onto same plane.
-        auto targetDir = to - from;
+        auto targetDir     = to - from;
         auto projTargetDir = targetDir - (axisNorm * Vector3::Dot(targetDir, axisNorm));
     
         float dot = Vector3::Dot(projRefDir, projTargetDir);
@@ -160,14 +160,14 @@ namespace Silent::Math
         auto refDir = ref - from;
 
         // Project `refDir` onto plane orthogonal to `axis`.
-        auto axisNorm = Vector3::Normalize(axis);
+        auto axisNorm   = Vector3::Normalize(axis);
         auto projRefDir = refDir - (axisNorm * Vector3::Dot(refDir, axisNorm));
 
         // Normal vector to projected reference direction in 2D.
         auto headingNormal = Vector3(projRefDir.z, 0.0f, -projRefDir.x);
 
         // Project `targetDir` onto same plane.
-        auto targetDir = to - from;
+        auto targetDir     = to - from;
         auto projTargetDir = targetDir - (axisNorm * Vector3::Dot(targetDir, axisNorm));
 
         float dot = Vector3::Dot(headingNormal, projTargetDir);
