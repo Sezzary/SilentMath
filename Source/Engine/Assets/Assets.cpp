@@ -220,7 +220,7 @@ namespace Silent::Assets
             }
             catch (const std::exception& ex)
             {
-                Log("Failed to parse data for file " + std::to_string(assetIdx) + ": " + ex.what(), LogLevel::Error, LogMode::Debug);
+                Log("Failed to parse asset data for file " + std::to_string(assetIdx) + ": " + ex.what(), LogLevel::Error, LogMode::Debug);
 
                 asset->State = AssetState::Error;
             }

@@ -196,9 +196,7 @@ namespace Silent::Math
 
     ContainmentType AxisAlignedBoundingBox::Contains(const OrientedBoundingBox& obb) const
     {
-        // Get the corners of the OBB.
-        
-        bool allInside = true;
+        bool allInside  = true;
         bool allOutside = true;
 
         // Check if each OBB corner is inside AABB.

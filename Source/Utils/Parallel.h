@@ -5,7 +5,6 @@ namespace Silent::Utils
     using ParallelTask  = std::function<void()>;
     using ParallelTasks = std::vector<ParallelTask>;
 
-    /** @brief Parallel task manager for multi-threaded capability. */
     class ParallelTaskManager
     {
     private:

@@ -71,8 +71,7 @@ namespace Silent::Math
 
     Quaternion AxisAngle::ToQuaternion() const
     {
-        float rad = FP_ANGLE_TO_RAD(Angle);
-
+        float rad          = FP_ANGLE_TO_RAD(Angle);
         float halfAngle    = rad / 2.0f;
         float sinHalfAngle = glm::sin(halfAngle);
         float cosHalfAngle = glm::cos(halfAngle);
@@ -88,21 +87,21 @@ namespace Silent::Math
         float rad         = FP_ANGLE_TO_RAD(Angle);
         float sinAngle    = glm::sin(rad);
         float cosAngle    = glm::cos(rad);
-        float oneMinusCos = 1.0f - cosAngle;
+        float invCosAngle = 1.0f - cosAngle;
     
-        return Matrix(cosAngle + SQUARE(Axis.x) * oneMinusCos,
-                      ((Axis.x * Axis.y) * oneMinusCos) - (Axis.z * sinAngle),
-                      ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
+        return Matrix(cosAngle + SQUARE(Axis.x) * invCosAngle,
+                      ((Axis.x * Axis.y) * invCosAngle) - (Axis.z * sinAngle),
+                      ((Axis.x * Axis.y) * invCosAngle) + (Axis.z * sinAngle),
                       0.0f,
 
-                      ((Axis.x * Axis.y) * oneMinusCos) + (Axis.z * sinAngle),
-                      cosAngle + (SQUARE(Axis.y) * oneMinusCos),
-                      ((Axis.y * Axis.z) * oneMinusCos) - (Axis.x * sinAngle),
+                      ((Axis.x * Axis.y) * invCosAngle) + (Axis.z * sinAngle),
+                      cosAngle + (SQUARE(Axis.y) * invCosAngle),
+                      ((Axis.y * Axis.z) * invCosAngle) - (Axis.x * sinAngle),
                       0.0f,
 
-                      ((Axis.x * Axis.z) * oneMinusCos) - (Axis.y * sinAngle),
-                      ((Axis.y * Axis.z) * oneMinusCos) + (Axis.x * sinAngle),
-                      cosAngle + (SQUARE(Axis.z) * oneMinusCos),
+                      ((Axis.x * Axis.z) * invCosAngle) - (Axis.y * sinAngle),
+                      ((Axis.y * Axis.z) * invCosAngle) + (Axis.x * sinAngle),
+                      cosAngle + (SQUARE(Axis.z) * invCosAngle),
                       0.0f,
 
                       0.0f,
