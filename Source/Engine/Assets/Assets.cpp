@@ -119,6 +119,21 @@ namespace Silent::Assets
         return asset;
     }
 
+    const std::shared_ptr<Asset> AssetManager::GetAsset(const std::string& assetName) const
+    {
+        // Check if asset exists.
+        auto it = _assetIdxs.find(assetName);
+        if (it == _assetIdxs.end())
+        {
+            Log("Attempted to get unregistered asset '" + assetName + "'.", LogLevel::Warning, LogMode::Debug);
+            return nullptr;
+        }
+
+        // Get asset by index.
+        const auto& [keyName, assetIdx] = *it;
+        return GetAsset(assetIdx);
+    }
+
     bool AssetManager::IsBusy() const
     {
         return _loadingCount > 0;
@@ -156,11 +171,15 @@ namespace Silent::Assets
             // Add asset.
             _assets.emplace_back(std::make_shared<Asset>());
             auto asset   = _assets.back();
+            asset->Name  = std::filesystem::relative(file, assetsPath).string();
             asset->Type  = ASSET_TYPES.at(ext);
             asset->File  = file;
             asset->Size  = std::filesystem::file_size(file);
             asset->State = AssetState::Unloaded;
             asset->Data  = nullptr;
+
+            // Add to asset index map.
+            _assetIdxs[asset->Name] = i;
         }
 
         Log("Registered " + std::to_string(_assets.size()) + " assets from '" + assetsPath.string() + "'.", LogLevel::Info, LogMode::Debug);

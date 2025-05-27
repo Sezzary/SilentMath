@@ -161,7 +161,7 @@ namespace Silent::Utils::Debug
         static auto mutex = std::mutex();
         {
             auto lock = std::lock_guard(mutex);
-            Messages.push_back(std::string(buffer));
+            Messages.push_back(buffer);
         }
     }
 

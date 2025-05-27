@@ -31,6 +31,7 @@ namespace Silent::Assets
 
     struct Asset
     {
+        std::string           Name = {};             // Name of relative file path.
         AssetType             Type = AssetType::Tim; // File extension type.
         std::filesystem::path File = {};             // Absolute file path.
         uint64                Size = 0;              // Raw file size in bytes.
@@ -44,8 +45,9 @@ namespace Silent::Assets
     private:
         // Fields
 
-        std::vector<std::shared_ptr<Asset>> _assets       = {};
-        std::atomic<uint>                   _loadingCount = 0;
+        std::vector<std::shared_ptr<Asset>>  _assets       = {};
+        std::unordered_map<std::string, int> _assetIdxs    = {}; // Key = asset name, value = asset index.
+        std::atomic<uint>                    _loadingCount = 0;
 
     public:
         // Constructors
@@ -55,6 +57,7 @@ namespace Silent::Assets
         // Getters
 
         const std::shared_ptr<Asset> GetAsset(int assetIdx) const;
+        const std::shared_ptr<Asset> GetAsset(const std::string& assetName) const;
 
         // Inquirers
 

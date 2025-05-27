@@ -25,12 +25,14 @@ namespace Silent::Utils::Debug
     enum class DebugPage
     {
         None,
-        RenderStats,
+        Renderer,
         Cheats
     };
 
     struct DebugData
     {
+        // Renderer
+
         bool EnableWireframeMode = false;
     };
 
