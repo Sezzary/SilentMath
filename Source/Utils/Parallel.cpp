@@ -1,11 +1,18 @@
 #include "Framework.h"
 #include "Utils/Parallel.h"
 
+#include "Engine/Application.h"
+
 namespace Silent::Utils
 {
     ParallelTaskManager g_Parallel = ParallelTaskManager();
 
-    ParallelTaskManager::ParallelTaskManager()
+    uint ParallelTaskManager::GetThreadCount() const
+    {
+        return (uint)_threads.size();
+    }
+
+    void ParallelTaskManager::Initialize()
     {
         // Reserve threads.
         uint threadCount = GetCoreCount() * 2;
@@ -16,11 +23,9 @@ namespace Silent::Utils
         {
             _threads.push_back(std::jthread(&ParallelTaskManager::Worker, this));
         }
-
-        _deinitialize = false;
     }
 
-    ParallelTaskManager::~ParallelTaskManager()
+    void ParallelTaskManager::Deinitialize()
     {
         // LOCK: Restrict shutdown flag access.
         {
@@ -33,16 +38,6 @@ namespace Silent::Utils
         _taskCond.notify_all();
     }
 
-    uint ParallelTaskManager::GetThreadCount() const
-    {
-        return (uint)_threads.size();
-    }
-
-    uint ParallelTaskManager::GetCoreCount() const
-    {
-        return std::max(std::jthread::hardware_concurrency(), 1u);
-    }
-
     std::future<void> ParallelTaskManager::AddTask(const ParallelTask& task)
     {
         return AddTasks(ParallelTasks{ task });
@@ -50,6 +45,19 @@ namespace Silent::Utils
 
     std::future<void> ParallelTaskManager::AddTasks(const ParallelTasks& tasks)
     {
+        // If parallelism is disabled, execute tasks sequentially.
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableParallelism)
+        {
+            for (const auto& task : tasks)
+            {
+                if (task)
+                {
+                    task();
+                }
+            }
+        }
+
         // HEAP ALLOC: Create counter and promise.
         auto counter = std::make_shared<std::atomic<int>>();
         auto promise = std::make_shared<std::promise<void>>();
@@ -115,7 +123,10 @@ namespace Silent::Utils
             auto taskLock = std::unique_lock(_taskMutex);
 
             // Add task with promise and counter handling.
-            _tasks.push([this, task, counter, promise]() { HandleTask(task, *counter, *promise); });
+            _tasks.push([this, task, counter, promise]()
+            {
+                HandleTask(task, *counter, *promise);
+            });
         }
     }
 
@@ -132,5 +143,10 @@ namespace Silent::Utils
         {
             promise.set_value();
         }
+    }
+
+    uint GetCoreCount()
+    {
+        return std::max(std::jthread::hardware_concurrency(), 1u);
     }
 }

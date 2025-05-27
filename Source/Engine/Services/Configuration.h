@@ -121,8 +121,9 @@ namespace Silent::Services
 
         // System
 
-        bool EnableToasts    = false; // Popup messages, e.g. "Gamepad connected", "Gamepad disconnected", etc.
-        bool EnableDebugMode = true;  // TODO: Temporarily hard-set to `true`. Wouldn't be saved in config file. User turns it on manually each session.
+        bool EnableToasts      = false; // Popup messages, e.g. "Gamepad connected", "Gamepad disconnected", etc.
+        bool EnableParallelism = false;
+        bool EnableDebugMode   = true;  // TODO: Temporarily hard-set to `true`. Wouldn't be saved in config file. User turns it on manually each session.
     };
 
     class ConfigurationManager

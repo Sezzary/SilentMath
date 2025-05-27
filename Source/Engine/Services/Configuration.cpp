@@ -4,8 +4,10 @@
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Binding.h"
 #include "Engine/Services/Savegame/Savegame.h"
+#include "Utils/Parallel.h"
 
 using namespace Silent::Input;
+using namespace Silent::Utils;
 
 namespace Silent::Services
 {
@@ -45,6 +47,7 @@ namespace Silent::Services
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
     constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
+    constexpr char KEY_ENABLE_PARALLELISM[]                       = "EnableParallelism";
 
     constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i(800, 600);
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
@@ -151,8 +154,9 @@ namespace Silent::Services
 
     void ConfigurationManager::SetDefaultInputSystemOptions()
     {
-        _options.EnableToasts    = DEFAULT_ENABLE_TOASTS;
-        _options.EnableDebugMode = IS_DEBUG_BUILD;
+        _options.EnableToasts      = DEFAULT_ENABLE_TOASTS;
+        _options.EnableParallelism = GetCoreCount() > 1;
+        _options.EnableDebugMode   = IS_DEBUG_BUILD;
     }
 
     void ConfigurationManager::Initialize()
@@ -412,8 +416,9 @@ namespace Silent::Services
         }
 
         // Load system options.
-        const auto& systemJson = optionsJson[KEY_SYSTEM];
-        options.EnableToasts   = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
+        const auto& systemJson    = optionsJson[KEY_SYSTEM];
+        options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
+        options.EnableParallelism = systemJson.value(KEY_ENABLE_PARALLELISM, GetCoreCount() > 1);
 
         return options;
     }

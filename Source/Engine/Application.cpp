@@ -61,6 +61,9 @@ namespace Silent
         // Options.
         _work.Config.LoadOptions();
 
+        // Parallelism.
+        g_Parallel.Initialize();
+
         // Assets.
         _work.Assets.Initialize(_work.Config.GetAssetsFolderPath() / "SILENT");
 
@@ -110,6 +113,9 @@ namespace Silent
 
         // Renderer.
         _work.Renderer->Deinitialize();
+
+        // Parallelism.
+        g_Parallel.Deinitialize();
 
         // SDL.
         SDL_DestroyWindow(_window);

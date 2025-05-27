@@ -19,14 +19,16 @@ namespace Silent::Utils
     public:
         // Constructors, destructors
 
-        ParallelTaskManager();
-        ~ParallelTaskManager();
+        ParallelTaskManager() = default;
+
+        // Getters
 
         uint GetThreadCount() const;
-        uint GetCoreCount() const;
 
         // Utilities
 
+        void              Initialize();
+        void              Deinitialize();
         std::future<void> AddTask(const ParallelTask& task);
         std::future<void> AddTasks(const ParallelTasks& tasks);
 
@@ -39,4 +41,6 @@ namespace Silent::Utils
     };
 
     extern ParallelTaskManager g_Parallel;
+
+    uint GetCoreCount();
 }
