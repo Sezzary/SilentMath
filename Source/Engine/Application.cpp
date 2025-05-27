@@ -51,6 +51,11 @@ namespace Silent
         _debugPage = page;
     }
 
+    bool ApplicationManager::IsDebugGuiEnabled() const
+    {
+        return _enableDebugGui;
+    }
+
     void ApplicationManager::Initialize()
     {
         _work.Config.Initialize();

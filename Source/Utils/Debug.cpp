@@ -76,17 +76,17 @@ namespace Silent::Utils::Debug
     {
         if constexpr (IS_DEBUG_BUILD)
         {
+            // Handle scratchpad.
             Scratchpad();
         }
 
+        // If debug GUI is disabled, return early.
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
+        if (!options.EnableDebugMode || !g_App.IsDebugGuiEnabled())
         {
+            Messages.clear();
             return;
         }
-
-        // TODO: Print messages to ImGui window.
-        Messages.clear();
 
         CreateGui([]()
         {
@@ -99,6 +99,9 @@ namespace Silent::Utils::Debug
             ImGui::Text("Hello. It's me. =^.^=");
             ImGui::End();
         });
+
+        // TODO: Print messages to ImGui window.
+        Messages.clear();
     }
 
     void Message(const std::string& msg, ...)
@@ -106,7 +109,7 @@ namespace Silent::Utils::Debug
         constexpr uint BUFFER_SIZE = 255;
 
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode)
+        if (!options.EnableDebugMode || !g_App.IsDebugGuiEnabled())
         {
             return;
         }

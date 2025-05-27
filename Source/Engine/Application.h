@@ -34,7 +34,7 @@ namespace Silent
 
         ApplicationWork _work           = {};
         bool            _isRunning      = false;
-        bool            _enableDebugGui = true; // TODO: Temporarily hard-set to `true`.
+        bool            _enableDebugGui = true; // TODO: Temporarily hard-set to `true`. Move to config?
         DebugPage       _debugPage      = DebugPage::None;
 
     public:
@@ -54,6 +54,10 @@ namespace Silent
         // Setters
 
         void SetDebugPage(DebugPage page);
+
+        // Inquirers
+
+        bool IsDebugGuiEnabled() const;
 
         // Utilities
 

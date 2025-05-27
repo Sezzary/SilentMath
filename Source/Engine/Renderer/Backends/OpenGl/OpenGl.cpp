@@ -169,6 +169,14 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawDebugGui()
     {
+        // If debug GUI is disabled, return early.
+        const auto& options = g_App.GetConfig().GetOptions();
+        if (!options.EnableDebugMode || !g_App.IsDebugGuiEnabled())
+        {
+            _debugGuiDrawCalls.clear();
+            return;
+        }
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();

@@ -115,7 +115,7 @@ namespace Silent::Input
         // Update components.
         UpdateRumble();
         UpdateActions();
-        HandleHotkeys();
+        HandleHotkeyActions();
     }
 
     void InputManager::InsertText(const std::string& textId, uint lineWidthMax, uint charCountMax)
@@ -442,7 +442,7 @@ namespace Silent::Input
         g_Parallel.AddTasks(tasks).wait();
     }
 
-    void InputManager::HandleHotkeys()
+    void InputManager::HandleHotkeyActions()
     {
         // Save screenshot.
         static bool dbScreenshot = true;
@@ -473,10 +473,10 @@ namespace Silent::Input
             if (_events.States[(int)EventId::Grave] && dbDebugGui)
             {
                 g_App.ToggleDebugGui();
+
+                Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
             }
             dbDebugGui = !_events.States[(int)EventId::Grave];
-
-            Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
         }
     }
 
