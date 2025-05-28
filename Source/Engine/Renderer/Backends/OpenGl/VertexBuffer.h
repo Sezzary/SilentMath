@@ -5,7 +5,7 @@ namespace Silent::Renderer
     class VertexBufferManager
     {
     public:
-        uint Id = 0;
+        GLuint Id = 0;
 
         // Constructors
 
@@ -13,7 +13,7 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(float* verts, uint size);
+        void Initialize(GLfloat* verts, GLsizeiptr size);
         void Bind();
         void Unbind();
         void Delete();

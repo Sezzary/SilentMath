@@ -40,7 +40,7 @@ namespace Silent
     {
         return *_work.Renderer;
     }
-
+    
     void ApplicationManager::Initialize()
     {
         _work.Config.Initialize();

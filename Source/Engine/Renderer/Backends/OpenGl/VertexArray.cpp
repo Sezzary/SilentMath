@@ -10,10 +10,10 @@ namespace Silent::Renderer
         glGenVertexArrays(1, &Id);
     }
 
-    void VertexArrayManager::LinkVertexBuffer(VertexBufferManager& vertBuffer, uint layout)
+    void VertexArrayManager::LinkAttrib(VertexBufferManager& vertBuffer, GLuint layout, GLuint componentCount, GLenum type, GLsizeiptr stride, void* offset)
     {
         vertBuffer.Bind();
-        glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glVertexAttribPointer(layout, componentCount, type, GL_FALSE, stride, offset);
         glEnableVertexAttribArray(layout);
         vertBuffer.Unbind();
     }

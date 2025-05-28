@@ -3,7 +3,7 @@
 
 namespace Silent::Renderer
 {
-    void ElementArrayBufferManager::Initialize(uint* idxs, uint size)
+    void ElementArrayBufferManager::Initialize(GLuint* idxs, GLsizeiptr size)
     {
         glGenBuffers(1, &Id);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Id);

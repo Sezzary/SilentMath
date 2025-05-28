@@ -13,6 +13,9 @@ namespace Silent::Renderer
     class OpenGlRenderer : public RendererBase
     {
     private:
+        // Constants
+
+        static constexpr Color COLOR_CLEAR = Color(0.2f, 0.2f, 0.2f, 1.0f);
         // Fields
 
         SDL_GLContext             _context      = nullptr;
@@ -41,6 +44,7 @@ namespace Silent::Renderer
         void DrawDebugGui();
         void DrawDebugObjects();
 
+        void CreateShaderProgram();
         void CreateDebugGui();
     };
 }

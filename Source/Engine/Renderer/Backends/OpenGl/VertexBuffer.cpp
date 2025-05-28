@@ -3,7 +3,7 @@
 
 namespace Silent::Renderer
 {
-    void VertexBufferManager::Initialize(float* verts, uint size)
+    void VertexBufferManager::Initialize(GLfloat* verts, GLsizeiptr size)
     {
         glGenBuffers(1, &Id);
         glBindBuffer(GL_ARRAY_BUFFER, Id);

@@ -5,7 +5,7 @@ namespace Silent::Renderer
     class ShaderManager
     {
     public:
-        uint Id = 0;
+        GLuint Id = 0;
 
         // Constructors
 
@@ -21,5 +21,6 @@ namespace Silent::Renderer
         // Helpers
 
         std::string GetFileContents(const char* filename);
+        void        LogError(uint shader, const std::string& type);
     };
 }

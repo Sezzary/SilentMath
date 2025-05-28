@@ -14,14 +14,14 @@ using namespace Silent::Services;
 
 namespace Silent::Renderer
 {
-    static float VERTICES[] =
+    static GLfloat VERTICES[] =
     {
-        -0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
-        0.5f, -0.5f * (float)sqrt(3) / 3,     0.0f,
-        0.0f,  0.5f * (float)sqrt(3) * 2 / 3, 0.0f,
-        -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-        0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-        0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+        -0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f, // Lower left corner
+        0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f, // Lower right corner
+        0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     1.0f, 0.6f,  0.32f, // Upper corner
+        -0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.9f, 0.45f, 0.17f, // Inner left
+        0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.9f, 0.45f, 0.17f, // Inner right
+        0.0f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f  // Inner down
     };
 
     static uint VERTEX_INDICES[] =
@@ -34,6 +34,8 @@ namespace Silent::Renderer
     void OpenGlRenderer::Initialize(SDL_Window& window)
     {
         _window = &window;
+
+        Log("Initializing renderer");
 
         // Create OpenGL context.
         _context = SDL_GL_CreateContext(_window);
@@ -56,30 +58,18 @@ namespace Silent::Renderer
 
         // Basic setup.
         glViewport(0, 0, res.x, res.y);
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        //glClear(GL_COLOR_BUFFER_BIT);
 
-        _shader.Initialize("Shaders/Default.vert", "Shaders/Default.frag");
-
-        _vertexArray.Initialize();
-        _vertexArray.Bind();
-
-        _vertexBuffer.Initialize(VERTICES, sizeof(VERTICES));
-        _elementArray.Initialize(VERTEX_INDICES, sizeof(VERTEX_INDICES));
-
-        _vertexArray.LinkVertexBuffer(_vertexBuffer, 0);
-        _vertexArray.Unbind();
-        _vertexBuffer.Unbind();
-        _elementArray.Unbind();
-
-        //CreateShaderProgram();
+        CreateShaderProgram();
         CreateDebugGui();
     }
 
     void OpenGlRenderer::Deinitialize()
     {
+        // Delete objects.
         _vertexArray.Delete();
         _vertexBuffer.Delete();
         _elementArray.Delete();
@@ -159,7 +149,7 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawFrame()
     {
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         _shader.Activate();
@@ -194,8 +184,33 @@ namespace Silent::Renderer
     void OpenGlRenderer::DrawDebugObjects()
     {
         // TODO
+
+        // Clear object elements.
         _debugLines.clear();
         _debugTriangles.clear();
+    }
+
+    void OpenGlRenderer::CreateShaderProgram()
+    {
+        // Generate shader object.
+        _shader.Initialize("Shaders/Default.vert", "Shaders/Default.frag");
+
+        // Generate and bind vertex array object.
+        _vertexArray.Initialize();
+        _vertexArray.Bind();
+
+        // Generate vertex buffer and element array objects.
+        _vertexBuffer.Initialize(VERTICES, sizeof(VERTICES));
+        _elementArray.Initialize(VERTEX_INDICES, sizeof(VERTEX_INDICES));
+
+        // Link attributes.
+        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, sizeof(float) * 6, (void*)0);
+        _vertexArray.LinkAttrib(_vertexBuffer, 1, 3, GL_FLOAT, sizeof(float) * 6, (void*)(sizeof(float) * 3));
+
+        // Unbind to prevent accidental modification.
+        _vertexArray.Unbind();
+        _vertexBuffer.Unbind();
+        _elementArray.Unbind();
     }
 
     void OpenGlRenderer::CreateDebugGui()
