@@ -156,7 +156,6 @@ namespace Silent::Services
     {
         _options.EnableToasts      = DEFAULT_ENABLE_TOASTS;
         _options.EnableParallelism = GetCoreCount() > 1;
-        _options.EnableDebugMode   = IS_DEBUG_BUILD;
     }
 
     void ConfigurationManager::Initialize()
@@ -265,6 +264,10 @@ namespace Silent::Services
             auto slotPath       = _workFolder / SAVEGAME_FOLDER_NAME / saveFolderName;
             std::filesystem::create_directories(slotPath);
         }
+
+        // Set debug options.
+        _options.EnableDebugMode = IS_DEBUG_BUILD;
+        _options.EnableDebugGui  = false;
     }
 
     void ConfigurationManager::SaveOptions()

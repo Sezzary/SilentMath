@@ -171,7 +171,7 @@ namespace Silent::Renderer
     {
         // If debug GUI is disabled, return early.
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || !g_App.IsDebugGuiEnabled())
+        if (!options.EnableDebugGui)
         {
             _debugGuiDrawCalls.clear();
             return;

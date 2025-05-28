@@ -123,7 +123,8 @@ namespace Silent::Services
 
         bool EnableToasts      = false; // Popup messages, e.g. "Gamepad connected", "Gamepad disconnected", etc.
         bool EnableParallelism = false;
-        bool EnableDebugMode   = true;  // TODO: Temporarily hard-set to `true`. Wouldn't be saved in config file. User turns it on manually each session.
+        bool EnableDebugMode   = true; // TODO: Can't depend on `IS_BUILD_MODE` in init func, have to set this here for some reason.
+        bool EnableDebugGui    = false;
     };
 
     class ConfigurationManager

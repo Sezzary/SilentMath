@@ -465,14 +465,14 @@ namespace Silent::Input
         }
         dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 
-        const auto& options = g_App.GetConfig().GetOptions();
+        auto& options = g_App.GetConfig().GetOptions();
         if (options.EnableDebugMode)
         {
             // Toggle debug GUI.
             static bool dbDebugGui = true;
             if (_events.States[(int)EventId::Grave] && dbDebugGui)
             {
-                g_App.ToggleDebugGui();
+                options.EnableDebugGui = !options.EnableDebugGui;
 
                 Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
             }

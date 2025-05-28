@@ -51,11 +51,6 @@ namespace Silent
         _debugPage = page;
     }
 
-    bool ApplicationManager::IsDebugGuiEnabled() const
-    {
-        return _enableDebugGui;
-    }
-
     void ApplicationManager::Initialize()
     {
         _work.Config.Initialize();
@@ -155,11 +150,6 @@ namespace Silent
         }
     }
 
-    void ApplicationManager::ToggleDebugGui()
-    {
-        _enableDebugGui = !_enableDebugGui;
-    }
-
     void ApplicationManager::Update()
     {
         PollEvents();
@@ -190,7 +180,7 @@ namespace Silent
         auto event = SDL_Event{};
         while (SDL_PollEvent(&event))
         {
-            if (options.EnableDebugMode && _enableDebugGui)
+            if (options.EnableDebugGui)
             {
                 ImGui_ImplSDL3_ProcessEvent(&event);
             }
@@ -250,8 +240,32 @@ namespace Silent
                 {
                     auto& options = _work.Config.GetOptions();
 
+                    bool isFullscreen = event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
+
+                    // Update cursor.
+                    if (isFullscreen)
+                    {
+                        // Hide cursor.
+                        if (!SDL_HideCursor())
+                        {
+                            Log("Failed to hide cursor: " + (std::string(SDL_GetError())));
+                        }
+                    }
+                    else
+                    {
+                        // Show cursor.
+                        if (!SDL_ShowCursor())
+                        {
+                            Log("Failed to show cursor: " + (std::string(SDL_GetError())));
+                        }
+
+                        // TODO: Warps to corner instead.
+                        // Move cursor to window center.
+                        auto res = Vector2i::Zero;
+                        SDL_WarpMouseInWindow(_window, res.x / 2, res.y / 2);
+                    }
+                    
                     // Update options.
-                    bool isFullscreen        = event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
                     options.EnableFullscreen = isFullscreen;
                     _work.Config.SaveOptions();
 

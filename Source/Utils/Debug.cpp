@@ -84,7 +84,7 @@ namespace Silent::Utils::Debug
 
         // If debug GUI is disabled, return early.
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || !g_App.IsDebugGuiEnabled())
+        if (!options.EnableDebugGui)
         {
             Messages.clear();
             return;
@@ -142,7 +142,7 @@ namespace Silent::Utils::Debug
         constexpr uint BUFFER_SIZE = 255;
 
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || !g_App.IsDebugGuiEnabled())
+        if (!options.EnableDebugGui)
         {
             return;
         }

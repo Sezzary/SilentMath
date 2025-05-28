@@ -32,10 +32,9 @@ namespace Silent
         SDL_Window* _window         = nullptr;
         Vector2     _mouseWheelAxis = Vector2::Zero;
 
-        ApplicationWork _work           = {};
-        bool            _isRunning      = false;
-        bool            _enableDebugGui = true; // TODO: Temporarily hard-set to `true`. Move to config?
-        DebugPage       _debugPage      = DebugPage::None;
+        ApplicationWork _work      = {};
+        bool            _isRunning = false;
+        DebugPage       _debugPage = DebugPage::None;
 
     public:
         // Constructors
@@ -55,10 +54,6 @@ namespace Silent
 
         void SetDebugPage(DebugPage page);
 
-        // Inquirers
-
-        bool IsDebugGuiEnabled() const;
-
         // Utilities
 
         void Initialize();
@@ -66,7 +61,6 @@ namespace Silent
         void Run();
 
         void ToggleFullscreen();
-        void ToggleDebugGui();
 
     private:
         // Helpers
