@@ -118,7 +118,7 @@ namespace Silent::Renderer
         std::filesystem::create_directories(path.parent_path());
 
         // Capture screenshot.
-        auto pixels = std::vector<uint8>((res.x * res.y) * 3);
+        auto pixels = std::vector<uint8>((res.x * res.y) * COLOR_CHANNEL_COUNT);
         glReadPixels(0, 0, res.x, res.y, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
         // Flip pixels vertically.
@@ -159,7 +159,7 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawFrame()
     {
-        glClearColor(0.07f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         _shader.Activate();

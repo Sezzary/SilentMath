@@ -31,6 +31,8 @@ namespace Silent::Utils::Debug
 
     struct DebugData
     {
+        DebugPage Page = DebugPage::Renderer;
+
         // Renderer
 
         bool EnableWireframeMode = false;

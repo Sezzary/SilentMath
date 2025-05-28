@@ -41,16 +41,6 @@ namespace Silent
         return *_work.Renderer;
     }
 
-    DebugPage ApplicationManager::GetDebugPage()
-    {
-        return _debugPage;
-    }
-
-    void ApplicationManager::SetDebugPage(DebugPage page)
-    {
-        _debugPage = page;
-    }
-
     void ApplicationManager::Initialize()
     {
         _work.Config.Initialize();

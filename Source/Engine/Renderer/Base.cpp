@@ -24,7 +24,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugLine(const Vector3& from, const Vector3& to, const Color& color, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -41,7 +41,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -62,7 +62,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -85,7 +85,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugBox(const OrientedBoundingBox& box, const Color& color, bool isWireframe, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -138,7 +138,7 @@ namespace Silent::Renderer
         constexpr uint WIREFRAME_SEGMENT_COUNT = 24;
 
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -196,7 +196,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugCylinder(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -216,7 +216,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugCone(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }
@@ -236,7 +236,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugDiamond(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, DebugPage page)
     {
         const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugMode || (page != g_App.GetDebugPage() && page != DebugPage::None))
+        if (!options.EnableDebugMode || (page != g_DebugData.Page && page != DebugPage::None))
         {
             return;
         }

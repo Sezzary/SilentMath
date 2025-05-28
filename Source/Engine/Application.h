@@ -34,7 +34,6 @@ namespace Silent
 
         ApplicationWork _work      = {};
         bool            _isRunning = false;
-        DebugPage       _debugPage = DebugPage::None;
 
     public:
         // Constructors
@@ -48,11 +47,6 @@ namespace Silent
         SavegameManager&      GetSavegame();
         ConfigurationManager& GetConfig();
         RendererBase&         GetRenderer();
-        DebugPage             GetDebugPage();
-
-        // Setters
-
-        void SetDebugPage(DebugPage page);
 
         // Utilities
 

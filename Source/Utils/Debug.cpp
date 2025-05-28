@@ -103,6 +103,8 @@ namespace Silent::Utils::Debug
                 // `Renderer` tab.
                 if (ImGui::BeginTabItem("Renderer"))
                 {
+                    g_DebugData.Page = DebugPage::Renderer;
+
                     ImGui::Checkbox("Wireframe mode", &g_DebugData.EnableWireframeMode);
                     ImGui::EndTabItem();
                 }
@@ -110,6 +112,8 @@ namespace Silent::Utils::Debug
                 // `Cheats` tab.
                 if (ImGui::BeginTabItem("Cheats"))
                 {
+                    g_DebugData.Page = DebugPage::Cheats;
+
                     ImGui::EndTabItem();
                 }
 
