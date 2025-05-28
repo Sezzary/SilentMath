@@ -4,13 +4,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-BASE_PATH    = Path(__file__).resolve().parent
-SCHEMAS_PATH = BASE_PATH / "../../Source/Engine/Services/Savegame/Schemas"
-OUTPUT_PATH  = BASE_PATH / "../../Source/Engine/Services/Savegame/Generated"
 FLATC_NAME   = "flatc"
+BASE_PATH    = Path(__file__).resolve().parent
+FLATC_PATH   = BASE_PATH / FLATC_NAME
+SCHEMAS_PATH = BASE_PATH / "../Source/Engine/Services/Savegame/Schemas"
+OUTPUT_PATH  = BASE_PATH / "../Source/Engine/Services/Savegame/Generated"
 
 """
-Get the path to the appropriate `flatc` executable based on the OS.
+Get the path to the appropriate `flatc` executable based on the system OS.
 """
 def get_flatc_executable():
     system_os = platform.system()
@@ -18,11 +19,11 @@ def get_flatc_executable():
     # Define OS-specific path.
     flatc_path = Path()
     if system_os == "Windows":
-        flatc_path = os.path.join(BASE_PATH, "Windows", FLATC_NAME + ".exe")
+        flatc_path = os.path.join(FLATC_PATH, "Windows", FLATC_NAME + ".exe")
     elif system_os == "Linux":
-        flatc_path = os.path.join(BASE_PATH, "Linux", FLATC_NAME)
+        flatc_path = os.path.join(FLATC_PATH, "Linux", FLATC_NAME)
     elif system_os == "Darwin": # MacOS.
-        flatc_path = os.path.join(BASE_PATH, "MacOs", FLATC_NAME)
+        flatc_path = os.path.join(FLATC_PATH, "MacOs", FLATC_NAME)
     else:
         raise Exception(f"Unsupported OS: {system_os}")
 

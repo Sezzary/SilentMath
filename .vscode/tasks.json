@@ -84,7 +84,7 @@
             "command": "python",
             "args":
             [
-                "${workspaceFolder}/Tools/FlatBuffers/GenerateSavegame.py"
+                "${workspaceFolder}/Tools/GenerateSavegame.py"
             ],
             "group":
             {
