@@ -35,8 +35,6 @@ namespace Silent::Renderer
     {
         _window = &window;
 
-        Log("Initializing renderer");
-
         // Create OpenGL context.
         _context = SDL_GL_CreateContext(_window);
         if (!_context)
@@ -59,12 +57,13 @@ namespace Silent::Renderer
         // Basic setup.
         glViewport(0, 0, res.x, res.y);
         //glEnable(GL_DEPTH_TEST);
-
         //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         //glClear(GL_COLOR_BUFFER_BIT);
 
         CreateShaderProgram();
         CreateDebugGui();
+
+        _uniformId = glGetUniformLocation(_shader.Id, "scale");
     }
 
     void OpenGlRenderer::Deinitialize()
@@ -149,10 +148,13 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawFrame()
     {
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        glClearColor(DEFAULT_COLOR.R(), DEFAULT_COLOR.G(), DEFAULT_COLOR.B(), DEFAULT_COLOR.A());
         glClear(GL_COLOR_BUFFER_BIT);
 
         _shader.Activate();
+
+        glUniform1f(_uniformId, 0.5f);
+
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
     }

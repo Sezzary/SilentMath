@@ -15,7 +15,8 @@ namespace Silent::Renderer
     private:
         // Constants
 
-        static constexpr Color COLOR_CLEAR = Color(0.2f, 0.2f, 0.2f, 1.0f);
+        static constexpr Color DEFAULT_COLOR = Color(0.2f, 0.2f, 0.2f, 1.0f);
+
         // Fields
 
         SDL_GLContext             _context      = nullptr;
@@ -23,6 +24,7 @@ namespace Silent::Renderer
         VertexArrayManager        _vertexArray  = VertexArrayManager();
         VertexBufferManager       _vertexBuffer = VertexBufferManager();
         ElementArrayBufferManager _elementArray = ElementArrayBufferManager();
+        GLuint                    _uniformId    = 0;
 
     public:
         // Constructors

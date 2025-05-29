@@ -46,7 +46,7 @@ namespace Silent
         _work.Config.Initialize();
         InitializeDebug();
 
-        Log("Starting Silent Engine.");
+        Log("Starting Silent Engine...");
 
         // Options.
         _work.Config.LoadOptions();
@@ -90,13 +90,13 @@ namespace Silent
         _work.Input.Initialize();
 
         // Finish.
-        Log("Initialization complete.");
+        Log("Startup complete.");
         _isRunning = true;
     }
 
     void ApplicationManager::Deinitialize()
     {
-        Log("Shutting down Silent Engine.");
+        Log("Shutting down Silent Engine...");
 
         // Input.
         _work.Input.Deinitialize();
@@ -112,7 +112,7 @@ namespace Silent
         SDL_Quit();
 
         // Finish.
-        Log("Deinitialization complete.");
+        Log("Shutdown complete.");
     }
 
     void ApplicationManager::Run()

@@ -32,6 +32,7 @@ namespace Silent::Renderer
         glAttachShader(Id, vertShader);
         glAttachShader(Id, fragShader);
         glLinkProgram(Id);
+        //LogError(Id, "PROGRAM"); // TODO: Program error logging.
 
         glDeleteShader(vertShader);
         glDeleteShader(fragShader);
@@ -75,7 +76,7 @@ namespace Silent::Renderer
         if (!success)
         {
             glGetShaderInfoLog(shader, MSG_BUFFER_SIZE, NULL, msgBuffer);
-            Log(msgBuffer);
+            Log("Failed to compile `" + type + "` shader: " + msgBuffer);
         }
     }
 }
