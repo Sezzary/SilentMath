@@ -13,6 +13,7 @@ int main()
     catch (const std::exception& ex)
     {
         Log(std::string("Exception: ") + ex.what(), LogLevel::Error);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", ex.what(), nullptr);
         return EXIT_FAILURE;
     }
 

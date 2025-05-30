@@ -27,6 +27,7 @@ namespace Silent::Services
     constexpr char ASSETS_FOLDER_NAME[]             = "Assets";
     constexpr char SAVEGAME_FOLDER_NAME[]           = "Savegame";
     constexpr char SCREENSHOTS_FOLDER_NAME[]        = "Screenshots";
+    constexpr char SHADERS_FOLDER_NAME[]            = "Shaders";
     constexpr char SAVEGAME_SLOT_FOLDER_NAME_BASE[] = "Slot ";
 
     constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";

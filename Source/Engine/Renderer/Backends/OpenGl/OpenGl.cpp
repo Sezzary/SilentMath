@@ -15,20 +15,17 @@ using namespace Silent::Services;
 namespace Silent::Renderer
 {
     static GLfloat VERTICES[] =
-    {
-        -0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f, // Lower left corner
-        0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f, // Lower right corner
-        0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     1.0f, 0.6f,  0.32f, // Upper corner
-        -0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.9f, 0.45f, 0.17f, // Inner left
-        0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.9f, 0.45f, 0.17f, // Inner right
-        0.0f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f  // Inner down
+    {   /* Positions           Colors               Texture coords */
+        -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f, // Lower left corner
+        -0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 0.0f, // Upper left corner
+         0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f, // Upper right corner
+         0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f, // Lower right corner
     };
 
-    static uint VERTEX_INDICES[] =
+    static GLuint VERTEX_INDICES[] =
     {
-        0, 3, 5, // Lower left triangle
-        3, 2, 4, // Upper triangle
-        5, 4, 1  // Lower right triangle
+        0, 2, 1, // Upper triangle
+        0, 3, 2  // Lower triangle
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
@@ -56,9 +53,9 @@ namespace Silent::Renderer
 
         // Basic setup.
         glViewport(0, 0, res.x, res.y);
-        //glEnable(GL_DEPTH_TEST);
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        //glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.2, 0.2f, 0.2f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         CreateShaderProgram();
         CreateDebugGui();
@@ -134,6 +131,7 @@ namespace Silent::Renderer
     void OpenGlRenderer::UpdateViewport()
     {
         // Clear screen.
+        glClearColor(0.2, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Resize viewport if window is resized.
@@ -148,15 +146,12 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawFrame()
     {
-        glClearColor(DEFAULT_COLOR.R(), DEFAULT_COLOR.G(), DEFAULT_COLOR.B(), DEFAULT_COLOR.A());
-        glClear(GL_COLOR_BUFFER_BIT);
-
         _shader.Activate();
 
         glUniform1f(_uniformId, 0.5f);
 
         _vertexArray.Bind();
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
     void OpenGlRenderer::DrawDebugGui()
