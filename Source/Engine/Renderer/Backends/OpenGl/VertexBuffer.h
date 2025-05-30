@@ -5,6 +5,8 @@ namespace Silent::Renderer
     class VertexBufferManager
     {
     public:
+        // Fields
+
         GLuint Id = 0;
 
         // Constructors

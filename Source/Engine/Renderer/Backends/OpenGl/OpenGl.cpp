@@ -4,6 +4,7 @@
 #include "Engine/Application.h"
 #include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 #include "Engine/Renderer/Base.h"
@@ -63,27 +64,8 @@ namespace Silent::Renderer
         _uniformId = glGetUniformLocation(_shader.Id, "scale");
 
         // Generate textures.
-        stbi_set_flip_vertically_on_load(true);
-        _imageBytes = stbi_load("Assets/pop_cat.png", &_imageRes.x, &_imageRes.y, &_imageColorChannelCount, 0);
-        glGenTextures(1, &_textureId);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, _textureId);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _imageRes.x, _imageRes.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, _imageBytes);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        stbi_image_free(_imageBytes);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        _textureUniformId = glGetUniformLocation(_shader.Id, "tex0");
-        _shader.Activate();
-        glUniform1i(_textureUniformId, 0);
+        _popCat = Texture("Assets/pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+        _popCat.TextureUnit(_shader, "tex0", 0);
     }
 
     void OpenGlRenderer::Deinitialize()
@@ -94,8 +76,7 @@ namespace Silent::Renderer
         _elementArray.Delete();
         _shader.Delete();
 
-        // Delete textures.
-        glDeleteTextures(1, &_textureId);
+        _popCat.Delete();
     }
 
     void OpenGlRenderer::Update()
@@ -175,7 +156,7 @@ namespace Silent::Renderer
         _shader.Activate();
 
         //glUniform1f(_uniformId, 0.5f);
-        glBindTexture(GL_TEXTURE_2D, _textureId);
+        _popCat.Bind();
 
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

@@ -5,6 +5,8 @@ namespace Silent::Renderer
     class ShaderManager
     {
     public:
+        // Fields
+
         GLuint Id = 0;
 
         // Constructors

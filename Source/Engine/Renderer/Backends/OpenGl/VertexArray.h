@@ -7,6 +7,8 @@ namespace Silent::Renderer
     class VertexArrayManager
     {
     public:
+        // Fields
+
         GLuint Id = 0;
 
         // Constructors
@@ -16,9 +18,10 @@ namespace Silent::Renderer
         // Utilities
 
         void Initialize();
-        void LinkAttrib(VertexBufferManager& vertBuffer, GLuint layout, GLuint componentCount, GLenum type, GLsizeiptr stride, void* offset);
         void Bind();
         void Unbind();
         void Delete();
+
+        void LinkAttrib(VertexBufferManager& vertBuffer, GLuint layout, GLuint componentCount, GLenum type, GLsizeiptr stride, void* offset);
     };
 }

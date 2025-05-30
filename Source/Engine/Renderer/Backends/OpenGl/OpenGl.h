@@ -2,6 +2,7 @@
 
 #include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 #include "Engine/Renderer/Base.h"
@@ -26,11 +27,7 @@ namespace Silent::Renderer
         ElementArrayBufferManager _elementArray = ElementArrayBufferManager();
         GLuint                    _uniformId    = 0;
 
-        Vector2i _imageRes               = Vector2i::Zero;
-        int      _imageColorChannelCount = 0;
-        uchar*   _imageBytes             = nullptr;
-        GLuint   _textureId              = 0;
-        GLuint   _textureUniformId       = 0;
+        Texture _popCat;
 
     public:
         // Constructors
