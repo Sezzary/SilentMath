@@ -75,6 +75,7 @@ using json = nlohmann::json;
 #include <spdlog/spdlog.h>
 
 // stb
+#include <stb_image.h>
 #include <stb_image_write.h>
 
 // Vulkan

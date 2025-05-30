@@ -26,6 +26,12 @@ namespace Silent::Renderer
         ElementArrayBufferManager _elementArray = ElementArrayBufferManager();
         GLuint                    _uniformId    = 0;
 
+        Vector2i _imageRes               = Vector2i::Zero;
+        int      _imageColorChannelCount = 0;
+        uchar*   _imageBytes             = nullptr;
+        GLuint   _textureId              = 0;
+        GLuint   _textureUniformId       = 0;
+
     public:
         // Constructors
 

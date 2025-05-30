@@ -16,10 +16,10 @@ namespace Silent::Renderer
 {
     static GLfloat VERTICES[] =
     {   /* Positions           Colors               Texture coords */
-        -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f, // Lower left corner
-        -0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 0.0f, // Upper left corner
-         0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f, // Upper right corner
-         0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f, // Lower right corner
+        -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,    0.0f, 0.0f, // Lower left corner
+        -0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 0.0f,    0.0f, 1.0f, // Upper left corner
+         0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f,    1.0f, 1.0f, // Upper right corner
+         0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f  // Lower right corner
     };
 
     static GLuint VERTEX_INDICES[] =
@@ -61,6 +61,29 @@ namespace Silent::Renderer
         CreateDebugGui();
 
         _uniformId = glGetUniformLocation(_shader.Id, "scale");
+
+        // Generate textures.
+        stbi_set_flip_vertically_on_load(true);
+        _imageBytes = stbi_load("Assets/pop_cat.png", &_imageRes.x, &_imageRes.y, &_imageColorChannelCount, 0);
+        glGenTextures(1, &_textureId);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _textureId);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _imageRes.x, _imageRes.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, _imageBytes);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        stbi_image_free(_imageBytes);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        _textureUniformId = glGetUniformLocation(_shader.Id, "tex0");
+        _shader.Activate();
+        glUniform1i(_textureUniformId, 0);
     }
 
     void OpenGlRenderer::Deinitialize()
@@ -70,6 +93,9 @@ namespace Silent::Renderer
         _vertexBuffer.Delete();
         _elementArray.Delete();
         _shader.Delete();
+
+        // Delete textures.
+        glDeleteTextures(1, &_textureId);
     }
 
     void OpenGlRenderer::Update()
@@ -148,7 +174,8 @@ namespace Silent::Renderer
     {
         _shader.Activate();
 
-        glUniform1f(_uniformId, 0.5f);
+        //glUniform1f(_uniformId, 0.5f);
+        glBindTexture(GL_TEXTURE_2D, _textureId);
 
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -201,8 +228,9 @@ namespace Silent::Renderer
         _elementArray.Initialize(VERTEX_INDICES, sizeof(VERTEX_INDICES));
 
         // Link attributes.
-        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, sizeof(float) * 6, (void*)0);
-        _vertexArray.LinkAttrib(_vertexBuffer, 1, 3, GL_FLOAT, sizeof(float) * 6, (void*)(sizeof(float) * 3));
+        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, sizeof(float) * 8, (void*)0);
+        _vertexArray.LinkAttrib(_vertexBuffer, 1, 3, GL_FLOAT, sizeof(float) * 8, (void*)(sizeof(float) * 3));
+        _vertexArray.LinkAttrib(_vertexBuffer, 2, 2, GL_FLOAT, sizeof(float) * 8, (void*)(sizeof(float) * 6));
 
         // Unbind to prevent accidental modification.
         _vertexArray.Unbind();
