@@ -17,16 +17,21 @@ namespace Silent::Renderer
 {
     static GLfloat VERTICES[] =
     {   /* Positions           Colors               Texture coords */
-        -0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,    0.0f, 0.0f, // Lower left corner
-        -0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 0.0f,    0.0f, 1.0f, // Upper left corner
-         0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f,    1.0f, 1.0f, // Upper right corner
-         0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f  // Lower right corner
+        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,    0.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,    5.0f, 0.0f,
+        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,     0.0f, 0.0f,
+        0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,     5.0f, 0.0f,
+        0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,     2.5f, 5.0f
     };
 
     static GLuint VERTEX_INDICES[] =
     {
-        0, 2, 1, // Upper triangle
-        0, 3, 2  // Lower triangle
+        0, 1, 2,
+        0, 2, 3,
+        0, 1, 4,
+        1, 2, 4,
+        2, 3, 4,
+        3, 0, 4
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
@@ -155,11 +160,36 @@ namespace Silent::Renderer
     {
         _shader.Activate();
 
+        auto res = Vector2i::Zero;
+        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+
+        auto modelMat = glm::mat4(1.0f);
+        auto viewMat  = glm::mat4(1.0f);
+        auto projMat  = glm::mat4(1.0f);
+
+        static float rot = 0.0f;
+        rot += 0.5f;
+        if (rot > 360.0f)
+        {
+            rot -= 360.0f;
+        }
+
+        modelMat = glm::rotate(modelMat, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
+        viewMat  = glm::translate(viewMat, glm::vec3(0.0f, -0.5f, -2.0f));
+        projMat  = glm::perspective(glm::radians(45.0f), (float)res.x / (float)res.y, 0.1f, 100.0f);
+
+        int modelLoc = glGetUniformLocation(_shader.Id, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
+        int viewLoc = glGetUniformLocation(_shader.Id, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
+        int projLoc = glGetUniformLocation(_shader.Id, "proj");
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+
         //glUniform1f(_uniformId, 0.5f);
         _popCat.Bind();
 
         _vertexArray.Bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(int), GL_UNSIGNED_INT, 0);
     }
 
     void OpenGlRenderer::DrawDebugGui()
