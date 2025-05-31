@@ -5,6 +5,7 @@
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/View.h"
 #include "Engine/Renderer/Base.h"
 
 namespace Silent::Renderer
@@ -25,7 +26,7 @@ namespace Silent::Renderer
         VertexArrayManager        _vertexArray  = VertexArrayManager();
         VertexBufferManager       _vertexBuffer = VertexBufferManager();
         ElementArrayBufferManager _elementArray = ElementArrayBufferManager();
-        GLuint                    _uniformId    = 0;
+        View                      _view         = View();
 
         Texture _popCat;
 
