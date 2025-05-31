@@ -165,6 +165,7 @@ namespace Silent::Renderer
         auto res = Vector2i::Zero;
         SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
 
+        _view.Move();
         _view.ExportMatrix(glm::radians(45.0f), 0.1f, 100.0f, _shader, "camMat");
 
         _popCat.Bind();

@@ -1,7 +1,11 @@
 #include "Framework.h"
 #include "Engine/Renderer/Backends/OpenGl/View.h"
 
+#include "Engine/Application.h"
 #include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Input/Input.h"
+
+using namespace Silent::Input;
 
 namespace Silent::Renderer
 {
@@ -18,5 +22,51 @@ namespace Silent::Renderer
         auto projMat = glm::perspective(fov, (float)Size.x / (float)Size.y, nearPlane, farPlane);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.Id, uni.c_str()), 1, GL_FALSE, glm::value_ptr(projMat * viewMat));
+    }
+
+    void View::Move()
+    {
+        const auto& input = g_App.GetInput();
+
+        // Move on 2D plane.
+        if (input.GetAction(In::W).IsHeld())
+        {
+            Position.Translate(Direction, Speed);
+        }
+        if (input.GetAction(In::A).IsHeld())
+        {
+            Position += Speed * -glm::normalize(glm::cross(Direction, Up));
+        }
+        if (input.GetAction(In::S).IsHeld())
+        {
+            Position.Translate(Direction, -Speed);
+        }
+        if (input.GetAction(In::D).IsHeld())
+        {
+            Position += Speed * glm::normalize(glm::cross(Direction, Up));
+        }
+
+        // Move vertically.
+        if (input.GetAction(In::Space).IsHeld())
+        {
+            Position.Translate(Up, Speed);
+        }
+        if (input.GetAction(In::Ctrl).IsHeld())
+        {
+            Position.Translate(Up, -Speed);
+        }
+
+        // Modulate speed.
+        if (input.GetAction(In::Shift).IsHeld())
+        {
+            Speed = 0.1f;
+        }
+        else
+        {
+            Speed = 0.05f;
+        }
+
+        const auto& axis = input.GetAnalogAxis(AnalogAxisId::Mouse);
+        // TODO: Rotation with mouse.
     }
 }

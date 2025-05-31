@@ -22,27 +22,7 @@ namespace Silent::Utils::Debug
 
     void Scratchpad()
     {
-        const auto& input = g_App.GetInput();
-
-        //Log("A val" + std::to_string(input.GetAction(In::A).GetState()), LogLevel::Info, LogMode::Debug, true);
-
-        if (input.GetAction(In::A).IsHeld())
-        {
-            if (g_Time.TestInterval(SEC_TO_TICK(0.25f)))
-            {
-                //Log("Holding A", LogLevel::Info, LogMode::Debug, true);
-            }
-        }
-
-        if (input.GetAction(In::A).IsClicked())
-        {
-            Log("Clicked A", LogLevel::Info, LogMode::Debug, true);
-        }
-
-        if (input.GetAction(In::A).IsReleased())
-        {
-            //Log("Released A", LogLevel::Info, LogMode::Debug, true);
-        }
+        
     }
 
     void InitializeDebug()

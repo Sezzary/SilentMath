@@ -16,7 +16,7 @@ namespace Silent::Renderer
         Vector2i Size = Vector2i::Zero;  
         float    Fov  = 0.0f;
 
-        float Velocity    = 0.1f;
+        float Speed       = 0.1f;
         float Sensitivity = 100.0f;
 
         // Constructors
@@ -27,5 +27,6 @@ namespace Silent::Renderer
         // Utilities
 
         void ExportMatrix(float fov, float nearPlane, float farPlane, ShaderManager& shader, const std::string& uni);
+        void Move();
     };
 }
