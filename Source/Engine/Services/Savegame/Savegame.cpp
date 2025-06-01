@@ -7,6 +7,35 @@
 
 namespace Silent::Services
 {
+    static const char* SAVEGAME_DESC_STRINGS[] =
+    {
+        "Anywhere",
+        "Cafe",
+        "Bus",
+        "Store",
+        "Infirmary",
+        "Doghouse",
+        "Gordon",
+        "Church",
+        "Garage",
+        "Police",
+        "Reception",
+        "Room_302",
+        "Director's",
+        "Jewelry_shop",
+        "Pool_hall",
+        "Antique_shop",
+        "Theme_park",
+        "Boat",
+        "Bridge",
+        "Motel",
+        "Lighthouse",
+        "Sewer",
+        "Nowhere",
+        "Child's_room",
+        "Next_fear"
+    };
+
     const std::vector<std::string>& SavegameManager::GetSlotSavegameList(int slotIdx)
     {
         if (slotIdx > _slotSavegameLists.size())
@@ -137,12 +166,7 @@ namespace Silent::Services
                     continue;
                 }
 
-                auto saveJson = json();
-                inputFile >> saveJson;
-
                 // TODO: Figure out how description is actually going to be retrieved.
-                const auto& desc = saveJson.value("Description", "Description Unimplemented");
-                saves.push_back(desc);
             }
         }
     }

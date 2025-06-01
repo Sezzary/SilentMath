@@ -2,19 +2,19 @@ namespace Silent.Buffers;
 
 table Stuff
 {
-    my_int: int32;
+    my_int:  int32;
     my_bool: bool;
 }
 
 table Things
 {
-    my_int: int32;
+    my_int:   int32;
     my_bools: [bool];
 }
 
 table Savegame
 {
-    stuff: [Stuff];
+    stuff:  [Stuff];
     things: [Things];
 }
 
