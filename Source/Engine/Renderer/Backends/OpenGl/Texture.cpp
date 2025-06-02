@@ -62,7 +62,7 @@ namespace Silent::Renderer
     void Texture::TextureUnit(ShaderManager& shader, const char* uniform, GLuint unit)
     {
         // Get uniform location.
-        GLuint texUni = glGetUniformLocation(shader.Id, uniform);
+        GLuint texUni = glGetUniformLocation(shader._shaderIds.at("Default"), uniform);
 
         // Set uniform value.
         shader.Activate();

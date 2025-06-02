@@ -46,8 +46,11 @@ namespace Silent::Renderer
         // Utilities
     
         void UpdateViewport();
+
         void DrawFrame();
+        void DrawGui();
         void DrawDebugGui();
+
         void DrawDebugObjects();
 
         void CreateShaderProgram();

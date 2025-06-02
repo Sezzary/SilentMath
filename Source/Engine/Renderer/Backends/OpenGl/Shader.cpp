@@ -7,32 +7,34 @@
 
 namespace Silent::Renderer
 {
-    void ShaderManager::Initialize(const char* vertFile, const char* fragFile)
+    void ShaderManager::Initialize(const std::string& shaderName)
     {
-        // Read vertexFile and fragmentFile and store strings.
-        auto vertCode = GetFileContents(vertFile);
-        auto fragCode = GetFileContents(fragFile);
+        // Read `vertFile` + `fragFile` and store strings.
+        auto vertCode = GetFileContents("Shaders/" + shaderName + ".vert");
+        auto fragCode = GetFileContents("Shaders/" + shaderName + ".frag");
 
         const char* vertSrc = vertCode.c_str();
         const char* fragSrc = fragCode.c_str();
 
         // Compile vertex shader.
-        GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
+        auto vertShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertShader, 1, &vertSrc, nullptr);
         glCompileShader(vertShader);
         LogError(vertShader, "VERTEX");
 
         // Compile fragment shader.
-        GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+        auto fragShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragShader, 1, &fragSrc, nullptr);
         glCompileShader(fragShader);
         LogError(vertShader, "FRAGMENT");
 
-        Id = glCreateProgram();
-        glAttachShader(Id, vertShader);
-        glAttachShader(Id, fragShader);
-        glLinkProgram(Id);
-        //LogError(Id, "PROGRAM"); // TODO: Program error logging.
+        _shaderIds[shaderName] = glCreateProgram();
+        auto id = _shaderIds.at(shaderName);
+
+        glAttachShader(id, vertShader);
+        glAttachShader(id, fragShader);
+        glLinkProgram(id);
+        //LogError(id, "PROGRAM"); // TODO: Program error logging.
 
         glDeleteShader(vertShader);
         glDeleteShader(fragShader);
@@ -40,15 +42,21 @@ namespace Silent::Renderer
 
     void ShaderManager::Activate()
     {
-        glUseProgram(Id);
+        for (auto [keyName, id] : _shaderIds)
+        {
+            glUseProgram(id);
+        }
     }
 
     void ShaderManager::Delete()
     {
-        glDeleteProgram(Id);
+        for (auto [keyName, id] : _shaderIds)
+        {
+            glDeleteProgram(id);
+        }
     }
 
-    std::string ShaderManager::GetFileContents(const char* filename)
+    std::string ShaderManager::GetFileContents(const std::string& filename)
     {
         auto input = std::ifstream(filename, std::ios::binary);
         if (input)
@@ -62,7 +70,7 @@ namespace Silent::Renderer
             return contents;
         }
 
-        throw std::runtime_error("Failed to open shader file '" + std::string(filename) + "`.");
+        throw std::runtime_error("Failed to open shader file '" + filename + "`.");
     }
 
     void ShaderManager::LogError(uint shader, const std::string& type)

@@ -7,7 +7,7 @@ namespace Silent::Renderer
     public:
         // Fields
 
-        GLuint Id = 0;
+        std::unordered_map<std::string, GLuint> _shaderIds = {};
 
         // Constructors
 
@@ -15,14 +15,14 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(const char* vertFile, const char* fragFile);
+        void Initialize(const std::string& shaderName);
         void Activate();
         void Delete();
 
     private:
         // Helpers
 
-        std::string GetFileContents(const char* filename);
+        std::string GetFileContents(const std::string& filename);
         void        LogError(uint shader, const std::string& type);
     };
 }

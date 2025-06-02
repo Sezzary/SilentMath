@@ -93,6 +93,7 @@ namespace Silent::Renderer
 
         // Render.
         DrawFrame();
+        DrawGui();
         DrawDebugGui();
 
         // Swap buffers.
@@ -145,7 +146,7 @@ namespace Silent::Renderer
     void OpenGlRenderer::UpdateViewport()
     {
         // Clear screen.
-        glClearColor(0.2, 0.2f, 0.2f, 1.0f);
+        glClearColor(0.3, 0.5f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Resize viewport if window is resized.
@@ -165,13 +166,106 @@ namespace Silent::Renderer
         auto res = Vector2i::Zero;
         SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
 
-        _view.Move();
+        /*_view.Move();
         _view.ExportMatrix(glm::radians(45.0f), 0.1f, 100.0f, _shader, "camMat");
 
         _popCat.Bind();
 
         _vertexArray.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(int), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(int), GL_UNSIGNED_INT, 0);*/
+    }
+
+    float quadVertices[] =
+    {
+        /*150 - 130, 20 - 62,
+        150 - 130, 20 - 43,
+        150 - 11,  20 - 62,
+        150 - 11,  20 - 43*/
+
+        
+        /*-106, -88, -106, -92, -146, -88, -150, -92,
+        -106, -87, -106, -83, -146, -87, -142, -83
+        
+        
+        -42, -88, -42, -92, -2, -88, 2, -92,
+        -42, -87, -42, -83, -2, -87, -6, -83
+        
+        
+        -146, -88, -150, -92, -146, 42, -150, 46,
+        -145, -87, -141, -83, -145, 41, -141, 37
+        
+        
+        -2, -88, 2, -92, -2, 42, 2, 46,
+        -3, -87, -7, -83, -3, 41, -7, 37*/
+        
+       
+       4, -1, -1, 7,  8, 7,
+       5, 1,  0, 8,  9, 8,
+       
+       
+       4, 96,  0, 88,  8, 88,
+       5, 97,  1, 89,  9, 89
+       
+       
+
+         //-144, -36 ,  -148, -40 ,  -4, -36 ,  0, -40 
+        // x, y
+        /*0.0f, 0.0f,
+        0.0f, 120.0f,
+        160.0f, 120.0f,
+        160.0f, 0.0f*/
+    };
+
+    void OpenGlRenderer::DrawGui()
+    {
+        static unsigned int vao, vbo;
+        static bool isFirstTime = true;
+        if (isFirstTime)
+        {
+            _shader.Initialize("Quad");
+
+            glGenVertexArrays(1, &vao);
+            glGenBuffers(1, &vbo);
+
+            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+            glEnableVertexAttribArray(0);
+
+            isFirstTime = false;
+        }
+
+        glUseProgram(_shader._shaderIds.at("Quad"));
+        glUniform3f(glGetUniformLocation(_shader._shaderIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
+
+        glBindVertexArray(vao);
+        for (int i = 0; i < 4; i++)
+        {
+            glDrawArrays(GL_LINE_LOOP, i * 3, 3); // Draw each quad (4 vertices at a time)
+        }
+        //glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+        // Set up flat-colored quad at position (vx, vy) with width w and height h
+        /*float vx = -136 // line->vertex0_0.vx
+        float vy = 60; // line->vertex0_0.vy
+        float w  = 272; // line->vertex1_4.vx
+        float h  = 40; // line->vertex1_4.vy
+
+        // Set flat color (dark gray ~ RGB(48, 48, 48))
+        glColor3f(0.19f, 0.19f, 0.19f);
+
+        // Disable lighting if using fixed-function pipeline
+        glDisable(GL_LIGHTING);
+
+        // Optional: set Z value based on intended depth
+        glBegin(GL_QUADS);
+            glVertex3f(vx,     vy,     z);  // Top-left
+            glVertex3f(vx,     vy + h, z);  // Bottom-left
+            glVertex3f(vx + w, vy + h, z);  // Bottom-right
+            glVertex3f(vx + w, vy,     z);  // Top-right
+        glEnd();*/
     }
 
     void OpenGlRenderer::DrawDebugGui()
@@ -210,7 +304,7 @@ namespace Silent::Renderer
     void OpenGlRenderer::CreateShaderProgram()
     {
         // Generate shader object.
-        _shader.Initialize("Shaders/Default.vert", "Shaders/Default.frag");
+        _shader.Initialize("Default");
 
         // Generate and bind vertex array object.
         _vertexArray.Initialize();
