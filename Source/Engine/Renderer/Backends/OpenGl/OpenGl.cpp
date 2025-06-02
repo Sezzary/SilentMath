@@ -198,15 +198,28 @@ namespace Silent::Renderer
         -2, -88, 2, -92, -2, 42, 2, 46,
         -3, -87, -7, -83, -3, 41, -7, 37*/
         
-       
-       4, -1, -1, 7,  8, 7,
+       // Scroll bar arrows.
+       /*4, -1, -1, 7,  8, 7,
        5, 1,  0, 8,  9, 8,
-       
-       
        4, 96,  0, 88,  8, 88,
-       5, 97,  1, 89,  9, 89
+       5, 97,  1, 89,  9, 89*/
        
-       
+       // Scroll bar track
+        /*0, 0 , 0, 96 , 4, 0, 4, 96,
+        8, 0 , 8, 96 , 4, 0 , 4, 96 */
+
+        // Slot border
+        /*-107, -88 , -146, -88,
+         -42, -88 , -2, -88 ,
+         -146, -88,  -146, 42 ,
+         -2,   -88,  -2, 42 ,
+         -146, 42 , -2, 42 */
+
+        -139, -81,
+        -139,  37,
+        -9,   -81,
+        -9,    37
+        
 
          //-144, -36 ,  -148, -40 ,  -4, -36 ,  0, -40 
         // x, y
@@ -240,10 +253,14 @@ namespace Silent::Renderer
         glUseProgram(_shader._shaderIds.at("Quad"));
         glUniform3f(glGetUniformLocation(_shader._shaderIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
 
+        
+        int trackOffsetX = 150 - 159;
+
         glBindVertexArray(vao);
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
-            glDrawArrays(GL_LINE_LOOP, i * 3, 3); // Draw each quad (4 vertices at a time)
+            //glDrawArrays(GL_LINES, i * 2, 2);
+            glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4); // Draw each quad (4 vertices at a time)
         }
         //glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 

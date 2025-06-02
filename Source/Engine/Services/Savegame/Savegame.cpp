@@ -48,7 +48,7 @@ namespace Silent::Services
 
     void SavegameManager::Initialize()
     {
-        // TODO: Load lists, create empty paths.
+        PopulateSlotMetadata();
     }
 
     void SavegameManager::Save(int slotIdx, int saveIdx)
@@ -58,12 +58,14 @@ namespace Silent::Services
         // Create savegame buffer.
         auto saveBuffer = ToSavegameBuffer(_savegame);
 
+        // TODO: Fill metadata.
+
         // Ensure directory exists.
-        auto path = GetSavegameFilePath(slotIdx, saveIdx);
-        std::filesystem::create_directories(path.parent_path());
+        auto saveFile = GetSavegameFilePath(slotIdx, saveIdx);
+        std::filesystem::create_directories(saveFile.parent_path());
 
         // Write savegame buffer.
-        auto outputFile = std::ofstream(path);
+        auto outputFile = std::ofstream(saveFile);
         if (outputFile.is_open())
         {
             outputFile.write((const char*)saveBuffer->GetBufferPointer(), saveBuffer->GetSize());
@@ -73,10 +75,10 @@ namespace Silent::Services
 
     void SavegameManager::Load(int slotIdx, int saveIdx)
     {
-        auto path = GetSavegameFilePath(slotIdx, saveIdx);
+        auto saveFile = GetSavegameFilePath(slotIdx, saveIdx);
 
         // Open savegame buffer file.
-        auto inputFile = std::ifstream(path, std::ios::binary);
+        auto inputFile = std::ifstream(saveFile, std::ios::binary);
         if (!inputFile.is_open())
         {
             Log("Attempted to load missing savegame file for slot " + std::to_string(slotIdx + 1) + ", save " + std::to_string(saveIdx + 1) + ".",
@@ -112,33 +114,35 @@ namespace Silent::Services
         return config.GetWorkFolder() / SAVEGAME_FOLDER_NAME / slotFolderName / saveFilename;
     }
 
-    // TODO: Will probably need a completely different approach when we know how the save system works.
-    void SavegameManager::PopulateSlotSavegameLists()
+    void SavegameManager::PopulateSlotMetadata()
     {
         const auto& config = g_App.GetConfig();
 
-        for (int slotIdx = 0; slotIdx < _slotSavegameLists.size(); slotIdx++)
+        for (int slotIdx = 0; slotIdx < _slotMetadata.size(); slotIdx++)
         {
-            auto paths = std::vector<std::filesystem::path>{};
-            
             auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
-            auto path           = config.GetWorkFolder() / slotFolderName;
-
-            // Collect savegame file paths.
-            for (const auto& entry : std::filesystem::directory_iterator(path))
+            auto slotFolder     = config.GetWorkFolder() / slotFolderName;
+            if (!std::filesystem::exists(slotFolder) || !std::filesystem::is_directory(slotFolder))
+            {
+                continue;
+            }
+            
+            // Collect savegame files.
+            auto saveFiles = std::vector<std::filesystem::path>{};
+            for (const auto& entry : std::filesystem::directory_iterator(slotFolder))
             {
                 if (entry.is_regular_file() && entry.path().extension() == SAVEGAME_FILE_EXT)
                 {
-                    paths.push_back(entry.path());
+                    saveFiles.push_back(entry.path());
                 }
             }
 
-            // Sort savegame file paths numerically.
-            std::sort(paths.begin(), paths.end(), [](const std::filesystem::path& path0, const std::filesystem::path& path1)
+            // Sort savegame files numerically.
+            std::sort(saveFiles.begin(), saveFiles.end(), [](const std::filesystem::path& file0, const std::filesystem::path& file1)
             {
-                auto extractNumber = [](const std::filesystem::path& path)
+                auto extractNumber = [](const std::filesystem::path& file)
                 {
-                    auto filename   = path.stem().string(); // "Save[idx]".
+                    auto filename   = file.stem().string(); // "Save[idx]".
                     auto numericStr = std::string();
                     for (char curChar : filename)
                     {
@@ -151,24 +155,56 @@ namespace Silent::Services
                     return std::stoi(numericStr);
                 };
 
-                return extractNumber(path0) < extractNumber(path1);
+                return extractNumber(file0) < extractNumber(file1);
             });
 
-            // Populate savegame list.
-            auto& saves = _slotSavegameLists[slotIdx];
-            saves.clear();
-            for (const auto& path : paths)
-            {
-                auto inputFile = std::ifstream(path);
-                if (!inputFile.is_open())
-                {
-                    saves.push_back("CORRUPTED SAVE");
-                    continue;
-                }
+            // Clear previous metadata.
+            auto& slotMetadata = _slotMetadata[slotIdx];
+            slotMetadata.clear();
 
-                // TODO: Figure out how description is actually going to be retrieved.
+            // Populate savegame metadata.
+            for (const auto& saveFile : saveFiles)
+            {
+                auto metadata = GetMetadata(saveFile);
+                slotMetadata.push_back(metadata);
             }
         }
+    }
+
+    SavegameMetadata SavegameManager::GetMetadata(const std::filesystem::path& saveFile) const
+    {
+        // Open savegame buffer file.
+        auto inputFile = std::ifstream(saveFile, std::ios::binary);
+        if (!inputFile.is_open())
+        {
+            Log("Attempted to get metadata for missing savegame file `" + saveFile.string() + "'.", LogLevel::Warning, LogMode::Debug);
+            return SavegameMetadata
+            {
+                .SlotIdx        = NO_VALUE,
+                .FileIdx        = NO_VALUE,
+                .DataIdx        = NO_VALUE,
+                .DescriptionIdx = NO_VALUE,
+                .SaveCount      = NO_VALUE,
+                .GameplayTimer  = 0,
+                .IsNextFear     = false,
+                .Flags          = NO_VALUE
+            };
+        }
+
+        // Get file size.
+        inputFile.seekg(0, std::ios::end);
+        auto fileSize = inputFile.tellg();
+        inputFile.seekg(0, std::ios::beg);
+
+        // Read file into buffer object.
+        auto fileBuffer = std::vector<char>(fileSize);
+        inputFile.read(fileBuffer.data(), fileSize);
+        auto* saveBuffer = flatbuffers::GetRoot<Silent::Buffers::Savegame>(fileBuffer.data());
+        
+        // TODO: Read metadata from savegame buffer.
+        auto metadata = SavegameMetadata{};
+
+        return metadata;
     }
 
     std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const Silent::Buffers::Savegame& saveBuffer) const

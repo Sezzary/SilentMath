@@ -15,28 +15,15 @@ namespace Silent::Services
     
     struct SavegameMetadata
     {
-        int    Unk_0;                     // Same behaviour as `field_0` in `s_SaveSlotElementInfo`.
-        uint   GameplayTimer_4;
-        ushort SavegameCount_8;
-        char   MapEventIdx_A;
-        uchar  IsTitleYellowFlag_B_0 : 1;
-        uchar  Add290Hours_B_1       : 2;
-        uchar  HyperBlasterFlags_B_3 : 5;
-    };
+        int  SlotIdx        = 0;
+        int  FileIdx        = 0;
+        int  DataIdx        = 0;
+        int  DescriptionIdx = 0;
+        int  SaveCount      = 0;
+        uint GameplayTimer  = 0;
 
-    struct SavegameEntry
-    {
-        int SlotIdx     = 0;
-        int SavegameIdx = 0;
-
-        short             Field_0;
-        short             SaveCount_2;
-        char              ElementType_4;   /** `e_SlotElementType` */
-        char              Field_5;         // The value changes between 0 when the first save slot is selected and 4 when the second is selected.
-        char              FileIdx_6;
-        char              ElementIdx_7;
-        int               MapEventIdx_8;
-        SavegameMetadata* Metadata_C;
+        bool IsNextFear = false;
+        int  Flags      = 0;
     };
 
     class SavegameManager
@@ -44,8 +31,8 @@ namespace Silent::Services
     private:
         // Fields
 
-        Savegame                                       _savegame            = {};
-        std::array<SavegameEntry, SAVEGAME_SLOT_COUNT> _slotSavegameEntries = {};
+        Savegame                                                       _savegame     = {};
+        std::array<std::vector<SavegameMetadata>, SAVEGAME_SLOT_COUNT> _slotMetadata = {};
 
         std::array<std::vector<std::string>, SAVEGAME_SLOT_COUNT> _slotSavegameLists = {};
 
@@ -68,8 +55,9 @@ namespace Silent::Services
         // Helpers
 
         std::filesystem::path GetSavegameFilePath(int slotIdx, int saveIdx) const;
-        void                  PopulateSlotSavegameLists();
+        void                  PopulateSlotMetadata();
 
+        SavegameMetadata                                GetMetadata(const std::filesystem::path& saveFile) const;
         std::unique_ptr<Savegame>                       FromSavegameBuffer(const Silent::Buffers::Savegame& saveBuffer) const;
         std::unique_ptr<flatbuffers::FlatBufferBuilder> ToSavegameBuffer(const Savegame& save) const;
     };
