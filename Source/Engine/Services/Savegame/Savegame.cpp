@@ -7,7 +7,7 @@
 
 namespace Silent::Services
 {
-    static const char* SAVEGAME_DESC_STRINGS[] =
+    static const char* SAVE_LOCATION_NAMES[] =
     {
         "Anywhere",
         "Cafe",
@@ -36,14 +36,11 @@ namespace Silent::Services
         "Next_fear"
     };
 
-    const std::vector<std::string>& SavegameManager::GetSlotSavegameList(int slotIdx)
+    const std::vector<SavegameMetadata>& SavegameManager::GetSlotMetadata(int slotIdx)
     {
-        if (slotIdx > _slotSavegameLists.size())
-        {
-            throw std::invalid_argument("Attempted to get savegame list for invalid slot.");
-        }
+        Assert(slotIdx < _slotMetadata.size(), "Attempted to get metadata for invalid save slot.");
 
-        return _slotSavegameLists[slotIdx];
+        return _slotMetadata[slotIdx];
     }
 
     void SavegameManager::Initialize()
@@ -51,9 +48,12 @@ namespace Silent::Services
         PopulateSlotMetadata();
     }
 
-    void SavegameManager::Save(int slotIdx, int saveIdx)
+    void SavegameManager::Save(int slotIdx, int fileIdx, int saveIdx)
     {
-        Log("Saving game to slot " + std::to_string(slotIdx + 1) + ", savegame " + std::to_string(saveIdx + 1) + ".", LogLevel::Info);
+        Log("Saving game to slot " + std::to_string(slotIdx + 1) +
+            ", file " + std::to_string(fileIdx + 1) +
+            ", savegame " + std::to_string(saveIdx + 1) + ".",
+            LogLevel::Info);
 
         // Create savegame buffer.
         auto saveBuffer = ToSavegameBuffer(_savegame);
@@ -61,7 +61,7 @@ namespace Silent::Services
         // TODO: Fill metadata.
 
         // Ensure directory exists.
-        auto saveFile = GetSavegameFilePath(slotIdx, saveIdx);
+        auto saveFile = GetSavegamePath(slotIdx, fileIdx, saveIdx);
         std::filesystem::create_directories(saveFile.parent_path());
 
         // Write savegame buffer.
@@ -73,15 +73,17 @@ namespace Silent::Services
         }
     }
 
-    void SavegameManager::Load(int slotIdx, int saveIdx)
+    void SavegameManager::Load(int slotIdx, int fileIdx, int saveIdx)
     {
-        auto saveFile = GetSavegameFilePath(slotIdx, saveIdx);
+        auto saveFile = GetSavegamePath(slotIdx, fileIdx, saveIdx);
 
         // Open savegame buffer file.
         auto inputFile = std::ifstream(saveFile, std::ios::binary);
         if (!inputFile.is_open())
         {
-            Log("Attempted to load missing savegame file for slot " + std::to_string(slotIdx + 1) + ", save " + std::to_string(saveIdx + 1) + ".",
+            Log("Attempted to load missing savegame for slot " + std::to_string(slotIdx + 1) +
+                ", file " + std::to_string(fileIdx + 1) +
+                ", savegame " + std::to_string(saveIdx + 1) + ".",
                 LogLevel::Warning, LogMode::Debug);
             return;
         }
@@ -100,18 +102,16 @@ namespace Silent::Services
         _savegame = std::move(*FromSavegameBuffer(*saveBuffer));
     }
 
-    std::filesystem::path SavegameManager::GetSavegameFilePath(int slotIdx, int saveIdx) const
+    std::filesystem::path SavegameManager::GetSavegamePath(int slotIdx, int fileIdx, int saveIdx) const
     {
-        if (slotIdx >= _slotSavegameLists.size())
-        {
-            throw std::invalid_argument("Attempted to get savegame file path for invalid slot.");
-        }
+        Assert(slotIdx < _slotMetadata.size(), "Attempted to get savegame path for invalid slot.");
 
         const auto& config = g_App.GetConfig();
 
         auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
+        auto fileFolderName = SAVEGAME_SLOT_FILE_FOLDER_NAME_BASE + std::to_string(fileIdx + 1);
         auto saveFilename   = std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT;
-        return config.GetWorkFolder() / SAVEGAME_FOLDER_NAME / slotFolderName / saveFilename;
+        return config.GetWorkFolder() / SAVEGAME_FOLDER_NAME / slotFolderName / fileFolderName / saveFilename;
     }
 
     void SavegameManager::PopulateSlotMetadata()
@@ -126,23 +126,53 @@ namespace Silent::Services
             {
                 continue;
             }
-            
-            // Collect savegame files.
-            auto saveFiles = std::vector<std::filesystem::path>{};
-            for (const auto& entry : std::filesystem::directory_iterator(slotFolder))
+
+            // Collect file folders.
+            auto fileFolders = std::vector<std::filesystem::path>{};
+            for (const auto& fileFolder : std::filesystem::directory_iterator(slotFolder))
             {
-                if (entry.is_regular_file() && entry.path().extension() == SAVEGAME_FILE_EXT)
+                if (fileFolder.is_directory())
                 {
-                    saveFiles.push_back(entry.path());
+                    fileFolders.push_back(fileFolder.path());
                 }
             }
+            std::sort(fileFolders.begin(), fileFolders.end(), [](const std::filesystem::path& file0, const std::filesystem::path& file1)
+            {
+                auto extractNumber = [](const std::filesystem::path& file)
+                {
+                    auto filename   = file.string(); // "File [ID]".
+                    auto numericStr = std::string();
+                    for (char curChar : filename)
+                    {
+                        if (std::isdigit(curChar))
+                        {
+                            numericStr += curChar;
+                        }
+                    }
 
-            // Sort savegame files numerically.
+                    return std::stoi(numericStr);
+                };
+
+                return extractNumber(file0) < extractNumber(file1);
+            });
+
+            // Collect savegame files.
+            auto saveFiles = std::vector<std::filesystem::path>{};
+            for (const auto& fileFolder : fileFolders)
+            {
+                for (const auto& saveFile : std::filesystem::directory_iterator(fileFolder))
+                {
+                    if (saveFile.is_regular_file() && saveFile.path().extension() == SAVEGAME_FILE_EXT)
+                    {
+                        saveFiles.push_back(saveFile.path());
+                    }
+                }
+            }
             std::sort(saveFiles.begin(), saveFiles.end(), [](const std::filesystem::path& file0, const std::filesystem::path& file1)
             {
                 auto extractNumber = [](const std::filesystem::path& file)
                 {
-                    auto filename   = file.stem().string(); // "Save[idx]".
+                    auto filename   = file.stem().string(); // "[idx]".
                     auto numericStr = std::string();
                     for (char curChar : filename)
                     {
@@ -183,10 +213,10 @@ namespace Silent::Services
                 .SlotIdx        = NO_VALUE,
                 .FileIdx        = NO_VALUE,
                 .DataIdx        = NO_VALUE,
-                .DescriptionIdx = NO_VALUE,
+                .LocationId     = NO_VALUE,
                 .SaveCount      = NO_VALUE,
                 .GameplayTimer  = 0,
-                .IsNextFear     = false,
+                .IsNextFearMode = false,
                 .Flags          = NO_VALUE
             };
         }

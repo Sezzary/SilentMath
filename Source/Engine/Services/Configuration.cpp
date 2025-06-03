@@ -257,13 +257,8 @@ namespace Silent::Services
         }
         std::filesystem::create_directories(_workFolder);
 
-        // Create savegame folders.
-        for (int i = 0; i < SAVEGAME_SLOT_COUNT; i++)
-        {
-            auto saveFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(i + 1);
-            auto slotPath       = _workFolder / SAVEGAME_FOLDER_NAME / saveFolderName;
-            std::filesystem::create_directories(slotPath);
-        }
+        // Create savegame folder.
+        std::filesystem::create_directories(_workFolder / SAVEGAME_FOLDER_NAME);
 
         // Set debug options.
         _options.EnableDebugMode = IS_DEBUG_BUILD;

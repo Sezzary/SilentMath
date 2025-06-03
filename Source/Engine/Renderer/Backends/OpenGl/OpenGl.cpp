@@ -215,10 +215,31 @@ namespace Silent::Renderer
          -2,   -88,  -2, 42 ,
          -146, 42 , -2, 42 */
 
-        -139, -81,
+         // SLot box
+        /*-139, -81,
         -139,  37,
         -9,   -81,
-        -9,    37
+        -9,    37*/
+        
+         // SAvegame entry border
+        /*-131, -62, -11, -62 ,
+        -131, -43, -11, -43 ,
+        -131, -62, -131, -44,
+        -11,  -62, -11, -44 ,*/
+
+        // Now checking MEMORY CARD border
+        /*-144, -36,  -4, -36,
+        -144, 2,  -4, 2,
+        -144, -36, -144, 2,
+        -4, -36,  -4, 2,*/
+        // glow frame quads
+        /*-144, -36 , -148, -40 ,-4, -36 , 0, -40,
+        -144, 2 ,  -148, 6 , -4, 2 , 0, 6 ,
+        -144, -36 ,  -148, -40 , -144, 2 , -148, 6 ,
+        -4, -36 ,  0, -40 ,  -4, 2 ,  0, 6 */
+        // some coloured line
+        -142, -33 , 136, 33,
+        -142, -33 , 136, 33,
         
 
          //-144, -36 ,  -148, -40 ,  -4, -36 ,  0, -40 
@@ -257,10 +278,10 @@ namespace Silent::Renderer
         int trackOffsetX = 150 - 159;
 
         glBindVertexArray(vao);
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 2; i++)
         {
-            //glDrawArrays(GL_LINES, i * 2, 2);
-            glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4); // Draw each quad (4 vertices at a time)
+            glDrawArrays(GL_LINES, i * 2, 2);
+            //glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4); // Draw each quad (4 vertices at a time)
         }
         //glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 

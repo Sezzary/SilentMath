@@ -15,15 +15,15 @@ namespace Silent::Services
     
     struct SavegameMetadata
     {
-        int  SlotIdx        = 0;
-        int  FileIdx        = 0;
-        int  DataIdx        = 0;
-        int  DescriptionIdx = 0;
-        int  SaveCount      = 0;
-        uint GameplayTimer  = 0;
+        int  SlotIdx       = 0;
+        int  FileIdx       = 0;
+        int  DataIdx       = 0;
+        int  LocationId    = 0;
+        int  SaveCount     = 0;
+        uint GameplayTimer = 0;
 
-        bool IsNextFear = false;
-        int  Flags      = 0;
+        bool IsNextFearMode = false;
+        int  Flags          = 0;
     };
 
     class SavegameManager
@@ -34,8 +34,6 @@ namespace Silent::Services
         Savegame                                                       _savegame     = {};
         std::array<std::vector<SavegameMetadata>, SAVEGAME_SLOT_COUNT> _slotMetadata = {};
 
-        std::array<std::vector<std::string>, SAVEGAME_SLOT_COUNT> _slotSavegameLists = {};
-
     public:
         // Constructors
 
@@ -43,18 +41,18 @@ namespace Silent::Services
 
         // Getters
 
-        const std::vector<std::string>& GetSlotSavegameList(int slotIdx);
+        const std::vector<SavegameMetadata>& GetSlotMetadata(int slotIdx);
 
         // Utilities
 
         void Initialize();
-        void Save(int slotIdx, int saveIdx);
-        void Load(int slotIdx, int saveIdx);
+        void Save(int slotIdx, int fileIdx, int saveIdx);
+        void Load(int slotIdx, int fileIdx, int saveIdx);
 
     private:
         // Helpers
 
-        std::filesystem::path GetSavegameFilePath(int slotIdx, int saveIdx) const;
+        std::filesystem::path GetSavegamePath(int slotIdx, int fileIdx, int saveIdx) const;
         void                  PopulateSlotMetadata();
 
         SavegameMetadata                                GetMetadata(const std::filesystem::path& saveFile) const;

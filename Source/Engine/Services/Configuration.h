@@ -24,18 +24,19 @@ namespace Silent::Services
     constexpr auto OS_TYPE = OsType::Linux;
 #endif
 
-    constexpr char ASSETS_FOLDER_NAME[]             = "Assets";
-    constexpr char SAVEGAME_FOLDER_NAME[]           = "Savegame";
-    constexpr char SCREENSHOTS_FOLDER_NAME[]        = "Screenshots";
-    constexpr char SHADERS_FOLDER_NAME[]            = "Shaders";
-    constexpr char SAVEGAME_SLOT_FOLDER_NAME_BASE[] = "Slot ";
+    constexpr char ASSETS_FOLDER_NAME[]                  = "Assets";
+    constexpr char SAVEGAME_SLOT_FILE_FOLDER_NAME_BASE[] = "File ";
+    constexpr char SAVEGAME_FOLDER_NAME[]                = "Savegame";
+    constexpr char SCREENSHOTS_FOLDER_NAME[]             = "Screenshots";
+    constexpr char SHADERS_FOLDER_NAME[]                 = "Shaders";
+    constexpr char SAVEGAME_SLOT_FOLDER_NAME_BASE[]      = "Slot ";
 
     constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
     constexpr char OPTIONS_FILENAME[]         = "Options";
     
     constexpr char JSON_FILE_EXT[]     = ".json";
     constexpr char PNG_FILE_EXT[]      = ".png";
-    constexpr char SAVEGAME_FILE_EXT[] = ".save";
+    constexpr char SAVEGAME_FILE_EXT[] = ".savegame";
     
     constexpr uint JSON_INDENT_SIZE = 4;
 
