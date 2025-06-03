@@ -52,6 +52,7 @@ target_include_directories(Math PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/..)
 
 # Add library directories.
+add_subdirectory(Libraries/assimp)
 add_subdirectory(Libraries/flatbuffers)
 add_subdirectory(Libraries/glad/cmake)
 add_subdirectory(Libraries/glm)
@@ -61,6 +62,7 @@ add_subdirectory(Libraries/spdlog)
 
 # Add library header paths.
 target_include_directories(Math SYSTEM PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/flatbuffers/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
@@ -78,6 +80,7 @@ find_package(Vulkan REQUIRED)
 
 # Add libraries.
 target_link_libraries(Math PRIVATE
+    assimp
     flatbuffers
     glm
     SDL3-static

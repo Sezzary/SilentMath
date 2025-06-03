@@ -1,3 +1,6 @@
+[submodule "Libraries/assimp"]
+    path = Libraries/assimp
+    url = https://github.com/assimp/assimp.git
 [submodule "Libraries/glad"]
     path = Libraries/glad
     url = https://github.com/Dav1dde/glad.git
