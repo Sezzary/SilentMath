@@ -3,25 +3,25 @@
 
 namespace Silent::Renderer
 {
-    void ElementArrayBufferManager::Initialize(const std::span<uint>& idxs)
+    void ElementArrayBufferObject::Initialize(const std::span<uint>& idxs)
     {
-        glGenBuffers(1, &Id);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Id);
+        glGenBuffers(1, &_id);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _id);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, idxs.size(), idxs.data(), GL_STATIC_DRAW);
     }
 
-    void ElementArrayBufferManager::Bind()
+    void ElementArrayBufferObject::Bind()
     {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Id);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _id);
     }
 
-    void ElementArrayBufferManager::Unbind()
+    void ElementArrayBufferObject::Unbind()
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void ElementArrayBufferManager::Delete()
+    void ElementArrayBufferObject::Delete()
     {
-        glDeleteBuffers(1, &Id);
+        glDeleteBuffers(1, &_id);
     }
 }

@@ -2,14 +2,17 @@
 
 namespace Silent::Renderer
 {
-    class ElementArrayBufferManager
+    class ElementArrayBufferObject
     {
-    public:
-        uint Id = 0;
+    private:
+        // Fields
 
+        uint _id = 0;
+
+    public:
         // Constructors
 
-        ElementArrayBufferManager() = default;
+        ElementArrayBufferObject() = default;
 
         // Utilities
 

@@ -44,7 +44,7 @@ def generate_savegame_headers():
         # Process schemas.
         schemas = ["savegame.fbs"]
         for schema in schemas:
-            print(f"Processing {schema}")
+            print(f"Processing `{schema}`...")
             os.makedirs(OUTPUT_PATH, exist_ok=True)
 
             # TODO: Setting output path doesn't work. For now, headers generate in project root and must be moved manually.

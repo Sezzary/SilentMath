@@ -7,7 +7,7 @@ namespace Silent::Renderer
     public:
         // Fields
 
-        std::unordered_map<std::string, uint> _shaderIds = {};
+        std::unordered_map<std::string, uint> _programIds = {}; // Key = program name, value = program ID.
 
         // Constructors
 
@@ -15,14 +15,15 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(const std::string& shaderName);
-        void Activate();
+        void Initialize(const std::string& programName);
+        void Activate(const std::string& programName);
         void Delete();
 
     private:
         // Helpers
 
         std::string GetFileContents(const std::string& filename);
-        void        LogError(uint shaderId, const std::string& type);
+        void        LogShaderError(uint shaderId, const std::string& type);
+        void        LogProgramError(uint programId);
     };
 }

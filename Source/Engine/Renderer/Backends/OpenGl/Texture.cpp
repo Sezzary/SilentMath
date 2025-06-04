@@ -8,23 +8,23 @@ namespace Silent::Renderer
     Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
     {
         // Assign type.
-        Type = texType;
+        _type = texType;
 
         auto res               = Vector2i::Zero;
         int  colorChannelCount = 0;
         
-        // Reads image from file.
+        // Read image from file.
         stbi_set_flip_vertically_on_load(true);
         uchar* bytes = stbi_load(image, &res.x, &res.y, &colorChannelCount, 0);
 
-        // Generates OpenGL texture object.
-        glGenTextures(1, &Id);
+        // Generate OpenGL texture object.
+        glGenTextures(1, &_id);
 
-        // Assigns texture to texture unit.
+        // Assign texture to texture unit.
         glActiveTexture(slot);
-        glBindTexture(texType, Id);
+        glBindTexture(texType, _id);
 
-        // Configure type of algorithm used to make image smaller or bigger.
+        // Configure algorithm type used to make image smaller or bigger.
         glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
         glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -44,28 +44,29 @@ namespace Silent::Renderer
         stbi_image_free(bytes);
         glBindTexture(texType, 0);
     }
+
     void Texture::Bind()
     {
-        glBindTexture(Type, Id);
+        glBindTexture(_type, _id);
     }
 
     void Texture::Unbind()
     {
-        glBindTexture(Type, 0);
+        glBindTexture(_type, 0);
     }
 
     void Texture::Delete()
     {
-        glDeleteTextures(1, &Id);
+        glDeleteTextures(1, &_id);
     }
 
-    void Texture::TextureUnit(ShaderManager& shader, const char* uniform, uint unit)
+    void Texture::TextureUnit(ShaderManager& shader, const std::string& uniform, uint unit)
     {
         // Get uniform location.
-        uint texUni = glGetUniformLocation(shader._shaderIds.at("Default"), uniform);
+        uint texUni = glGetUniformLocation(shader._programIds.at("Default"), uniform.c_str());
 
         // Set uniform value.
-        shader.Activate();
+        shader.Activate("Default");
         glUniform1i(texUni, unit);
     }
 }

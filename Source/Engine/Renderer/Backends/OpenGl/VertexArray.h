@@ -4,16 +4,17 @@
 
 namespace Silent::Renderer
 {
-    class VertexArrayManager
+    class VertexArrayObject
     {
-    public:
+    private:
         // Fields
 
-        uint Id = 0;
+        uint _id = 0;
 
+    public:
         // Constructors
 
-        VertexArrayManager() = default;
+        VertexArrayObject() = default;
 
         // Utilities
 
@@ -22,6 +23,6 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void LinkAttrib(VertexBufferManager& vertBuffer, uint layout, uint componentCount, GLenum type, GLsizeiptr stride, void* offset);
+        void LinkAttrib(VertexBufferObject& vertBuffer, uint layoutId, uint componentCount, GLenum type, GLsizeiptr stride, void* offset);
     };
 }

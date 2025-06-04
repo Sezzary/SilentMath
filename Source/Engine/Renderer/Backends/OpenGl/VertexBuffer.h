@@ -2,16 +2,17 @@
 
 namespace Silent::Renderer
 {
-    class VertexBufferManager
+    class VertexBufferObject
     {
-    public:
+    private:
         // Fields
 
-        uint Id = 0;
+        uint _id = 0;
 
+    public:
         // Constructors
 
-        VertexBufferManager() = default;
+        VertexBufferObject() = default;
 
         // Utilities
 

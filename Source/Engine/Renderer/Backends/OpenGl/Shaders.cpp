@@ -23,38 +23,45 @@ namespace Silent::Renderer
         uint vertShaderId = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertShaderId, 1, &vertSrc, nullptr);
         glCompileShader(vertShaderId);
-        LogError(vertShaderId, "VERTEX");
+        LogShaderError(vertShaderId, "VERTEX");
 
         // Compile fragment shader.
         uint fragShaderId = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragShaderId, 1, &fragSrc, nullptr);
         glCompileShader(fragShaderId);
-        LogError(vertShaderId, "FRAGMENT");
+        LogShaderError(vertShaderId, "FRAGMENT");
 
-        // Register shader.
-        _shaderIds[shaderName] = glCreateProgram();
-        uint shaderId = _shaderIds.at(shaderName);
+        // Register shader program.
+        _programIds[shaderName] = glCreateProgram();
+        uint programId = _programIds.at(shaderName);
 
-        glAttachShader(shaderId, vertShaderId);
-        glAttachShader(shaderId, fragShaderId);
-        glLinkProgram(shaderId);
-        //LogError(id, "PROGRAM"); // TODO: Program error logging.
+        // Create shader program.
+        glAttachShader(programId, vertShaderId);
+        glAttachShader(programId, fragShaderId);
+        glLinkProgram(programId);
+        LogProgramError(programId);
 
+        // Cleanup.
         glDeleteShader(vertShaderId);
         glDeleteShader(fragShaderId);
     }
 
-    void ShaderManager::Activate()
+    void ShaderManager::Activate(const std::string& programName)
     {
-        for (auto [keyName, id] : _shaderIds)
+        auto it = _programIds.find(programName);
+        if (it == _programIds.end())
         {
-            glUseProgram(id);
+            Log("Attempted to activate missing shader program '" + programName + "'.", LogLevel::Warning);
+            return;
         }
+
+        auto [keyName, id] = *it;
+        glUseProgram(id);
     }
 
     void ShaderManager::Delete()
     {
-        for (auto [keyName, id] : _shaderIds)
+        for (auto [keyName, id] : _programIds)
         {
             glDeleteProgram(id);
         }
@@ -77,18 +84,33 @@ namespace Silent::Renderer
         return contents;
     }
 
-    void ShaderManager::LogError(uint shader, const std::string& type)
+    void ShaderManager::LogShaderError(uint shaderId, const std::string& type)
     {
         constexpr uint MSG_BUFFER_SIZE = 512;
 
         int  success = 0;
         char msgBuffer[MSG_BUFFER_SIZE];
 
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
         if (!success)
         {
-            glGetShaderInfoLog(shader, MSG_BUFFER_SIZE, nullptr, msgBuffer);
+            glGetShaderInfoLog(shaderId, MSG_BUFFER_SIZE, nullptr, msgBuffer);
             Log("Failed to compile `" + type + "` shader: " + msgBuffer, LogLevel::Error);
+        }
+    }
+
+    void ShaderManager::LogProgramError(uint programId)
+    {
+        constexpr uint MSG_BUFFER_SIZE = 512;
+
+        int  success = 0;
+        char msgBuffer[MSG_BUFFER_SIZE];
+
+        glGetProgramiv(programId, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            glGetProgramInfoLog(programId, MSG_BUFFER_SIZE, nullptr, msgBuffer);
+            Log("Failed to create '" + std::to_string(programId) + "' shader program:" + msgBuffer, LogLevel::Error);
         }
     }
 }

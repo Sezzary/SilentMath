@@ -71,7 +71,7 @@ namespace Silent::Renderer
 
         // Texture setup.
         _popCat = Texture("Assets/pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-        _popCat.TextureUnit(_shader, "tex0", 0);
+        _popCat.TextureUnit(_shaders, "tex0", 0);
 
         // View setup.
         _view = View(Vector3(0.0f, 0.0f, 2.0f), res);
@@ -83,7 +83,7 @@ namespace Silent::Renderer
         _vertexArray.Delete();
         _vertexBuffer.Delete();
         _elementArray.Delete();
-        _shader.Delete();
+        _shaders.Delete();
 
         _popCat.Delete();
     }
@@ -162,10 +162,10 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawFrame()
     {
-        _shader.Activate();
+        _shaders.Activate("Default");
 
         _view.Move();
-        _view.ExportMatrix(glm::radians(45.0f), 0.1f, 100.0f, _shader, "camMat");
+        _view.ExportMatrix(glm::radians(45.0f), 0.1f, 100.0f, _shaders, "camMat");
 
         _popCat.Bind();
 
@@ -254,7 +254,7 @@ namespace Silent::Renderer
         static bool isFirstTime = true;
         if (isFirstTime)
         {
-            _shader.Initialize("Quad");
+            _shaders.Initialize("Quad");
 
             glGenVertexArrays(1, &vao);
             glGenBuffers(1, &vbo);
@@ -269,8 +269,8 @@ namespace Silent::Renderer
             isFirstTime = false;
         }
 
-        glUseProgram(_shader._shaderIds.at("Quad"));
-        glUniform3f(glGetUniformLocation(_shader._shaderIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
+        glUseProgram(_shaders._programIds.at("Quad"));
+        glUniform3f(glGetUniformLocation(_shaders._programIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
 
         // Set line width to match PSX resolution.
         auto ratio = GetScreenResolution().ToVector2() / Vector2(320.0f, 240.0f);
@@ -320,8 +320,8 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::CreateShaderProgram()
     {
-        // Generate shader object.
-        _shader.Initialize("Default");
+        // Generate shader program.
+        _shaders.Initialize("Default");
 
         // Generate and bind vertex array object.
         _vertexArray.Initialize();

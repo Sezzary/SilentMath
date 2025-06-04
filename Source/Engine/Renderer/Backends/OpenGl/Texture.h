@@ -6,12 +6,13 @@ namespace Silent::Renderer
 
     class Texture
     {
-    public:
+    private:
         // Fields
 
-        GLuint Id   = 0;
-        GLenum Type = 0;
+        uint   _id   = 0;
+        GLenum _type = 0;
 
+    public:
         // Constructors
 
         Texture() = default;
@@ -23,6 +24,6 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void TextureUnit(ShaderManager& shader, const char* uniform, uint unitId);
+        void TextureUnit(ShaderManager& shader, const std::string& uniform, uint unitId);
     };
 }

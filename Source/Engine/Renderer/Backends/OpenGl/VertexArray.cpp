@@ -5,31 +5,31 @@
 
 namespace Silent::Renderer
 {
-    void VertexArrayManager::Initialize()
+    void VertexArrayObject::Initialize()
     {
-        glGenVertexArrays(1, &Id);
+        glGenVertexArrays(1, &_id);
     }
 
-    void VertexArrayManager::Bind()
+    void VertexArrayObject::Bind()
     {
-        glBindVertexArray(Id);
+        glBindVertexArray(_id);
     }
 
-    void VertexArrayManager::Unbind()
+    void VertexArrayObject::Unbind()
     {
         glBindVertexArray(0);
     }
 
-    void VertexArrayManager::Delete()
+    void VertexArrayObject::Delete()
     {
-        glDeleteVertexArrays(1, &Id);
+        glDeleteVertexArrays(1, &_id);
     }
     
-    void VertexArrayManager::LinkAttrib(VertexBufferManager& vertBuffer, uint layout, uint componentCount, GLenum type, GLsizeiptr stride, void* offset)
+    void VertexArrayObject::LinkAttrib(VertexBufferObject& vertBuffer, uint layoutId, uint componentCount, GLenum type, GLsizeiptr stride, void* offset)
     {
         vertBuffer.Bind();
-        glVertexAttribPointer(layout, componentCount, type, GL_FALSE, stride, offset);
-        glEnableVertexAttribArray(layout);
+        glVertexAttribPointer(layoutId, componentCount, type, GL_FALSE, stride, offset);
+        glEnableVertexAttribArray(layoutId);
         vertBuffer.Unbind();
     }
 }

@@ -21,12 +21,12 @@ namespace Silent::Renderer
 
         // Fields
 
-        SDL_GLContext             _context      = nullptr;
-        ShaderManager             _shader       = ShaderManager();
-        VertexArrayManager        _vertexArray  = VertexArrayManager();
-        VertexBufferManager       _vertexBuffer = VertexBufferManager();
-        ElementArrayBufferManager _elementArray = ElementArrayBufferManager();
-        View                      _view         = View();
+        SDL_GLContext            _context      = nullptr;
+        ShaderManager            _shaders      = ShaderManager();
+        VertexArrayObject        _vertexArray  = VertexArrayObject();
+        VertexBufferObject       _vertexBuffer = VertexBufferObject();
+        ElementArrayBufferObject _elementArray = ElementArrayBufferObject();
+        View                     _view         = View();
 
         Texture _popCat;
 

@@ -21,7 +21,7 @@ namespace Silent::Renderer
         auto viewMat = glm::lookAt(Position, Position + Direction, Up);
         auto projMat = glm::perspective(fov, (float)Size.x / (float)Size.y, nearPlane, farPlane);
 
-        glUniformMatrix4fv(glGetUniformLocation(shader._shaderIds.at("Default"), uni.c_str()), 1, GL_FALSE, glm::value_ptr(projMat * viewMat));
+        glUniformMatrix4fv(glGetUniformLocation(shader._programIds.at("Default"), uni.c_str()), 1, GL_FALSE, glm::value_ptr(projMat * viewMat));
     }
 
     void View::Move()

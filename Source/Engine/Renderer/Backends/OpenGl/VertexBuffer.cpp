@@ -3,25 +3,26 @@
 
 namespace Silent::Renderer
 {
-    void VertexBufferManager::Initialize(const std::span<float>& verts)
+    void VertexBufferObject::Initialize(const std::span<float>& verts)
     {
-        glGenBuffers(1, &Id);
-        glBindBuffer(GL_ARRAY_BUFFER, Id);
+        glGenBuffers(1, &_id);
+        glBindBuffer(GL_ARRAY_BUFFER, _id);
         glBufferData(GL_ARRAY_BUFFER, verts.size(), verts.data(), GL_STATIC_DRAW);
+        //glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void VertexBufferManager::Bind()
+    void VertexBufferObject::Bind()
     {
-        glBindBuffer(GL_ARRAY_BUFFER, Id);
+        glBindBuffer(GL_ARRAY_BUFFER, _id);
     }
 
-    void VertexBufferManager::Unbind()
+    void VertexBufferObject::Unbind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void VertexBufferManager::Delete()
+    void VertexBufferObject::Delete()
     {
-        glDeleteBuffers(1, &Id);
+        glDeleteBuffers(1, &_id);
     }
 }
