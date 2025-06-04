@@ -115,7 +115,7 @@ namespace Silent::Renderer
 
         // Get window size.
         auto res = GetScreenResolution();
-        
+
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
         auto filename  = (SCREENSHOT_FILENAME_BASE + timestamp) + PNG_FILE_EXT;

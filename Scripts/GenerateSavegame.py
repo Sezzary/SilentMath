@@ -6,7 +6,7 @@ from pathlib import Path
 
 FLATC_NAME   = "flatc"
 BASE_PATH    = Path(__file__).resolve().parent
-FLATC_PATH   = BASE_PATH / FLATC_NAME
+FLATC_PATH   = BASE_PATH / "Tools" / FLATC_NAME
 SCHEMAS_PATH = BASE_PATH / "../Source/Engine/Services/Savegame/Schemas"
 OUTPUT_PATH  = BASE_PATH / "../Source/Engine/Services/Savegame/Generated"
 
@@ -16,21 +16,21 @@ Get the path to the appropriate `flatc` executable based on the system OS.
 def get_flatc_executable():
     system_os = platform.system()
 
-    # Define OS-specific path.
-    flatc_path = Path()
+    # Define OS-specific executable path.
+    flatc_exe = Path()
     if system_os == "Windows":
-        flatc_path = os.path.join(FLATC_PATH, "Windows", FLATC_NAME + ".exe")
+        flatc_exe = os.path.join(FLATC_PATH, "Windows", FLATC_NAME + ".exe")
     elif system_os == "Linux":
-        flatc_path = os.path.join(FLATC_PATH, "Linux", FLATC_NAME)
+        flatc_exe = os.path.join(FLATC_PATH, "Linux", FLATC_NAME)
     elif system_os == "Darwin": # MacOS.
-        flatc_path = os.path.join(FLATC_PATH, "MacOs", FLATC_NAME)
+        flatc_exe = os.path.join(FLATC_PATH, "MacOs", FLATC_NAME)
     else:
-        raise Exception(f"Unsupported OS: {system_os}")
+        raise Exception(f"Unsupported OS '{system_os}'.")
 
-    if not os.path.isfile(flatc_path):
-        raise Exception(f"flatc executable not found at {flatc_path}")
+    if not os.path.isfile(flatc_exe):
+        raise Exception(f"`flatc` executable not found at '{flatc_exe}'.")
 
-    return flatc_path
+    return flatc_exe
 
 """
 Run `flatc` to generate FlatBuffers headers.
@@ -47,7 +47,7 @@ def generate_savegame_headers():
             print(f"Processing {schema}")
             os.makedirs(OUTPUT_PATH, exist_ok=True)
 
-            # TODO: Setting output path doesn't work. For now, headers generate in project root and must be manually moved.
+            # TODO: Setting output path doesn't work. For now, headers generate in project root and must be moved manually.
             # Build command.
             schema_path = os.path.join(SCHEMAS_PATH, schema)
             command     = [ flatc_exe, "--cpp", schema_path ]#, "--output", str(OUTPUT_PATH) ]
