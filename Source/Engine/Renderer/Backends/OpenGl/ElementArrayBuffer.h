@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    class ElementArrayBufferObject
+    class ElementBufferObject
     {
     private:
         // Fields
@@ -12,7 +12,7 @@ namespace Silent::Renderer
     public:
         // Constructors
 
-        ElementArrayBufferObject() = default;
+        ElementBufferObject() = default;
 
         // Utilities
 

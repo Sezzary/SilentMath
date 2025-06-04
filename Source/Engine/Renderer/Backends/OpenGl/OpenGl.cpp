@@ -269,8 +269,8 @@ namespace Silent::Renderer
             isFirstTime = false;
         }
 
-        glUseProgram(_shaders._programIds.at("Quad"));
-        glUniform3f(glGetUniformLocation(_shaders._programIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
+        _shaders.Activate("Quad");
+        glUniform3f(glGetUniformLocation(_shaders.GetProgramId("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
 
         // Set line width to match PSX resolution.
         auto ratio = GetScreenResolution().ToVector2() / Vector2(320.0f, 240.0f);

@@ -2,16 +2,21 @@
 
 namespace Silent::Renderer
 {
-    class ShaderManager
+    class ShaderProgramManager
     {
-    public:
+    private:
         // Fields
 
         std::unordered_map<std::string, uint> _programIds = {}; // Key = program name, value = program ID.
 
+    public:
         // Constructors
 
-        ShaderManager() = default;
+        ShaderProgramManager() = default;
+
+        // Getters
+
+        uint GetProgramId(const std::string& programName) const;
 
         // Utilities
 

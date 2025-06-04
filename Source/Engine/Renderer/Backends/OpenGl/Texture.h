@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    class ShaderManager;
+    class ShaderProgramManager;
 
     class Texture
     {
@@ -24,6 +24,6 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void TextureUnit(ShaderManager& shader, const std::string& uniform, uint unitId);
+        void TextureUnit(ShaderProgramManager& shaders, const std::string& uniform, uint unitId);
     };
 }

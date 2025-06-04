@@ -60,13 +60,13 @@ namespace Silent::Renderer
         glDeleteTextures(1, &_id);
     }
 
-    void Texture::TextureUnit(ShaderManager& shader, const std::string& uniform, uint unit)
+    void Texture::TextureUnit(ShaderProgramManager& shaders, const std::string& uniform, uint unit)
     {
         // Get uniform location.
-        uint texUni = glGetUniformLocation(shader._programIds.at("Default"), uniform.c_str());
+        uint texUniLoc = glGetUniformLocation(shaders.GetProgramId("Default"), uniform.c_str());
 
         // Set uniform value.
-        shader.Activate("Default");
-        glUniform1i(texUni, unit);
+        shaders.Activate("Default");
+        glUniform1i(texUniLoc, unit);
     }
 }

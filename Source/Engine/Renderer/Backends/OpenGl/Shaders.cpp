@@ -7,7 +7,20 @@
 
 namespace Silent::Renderer
 {
-    void ShaderManager::Initialize(const std::string& shaderName)
+    uint ShaderProgramManager::GetProgramId(const std::string& programName) const
+    {
+        auto it = _programIds.find(programName);
+        if (it == _programIds.end())
+        {
+            Log("Attempted to get ID for missing shader program '" + programName + "'.", LogLevel::Warning);
+            return 0;
+        }
+
+        auto [keyName, id] = *it;
+        return id;
+    }
+
+    void ShaderProgramManager::Initialize(const std::string& shaderName)
     {
         constexpr char VERT_FILE_EXT[] = ".vert";
         constexpr char FRAG_FILE_EXT[] = ".frag";
@@ -46,7 +59,7 @@ namespace Silent::Renderer
         glDeleteShader(fragShaderId);
     }
 
-    void ShaderManager::Activate(const std::string& programName)
+    void ShaderProgramManager::Activate(const std::string& programName)
     {
         auto it = _programIds.find(programName);
         if (it == _programIds.end())
@@ -59,7 +72,7 @@ namespace Silent::Renderer
         glUseProgram(id);
     }
 
-    void ShaderManager::Delete()
+    void ShaderProgramManager::Delete()
     {
         for (auto [keyName, id] : _programIds)
         {
@@ -67,7 +80,7 @@ namespace Silent::Renderer
         }
     }
 
-    std::string ShaderManager::GetFileContents(const std::string& filename)
+    std::string ShaderProgramManager::GetFileContents(const std::string& filename)
     {
         auto input = std::ifstream(filename, std::ios::binary);
         if (!input)
@@ -84,7 +97,7 @@ namespace Silent::Renderer
         return contents;
     }
 
-    void ShaderManager::LogShaderError(uint shaderId, const std::string& type)
+    void ShaderProgramManager::LogShaderError(uint shaderId, const std::string& type)
     {
         constexpr uint MSG_BUFFER_SIZE = 512;
 
@@ -99,7 +112,7 @@ namespace Silent::Renderer
         }
     }
 
-    void ShaderManager::LogProgramError(uint programId)
+    void ShaderProgramManager::LogProgramError(uint programId)
     {
         constexpr uint MSG_BUFFER_SIZE = 512;
 
