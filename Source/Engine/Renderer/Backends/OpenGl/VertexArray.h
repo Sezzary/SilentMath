@@ -9,7 +9,7 @@ namespace Silent::Renderer
     public:
         // Fields
 
-        GLuint Id = 0;
+        uint Id = 0;
 
         // Constructors
 
@@ -22,6 +22,6 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void LinkAttrib(VertexBufferManager& vertBuffer, GLuint layout, GLuint componentCount, GLenum type, GLsizeiptr stride, void* offset);
+        void LinkAttrib(VertexBufferManager& vertBuffer, uint layout, uint componentCount, GLenum type, GLsizeiptr stride, void* offset);
     };
 }

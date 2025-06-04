@@ -11,8 +11,10 @@
 #include "Engine/Renderer/Base.h"
 #include "Engine/Services/Configuration.h"
 #include "Engine/Services/Time.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Services;
+using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
@@ -97,7 +99,10 @@ namespace Silent::Renderer
         DrawDebugGui();
 
         // Swap buffers.
-        SDL_GL_SwapWindow(_window);
+        if (!SDL_GL_SwapWindow(_window))
+        {
+            Log("Failed to swap render buffer: " + std::string(SDL_GetError()), LogLevel::Warning);
+        }
 
         // Clear scene. TODO
     }
@@ -134,29 +139,27 @@ namespace Silent::Renderer
         }
 
         // Write screenshot file.
-        if (stbi_write_png(path.string().c_str(), res.x, res.y, COLOR_CHANNEL_COUNT, pixels.data(), res.x * COLOR_CHANNEL_COUNT))
+        if (!stbi_write_png(path.string().c_str(), res.x, res.y, COLOR_CHANNEL_COUNT, pixels.data(), res.x * COLOR_CHANNEL_COUNT))
         {
-            // TODO: Shutter SFX, postprocess flash effect, timeout?
-            return;
+            Log("Failed to save screenshot.", LogLevel::Warning, LogMode::DebugRelease, true);
         }
-
-        Log("Failed to save screenshot.", LogLevel::Warning, LogMode::DebugRelease, true);
     }
 
     void OpenGlRenderer::UpdateViewport()
     {
-        // Clear screen.
-        glClearColor(0.3, 0.5f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         // Resize viewport if window is resized.
         if (_isResized)
         {
             auto res = Vector2i::Zero;
             SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+
             glViewport(0, 0, res.x, res.y);
             _isResized = false;
         }
+
+        // Clear screen.
+        glClearColor(0.3, 0.5f, 0.2f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void OpenGlRenderer::DrawFrame()
@@ -274,36 +277,12 @@ namespace Silent::Renderer
         glUseProgram(_shader._shaderIds.at("Quad"));
         glUniform3f(glGetUniformLocation(_shader._shaderIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
 
-        
-        int trackOffsetX = 150 - 159;
-
         glBindVertexArray(vao);
         for (int i = 0; i < 2; i++)
         {
             glDrawArrays(GL_LINES, i * 2, 2);
             //glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4); // Draw each quad (4 vertices at a time)
         }
-        //glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-
-        // Set up flat-colored quad at position (vx, vy) with width w and height h
-        /*float vx = -136 // line->vertex0_0.vx
-        float vy = 60; // line->vertex0_0.vy
-        float w  = 272; // line->vertex1_4.vx
-        float h  = 40; // line->vertex1_4.vy
-
-        // Set flat color (dark gray ~ RGB(48, 48, 48))
-        glColor3f(0.19f, 0.19f, 0.19f);
-
-        // Disable lighting if using fixed-function pipeline
-        glDisable(GL_LIGHTING);
-
-        // Optional: set Z value based on intended depth
-        glBegin(GL_QUADS);
-            glVertex3f(vx,     vy,     z);  // Top-left
-            glVertex3f(vx,     vy + h, z);  // Bottom-left
-            glVertex3f(vx + w, vy + h, z);  // Bottom-right
-            glVertex3f(vx + w, vy,     z);  // Top-right
-        glEnd();*/
     }
 
     void OpenGlRenderer::DrawDebugGui()
@@ -349,8 +328,8 @@ namespace Silent::Renderer
         _vertexArray.Bind();
 
         // Generate vertex buffer and element array objects.
-        _vertexBuffer.Initialize(VERTICES, sizeof(VERTICES));
-        _elementArray.Initialize(VERTEX_INDICES, sizeof(VERTEX_INDICES));
+        _vertexBuffer.Initialize(ToSpan(VERTICES));
+        _elementArray.Initialize(ToSpan(VERTEX_INDICES));
 
         // Link attributes.
         _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, sizeof(float) * 8, (void*)0);

@@ -60,7 +60,7 @@ namespace Silent
         // SDL.
         if (!SDL_Init(SDL_INIT_VIDEO))
         {
-            throw std::runtime_error("Failed to initialize SDL.");
+            throw std::runtime_error("Failed to initialize SDL: " + std::string(SDL_GetError()));
         }
 
         const auto& options = _work.Config.GetOptions();
@@ -75,7 +75,7 @@ namespace Silent
         _window = SDL_CreateWindow(APP_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
         if (_window == nullptr)
         {
-            throw std::runtime_error("Failed to create window.");
+            throw std::runtime_error("Failed to create window: " + std::string(SDL_GetError()));
         }
 
         // Renderer.
@@ -136,7 +136,7 @@ namespace Silent
 
         if (!SDL_SetWindowFullscreen(_window, !options.EnableFullscreen))
         {
-            Log("Failed to toggle fullscreen mode.", LogLevel::Warning);
+            Log("Failed to toggle fullscreen mode: " + std::string(SDL_GetError()), LogLevel::Warning);
         }
     }
 
@@ -238,7 +238,7 @@ namespace Silent
                         // Hide cursor.
                         if (!SDL_HideCursor())
                         {
-                            Log("Failed to hide cursor: " + (std::string(SDL_GetError())));
+                            Log("Failed to hide cursor: " + std::string(SDL_GetError()));
                         }
                     }
                     else
@@ -246,7 +246,7 @@ namespace Silent
                         // Show cursor.
                         if (!SDL_ShowCursor())
                         {
-                            Log("Failed to show cursor: " + (std::string(SDL_GetError())));
+                            Log("Failed to show cursor: " + std::string(SDL_GetError()));
                         }
 
                         // TODO: Warps to corner instead.

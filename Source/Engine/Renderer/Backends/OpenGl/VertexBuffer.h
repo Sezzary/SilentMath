@@ -7,7 +7,7 @@ namespace Silent::Renderer
     public:
         // Fields
 
-        GLuint Id = 0;
+        uint Id = 0;
 
         // Constructors
 
@@ -15,7 +15,7 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(GLfloat* verts, GLsizeiptr size);
+        void Initialize(const std::span<float>& verts);
         void Bind();
         void Unbind();
         void Delete();

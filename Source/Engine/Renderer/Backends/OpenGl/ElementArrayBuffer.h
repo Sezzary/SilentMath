@@ -5,7 +5,7 @@ namespace Silent::Renderer
     class ElementArrayBufferManager
     {
     public:
-        GLuint Id = 0;
+        uint Id = 0;
 
         // Constructors
 
@@ -13,7 +13,7 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(GLuint* idxs, GLsizeiptr size);
+        void Initialize(const std::span<uint>& idxs);
         void Bind();
         void Unbind();
         void Delete();

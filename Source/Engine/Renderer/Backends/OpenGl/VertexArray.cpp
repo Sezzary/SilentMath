@@ -25,7 +25,7 @@ namespace Silent::Renderer
         glDeleteVertexArrays(1, &Id);
     }
     
-    void VertexArrayManager::LinkAttrib(VertexBufferManager& vertBuffer, GLuint layout, GLuint componentCount, GLenum type, GLsizeiptr stride, void* offset)
+    void VertexArrayManager::LinkAttrib(VertexBufferManager& vertBuffer, uint layout, uint componentCount, GLenum type, GLsizeiptr stride, void* offset)
     {
         vertBuffer.Bind();
         glVertexAttribPointer(layout, componentCount, type, GL_FALSE, stride, offset);

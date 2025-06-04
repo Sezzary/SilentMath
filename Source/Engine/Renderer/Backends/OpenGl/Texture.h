@@ -23,6 +23,6 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void TextureUnit(ShaderManager& shader, const char* uniform, GLuint unitId);
+        void TextureUnit(ShaderManager& shader, const char* uniform, uint unitId);
     };
 }

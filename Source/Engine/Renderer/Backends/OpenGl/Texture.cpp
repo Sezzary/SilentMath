@@ -59,10 +59,10 @@ namespace Silent::Renderer
         glDeleteTextures(1, &Id);
     }
 
-    void Texture::TextureUnit(ShaderManager& shader, const char* uniform, GLuint unit)
+    void Texture::TextureUnit(ShaderManager& shader, const char* uniform, uint unit)
     {
         // Get uniform location.
-        GLuint texUni = glGetUniformLocation(shader._shaderIds.at("Default"), uniform);
+        uint texUni = glGetUniformLocation(shader._shaderIds.at("Default"), uniform);
 
         // Set uniform value.
         shader.Activate();
