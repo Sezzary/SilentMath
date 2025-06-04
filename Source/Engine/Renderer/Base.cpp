@@ -5,6 +5,13 @@
 
 namespace Silent::Renderer
 {
+    Vector2i RendererBase::GetScreenResolution() const
+    {
+        auto res = Vector2i::Zero;
+        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+        return res;
+    }
+
     void RendererBase::SignalResize()
     {
         _isResized = true;

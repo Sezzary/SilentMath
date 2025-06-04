@@ -3,7 +3,7 @@
 
 #include "Engine/Application.h"
 #include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
-#include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
@@ -18,7 +18,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    static GLfloat VERTICES[] =
+    static float VERTICES[] =
     {/*  Positions              Colors                  Texture coords */
         -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,    0.0f, 0.0f,
         -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,    5.0f, 0.0f,
@@ -27,7 +27,7 @@ namespace Silent::Renderer
          0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,    2.5f, 5.0f
     };
 
-    static GLuint VERTEX_INDICES[] =
+    static uint VERTEX_INDICES[] =
     {
         0, 1, 2,
         0, 2, 3,
@@ -57,13 +57,13 @@ namespace Silent::Renderer
         // Enable VSync.
         SDL_GL_SetSwapInterval(1);
 
-        auto res = Vector2i::Zero;
-        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+        // Get screen resolution.
+        auto res = GetScreenResolution();
 
-        // Basic setup.
+        // Viewport setup.
         glViewport(0, 0, res.x, res.y);
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.2, 0.2f, 0.2f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         CreateShaderProgram();
@@ -95,7 +95,7 @@ namespace Silent::Renderer
 
         // Render.
         DrawFrame();
-        DrawGui();
+        //DrawGui();
         DrawDebugGui();
 
         // Swap buffers.
@@ -114,8 +114,7 @@ namespace Silent::Renderer
         const auto& config = g_App.GetConfig();
 
         // Get window size.
-        auto res = Vector2i::Zero;
-        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+        auto res = GetScreenResolution();
         
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
@@ -150,15 +149,14 @@ namespace Silent::Renderer
         // Resize viewport if window is resized.
         if (_isResized)
         {
-            auto res = Vector2i::Zero;
-            SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
-
-            glViewport(0, 0, res.x, res.y);
             _isResized = false;
+
+            auto res = GetScreenResolution();
+            glViewport(0, 0, res.x, res.y);
         }
 
         // Clear screen.
-        glClearColor(0.3, 0.5f, 0.2f, 1.0f);
+        glClearColor(0.3f, 0.5f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
@@ -166,16 +164,13 @@ namespace Silent::Renderer
     {
         _shader.Activate();
 
-        auto res = Vector2i::Zero;
-        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
-
-        /*_view.Move();
+        _view.Move();
         _view.ExportMatrix(glm::radians(45.0f), 0.1f, 100.0f, _shader, "camMat");
 
         _popCat.Bind();
 
         _vertexArray.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(int), GL_UNSIGNED_INT, 0);*/
+        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(int), GL_UNSIGNED_INT, 0);
     }
 
     float quadVertices[] =
@@ -225,10 +220,10 @@ namespace Silent::Renderer
         -9,    37*/
         
          // SAvegame entry border
-        /*-131, -62, -11, -62 ,
+        -131, -62, -11, -62 ,
         -131, -43, -11, -43 ,
         -131, -62, -131, -44,
-        -11,  -62, -11, -44 ,*/
+        -11,  -62, -11, -44 
 
         // Now checking MEMORY CARD border
         /*-144, -36,  -4, -36,
@@ -241,8 +236,8 @@ namespace Silent::Renderer
         -144, -36 ,  -148, -40 , -144, 2 , -148, 6 ,
         -4, -36 ,  0, -40 ,  -4, 2 ,  0, 6 */
         // some coloured line
-        -142, -33 , 136, 33,
-        -142, -33 , 136, 33,
+       /* -142, -33 , 136, 33,
+        -142, -33 , 136, 33,*/
         
 
          //-144, -36 ,  -148, -40 ,  -4, -36 ,  0, -40 
@@ -277,8 +272,13 @@ namespace Silent::Renderer
         glUseProgram(_shader._shaderIds.at("Quad"));
         glUniform3f(glGetUniformLocation(_shader._shaderIds.at("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
 
+        // Set line width to match PSX resolution.
+        auto ratio = GetScreenResolution().ToVector2() / Vector2(320.0f, 240.0f);
+        int  width = std::max((int)round(std::min(ratio.x, ratio.y)), 1);
+        glLineWidth(width);
+
         glBindVertexArray(vao);
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
         {
             glDrawArrays(GL_LINES, i * 2, 2);
             //glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4); // Draw each quad (4 vertices at a time)

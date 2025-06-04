@@ -7,7 +7,7 @@ namespace Silent::Renderer
     public:
         // Fields
 
-        std::unordered_map<std::string, GLuint> _shaderIds = {};
+        std::unordered_map<std::string, uint> _shaderIds = {};
 
         // Constructors
 
@@ -23,6 +23,6 @@ namespace Silent::Renderer
         // Helpers
 
         std::string GetFileContents(const std::string& filename);
-        void        LogError(uint shader, const std::string& type);
+        void        LogError(uint shaderId, const std::string& type);
     };
 }

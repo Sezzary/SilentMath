@@ -22,6 +22,10 @@ namespace Silent::Renderer
 
         RendererBase() = default;
 
+        // Getters
+
+        Vector2i GetScreenResolution() const;
+
         // Utilities
 
         virtual void Initialize(SDL_Window& window) = 0;

@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 
-#include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
 
 namespace Silent::Renderer
 {

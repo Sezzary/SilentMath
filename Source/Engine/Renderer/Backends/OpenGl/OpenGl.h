@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
-#include "Engine/Renderer/Backends/OpenGl/Shader.h"
+#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
