@@ -182,7 +182,7 @@ namespace Silent::Assets
             _assetIdxs[asset->Name] = i;
         }
 
-        Log("Registered " + std::to_string(_assets.size()) + " assets from '" + assetsPath.string() + "'.", LogLevel::Info, LogMode::Debug);
+        Log("Registered " + std::to_string(_assets.size()) + " assets.", LogLevel::Info, LogMode::Debug);
     }
 
     void AssetManager::LoadAsset(int assetIdx)

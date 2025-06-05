@@ -18,22 +18,22 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    static float VERTICES[] =
-    {
-         0.5f,  0.5f, 0.0f, // top right
-         0.5f, -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f  // top left 
+    auto VERTICES = std::vector<float>
+    {/* Positions           Colors */
+        -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.95f, // Left.
+         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.95f, // Bottom.
+         0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.95f  // Top.
     };
 
     static uint VERTEX_INDICES[] =
     {
-        0, 1, 3, // First triangle.
-        1, 2, 3  // Second triangle.
+        0, 1, 2
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
     {
+        Log("Using OpenGL renderer.", LogLevel::Info, LogMode::Debug);
+
         _window = &window;
 
         // Create OpenGL context.
@@ -86,7 +86,7 @@ namespace Silent::Renderer
 
         // Render.
         DrawFrame();
-        DrawGui();
+        //DrawGui();
         DrawDebugGui();
 
         // Swap buffers.
@@ -161,9 +161,81 @@ namespace Silent::Renderer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    static void DoCoolColorThing()
+    {
+        static int timer = 0;
+
+        int timerCount = timer & 0x7F;
+        
+        // Fade start color.
+        int colorStart = 0;
+        if (timerCount >= 32)
+        {
+            colorStart = 32;
+            if (timerCount < 64)
+            {
+                colorStart = 32;
+            }
+            else if (timerCount < 96)
+            {
+                colorStart = 96 - timerCount;
+            }
+            else
+            {
+                colorStart = 0;
+            }
+        }
+        else
+        {
+            colorStart = timerCount;
+        }
+
+        // Fade end color.
+        int colorEnd = 0;
+        if (timerCount >= 32)
+        {
+            if (timerCount < 64)
+            {
+                colorEnd = timerCount - 32;
+            }
+            else if (timerCount >= 96)
+            {
+                colorEnd = 128 - timerCount;
+            }
+            else
+            {
+                colorEnd = 32;
+            }
+        }
+        else
+        {
+            colorEnd = 0;
+        }
+
+        timer++;
+
+        VERTICES[3] = 0.0f;
+        VERTICES[4] = colorEnd / 31.0f;
+        VERTICES[5] = 1.0f;
+
+        VERTICES[9]  = 0.0f;
+        VERTICES[10] = colorStart / 31.0f;
+        VERTICES[11] = 1.0f;
+
+        VERTICES[15] = 0.0f;
+        VERTICES[16] = colorStart / 31.0f;
+        VERTICES[17] = 1.0f;
+    }
+
     void OpenGlRenderer::DrawFrame()
     {
+        DoCoolColorThing();
+
         _shaders.Activate("Default");
+
+        _vertexBuffer.Bind();
+        glBufferData(GL_ARRAY_BUFFER, VERTICES.size() * sizeof(float), VERTICES.data(), GL_DYNAMIC_DRAW);
+
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
     }
@@ -327,7 +399,8 @@ namespace Silent::Renderer
         _elementBuffer.Initialize(ToSpan(VERTEX_INDICES));
 
         // Link attributes.
-        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+        _vertexArray.LinkAttrib(_vertexBuffer, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
         // Unbind to prevent accidental modification.
         _vertexArray.Unbind();

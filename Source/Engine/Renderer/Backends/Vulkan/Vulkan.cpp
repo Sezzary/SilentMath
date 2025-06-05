@@ -62,6 +62,8 @@ namespace Silent::Renderer
 
     void VulkanRenderer::Initialize(SDL_Window& window)
     {
+        Log("Using Vulkan renderer.", LogLevel::Info, LogMode::Debug);
+
         _window = &window;
 
         CreateInstance();

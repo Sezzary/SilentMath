@@ -23,6 +23,6 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void LinkAttrib(VertexBufferObject& vertBuffer, uint layoutId, uint componentCount, GLenum type, GLsizeiptr stride, void* offset);
+        void LinkAttrib(VertexBufferObject& vbo, uint layoutId, uint componentCount, GLenum type, GLsizeiptr stride, void* offset);
     };
 }
