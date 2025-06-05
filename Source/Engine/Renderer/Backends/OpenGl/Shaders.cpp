@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Engine/Renderer/Backends/OpenGl/Shaders.h"
 
-#include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 

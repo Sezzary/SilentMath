@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/Shaders.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
@@ -21,14 +21,12 @@ namespace Silent::Renderer
 
         // Fields
 
-        SDL_GLContext            _context      = nullptr;
-        ShaderProgramManager            _shaders      = ShaderProgramManager();
-        VertexArrayObject        _vertexArray  = VertexArrayObject();
-        VertexBufferObject       _vertexBuffer = VertexBufferObject();
-        ElementBufferObject _elementArray = ElementBufferObject();
-        View                     _view         = View();
-
-        Texture _popCat;
+        SDL_GLContext        _context       = nullptr;
+        ShaderProgramManager _shaders       = ShaderProgramManager();
+        VertexArrayObject    _vertexArray   = VertexArrayObject();
+        VertexBufferObject   _vertexBuffer  = VertexBufferObject();
+        ElementBufferObject  _elementBuffer = ElementBufferObject();
+        View                 _view          = View();
 
     public:
         // Constructors

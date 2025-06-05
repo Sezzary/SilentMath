@@ -2,7 +2,7 @@
 #include "Engine/Renderer/Backends/OpenGl/OpenGl.h"
 
 #include "Engine/Application.h"
-#include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/Shaders.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
@@ -19,22 +19,17 @@ using namespace Silent::Utils;
 namespace Silent::Renderer
 {
     static float VERTICES[] =
-    {/*  Positions              Colors                  Texture coords */
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,    0.0f, 0.0f,
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,    5.0f, 0.0f,
-         0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,    0.0f, 0.0f,
-         0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,    5.0f, 0.0f,
-         0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,    2.5f, 5.0f
+    {
+         0.5f,  0.5f, 0.0f, // top right
+         0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f  // top left 
     };
 
     static uint VERTEX_INDICES[] =
     {
-        0, 1, 2,
-        0, 2, 3,
-        0, 1, 4,
-        1, 2, 4,
-        2, 3, 4,
-        3, 0, 4
+        0, 1, 3, // First triangle.
+        1, 2, 3  // Second triangle.
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
@@ -69,12 +64,10 @@ namespace Silent::Renderer
         CreateShaderProgram();
         CreateDebugGui();
 
-        // Texture setup.
-        _popCat = Texture("Assets/pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-        _popCat.TextureUnit(_shaders, "tex0", 0);
-
-        // View setup.
-        _view = View(Vector3(0.0f, 0.0f, 2.0f), res);
+        // Log available vertex attributes.
+        int attribCountMax = 0;
+        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribCountMax);
+        Log(std::to_string(attribCountMax) + " vertex attributes available.", LogLevel::Info, LogMode::Debug);
     }
 
     void OpenGlRenderer::Deinitialize()
@@ -82,10 +75,8 @@ namespace Silent::Renderer
         // Delete objects.
         _vertexArray.Delete();
         _vertexBuffer.Delete();
-        _elementArray.Delete();
+        _elementBuffer.Delete();
         _shaders.Delete();
-
-        _popCat.Delete();
     }
 
     void OpenGlRenderer::Update()
@@ -95,7 +86,7 @@ namespace Silent::Renderer
 
         // Render.
         DrawFrame();
-        //DrawGui();
+        DrawGui();
         DrawDebugGui();
 
         // Swap buffers.
@@ -146,6 +137,16 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::UpdateViewport()
     {
+        // Set wireframe mode.
+        if (g_DebugData.EnableWireframeMode)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        else
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+
         // Resize viewport if window is resized.
         if (_isResized)
         {
@@ -163,14 +164,8 @@ namespace Silent::Renderer
     void OpenGlRenderer::DrawFrame()
     {
         _shaders.Activate("Default");
-
-        _view.Move();
-        _view.ExportMatrix(glm::radians(45.0f), 0.1f, 100.0f, _shaders, "camMat");
-
-        _popCat.Bind();
-
         _vertexArray.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(int), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
     }
 
     float quadVertices[] =
@@ -329,17 +324,15 @@ namespace Silent::Renderer
 
         // Generate vertex buffer and element array objects.
         _vertexBuffer.Initialize(ToSpan(VERTICES));
-        _elementArray.Initialize(ToSpan(VERTEX_INDICES));
+        _elementBuffer.Initialize(ToSpan(VERTEX_INDICES));
 
         // Link attributes.
-        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, sizeof(float) * 8, (void*)0);
-        _vertexArray.LinkAttrib(_vertexBuffer, 1, 3, GL_FLOAT, sizeof(float) * 8, (void*)(sizeof(float) * 3));
-        _vertexArray.LinkAttrib(_vertexBuffer, 2, 2, GL_FLOAT, sizeof(float) * 8, (void*)(sizeof(float) * 6));
+        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
         // Unbind to prevent accidental modification.
         _vertexArray.Unbind();
         _vertexBuffer.Unbind();
-        _elementArray.Unbind();
+        _elementBuffer.Unbind();
     }
 
     void OpenGlRenderer::CreateDebugGui()

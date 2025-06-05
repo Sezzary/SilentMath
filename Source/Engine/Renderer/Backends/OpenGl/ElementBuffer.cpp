@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Engine/Renderer/Backends/OpenGl/ElementArrayBuffer.h"
+#include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
 
 namespace Silent::Renderer
 {
@@ -7,7 +7,7 @@ namespace Silent::Renderer
     {
         glGenBuffers(1, &_id);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _id);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, idxs.size(), idxs.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, idxs.size_bytes(), idxs.data(), GL_STATIC_DRAW);
     }
 
     void ElementBufferObject::Bind()
