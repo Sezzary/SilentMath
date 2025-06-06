@@ -9,14 +9,13 @@ namespace Silent::Renderer
     private:
         // Fields
 
-        uint   _id   = 0;
-        GLenum _type = 0;
+        uint _id = 0;
 
     public:
         // Constructors
 
         Texture() = default;
-        Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
+        Texture(const std::string& filename, GLenum slot, GLenum format, GLenum pixelType);
 
         // Utilities
 
@@ -24,6 +23,7 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void TextureUnit(ShaderProgram& shaderProgram, const std::string& uniform, uint unitId);
+        void TextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unitId);
+        void RefreshFiltering();
     };
 }

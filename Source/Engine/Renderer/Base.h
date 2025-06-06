@@ -10,8 +10,9 @@ namespace Silent::Renderer
     protected:
         // Fields
 
-        SDL_Window* _window    = nullptr;
-        bool        _isResized = false;
+        SDL_Window* _window        = nullptr;
+        bool        _isResized     = false;
+        uint        _drawCallCount = 0;
 
         std::vector<std::function<void()>> _debugGuiDrawCalls = {};
         std::vector<Line>                  _debugLines        = {};
@@ -31,6 +32,7 @@ namespace Silent::Renderer
         virtual void Initialize(SDL_Window& window) = 0;
         virtual void Deinitialize() = 0;
         virtual void Update() = 0;
+        virtual void RefreshTextureFilter() = 0;
         virtual void SaveScreenshot() const = 0;
         
         void SignalResize();

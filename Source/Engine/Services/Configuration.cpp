@@ -56,7 +56,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_FRAME_RATE_TYPE                          = FrameRateType::Fps60;
     constexpr auto DEFAULT_RENDER_SCALE_TYPE                        = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO_TYPE                        = AspectRatioType::Native;
-    constexpr auto DEFAULT_TEXTURE_FILTER_TYPE                      = TextureFilteringType::Nearest;
+    constexpr auto DEFAULT_TEXTURE_FILTER_TYPE                      = TextureFilterType::Nearest;
     constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;

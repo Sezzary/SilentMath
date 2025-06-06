@@ -63,7 +63,7 @@ namespace Silent::Services
         Retro
     };
 
-    enum class TextureFilteringType
+    enum class TextureFilterType
     {
         Nearest,
         Bilinear
@@ -78,15 +78,15 @@ namespace Silent::Services
 
         // Graphics (user)
 
-        bool                 EnableFullscreen   = false;
-        int                  BrightnessLevel    = 0;
-        FrameRateType        FrameRateType      = FrameRateType::Fps30;
-        RenderScaleType      RenderScaleType    = RenderScaleType::Native;
-        AspectRatioType      AspectRatioType    = AspectRatioType::Native;
-        TextureFilteringType TextureFilterType  = TextureFilteringType::Nearest;
-        bool                 EnableDithering    = false;
-        bool                 EnableCrtFilter    = false;
-        bool                 EnableVertexJitter = false;
+        bool              EnableFullscreen   = false;
+        int               BrightnessLevel    = 0;
+        FrameRateType     FrameRateType      = FrameRateType::Fps30;
+        RenderScaleType   RenderScaleType    = RenderScaleType::Native;
+        AspectRatioType   AspectRatioType    = AspectRatioType::Native;
+        TextureFilterType TextureFilterType  = TextureFilterType::Nearest;
+        bool              EnableDithering    = false;
+        bool              EnableCrtFilter    = false;
+        bool              EnableVertexJitter = false;
 
         // Gameplay
 

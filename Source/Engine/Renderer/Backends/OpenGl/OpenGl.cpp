@@ -18,11 +18,26 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    static auto VERTICES = std::vector<float>
-    {/*  Positions             Colors */
-        -0.5f,  0.0f, 0.0f,    0.0f, 0.0f, 0.95f, // Left.
-         0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 0.95f, // Bottom.
-         0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 0.95f  // Top.
+    static auto VERTEX_POSITIONS = std::vector<float>
+    {
+        -0.5f,  0.0f, 0.0f, // Left.
+         0.5f,  0.5f, 0.0f, // Bottom.
+         0.5f, -0.5f, 0.0f  // Top.
+    };
+
+    static auto VERTEX_COLORS = std::vector<float>
+    {
+        0.0f, 0.0f, 0.95f, // Left.
+        0.0f, 0.0f, 0.95f, // Bottom.
+        0.0f, 0.0f, 0.95f  // Top.
+    };
+
+    static auto VERTEX_TEXTURE_COORDS = std::vector<float>
+    {
+        1.0f, 1.0f, // Top-right.
+        1.0f, 0.0f, // Bottom-right.
+        0.0f, 0.0f, // Bottom-left.
+        0.0f, 1.0f  // Top-left.
     };
 
     static auto VERTEX_INDICES = std::vector<uint>
@@ -108,7 +123,8 @@ namespace Silent::Renderer
     {
         // Delete objects.
         _vertexArray.Delete();
-        _vertexBuffer.Delete();
+        _vertexPositionBuffer.Delete();
+        _vertexColorBuffer.Delete();
         _elementBuffer.Delete();
 
         for (auto& [keyName, shaderProg] : _shaderPrograms)
@@ -119,6 +135,8 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::Update()
     {
+        _drawCallCount = 0;
+
         // Update viewport.
         UpdateViewport();
 
@@ -134,6 +152,11 @@ namespace Silent::Renderer
         }
 
         // Clear scene. TODO
+    }
+
+    void OpenGlRenderer::RefreshTextureFilter()
+    {
+        // TODO: Run through all textures and refresh.
     }
 
     void OpenGlRenderer::SaveScreenshot() const
@@ -252,17 +275,17 @@ namespace Silent::Renderer
 
         timer++;
 
-        VERTICES[3] = 0.0f;
-        VERTICES[4] = colorEnd / 31.0f;
-        VERTICES[5] = 1.0f;
+        VERTEX_COLORS[0] = 0.0f;
+        VERTEX_COLORS[1] = colorEnd / 31.0f;
+        VERTEX_COLORS[2] = 1.0f;
 
-        VERTICES[9]  = 0.0f;
-        VERTICES[10] = colorStart / 31.0f;
-        VERTICES[11] = 1.0f;
+        VERTEX_COLORS[3]  = 0.0f;
+        VERTEX_COLORS[4] = colorStart / 31.0f;
+        VERTEX_COLORS[5] = 1.0f;
 
-        VERTICES[15] = 0.0f;
-        VERTICES[16] = colorStart / 31.0f;
-        VERTICES[17] = 1.0f;
+        VERTEX_COLORS[6] = 0.0f;
+        VERTEX_COLORS[7] = colorStart / 31.0f;
+        VERTEX_COLORS[8] = 1.0f;
     }
 
     void OpenGlRenderer::DrawFrame()
@@ -272,11 +295,12 @@ namespace Silent::Renderer
         _shaderPrograms.at("Default").Activate();
         _shaderPrograms.at("Default").SetVec3("offset", Vector3(0.5f, 0.5f, 0.5f));
 
-        _vertexBuffer.Bind();
-        glBufferData(GL_ARRAY_BUFFER, VERTICES.size() * sizeof(float), VERTICES.data(), GL_DYNAMIC_DRAW);
+        _vertexColorBuffer.Bind();
+        glBufferData(GL_ARRAY_BUFFER, VERTEX_COLORS.size() * sizeof(float), VERTEX_COLORS.data(), GL_DYNAMIC_DRAW);
 
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
+        _drawCallCount++;
     }
 
     float quadVertices[] =
@@ -388,6 +412,8 @@ namespace Silent::Renderer
         {
             glDrawArrays(GL_LINES, i * 2, 2);
             //glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4); // Draw each quad (4 vertices at a time)
+
+            _drawCallCount++;
         }
     }
 
@@ -434,16 +460,18 @@ namespace Silent::Renderer
         _vertexArray.Bind();
 
         // Generate vertex buffer and element array objects.
-        _vertexBuffer.Initialize(ToSpan(VERTICES));
+        _vertexPositionBuffer.Initialize(ToSpan(VERTEX_POSITIONS));
+        _vertexColorBuffer.Initialize(ToSpan(VERTEX_COLORS));
         _elementBuffer.Initialize(ToSpan(VERTEX_INDICES));
 
         // Link attributes.
-        _vertexArray.LinkAttrib(_vertexBuffer, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-        _vertexArray.LinkAttrib(_vertexBuffer, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        _vertexArray.LinkAttrib(_vertexPositionBuffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+        _vertexArray.LinkAttrib(_vertexColorBuffer, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
         // Unbind to prevent accidental modification.
         _vertexArray.Unbind();
-        _vertexBuffer.Unbind();
+        _vertexPositionBuffer.Unbind();
+        _vertexColorBuffer.Unbind();
         _elementBuffer.Unbind();
     }
 

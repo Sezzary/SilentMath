@@ -3,11 +3,11 @@
 
 namespace Silent::Renderer
 {
-    void VertexBufferObject::Initialize(const std::span<float>& verts)
+    void VertexBufferObject::Initialize(const std::span<float>& verts, GLenum usage)
     {
         glGenBuffers(1, &_id);
         glBindBuffer(GL_ARRAY_BUFFER, _id);
-        glBufferData(GL_ARRAY_BUFFER, verts.size_bytes(), verts.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, verts.size_bytes(), verts.data(), usage);
     }
 
     void VertexBufferObject::Bind()

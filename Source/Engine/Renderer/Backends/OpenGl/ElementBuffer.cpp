@@ -3,11 +3,11 @@
 
 namespace Silent::Renderer
 {
-    void ElementBufferObject::Initialize(const std::span<uint>& idxs)
+    void ElementBufferObject::Initialize(const std::span<uint>& idxs, GLenum usage)
     {
         glGenBuffers(1, &_id);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _id);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, idxs.size_bytes(), idxs.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, idxs.size_bytes(), idxs.data(), usage);
     }
 
     void ElementBufferObject::Bind()

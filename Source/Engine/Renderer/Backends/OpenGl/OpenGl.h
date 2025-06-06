@@ -21,12 +21,13 @@ namespace Silent::Renderer
 
         // Fields
 
-        SDL_GLContext                                  _context        = nullptr;
-        std::unordered_map<std::string, ShaderProgram> _shaderPrograms = {};
-        VertexArrayObject                              _vertexArray    = VertexArrayObject();
-        VertexBufferObject                             _vertexBuffer   = VertexBufferObject();
-        ElementBufferObject                            _elementBuffer  = ElementBufferObject();
-        View                                           _view           = View();
+        SDL_GLContext                                  _context              = nullptr;
+        View                                           _view                 = View();
+        std::unordered_map<std::string, ShaderProgram> _shaderPrograms       = {};
+        VertexArrayObject                              _vertexArray          = VertexArrayObject();
+        VertexBufferObject                             _vertexPositionBuffer = VertexBufferObject();
+        VertexBufferObject                             _vertexColorBuffer    = VertexBufferObject();
+        ElementBufferObject                            _elementBuffer        = ElementBufferObject();
 
     public:
         // Constructors
@@ -38,6 +39,7 @@ namespace Silent::Renderer
         void Initialize(SDL_Window& window) override;
         void Deinitialize() override;
         void Update() override;
+        void RefreshTextureFilter() override;
         void SaveScreenshot() const override;
 
     private:

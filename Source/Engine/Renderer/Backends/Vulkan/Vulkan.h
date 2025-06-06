@@ -84,6 +84,7 @@ namespace Silent::Renderer
         void Initialize(SDL_Window& window) override;
         void Deinitialize() override;
         void Update() override;
+        void RefreshTextureFilter() override;
         void SaveScreenshot() const override;
 
     private:

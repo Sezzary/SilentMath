@@ -1,58 +1,71 @@
 #include "Framework.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 
+#include "Engine/Application.h"
 #include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
+#include "Engine/Services/Configuration.h"
+
+using namespace Silent::Services;
 
 namespace Silent::Renderer
 {
-    Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
+    Texture::Texture(const std::string& filename, GLenum slot, GLenum format, GLenum pixelType)
     {
-        // Assign type.
-        _type = texType;
+        const auto& options = g_App.GetConfig().GetOptions();
+
+        // Configure texture repetition type.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        // Configure algorithm type used to make image smaller or bigger.
+        switch (options.TextureFilterType)
+        {
+            default:
+            case TextureFilterType::Nearest:
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                break;
+            }
+
+            case TextureFilterType::Bilinear:
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            }
+        }
 
         auto res               = Vector2i::Zero;
         int  colorChannelCount = 0;
         
         // Read image from file.
         stbi_set_flip_vertically_on_load(true);
-        uchar* bytes = stbi_load(image, &res.x, &res.y, &colorChannelCount, 0);
+        uchar* data = stbi_load(filename.c_str(), &res.x, &res.y, &colorChannelCount, 0);
 
-        // Generate OpenGL texture object.
+        // Generate texture object.
         glGenTextures(1, &_id);
+
+        // Assign image to texture object.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res.x, res.y, 0, format, pixelType, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
         // Assign texture to texture unit.
         glActiveTexture(slot);
-        glBindTexture(texType, _id);
-
-        // Configure algorithm type used to make image smaller or bigger.
-        glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-        glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        // Configure texture repetition.
-        glTexParameteri(texType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(texType, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        // Extra lines for `GL_CLAMP_TO_BORDER`.
-        // float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
-
-        // Assign image to OpenGL texture object.
-        glTexImage2D(texType, 0, GL_RGBA, res.x, res.y, 0, format, pixelType, bytes);
-        glGenerateMipmap(texType);
+        glBindTexture(GL_TEXTURE_2D, _id);
 
         // Cleanup.
-        stbi_image_free(bytes);
-        glBindTexture(texType, 0);
+        stbi_image_free(data);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void Texture::Bind()
     {
-        glBindTexture(_type, _id);
+        glBindTexture(GL_TEXTURE_2D, _id);
     }
 
     void Texture::Unbind()
     {
-        glBindTexture(_type, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void Texture::Delete()
@@ -60,13 +73,37 @@ namespace Silent::Renderer
         glDeleteTextures(1, &_id);
     }
 
-    void Texture::TextureUnit(ShaderProgram& shaderProgram, const std::string& uniform, uint unit)
+    void Texture::TextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unit)
     {
         // Get uniform location.
-        uint texUniLoc = glGetUniformLocation(shaderProgram.GetId(), uniform.c_str());
+        uint texUniLoc = glGetUniformLocation(shaderProg.GetId(), uniName.c_str());
 
         // Set uniform value.
-        shaderProgram.Activate();
+        shaderProg.Activate();
         glUniform1i(texUniLoc, unit);
+    }
+
+    void Texture::RefreshFiltering()
+    {
+        const auto& options = g_App.GetConfig().GetOptions();
+
+        Bind();
+        switch (options.TextureFilterType)
+        {
+            default:
+            case TextureFilterType::Nearest:
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                break;
+            }
+
+            case TextureFilterType::Bilinear:
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            }
+        }
+        Unbind();
     }
 }

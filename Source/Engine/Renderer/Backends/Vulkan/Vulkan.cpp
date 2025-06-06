@@ -128,6 +128,11 @@ namespace Silent::Renderer
         DrawFrame();
     }
 
+    void VulkanRenderer::RefreshTextureFilter()
+    {
+
+    }
+
     void VulkanRenderer::SaveScreenshot() const
     {
         // TODO

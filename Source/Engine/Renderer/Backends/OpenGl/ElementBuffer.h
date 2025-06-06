@@ -16,7 +16,7 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(const std::span<uint>& idxs);
+        void Initialize(const std::span<uint>& idxs, GLenum usage = GL_STATIC_DRAW);
         void Bind();
         void Unbind();
         void Delete();
