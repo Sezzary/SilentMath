@@ -7,6 +7,45 @@
 
 namespace Silent::Renderer
 {
+    ShaderProgram::ShaderProgram(const std::string& name)
+    {
+        constexpr char VERT_FILE_EXT[] = ".vert";
+        constexpr char FRAG_FILE_EXT[] = ".frag";
+
+        // Set name.
+        _name = name;
+
+        // Read source files as strings.
+        auto vertCode = GetFileContents("Shaders/" + name + VERT_FILE_EXT);
+        auto fragCode = GetFileContents("Shaders/" + name + FRAG_FILE_EXT);
+
+        const char* vertSrc = vertCode.c_str();
+        const char* fragSrc = fragCode.c_str();
+
+        // Compile vertex shader.
+        uint vertShaderId = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertShaderId, 1, &vertSrc, nullptr);
+        glCompileShader(vertShaderId);
+        LogShaderError(vertShaderId, "VERTEX");
+
+        // Compile fragment shader.
+        uint fragShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragShaderId, 1, &fragSrc, nullptr);
+        glCompileShader(fragShaderId);
+        LogShaderError(vertShaderId, "FRAGMENT");
+
+        // Create shader program.
+        _id = glCreateProgram();
+        glAttachShader(_id, vertShaderId);
+        glAttachShader(_id, fragShaderId);
+        glLinkProgram(_id);
+        LogProgramError(_id);
+
+        // Cleanup.
+        glDeleteShader(vertShaderId);
+        glDeleteShader(fragShaderId);
+    }
+
     uint ShaderProgram::GetId() const
     {
         return _id;
@@ -90,45 +129,6 @@ namespace Silent::Renderer
     void ShaderProgram::SetMatrixArray(const std::string& uniName, const std::span<Matrix>& val) const
     {
         glUniformMatrix4fv(glGetUniformLocation(_id, uniName.c_str()), 1, GL_FALSE, (const float*)val.data());
-    }
-
-    void ShaderProgram::Initialize(const std::string& shaderName)
-    {
-        constexpr char VERT_FILE_EXT[] = ".vert";
-        constexpr char FRAG_FILE_EXT[] = ".frag";
-
-        // Set name.
-        _name = shaderName;
-
-        // Read source files as strings.
-        auto vertCode = GetFileContents("Shaders/" + shaderName + VERT_FILE_EXT);
-        auto fragCode = GetFileContents("Shaders/" + shaderName + FRAG_FILE_EXT);
-
-        const char* vertSrc = vertCode.c_str();
-        const char* fragSrc = fragCode.c_str();
-
-        // Compile vertex shader.
-        uint vertShaderId = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertShaderId, 1, &vertSrc, nullptr);
-        glCompileShader(vertShaderId);
-        LogShaderError(vertShaderId, "VERTEX");
-
-        // Compile fragment shader.
-        uint fragShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragShaderId, 1, &fragSrc, nullptr);
-        glCompileShader(fragShaderId);
-        LogShaderError(vertShaderId, "FRAGMENT");
-
-        // Create shader program.
-        _id = glCreateProgram();
-        glAttachShader(_id, vertShaderId);
-        glAttachShader(_id, fragShaderId);
-        glLinkProgram(_id);
-        LogProgramError(_id);
-
-        // Cleanup.
-        glDeleteShader(vertShaderId);
-        glDeleteShader(fragShaderId);
     }
 
     void ShaderProgram::Activate()

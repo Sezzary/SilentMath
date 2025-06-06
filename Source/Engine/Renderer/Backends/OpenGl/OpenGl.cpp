@@ -32,8 +32,6 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
     {
-        Log("Using OpenGL renderer:", LogLevel::Info, LogMode::Debug);
-
         _window = &window;
 
         // Create OpenGL context.
@@ -64,10 +62,46 @@ namespace Silent::Renderer
         CreateShaderProgram();
         CreateDebugGui();
 
-        // Log available vertex attributes.
+        // Log renderer specs.
+        Log("Using OpenGL renderer:");
+
+        auto version = std::string((const char*)glGetString(GL_VERSION));
+        Log("    Version: " + version + ".");
+
+        auto shadingLangVersion = std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+        Log("    Shading language version: " + shadingLangVersion + ".");
+
+        auto gpu    = std::string((const char*)glGetString(GL_RENDERER));
+        auto vendor = std::string((const char*)glGetString(GL_VENDOR));
+        Log("    GPU: " + gpu + ", " + vendor + ".");
+
         int attribCountMax = 0;
         glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribCountMax);
         Log("    " + std::to_string(attribCountMax) + " vertex attributes available.", LogLevel::Info, LogMode::Debug);
+
+        int texSizeMax = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSizeMax);
+        Log("    " + std::to_string(texSizeMax)  + " max texture size.", LogLevel::Info, LogMode::Debug);
+
+        int combinedTexUnitCountMax = 0;
+        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &combinedTexUnitCountMax);
+        Log("    " + std::to_string(combinedTexUnitCountMax) + " max combined texture image units.", LogLevel::Info, LogMode::Debug);
+
+        int uniBlockSizeMax = 0;
+        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &uniBlockSizeMax);
+        Log("    " + std::to_string(uniBlockSizeMax) + " max uniform block size.", LogLevel::Info, LogMode::Debug);
+
+        int varyingVarCountMax = 0;
+        glGetIntegerv(GL_MAX_VARYING_VECTORS, &varyingVarCountMax);
+        Log("    " + std::to_string(varyingVarCountMax) + " max varying variables.", LogLevel::Info, LogMode::Debug);
+
+        int vertTexImageUnitCountMax = 0;
+        glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &vertTexImageUnitCountMax);
+        Log("    " + std::to_string(vertTexImageUnitCountMax) + " max vertex texture image units.", LogLevel::Info, LogMode::Debug);
+
+        int renderBufferSizeMax = 0;
+        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &renderBufferSizeMax);
+        Log("    " + std::to_string(renderBufferSizeMax) + " max renderbuffer size.", LogLevel::Info, LogMode::Debug);
     }
 
     void OpenGlRenderer::Deinitialize()
@@ -325,8 +359,7 @@ namespace Silent::Renderer
         static bool isFirstTime = true;
         if (isFirstTime)
         {
-            _shaderPrograms.emplace("Quad", ShaderProgram());
-            _shaderPrograms.at("Quad").Initialize("Quad");
+            _shaderPrograms.emplace("Quad", ShaderProgram("Quad"));
 
             glGenVertexArrays(1, &vao);
             glGenBuffers(1, &vbo);
@@ -393,8 +426,7 @@ namespace Silent::Renderer
     void OpenGlRenderer::CreateShaderProgram()
     {
         // Generate shader program.
-        _shaderPrograms.emplace("Default", ShaderProgram());
-        _shaderPrograms.at("Default").Initialize("Default");
+        _shaderPrograms.emplace("Default", ShaderProgram("Default"));
 
         // Generate and bind vertex array object.
         _vertexArray.Initialize();

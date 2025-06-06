@@ -13,7 +13,7 @@ namespace Silent::Renderer
     public:
         // Constructors
 
-        ShaderProgram() = default;
+        ShaderProgram(const std::string& name);
 
         // Getters
 
@@ -40,7 +40,6 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Initialize(const std::string& shaderName);
         void Activate();
         void Delete();
 
