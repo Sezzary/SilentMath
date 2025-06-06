@@ -19,7 +19,7 @@ using namespace Silent::Utils;
 namespace Silent::Renderer
 {
     static auto VERTICES = std::vector<float>
-    {/* Positions              Colors */
+    {/*  Positions             Colors */
         -0.5f,  0.0f, 0.0f,    0.0f, 0.0f, 0.95f, // Left.
          0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 0.95f, // Bottom.
          0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 0.95f  // Top.
@@ -111,9 +111,9 @@ namespace Silent::Renderer
         _vertexBuffer.Delete();
         _elementBuffer.Delete();
 
-        for (auto& [keyName, shaderProgram] : _shaderPrograms)
+        for (auto& [keyName, shaderProg] : _shaderPrograms)
         {
-            shaderProgram.Delete();
+            shaderProg.Delete();
         }
     }
 
@@ -270,6 +270,7 @@ namespace Silent::Renderer
         DoCoolColorThing();
 
         _shaderPrograms.at("Default").Activate();
+        _shaderPrograms.at("Default").SetVec3("offset", Vector3(0.5f, 0.5f, 0.5f));
 
         _vertexBuffer.Bind();
         glBufferData(GL_ARRAY_BUFFER, VERTICES.size() * sizeof(float), VERTICES.data(), GL_DYNAMIC_DRAW);

@@ -48,6 +48,6 @@ namespace Silent::Renderer
 
         std::string GetFileContents(const std::string& filename);
         void        LogShaderError(uint shaderId, const std::string& type);
-        void        LogProgramError(uint programId);
+        void        LogProgramError(uint progId);
     };
 }

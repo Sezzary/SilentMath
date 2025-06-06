@@ -173,18 +173,18 @@ namespace Silent::Renderer
         }
     }
 
-    void ShaderProgram::LogProgramError(uint programId)
+    void ShaderProgram::LogProgramError(uint progId)
     {
         constexpr uint MSG_BUFFER_SIZE = 512;
 
         int  success = 0;
         char msgBuffer[MSG_BUFFER_SIZE];
 
-        glGetProgramiv(programId, GL_LINK_STATUS, &success);
+        glGetProgramiv(progId, GL_LINK_STATUS, &success);
         if (!success)
         {
-            glGetProgramInfoLog(programId, MSG_BUFFER_SIZE, nullptr, msgBuffer);
-            Log("Failed to create '" + std::to_string(programId) + "' shader program:" + msgBuffer, LogLevel::Error);
+            glGetProgramInfoLog(progId, MSG_BUFFER_SIZE, nullptr, msgBuffer);
+            Log("Failed to create '" + std::to_string(progId) + "' shader program:" + msgBuffer, LogLevel::Error);
         }
     }
 }

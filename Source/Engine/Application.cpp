@@ -193,7 +193,7 @@ namespace Silent
                     }
 
                     auto& options = _work.Config.GetOptions();
-                    
+
                     auto res = Vector2i::Zero;
                     SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
                     if (options.WindowedSize == res)
