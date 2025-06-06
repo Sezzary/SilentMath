@@ -2,7 +2,7 @@
 #include "Engine/Renderer/Backends/OpenGl/View.h"
 
 #include "Engine/Application.h"
-#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
+#include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Input/Input.h"
 
 using namespace Silent::Input;
@@ -15,13 +15,13 @@ namespace Silent::Renderer
         Size     = size;
     }
 
-    void View::ExportMatrix(float fov, float nearPlane, float farPlane, ShaderProgramManager& shaders, const std::string& uni)
+    void View::ExportMatrix(float fov, float nearPlane, float farPlane, ShaderProgram& shaderProgram, const std::string& uni)
     {
         //auto viewMat  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, -2.0f));
         auto viewMat = glm::lookAt(Position, Position + Direction, Up);
         auto projMat = glm::perspective(fov, (float)Size.x / (float)Size.y, nearPlane, farPlane);
 
-        glUniformMatrix4fv(glGetUniformLocation(shaders.GetProgramId("Default"), uni.c_str()), 1, GL_FALSE, glm::value_ptr(projMat * viewMat));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram.GetId(), uni.c_str()), 1, GL_FALSE, glm::value_ptr(projMat * viewMat));
     }
 
     void View::Move()

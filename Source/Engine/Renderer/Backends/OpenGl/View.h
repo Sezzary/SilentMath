@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    class ShaderProgramManager;
+    class ShaderProgram;
 
     class View
     {
@@ -26,7 +26,7 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void ExportMatrix(float fov, float nearPlane, float farPlane, ShaderProgramManager& shaders, const std::string& uni);
+        void ExportMatrix(float fov, float nearPlane, float farPlane, ShaderProgram& shaderProgram, const std::string& uni);
         void Move();
     };
 }

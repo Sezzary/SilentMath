@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
-#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
+#include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
@@ -21,12 +21,12 @@ namespace Silent::Renderer
 
         // Fields
 
-        SDL_GLContext        _context       = nullptr;
-        ShaderProgramManager _shaders       = ShaderProgramManager();
-        VertexArrayObject    _vertexArray   = VertexArrayObject();
-        VertexBufferObject   _vertexBuffer  = VertexBufferObject();
-        ElementBufferObject  _elementBuffer = ElementBufferObject();
-        View                 _view          = View();
+        SDL_GLContext                                  _context        = nullptr;
+        std::unordered_map<std::string, ShaderProgram> _shaderPrograms = {};
+        VertexArrayObject                              _vertexArray    = VertexArrayObject();
+        VertexBufferObject                             _vertexBuffer   = VertexBufferObject();
+        ElementBufferObject                            _elementBuffer  = ElementBufferObject();
+        View                                           _view           = View();
 
     public:
         // Constructors

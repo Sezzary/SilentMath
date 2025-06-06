@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 
-#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
+#include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 
 namespace Silent::Renderer
 {
@@ -60,13 +60,13 @@ namespace Silent::Renderer
         glDeleteTextures(1, &_id);
     }
 
-    void Texture::TextureUnit(ShaderProgramManager& shaders, const std::string& uniform, uint unit)
+    void Texture::TextureUnit(ShaderProgram& shaderProgram, const std::string& uniform, uint unit)
     {
         // Get uniform location.
-        uint texUniLoc = glGetUniformLocation(shaders.GetProgramId("Default"), uniform.c_str());
+        uint texUniLoc = glGetUniformLocation(shaderProgram.GetId(), uniform.c_str());
 
         // Set uniform value.
-        shaders.Activate("Default");
+        shaderProgram.Activate();
         glUniform1i(texUniLoc, unit);
     }
 }

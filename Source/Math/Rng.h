@@ -56,7 +56,7 @@ namespace Silent::Math
 
     /** @brief Tests if a probability is met.
      *
-     * This macro evaluates the probability by performing a bitwise AND
+     * This function evaluates the probability by performing a bitwise AND
      * operation with a mask that has the specified number of bits set to 1.
      *
      * Bits | Mask   | Chance  

@@ -3,7 +3,7 @@
 
 #include "Engine/Application.h"
 #include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
-#include "Engine/Renderer/Backends/OpenGl/Shaders.h"
+#include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexArray.h"
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
@@ -18,21 +18,21 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    auto VERTICES = std::vector<float>
-    {/* Positions           Colors */
-        -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 0.95f, // Left.
-         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.95f, // Bottom.
-         0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.95f  // Top.
+    static auto VERTICES = std::vector<float>
+    {/* Positions              Colors */
+        -0.5f,  0.0f, 0.0f,    0.0f, 0.0f, 0.95f, // Left.
+         0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 0.95f, // Bottom.
+         0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 0.95f  // Top.
     };
 
-    static uint VERTEX_INDICES[] =
+    static auto VERTEX_INDICES = std::vector<uint>
     {
         0, 1, 2
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
     {
-        Log("Using OpenGL renderer.", LogLevel::Info, LogMode::Debug);
+        Log("Using OpenGL renderer:", LogLevel::Info, LogMode::Debug);
 
         _window = &window;
 
@@ -67,7 +67,7 @@ namespace Silent::Renderer
         // Log available vertex attributes.
         int attribCountMax = 0;
         glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribCountMax);
-        Log(std::to_string(attribCountMax) + " vertex attributes available.", LogLevel::Info, LogMode::Debug);
+        Log("    " + std::to_string(attribCountMax) + " vertex attributes available.", LogLevel::Info, LogMode::Debug);
     }
 
     void OpenGlRenderer::Deinitialize()
@@ -76,7 +76,11 @@ namespace Silent::Renderer
         _vertexArray.Delete();
         _vertexBuffer.Delete();
         _elementBuffer.Delete();
-        _shaders.Delete();
+
+        for (auto& [keyName, shaderProgram] : _shaderPrograms)
+        {
+            shaderProgram.Delete();
+        }
     }
 
     void OpenGlRenderer::Update()
@@ -231,7 +235,7 @@ namespace Silent::Renderer
     {
         DoCoolColorThing();
 
-        _shaders.Activate("Default");
+        _shaderPrograms.at("Default").Activate();
 
         _vertexBuffer.Bind();
         glBufferData(GL_ARRAY_BUFFER, VERTICES.size() * sizeof(float), VERTICES.data(), GL_DYNAMIC_DRAW);
@@ -321,7 +325,8 @@ namespace Silent::Renderer
         static bool isFirstTime = true;
         if (isFirstTime)
         {
-            _shaders.Initialize("Quad");
+            _shaderPrograms.emplace("Quad", ShaderProgram());
+            _shaderPrograms.at("Quad").Initialize("Quad");
 
             glGenVertexArrays(1, &vao);
             glGenBuffers(1, &vbo);
@@ -336,8 +341,8 @@ namespace Silent::Renderer
             isFirstTime = false;
         }
 
-        _shaders.Activate("Quad");
-        glUniform3f(glGetUniformLocation(_shaders.GetProgramId("Quad"), "uColor"), 0.63f, 0.63f, 0.63f);
+        _shaderPrograms.at("Quad").Activate();
+        glUniform3f(glGetUniformLocation(_shaderPrograms.at("Quad").GetId(), "uColor"), 0.63f, 0.63f, 0.63f);
 
         // Set line width to match PSX resolution.
         auto ratio = GetScreenResolution().ToVector2() / Vector2(320.0f, 240.0f);
@@ -388,7 +393,8 @@ namespace Silent::Renderer
     void OpenGlRenderer::CreateShaderProgram()
     {
         // Generate shader program.
-        _shaders.Initialize("Default");
+        _shaderPrograms.emplace("Default", ShaderProgram());
+        _shaderPrograms.at("Default").Initialize("Default");
 
         // Generate and bind vertex array object.
         _vertexArray.Initialize();
