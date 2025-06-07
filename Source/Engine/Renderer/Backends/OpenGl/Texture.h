@@ -24,7 +24,7 @@ namespace Silent::Renderer
         void Unbind();
         void Delete();
 
-        void TextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unitId);
-        void RefreshFiltering();
+        void SetTextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unitId);
+        void RefreshFilter();
     };
 }

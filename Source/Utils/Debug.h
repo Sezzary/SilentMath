@@ -26,7 +26,8 @@ namespace Silent::Utils::Debug
     {
         None,
         Renderer,
-        Cheats
+        Cheats,
+        Options
     };
 
     struct DebugData

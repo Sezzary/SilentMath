@@ -77,6 +77,11 @@ namespace Silent::Utils::Debug
 
         CreateGui([]()
         {
+            constexpr const char* TEX_FILTER_ITEMS[] = { "Nearest", "Bilinear" };
+
+            auto& options  = g_App.GetConfig().GetOptions();
+            auto& renderer = g_App.GetRenderer();
+
             // Main tabs.
             if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll))
             {
@@ -93,6 +98,22 @@ namespace Silent::Utils::Debug
                 if (ImGui::BeginTabItem("Cheats"))
                 {
                     g_DebugData.Page = DebugPage::Cheats;
+
+                    ImGui::EndTabItem();
+                }
+
+                // `Options` tab.
+                if (ImGui::BeginTabItem("Options"))
+                {
+                    g_DebugData.Page = DebugPage::Options;
+
+                    // `Texture filter` combo.
+                    int texFilterType = (int)options.TextureFilterType;
+                    if (ImGui::Combo("Texture filter", &texFilterType, TEX_FILTER_ITEMS, IM_ARRAYSIZE(TEX_FILTER_ITEMS)))
+                    {
+                        options.TextureFilterType = (TextureFilterType)texFilterType;
+                        renderer.RefreshTextureFilter();
+                    }
 
                     ImGui::EndTabItem();
                 }

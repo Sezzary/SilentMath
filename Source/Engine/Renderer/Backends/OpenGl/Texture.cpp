@@ -73,7 +73,7 @@ namespace Silent::Renderer
         glDeleteTextures(1, &_id);
     }
 
-    void Texture::TextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unit)
+    void Texture::SetTextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unit)
     {
         // Get uniform location.
         uint texUniLoc = glGetUniformLocation(shaderProg.GetId(), uniName.c_str());
@@ -83,7 +83,7 @@ namespace Silent::Renderer
         glUniform1i(texUniLoc, unit);
     }
 
-    void Texture::RefreshFiltering()
+    void Texture::RefreshFilter()
     {
         const auto& options = g_App.GetConfig().GetOptions();
 

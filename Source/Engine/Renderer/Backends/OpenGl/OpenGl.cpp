@@ -94,25 +94,25 @@ namespace Silent::Renderer
         glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attribCountMax);
         Log("    " + std::to_string(attribCountMax) + " vertex attributes available.", LogLevel::Info, LogMode::Debug);
 
-        int texSizeMax = 0;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSizeMax);
-        Log("    " + std::to_string(texSizeMax)  + " max texture size.", LogLevel::Info, LogMode::Debug);
+        int varyingVarCountMax = 0;
+        glGetIntegerv(GL_MAX_VARYING_VECTORS, &varyingVarCountMax);
+        Log("    " + std::to_string(varyingVarCountMax) + " varying variables available.", LogLevel::Info, LogMode::Debug);
 
         int combinedTexUnitCountMax = 0;
         glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &combinedTexUnitCountMax);
         Log("    " + std::to_string(combinedTexUnitCountMax) + " combined texture image units available.", LogLevel::Info, LogMode::Debug);
 
-        int uniBlockSizeMax = 0;
-        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &uniBlockSizeMax);
-        Log("    " + std::to_string(uniBlockSizeMax) + " max uniform block size.", LogLevel::Info, LogMode::Debug);
-
-        int varyingVarCountMax = 0;
-        glGetIntegerv(GL_MAX_VARYING_VECTORS, &varyingVarCountMax);
-        Log("    " + std::to_string(varyingVarCountMax) + " varying variables available.", LogLevel::Info, LogMode::Debug);
-
         int vertTexImageUnitCountMax = 0;
         glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &vertTexImageUnitCountMax);
         Log("    " + std::to_string(vertTexImageUnitCountMax) + " vertex texture image units available.", LogLevel::Info, LogMode::Debug);
+
+        int texSizeMax = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSizeMax);
+        Log("    " + std::to_string(texSizeMax)  + " max texture size.", LogLevel::Info, LogMode::Debug);
+
+        int uniBlockSizeMax = 0;
+        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &uniBlockSizeMax);
+        Log("    " + std::to_string(uniBlockSizeMax) + " max uniform block size.", LogLevel::Info, LogMode::Debug);
 
         int renderBufferSizeMax = 0;
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &renderBufferSizeMax);
@@ -132,7 +132,8 @@ namespace Silent::Renderer
         _vertexColorBuffer.Delete();
         _vertexTexCoordBuffer.Delete();
         _elementBuffer.Delete();
-        _texture.Delete();
+        _texture0.Delete();
+        _texture1.Delete();
     }
 
     void OpenGlRenderer::Update()
@@ -158,7 +159,8 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::RefreshTextureFilter()
     {
-        // TODO: Run through all textures and refresh.
+        _texture0.RefreshFilter();
+        _texture1.RefreshFilter();
     }
 
     void OpenGlRenderer::SaveScreenshot() const
@@ -300,7 +302,8 @@ namespace Silent::Renderer
         _vertexColorBuffer.Bind();
         glBufferData(GL_ARRAY_BUFFER, VERTEX_COLORS.size() * sizeof(float), VERTEX_COLORS.data(), GL_DYNAMIC_DRAW);
 
-        _texture.Bind();
+        _texture0.Bind();
+        _texture1.Bind();
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
         _drawCallCount++;
@@ -406,8 +409,8 @@ namespace Silent::Renderer
         glUniform3f(glGetUniformLocation(_shaderPrograms.at("Quad").GetId(), "uColor"), 0.63f, 0.63f, 0.63f);
 
         // Set line width to match PSX resolution.
-        auto ratio = GetScreenResolution().ToVector2() / Vector2(320.0f, 240.0f);
-        int  width = std::max((int)round(std::min(ratio.x, ratio.y)), 1);
+        auto  ratio = GetScreenResolution().ToVector2() / Vector2(320.0f, 240.0f);
+        float width = std::max(round(std::min(ratio.x, ratio.y)), 1.0f);
         glLineWidth(width);
 
         glBindVertexArray(vao);
@@ -480,8 +483,13 @@ namespace Silent::Renderer
         _vertexTexCoordBuffer.Unbind();
         _elementBuffer.Unbind();
 
-        // Load texture.
-        _texture = Texture("Assets/brick.png", GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+        // Load textures.
+        _texture0 = Texture("Assets/brick.png", GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+        _texture1 = Texture("Assets/derg.png", GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+
+        _shaderPrograms.at("Default").Activate();
+        _shaderPrograms.at("Default").SetInt("tex0", 0);
+        _shaderPrograms.at("Default").SetInt("tex1", 1);
     }
 
     void OpenGlRenderer::CreateDebugGui()

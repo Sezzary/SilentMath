@@ -30,7 +30,8 @@ namespace Silent::Renderer
         VertexBufferObject                             _vertexColorBuffer    = VertexBufferObject();
         VertexBufferObject                             _vertexTexCoordBuffer = VertexBufferObject();
         ElementBufferObject                            _elementBuffer        = ElementBufferObject();
-        Texture                                        _texture              = Texture();
+        Texture                                        _texture0             = Texture();
+        Texture                                        _texture1             = Texture();
 
     public:
         // Constructors

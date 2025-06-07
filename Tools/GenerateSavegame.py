@@ -6,7 +6,7 @@ from pathlib import Path
 
 FLATC_NAME   = "flatc"
 BASE_PATH    = Path(__file__).resolve().parent
-FLATC_PATH   = BASE_PATH / "Tools" / FLATC_NAME
+FLATC_PATH   = BASE_PATH / FLATC_NAME
 SCHEMAS_PATH = BASE_PATH / "../Source/Engine/Services/Savegame/Schemas"
 OUTPUT_PATH  = BASE_PATH / "../Source/Engine/Services/Savegame/Generated"
 
