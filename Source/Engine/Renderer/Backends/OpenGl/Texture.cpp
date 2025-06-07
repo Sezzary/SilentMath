@@ -3,7 +3,7 @@
 
 #include "Engine/Application.h"
 #include "Engine/Assets/Assets.h"
-#include "Engine/Assets/Parsers/Tim.h"
+#include "Engine/Assets/Parsers/Tim.h" // TODO: Shouldn't need this.
 #include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Services/Configuration.h"
 
@@ -50,11 +50,13 @@ namespace Silent::Renderer
         {
             auto& assets = g_App.GetAssets();
 
+            // Load asset.
             auto name = "TIM\\" + filename.filename().string();
             assets.LoadAsset(name).wait();
 
+            // Get asset data.
             const auto& asset = assets.GetAsset(name);
-            auto data = std::reinterpret_pointer_cast<Silent::Assets::TimAsset>(asset->Data);
+            auto data         = std::reinterpret_pointer_cast<TimAsset>(asset->Data);
 
             // Assign image to texture object.
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->Resolution.x, data->Resolution.y, 0, format, pixelType, data->Pixels.data());

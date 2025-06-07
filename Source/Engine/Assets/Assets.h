@@ -69,6 +69,7 @@ namespace Silent::Assets
         std::future<void> LoadAsset(int assetIdx);
         std::future<void> LoadAsset(const std::string& assetName);
         void              UnloadAsset(int assetIdx);
+        void              UnloadAsset(const std::string& assetName);
         void              UnloadAllAssets();
     };
 }

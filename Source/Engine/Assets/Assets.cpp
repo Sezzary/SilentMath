@@ -211,6 +211,21 @@ namespace Silent::Assets
         Log("Unloaded asset " + std::to_string(assetIdx) + ".", LogLevel::Info, LogMode::Debug);
     }
 
+    void AssetManager::UnloadAsset(const std::string& assetName)
+    {
+        // Check if asset exists.
+        auto it = _assetIdxs.find(assetName);
+        if (it == _assetIdxs.end())
+        {
+            Log("Attempted to unload unregistered asset '" + assetName + "'.", LogLevel::Warning, LogMode::Debug);
+            return;
+        }
+
+        // Unload asset by index.
+        const auto& [keyName, assetIdx] = *it;
+        UnloadAsset(assetIdx);
+    }
+
     void AssetManager::UnloadAllAssets()
     {
         for (auto& asset : _assets)
