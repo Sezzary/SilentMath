@@ -16,7 +16,7 @@ namespace Silent::Renderer
         // Constructors
 
         Texture() = default;
-        Texture(const std::string& filename, GLenum unit, GLenum format, GLenum pixelType);
+        Texture(const std::filesystem::path& filename, GLenum unit, GLenum format, GLenum pixelType);
 
         // Utilities
 
@@ -26,5 +26,11 @@ namespace Silent::Renderer
 
         void SetTextureUnit(ShaderProgram& shaderProg, const std::string& uniName, uint unitId);
         void RefreshFilter();
+
+    private:
+        // Helpers
+
+        void SetNearestFilter();
+        void SetBilinearFilter();
     };
 }

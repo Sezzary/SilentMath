@@ -54,6 +54,10 @@ namespace Silent
         // Parallelism.
         g_Parallel.Initialize();
 
+        // TODO: Should move below input init.
+        // Assets.
+        _work.Assets.Initialize(_work.Config.GetAssetsFolder() / "SILENT");
+
         // SDL.
         if (!SDL_Init(SDL_INIT_VIDEO))
         {
@@ -85,9 +89,6 @@ namespace Silent
 
         // Input.
         _work.Input.Initialize();
-
-        // Assets.
-        _work.Assets.Initialize(_work.Config.GetAssetsFolder() / "SILENT");
 
         // Finish.
         Log("Startup complete.");

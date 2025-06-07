@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Engine/Assets/Assets.h"
 
+#include "Engine/Assets/Parsers/Tim.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
 
@@ -8,11 +9,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    struct ParsedDataBase
-    {
-        int Idk = 0;
-    };
-
     static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
     {
         { ".TIM", AssetType::Tim },
@@ -30,80 +26,9 @@ namespace Silent::Assets
         { "",     AssetType::Xa }
     };
 
-    static std::shared_ptr<ParsedDataBase> ParseTim(const std::filesystem::path& file)
+    static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<void>(const std::filesystem::path& file)>>
     {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseVab(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseDms(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseAnm(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParsePlm(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseIpd(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseIlm(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseTmd(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseDat(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseKdt(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseCmp(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static std::shared_ptr<ParsedDataBase> ParseXa(const std::filesystem::path& file)
-    {
-        return std::make_unique<ParsedDataBase>();
-    }
-
-    static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<ParsedDataBase>(const std::filesystem::path& file)>>
-    {
-        { AssetType::Tim, ParseTim },
-        { AssetType::Vab, ParseVab },
-        { AssetType::Dms, ParseDms },
-        { AssetType::Anm, ParseAnm },
-        { AssetType::Plm, ParsePlm },
-        { AssetType::Ipd, ParseIpd },
-        { AssetType::Ilm, ParseIlm },
-        { AssetType::Tmd, ParseTmd },
-        { AssetType::Dat, ParseDat },
-        { AssetType::Kdt, ParseKdt },
-        { AssetType::Cmp, ParseCmp },
-        { AssetType::Xa , ParseXa }
+        { AssetType::Tim, ParseTim }
     };
 
     const std::shared_ptr<Asset> AssetManager::GetAsset(int assetIdx) const
@@ -185,13 +110,13 @@ namespace Silent::Assets
         Log("Registered " + std::to_string(_assets.size()) + " assets.", LogLevel::Info, LogMode::Debug);
     }
 
-    void AssetManager::LoadAsset(int assetIdx)
+    std::future<void> AssetManager::LoadAsset(int assetIdx)
     {
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
             Log("Attempted to load invalid asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
-            return;
+            return {};
         }
         auto& asset = _assets[assetIdx];
 
@@ -199,7 +124,7 @@ namespace Silent::Assets
         if (asset->State == AssetState::Loading || asset->State == AssetState::Loaded)
         {
             Log("Attempted to load already loading/loaded asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
-            return;
+            return {};
         }
 
         // Check if file is valid.
@@ -208,7 +133,7 @@ namespace Silent::Assets
             Log("Attempted to load asset " + std::to_string(assetIdx) + " from invalid file '" + asset->File.string() + "'.", LogLevel::Error);
 
             asset->State = AssetState::Error;
-            return;
+            return {};
         }
 
         // Set loading state.
@@ -216,7 +141,7 @@ namespace Silent::Assets
         asset->State = AssetState::Loading;
 
         // Load asynchronously.
-        g_Parallel.AddTask([&]()
+        return g_Parallel.AddTask([&]()
         {
             // Get parser function.
             auto parserFuncIt = PARSER_FUNCS.find(asset->Type);
@@ -245,6 +170,21 @@ namespace Silent::Assets
             }
             _loadingCount--;
         });
+    }
+
+    std::future<void> AssetManager::LoadAsset(const std::string& assetName)
+    {
+        // Check if asset exists.
+        auto it = _assetIdxs.find(assetName);
+        if (it == _assetIdxs.end())
+        {
+            Log("Attempted to load unregistered asset '" + assetName + "'.", LogLevel::Warning, LogMode::Debug);
+            return {};
+        }
+
+        // Load asset by index.
+        const auto& [keyName, assetIdx] = *it;
+        return LoadAsset(assetIdx);
     }
 
     void AssetManager::UnloadAsset(int assetIdx)

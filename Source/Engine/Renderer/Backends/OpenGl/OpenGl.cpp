@@ -2,6 +2,7 @@
 #include "Engine/Renderer/Backends/OpenGl/OpenGl.h"
 
 #include "Engine/Application.h"
+#include "Engine/Assets/Assets.h"
 #include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
@@ -13,6 +14,7 @@
 #include "Engine/Services/Time.h"
 #include "Utils/Utils.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
@@ -485,7 +487,7 @@ namespace Silent::Renderer
 
         // Load textures.
         _texture0 = Texture("Assets/brick.png", GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-        _texture1 = Texture("Assets/derg.png", GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+        _texture1 = Texture("Assets/SILENT/TIM/BG_ETC.TIM", GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
 
         _shaderPrograms.at("Default").Activate();
         _shaderPrograms.at("Default").SetInt("tex0", 0);

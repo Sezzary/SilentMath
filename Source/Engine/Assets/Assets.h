@@ -31,7 +31,7 @@ namespace Silent::Assets
 
     struct Asset
     {
-        std::string           Name = {};             // Name of relative file path.
+        std::string           Name = {};             // Filename relative to assets folder.
         AssetType             Type = AssetType::Tim; // File extension type.
         std::filesystem::path File = {};             // Absolute file path.
         uint64                Size = 0;              // Raw file size in bytes.
@@ -65,9 +65,10 @@ namespace Silent::Assets
 
         // Utilities
 
-        void Initialize(const std::filesystem::path& assetsPath);
-        void LoadAsset(int assetIdx);
-        void UnloadAsset(int assetIdx);
-        void UnloadAllAssets();
+        void              Initialize(const std::filesystem::path& assetsPath);
+        std::future<void> LoadAsset(int assetIdx);
+        std::future<void> LoadAsset(const std::string& assetName);
+        void              UnloadAsset(int assetIdx);
+        void              UnloadAllAssets();
     };
 }
