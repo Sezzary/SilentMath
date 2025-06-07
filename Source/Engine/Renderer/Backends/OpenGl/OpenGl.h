@@ -24,10 +24,13 @@ namespace Silent::Renderer
         SDL_GLContext                                  _context              = nullptr;
         View                                           _view                 = View();
         std::unordered_map<std::string, ShaderProgram> _shaderPrograms       = {};
+
         VertexArrayObject                              _vertexArray          = VertexArrayObject();
         VertexBufferObject                             _vertexPositionBuffer = VertexBufferObject();
         VertexBufferObject                             _vertexColorBuffer    = VertexBufferObject();
+        VertexBufferObject                             _vertexTexCoordBuffer = VertexBufferObject();
         ElementBufferObject                            _elementBuffer        = ElementBufferObject();
+        Texture                                        _texture              = Texture();
 
     public:
         // Constructors

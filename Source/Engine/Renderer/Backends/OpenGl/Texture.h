@@ -9,13 +9,14 @@ namespace Silent::Renderer
     private:
         // Fields
 
-        uint _id = 0;
+        uint _id   = 0;
+        uint _unit = 0;
 
     public:
         // Constructors
 
         Texture() = default;
-        Texture(const std::string& filename, GLenum slot, GLenum format, GLenum pixelType);
+        Texture(const std::string& filename, GLenum unit, GLenum format, GLenum pixelType);
 
         // Utilities
 

@@ -100,7 +100,7 @@ namespace Silent::Renderer
 
         int combinedTexUnitCountMax = 0;
         glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &combinedTexUnitCountMax);
-        Log("    " + std::to_string(combinedTexUnitCountMax) + " max combined texture image units.", LogLevel::Info, LogMode::Debug);
+        Log("    " + std::to_string(combinedTexUnitCountMax) + " combined texture image units available.", LogLevel::Info, LogMode::Debug);
 
         int uniBlockSizeMax = 0;
         glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &uniBlockSizeMax);
@@ -108,11 +108,11 @@ namespace Silent::Renderer
 
         int varyingVarCountMax = 0;
         glGetIntegerv(GL_MAX_VARYING_VECTORS, &varyingVarCountMax);
-        Log("    " + std::to_string(varyingVarCountMax) + " max varying variables.", LogLevel::Info, LogMode::Debug);
+        Log("    " + std::to_string(varyingVarCountMax) + " varying variables available.", LogLevel::Info, LogMode::Debug);
 
         int vertTexImageUnitCountMax = 0;
         glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &vertTexImageUnitCountMax);
-        Log("    " + std::to_string(vertTexImageUnitCountMax) + " max vertex texture image units.", LogLevel::Info, LogMode::Debug);
+        Log("    " + std::to_string(vertTexImageUnitCountMax) + " vertex texture image units available.", LogLevel::Info, LogMode::Debug);
 
         int renderBufferSizeMax = 0;
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &renderBufferSizeMax);
@@ -121,16 +121,18 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::Deinitialize()
     {
-        // Delete objects.
-        _vertexArray.Delete();
-        _vertexPositionBuffer.Delete();
-        _vertexColorBuffer.Delete();
-        _elementBuffer.Delete();
-
         for (auto& [keyName, shaderProg] : _shaderPrograms)
         {
             shaderProg.Delete();
         }
+
+        // Delete objects.
+        _vertexArray.Delete();
+        _vertexPositionBuffer.Delete();
+        _vertexColorBuffer.Delete();
+        _vertexTexCoordBuffer.Delete();
+        _elementBuffer.Delete();
+        _texture.Delete();
     }
 
     void OpenGlRenderer::Update()
@@ -298,6 +300,7 @@ namespace Silent::Renderer
         _vertexColorBuffer.Bind();
         glBufferData(GL_ARRAY_BUFFER, VERTEX_COLORS.size() * sizeof(float), VERTEX_COLORS.data(), GL_DYNAMIC_DRAW);
 
+        _texture.Bind();
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
         _drawCallCount++;
@@ -461,18 +464,24 @@ namespace Silent::Renderer
 
         // Generate vertex buffer and element array objects.
         _vertexPositionBuffer.Initialize(ToSpan(VERTEX_POSITIONS));
-        _vertexColorBuffer.Initialize(ToSpan(VERTEX_COLORS));
+        _vertexColorBuffer.Initialize(ToSpan(VERTEX_COLORS), GL_DYNAMIC_DRAW);
+        _vertexTexCoordBuffer.Initialize(ToSpan(VERTEX_TEXTURE_COORDS));
         _elementBuffer.Initialize(ToSpan(VERTEX_INDICES));
 
         // Link attributes.
         _vertexArray.LinkAttrib(_vertexPositionBuffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
         _vertexArray.LinkAttrib(_vertexColorBuffer, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+        _vertexArray.LinkAttrib(_vertexTexCoordBuffer, 2, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
         // Unbind to prevent accidental modification.
         _vertexArray.Unbind();
         _vertexPositionBuffer.Unbind();
         _vertexColorBuffer.Unbind();
+        _vertexTexCoordBuffer.Unbind();
         _elementBuffer.Unbind();
+
+        // Load texture.
+        _texture = Texture("Assets/brick.png", GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     }
 
     void OpenGlRenderer::CreateDebugGui()
