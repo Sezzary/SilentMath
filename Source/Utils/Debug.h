@@ -37,6 +37,7 @@ namespace Silent::Utils::Debug
         // Renderer
 
         bool EnableWireframeMode = false;
+        float BlendAlpha = 0.0f;
     };
 
     extern DebugData g_DebugData;

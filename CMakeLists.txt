@@ -6,7 +6,7 @@ project(Math)
 # Specify C and C++ standards.
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 23)
-#set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+#set(CMAKE_CXX_SCAN_FOR_MODULES ON) # TODO: Want to use modules but can't get them to work.
 set(CMAKE_CXX_MODULES ON)
 
 # Add executable.
@@ -15,25 +15,26 @@ add_executable(Math ${SOURCES})
 set_target_properties(Math PROPERTIES OUTPUT_NAME "Math" DEBUG_POSTFIX "_d")
 
 # Add library sources.
-file(GLOB IMGUI_SOURCES
+file(GLOB LIB_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/src/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_opengl3.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl3.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_vulkan.cpp")
-target_sources(Math PRIVATE ${IMGUI_SOURCES})
+target_sources(Math PRIVATE ${LIB_SOURCES})
 
-# Set Debug build definitions.
+# Set `Debug` build definitions.
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_definitions(-D_DEBUG)
 endif()
 
-# Set compiler options for Debug and Release modes.
+# Set compiler options for `Debug` and `Release` modes.
 target_compile_options(Math PRIVATE
     #-include "${CMAKE_CURRENT_LIST_DIR}/Source/Framework.h"
     $<$<CONFIG:DEBUG>:-DDEBUG_MODE>
     $<$<CONFIG:RELEASE>:-O3>)
 
+# TODO: Switch to GCC.
 # Set compiler warning flags.
 if(MSVC)
     # MSVC warning flags.
@@ -86,3 +87,10 @@ target_link_libraries(Math PRIVATE
     SDL3-static
     spdlog
     Vulkan::Vulkan)
+
+# Copy shaders.
+set(SHADER_SOURCE_DIR ${CMAKE_SOURCE_DIR}/Shaders)
+set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
+set(SHADER_BUILD_DIR ${CMAKE_BINARY_DIR}/${BUILD_TYPE}/Shaders)
+file(MAKE_DIRECTORY ${SHADER_BUILD_DIR})
+file(COPY ${SHADER_SOURCE_DIR}/ DESTINATION ${SHADER_BUILD_DIR})

@@ -85,6 +85,14 @@ namespace Silent::Utils::Debug
             // Main tabs.
             if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll))
             {
+                // `Scratchpad` tab.
+                if (ImGui::BeginTabItem("Scratchpad"))
+                {
+                    ImGui::SliderFloat("My Slider", &g_DebugData.BlendAlpha, 0.0f, 1.0f);
+
+                    ImGui::EndTabItem();
+                }
+
                 // `Renderer` tab.
                 if (ImGui::BeginTabItem("Renderer"))
                 {

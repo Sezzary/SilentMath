@@ -300,6 +300,7 @@ namespace Silent::Renderer
 
         _shaderPrograms.at("Default").Activate();
         _shaderPrograms.at("Default").SetVec3("offset", Vector3(0.5f, 0.5f, 0.5f));
+        _shaderPrograms.at("Default").SetFloat("blendAlpha", g_DebugData.BlendAlpha);
 
         _vertexColorBuffer.Bind();
         glBufferData(GL_ARRAY_BUFFER, VERTEX_COLORS.size() * sizeof(float), VERTEX_COLORS.data(), GL_DYNAMIC_DRAW);
