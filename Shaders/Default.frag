@@ -1,10 +1,13 @@
 #version 460 core
 
+// Inputs
 in vec3 vertColor;
 in vec2 texCoord;
 
+// Outputs
 out vec4 FragColor;
 
+// Uniforms
 uniform float     blendAlpha;
 uniform sampler2D tex0;
 uniform sampler2D tex1;

@@ -10,14 +10,34 @@ namespace Silent::Math
 {
     const Matrix Matrix::Identity = Matrix(1.0f);
 
-    Matrix Matrix::Inverse(const Matrix& matrix)
+    Matrix Matrix::Inverse(const Matrix& mat)
     {
-        return Matrix(glm::inverse(matrix.ToGlmMat4()));
+        return Matrix(glm::inverse(mat.ToGlmMat4()));
     }
 
     void Matrix::Inverse()
     {
         *this = Matrix::Inverse(*this);
+    }
+
+    Matrix Matrix::Rotate(const Matrix& mat, float rad, const Vector3& axis)
+    {
+       return glm::rotate(mat.ToGlmMat4(), rad, axis);
+    }
+
+    void Matrix::Rotate(float rad, const Vector3& axis)
+    {
+        *this = Matrix::Rotate(*this, rad, axis);
+    }
+
+    Matrix Matrix::Scale(const Matrix& mat, const Vector3& scale)
+    {
+        return glm::scale(mat.ToGlmMat4(), scale.ToGlmVec3());
+    }
+
+    void Matrix::Scale(const Vector3& scale)
+    {
+        *this = Matrix::Scale(*this, scale);
     }
 
     const glm::mat4& Matrix::ToGlmMat4() const
@@ -79,5 +99,51 @@ namespace Silent::Math
         return Vector3(Vector3((*this)[0][0], (*this)[0][1], (*this)[0][2]).Length(),
                        Vector3((*this)[1][0], (*this)[1][1], (*this)[1][2]).Length(),
                        Vector3((*this)[2][0], (*this)[2][1], (*this)[2][2]).Length());
+    }
+
+    bool Matrix::operator==(const Matrix& mat) const
+    {
+        return ToGlmMat4() == mat.ToGlmMat4();
+    }
+
+    bool Matrix::operator!=(const Matrix& mat) const
+    {
+        return ToGlmMat4() != mat.ToGlmMat4();
+    }
+
+    Matrix& Matrix::operator+=(const Matrix& mat)
+    {
+        ToGlmMat4() += mat.ToGlmMat4();
+        return *this;
+    }
+
+    Matrix& Matrix::operator-=(const Matrix& mat)
+    {
+        ToGlmMat4() -= mat.ToGlmMat4();
+        return *this;
+    }
+
+    Matrix& Matrix::operator*=(const Matrix& mat)
+    {
+        ToGlmMat4() *= mat.ToGlmMat4();
+        return *this;
+    }
+
+    Matrix& Matrix::operator*=(float scalar)
+    {
+        ToGlmMat4() *= scalar;
+        return *this;
+    }
+
+    Matrix& Matrix::operator/=(const Matrix& mat)
+    {
+        ToGlmMat4() /= mat.ToGlmMat4();
+        return *this;
+    }
+
+    Matrix& Matrix::operator/=(float scalar)
+    {
+        ToGlmMat4() /= scalar;
+        return *this;
     }
 }

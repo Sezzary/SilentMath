@@ -29,8 +29,21 @@ namespace Silent::Math
 
         // Utilities
 
-        static Matrix Inverse(const Matrix& matrix);
+        static Matrix Inverse(const Matrix& mat);
         void          Inverse();
+        static Matrix Rotate(const Matrix& mat, float rad, const Vector3& axis);
+        void          Rotate(float rad, const Vector3& axis);
+        static Matrix Scale(const Matrix& mat, const Vector3& scale);
+        void          Scale(const Vector3& scale);
+
+        // TODO:
+        // Lerp
+        // Translate
+        // LookAt
+        // Perspective
+        // Orthographic
+        // Transpose
+        // Determinant
 
         // Converters
 
@@ -48,16 +61,14 @@ namespace Silent::Math
 
         // Operators
 
-        bool    operator==(const Matrix& matrix) const;
-        bool    operator!=(const Matrix& matrix) const;
-        Matrix& operator=(const Matrix& matrix) = default;
-        Matrix& operator+=(const Matrix& matrix);
-        Matrix& operator-=(const Matrix& matrix);
-        Matrix& operator*=(const Matrix& matrix);
+        bool    operator==(const Matrix& mat) const;
+        bool    operator!=(const Matrix& mat) const;
+        Matrix& operator=(const Matrix& mat) = default;
+        Matrix& operator+=(const Matrix& mat);
+        Matrix& operator-=(const Matrix& mat);
+        Matrix& operator*=(const Matrix& mat);
         Matrix& operator*=(float scalar);
-        Matrix& operator/=(const Matrix& matrix);
+        Matrix& operator/=(const Matrix& mat);
         Matrix& operator/=(float scalar);
-        Matrix  operator+() const;
-        Matrix  operator-() const;
     };
 }

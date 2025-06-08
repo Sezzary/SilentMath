@@ -50,8 +50,8 @@ namespace Silent::Math
         void           Lerp(const Vector3& to, float alpha);
         static Vector3 Smoothstep(const Vector3& from, const Vector3& to, float alpha);
         void           Smoothstep(const Vector3& to, float alpha);
-        static Vector3 Transform(const Vector3& vec, const Matrix& mat);
-        void           Transform(const Matrix& mat);
+        static Vector3 Transform(const Vector3& vec, const Matrix& transformMat);
+        void           Transform(const Matrix& transformMat);
         static Vector3 Rotate(const Vector3& vec, const Matrix& rotMat);
         void           Rotate(const Matrix& rotMat);
         static Vector3 Translate(const Vector3& vec, const Vector3& dir, float dist);

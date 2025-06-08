@@ -102,14 +102,14 @@ namespace Silent::Math
         *this = Vector3::Smoothstep(*this, to, alpha);
     }
 
-    Vector3 Vector3::Transform(const Vector3& vec, const Matrix& mat)
+    Vector3 Vector3::Transform(const Vector3& vec, const Matrix& transformMat)
     {
-        return Vector3(glm::vec3(mat.ToGlmMat4() * glm::vec4(vec, 1.0f)));
+        return Vector3(glm::vec3(transformMat.ToGlmMat4() * glm::vec4(vec, 1.0f)));
     }
 
-    void Vector3::Transform(const Matrix& mat)
+    void Vector3::Transform(const Matrix& transformMat)
     {
-        *this = Vector3::Transform(*this, mat);
+        *this = Vector3::Transform(*this, transformMat);
     }
 
     Vector3 Vector3::Rotate(const Vector3& vec, const Matrix& rotMat)

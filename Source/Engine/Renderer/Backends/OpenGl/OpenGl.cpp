@@ -20,31 +20,55 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    static auto VERTEX_POSITIONS = std::vector<float>
+    static auto TRI_POSITIONS = std::vector<float>
     {
         -0.5f,  0.0f, 0.0f, // Left.
          0.5f,  0.5f, 0.0f, // Bottom.
          0.5f, -0.5f, 0.0f  // Top.
     };
-
-    static auto VERTEX_COLORS = std::vector<float>
+    static auto TRI_COLORS = std::vector<float>
     {
         0.0f, 0.0f, 0.95f, // Left.
         0.0f, 0.0f, 0.95f, // Bottom.
         0.0f, 0.0f, 0.95f  // Top.
     };
-
-    static auto VERTEX_TEXTURE_COORDS = std::vector<float>
+    static auto TRI_TEXTURE_COORDS = std::vector<float>
     {
         1.0f, 1.0f, // Top-right.
         1.0f, 0.0f, // Bottom-right.
         0.0f, 0.0f, // Bottom-left.
         0.0f, 1.0f  // Top-left.
     };
-
-    static auto VERTEX_INDICES = std::vector<uint>
+    static auto TRI_INDICES = std::vector<uint>
     {
         0, 1, 2
+    };
+
+    static auto QUAD_POSITIONS = std::vector<float>
+    {
+         0.5f,  0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
+    };
+    static auto QUAD_COLORS = std::vector<float>
+    {
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f
+    };
+    static auto QUAD_TEXTURE_COORDS = std::vector<float>
+    {
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
+    };
+    static auto QUAD_INDICES = std::vector<uint>
+    {
+        0, 1, 3,
+        1, 2, 3
     };
 
     void OpenGlRenderer::Initialize(SDL_Window& window)
@@ -230,9 +254,8 @@ namespace Silent::Renderer
 
     static void DoCoolColorThing()
     {
-        static int timer = 0;
-
-        int timerCount = timer & 0x7F;
+        static int timer      = 0;
+        int        timerCount = timer & 0x7F;
         
         // Fade start color.
         int colorStart = 0;
@@ -281,34 +304,41 @@ namespace Silent::Renderer
 
         timer++;
 
-        VERTEX_COLORS[0] = 0.0f;
-        VERTEX_COLORS[1] = colorEnd / 31.0f;
-        VERTEX_COLORS[2] = 1.0f;
+        TRI_COLORS[0] = 0.0f;
+        TRI_COLORS[1] = colorEnd / 31.0f;
+        TRI_COLORS[2] = 1.0f;
 
-        VERTEX_COLORS[3]  = 0.0f;
-        VERTEX_COLORS[4] = colorStart / 31.0f;
-        VERTEX_COLORS[5] = 1.0f;
+        TRI_COLORS[3]  = 0.0f;
+        TRI_COLORS[4] = colorStart / 31.0f;
+        TRI_COLORS[5] = 1.0f;
 
-        VERTEX_COLORS[6] = 0.0f;
-        VERTEX_COLORS[7] = colorStart / 31.0f;
-        VERTEX_COLORS[8] = 1.0f;
+        TRI_COLORS[6] = 0.0f;
+        TRI_COLORS[7] = colorStart / 31.0f;
+        TRI_COLORS[8] = 1.0f;
     }
 
     void OpenGlRenderer::DrawFrame()
     {
         DoCoolColorThing();
 
-        _shaderPrograms.at("Default").Activate();
-        _shaderPrograms.at("Default").SetVec3("offset", Vector3(0.5f, 0.5f, 0.5f));
-        _shaderPrograms.at("Default").SetFloat("blendAlpha", g_DebugData.BlendAlpha);
+        static auto transform = Matrix::Identity;
+        transform.Rotate(glm::radians(0.5f), Vector3::UnitZ);
+        //transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+
+        auto& shaderProg = _shaderPrograms.at("Default");
+
+        shaderProg.Activate();
+        shaderProg.SetVec3("offset", Vector3(0.5f, 0.5f, 0.5f));
+        shaderProg.SetFloat("blendAlpha", g_DebugData.BlendAlpha);
+        shaderProg.SetMatrix("transform", transform);
 
         _vertexColorBuffer.Bind();
-        glBufferData(GL_ARRAY_BUFFER, VERTEX_COLORS.size() * sizeof(float), VERTEX_COLORS.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, TRI_COLORS.size() * sizeof(float), TRI_COLORS.data(), GL_DYNAMIC_DRAW);
 
         _texture0.Bind();
         _texture1.Bind();
         _vertexArray.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(VERTEX_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(TRI_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
         _drawCallCount++;
     }
 
@@ -469,10 +499,10 @@ namespace Silent::Renderer
         _vertexArray.Bind();
 
         // Generate vertex buffer and element array objects.
-        _vertexPositionBuffer.Initialize(ToSpan(VERTEX_POSITIONS));
-        _vertexColorBuffer.Initialize(ToSpan(VERTEX_COLORS), GL_DYNAMIC_DRAW);
-        _vertexTexCoordBuffer.Initialize(ToSpan(VERTEX_TEXTURE_COORDS));
-        _elementBuffer.Initialize(ToSpan(VERTEX_INDICES));
+        _vertexPositionBuffer.Initialize(ToSpan(TRI_POSITIONS));
+        _vertexColorBuffer.Initialize(ToSpan(TRI_COLORS), GL_DYNAMIC_DRAW);
+        _vertexTexCoordBuffer.Initialize(ToSpan(TRI_TEXTURE_COORDS));
+        _elementBuffer.Initialize(ToSpan(TRI_INDICES));
 
         // Link attributes.
         _vertexArray.LinkAttrib(_vertexPositionBuffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
