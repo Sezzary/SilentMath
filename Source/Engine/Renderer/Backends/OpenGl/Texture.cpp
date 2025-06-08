@@ -43,7 +43,7 @@ namespace Silent::Renderer
                 break;
             }
         }
-        
+
         // HACK!!!! Demonstrating TIM file load.
         // Read image from file.
         if (filename.extension().string() == ".TIM")
@@ -56,7 +56,7 @@ namespace Silent::Renderer
 
             // Get asset data.
             const auto& asset = assets.GetAsset(name);
-            auto data         = std::reinterpret_pointer_cast<TimAsset>(asset->Data);
+            auto data         = GetAssetData<TimAsset>(asset->Data);
 
             // Assign image to texture object.
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->Resolution.x, data->Resolution.y, 0, format, pixelType, data->Pixels.data());

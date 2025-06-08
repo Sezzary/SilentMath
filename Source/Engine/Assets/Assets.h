@@ -32,7 +32,7 @@ namespace Silent::Assets
     struct Asset
     {
         std::string           Name = {};             // Filename relative to assets folder.
-        AssetType             Type = AssetType::Tim; // File extension type.
+        AssetType             Type = AssetType::Tim; // File type.
         std::filesystem::path File = {};             // Absolute file path.
         uint64                Size = 0;              // Raw file size in bytes.
 
@@ -72,4 +72,10 @@ namespace Silent::Assets
         void              UnloadAsset(const std::string& assetName);
         void              UnloadAllAssets();
     };
+
+    template <typename T>
+    std::shared_ptr<T> GetAssetData(std::shared_ptr<void> data)
+    {
+        return std::reinterpret_pointer_cast<T>(data);
+    }
 }

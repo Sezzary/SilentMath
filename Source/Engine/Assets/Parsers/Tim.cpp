@@ -14,7 +14,7 @@ namespace Silent::Assets
     {
         constexpr int HEADER_MAGIC  = 1 << 4;
         constexpr int HAS_CLUT_FLAG = 1 << 3;
-        constexpr int BPP_MASK      = (1 << 3) - 1;
+        constexpr int BPP_MASK      = 0x7;
 
         // Read file.
         auto file = std::ifstream(filename, std::ios::binary);
@@ -157,7 +157,7 @@ namespace Silent::Assets
                         file.read((char*)&byte, 1);
 
                         // Decode CLUT indices from byte.
-                        uint idx0 = byte & ((1 << 4) - 1);
+                        uint idx0 = byte & 0xF;
                         uint idx1 = byte >> 4;
 
                         for (int i = 0; i < 2 && x < res.x; i++, x++)
