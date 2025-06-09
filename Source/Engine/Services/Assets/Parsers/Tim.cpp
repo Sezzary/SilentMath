@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Engine/Assets/Parsers/Tim.h"
+#include "Engine/Services/Assets/Parsers/Tim.h"
 
 namespace Silent::Assets
 {
@@ -20,8 +20,7 @@ namespace Silent::Assets
         auto file = std::ifstream(filename, std::ios::binary);
         if (!file.is_open())
         {
-            Log("Attempted to parse missing TIM asset `" + filename.string() + "`.", LogLevel::Warning);
-            return nullptr;
+            throw std::runtime_error("Couldn't open TIM `" + filename.string() + "`.");
         }
 
         // Confirm TIM format magic.
@@ -29,10 +28,9 @@ namespace Silent::Assets
         file.read((char*)&magic, 4);
         if (magic != HEADER_MAGIC)
         {
-            Log("Attempted to parse invalid TIM asset `" + filename.string() + "`.", LogLevel::Warning);
-            return nullptr;
+            throw std::runtime_error("Invalid TIM `" + filename.string() + "`.");
         }
-        
+
         // Read CLUT and BPP flags.
         uint32 flags = 0;
         file.read((char*)&flags, 4);

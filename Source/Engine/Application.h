@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine/Assets/Assets.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Services/Assets/Assets.h"
 #include "Engine/Services/Configuration.h"
 #include "Engine/Services/Savegame/Savegame.h"
 

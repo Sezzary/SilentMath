@@ -385,7 +385,7 @@ namespace Silent::Input
                     auto& action = _actions.at(actionId);
                     float state  = 0.0f;
 
-                    // Get highest gamepad event state.
+                    // Get max gamepad event state.
                     if (_gamepad != nullptr)
                     {
                         auto gamepadEventIds = gamepadProfile.at(actionId);
@@ -395,7 +395,7 @@ namespace Silent::Input
                         }
                     }
 
-                    // If no valid gamepad event state, get highest keyboard/mouse event state.
+                    // If no valid gamepad event state, get max keyboard/mouse event state.
                     if (state == 0.0f)
                     {
                         auto kmEventIds = kmProfile.at(actionId);
@@ -405,7 +405,7 @@ namespace Silent::Input
                         }
                     }
 
-                    // Use highest bound event state.
+                    // Use max bound event state.
                     action.Update(state);
                 }
             }
@@ -427,7 +427,7 @@ namespace Silent::Input
                         state = std::max(state, _events.States[(int)eventId]);
                     }
 
-                    // Use highest bound event state.
+                    // Use max bound event state.
                     action.Update(state);
                 }
             }
@@ -492,7 +492,7 @@ namespace Silent::Input
             SDL_CloseGamepad(_gamepad);
             _gamepad = nullptr;
         }
-        // Intermittently attempt reinitializing gamepad.
+        // Intermittently attempt reconnecting gamepad.
         else
         {
             if (g_Time.TestInterval(SEC_TO_TICK(GAMEPAD_RECONNECT_INTERVAL_SEC)))

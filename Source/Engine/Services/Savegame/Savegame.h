@@ -12,7 +12,7 @@ namespace Silent::Services
     {
         int Dummy = 0;
     };
-    
+
     struct SavegameMetadata
     {
         int  SlotIdx       = 0;

@@ -2,7 +2,6 @@
 #include "Engine/Renderer/Backends/OpenGl/OpenGl.h"
 
 #include "Engine/Application.h"
-#include "Engine/Assets/Assets.h"
 #include "Engine/Renderer/Backends/OpenGl/ElementBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
@@ -10,6 +9,7 @@
 #include "Engine/Renderer/Backends/OpenGl/VertexBuffer.h"
 #include "Engine/Renderer/Backends/OpenGl/View.h"
 #include "Engine/Renderer/Base.h"
+#include "Engine/Services/Assets/Assets.h"
 #include "Engine/Services/Configuration.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Utils.h"
@@ -319,18 +319,31 @@ namespace Silent::Renderer
 
     void OpenGlRenderer::DrawFrame()
     {
+        //---------------------------------------
+
         DoCoolColorThing();
 
-        static auto transform = Matrix::Identity;
-        transform.Rotate(glm::radians(0.5f), Vector3::UnitZ);
+        /*static auto transform = Matrix::Identity;
+        transform.Rotate(glm::radians(0.5f), Vector3::UnitZ);*/
         //transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+
+        auto modelMat = Matrix::Identity;
+        modelMat.Rotate(glm::radians(-55.0f), Vector3::UnitX);
+
+        auto viewMat = Matrix::Identity;
+        viewMat.Translate(Vector3::UnitZ * -3.0f);
+
+        auto projMat = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);;
+
+        //---------------------------------------
 
         auto& shaderProg = _shaderPrograms.at("Default");
 
         shaderProg.Activate();
-        shaderProg.SetVec3("offset", Vector3(0.5f, 0.5f, 0.5f));
+        shaderProg.SetMatrix("modelMat", modelMat);
+        shaderProg.SetMatrix("viewMat", viewMat);
+        shaderProg.SetMatrix("projMat", projMat);
         shaderProg.SetFloat("blendAlpha", g_DebugData.BlendAlpha);
-        shaderProg.SetMatrix("transform", transform);
 
         _vertexColorBuffer.Bind();
         glBufferData(GL_ARRAY_BUFFER, TRI_COLORS.size() * sizeof(float), TRI_COLORS.data(), GL_DYNAMIC_DRAW);

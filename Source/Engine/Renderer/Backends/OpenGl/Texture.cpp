@@ -2,9 +2,9 @@
 #include "Engine/Renderer/Backends/OpenGl/Texture.h"
 
 #include "Engine/Application.h"
-#include "Engine/Assets/Assets.h"
-#include "Engine/Assets/Parsers/Tim.h" // TODO: Shouldn't need this.
 #include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
+#include "Engine/Services/Assets/Assets.h"
+#include "Engine/Services/Assets/Parsers/Tim.h" // TODO: Shouldn't need this.
 #include "Engine/Services/Configuration.h"
 
 using namespace Silent::Assets;

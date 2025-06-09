@@ -1,7 +1,8 @@
 #include "Framework.h"
-#include "Engine/Assets/Assets.h"
+#include "Engine/Services/Assets/Assets.h"
 
-#include "Engine/Assets/Parsers/Tim.h"
+#include "Engine/Services/Assets/Parsers/Plm.h"
+#include "Engine/Services/Assets/Parsers/Tim.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
 
@@ -23,11 +24,12 @@ namespace Silent::Assets
         { ".DAT", AssetType::Dat },
         { ".KDT", AssetType::Kdt },
         { ".CMP", AssetType::Cmp },
-        { "",     AssetType::Xa } // TODO: Should be given .XA extension when exporting.
+        { "",     AssetType::Xa }   // TODO: Should be given .XA extension when exporting.
     };
 
     static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<void>(const std::filesystem::path& file)>>
     {
+        { AssetType::Plm, ParsePlm },
         { AssetType::Tim, ParseTim }
     };
 
@@ -137,8 +139,8 @@ namespace Silent::Assets
         }
 
         // Set loading state.
-        _loadingCount++;
         asset->State = AssetState::Loading;
+        _loadingCount++;
 
         // Load asynchronously.
         return g_Parallel.AddTask([&]()
@@ -148,15 +150,15 @@ namespace Silent::Assets
             if (parserFuncIt == PARSER_FUNCS.end())
             {
                 Log("Attempted to load asset " + std::to_string(assetIdx) + " with no parser function for asset type " + std::to_string((int)asset->Type) + ".",
-                    LogLevel::Error, LogMode::Debug);
+                    LogLevel::Error);
 
-                _loadingCount--;
                 asset->State = AssetState::Error;
+                _loadingCount--;
                 return;
             }
             const auto& parserFunc = parserFuncIt->second;
 
-            // Parse file to engine object.
+            // Parse asset data from file.
             try
             {
                 asset->Data  = parserFunc(asset->File);
@@ -164,7 +166,7 @@ namespace Silent::Assets
             }
             catch (const std::exception& ex)
             {
-                Log("Failed to parse asset data for file " + std::to_string(assetIdx) + ": " + ex.what(), LogLevel::Error, LogMode::Debug);
+                Log("Failed to parse file for asset " + std::to_string(assetIdx) + ": " + ex.what(), LogLevel::Error);
 
                 asset->State = AssetState::Error;
             }

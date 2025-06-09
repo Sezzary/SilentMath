@@ -31,6 +31,8 @@ namespace Silent::Math
 
         static Matrix Inverse(const Matrix& mat);
         void          Inverse();
+        static Matrix Translate(const Matrix& mat, const Vector3& offset);
+        void          Translate(const Vector3& offset);
         static Matrix Rotate(const Matrix& mat, float rad, const Vector3& axis);
         void          Rotate(float rad, const Vector3& axis);
         static Matrix Scale(const Matrix& mat, const Vector3& scale);
@@ -47,14 +49,12 @@ namespace Silent::Math
 
         // Converters
 
-        Vector3 ToTranslation() const;
-
+        Vector3     ToTranslation() const;
         Vector3     ToDirection() const;
         EulerAngles ToEulerAngles() const;
         Quaternion  ToQuaternion() const;
         AxisAngle   ToAxisAngle() const;
-
-        Vector3 ToScale() const;
+        Vector3     ToScale() const;
 
         const glm::mat4& ToGlmMat4() const;
         glm::mat4&       ToGlmMat4();

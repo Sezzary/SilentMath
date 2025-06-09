@@ -20,6 +20,16 @@ namespace Silent::Math
         *this = Matrix::Inverse(*this);
     }
 
+    Matrix Matrix::Translate(const Matrix& mat, const Vector3& offset)
+    {
+        return glm::translate(mat, offset);
+    }
+
+    void Matrix::Translate(const Vector3& offset)
+    {
+        *this = Matrix::Translate(*this, offset);
+    }
+
     Matrix Matrix::Rotate(const Matrix& mat, float rad, const Vector3& axis)
     {
        return glm::rotate(mat.ToGlmMat4(), rad, axis);
