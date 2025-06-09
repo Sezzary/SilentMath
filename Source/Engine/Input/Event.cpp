@@ -1,6 +1,8 @@
 #include "Framework.h"
 #include "Engine/Input/Event.h"
 
+#include "Engine/Input/Input.h"
+
 namespace Silent::Input
 {
     enum class VendorType
@@ -460,7 +462,7 @@ namespace Silent::Input
         constexpr ushort NINTENDO_VENDOR_ID = 0x057E;
         constexpr ushort SONY_VENDOR_ID     = 0x054C;
 
-        auto* gamepad = SDL_OpenGamepad(0);
+        auto* gamepad = SDL_OpenGamepad(InputManager::GAMEPAD_ID);
 
         // Determine vendor type.
         auto type = VendorType::Generic;

@@ -27,12 +27,20 @@ namespace Silent::Math
                                    m20, m21, m22, m23,
                                    m30, m31, m32, m33) {}
 
+        static Matrix CreateOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane);
+        static Matrix CreatePerspective(float fov, float aspect, float nearPlane, float farPlane);
+        static Matrix CreateTranslation(const Vector3& translation);
+        static Matrix CreateRotationX(float rad);
+        static Matrix CreateRotationY(float rad);
+        static Matrix CreateRotationZ(float rad);
+        static Matrix CreateScale(const Vector3& scale);
+
         // Utilities
 
         static Matrix Inverse(const Matrix& mat);
         void          Inverse();
-        static Matrix Translate(const Matrix& mat, const Vector3& offset);
-        void          Translate(const Vector3& offset);
+        static Matrix Translate(const Matrix& mat, const Vector3& translation);
+        void          Translate(const Vector3& translation);
         static Matrix Rotate(const Matrix& mat, float rad, const Vector3& axis);
         void          Rotate(float rad, const Vector3& axis);
         static Matrix Scale(const Matrix& mat, const Vector3& scale);

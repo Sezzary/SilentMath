@@ -44,6 +44,11 @@ namespace Silent::Input
 
     class InputManager
     {
+    public:
+        // Constants
+
+        static constexpr int GAMEPAD_ID = 0;
+
     private:
         // Fields
 

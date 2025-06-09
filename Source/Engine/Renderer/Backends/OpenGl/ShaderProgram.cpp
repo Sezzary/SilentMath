@@ -58,90 +58,90 @@ namespace Silent::Renderer
 
     void ShaderProgram::SetBool(const std::string& uniName, bool val) const
     {
-        glUniform1i(glGetUniformLocation(_id, uniName.c_str()), (int)val);
+        glUniform1i(GetUniformLocation(uniName), (int)val);
     }
 
     void ShaderProgram::SetInt(const std::string& uniName, int val) const
     {
-        glUniform1i(glGetUniformLocation(_id, uniName.c_str()), val);
+        glUniform1i(GetUniformLocation(uniName), val);
     }
 
     void ShaderProgram::SetUint(const std::string& uniName, uint val) const
     {
-        glUniform1ui(glGetUniformLocation(_id, uniName.c_str()), val);
+        glUniform1ui(GetUniformLocation(uniName), val);
     }
 
     void ShaderProgram::SetFloat(const std::string& uniName, float val) const
     {
-        glUniform1f(glGetUniformLocation(_id, uniName.c_str()), val);
+        glUniform1f(GetUniformLocation(uniName), val);
     }
 
     void ShaderProgram::SetVec2(const std::string& uniName, const Vector2& val) const
     {
-        glUniform2fv(glGetUniformLocation(_id, uniName.c_str()), 1, &val[0]);
+        glUniform2fv(GetUniformLocation(uniName), 1, &val[0]);
     }
 
     void ShaderProgram::SetVec3(const std::string& uniName, const Vector3& val) const
     {
-        glUniform3fv(glGetUniformLocation(_id, uniName.c_str()), 1, &val[0]);
+        glUniform3fv(GetUniformLocation(uniName), 1, &val[0]);
     }
 
     void ShaderProgram::SetVec4(const std::string& uniName, const Vector4& val) const
     {
-        glUniform4fv(glGetUniformLocation(_id, uniName.c_str()), 1, &val[0]);
+        glUniform4fv(GetUniformLocation(uniName), 1, &val[0]);
     }
 
     void ShaderProgram::SetMatrix(const std::string& uniName, const Matrix& val) const
     {
-        glUniformMatrix4fv(glGetUniformLocation(_id, uniName.c_str()), 1, GL_FALSE, &val[0][0]);
+        glUniformMatrix4fv(GetUniformLocation(uniName), 1, GL_FALSE, &val[0][0]);
     }
 
     void ShaderProgram::SetIntArray(const std::string& uniName, const std::span<int>& val) const
     {
-        glUniform1iv(glGetUniformLocation(_id, uniName.c_str()), val.size(), val.data());
+        glUniform1iv(GetUniformLocation(uniName), val.size(), val.data());
     }
 
     void ShaderProgram::SetUintArray(const std::string& uniName, const std::span<uint>& val) const
     {
-        glUniform1uiv(glGetUniformLocation(_id, uniName.c_str()), val.size(), val.data());
+        glUniform1uiv(GetUniformLocation(uniName), val.size(), val.data());
     }
 
     void ShaderProgram::SetFloatArray(const std::string& uniName, const std::span<float>& val) const
     {
-        glUniform1fv(glGetUniformLocation(_id, uniName.c_str()), val.size(), val.data());
+        glUniform1fv(GetUniformLocation(uniName), val.size(), val.data());
     }
 
     void ShaderProgram::SetVec2Array(const std::string& uniName, const std::span<Vector2>& val) const
     {
-        glUniform2fv(glGetUniformLocation(_id, uniName.c_str()), val.size(), (const float*)val.data());
+        glUniform2fv(GetUniformLocation(uniName), val.size(), (const float*)val.data());
     }
 
     void ShaderProgram::SetVec3Array(const std::string& uniName, const std::span<Vector3>& val) const
     {
-        glUniform3fv(glGetUniformLocation(_id, uniName.c_str()), val.size(), (const float*)val.data());
+        glUniform3fv(GetUniformLocation(uniName), val.size(), (const float*)val.data());
     }
 
     void ShaderProgram::SetVec4Array(const std::string& uniName, const std::span<Vector4>& val) const
     {
-        glUniform4fv(glGetUniformLocation(_id, uniName.c_str()), val.size(), (const float*)val.data());
+        glUniform4fv(GetUniformLocation(uniName), val.size(), (const float*)val.data());
     }
 
     void ShaderProgram::SetMatrixArray(const std::string& uniName, const std::span<Matrix>& val) const
     {
-        glUniformMatrix4fv(glGetUniformLocation(_id, uniName.c_str()), 1, GL_FALSE, (const float*)val.data());
+        glUniformMatrix4fv(GetUniformLocation(uniName), 1, GL_FALSE, (const float*)val.data());
     }
 
-    void ShaderProgram::Activate()
+    void ShaderProgram::Activate() const
     {
         glUseProgram(_id);
     }
 
-    void ShaderProgram::Delete()
+    void ShaderProgram::Delete() const
     {
         glDeleteProgram(_id);
     }
 
-    std::string ShaderProgram::GetFileContents(const std::string& filename)
+    std::string ShaderProgram::GetFileContents(const std::string& filename) const
     {
         auto input = std::ifstream(filename, std::ios::binary);
         if (!input)
@@ -158,7 +158,21 @@ namespace Silent::Renderer
         return contents;
     }
 
-    void ShaderProgram::LogShaderError(uint shaderId, const std::string& type)
+    int ShaderProgram::GetUniformLocation(const std::string& uniName) const
+    {
+        int uniLoc = glGetUniformLocation(_id, uniName.c_str());
+        if constexpr (IS_DEBUG_BUILD)
+        {
+            if (uniLoc == NO_VALUE)
+            {
+                Log("Attempted to set invalid uniform '" + uniName + "'.", LogLevel::Warning, LogMode::Debug);
+            }
+        }
+
+        return uniLoc;
+    }
+
+    void ShaderProgram::LogShaderError(uint shaderId, const std::string& type) const
     {
         constexpr uint MSG_BUFFER_SIZE = 512;
 
@@ -173,7 +187,7 @@ namespace Silent::Renderer
         }
     }
 
-    void ShaderProgram::LogProgramError(uint progId)
+    void ShaderProgram::LogProgramError(uint progId) const
     {
         constexpr uint MSG_BUFFER_SIZE = 512;
 

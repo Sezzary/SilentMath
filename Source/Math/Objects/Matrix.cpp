@@ -10,6 +10,41 @@ namespace Silent::Math
 {
     const Matrix Matrix::Identity = Matrix(1.0f);
 
+    Matrix Matrix::CreateOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane)
+    {
+        return Matrix(glm::ortho(left, right, bottom, top, nearPlane, farPlane));
+    }
+
+    Matrix Matrix::CreatePerspective(float fov, float aspect, float nearPlane, float farPlane)
+    {
+        return Matrix(glm::perspective(fov, aspect, nearPlane, farPlane));
+    }
+
+    Matrix Matrix::CreateTranslation(const Vector3& translation)
+    {
+        return Matrix(glm::translate(Matrix::Identity.ToGlmMat4(), translation));
+    }
+
+    Matrix Matrix::CreateRotationX(float rad)
+    {
+       return Matrix(glm::rotate(Matrix::Identity.ToGlmMat4(), rad, Vector3::UnitX));
+    }
+
+    Matrix Matrix::CreateRotationY(float rad)
+    {
+       return Matrix(glm::rotate(Matrix::Identity.ToGlmMat4(), rad, Vector3::UnitY));
+    }
+
+    Matrix Matrix::CreateRotationZ(float rad)
+    {
+       return Matrix(glm::rotate(Matrix::Identity.ToGlmMat4(), rad, Vector3::UnitZ));
+    }
+
+    Matrix Matrix::CreateScale(const Vector3& scale)
+    {
+        return Matrix(glm::scale(Matrix::Identity.ToGlmMat4(), scale.ToGlmVec3()));
+    }
+
     Matrix Matrix::Inverse(const Matrix& mat)
     {
         return Matrix(glm::inverse(mat.ToGlmMat4()));
@@ -20,19 +55,19 @@ namespace Silent::Math
         *this = Matrix::Inverse(*this);
     }
 
-    Matrix Matrix::Translate(const Matrix& mat, const Vector3& offset)
+    Matrix Matrix::Translate(const Matrix& mat, const Vector3& translation)
     {
-        return glm::translate(mat, offset);
+        return Matrix(glm::translate(mat.ToGlmMat4(), translation));
     }
 
-    void Matrix::Translate(const Vector3& offset)
+    void Matrix::Translate(const Vector3& translation)
     {
-        *this = Matrix::Translate(*this, offset);
+        *this = Matrix::Translate(*this, translation);
     }
 
     Matrix Matrix::Rotate(const Matrix& mat, float rad, const Vector3& axis)
     {
-       return glm::rotate(mat.ToGlmMat4(), rad, axis);
+       return Matrix(glm::rotate(mat.ToGlmMat4(), rad, axis));
     }
 
     void Matrix::Rotate(float rad, const Vector3& axis)
@@ -42,7 +77,7 @@ namespace Silent::Math
 
     Matrix Matrix::Scale(const Matrix& mat, const Vector3& scale)
     {
-        return glm::scale(mat.ToGlmMat4(), scale.ToGlmVec3());
+        return Matrix(glm::scale(mat.ToGlmMat4(), scale.ToGlmVec3()));
     }
 
     void Matrix::Scale(const Vector3& scale)

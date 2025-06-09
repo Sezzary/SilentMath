@@ -70,7 +70,7 @@ namespace Silent::Input
         }
 
         // Initialize gamepad.
-        _gamepad = SDL_OpenGamepad(0);
+        _gamepad = SDL_OpenGamepad(GAMEPAD_ID);
         if (_gamepad != nullptr)
         {
             Log("Connected gamepad with vendor ID " + std::to_string(SDL_GetGamepadVendor(_gamepad)) + ".");
@@ -488,6 +488,7 @@ namespace Silent::Input
         if (_gamepad != nullptr)
         {
             Log("Gamepad disconnected.");
+            // TODO: Add toast notification.
 
             SDL_CloseGamepad(_gamepad);
             _gamepad = nullptr;
@@ -497,13 +498,13 @@ namespace Silent::Input
         {
             if (g_Time.TestInterval(SEC_TO_TICK(GAMEPAD_RECONNECT_INTERVAL_SEC)))
             {
-                _gamepad = SDL_OpenGamepad(0);
+                _gamepad = SDL_OpenGamepad(GAMEPAD_ID);
                 if (_gamepad != nullptr)
                 {
                     Log("Connected gamepad with vendor ID " + std::to_string(SDL_GetGamepadVendor(_gamepad)) + ".");
+                    // TODO: Add toast notification.
 
                     SetRumble(RumbleMode::LowAndHigh, 1.0f, 0.0f, 0.5f);
-                    // TODO: Add toast notification.
                 }
             }
         }

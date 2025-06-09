@@ -24,7 +24,7 @@ namespace Silent::Assets
         { ".DAT", AssetType::Dat },
         { ".KDT", AssetType::Kdt },
         { ".CMP", AssetType::Cmp },
-        { "",     AssetType::Xa }   // TODO: Should be given .XA extension when exporting.
+        { "",     AssetType::Xa }   // TODO: Should be given .XA extension when exporting from ROM.
     };
 
     static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<void>(const std::filesystem::path& file)>>

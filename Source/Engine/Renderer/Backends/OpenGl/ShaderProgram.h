@@ -40,14 +40,16 @@ namespace Silent::Renderer
 
         // Utilities
 
-        void Activate();
-        void Delete();
+        void Activate() const;
+        void Delete() const;
 
     private:
         // Helpers
 
-        std::string GetFileContents(const std::string& filename);
-        void        LogShaderError(uint shaderId, const std::string& type);
-        void        LogProgramError(uint progId);
+        std::string GetFileContents(const std::string& filename) const;
+        int         GetUniformLocation(const std::string& uniName) const;
+
+        void LogShaderError(uint shaderId, const std::string& type) const;
+        void LogProgramError(uint progId) const;
     };
 }

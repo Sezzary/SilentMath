@@ -327,13 +327,9 @@ namespace Silent::Renderer
         transform.Rotate(glm::radians(0.5f), Vector3::UnitZ);*/
         //transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
 
-        auto modelMat = Matrix::Identity;
-        modelMat.Rotate(glm::radians(-55.0f), Vector3::UnitX);
-
-        auto viewMat = Matrix::Identity;
-        viewMat.Translate(Vector3::UnitZ * -3.0f);
-
-        auto projMat = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);;
+        auto modelMat = Matrix::CreateRotationX(glm::radians(-55.0f));
+        auto viewMat  = Matrix::CreateTranslation(Vector3::UnitZ * -3.0f);
+        auto projMat  = Matrix::CreatePerspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         //---------------------------------------
 
