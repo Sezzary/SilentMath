@@ -26,9 +26,11 @@ namespace Silent::Renderer
         std::unordered_map<std::string, ShaderProgram> _shaderPrograms       = {};
 
         VertexArrayObject                              _vertexArray          = VertexArrayObject();
+        VertexArrayObject                              _vertexCubeArray      = VertexArrayObject();
         VertexBufferObject                             _vertexPositionBuffer = VertexBufferObject();
         VertexBufferObject                             _vertexColorBuffer    = VertexBufferObject();
         VertexBufferObject                             _vertexTexCoordBuffer = VertexBufferObject();
+        VertexBufferObject                             _vertexCubeBuffer     = VertexBufferObject();
         ElementBufferObject                            _elementBuffer        = ElementBufferObject();
         Texture                                        _texture0             = Texture();
         Texture                                        _texture1             = Texture();

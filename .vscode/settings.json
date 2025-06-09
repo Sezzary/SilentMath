@@ -100,6 +100,7 @@
         "ABS.C": "cpp",
         "sdl.h": "c",
         "cwctype": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "stdout_color_sinks.h": "c"
     }
 }

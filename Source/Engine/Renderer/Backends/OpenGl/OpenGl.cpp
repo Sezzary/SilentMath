@@ -71,6 +71,65 @@ namespace Silent::Renderer
         1, 2, 3
     };
 
+    static auto CUBE_VERICES = std::vector<float>
+    {
+    //   Positions            UVs
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+    Vector3 cubePositions[] =
+    {
+        Vector3( 0.0f,  0.0f,  0.0f), 
+        Vector3( 2.0f,  5.0f, -15.0f), 
+        Vector3(-1.5f, -2.2f, -2.5f),  
+        Vector3(-3.8f, -2.0f, -12.3f),  
+        Vector3( 2.4f, -0.4f, -3.5f),  
+        Vector3(-1.7f,  3.0f, -7.5f),  
+        Vector3( 1.3f, -2.0f, -2.5f),  
+        Vector3( 1.5f,  2.0f, -2.5f), 
+        Vector3( 1.5f,  0.2f, -1.5f), 
+        Vector3(-1.3f,  1.0f, -1.5f)  
+    };
+
     void OpenGlRenderer::Initialize(SDL_Window& window)
     {
         _window = &window;
@@ -349,6 +408,25 @@ namespace Silent::Renderer
         _vertexArray.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(TRI_INDICES) / sizeof(uint), GL_UNSIGNED_INT, 0);
         _drawCallCount++;
+
+        _vertexCubeBuffer.Bind();
+        _vertexCubeArray.Bind();
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        static float rot = 0.0f;
+        rot += 0.2f;
+        if (rot > 360.0f)
+            rot -= 360.0f;
+        for(unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i; 
+            model = glm::rotate(model, glm::radians(angle + rot), glm::vec3(1.0f, 0.3f, 0.5f));
+            shaderProg.SetMatrix("modelMat", model);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
     }
 
     float quadVertices[] =
@@ -515,18 +593,28 @@ namespace Silent::Renderer
 
         // Link attributes.
         _vertexArray.LinkAttrib(_vertexPositionBuffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-        _vertexArray.LinkAttrib(_vertexColorBuffer, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-        _vertexArray.LinkAttrib(_vertexTexCoordBuffer, 2, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+        //_vertexArray.LinkAttrib(_vertexColorBuffer, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+        _vertexArray.LinkAttrib(_vertexTexCoordBuffer, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+
+        _vertexCubeArray.Initialize();
+        _vertexCubeArray.Bind();
+
+        _vertexCubeBuffer.Initialize(ToSpan(CUBE_VERICES));
+
+        _vertexCubeArray.LinkAttrib(_vertexCubeBuffer, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+        _vertexCubeArray.LinkAttrib(_vertexCubeBuffer, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
         // Unbind to prevent accidental modification.
         _vertexArray.Unbind();
+        _vertexCubeArray.Unbind();
         _vertexPositionBuffer.Unbind();
         _vertexColorBuffer.Unbind();
         _vertexTexCoordBuffer.Unbind();
+        _vertexCubeBuffer.Unbind();
         _elementBuffer.Unbind();
 
         // Load textures.
-        _texture0 = Texture("Assets/brick.png", GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+        _texture0 = Texture("Assets/derg.png", GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
         _texture1 = Texture("Assets/SILENT/TIM/BG_ETC.TIM", GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
 
         _shaderPrograms.at("Default").Activate();
