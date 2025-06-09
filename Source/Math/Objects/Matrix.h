@@ -39,6 +39,8 @@ namespace Silent::Math
 
         static Matrix Inverse(const Matrix& mat);
         void          Inverse();
+        static Matrix Lerp(const Matrix& from, const Matrix& to, float alpha);
+        void          Lerp(const Matrix& to, float alpha);
         static Matrix Translate(const Matrix& mat, const Vector3& translation);
         void          Translate(const Vector3& translation);
         static Matrix Rotate(const Matrix& mat, float rad, const Vector3& axis);
@@ -47,11 +49,7 @@ namespace Silent::Math
         void          Scale(const Vector3& scale);
 
         // TODO:
-        // Lerp
-        // Translate
         // LookAt
-        // Perspective
-        // Orthographic
         // Transpose
         // Determinant
 

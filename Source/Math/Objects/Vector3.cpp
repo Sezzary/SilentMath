@@ -112,16 +112,6 @@ namespace Silent::Math
         *this = Vector3::Transform(*this, transformMat);
     }
 
-    Vector3 Vector3::Rotate(const Vector3& vec, const Matrix& rotMat)
-    {
-        return Vector3(glm::vec3(rotMat.ToGlmMat4() * glm::vec4(vec, 0.0f)));
-    }
-
-    void Vector3::Rotate(const Matrix& rotMat)
-    {
-        *this = Vector3::Rotate(*this, rotMat);
-    }
-
     Vector3 Vector3::Translate(const Vector3& vec, const Vector3& dir, float dist)
     {
         return vec + (dir * dist);
@@ -130,6 +120,16 @@ namespace Silent::Math
     void Vector3::Translate(const Vector3& dir, float dist)
     {
         *this = Vector3::Translate(*this, Vector3::Normalize(dir), dist);
+    }
+
+    Vector3 Vector3::Rotate(const Vector3& vec, const Matrix& rotMat)
+    {
+        return Vector3(glm::vec3(rotMat.ToGlmMat4() * glm::vec4(vec, 0.0f)));
+    }
+
+    void Vector3::Rotate(const Matrix& rotMat)
+    {
+        *this = Vector3::Rotate(*this, rotMat);
     }
 
     bool Vector3::Compare(const Vector3& vec0, const Vector3& vec1, float epsilon)

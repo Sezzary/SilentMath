@@ -55,6 +55,16 @@ namespace Silent::Math
         *this = Matrix::Inverse(*this);
     }
 
+    Matrix Matrix::Lerp(const Matrix& from, const Matrix& to, float alpha)
+    {
+        return Matrix(glm::interpolate(from.ToGlmMat4(), to.ToGlmMat4(), alpha));
+    }
+
+    void Matrix::Lerp(const Matrix& to, float alpha)
+    {
+        *this = Matrix::Lerp(ToGlmMat4(), to.ToGlmMat4(), alpha);
+    }
+
     Matrix Matrix::Translate(const Matrix& mat, const Vector3& translation)
     {
         return Matrix(glm::translate(mat.ToGlmMat4(), translation));

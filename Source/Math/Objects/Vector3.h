@@ -52,10 +52,10 @@ namespace Silent::Math
         void           Smoothstep(const Vector3& to, float alpha);
         static Vector3 Transform(const Vector3& vec, const Matrix& transformMat);
         void           Transform(const Matrix& transformMat);
-        static Vector3 Rotate(const Vector3& vec, const Matrix& rotMat);
-        void           Rotate(const Matrix& rotMat);
         static Vector3 Translate(const Vector3& vec, const Vector3& dir, float dist);
         void           Translate(const Vector3& dir, float dist);
+        static Vector3 Rotate(const Vector3& vec, const Matrix& rotMat);
+        void           Rotate(const Matrix& rotMat);
 
         static bool Compare(const Vector3& vec0, const Vector3& vec1, float epsilon = EPSILON);
 
