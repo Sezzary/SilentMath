@@ -29,8 +29,8 @@ namespace Silent::Assets
 
     static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<void>(const std::filesystem::path& file)>>
     {
-        { AssetType::Plm, ParsePlm },
-        { AssetType::Tim, ParseTim }
+        { AssetType::Tim, ParseTim },
+        { AssetType::Tmd, ParseTmd }
     };
 
     const std::shared_ptr<Asset> AssetManager::GetAsset(int assetIdx) const

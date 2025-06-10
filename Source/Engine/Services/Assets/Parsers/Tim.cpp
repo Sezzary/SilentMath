@@ -43,7 +43,7 @@ namespace Silent::Assets
             uint32 clutSize = 0;
             file.read((char*)&clutSize, 4);
 
-            // Read start position (unused).
+            // Read frame ebuffer coordinates (unused).
             uint16 clutX = 0;
             uint16 clutY = 0;
             file.read((char*)&clutX, 2);
@@ -58,14 +58,14 @@ namespace Silent::Assets
             // Read color values.
             uint clutCount = clutW * clutH;
             clut.resize(clutCount);
-            file.read((char*)clut.data(), clutCount * sizeof(uint16));
+            file.read((char*)clut.data(), clutCount * 2);
         }
 
         // Read image data header (unused).
         uint32 imageSize = 0;
         file.read((char*)&imageSize, 4);
 
-        // Read image position (unused).
+        // Read frame buffer coordinates (unused).
         uint16 imageX = 0;
         uint16 imageY = 0;
         file.read((char*)&imageX, 2);
@@ -163,7 +163,7 @@ namespace Silent::Assets
                             // Get color from CLUT.
                             uint16 color = clut[(i == 0) ? idx0 : idx1];
 
-                            // Extract RGBA components.
+                            // Collect extracted RGBA components.
                             uchar* out = &asset.Pixels[((y * res.x) + x) * 4];
                             out[0]     = (color & 0x1F)         << 3;          // B.
                             out[1]     = ((color >> 5) & 0x1F)  << 3;          // G.
@@ -182,7 +182,7 @@ namespace Silent::Assets
                         // Get color from CLUT.
                         uint16 color = clut[idx];
 
-                        // Extract RGBA components.
+                        // Collect extracted RGBA components.
                         uchar* out = &asset.Pixels[((y * res.x) + x) * 4];
                         out[0]     = (color & 0x1F)         << 3;          // B.
                         out[1]     = ((color >> 5) & 0x1F)  << 3;          // G.
@@ -199,7 +199,7 @@ namespace Silent::Assets
                         uint16 color = 0;
                         file.read((char*)&color, 2);
 
-                        // Extract RGBA components.
+                        // Collect extracted RGBA components.
                         uchar* out = &asset.Pixels[((y * res.x) + x) * 4];
                         out[0]     = (color & 0x1F)         << 3;          // B.
                         out[1]     = ((color >> 5) & 0x1F)  << 3;          // G.
