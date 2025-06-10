@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Engine/Services/Assets/Assets.h"
 
-#include "Engine/Services/Assets/Parsers/Plm.h"
+#include "Engine/Services/Assets/Parsers/Tmd.h"
 #include "Engine/Services/Assets/Parsers/Tim.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"

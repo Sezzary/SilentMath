@@ -148,8 +148,8 @@ namespace Silent::Assets
                 mesh.Triangles.push_back(TmdAsset::Triangle
                 {
                     .Vertices = { vertIdx0, vertIdx1, vertIdx2 },
-                    .Normals  = { normalIdx0, normalIdx1, normalIdx2 }*/
-                });
+                    .Normals  = { normalIdx0, normalIdx1, normalIdx2 }
+                });*/
             }
         }
 

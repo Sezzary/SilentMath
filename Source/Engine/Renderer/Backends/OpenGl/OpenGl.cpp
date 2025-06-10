@@ -386,9 +386,12 @@ namespace Silent::Renderer
         transform.Rotate(glm::radians(0.5f), Vector3::UnitZ);*/
         //transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
 
+        auto  res   = GetScreenResolution().ToVector2();
+        float ratio = res.x / res.y;
+        
         auto modelMat = Matrix::CreateRotationX(glm::radians(-55.0f));
         auto viewMat  = Matrix::CreateTranslation(Vector3::UnitZ * -3.0f);
-        auto projMat  = Matrix::CreatePerspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        auto projMat  = Matrix::CreatePerspective(glm::radians(45.0f), ratio, 0.1f, 100.0f);
 
         //---------------------------------------
 
@@ -414,16 +417,16 @@ namespace Silent::Renderer
         //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         static float rot = 0.0f;
-        rot += 0.2f;
+        rot += 0.5f;
         if (rot > 360.0f)
+        {
             rot -= 360.0f;
+        }
         for(unsigned int i = 0; i < 10; i++)
         {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i; 
-            model = glm::rotate(model, glm::radians(angle + rot), glm::vec3(1.0f, 0.3f, 0.5f));
-            shaderProg.SetMatrix("modelMat", model);
+            auto modelMat = Matrix::CreateTranslation(cubePositions[i]);
+            modelMat.Rotate(glm::radians((20.0f * i) + rot), Vector3(1.0f, 0.3f, 0.5f));
+            shaderProg.SetMatrix("modelMat", modelMat);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
