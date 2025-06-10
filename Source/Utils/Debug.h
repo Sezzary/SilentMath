@@ -26,6 +26,7 @@ namespace Silent::Utils::Debug
     {
         None,
         Renderer,
+        Input,
         Cheats,
         Options
     };

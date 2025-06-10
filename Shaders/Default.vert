@@ -12,11 +12,10 @@ out vec2 texCoord;
 // Uniforms
 uniform mat4 modelMat;
 uniform mat4 viewMat;
-uniform mat4 projMat;
 
 void main()
 {
-    gl_Position = (projMat * viewMat * modelMat) * vec4(aPos, 1.0);
+    gl_Position = (viewMat * modelMat) * vec4(aPos, 1.0);
     vertColor   = vec3(1.0f, 1.0f, 1.0f);//aColor;
     texCoord    = aTexCoord;
 }

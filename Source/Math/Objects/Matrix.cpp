@@ -10,16 +10,6 @@ namespace Silent::Math
 {
     const Matrix Matrix::Identity = Matrix(1.0f);
 
-    Matrix Matrix::CreateOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane)
-    {
-        return Matrix(glm::ortho(left, right, bottom, top, nearPlane, farPlane));
-    }
-
-    Matrix Matrix::CreatePerspective(float fov, float aspect, float nearPlane, float farPlane)
-    {
-        return Matrix(glm::perspective(fov, aspect, nearPlane, farPlane));
-    }
-
     Matrix Matrix::CreateTranslation(const Vector3& translation)
     {
         return Matrix(glm::translate(Matrix::Identity.ToGlmMat4(), translation));
@@ -43,6 +33,21 @@ namespace Silent::Math
     Matrix Matrix::CreateScale(const Vector3& scale)
     {
         return Matrix(glm::scale(Matrix::Identity.ToGlmMat4(), scale.ToGlmVec3()));
+    }
+
+    Matrix Matrix::CreateOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane)
+    {
+        return Matrix(glm::ortho(left, right, bottom, top, nearPlane, farPlane));
+    }
+
+    Matrix Matrix::CreatePerspective(float fov, float aspect, float nearPlane, float farPlane)
+    {
+        return Matrix(glm::perspective(fov, aspect, nearPlane, farPlane));
+    }
+
+    Matrix Matrix::CreateLookAt(const Vector3& pos, const Vector3& target, const Vector3& up)
+    {
+        return Matrix(glm::lookAt(pos.ToGlmVec3(), target.ToGlmVec3(), up.ToGlmVec3()));
     }
 
     Matrix Matrix::Inverse(const Matrix& mat)

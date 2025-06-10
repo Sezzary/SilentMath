@@ -380,18 +380,17 @@ namespace Silent::Renderer
     {
         //---------------------------------------
 
+        _view.Move();
         DoCoolColorThing();
 
         /*static auto transform = Matrix::Identity;
         transform.Rotate(glm::radians(0.5f), Vector3::UnitZ);*/
         //transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
 
-        auto  res   = GetScreenResolution().ToVector2();
-        float ratio = res.x / res.y;
+        auto  res    = GetScreenResolution().ToVector2();
+        float aspect = res.x / res.y;
         
         auto modelMat = Matrix::CreateRotationX(glm::radians(-55.0f));
-        auto viewMat  = Matrix::CreateTranslation(Vector3::UnitZ * -3.0f);
-        auto projMat  = Matrix::CreatePerspective(glm::radians(45.0f), ratio, 0.1f, 100.0f);
 
         //---------------------------------------
 
@@ -399,8 +398,7 @@ namespace Silent::Renderer
 
         shaderProg.Activate();
         shaderProg.SetMatrix("modelMat", modelMat);
-        shaderProg.SetMatrix("viewMat", viewMat);
-        shaderProg.SetMatrix("projMat", projMat);
+        _view.ExportMatrix(glm::radians(45.0f), aspect, 0.1f, 100.0f, shaderProg, "viewMat");
         shaderProg.SetFloat("blendAlpha", g_DebugData.BlendAlpha);
 
         _vertexColorBuffer.Bind();

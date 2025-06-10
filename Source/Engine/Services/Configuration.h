@@ -65,8 +65,14 @@ namespace Silent::Services
 
     enum class TextureFilterType
     {
-        Nearest,
-        Bilinear
+        Nearest, // Pixelated
+        Bilinear // Smooth
+    };
+
+    enum class LightType
+    {
+        PerVertex, // Coarse
+        PerPixel   // Smooth
     };
 
     struct Options

@@ -15,13 +15,11 @@ namespace Silent::Renderer
         Size     = size;
     }
 
-    void View::ExportMatrix(float fov, float nearPlane, float farPlane, ShaderProgram& shaderProgram, const std::string& uni)
+    void View::ExportMatrix(float fov, float aspect, float nearPlane, float farPlane, ShaderProgram& shaderProg, const std::string& uniName)
     {
-        //auto viewMat  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, -2.0f));
-        auto viewMat = glm::lookAt(Position, Position + Direction, Up);
-        auto projMat = glm::perspective(fov, (float)Size.x / (float)Size.y, nearPlane, farPlane);
-
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram.GetId(), uni.c_str()), 1, GL_FALSE, glm::value_ptr(projMat * viewMat));
+        auto viewMat = Matrix::CreateLookAt(Position, Position + Direction * 3, Up);
+        auto projMat = Matrix::CreatePerspective(fov, aspect, nearPlane, farPlane);
+        shaderProg.SetMatrix(uniName, projMat * viewMat);
     }
 
     void View::Move()
@@ -35,7 +33,7 @@ namespace Silent::Renderer
         }
         if (input.GetAction(In::A).IsHeld())
         {
-            Position += Speed * -glm::normalize(glm::cross(Direction, Up));
+            Position += Speed * -Vector3::Normalize(Vector3::Cross(Direction, Up));
         }
         if (input.GetAction(In::S).IsHeld())
         {

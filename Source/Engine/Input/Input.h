@@ -25,6 +25,7 @@ namespace Silent::Input
         LowAndHigh
     };
 
+    // TODO: Rename.
     struct Event
     {
         bool               IsUsingGamepad     = false;
@@ -81,6 +82,7 @@ namespace Silent::Input
 
         // Inquirers
 
+        bool IsGamepadConnected() const;
         bool IsUsingGamepad() const;
 
         // Utilities

@@ -55,6 +55,11 @@ namespace Silent::Input
         _rumble.Ticks         = SEC_TO_TICK(durationSec);
     }
 
+    bool InputManager::IsGamepadConnected() const
+    {
+        return _gamepad != nullptr;
+    }
+
     bool InputManager::IsUsingGamepad() const
     {
         return _events.IsUsingGamepad;
@@ -211,9 +216,9 @@ namespace Silent::Input
         {
             Log("Failed to get window size: " + std::string(SDL_GetError()), LogLevel::Error);
         }
-
+        
         float sensitivity = (options.MouseSensitivity * 0.1f) + 0.4f;
-        auto  moveAxis    = ((_events.PrevCursorPosition / res.ToVector2()) / (_events.CursorPosition / res.ToVector2())) * sensitivity;
+        auto  moveAxis    = ((_events.CursorPosition - _events.PrevCursorPosition) / res.ToVector2()) * sensitivity;
         if (moveAxis != Vector2::Zero)
         {
             _events.IsUsingGamepad = false;
