@@ -65,14 +65,14 @@ namespace Silent::Services
 
     enum class TextureFilterType
     {
-        Nearest, // Pixelated
-        Bilinear // Smooth
+        Nearest,
+        Bilinear
     };
 
-    enum class LightType
+    enum class LightingType
     {
-        PerVertex, // Coarse
-        PerPixel   // Smooth
+        PerVertex,
+        PerPixel
     };
 
     struct Options
@@ -90,6 +90,7 @@ namespace Silent::Services
         RenderScaleType   RenderScaleType    = RenderScaleType::Native;
         AspectRatioType   AspectRatioType    = AspectRatioType::Native;
         TextureFilterType TextureFilterType  = TextureFilterType::Nearest;
+        LightingType      LightingType       = LightingType::PerVertex;
         bool              EnableDithering    = false;
         bool              EnableCrtFilter    = false;
         bool              EnableVertexJitter = false;

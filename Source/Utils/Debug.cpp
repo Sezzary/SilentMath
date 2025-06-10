@@ -118,7 +118,7 @@ namespace Silent::Utils::Debug
                     {
                         if (ImGui::BeginTable("Status", 2))
                         {
-                            // `Gamepad enabled/disabled` info.
+                            // `Gamepad` enabled/disabled info.
                             ImGui::TableNextRow();
                             ImGui::TableSetColumnIndex(0);
                             ImGui::Text("Gamepad:", 0, 0);

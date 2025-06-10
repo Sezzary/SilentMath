@@ -24,6 +24,7 @@ namespace Silent::Services
     constexpr char KEY_RENDER_SCALE_TYPE[]                        = "RenderScaleType";
     constexpr char KEY_ASPECT_RATIO_TYPE[]                        = "AspectRatioType";
     constexpr char KEY_TEXTURE_FILTER_TYPE[]                      = "TextureFilterType";
+    constexpr char KEY_LIGHTING_TYPE[]                            = "LightingType";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
@@ -57,6 +58,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_RENDER_SCALE_TYPE                        = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO_TYPE                        = AspectRatioType::Native;
     constexpr auto DEFAULT_TEXTURE_FILTER_TYPE                      = TextureFilterType::Nearest;
+    constexpr auto DEFAULT_LIGHTING_TYPE                            = LightingType::PerVertex;
     constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
@@ -114,6 +116,7 @@ namespace Silent::Services
         _options.RenderScaleType    = DEFAULT_RENDER_SCALE_TYPE;
         _options.AspectRatioType    = DEFAULT_ASPECT_RATIO_TYPE;
         _options.TextureFilterType  = DEFAULT_TEXTURE_FILTER_TYPE;
+        _options.LightingType       = DEFAULT_LIGHTING_TYPE;
         _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
         _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
         _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
@@ -336,6 +339,7 @@ namespace Silent::Services
         options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
         options.AspectRatioType    = graphicsJson.value(KEY_ASPECT_RATIO_TYPE,    DEFAULT_ASPECT_RATIO_TYPE);
         options.TextureFilterType  = graphicsJson.value(KEY_TEXTURE_FILTER_TYPE,  DEFAULT_TEXTURE_FILTER_TYPE);
+        options.LightingType       = graphicsJson.value(KEY_LIGHTING_TYPE,        DEFAULT_LIGHTING_TYPE);
         options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
         options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
         options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
@@ -464,6 +468,7 @@ namespace Silent::Services
                     { KEY_RENDER_SCALE_TYPE,    options.RenderScaleType },
                     { KEY_ASPECT_RATIO_TYPE,    options.AspectRatioType },
                     { KEY_TEXTURE_FILTER_TYPE,  options.TextureFilterType },
+                    { KEY_LIGHTING_TYPE,        options.LightingType },
                     { KEY_ENABLE_DITHERING,     options.EnableDithering },
                     { KEY_ENABLE_CRT_FILTER,    options.EnableCrtFilter },
                     { KEY_ENABLE_VERTEX_JITTER, options.EnableVertexJitter }
