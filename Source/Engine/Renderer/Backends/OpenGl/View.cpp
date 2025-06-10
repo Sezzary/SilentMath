@@ -18,13 +18,23 @@ namespace Silent::Renderer
     void View::ExportMatrix(float fov, float aspect, float nearPlane, float farPlane, ShaderProgram& shaderProg, const std::string& uniName)
     {
         auto viewMat = Matrix::CreateLookAt(Position, Position + Direction * 3, Up);
-        auto projMat = Matrix::CreatePerspective(fov, aspect, nearPlane, farPlane);
+        auto projMat = Matrix::CreatePerspective(Fov, aspect, nearPlane, farPlane);
         shaderProg.SetMatrix(uniName, projMat * viewMat);
     }
 
     void View::Move()
     {
         const auto& input = g_App.GetInput();
+
+        // Modulate speed.
+        if (input.GetAction(In::Shift).IsHeld())
+        {
+            Speed = 0.1f;
+        }
+        else
+        {
+            Speed = 0.05f;
+        }
 
         // Move on 2D plane.
         if (input.GetAction(In::W).IsHeld())
@@ -33,7 +43,7 @@ namespace Silent::Renderer
         }
         if (input.GetAction(In::A).IsHeld())
         {
-            Position += Speed * -Vector3::Normalize(Vector3::Cross(Direction, Up));
+            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), -Speed);
         }
         if (input.GetAction(In::S).IsHeld())
         {
@@ -41,7 +51,7 @@ namespace Silent::Renderer
         }
         if (input.GetAction(In::D).IsHeld())
         {
-            Position += Speed * glm::normalize(glm::cross(Direction, Up));
+            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), Speed);
         }
 
         // Move vertically.
@@ -54,17 +64,39 @@ namespace Silent::Renderer
             Position.Translate(Up, -Speed);
         }
 
-        // Modulate speed.
-        if (input.GetAction(In::Shift).IsHeld())
+        // Pan.
+        if (input.GetAction(In::MouseClickMiddle).IsHeld())
         {
-            Speed = 0.1f;
-        }
-        else
-        {
-            Speed = 0.05f;
+            const auto& mouseAxis = input.GetAnalogAxis(AnalogAxisId::Mouse);
+            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), -mouseAxis.x);
+            Position.Translate(Up, mouseAxis.y);
         }
 
-        const auto& axis = input.GetAnalogAxis(AnalogAxisId::Mouse);
-        // TODO: Rotation with mouse.
+        // Rotate.
+        const auto& mouseAxis = input.GetAnalogAxis(AnalogAxisId::Mouse);
+        /*if (mouseAxis != Vector2::Zero)
+        {
+            static auto rot = EulerAngles::Identity;
+            rot            += EulerAngles(FP_ANGLE(mouseAxis.x), FP_ANGLE(mouseAxis.y), 0);
+            Direction       = rot.ToDirection();
+        }*/
+
+        // Change FOV.
+        if (input.GetAction(In::MouseScrollDown).IsClicked())
+        {
+            Fov -= 1.0f;
+            if (Fov < 1.0f)
+            {
+                Fov = 1.0f;
+            }
+        }
+        else if (input.GetAction(In::MouseScrollUp).IsClicked())
+        {
+            Fov += 1.0f;
+            if (Fov < 45.0f)
+            {
+                Fov = 45.0f;
+            }
+        }
     }
 }

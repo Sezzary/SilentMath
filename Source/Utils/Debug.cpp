@@ -86,12 +86,15 @@ namespace Silent::Utils::Debug
             // Main tabs.
             if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll))
             {
-                // `Scratchpad` tab.
-                if (ImGui::BeginTabItem("Scratchpad"))
+                if constexpr (IS_DEBUG_BUILD)
                 {
-                    ImGui::SliderFloat("My Slider", &g_DebugData.BlendAlpha, 0.0f, 1.0f);
-
-                    ImGui::EndTabItem();
+                    // `Scratchpad` tab.
+                    if (ImGui::BeginTabItem("Scratchpad"))
+                    {
+                        ImGui::SliderFloat("Alpha Blend", &g_DebugData.BlendAlpha, 0.0f, 1.0f);
+    
+                        ImGui::EndTabItem();
+                    }
                 }
 
                 // `Renderer` tab.
@@ -110,61 +113,77 @@ namespace Silent::Utils::Debug
 
                     const auto& input = g_App.GetInput();
 
-                    // `Cursor` info.
-                    const auto& cursorPos = input.GetCursorPosition();
-                    ImGui::Text("Cursor: ");
-                    ImGui::SameLine();
-                    ImGui::Text("X: %.2f", cursorPos.x);
-                    ImGui::SameLine();
-                    ImGui::Text("Y: %.2f", cursorPos.y);
+                    // `Status` section.
+                    ImGui::SeparatorText("Status");
+                    {
+                        if (ImGui::BeginTable("Status", 2))
+                        {
+                            // `Gamepad enabled/disabled` info.
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Gamepad:", 0, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            input.IsGamepadConnected() ? ImGui::Text("Connected", 0, 1) : ImGui::Text("Not connected", 0, 1);
+                            
+                            // `Cursor` info.
+                            const auto& cursorPos = input.GetCursorPosition();
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Cursor:", 1, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("(%.2f, %.2f)", cursorPos.x, cursorPos.y, 1, 1);
 
-                    // `Gamepad connected/disconnected` info.
-                    ImGui::Text("Gamepad: ");
-                    ImGui::SameLine();
-                    input.IsGamepadConnected() ? ImGui::Text("Connected") : ImGui::Text("Disconnected");
+                            ImGui::EndTable();
+                        }
+                    }
 
                     // `Analog Axes` section.
                     ImGui::SeparatorText("Analog Axes");
                     {
-                        // `Move axis` info.
-                        const auto& moveAxis = input.GetAnalogAxis(AnalogAxisId::Move);
-                        ImGui::Text("Move axis: ");
-                        ImGui::SameLine();
-                        ImGui::Text("X: %.2f", moveAxis.x);
-                        ImGui::SameLine();
-                        ImGui::Text("Y: %.2f", moveAxis.y);
-    
-                        // `Camera axis` info.
-                        const auto& camAxis = input.GetAnalogAxis(AnalogAxisId::Camera);
-                        ImGui::Text("Camera axis: ");
-                        ImGui::SameLine();
-                        ImGui::Text("X: %.2f", camAxis.x);
-                        ImGui::SameLine();
-                        ImGui::Text("Y: %.2f", camAxis.y);
-    
-                        // `Mouse axis` info.
-                        const auto& mouseAxis = input.GetAnalogAxis(AnalogAxisId::Mouse);
-                        ImGui::Text("Mouse axis: ");
-                        ImGui::SameLine();
-                        ImGui::Text("X: %.2f", mouseAxis.x);
-                        ImGui::SameLine();
-                        ImGui::Text("Y: %.2f", mouseAxis.y);
-    
-                        // `Left stick axis` info.
-                        const auto& leftStickAxis = input.GetAnalogAxis(AnalogAxisId::StickLeft);
-                        ImGui::Text("Left stick axis: ");
-                        ImGui::SameLine();
-                        ImGui::Text("X: %.2f", leftStickAxis.x);
-                        ImGui::SameLine();
-                        ImGui::Text("Y: %.2f", leftStickAxis.y);
-    
-                        // `Right stick axis` info.
-                        const auto& rightStickAxis = input.GetAnalogAxis(AnalogAxisId::StickRight);
-                        ImGui::Text("Right stick axis: ");
-                        ImGui::SameLine();
-                        ImGui::Text("X: %.2f", rightStickAxis.x);
-                        ImGui::SameLine();
-                        ImGui::Text("Y: %.2f", rightStickAxis.y);
+                        if (ImGui::BeginTable("Analog Axes", 2))
+                        {
+                            // `Move axis` info.
+                            const auto& moveAxis = input.GetAnalogAxis(AnalogAxisId::Move);
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Move axis:", 0, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("(%.2f, %.2f)", moveAxis.x, moveAxis.y, 0, 1);
+
+                            // `Camera axis` info.
+                            const auto& camAxis = input.GetAnalogAxis(AnalogAxisId::Camera);
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Camera axis:", 1, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("(%.2f, %.2f)", camAxis.x, camAxis.y, 1, 1);
+
+                            // `Mouse axis` info.
+                            const auto& mouseAxis = input.GetAnalogAxis(AnalogAxisId::Mouse);
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Mouse axis:", 2, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("(%.2f, %.2f)", mouseAxis.x, mouseAxis.y, 2, 1);
+
+                            // `Left stick axis` info.
+                            const auto& leftStickAxis = input.GetAnalogAxis(AnalogAxisId::StickLeft);
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Left stick axis:", 3, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("(%.2f, %.2f)", leftStickAxis.x, leftStickAxis.y, 3, 1);
+
+                            // `Right stick axis` info.
+                            const auto& rightStickAxis = input.GetAnalogAxis(AnalogAxisId::StickRight);
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Right stick axis:", 4, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("(%.2f, %.2f)", rightStickAxis.x, rightStickAxis.y, 4, 1);
+
+                            ImGui::EndTable();
+                        }
                     }
 
                     ImGui::EndTabItem();

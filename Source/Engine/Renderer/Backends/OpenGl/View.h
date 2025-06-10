@@ -14,10 +14,9 @@ namespace Silent::Renderer
         Vector3 Up        = Vector3::UnitY;
 
         Vector2i Size = Vector2i::Zero;  
-        float    Fov  = 0.0f;
+        float    Fov  = 45.0f;
 
-        float Speed       = 0.02f;
-        float Sensitivity = 100.0f;
+        float Speed = 0.02f;
 
         // Constructors
 
