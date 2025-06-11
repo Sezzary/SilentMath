@@ -314,8 +314,8 @@ namespace Silent::Utils::Debug
                         int  RetreatTurn       = 0;
                         int  WalkRunControl    = 0;
 
-                        // `Enable auto aiming` checkbox.
-                        ImGui::Checkbox("Enable auto aiming", &options.DisableAutoAiming);
+                        // `Disable auto aiming` checkbox.
+                        ImGui::Checkbox("Disable auto aiming", &options.DisableAutoAiming);
 
                         // TODO
                         int  ViewMode          = 0;
@@ -325,7 +325,7 @@ namespace Silent::Utils::Debug
                     ImGui::SeparatorText("Systems");
                     {
                         // `Enable toasts` checkbox.
-                        ImGui::Checkbox("Enable toasts", &options.DisableAutoAiming);
+                        ImGui::Checkbox("Enable toasts", &options.EnableToasts);
 
                         // `Enable parallelism` checkbox.
                         ImGui::Checkbox("Enable parallelism", &options.EnableParallelism);

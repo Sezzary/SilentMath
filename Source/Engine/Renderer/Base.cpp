@@ -7,8 +7,42 @@ namespace Silent::Renderer
 {
     Vector2i RendererBase::GetScreenResolution() const
     {
+        constexpr auto RETRO_RES = Vector2i(320, 240);
+
+        const auto& options = g_App.GetConfig().GetOptions();
+
         auto res = Vector2i::Zero;
         SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+        return res;
+
+        // TODO: Hum, not sure how to do this.
+        switch (options.RenderScale)
+        {
+            default:
+            case RenderScaleType::Native:
+            {
+                break;
+            }
+
+            case RenderScaleType::Half:
+            {
+                res /= 2;
+                break;
+            }
+
+            case RenderScaleType::Quarter:
+            {
+                res /= 4;
+                break;
+            }
+
+            case RenderScaleType::Retro:
+            {
+                res = RETRO_RES;
+                break;
+            }
+        }
+
         return res;
     }
 
