@@ -128,12 +128,15 @@ namespace Silent::Services
         bool DisableAutoAiming = false;
         int  ViewMode          = 0;
 
-        // System
+        // System (internal)
+
+        bool EnableDebugMode = true; // TODO: Can't depend on `IS_BUILD_MODE` in init func, have to set this here for some reason.
+        bool EnableDebugGui  = false;
+
+        // System (user)
 
         bool EnableToasts      = false; // Popup messages, e.g. "Gamepad connected", "Gamepad disconnected", etc.
         bool EnableParallelism = false;
-        bool EnableDebugMode   = true; // TODO: Can't depend on `IS_BUILD_MODE` in init func, have to set this here for some reason.
-        bool EnableDebugGui    = false;
     };
 
     class ConfigurationManager

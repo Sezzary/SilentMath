@@ -451,7 +451,7 @@ namespace Silent::Input
 
     void InputManager::HandleHotkeyActions()
     {
-        // Save screenshot.
+        // Capture screenshot.
         static bool dbScreenshot = true;
         if ((_events.States[(int)EventId::PrintScreen] || _events.States[(int)EventId::F12]) && dbScreenshot)
         {
@@ -480,6 +480,7 @@ namespace Silent::Input
             if (_events.States[(int)EventId::Grave] && dbDebugGui)
             {
                 options.EnableDebugGui = !options.EnableDebugGui;
+                g_DebugData.Page       = DebugPage::None;
 
                 Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
             }

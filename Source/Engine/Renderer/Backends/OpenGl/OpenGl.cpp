@@ -412,7 +412,6 @@ namespace Silent::Renderer
 
         _vertexCubeBuffer.Bind();
         _vertexCubeArray.Bind();
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         static float rot = 0.0f;
         rot += 0.5f;

@@ -78,7 +78,11 @@ namespace Silent::Utils::Debug
 
         CreateGui([]()
         {
-            constexpr const char* TEX_FILTER_ITEMS[] = { "Nearest", "Bilinear" };
+            constexpr const char* FRAME_RATE_ITEMS[]   = { "30", "60", "120", "Unlimited" };
+            constexpr const char* RENDER_SCALE_ITEMS[] = { "Native", "Half", "Quarter", "Retro" };
+            constexpr const char* ASPECT_RATIO_ITEMS[] = { "Native", "Widescreen", "Retro" };
+            constexpr const char* TEX_FILTER_ITEMS[]   = { "Nearest", "Bilinear" };
+            constexpr const char* LIGHTING_ITEMS[]     = { "Per vertex", "Per pixel" };
 
             auto& options  = g_App.GetConfig().GetOptions();
             auto& renderer = g_App.GetRenderer();
@@ -91,6 +95,7 @@ namespace Silent::Utils::Debug
                     // `Scratchpad` tab.
                     if (ImGui::BeginTabItem("Scratchpad"))
                     {
+                        // 'Alpha blend' slider.
                         ImGui::SliderFloat("Alpha Blend", &g_DebugData.BlendAlpha, 0.0f, 1.0f);
     
                         ImGui::EndTabItem();
@@ -102,7 +107,9 @@ namespace Silent::Utils::Debug
                 {
                     g_DebugData.Page = DebugPage::Renderer;
 
+                    // `Wireframe mode` checkbox.
                     ImGui::Checkbox("Wireframe mode", &g_DebugData.EnableWireframeMode);
+
                     ImGui::EndTabItem();
                 }
                 
@@ -202,17 +209,110 @@ namespace Silent::Utils::Debug
                 {
                     g_DebugData.Page = DebugPage::Options;
 
-                    // `Texture filter` combo.
-                    int texFilterType = (int)options.TextureFilterType;
-                    if (ImGui::Combo("Texture filter", &texFilterType, TEX_FILTER_ITEMS, IM_ARRAYSIZE(TEX_FILTER_ITEMS)))
+                    // `Graphics` section.
+                    ImGui::SeparatorText("Graphics");
                     {
-                        options.TextureFilterType = (TextureFilterType)texFilterType;
-                        renderer.RefreshTextureFilter();
+                        // `Enable fullscreen` checkbox.
+                        ImGui::Checkbox("Enable fullscreen", &options.EnableFullscreen);
+
+                        // `Brightness level` slider.
+                        ImGui::SliderInt("Brightness level", &options.BrightnessLevel, 0, 7);
+
+                        // `Frame rate` combo.
+                        int frameRate = (int)options.FrameRateType;
+                        if (ImGui::Combo("Frame rate", &frameRate, FRAME_RATE_ITEMS, IM_ARRAYSIZE(FRAME_RATE_ITEMS)))
+                        {
+                            options.FrameRateType = (FrameRateType)frameRate;
+                        }
+
+                        // `Render scale` combo.
+                        int renderScale = (int)options.RenderScaleType;
+                        if (ImGui::Combo("Render scale", &renderScale, RENDER_SCALE_ITEMS, IM_ARRAYSIZE(RENDER_SCALE_ITEMS)))
+                        {
+                            options.RenderScaleType = (RenderScaleType)renderScale;
+                        }
+
+                        // `Aspect ratio` combo.
+                        int aspectRatio = (int)options.AspectRatioType;
+                        if (ImGui::Combo("Aspect ratio", &aspectRatio, ASPECT_RATIO_ITEMS, IM_ARRAYSIZE(ASPECT_RATIO_ITEMS)))
+                        {
+                            options.AspectRatioType = (AspectRatioType)aspectRatio;
+                        }
+
+                        // `Texture filter` combo.
+                        int texFilter = (int)options.TextureFilterType;
+                        if (ImGui::Combo("Texture filter", &texFilter, TEX_FILTER_ITEMS, IM_ARRAYSIZE(TEX_FILTER_ITEMS)))
+                        {
+                            options.TextureFilterType = (TextureFilterType)texFilter;
+                            renderer.RefreshTextureFilter();
+                        }
+
+                        // `Lighting type` combo.
+                        int lighting = (int)options.LightingType;
+                        if (ImGui::Combo("Lighting", &lighting, LIGHTING_ITEMS, IM_ARRAYSIZE(LIGHTING_ITEMS)))
+                        {
+                            options.LightingType = (LightingType)lighting;
+                            renderer.RefreshTextureFilter();
+                        }
+
+                        // `Enable dithering` checkbox.
+                        ImGui::Checkbox("Enable dithering", &options.EnableDithering);
+
+                        // `Enable CRT filter` checkbox.
+                        ImGui::Checkbox("Enable CRT filter", &options.EnableCrtFilter);
+
+                        // `Enable vertex jitter` checkbox.
+                        ImGui::Checkbox("Enable vertex jitter", &options.EnableVertexJitter);
+                    }
+
+                    // `Gameplay` section.
+                    ImGui::SeparatorText("Gameplay");
+                    {
+                        // `Enable auto load` checkbox.
+                        ImGui::Checkbox("Enable auto load", &options.EnableAutoLoad);
+
+                        // `Enable subtitles` checkbox.
+                        ImGui::Checkbox("Enable subtitles", &options.EnableSubtitles);
+
+                        // TODO
+                        int  SoundType       = 0;
+                        int  BgmVolume       = 0;
+                        int  SeVolume        = 0;
+                        int  BloodColor      = 0;
+                        int  BulletAdjust    = 0;
+                    }
+
+                    // `Input` section.
+                    ImGui::SeparatorText("Input");
+                    {
+                        // `Enable vibration` checkbox.
+                        ImGui::Checkbox("Enable vibration", &options.EnableVibration);
+
+                        // TODO
+                        int  MouseSensitivity  = 0;
+                        int  WeaponControl     = 0;
+                        int  ViewControl       = 0;
+                        int  RetreatTurn       = 0;
+                        int  WalkRunControl    = 0;
+
+                        // `Enable auto aiming` checkbox.
+                        ImGui::Checkbox("Enable auto aiming", &options.DisableAutoAiming);
+
+                        int  ViewMode          = 0;
+                    }
+
+                    // `Systems` section.
+                    ImGui::SeparatorText("Systems");
+                    {
+                        // `Enable toasts` checkbox.
+                        ImGui::Checkbox("Enable toasts", &options.DisableAutoAiming);
+
+                        // `Enable parallelism` checkbox.
+                        ImGui::Checkbox("Enable parallelism", &options.EnableParallelism);
                     }
 
                     ImGui::EndTabItem();
                 }
-
                 ImGui::EndTabBar();
             }
 
@@ -261,13 +361,15 @@ namespace Silent::Utils::Debug
         static auto mutex = std::mutex();
         {
             auto lock = std::lock_guard(mutex);
+
+            // Add message.
             Messages.push_back(buffer);
         }
     }
 
     void Log(const std::string& msg, LogLevel level, LogMode mode, bool repeat)
     {
-        // Ignore debug mode messages in release mode.
+        // Ignore debug mode messages in release build.
         if constexpr (!IS_DEBUG_BUILD)
         {
             if (mode == LogMode::Debug)
