@@ -28,7 +28,7 @@ namespace Silent::Renderer
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // Configure algorithm type used to make image smaller or bigger.
-        switch (options.TextureFilterType)
+        switch (options.TextureFilter)
         {
             default:
             case TextureFilterType::Nearest:
@@ -111,7 +111,7 @@ namespace Silent::Renderer
         const auto& options = g_App.GetConfig().GetOptions();
 
         Bind();
-        switch (options.TextureFilterType)
+        switch (options.TextureFilter)
         {
             default:
             case TextureFilterType::Nearest:

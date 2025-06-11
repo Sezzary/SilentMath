@@ -40,6 +40,10 @@ namespace Silent::Services
     
     constexpr uint JSON_INDENT_SIZE = 4;
 
+    constexpr int SOUND_VOLUME_MAX  = 128;
+    constexpr int BULLET_ADJUST_MIN = 1;
+    constexpr int BULLET_ADJUST_MAX = 6;
+
     enum class FrameRateType
     {
         Fps30,
@@ -75,6 +79,20 @@ namespace Silent::Services
         PerPixel
     };
 
+    enum class SoundType
+    {
+        Stereo,
+        Monaural
+    };
+
+    enum class BloodColorType
+    {
+        Normal = 0,
+        Green  = 2,
+        Violet = 5,
+        Black  = 13
+    };
+
     struct Options
     {
         // Graphics (internal)
@@ -86,24 +104,24 @@ namespace Silent::Services
 
         bool              EnableFullscreen   = false;
         int               BrightnessLevel    = 0;
-        FrameRateType     FrameRateType      = FrameRateType::Fps30;
-        RenderScaleType   RenderScaleType    = RenderScaleType::Native;
-        AspectRatioType   AspectRatioType    = AspectRatioType::Native;
-        TextureFilterType TextureFilterType  = TextureFilterType::Nearest;
-        LightingType      LightingType       = LightingType::PerVertex;
+        FrameRateType     FrameRate          = FrameRateType::Fps30;
+        RenderScaleType   RenderScale        = RenderScaleType::Native;
+        AspectRatioType   AspectRatio        = AspectRatioType::Native;
+        TextureFilterType TextureFilter      = TextureFilterType::Nearest;
+        LightingType      Lighting           = LightingType::PerVertex;
         bool              EnableDithering    = false;
         bool              EnableCrtFilter    = false;
         bool              EnableVertexJitter = false;
 
         // Gameplay
 
-        bool EnableAutoLoad  = false;
-        bool EnableSubtitles = false;
-        int  SoundType       = 0;
-        int  BgmVolume       = 0;
-        int  SeVolume        = 0;
-        int  BloodColor      = 0;
-        int  BulletAdjust    = 0;
+        bool           EnableAutoLoad  = false;
+        bool           EnableSubtitles = false;
+        SoundType      Sound           = SoundType::Stereo;
+        int            BgmVolume       = 0;
+        int            SeVolume        = 0;
+        BloodColorType BloodColor      = BloodColorType::Normal;
+        int            BulletAdjust    = 0;
 
         // TOO: Enhancements options section? Would contain settings for things like bugfixes.
 

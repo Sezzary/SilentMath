@@ -220,7 +220,7 @@ namespace Silent::Input
         }
         
         float sensitivity = (options.MouseSensitivity * 0.1f) + 0.4f;
-        auto  moveAxis    = ((_events.CursorPosition - _events.PrevCursorPosition) / res.ToVector2()) * sensitivity;
+        auto  moveAxis    = ((_events.CursorPosition - _events.PrevCursorPosition) / res.ToVector2()) * sensitivity; // TODO
         if (moveAxis != Vector2::Zero)
         {
             _events.IsUsingGamepad = false;

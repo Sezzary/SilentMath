@@ -11,26 +11,27 @@ using namespace Silent::Utils;
 
 namespace Silent::Services
 {
-    constexpr char KEY_GRAPHICS[]                                 = "Graphics";
-    constexpr char KEY_INPUT[]                                    = "Input";
-    constexpr char KEY_GAMEPLAY[]                                 = "Gameplay";
-    constexpr char KEY_SYSTEM[]                                   = "System";
+    constexpr char KEY_GRAPHICS[] = "Graphics";
+    constexpr char KEY_INPUT[]    = "Input";
+    constexpr char KEY_GAMEPLAY[] = "Gameplay";
+    constexpr char KEY_SYSTEM[]   = "System";
+
     constexpr char KEY_WINDOWED_SIZE_X[]                          = "WindowedSizeX";
     constexpr char KEY_WINDOWED_SIZE_Y[]                          = "WindowedSizeY";
     constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
     constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
     constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
-    constexpr char KEY_FRAME_RATE_TYPE[]                          = "FrameRateType";
-    constexpr char KEY_RENDER_SCALE_TYPE[]                        = "RenderScaleType";
-    constexpr char KEY_ASPECT_RATIO_TYPE[]                        = "AspectRatioType";
-    constexpr char KEY_TEXTURE_FILTER_TYPE[]                      = "TextureFilterType";
-    constexpr char KEY_LIGHTING_TYPE[]                            = "LightingType";
+    constexpr char KEY_FRAME_RATE[]                               = "FrameRateType";
+    constexpr char KEY_RENDER_SCALE[]                             = "RenderScaleType";
+    constexpr char KEY_ASPECT_RATIO[]                             = "AspectRatioType";
+    constexpr char KEY_TEXTURE_FILTER[]                           = "TextureFilterType";
+    constexpr char KEY_LIGHTING[]                                 = "LightingType";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
     constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
     constexpr char KEY_ENABLE_SUBTITLES[]                         = "EnableSubtitles";
-    constexpr char KEY_SOUND_TYPE[]                               = "SoundType";
+    constexpr char KEY_SOUND[]                                    = "SoundType";
     constexpr char KEY_BGM_VOLUME[]                               = "BgmVolume";
     constexpr char KEY_SE_VOLUME[]                                = "SeVolume";
     constexpr char KEY_BLOOD_COLOR[]                              = "BloodColor";
@@ -54,20 +55,20 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
-    constexpr auto DEFAULT_FRAME_RATE_TYPE                          = FrameRateType::Fps60;
-    constexpr auto DEFAULT_RENDER_SCALE_TYPE                        = RenderScaleType::Native;
-    constexpr auto DEFAULT_ASPECT_RATIO_TYPE                        = AspectRatioType::Native;
-    constexpr auto DEFAULT_TEXTURE_FILTER_TYPE                      = TextureFilterType::Nearest;
-    constexpr auto DEFAULT_LIGHTING_TYPE                            = LightingType::PerVertex;
+    constexpr auto DEFAULT_FRAME_RATE                               = FrameRateType::Fps60;
+    constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
+    constexpr auto DEFAULT_ASPECT_RATIO                             = AspectRatioType::Native;
+    constexpr auto DEFAULT_TEXTURE_FILTER                           = TextureFilterType::Nearest;
+    constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
     constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr bool DEFAULT_ENABLE_SUBTITLES                         = true;
-    constexpr int  DEFAULT_SOUND_TYPE                               = 0;
+    constexpr auto DEFAULT_SOUND                                    = SoundType::Stereo;
     constexpr int  DEFAULT_BGM_VOLUME                               = 16;
     constexpr int  DEFAULT_SE_VOLUME                                = 16;
-    constexpr int  DEFAULT_BLOOD_COLOR                              = 0;
+    constexpr auto DEFAULT_BLOOD_COLOR                              = BloodColorType::Normal;
     constexpr int  DEFAULT_BULLET_ADJUST                            = 0;
     constexpr auto DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID = BindingProfileId::KeyboardMouseType1;
     constexpr auto DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID        = BindingProfileId::GamepadType1;
@@ -112,11 +113,11 @@ namespace Silent::Services
         _options.EnableMaximized    = DEFAULT_ENABLE_MAXIMIZED;
         _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
         _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
-        _options.FrameRateType      = DEFAULT_FRAME_RATE_TYPE;
-        _options.RenderScaleType    = DEFAULT_RENDER_SCALE_TYPE;
-        _options.AspectRatioType    = DEFAULT_ASPECT_RATIO_TYPE;
-        _options.TextureFilterType  = DEFAULT_TEXTURE_FILTER_TYPE;
-        _options.LightingType       = DEFAULT_LIGHTING_TYPE;
+        _options.FrameRate          = DEFAULT_FRAME_RATE;
+        _options.RenderScale        = DEFAULT_RENDER_SCALE;
+        _options.AspectRatio        = DEFAULT_ASPECT_RATIO;
+        _options.TextureFilter      = DEFAULT_TEXTURE_FILTER;
+        _options.Lighting           = DEFAULT_LIGHTING;
         _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
         _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
         _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
@@ -126,7 +127,7 @@ namespace Silent::Services
     {
         _options.EnableAutoLoad  = DEFAULT_ENABLE_AUTO_LOAD;
         _options.EnableSubtitles = DEFAULT_ENABLE_SUBTITLES;
-        _options.SoundType       = DEFAULT_SOUND_TYPE;
+        _options.Sound           = DEFAULT_SOUND;
         _options.BgmVolume       = DEFAULT_BGM_VOLUME;
         _options.SeVolume        = DEFAULT_SE_VOLUME;
         _options.BloodColor      = DEFAULT_BLOOD_COLOR;
@@ -335,11 +336,11 @@ namespace Silent::Services
         options.EnableMaximized    = graphicsJson.value(KEY_ENABLE_MAXIMIZED,     DEFAULT_ENABLE_MAXIMIZED);
         options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
         options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
-        options.FrameRateType      = graphicsJson.value(KEY_FRAME_RATE_TYPE,      DEFAULT_FRAME_RATE_TYPE);
-        options.RenderScaleType    = graphicsJson.value(KEY_RENDER_SCALE_TYPE,    DEFAULT_RENDER_SCALE_TYPE);
-        options.AspectRatioType    = graphicsJson.value(KEY_ASPECT_RATIO_TYPE,    DEFAULT_ASPECT_RATIO_TYPE);
-        options.TextureFilterType  = graphicsJson.value(KEY_TEXTURE_FILTER_TYPE,  DEFAULT_TEXTURE_FILTER_TYPE);
-        options.LightingType       = graphicsJson.value(KEY_LIGHTING_TYPE,        DEFAULT_LIGHTING_TYPE);
+        options.FrameRate          = graphicsJson.value(KEY_FRAME_RATE,           DEFAULT_FRAME_RATE);
+        options.RenderScale        = graphicsJson.value(KEY_RENDER_SCALE,         DEFAULT_RENDER_SCALE);
+        options.AspectRatio        = graphicsJson.value(KEY_ASPECT_RATIO,         DEFAULT_ASPECT_RATIO);
+        options.TextureFilter      = graphicsJson.value(KEY_TEXTURE_FILTER,       DEFAULT_TEXTURE_FILTER);
+        options.Lighting           = graphicsJson.value(KEY_LIGHTING,             DEFAULT_LIGHTING);
         options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
         options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
         options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
@@ -348,7 +349,7 @@ namespace Silent::Services
         const auto& gameplayJson = optionsJson[KEY_GAMEPLAY];
         options.EnableAutoLoad   = gameplayJson.value(KEY_ENABLE_AUTO_LOAD, DEFAULT_ENABLE_AUTO_LOAD);
         options.EnableSubtitles  = gameplayJson.value(KEY_ENABLE_SUBTITLES, DEFAULT_ENABLE_SUBTITLES);
-        options.SoundType        = gameplayJson.value(KEY_SOUND_TYPE,       DEFAULT_SOUND_TYPE);
+        options.Sound            = gameplayJson.value(KEY_SOUND,            DEFAULT_SOUND);
         options.BgmVolume        = gameplayJson.value(KEY_BGM_VOLUME,       DEFAULT_BGM_VOLUME);
         options.SeVolume         = gameplayJson.value(KEY_SE_VOLUME,        DEFAULT_SE_VOLUME);
         options.BloodColor       = gameplayJson.value(KEY_BLOOD_COLOR,      DEFAULT_BLOOD_COLOR);
@@ -464,11 +465,11 @@ namespace Silent::Services
                     { KEY_ENABLE_MAXIMIZED,     options.EnableMaximized },
                     { KEY_ENABLE_FULLSCREEN,    options.EnableFullscreen },
                     { KEY_BRIGHTNESS_LEVEL,     options.BrightnessLevel },
-                    { KEY_FRAME_RATE_TYPE,      options.FrameRateType },
-                    { KEY_RENDER_SCALE_TYPE,    options.RenderScaleType },
-                    { KEY_ASPECT_RATIO_TYPE,    options.AspectRatioType },
-                    { KEY_TEXTURE_FILTER_TYPE,  options.TextureFilterType },
-                    { KEY_LIGHTING_TYPE,        options.LightingType },
+                    { KEY_FRAME_RATE,           options.FrameRate },
+                    { KEY_RENDER_SCALE,         options.RenderScale },
+                    { KEY_ASPECT_RATIO,         options.AspectRatio },
+                    { KEY_TEXTURE_FILTER,       options.TextureFilter },
+                    { KEY_LIGHTING,             options.Lighting },
                     { KEY_ENABLE_DITHERING,     options.EnableDithering },
                     { KEY_ENABLE_CRT_FILTER,    options.EnableCrtFilter },
                     { KEY_ENABLE_VERTEX_JITTER, options.EnableVertexJitter }
@@ -479,7 +480,7 @@ namespace Silent::Services
                 {
                     { KEY_ENABLE_AUTO_LOAD, options.EnableAutoLoad },
                     { KEY_ENABLE_SUBTITLES, options.EnableSubtitles },
-                    { KEY_SOUND_TYPE,       options.SoundType },
+                    { KEY_SOUND,            options.Sound },
                     { KEY_BGM_VOLUME,       options.BgmVolume },
                     { KEY_SE_VOLUME,        options.SeVolume },
                     { KEY_BLOOD_COLOR,      options.BloodColor },

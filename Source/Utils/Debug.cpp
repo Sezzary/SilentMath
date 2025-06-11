@@ -28,7 +28,8 @@ namespace Silent::Utils::Debug
 
     void InitializeDebug()
     {
-        constexpr char LOG_FILENAME[] = "Log.txt";
+        constexpr char LOG_FILENAME[]   = "Log.txt";
+        constexpr char IMGUI_FILENAME[] = "imgui.ini";
 
         const auto& config = g_App.GetConfig();
 
@@ -46,7 +47,7 @@ namespace Silent::Utils::Debug
 
         // Initialize ImGui.
         ImGui::CreateContext();
-        auto imguiPath             = (config.GetWorkFolder() / "imgui.ini").string();
+        auto imguiPath             = (config.GetWorkFolder() / IMGUI_FILENAME).string();
         ImGui::GetIO().IniFilename = CopyString(imguiPath.c_str(), imguiPath.size());
     }
 
@@ -71,11 +72,12 @@ namespace Silent::Utils::Debug
             return;
         }
 
-        CreateGui([]()
+        /*CreateGui([]()
         {
             ImGui::ShowDemoWindow();
-        });
+        });*/
 
+        // Create debug GUI.
         CreateGui([]()
         {
             constexpr const char* FRAME_RATE_ITEMS[]   = { "30", "60", "120", "Unlimited" };
@@ -83,6 +85,8 @@ namespace Silent::Utils::Debug
             constexpr const char* ASPECT_RATIO_ITEMS[] = { "Native", "Widescreen", "Retro" };
             constexpr const char* TEX_FILTER_ITEMS[]   = { "Nearest", "Bilinear" };
             constexpr const char* LIGHTING_ITEMS[]     = { "Per vertex", "Per pixel" };
+            constexpr const char* SOUND_ITEMS[]        = { "Stereo", "Monaural" };
+            constexpr const char* BLOOD_COLOR_ITEMS[]  = { "Normal", "Green", "Violet", "Black" };
 
             auto& options  = g_App.GetConfig().GetOptions();
             auto& renderer = g_App.GetRenderer();
@@ -219,40 +223,39 @@ namespace Silent::Utils::Debug
                         ImGui::SliderInt("Brightness level", &options.BrightnessLevel, 0, 7);
 
                         // `Frame rate` combo.
-                        int frameRate = (int)options.FrameRateType;
+                        int frameRate = (int)options.FrameRate;
                         if (ImGui::Combo("Frame rate", &frameRate, FRAME_RATE_ITEMS, IM_ARRAYSIZE(FRAME_RATE_ITEMS)))
                         {
-                            options.FrameRateType = (FrameRateType)frameRate;
+                            options.FrameRate = (FrameRateType)frameRate;
                         }
 
                         // `Render scale` combo.
-                        int renderScale = (int)options.RenderScaleType;
+                        int renderScale = (int)options.RenderScale;
                         if (ImGui::Combo("Render scale", &renderScale, RENDER_SCALE_ITEMS, IM_ARRAYSIZE(RENDER_SCALE_ITEMS)))
                         {
-                            options.RenderScaleType = (RenderScaleType)renderScale;
+                            options.RenderScale = (RenderScaleType)renderScale;
                         }
 
                         // `Aspect ratio` combo.
-                        int aspectRatio = (int)options.AspectRatioType;
+                        int aspectRatio = (int)options.AspectRatio;
                         if (ImGui::Combo("Aspect ratio", &aspectRatio, ASPECT_RATIO_ITEMS, IM_ARRAYSIZE(ASPECT_RATIO_ITEMS)))
                         {
-                            options.AspectRatioType = (AspectRatioType)aspectRatio;
+                            options.AspectRatio = (AspectRatioType)aspectRatio;
                         }
 
                         // `Texture filter` combo.
-                        int texFilter = (int)options.TextureFilterType;
+                        int texFilter = (int)options.TextureFilter;
                         if (ImGui::Combo("Texture filter", &texFilter, TEX_FILTER_ITEMS, IM_ARRAYSIZE(TEX_FILTER_ITEMS)))
                         {
-                            options.TextureFilterType = (TextureFilterType)texFilter;
+                            options.TextureFilter = (TextureFilterType)texFilter;
                             renderer.RefreshTextureFilter();
                         }
 
                         // `Lighting type` combo.
-                        int lighting = (int)options.LightingType;
+                        int lighting = (int)options.Lighting;
                         if (ImGui::Combo("Lighting", &lighting, LIGHTING_ITEMS, IM_ARRAYSIZE(LIGHTING_ITEMS)))
                         {
-                            options.LightingType = (LightingType)lighting;
-                            renderer.RefreshTextureFilter();
+                            options.Lighting = (LightingType)lighting;
                         }
 
                         // `Enable dithering` checkbox.
@@ -274,12 +277,28 @@ namespace Silent::Utils::Debug
                         // `Enable subtitles` checkbox.
                         ImGui::Checkbox("Enable subtitles", &options.EnableSubtitles);
 
-                        // TODO
-                        int  SoundType       = 0;
-                        int  BgmVolume       = 0;
-                        int  SeVolume        = 0;
-                        int  BloodColor      = 0;
-                        int  BulletAdjust    = 0;
+                        // `Sound type` combo.
+                        int sound = (int)options.Sound;
+                        if (ImGui::Combo("Sound", &sound, SOUND_ITEMS, IM_ARRAYSIZE(SOUND_ITEMS)))
+                        {
+                            options.Sound = (SoundType)sound;
+                        }
+
+                        // `Music volume` slider.
+                        ImGui::SliderInt("Music volume", &options.BgmVolume, 0, SOUND_VOLUME_MAX);
+
+                        // `SFX volume` slider.
+                        ImGui::SliderInt("SFX volume", &options.SeVolume, 0, SOUND_VOLUME_MAX);
+
+                        // `Blood color type` combo.
+                        int bloodColor = (int)options.BloodColor;
+                        if (ImGui::Combo("Blood color", &bloodColor, BLOOD_COLOR_ITEMS, IM_ARRAYSIZE(BLOOD_COLOR_ITEMS)))
+                        {
+                            options.BloodColor = (BloodColorType)bloodColor;
+                        }
+
+                        // `Bullet adjust` slider.
+                        ImGui::SliderInt("Bullet adjust", &options.BulletAdjust, BULLET_ADJUST_MIN, BULLET_ADJUST_MAX);
                     }
 
                     // `Input` section.
@@ -298,6 +317,7 @@ namespace Silent::Utils::Debug
                         // `Enable auto aiming` checkbox.
                         ImGui::Checkbox("Enable auto aiming", &options.DisableAutoAiming);
 
+                        // TODO
                         int  ViewMode          = 0;
                     }
 
