@@ -22,12 +22,12 @@ namespace Silent::Math
         // Fields
 
         Vector3    Center   = Vector3::Zero;
-        Vector3    Extents  = Vector3::Zero;
+        Vector3    Extents  = Vector3::One;
         Quaternion Rotation = Quaternion::Identity;
 
         // Constructors
 
-       constexpr OrientedBoundingBox() = default;
+       constexpr OrientedBoundingBox()                                                                    = default;
        constexpr OrientedBoundingBox(const Vector3& center, const Vector3& extents, const Quaternion rot) : Center(center), Extents(extents), Rotation(rot) {}
 
        // Getters

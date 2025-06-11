@@ -70,7 +70,7 @@ namespace Silent::Math
 
     Vector3 EulerAngles::ToDirection() const
     {
-        return Vector3::Normalize(Vector3::Rotate(Vector3::UnitZ, ToRotationMatrix()));
+        return Vector3::Rotate(Vector3::UnitZ, ToRotationMatrix());
     }
 
     Quaternion EulerAngles::ToQuaternion() const

@@ -5,6 +5,8 @@
 
 namespace Silent::Renderer
 {
+    constexpr auto SCREEN_SPACE_RES = Vector2(100.0f);
+
     class RendererBase
     {
     protected:

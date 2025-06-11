@@ -14,7 +14,7 @@ namespace Silent::Math
         // Fields
 
         Vector3 Center = Vector3::Zero;
-        float   Radius = 0.0f;
+        float   Radius = 1.0f;
 
         // Constructors
 

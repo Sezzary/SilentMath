@@ -16,7 +16,7 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr Quaternion()                                   = default;
+        constexpr Quaternion()                                   : glm::quat(0.0f, 0.0f, 0.0f, 1.0f) {}
         constexpr Quaternion(const glm::quat& quat)              : glm::quat(quat) {}
         constexpr Quaternion(float x, float y, float z, float w) : glm::quat(w, x, y, z) {}
         constexpr Quaternion(const Vector3& vec, float scalar)   : glm::quat(scalar, vec.ToGlmVec3()) {}

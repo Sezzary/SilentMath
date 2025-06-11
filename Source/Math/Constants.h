@@ -111,13 +111,13 @@ namespace Silent::Math
     /** @brief Converts a normalized color value in the range `[0.0f, 1.0f]` to an 8-bit color format in the range `[0, 255]`. */
     constexpr uchar FP_COLOR(float val)
     {
-        return (uchar)(val * (FP_TO(1, (Q8_SHIFT)) - 1));
+        return (uchar)(val * (FP_TO(1, Q8_SHIFT) - 1));
     }
 
     /** @brief Converts floating-point degrees to fixed-point angles in Q1.15 format. */
     constexpr short FP_ANGLE(float deg)
     {
-        return (short)ROUND(deg * (FP_ANGLE_COUNT / 360.0f));
+        return (short)ROUND(deg * (360.0f / (float)FP_ANGLE_COUNT));
     }
 
     /** @brief Converts floating-point radians to fixed-point angles in Q1.15 format. */
@@ -129,7 +129,7 @@ namespace Silent::Math
     /** @brief Converts fixed-point angles in Q1.15 format to floating-point radians. */
     constexpr float FP_ANGLE_TO_RAD(short angle)
     {
-        return (angle * ((float)FP_ANGLE_COUNT / 360.0f)) * (PI / 180.0f);
+        return (angle * (360.0f / (float)FP_ANGLE_COUNT)) * (PI / 180.0f);
     }
 
     /** @brief Converts floating-point meters to fixed-point world units in Q12.8 format. */

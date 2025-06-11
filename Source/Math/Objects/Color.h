@@ -37,8 +37,8 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr Color()                                          = default;
-        //constexpr Color(const glm::vec4& color)                    : glm::vec4(color)      {}
+        constexpr Color()                                          : glm::vec4(1.0f, 0.0f, 0.0f, 0.0f) {}
+        //constexpr Color(const glm::vec4& color)                    : glm::vec4(color) {}
         constexpr Color(float r, float g, float b, float a = 1.0f) : glm::vec4(a, r, g, b) {}
 
         static Color From8Bit(uchar r, uchar g, uchar b, uchar a = FP_COLOR(1.0f));

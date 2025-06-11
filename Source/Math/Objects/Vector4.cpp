@@ -10,4 +10,13 @@ namespace Silent::Math
     const Vector4 Vector4::UnitZ = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
     const Vector4 Vector4::UnitW = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
+    const glm::vec4& Vector4::ToGlmVec4() const
+    {
+        return *(const glm::vec4*)this;
+    }
+
+    glm::vec4& Vector4::ToGlmVec4()
+    {
+        return *(glm::vec4*)this;
+    }
 }

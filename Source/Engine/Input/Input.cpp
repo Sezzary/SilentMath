@@ -177,10 +177,12 @@ namespace Silent::Input
 
     void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis)
     {
-        const auto& options = g_App.GetConfig().GetOptions();
+        const auto& options  = g_App.GetConfig().GetOptions();
+        const auto& renderer = g_App.GetRenderer();
 
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
+        pos           = (pos / renderer.GetScreenResolution().ToVector2()) * SCREEN_SPACE_RES;
 
         // Set mouse button event states.
         for (int butCode : VALID_MOUSE_BUTTON_CODES)

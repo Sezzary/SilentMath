@@ -20,7 +20,7 @@ namespace Silent::Math
         // Fields
 
         Vector3 Center  = Vector3::Zero;
-        Vector3 Extents = Vector3::Zero;
+        Vector3 Extents = Vector3::One;
 
         // Constructors
     

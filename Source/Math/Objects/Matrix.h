@@ -15,17 +15,19 @@ namespace Silent::Math
 
         // Constructors
 
-        constexpr Matrix() = default;
+        constexpr Matrix() : glm::mat4(1.0f, 0.0f, 0.0f, 0.0f,
+                                       0.0f, 1.0f, 0.0f, 0.0f,
+                                       0.0f, 0.0f, 1.0f, 0.0f,
+                                       0.0f, 0.0f, 0.0f, 1.0f) {}
         constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
-        constexpr Matrix(float m)              : glm::mat4(m)   {}
+        constexpr Matrix(float m)              : glm::mat4(m) {}
         constexpr Matrix(float m00, float m01, float m02, float m03,
                          float m10, float m11, float m12, float m13,
                          float m20, float m21, float m22, float m23,
-                         float m30, float m31, float m32, float m33) :
-                         glm::mat4(m00, m01, m02, m03,
-                                   m10, m11, m12, m13,
-                                   m20, m21, m22, m23,
-                                   m30, m31, m32, m33) {}
+                         float m30, float m31, float m32, float m33) : glm::mat4(m00, m01, m02, m03,
+                                                                                 m10, m11, m12, m13,
+                                                                                 m20, m21, m22, m23,
+                                                                                 m30, m31, m32, m33) {}
 
         static Matrix CreateTranslation(const Vector3& translation);
         static Matrix CreateRotationX(float rad);
