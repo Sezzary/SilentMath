@@ -45,7 +45,7 @@ namespace Silent::Services
     constexpr char KEY_MOUSE_SENSITIVITY[]                        = "MouseSensitivity";
     constexpr char KEY_WEAPON_CONTROL[]                           = "WeaponControl";
     constexpr char KEY_VIEW_CONTROL[]                             = "ViewControl";
-    constexpr char KEY_RETREAT_TURN[]                             = "RetreatTurn";
+    constexpr char KEY_RETREAT_TURN_CONTROL[]                     = "RetreatTurnControl";
     constexpr char KEY_WALK_RUN_CONTROL[]                         = "WalkRunControl";
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
@@ -76,11 +76,11 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_VIBRATION                         = true;
     constexpr int  DEFAULT_MOUSE_SENSITIVITY                        = 6;
     constexpr auto DEFAULT_WEAPON_CONTROL                           = WeaponControlType::Press;
-    constexpr auto DEFAULT_VIEW_CONTROL                             = ViewControlType::Normal;
-    constexpr int  DEFAULT_RETREAT_TURN                             = 0;
-    constexpr int  DEFAULT_WALK_RUN_CONTROL                         = 0;
+    constexpr auto DEFAULT_VIEW_CONTROL                             = ControlInversionType::Normal;
+    constexpr auto DEFAULT_RETREAT_TURN_CONTROL                     = ControlInversionType::Normal;
+    constexpr auto DEFAULT_WALK_RUN_CONTROL                         = ControlInversionType::Normal;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
-    constexpr int  DEFAULT_VIEW_MODE                                = 0;
+    constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
     void OptionsManager::SetDefaultGraphicsOptions()
@@ -122,14 +122,14 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultInputControlsOptions()
     {
-        _options.EnableVibration   = DEFAULT_ENABLE_VIBRATION;
-        _options.MouseSensitivity  = DEFAULT_MOUSE_SENSITIVITY;
-        _options.WeaponControl     = DEFAULT_WEAPON_CONTROL;
-        _options.ViewControl       = DEFAULT_VIEW_CONTROL;
-        _options.RetreatTurn       = DEFAULT_RETREAT_TURN;
-        _options.WalkRunControl    = DEFAULT_WALK_RUN_CONTROL;
-        _options.DisableAutoAiming = DEFAULT_DISABLE_AUTO_AIMING;
-        _options.ViewMode          = DEFAULT_VIEW_MODE;
+        _options.EnableVibration    = DEFAULT_ENABLE_VIBRATION;
+        _options.MouseSensitivity   = DEFAULT_MOUSE_SENSITIVITY;
+        _options.WeaponControl      = DEFAULT_WEAPON_CONTROL;
+        _options.ViewControl        = DEFAULT_VIEW_CONTROL;
+        _options.RetreatTurnControl = DEFAULT_RETREAT_TURN_CONTROL;
+        _options.WalkRunControl     = DEFAULT_WALK_RUN_CONTROL;
+        _options.DisableAutoAiming  = DEFAULT_DISABLE_AUTO_AIMING;
+        _options.ViewMode           = DEFAULT_VIEW_MODE;
     }
 
     void OptionsManager::SetDefaultSystemOptions()
@@ -242,7 +242,7 @@ namespace Silent::Services
         options.MouseSensitivity             = inputJson.value(KEY_MOUSE_SENSITIVITY,                        DEFAULT_MOUSE_SENSITIVITY);
         options.WeaponControl                = inputJson.value(KEY_WEAPON_CONTROL,                           DEFAULT_WEAPON_CONTROL);
         options.ViewControl                  = inputJson.value(KEY_VIEW_CONTROL,                             DEFAULT_VIEW_CONTROL);
-        options.RetreatTurn                  = inputJson.value(KEY_RETREAT_TURN,                             DEFAULT_RETREAT_TURN);
+        options.RetreatTurnControl           = inputJson.value(KEY_RETREAT_TURN_CONTROL,                     DEFAULT_RETREAT_TURN_CONTROL);
         options.WalkRunControl               = inputJson.value(KEY_WALK_RUN_CONTROL,                         DEFAULT_WALK_RUN_CONTROL);
         options.DisableAutoAiming            = inputJson.value(KEY_DISABLE_AUTO_AIMING,                      DEFAULT_DISABLE_AUTO_AIMING);
         options.ViewMode                     = inputJson.value(KEY_VIEW_MODE,                                DEFAULT_VIEW_MODE);
@@ -387,7 +387,7 @@ namespace Silent::Services
                     { KEY_MOUSE_SENSITIVITY,                        options.MouseSensitivity },
                     { KEY_WEAPON_CONTROL,                           options.WeaponControl },
                     { KEY_VIEW_CONTROL,                             options.ViewControl },
-                    { KEY_RETREAT_TURN,                             options.RetreatTurn },
+                    { KEY_RETREAT_TURN_CONTROL,                             options.RetreatTurnControl },
                     { KEY_WALK_RUN_CONTROL,                         options.WalkRunControl },
                     { KEY_DISABLE_AUTO_AIMING,                      options.DisableAutoAiming },
                     { KEY_VIEW_MODE,                                options.ViewMode }

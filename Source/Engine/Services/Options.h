@@ -6,6 +6,7 @@ using namespace Silent::Input;
 
 namespace Silent::Services
 {
+    constexpr int BRIGHTNESS_LEVEL_MAX  = 7;
     constexpr int SOUND_VOLUME_MAX      = 128;
     constexpr int BULLET_ADJUST_MIN     = 1;
     constexpr int BULLET_ADJUST_MAX     = 6;
@@ -60,22 +61,22 @@ namespace Silent::Services
         Black  = 13
     };
 
+    enum class ControlInversionType
+    {
+        Normal,
+        Reverse
+    };
+
     enum class WeaponControlType
     {
         Switch,
         Press
     };
 
-    enum class ViewControlType
+    enum class ViewMode
     {
         Normal,
         SelfView
-    };
-
-    enum class ControlInversionType
-    {
-        Normal,
-        Reverse
     };
 
     struct Options
@@ -122,14 +123,14 @@ namespace Silent::Services
 
         // Input (controls)
 
-        bool              EnableVibration   = false;
-        int               MouseSensitivity  = 0;
-        WeaponControlType WeaponControl     = WeaponControlType::Switch;
-        ViewControlType   ViewControl       = ViewControlType::Normal;
-        int               RetreatTurn       = 0;
-        int               WalkRunControl    = 0;
-        bool              DisableAutoAiming = false;
-        int               ViewMode          = 0;
+        bool                 EnableVibration    = false;
+        int                  MouseSensitivity   = 0;
+        WeaponControlType    WeaponControl      = WeaponControlType::Switch;
+        ControlInversionType ViewControl        = ControlInversionType::Normal;
+        ControlInversionType RetreatTurnControl = ControlInversionType::Normal;
+        ControlInversionType WalkRunControl     = ControlInversionType::Normal;
+        bool                 DisableAutoAiming  = false;
+        ViewMode             ViewMode           = ViewMode::Normal;
 
         // System (internal)
 

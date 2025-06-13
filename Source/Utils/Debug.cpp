@@ -80,13 +80,16 @@ namespace Silent::Utils::Debug
         // Create debug GUI.
         CreateGui([]()
         {
-            constexpr const char* FRAME_RATE_ITEMS[]   = { "30", "60", "120", "Unlimited" };
-            constexpr const char* RENDER_SCALE_ITEMS[] = { "Native", "Half", "Quarter", "Retro" };
-            constexpr const char* ASPECT_RATIO_ITEMS[] = { "Native", "Widescreen", "Retro" };
-            constexpr const char* TEX_FILTER_ITEMS[]   = { "Nearest", "Bilinear" };
-            constexpr const char* LIGHTING_ITEMS[]     = { "Per vertex", "Per pixel" };
-            constexpr const char* SOUND_ITEMS[]        = { "Stereo", "Monaural" };
-            constexpr const char* BLOOD_COLOR_ITEMS[]  = { "Normal", "Green", "Violet", "Black" };
+            constexpr const char* FRAME_RATE_ITEMS[]        = { "30", "60", "120", "Unlimited" };
+            constexpr const char* RENDER_SCALE_ITEMS[]      = { "Native", "Half", "Quarter", "Retro" };
+            constexpr const char* ASPECT_RATIO_ITEMS[]      = { "Native", "Widescreen", "Retro" };
+            constexpr const char* TEX_FILTER_ITEMS[]        = { "Nearest", "Bilinear" };
+            constexpr const char* LIGHTING_ITEMS[]          = { "Per vertex", "Per pixel" };
+            constexpr const char* SOUND_ITEMS[]             = { "Stereo", "Monaural" };
+            constexpr const char* BLOOD_COLOR_ITEMS[]       = { "Normal", "Green", "Violet", "Black" };
+            constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
+            constexpr const char* WEAPON_CONTROL_ITEMS[]    = { "Switch", "Press" };
+            constexpr const char* VIEW_MODE_ITEMS[]         = { "Normal", "Self view" };
 
             auto& options  = g_App.GetOptions();
             auto& renderer = g_App.GetRenderer();
@@ -225,13 +228,13 @@ namespace Silent::Utils::Debug
                         }
 
                         // `Toggle fullscreen` button.
-                        if (ImGui::Button("Enable fullscreen"))
+                        if (ImGui::Button("Toggle fullscreen"))
                         {
                             g_App.ToggleFullscreen();
                         }
 
                         // `Brightness level` slider.
-                        if (ImGui::SliderInt("Brightness level", &options->BrightnessLevel, 0, 7))
+                        if (ImGui::SliderInt("Brightness level", &options->BrightnessLevel, 0, BRIGHTNESS_LEVEL_MAX))
                         {
                             isOptChanged = true;
                         }
@@ -374,12 +377,38 @@ namespace Silent::Utils::Debug
                         {
                             isOptChanged = true;
                         }
-                        
-                        // TODO
-                        int  WeaponControl     = 0;
-                        int  ViewControl       = 0;
-                        int  RetreatTurn       = 0;
-                        int  WalkRunControl    = 0;
+
+                        // `Weapon control` combo.
+                        int weaponCtrl = (int)options->WeaponControl;
+                        if (ImGui::Combo("Weapon control", &weaponCtrl, WEAPON_CONTROL_ITEMS, IM_ARRAYSIZE(WEAPON_CONTROL_ITEMS)))
+                        {
+                            options->WeaponControl = (WeaponControlType)weaponCtrl;
+                            isOptChanged           = true;
+                        }
+
+                        // `View control` combo.
+                        int viewCtrl = (int)options->ViewControl;
+                        if (ImGui::Combo("View control", &viewCtrl, CONTROL_INVERSION_ITEMS, IM_ARRAYSIZE(CONTROL_INVERSION_ITEMS)))
+                        {
+                            options->ViewControl = (ControlInversionType)viewCtrl;
+                            isOptChanged           = true;
+                        }
+
+                        // `Retreat turn control` combo.
+                        int retreatTurnCtrl = (int)options->RetreatTurnControl;
+                        if (ImGui::Combo("Retreat turn control", &retreatTurnCtrl, CONTROL_INVERSION_ITEMS, IM_ARRAYSIZE(CONTROL_INVERSION_ITEMS)))
+                        {
+                            options->RetreatTurnControl = (ControlInversionType)retreatTurnCtrl;
+                            isOptChanged                = true;
+                        }
+
+                        // `Walk/run control` combo.
+                        int walkRunCtrl = (int)options->WalkRunControl;
+                        if (ImGui::Combo("Walk/run control", &walkRunCtrl, CONTROL_INVERSION_ITEMS, IM_ARRAYSIZE(CONTROL_INVERSION_ITEMS)))
+                        {
+                            options->WalkRunControl = (ControlInversionType)walkRunCtrl;
+                            isOptChanged            = true;
+                        }
 
                         // `Disable auto aiming` checkbox.
                         if (ImGui::Checkbox("Disable auto aiming", &options->DisableAutoAiming))
@@ -387,8 +416,13 @@ namespace Silent::Utils::Debug
                             isOptChanged = true;
                         }
 
-                        // TODO
-                        int  ViewMode          = 0;
+                        // `View mode` combo.
+                        int viewMode = (int)options->ViewMode;
+                        if (ImGui::Combo("View mode", &viewMode, VIEW_MODE_ITEMS, IM_ARRAYSIZE(VIEW_MODE_ITEMS)))
+                        {
+                            options->ViewMode = (ViewMode)viewMode;
+                            isOptChanged      = true;
+                        }
                     }
 
                     // `System` section.
