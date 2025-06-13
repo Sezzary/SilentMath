@@ -62,7 +62,6 @@ namespace Silent
         // Parallelism.
         g_Parallel.Initialize();
 
-        // TODO: Should move below input init.
         // Assets.
         _work.Assets.Initialize(_work.Filesystem.GetAssetsFolder() / "SILENT");
 

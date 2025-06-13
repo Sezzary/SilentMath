@@ -76,6 +76,11 @@ namespace Silent::Assets
     template <typename T>
     std::shared_ptr<T> GetAssetData(std::shared_ptr<void> data)
     {
+        if (data == nullptr)
+        {
+            throw std::runtime_error("Attempted to get data for unloaded asset.");
+        }
+
         return std::reinterpret_pointer_cast<T>(data);
     }
 }
