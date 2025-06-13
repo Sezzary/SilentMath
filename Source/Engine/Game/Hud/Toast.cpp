@@ -2,6 +2,7 @@
 #include "Engine/Game/Hud/Toast.h"
 
 #include "Engine/Application.h"
+#include "Engine/Services/Options.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Utils.h"
 
@@ -12,8 +13,8 @@ namespace Silent::Hud
 {
     void ToastManager::AddToast(const std::string& msg, const Color& color)
     {
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableToasts)
+        const auto& options = g_App.GetOptions();
+        if (!options->EnableToasts)
         {
             return;
         }
@@ -61,8 +62,8 @@ namespace Silent::Hud
 
     void ToastManager::Render()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableToasts)
+        const auto& options = g_App.GetOptions();
+        if (!options->EnableToasts)
         {
             return;
         }

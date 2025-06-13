@@ -3,7 +3,7 @@
 
 #include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Filesystem.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Parallel.h"
 
@@ -21,19 +21,19 @@ namespace Silent
         return _work.Assets;
     }
 
+    FilesystemManager& ApplicationManager::GetFilesystem()
+    {
+        return _work.Filesystem;
+    }
+
     InputManager& ApplicationManager::GetInput()
     {
         return _work.Input;
     }
 
-    SavegameManager& ApplicationManager::GetSavegame()
+    OptionsManager& ApplicationManager::GetOptions()
     {
-        return _work.Savegame;
-    }
-
-    ConfigurationManager& ApplicationManager::GetConfig()
-    {
-        return _work.Config;
+        return _work.Options;   
     }
 
     RendererBase& ApplicationManager::GetRenderer()
@@ -41,22 +41,30 @@ namespace Silent
         return *_work.Renderer;
     }
     
+    SavegameManager& ApplicationManager::GetSavegame()
+    {
+        return _work.Savegame;
+    }
+
     void ApplicationManager::Initialize()
     {
-        _work.Config.Initialize();
+        // Filesystem.
+        _work.Filesystem.Initialize();
+
+        // Debug.
         InitializeDebug();
 
         Log("Starting Silent Engine...");
 
         // Options.
-        _work.Config.LoadOptions();
+        _work.Options.Load();
 
         // Parallelism.
         g_Parallel.Initialize();
 
         // TODO: Should move below input init.
         // Assets.
-        _work.Assets.Initialize(_work.Config.GetAssetsFolder() / "SILENT");
+        _work.Assets.Initialize(_work.Filesystem.GetAssetsFolder() / "SILENT");
 
         // SDL.
         if (!SDL_Init(SDL_INIT_VIDEO))
@@ -64,16 +72,14 @@ namespace Silent
             throw std::runtime_error("Failed to initialize SDL: " + std::string(SDL_GetError()));
         }
 
-        const auto& options = _work.Config.GetOptions();
-
         // Collect window flags.
         int rendererFlag   = SDL_WINDOW_OPENGL;
-        int fullscreenFlag = options.EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
-        int maximizedFlag  = options.EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
+        int fullscreenFlag = _work.Options->EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
+        int maximizedFlag  = _work.Options->EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
         int flags          = SDL_WINDOW_RESIZABLE | rendererFlag | fullscreenFlag | maximizedFlag;
 
         // Create window.
-        _window = SDL_CreateWindow(APP_NAME, options.WindowedSize.x, options.WindowedSize.y, flags);
+        _window = SDL_CreateWindow(APP_NAME, _work.Options->WindowedSize.x, _work.Options->WindowedSize.y, flags);
         if (_window == nullptr)
         {
             throw std::runtime_error("Failed to create window: " + std::string(SDL_GetError()));
@@ -133,9 +139,7 @@ namespace Silent
 
     void ApplicationManager::ToggleFullscreen()
     {
-        auto& options = _work.Config.GetOptions();
-
-        if (!SDL_SetWindowFullscreen(_window, !options.EnableFullscreen))
+        if (!SDL_SetWindowFullscreen(_window, !_work.Options->EnableFullscreen))
         {
             Log("Failed to toggle fullscreen mode: " + std::string(SDL_GetError()), LogLevel::Warning);
         }
@@ -166,12 +170,10 @@ namespace Silent
 
     void ApplicationManager::PollEvents()
     {
-        const auto& options = _work.Config.GetOptions();
-
         auto event = SDL_Event{};
         while (SDL_PollEvent(&event))
         {
-            if (options.EnableDebugGui)
+            if (_work.Options->EnableDebugGui)
             {
                 ImGui_ImplSDL3_ProcessEvent(&event);
             }
@@ -193,18 +195,16 @@ namespace Silent
                         break;
                     }
 
-                    auto& options = _work.Config.GetOptions();
-
                     auto res = Vector2i::Zero;
                     SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
-                    if (options.WindowedSize == res)
+                    if (_work.Options->WindowedSize == res)
                     {
                         break;
                     }
 
                     // Update options.
-                    options.WindowedSize = res;
-                    _work.Config.SaveOptions();
+                    _work.Options->WindowedSize = res;
+                    _work.Options.Save();
 
                     // Update window state.
                     _work.Renderer->SignalResize();
@@ -214,12 +214,10 @@ namespace Silent
                 case SDL_EVENT_WINDOW_MAXIMIZED:
                 case SDL_EVENT_WINDOW_RESTORED:
                 {
-                    auto& options = _work.Config.GetOptions();
-
                     // Update options.
-                    auto windowFlags        = SDL_GetWindowFlags(_window);
-                    options.EnableMaximized = windowFlags & SDL_WINDOW_MAXIMIZED;
-                    _work.Config.SaveOptions();
+                    auto windowFlags                        = SDL_GetWindowFlags(_window);
+                    _work.Options->EnableMaximized = windowFlags & SDL_WINDOW_MAXIMIZED;
+                    _work.Options.Save();
 
                     // Update window state.
                     _work.Renderer->SignalResize();
@@ -229,8 +227,6 @@ namespace Silent
                 case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                 case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                 {
-                    auto& options = _work.Config.GetOptions();
-
                     bool isFullscreen = event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
 
                     // Update cursor.
@@ -257,8 +253,8 @@ namespace Silent
                     }
                     
                     // Update options.
-                    options.EnableFullscreen = isFullscreen;
-                    _work.Config.SaveOptions();
+                    _work.Options->EnableFullscreen = isFullscreen;
+                    _work.Options.Save();
 
                     // Update window state.
                     _work.Renderer->SignalResize();

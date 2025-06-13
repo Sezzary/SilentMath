@@ -2,7 +2,7 @@
 #include "Engine/Services/Savegame/Savegame.h"
 
 #include "Engine/Application.h"
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Filesystem.h"
 #include "Engine/Services/Savegame/Generated/savegame_generated.h"
 
 namespace Silent::Services
@@ -102,26 +102,36 @@ namespace Silent::Services
         _savegame = std::move(*FromSavegameBuffer(*saveBuffer));
     }
 
+    const Savegame* SavegameManager::operator->() const
+    {
+        return &_savegame;
+    }
+
+    Savegame* SavegameManager::operator->()
+    {
+        return &_savegame;
+    }
+
     std::filesystem::path SavegameManager::GetSavegamePath(int slotIdx, int fileIdx, int saveIdx) const
     {
         Assert(slotIdx < _slotMetadata.size(), "Attempted to get savegame path for invalid slot.");
 
-        const auto& config = g_App.GetConfig();
+        const auto& fs = g_App.GetFilesystem();
 
         auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
         auto fileFolderName = SAVEGAME_SLOT_FILE_FOLDER_NAME_BASE + std::to_string(fileIdx + 1);
         auto saveFilename   = std::to_string(saveIdx + 1) + SAVEGAME_FILE_EXT;
-        return config.GetWorkFolder() / SAVEGAME_FOLDER_NAME / slotFolderName / fileFolderName / saveFilename;
+        return fs.GetWorkFolder() / SAVEGAME_FOLDER_NAME / slotFolderName / fileFolderName / saveFilename;
     }
 
     void SavegameManager::PopulateSlotMetadata()
     {
-        const auto& config = g_App.GetConfig();
+        const auto& fs = g_App.GetFilesystem();
 
         for (int slotIdx = 0; slotIdx < _slotMetadata.size(); slotIdx++)
         {
             auto slotFolderName = SAVEGAME_SLOT_FOLDER_NAME_BASE + std::to_string(slotIdx + 1);
-            auto slotFolder     = config.GetWorkFolder() / slotFolderName;
+            auto slotFolder     = fs.GetWorkFolder() / slotFolderName;
             if (!std::filesystem::exists(slotFolder) || !std::filesystem::is_directory(slotFolder))
             {
                 continue;

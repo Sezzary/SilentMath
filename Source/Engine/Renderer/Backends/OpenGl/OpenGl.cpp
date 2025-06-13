@@ -10,7 +10,8 @@
 #include "Engine/Renderer/Backends/OpenGl/View.h"
 #include "Engine/Renderer/Base.h"
 #include "Engine/Services/Assets/Assets.h"
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Filesystem.h"
+#include "Engine/Services/Options.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Utils.h"
 
@@ -252,7 +253,7 @@ namespace Silent::Renderer
     {
         constexpr uint COLOR_CHANNEL_COUNT = 3; // RGB.
 
-        const auto& config = g_App.GetConfig();
+        const auto& fs = g_App.GetFilesystem();
 
         // Get window size.
         auto res = GetScreenResolution();
@@ -260,7 +261,7 @@ namespace Silent::Renderer
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
         auto filename  = (SCREENSHOT_FILENAME_BASE + timestamp) + PNG_FILE_EXT;
-        auto path      = config.GetScreenshotsFolder() / filename;
+        auto path      = fs.GetScreenshotsFolder() / filename;
         std::filesystem::create_directories(path.parent_path());
 
         // Capture screenshot.
@@ -546,8 +547,8 @@ namespace Silent::Renderer
     void OpenGlRenderer::DrawDebugGui()
     {
         // If debug GUI is disabled, return early.
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableDebugGui)
+        const auto& options = g_App.GetOptions();
+        if (!options->EnableDebugGui)
         {
             _debugGuiDrawCalls.clear();
             return;

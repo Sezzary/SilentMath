@@ -45,9 +45,10 @@ namespace Silent::Utils
 
     std::future<void> ParallelTaskManager::AddTasks(const ParallelTasks& tasks)
     {
+        const auto& options = g_App.GetOptions();
+
         // If parallelism is disabled, execute tasks sequentially.
-        const auto& options = g_App.GetConfig().GetOptions();
-        if (!options.EnableParallelism)
+        if (!options->EnableParallelism)
         {
             for (const auto& task : tasks)
             {
@@ -56,6 +57,8 @@ namespace Silent::Utils
                     task();
                 }
             }
+
+            return {};
         }
 
         // HEAP ALLOC: Create counter and promise.

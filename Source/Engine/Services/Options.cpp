@@ -1,9 +1,10 @@
 #include "Framework.h"
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Options.h"
 
+#include "Engine/Application.h"
 #include "Engine/Input/Action.h"
 #include "Engine/Input/Binding.h"
-#include "Engine/Services/Savegame/Savegame.h"
+#include "Engine/Services/Filesystem.h"
 #include "Utils/Parallel.h"
 
 using namespace Silent::Input;
@@ -74,40 +75,15 @@ namespace Silent::Services
     constexpr auto DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID        = BindingProfileId::GamepadType1;
     constexpr bool DEFAULT_ENABLE_VIBRATION                         = true;
     constexpr int  DEFAULT_MOUSE_SENSITIVITY                        = 6;
-    constexpr int  DEFAULT_WEAPON_CONTROL                           = 1;
-    constexpr int  DEFAULT_VIEW_CONTROL                             = 0;
+    constexpr auto DEFAULT_WEAPON_CONTROL                           = WeaponControlType::Press;
+    constexpr auto DEFAULT_VIEW_CONTROL                             = ViewControlType::Normal;
     constexpr int  DEFAULT_RETREAT_TURN                             = 0;
     constexpr int  DEFAULT_WALK_RUN_CONTROL                         = 0;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
     constexpr int  DEFAULT_VIEW_MODE                                = 0;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
-    const std::filesystem::path& ConfigurationManager::GetAppFolder() const
-    {
-        return _appFolder;
-    }
-
-    const std::filesystem::path& ConfigurationManager::GetAssetsFolder() const
-    {
-        return _assetsFolder;
-    }
-
-    const std::filesystem::path& ConfigurationManager::GetWorkFolder() const
-    {
-        return _workFolder;
-    }
-
-    const std::filesystem::path& ConfigurationManager::GetScreenshotsFolder() const
-    {
-        return _screenshotsFolder;
-    }
-
-    Options& ConfigurationManager::GetOptions()
-    {
-        return _options;
-    }
-
-    void ConfigurationManager::SetDefaultGraphicsOptions()
+    void OptionsManager::SetDefaultGraphicsOptions()
     {
         _options.WindowedSize       = DEFAULT_WINDOWED_SIZE;
         _options.EnableMaximized    = DEFAULT_ENABLE_MAXIMIZED;
@@ -123,7 +99,7 @@ namespace Silent::Services
         _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
     }
 
-    void ConfigurationManager::SetDefaultGameplayOptions()
+    void OptionsManager::SetDefaultGameplayOptions()
     {
         _options.EnableAutoLoad  = DEFAULT_ENABLE_AUTO_LOAD;
         _options.EnableSubtitles = DEFAULT_ENABLE_SUBTITLES;
@@ -134,17 +110,17 @@ namespace Silent::Services
         _options.BulletAdjust    = DEFAULT_BULLET_ADJUST;
     }
 
-    void ConfigurationManager::SetDefaultInputKmBindingsOptions()
+    void OptionsManager::SetDefaultInputKmBindingsOptions()
     {
         _options.KeyboardMouseBindings = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;
     }
 
-    void ConfigurationManager::SetDefaultInputGamepadCustomBindingOptions()
+    void OptionsManager::SetDefaultInputGamepadCustomBindingOptions()
     {
         _options.GamepadBindings = USER_GAMEPAD_BINDING_PROFILE_TYPE_1;
     }
 
-    void ConfigurationManager::SetDefaultInputControlsOptions()
+    void OptionsManager::SetDefaultInputControlsOptions()
     {
         _options.EnableVibration   = DEFAULT_ENABLE_VIBRATION;
         _options.MouseSensitivity  = DEFAULT_MOUSE_SENSITIVITY;
@@ -156,126 +132,27 @@ namespace Silent::Services
         _options.ViewMode          = DEFAULT_VIEW_MODE;
     }
 
-    void ConfigurationManager::SetDefaultInputSystemOptions()
+    void OptionsManager::SetDefaultInputSystemOptions()
     {
         _options.EnableToasts      = DEFAULT_ENABLE_TOASTS;
         _options.EnableParallelism = GetCoreCount() > 1;
     }
 
-    void ConfigurationManager::Initialize()
+    void OptionsManager::Initialize()
     {
-        char*  buffer = nullptr;
-        size_t length = 0;
-
-        // Set app path.
-        _appFolder = std::filesystem::current_path();
-
-        // Set assets path.
-        _assetsFolder = _appFolder / ASSETS_FOLDER_NAME;
-
-        // Set work and screenshots paths.
-        switch (OS_TYPE)
-        {
-            case OsType::Windows:
-            {
-                // Get `APPDATA` path for work.
-                if (_dupenv_s(&buffer, &length, "APPDATA") == 0 && buffer != nullptr)
-                {
-                    auto path   = std::filesystem::path(buffer);
-                    _workFolder = path / APP_NAME; 
-                }
-
-                // Get `Pictures` folder path for screenshots.
-                if (_dupenv_s(&buffer, &length, "USERPROFILE") == 0 && buffer != nullptr)
-                {
-                    auto path          = std::filesystem::path(buffer);
-                    _screenshotsFolder = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
-                }
-                break;
-            }
-
-            case OsType::MacOs:
-            {
-                // Get `HOME` path for work.
-                if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
-                {
-                    auto path   = std::filesystem::path(buffer);
-                    _workFolder = path / APP_NAME; 
-                }
-
-                // Get `Pictures` folder path for screenshots.
-                if (buffer != nullptr)
-                {
-                    auto path          = std::filesystem::path(buffer);
-                    _screenshotsFolder = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
-                }
-                break;
-            }
-
-            case OsType::Linux:
-            {
-                // Get `HOME` path for work.
-                if (_dupenv_s(&buffer, &length, "HOME") == 0 && buffer != nullptr)
-                {
-                    auto path   = std::filesystem::path(buffer);
-                    _workFolder = path / APP_NAME; 
-                }
-
-                // Get `Pictures` folder path for screenshots.
-                if (buffer != nullptr)
-                {
-                    auto path          = std::filesystem::path(buffer);
-                    _screenshotsFolder = path / "Pictures" / SCREENSHOTS_FOLDER_NAME;
-                }
-                break;
-            }
-
-            default:
-            {
-                break;
-            }
-        }
-
-        // Check app folder.
-        if (_appFolder.empty())
-        {
-            throw std::runtime_error("Failed to define app folder path.");
-        }
-
-        // Check assets folder.
-        if (!std::filesystem::exists(_assetsFolder))
-        {
-            throw std::runtime_error("Assets folder not found in executable directory.");
-        }
-
-        // Check screenshots folder.
-        if (_screenshotsFolder.empty())
-        {
-            throw std::runtime_error("Failed to define screenshots folder path.");
-        }
-
-        // Create work folder.
-        if (_workFolder.empty())
-        {
-            throw std::runtime_error("Failed to define work folder path.");
-        }
-        std::filesystem::create_directories(_workFolder);
-
-        // Create savegame folder.
-        std::filesystem::create_directories(_workFolder / SAVEGAME_FOLDER_NAME);
-
-        // Set debug options.
         _options.EnableDebugMode = IS_DEBUG_BUILD;
         _options.EnableDebugGui  = false;
     }
 
-    void ConfigurationManager::SaveOptions()
+    void OptionsManager::Save()
     {
+        const auto& fs = g_App.GetFilesystem();
+
         // Create options JSON.
         auto optionsJson = ToOptionsJson(_options);
 
         // Ensure directory exists.
-        auto path = GetWorkFolder() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
+        auto path = fs.GetWorkFolder() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
         std::filesystem::create_directories(path.parent_path());
 
         // Write options JSON file.
@@ -287,9 +164,11 @@ namespace Silent::Services
         }
     }
 
-    void ConfigurationManager::LoadOptions()
+    void OptionsManager::Load()
     {
-        auto path = GetWorkFolder() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
+        const auto& fs = g_App.GetFilesystem();
+
+        auto path = fs.GetWorkFolder() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT);
         
         // Open options JSON file.
         auto inputFile = std::ifstream(path);
@@ -298,7 +177,7 @@ namespace Silent::Services
             Log("No options file found. Creating file.", LogLevel::Info);
 
             SetDefaultOptions();
-            SaveOptions();
+            Save();
             return;
         }
 
@@ -310,7 +189,7 @@ namespace Silent::Services
         _options = FromOptionsJson(optionsJson);
     }
 
-    void ConfigurationManager::SetDefaultOptions()
+    void OptionsManager::SetDefaultOptions()
     {
         SetDefaultGraphicsOptions();
         SetDefaultGameplayOptions();
@@ -325,7 +204,7 @@ namespace Silent::Services
         SetDefaultInputSystemOptions();
     }
 
-    Options ConfigurationManager::FromOptionsJson(const json& optionsJson) const
+    Options OptionsManager::FromOptionsJson(const json& optionsJson) const
     {
         auto options = Options{};
 
@@ -426,7 +305,17 @@ namespace Silent::Services
         return options;
     }
 
-    json ConfigurationManager::ToOptionsJson(const Options& options) const
+    const Options* OptionsManager::operator->() const
+    {
+        return &_options;
+    }
+
+    Options* OptionsManager::operator->()
+    {
+        return &_options;
+    }
+
+    json OptionsManager::ToOptionsJson(const Options& options) const
     {
         // Create keyboard/mouse action-event bindings JSON.
         auto kmBindsJson = json();

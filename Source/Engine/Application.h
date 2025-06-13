@@ -3,7 +3,8 @@
 #include "Engine/Input/Input.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Assets/Assets.h"
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Filesystem.h"
+#include "Engine/Services/Options.h"
 #include "Engine/Services/Savegame/Savegame.h"
 
 namespace Silent
@@ -17,11 +18,12 @@ namespace Silent
     {
         // TODO: `g_SysWork`, `g_GameWork`, and probably other globals would go here.
 
-        InputManager                  Input    = InputManager();
-        AssetManager                  Assets   = AssetManager();
-        SavegameManager               Savegame = SavegameManager();
-        ConfigurationManager          Config   = ConfigurationManager();
-        std::unique_ptr<RendererBase> Renderer = nullptr;
+        AssetManager                  Assets     = AssetManager();
+        FilesystemManager             Filesystem = FilesystemManager();
+        InputManager                  Input      = InputManager();
+        OptionsManager                Options    = OptionsManager();
+        std::unique_ptr<RendererBase> Renderer   = nullptr;
+        SavegameManager               Savegame   = SavegameManager();
     };
 
     class ApplicationManager
@@ -29,11 +31,11 @@ namespace Silent
     private:
         // Fields
 
-        SDL_Window* _window         = nullptr;
-        Vector2     _mouseWheelAxis = Vector2::Zero;
-
-        ApplicationWork _work      = {};
         bool            _isRunning = false;
+        ApplicationWork _work      = {};
+        SDL_Window*     _window    = nullptr;
+
+        Vector2 _mouseWheelAxis = Vector2::Zero;
 
     public:
         // Constructors
@@ -42,11 +44,12 @@ namespace Silent
 
         // Getters
 
-        InputManager&         GetInput();
-        AssetManager&         GetAssets();
-        SavegameManager&      GetSavegame();
-        ConfigurationManager& GetConfig();
-        RendererBase&         GetRenderer();
+        AssetManager&      GetAssets();
+        FilesystemManager& GetFilesystem();
+        InputManager&      GetInput();
+        OptionsManager&    GetOptions();
+        RendererBase&      GetRenderer();
+        SavegameManager&   GetSavegame();
 
         // Utilities
 

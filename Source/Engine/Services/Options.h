@@ -6,43 +6,10 @@ using namespace Silent::Input;
 
 namespace Silent::Services
 {
-    enum class OsType
-    {
-        Windows,
-        MacOs,
-        Linux
-    };
-
-    constexpr char APP_NAME[]                       = "Silent Engine";
-    constexpr char APP_VERSION[]                    = "0.1.0";
-
-#if defined(_WIN32) || defined(_WIN64)
-    constexpr auto OS_TYPE = OsType::Windows;
-#elif defined(__APPLE__)
-    constexpr auto OS_TYPE = OsType::MacOs;
-#elif defined(__linux__)
-    constexpr auto OS_TYPE = OsType::Linux;
-#endif
-
-    constexpr char ASSETS_FOLDER_NAME[]                  = "Assets";
-    constexpr char SAVEGAME_SLOT_FILE_FOLDER_NAME_BASE[] = "File ";
-    constexpr char SAVEGAME_FOLDER_NAME[]                = "Savegame";
-    constexpr char SCREENSHOTS_FOLDER_NAME[]             = "Screenshots";
-    constexpr char SHADERS_FOLDER_NAME[]                 = "Shaders";
-    constexpr char SAVEGAME_SLOT_FOLDER_NAME_BASE[]      = "Slot ";
-
-    constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
-    constexpr char OPTIONS_FILENAME[]         = "Options";
-    
-    constexpr char JSON_FILE_EXT[]     = ".json";
-    constexpr char PNG_FILE_EXT[]      = ".png";
-    constexpr char SAVEGAME_FILE_EXT[] = ".savegame";
-    
-    constexpr uint JSON_INDENT_SIZE = 4;
-
-    constexpr int SOUND_VOLUME_MAX  = 128;
-    constexpr int BULLET_ADJUST_MIN = 1;
-    constexpr int BULLET_ADJUST_MAX = 6;
+    constexpr int SOUND_VOLUME_MAX      = 128;
+    constexpr int BULLET_ADJUST_MIN     = 1;
+    constexpr int BULLET_ADJUST_MAX     = 6;
+    constexpr int MOUSE_SENSITIVITY_MAX = 20;
 
     enum class FrameRateType
     {
@@ -93,6 +60,24 @@ namespace Silent::Services
         Black  = 13
     };
 
+    enum class WeaponControlType
+    {
+        Switch,
+        Press
+    };
+
+    enum class ViewControlType
+    {
+        Normal,
+        SelfView
+    };
+
+    enum class ControlInversionType
+    {
+        Normal,
+        Reverse
+    };
+
     struct Options
     {
         // Graphics (internal)
@@ -137,14 +122,14 @@ namespace Silent::Services
 
         // Input (controls)
 
-        bool EnableVibration   = false;
-        int  MouseSensitivity  = 0;
-        int  WeaponControl     = 0;
-        int  ViewControl       = 0;
-        int  RetreatTurn       = 0;
-        int  WalkRunControl    = 0;
-        bool DisableAutoAiming = false;
-        int  ViewMode          = 0;
+        bool              EnableVibration   = false;
+        int               MouseSensitivity  = 0;
+        WeaponControlType WeaponControl     = WeaponControlType::Switch;
+        ViewControlType   ViewControl       = ViewControlType::Normal;
+        int               RetreatTurn       = 0;
+        int               WalkRunControl    = 0;
+        bool              DisableAutoAiming = false;
+        int               ViewMode          = 0;
 
         // System (internal)
 
@@ -157,29 +142,17 @@ namespace Silent::Services
         bool EnableParallelism = false;
     };
 
-    class ConfigurationManager
+    class OptionsManager
     {
     private:
         // Fields
 
-        std::filesystem::path _appFolder         = {};
-        std::filesystem::path _assetsFolder      = {};
-        std::filesystem::path _workFolder        = {};
-        std::filesystem::path _screenshotsFolder = {};
-        Options               _options           = {};
+        Options _options = {};
 
     public:
         // Constructors
 
-        ConfigurationManager() = default;
-
-        // Getters
-
-        const std::filesystem::path& GetAppFolder() const;
-        const std::filesystem::path& GetAssetsFolder() const;
-        const std::filesystem::path& GetWorkFolder() const;
-        const std::filesystem::path& GetScreenshotsFolder() const;
-        Options&                     GetOptions();
+        OptionsManager() = default;
 
         // Setters
 
@@ -193,8 +166,13 @@ namespace Silent::Services
         // Utilities
 
         void Initialize();
-        void SaveOptions();
-        void LoadOptions();
+        void Save();
+        void Load();
+
+        // Operators
+
+        const Options* operator->() const;
+        Options*       operator->();
 
     private:
         // Helpers

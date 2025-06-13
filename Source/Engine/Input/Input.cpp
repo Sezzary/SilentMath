@@ -6,7 +6,7 @@
 #include "Engine/Input/Binding.h"
 #include "Engine/Input/Event.h"
 #include "Engine/Input/Text.h"
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Options.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
@@ -67,7 +67,7 @@ namespace Silent::Input
 
     void InputManager::Initialize()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
+        const auto& options = g_App.GetOptions();
 
         if (!SDL_Init(SDL_INIT_GAMEPAD))
         {
@@ -96,7 +96,7 @@ namespace Silent::Input
         }
 
         // Initialize bindings.
-        _bindings.Initialize(options.KeyboardMouseBindings, options.GamepadBindings);
+        _bindings.Initialize(options->KeyboardMouseBindings, options->GamepadBindings);
     }
 
     void InputManager::Deinitialize()
@@ -177,7 +177,7 @@ namespace Silent::Input
 
     void InputManager::ReadMouse(int& eventStateIdx, SDL_Window& window, const Vector2& wheelAxis)
     {
-        const auto& options  = g_App.GetConfig().GetOptions();
+        const auto& options  = g_App.GetOptions();
         const auto& renderer = g_App.GetRenderer();
 
         auto pos      = Vector2::Zero;
@@ -219,7 +219,7 @@ namespace Silent::Input
             Log("Failed to get window size: " + std::string(SDL_GetError()), LogLevel::Error);
         }
         
-        float sensitivity = (options.MouseSensitivity * 0.1f) + 0.4f;
+        float sensitivity = (options->MouseSensitivity * 0.1f) + 0.4f;
         auto  moveAxis    = ((_events.CursorPosition - _events.PrevCursorPosition) / res.ToVector2()) * sensitivity; // TODO
         if (moveAxis != Vector2::Zero)
         {
@@ -375,14 +375,14 @@ namespace Silent::Input
 
     void InputManager::UpdateActions()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
+        const auto& options = g_App.GetOptions();
 
         // 1) Update user action states.
         auto updateUserActions = [&]()
         {
             // Get user action binding profiles.
-            auto gamepadProfile = _bindings.GetBindingProfile(options.ActiveGamepadProfileId);
-            auto kmProfile      = _bindings.GetBindingProfile(options.ActiveKeyboardMouseProfileId);
+            auto gamepadProfile = _bindings.GetBindingProfile(options->ActiveGamepadProfileId);
+            auto kmProfile      = _bindings.GetBindingProfile(options->ActiveKeyboardMouseProfileId);
 
             for (auto actionGroupId : USER_ACTION_GROUP_IDS)
             {
@@ -472,15 +472,15 @@ namespace Silent::Input
         }
         dbFullscreen = !((_events.States[(int)EventId::Alt] && _events.States[(int)EventId::Return]) || _events.States[(int)EventId::F11]);
 
-        auto& options = g_App.GetConfig().GetOptions();
-        if (options.EnableDebugMode)
+        auto& options = g_App.GetOptions();
+        if (options->EnableDebugMode)
         {
             // Toggle debug GUI.
             static bool dbDebugGui = true;
             if (_events.States[(int)EventId::Grave] && dbDebugGui)
             {
-                options.EnableDebugGui = !options.EnableDebugGui;
-                g_DebugData.Page       = DebugPage::None;
+                options->EnableDebugGui = !options->EnableDebugGui;
+                g_DebugData.Page        = DebugPage::None;
 
                 Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
             }

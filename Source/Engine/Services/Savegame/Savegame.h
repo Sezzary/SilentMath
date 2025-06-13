@@ -49,6 +49,11 @@ namespace Silent::Services
         void Save(int slotIdx, int fileIdx, int saveIdx);
         void Load(int slotIdx, int fileIdx, int saveIdx);
 
+        // Operators
+
+        const Savegame* operator->() const;
+        Savegame*       operator->();
+
     private:
         // Helpers
 

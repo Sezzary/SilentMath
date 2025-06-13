@@ -5,7 +5,7 @@
 #include "Engine/Renderer/Backends/OpenGl/ShaderProgram.h"
 #include "Engine/Services/Assets/Assets.h"
 #include "Engine/Services/Assets/Parsers/Tim.h" // TODO: Shouldn't need this.
-#include "Engine/Services/Configuration.h"
+#include "Engine/Services/Options.h"
 
 using namespace Silent::Assets;
 using namespace Silent::Services;
@@ -14,7 +14,7 @@ namespace Silent::Renderer
 {
     Texture::Texture(const std::filesystem::path& filename, GLenum unit, GLenum format, GLenum pixelType)
     {
-        const auto& options = g_App.GetConfig().GetOptions();
+        const auto& options = g_App.GetOptions();
 
         // Store texture unit.
         _unit = unit;
@@ -28,7 +28,7 @@ namespace Silent::Renderer
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // Configure algorithm type used to make image smaller or bigger.
-        switch (options.TextureFilter)
+        switch (options->TextureFilter)
         {
             default:
             case TextureFilterType::Nearest:
@@ -108,10 +108,10 @@ namespace Silent::Renderer
 
     void Texture::RefreshFilter()
     {
-        const auto& options = g_App.GetConfig().GetOptions();
+        const auto& options = g_App.GetOptions();
 
         Bind();
-        switch (options.TextureFilter)
+        switch (options->TextureFilter)
         {
             default:
             case TextureFilterType::Nearest:
