@@ -58,7 +58,7 @@ namespace Silent::Utils
                 }
             }
 
-            return {};
+            return GenerateReadyFuture();
         }
 
         // HEAP ALLOC: Create counter and promise.
@@ -151,5 +151,12 @@ namespace Silent::Utils
     uint GetCoreCount()
     {
         return std::max(std::jthread::hardware_concurrency(), 1u);
+    }
+
+    std::future<void> GenerateReadyFuture()
+    {
+        auto promise = std::promise<void>();
+        promise.set_value();
+        return promise.get_future();
     }
 }

@@ -42,5 +42,6 @@ namespace Silent::Utils
 
     extern ParallelTaskManager g_Parallel;
 
-    uint GetCoreCount();
+    uint              GetCoreCount();
+    std::future<void> GenerateReadyFuture();
 }

@@ -118,7 +118,7 @@ namespace Silent::Assets
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
             Log("Attempted to load invalid asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
-            return {};
+            return GenerateReadyFuture();
         }
         auto& asset = _assets[assetIdx];
 
@@ -126,7 +126,7 @@ namespace Silent::Assets
         if (asset->State == AssetState::Loading || asset->State == AssetState::Loaded)
         {
             Log("Attempted to load already loading/loaded asset " + std::to_string(assetIdx) + ".", LogLevel::Warning, LogMode::Debug);
-            return {};
+            return GenerateReadyFuture();
         }
 
         // Check if file is valid.
@@ -135,7 +135,7 @@ namespace Silent::Assets
             Log("Attempted to load asset " + std::to_string(assetIdx) + " from invalid file '" + asset->File.string() + "'.", LogLevel::Error);
 
             asset->State = AssetState::Error;
-            return {};
+            return GenerateReadyFuture();
         }
 
         // Set loading state.
@@ -181,7 +181,7 @@ namespace Silent::Assets
         if (it == _assetIdxs.end())
         {
             Log("Attempted to load unregistered asset '" + assetName + "'.", LogLevel::Warning, LogMode::Debug);
-            return {};
+            return GenerateReadyFuture();
         }
 
         // Load asset by index.

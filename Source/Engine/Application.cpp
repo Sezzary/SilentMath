@@ -214,7 +214,7 @@ namespace Silent
                 case SDL_EVENT_WINDOW_RESTORED:
                 {
                     // Update options.
-                    auto windowFlags                        = SDL_GetWindowFlags(_window);
+                    auto windowFlags               = SDL_GetWindowFlags(_window);
                     _work.Options->EnableMaximized = windowFlags & SDL_WINDOW_MAXIMIZED;
                     _work.Options.Save();
 

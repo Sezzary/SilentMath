@@ -72,10 +72,10 @@ namespace Silent::Utils::Debug
             return;
         }
 
-        CreateGui([]()
+        /*CreateGui([]()
         {
             ImGui::ShowDemoWindow();
-        });
+        });*/
 
         // Create debug GUI.
         CreateGui([]()
@@ -218,17 +218,16 @@ namespace Silent::Utils::Debug
                     ImGui::SeparatorText("Graphics");
                     {
                         // `Reset` button.
-                        if (ImGui::Button("Reset graphics"))
+                        if (ImGui::Button("Reset##0"))
                         {
                             options.SetDefaultGraphicsOptions();
+                            isOptChanged = true;
                         }
 
-                        // `Enable fullscreen` checkbox.
-                        if (ImGui::Checkbox("Enable fullscreen", &options->EnableFullscreen))
+                        // `Toggle fullscreen` button.
+                        if (ImGui::Button("Enable fullscreen"))
                         {
-                            auto& renderer = g_App.GetRenderer();
-                            renderer.SignalResize();
-                            isOptChanged = true;
+                            g_App.ToggleFullscreen();
                         }
 
                         // `Brightness level` slider.
@@ -242,7 +241,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Frame rate", &frameRate, FRAME_RATE_ITEMS, IM_ARRAYSIZE(FRAME_RATE_ITEMS)))
                         {
                             options->FrameRate = (FrameRateType)frameRate;
-                            isOptChanged = true;
+                            isOptChanged       = true;
                         }
 
                         // `Render scale` combo.
@@ -250,7 +249,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Render scale", &renderScale, RENDER_SCALE_ITEMS, IM_ARRAYSIZE(RENDER_SCALE_ITEMS)))
                         {
                             options->RenderScale = (RenderScaleType)renderScale;
-                            isOptChanged = true;
+                            isOptChanged         = true;
                         }
 
                         // `Aspect ratio` combo.
@@ -258,7 +257,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Aspect ratio", &aspectRatio, ASPECT_RATIO_ITEMS, IM_ARRAYSIZE(ASPECT_RATIO_ITEMS)))
                         {
                             options->AspectRatio = (AspectRatioType)aspectRatio;
-                            isOptChanged = true;
+                            isOptChanged         = true;
                         }
 
                         // `Texture filter` combo.
@@ -275,7 +274,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Lighting", &lighting, LIGHTING_ITEMS, IM_ARRAYSIZE(LIGHTING_ITEMS)))
                         {
                             options->Lighting = (LightingType)lighting;
-                            isOptChanged = true;
+                            isOptChanged      = true;
                         }
 
                         // `Enable dithering` checkbox.
@@ -301,9 +300,10 @@ namespace Silent::Utils::Debug
                     ImGui::SeparatorText("Gameplay");
                     {
                         // `Reset` button.
-                        if (ImGui::Button("Reset gameplay"))
+                        if (ImGui::Button("Reset##1"))
                         {
                             options.SetDefaultGameplayOptions();
+                            isOptChanged = true;
                         }
 
                         // `Enable auto load` checkbox.
@@ -323,7 +323,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Sound", &sound, SOUND_ITEMS, IM_ARRAYSIZE(SOUND_ITEMS)))
                         {
                             options->Sound = (SoundType)sound;
-                            isOptChanged = true;
+                            isOptChanged   = true;
                         }
 
                         // `Music volume` slider.
@@ -357,9 +357,10 @@ namespace Silent::Utils::Debug
                     ImGui::SeparatorText("Input");
                     {
                         // `Reset` button.
-                        if (ImGui::Button("Reset input"))
+                        if (ImGui::Button("Reset##2"))
                         {
                             options.SetDefaultInputControlsOptions();
+                            isOptChanged = true;
                         }
 
                         // `Enable vibration` checkbox.
@@ -394,9 +395,10 @@ namespace Silent::Utils::Debug
                     ImGui::SeparatorText("System");
                     {
                         // `Reset` button.
-                        if (ImGui::Button("Reset system"))
+                        if (ImGui::Button("Reset##3"))
                         {
                             options.SetDefaultSystemOptions();
+                            isOptChanged = true;
                         }
 
                         // `Enable toasts` checkbox.
@@ -412,7 +414,7 @@ namespace Silent::Utils::Debug
                         }
                     }
 
-                    // If changed, save options.
+                    // Save options if changed.
                     if (isOptChanged)
                     {
                         options.Save();
@@ -499,7 +501,7 @@ namespace Silent::Utils::Debug
 
             // Get logger instance.
             auto logger = spdlog::get(LOGGER_NAME);
-            if (!logger)
+            if (logger == nullptr)
             {
                 return;
             }
