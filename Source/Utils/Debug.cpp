@@ -72,10 +72,10 @@ namespace Silent::Utils::Debug
             return;
         }
 
-        /*CreateGui([]()
+        CreateGui([]()
         {
             ImGui::ShowDemoWindow();
-        });*/
+        });
 
         // Create debug GUI.
         CreateGui([]()
@@ -211,26 +211,38 @@ namespace Silent::Utils::Debug
                 // `Options` tab.
                 if (ImGui::BeginTabItem("Options"))
                 {
-                    g_DebugData.Page = DebugPage::Options;
+                    g_DebugData.Page  = DebugPage::Options;
+                    bool isOptChanged = false;
 
                     // `Graphics` section.
                     ImGui::SeparatorText("Graphics");
                     {
+                        // `Reset` button.
+                        if (ImGui::Button("Reset graphics"))
+                        {
+                            options.SetDefaultGraphicsOptions();
+                        }
+
                         // `Enable fullscreen` checkbox.
                         if (ImGui::Checkbox("Enable fullscreen", &options->EnableFullscreen))
                         {
                             auto& renderer = g_App.GetRenderer();
                             renderer.SignalResize();
+                            isOptChanged = true;
                         }
 
                         // `Brightness level` slider.
-                        ImGui::SliderInt("Brightness level", &options->BrightnessLevel, 0, 7);
+                        if (ImGui::SliderInt("Brightness level", &options->BrightnessLevel, 0, 7))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Frame rate` combo.
                         int frameRate = (int)options->FrameRate;
                         if (ImGui::Combo("Frame rate", &frameRate, FRAME_RATE_ITEMS, IM_ARRAYSIZE(FRAME_RATE_ITEMS)))
                         {
                             options->FrameRate = (FrameRateType)frameRate;
+                            isOptChanged = true;
                         }
 
                         // `Render scale` combo.
@@ -238,6 +250,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Render scale", &renderScale, RENDER_SCALE_ITEMS, IM_ARRAYSIZE(RENDER_SCALE_ITEMS)))
                         {
                             options->RenderScale = (RenderScaleType)renderScale;
+                            isOptChanged = true;
                         }
 
                         // `Aspect ratio` combo.
@@ -245,6 +258,7 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Aspect ratio", &aspectRatio, ASPECT_RATIO_ITEMS, IM_ARRAYSIZE(ASPECT_RATIO_ITEMS)))
                         {
                             options->AspectRatio = (AspectRatioType)aspectRatio;
+                            isOptChanged = true;
                         }
 
                         // `Texture filter` combo.
@@ -253,6 +267,7 @@ namespace Silent::Utils::Debug
                         {
                             options->TextureFilter = (TextureFilterType)texFilter;
                             renderer.RefreshTextureFilter();
+                            isOptChanged = true;
                         }
 
                         // `Lighting type` combo.
@@ -260,59 +275,104 @@ namespace Silent::Utils::Debug
                         if (ImGui::Combo("Lighting", &lighting, LIGHTING_ITEMS, IM_ARRAYSIZE(LIGHTING_ITEMS)))
                         {
                             options->Lighting = (LightingType)lighting;
+                            isOptChanged = true;
                         }
 
                         // `Enable dithering` checkbox.
-                        ImGui::Checkbox("Enable dithering", &options->EnableDithering);
+                        if (ImGui::Checkbox("Enable dithering", &options->EnableDithering))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Enable CRT filter` checkbox.
-                        ImGui::Checkbox("Enable CRT filter", &options->EnableCrtFilter);
+                        if (ImGui::Checkbox("Enable CRT filter", &options->EnableCrtFilter))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Enable vertex jitter` checkbox.
-                        ImGui::Checkbox("Enable vertex jitter", &options->EnableVertexJitter);
+                        if (ImGui::Checkbox("Enable vertex jitter", &options->EnableVertexJitter))
+                        {
+                            isOptChanged = true;
+                        }
                     }
 
                     // `Gameplay` section.
                     ImGui::SeparatorText("Gameplay");
                     {
+                        // `Reset` button.
+                        if (ImGui::Button("Reset gameplay"))
+                        {
+                            options.SetDefaultGameplayOptions();
+                        }
+
                         // `Enable auto load` checkbox.
-                        ImGui::Checkbox("Enable auto load", &options->EnableAutoLoad);
+                        if (ImGui::Checkbox("Enable auto load", &options->EnableAutoLoad))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Enable subtitles` checkbox.
-                        ImGui::Checkbox("Enable subtitles", &options->EnableSubtitles);
+                        if (ImGui::Checkbox("Enable subtitles", &options->EnableSubtitles))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Sound type` combo.
                         int sound = (int)options->Sound;
                         if (ImGui::Combo("Sound", &sound, SOUND_ITEMS, IM_ARRAYSIZE(SOUND_ITEMS)))
                         {
                             options->Sound = (SoundType)sound;
+                            isOptChanged = true;
                         }
 
                         // `Music volume` slider.
-                        ImGui::SliderInt("Music volume", &options->BgmVolume, 0, SOUND_VOLUME_MAX);
+                        if (ImGui::SliderInt("Music volume", &options->BgmVolume, 0, SOUND_VOLUME_MAX))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `SFX volume` slider.
-                        ImGui::SliderInt("SFX volume", &options->SeVolume, 0, SOUND_VOLUME_MAX);
+                        if (ImGui::SliderInt("SFX volume", &options->SeVolume, 0, SOUND_VOLUME_MAX))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Blood color type` combo.
                         int bloodColor = (int)options->BloodColor;
                         if (ImGui::Combo("Blood color", &bloodColor, BLOOD_COLOR_ITEMS, IM_ARRAYSIZE(BLOOD_COLOR_ITEMS)))
                         {
                             options->BloodColor = (BloodColorType)bloodColor;
+                            isOptChanged        = true;
                         }
 
                         // `Bullet adjust` slider.
-                        ImGui::SliderInt("Bullet adjust", &options->BulletAdjust, BULLET_ADJUST_MIN, BULLET_ADJUST_MAX);
+                        if (ImGui::SliderInt("Bullet adjust", &options->BulletAdjust, BULLET_ADJUST_MIN, BULLET_ADJUST_MAX))
+                        {
+                            isOptChanged = true;
+                        }
                     }
 
                     // `Input` section.
                     ImGui::SeparatorText("Input");
                     {
+                        // `Reset` button.
+                        if (ImGui::Button("Reset input"))
+                        {
+                            options.SetDefaultInputControlsOptions();
+                        }
+
                         // `Enable vibration` checkbox.
-                        ImGui::Checkbox("Enable vibration", &options->EnableVibration);
+                        if (ImGui::Checkbox("Enable vibration", &options->EnableVibration))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Mouse sensitivity` slider.
-                        ImGui::SliderInt("Mouse sensitivity", &options->MouseSensitivity, 0, MOUSE_SENSITIVITY_MAX);
+                        if (ImGui::SliderInt("Mouse sensitivity", &options->MouseSensitivity, 1, MOUSE_SENSITIVITY_MAX))
+                        {
+                            isOptChanged = true;
+                        }
                         
                         // TODO
                         int  WeaponControl     = 0;
@@ -321,20 +381,41 @@ namespace Silent::Utils::Debug
                         int  WalkRunControl    = 0;
 
                         // `Disable auto aiming` checkbox.
-                        ImGui::Checkbox("Disable auto aiming", &options->DisableAutoAiming);
+                        if (ImGui::Checkbox("Disable auto aiming", &options->DisableAutoAiming))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // TODO
                         int  ViewMode          = 0;
                     }
 
-                    // `Systems` section.
-                    ImGui::SeparatorText("Systems");
+                    // `System` section.
+                    ImGui::SeparatorText("System");
                     {
+                        // `Reset` button.
+                        if (ImGui::Button("Reset system"))
+                        {
+                            options.SetDefaultSystemOptions();
+                        }
+
                         // `Enable toasts` checkbox.
-                        ImGui::Checkbox("Enable toasts", &options->EnableToasts);
+                        if (ImGui::Checkbox("Enable toasts", &options->EnableToasts))
+                        {
+                            isOptChanged = true;
+                        }
 
                         // `Enable parallelism` checkbox.
-                        ImGui::Checkbox("Enable parallelism", &options->EnableParallelism);
+                        if (ImGui::Checkbox("Enable parallelism", &options->EnableParallelism))
+                        {
+                            isOptChanged = true;
+                        }
+                    }
+
+                    // If changed, save options.
+                    if (isOptChanged)
+                    {
+                        options.Save();
                     }
 
                     ImGui::EndTabItem();

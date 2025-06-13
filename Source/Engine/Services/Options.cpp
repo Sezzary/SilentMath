@@ -132,7 +132,7 @@ namespace Silent::Services
         _options.ViewMode          = DEFAULT_VIEW_MODE;
     }
 
-    void OptionsManager::SetDefaultInputSystemOptions()
+    void OptionsManager::SetDefaultSystemOptions()
     {
         _options.EnableToasts      = DEFAULT_ENABLE_TOASTS;
         _options.EnableParallelism = GetCoreCount() > 1;
@@ -201,7 +201,7 @@ namespace Silent::Services
         _options.ActiveGamepadProfileId = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
 
         SetDefaultInputControlsOptions();
-        SetDefaultInputSystemOptions();
+        SetDefaultSystemOptions();
     }
 
     Options OptionsManager::FromOptionsJson(const json& optionsJson) const

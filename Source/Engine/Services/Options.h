@@ -161,7 +161,7 @@ namespace Silent::Services
         void SetDefaultInputKmBindingsOptions();
         void SetDefaultInputGamepadCustomBindingOptions();
         void SetDefaultInputControlsOptions();
-        void SetDefaultInputSystemOptions();
+        void SetDefaultSystemOptions();
 
         // Utilities
 
