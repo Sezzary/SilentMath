@@ -11,8 +11,7 @@ namespace Silent::Renderer
 
         const auto& options = g_App.GetOptions();
 
-        auto res = Vector2i::Zero;
-        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+        auto res = g_App.GetWindowResolution();
         return res;
 
         // TODO: Hum, not sure how to do this.

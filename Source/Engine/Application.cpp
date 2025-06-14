@@ -33,7 +33,7 @@ namespace Silent
 
     OptionsManager& ApplicationManager::GetOptions()
     {
-        return _work.Options;   
+        return _work.Options;
     }
 
     RendererBase& ApplicationManager::GetRenderer()
@@ -49,6 +49,13 @@ namespace Silent
     TimeManager& ApplicationManager::GetTime()
     {
         return _work.Time;
+    }
+
+    Vector2i ApplicationManager::GetWindowResolution() const
+    {
+        auto res = Vector2i::Zero;
+        SDL_GetWindowSizeInPixels(_window, &res.x, &res.y);
+        return res;
     }
 
     void ApplicationManager::Initialize()
@@ -160,8 +167,8 @@ namespace Silent
             }
 
             // Move cursor to window center.
-            auto res = _work.Renderer->GetScreenResolution();
-            SDL_WarpMouseInWindow(_window, res.x / 2, res.y / 2);
+            auto pos = GetWindowResolution().ToVector2() / 2.0f;
+            SDL_WarpMouseInWindow(_window, pos.x, pos.y);
         }
         // Hide.
         else if (_work.Options->EnableFullscreen && SDL_CursorVisible())

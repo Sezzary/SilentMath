@@ -44,7 +44,7 @@ namespace Silent
 
         ApplicationManager() = default;
 
-        // Gettersf
+        // Getters
 
         AssetManager&      GetAssets();
         FilesystemManager& GetFilesystem();
@@ -53,6 +53,8 @@ namespace Silent
         RendererBase&      GetRenderer();
         SavegameManager&   GetSavegame();
         TimeManager&       GetTime();
+
+        Vector2i GetWindowResolution() const;
 
         // Utilities
 
