@@ -149,6 +149,33 @@ namespace Silent
         }
     }
 
+    void ApplicationManager::ToggleCursor()
+    {
+        int state = SDL_CursorVisible();
+
+        // Show.
+        if ((!_work.Options->EnableFullscreen || _work.Options->EnableDebugGui) && !SDL_CursorVisible())
+        {
+            if (!SDL_ShowCursor())
+            {
+                Log("Failed to show cursor: " + std::string(SDL_GetError()));
+            }
+
+            // TODO: Warps to corner instead.
+            // Move cursor to window center.
+            auto res = Vector2i::Zero;
+            SDL_WarpMouseInWindow(_window, res.x / 2, res.y / 2);
+        }
+        // Hide.
+        else if (_work.Options->EnableFullscreen && SDL_CursorVisible())
+        {
+            if (!SDL_HideCursor())
+            {
+                Log("Failed to hide cursor: " + std::string(SDL_GetError()));
+            }
+        }
+    }
+
     void ApplicationManager::Update()
     {
         PollEvents();
@@ -231,33 +258,13 @@ namespace Silent
                 {
                     bool isFullscreen = event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN;
 
-                    // Update cursor.
-                    if (isFullscreen)
-                    {
-                        // Hide cursor.
-                        if (!SDL_HideCursor())
-                        {
-                            Log("Failed to hide cursor: " + std::string(SDL_GetError()));
-                        }
-                    }
-                    else
-                    {
-                        // Show cursor.
-                        if (!SDL_ShowCursor())
-                        {
-                            Log("Failed to show cursor: " + std::string(SDL_GetError()));
-                        }
-
-                        // TODO: Warps to corner instead.
-                        // Move cursor to window center.
-                        auto res = Vector2i::Zero;
-                        SDL_WarpMouseInWindow(_window, res.x / 2, res.y / 2);
-                    }
-                    
                     // Update options.
                     _work.Options->EnableFullscreen = isFullscreen;
                     _work.Options.Save();
 
+                    // Show/hide cursor.
+                    ToggleCursor();
+                    
                     // Update window state.
                     _work.Renderer->SignalResize();
                     break;

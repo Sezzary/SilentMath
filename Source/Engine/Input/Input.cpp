@@ -480,7 +480,8 @@ namespace Silent::Input
             if (_events.States[(int)EventId::Grave] && dbDebugGui)
             {
                 options->EnableDebugGui = !options->EnableDebugGui;
-                g_DebugData.Page        = DebugPage::None;
+                g_App.ToggleCursor();
+                g_DebugData.Page = DebugPage::None;
 
                 Log("Toggled debug mode.", LogLevel::Info, LogMode::DebugRelease, true);
             }

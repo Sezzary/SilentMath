@@ -61,6 +61,7 @@ namespace Silent
         void Run();
 
         void ToggleFullscreen();
+        void ToggleCursor();
 
     private:
         // Helpers
