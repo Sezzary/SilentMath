@@ -151,8 +151,6 @@ namespace Silent
 
     void ApplicationManager::ToggleCursor()
     {
-        int state = SDL_CursorVisible();
-
         // Show.
         if ((!_work.Options->EnableFullscreen || _work.Options->EnableDebugGui) && !SDL_CursorVisible())
         {
@@ -161,9 +159,8 @@ namespace Silent
                 Log("Failed to show cursor: " + std::string(SDL_GetError()));
             }
 
-            // TODO: Warps to corner instead.
             // Move cursor to window center.
-            auto res = Vector2i::Zero;
+            auto res = _work.Renderer->GetScreenResolution();
             SDL_WarpMouseInWindow(_window, res.x / 2, res.y / 2);
         }
         // Hide.
