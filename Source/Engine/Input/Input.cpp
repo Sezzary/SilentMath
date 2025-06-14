@@ -511,7 +511,7 @@ namespace Silent::Input
                 _gamepad = SDL_OpenGamepad(GAMEPAD_ID);
                 if (_gamepad != nullptr)
                 {
-                    Log("Connected gamepad with vendor ID " + std::to_string(SDL_GetGamepadVendor(_gamepad)) + ".");
+                    Log("Gamepad connected.");
                     // TODO: Add toast notification.
 
                     SetRumble(RumbleMode::LowAndHigh, 0.0f, 1.0f, 0.5f);

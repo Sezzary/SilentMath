@@ -6,6 +6,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Services/Time.h"
 #include "Utils/Parallel.h"
+#include "Utils/BitField.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Renderer;
@@ -144,6 +145,59 @@ namespace Silent::Utils::Debug
 
                             ImGui::EndTable();
                         }
+                    }
+
+                    // `Actions` section.
+                    ImGui::SeparatorText("Actions");
+                    {
+                        const auto& input = g_App.GetInput();
+
+                        // Collect action statuses.
+                        int  bfSize           = (int)ACTION_ID_GROUPS.at(USER_ACTION_GROUP_IDS.back()).back();
+                        auto clickedActionBf  = BitField(bfSize);
+                        auto heldActionBf     = BitField(bfSize);
+                        auto releasedActionBf = BitField(bfSize);
+                        for (int i = 0; i < bfSize; i++)
+                        {
+                            auto actionId = (ActionId)i;
+                            const auto& action = input.GetAction(actionId);
+
+                            if (action.IsClicked())
+                            {
+                                clickedActionBf.Set(i);
+                            }
+                            if (action.IsHeld())
+                            {
+                                heldActionBf.Set(i);
+                            }
+                            if (action.IsReleased())
+                            {
+                                releasedActionBf.Set(i);
+                            }
+                        }
+
+                        // TODO: Using `c_str` crashes.
+
+                        // `Clicked` info.
+                        /*ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("Clicked:", 0, 0);
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::Text(clickedActionBf.ToString().c_str(), 0, 1);*/
+
+                        // `Held` info.
+                        /*ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("Held:", 1, 0);
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::Text(heldActionBf.ToString().c_str(), 1, 1);*/
+
+                        // `Released` info.
+                        /*ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("Released:", 2, 0);
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::Text(releasedActionBf.ToString().c_str(), 2, 1);*/
                     }
 
                     // `Analog Axes` section.

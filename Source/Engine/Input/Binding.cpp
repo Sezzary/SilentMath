@@ -322,7 +322,7 @@ namespace Silent::Input
     void BindingManager::SetEventBinding(BindingProfileId profileId, ActionId actionId, EventId eventId)
     {
         // Overwrite or add new action-event binding.
-        // Unlike presets, custom bindings allow only a single event ID.
+        // TODO: For now, only single event ID can be bound at one time.
         _bindings[profileId][actionId] = { eventId };
     }
 
