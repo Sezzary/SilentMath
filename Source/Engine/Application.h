@@ -5,6 +5,7 @@
 #include "Engine/Services/Assets/Assets.h"
 #include "Engine/Services/Filesystem.h"
 #include "Engine/Services/Options.h"
+#include "Engine/Services/Time.h"
 #include "Engine/Services/Savegame/Savegame.h"
 
 namespace Silent
@@ -24,6 +25,7 @@ namespace Silent
         OptionsManager                Options    = OptionsManager();
         std::unique_ptr<RendererBase> Renderer   = nullptr;
         SavegameManager               Savegame   = SavegameManager();
+        TimeManager                   Time       = TimeManager();
     };
 
     class ApplicationManager
@@ -42,7 +44,7 @@ namespace Silent
 
         ApplicationManager() = default;
 
-        // Getters
+        // Gettersf
 
         AssetManager&      GetAssets();
         FilesystemManager& GetFilesystem();
@@ -50,6 +52,7 @@ namespace Silent
         OptionsManager&    GetOptions();
         RendererBase&      GetRenderer();
         SavegameManager&   GetSavegame();
+        TimeManager&       GetTime();
 
         // Utilities
 

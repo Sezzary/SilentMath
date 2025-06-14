@@ -101,29 +101,28 @@ namespace Silent::Assets
             }
         }
 
-        // Define color depth and image width coefficient based on BPP.
-        uint colorDepth = 0;
+        // Definte color depth.
+        uint colorDepth = 1 << (flags & BPP_MASK);
+
+        // Define image width coefficient based on BPP.
         int  widthCoeff = 1;
         switch (bpp)
         {
             default:
             case BitsPerPixel::Bpp4:
             {
-                colorDepth = 16;
                 widthCoeff = 4;
                 break;
             }
 
             case BitsPerPixel::Bpp8:
             {
-                colorDepth = 256;
                 widthCoeff = 2;
                 break;
             }
 
             case BitsPerPixel::Bpp16:
             {
-                colorDepth = 65536;
                 widthCoeff = 1;
                 break;
             }

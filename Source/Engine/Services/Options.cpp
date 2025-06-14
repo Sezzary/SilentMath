@@ -22,17 +22,17 @@ namespace Silent::Services
     constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
     constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
     constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
-    constexpr char KEY_FRAME_RATE[]                               = "FrameRateType";
-    constexpr char KEY_RENDER_SCALE[]                             = "RenderScaleType";
-    constexpr char KEY_ASPECT_RATIO[]                             = "AspectRatioType";
-    constexpr char KEY_TEXTURE_FILTER[]                           = "TextureFilterType";
-    constexpr char KEY_LIGHTING[]                                 = "LightingType";
+    constexpr char KEY_FRAME_RATE[]                               = "FrameRate";
+    constexpr char KEY_RENDER_SCALE[]                             = "RenderScale";
+    constexpr char KEY_ASPECT_RATIO[]                             = "AspectRatio";
+    constexpr char KEY_TEXTURE_FILTER[]                           = "TextureFilter";
+    constexpr char KEY_LIGHTING[]                                 = "Lighting";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
     constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
     constexpr char KEY_ENABLE_SUBTITLES[]                         = "EnableSubtitles";
-    constexpr char KEY_SOUND[]                                    = "SoundType";
+    constexpr char KEY_SOUND[]                                    = "Sound";
     constexpr char KEY_BGM_VOLUME[]                               = "BgmVolume";
     constexpr char KEY_SE_VOLUME[]                                = "SeVolume";
     constexpr char KEY_BLOOD_COLOR[]                              = "BloodColor";
@@ -387,7 +387,7 @@ namespace Silent::Services
                     { KEY_MOUSE_SENSITIVITY,                        options.MouseSensitivity },
                     { KEY_WEAPON_CONTROL,                           options.WeaponControl },
                     { KEY_VIEW_CONTROL,                             options.ViewControl },
-                    { KEY_RETREAT_TURN_CONTROL,                             options.RetreatTurnControl },
+                    { KEY_RETREAT_TURN_CONTROL,                     options.RetreatTurnControl },
                     { KEY_WALK_RUN_CONTROL,                         options.WalkRunControl },
                     { KEY_DISABLE_AUTO_AIMING,                      options.DisableAutoAiming },
                     { KEY_VIEW_MODE,                                options.ViewMode }

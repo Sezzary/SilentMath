@@ -72,11 +72,6 @@ namespace Silent::Utils::Debug
             return;
         }
 
-        /*CreateGui([]()
-        {
-            ImGui::ShowDemoWindow();
-        });*/
-
         // Create debug GUI.
         CreateGui([]()
         {
@@ -476,6 +471,12 @@ namespace Silent::Utils::Debug
                 ImGui::EndChild();
             }
         });
+
+        // Create demo GUI.
+        /*CreateGui([]()
+        {
+            ImGui::ShowDemoWindow();
+        });*/
 
         Messages.clear();
     }

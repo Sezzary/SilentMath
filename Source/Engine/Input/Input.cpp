@@ -504,7 +504,8 @@ namespace Silent::Input
         // Intermittently attempt reconnecting gamepad.
         else
         {
-            if (g_Time.TestInterval(SEC_TO_TICK(GAMEPAD_RECONNECT_INTERVAL_SEC)))
+            const auto& time = g_App.GetTime();
+            if (time.TestInterval(SEC_TO_TICK(GAMEPAD_RECONNECT_INTERVAL_SEC)))
             {
                 _gamepad = SDL_OpenGamepad(GAMEPAD_ID);
                 if (_gamepad != nullptr)
@@ -512,7 +513,7 @@ namespace Silent::Input
                     Log("Connected gamepad with vendor ID " + std::to_string(SDL_GetGamepadVendor(_gamepad)) + ".");
                     // TODO: Add toast notification.
 
-                    SetRumble(RumbleMode::LowAndHigh, 1.0f, 0.0f, 0.5f);
+                    SetRumble(RumbleMode::LowAndHigh, 0.0f, 1.0f, 0.5f);
                 }
             }
         }

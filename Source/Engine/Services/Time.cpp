@@ -7,8 +7,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Services
 {
-    TimeManager g_Time = TimeManager();
-
     float TimeManager::GetDeltaTime() const
     {
         uint64 uptimeMicrosec  = GetUptimeMicrosec();

@@ -45,18 +45,16 @@ namespace Silent::Services
         uint64 GetEpochMicrosec() const;
     };
 
-    extern TimeManager g_Time;
-
     std::string GetCurrentDateString();
     std::string GetCurrentTimeString();
 
     constexpr uint SEC_TO_TICK(float sec)
     {
-        return (uint)ROUND(sec * g_Time.TPS);
+        return (uint)ROUND(sec * TimeManager::TPS);
     }
 
     constexpr float TICK_TO_SEC(uint ticks)
     {
-        return (float)ticks / (float)g_Time.TPS;
+        return (float)ticks / (float)TimeManager::TPS;
     }
 }

@@ -46,6 +46,11 @@ namespace Silent
         return _work.Savegame;
     }
 
+    TimeManager& ApplicationManager::GetTime()
+    {
+        return _work.Time;
+    }
+
     void ApplicationManager::Initialize()
     {
         // Filesystem.
@@ -123,16 +128,16 @@ namespace Silent
 
     void ApplicationManager::Run()
     {
-        g_Time.Initialize();
+        _work.Time.Initialize();
 
         while (_isRunning)
         {
-            g_Time.Update();
+            _work.Time.Update();
 
             Update();
             Render();
 
-            g_Time.WaitForNextTick();
+            _work.Time.WaitForNextTick();
         }
     }
 
@@ -147,8 +152,6 @@ namespace Silent
     void ApplicationManager::Update()
     {
         PollEvents();
-
-        // Update input state.
         _work.Input.Update(*_window, _mouseWheelAxis);
 
         // TODO: Update game state here.
@@ -158,7 +161,7 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
-        if (g_Time.GetTicks() <= 0)
+        if (_work.Time.GetTicks() <= 0)
         {
             return;
         }

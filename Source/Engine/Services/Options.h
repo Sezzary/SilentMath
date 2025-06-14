@@ -109,7 +109,7 @@ namespace Silent::Services
         BloodColorType BloodColor      = BloodColorType::Normal;
         int            BulletAdjust    = 0;
 
-        // TOO: Enhancements options section? Would contain settings for things like bugfixes.
+        // TODO: Enhancements options section? Would contain settings for things like bugfixes.
 
         // Input (keyboard/mouse bindings)
 
