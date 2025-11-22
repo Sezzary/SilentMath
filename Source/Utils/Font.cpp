@@ -19,9 +19,9 @@ namespace Silent::Utils
     {
         constexpr int POINT_SIZE_MAX = ATLAS_SIZE / 8;
 
-        _name           = metadata.Name;
-        _useNativeScale = metadata.UseNativeScale;
-        _fontCount      = metadata.Filenames.size();
+        _name               = metadata.Name;
+        _enableAntialiasing = metadata.EnableAntialiasing;
+        _fontCount          = metadata.Filenames.size();
 
         // Clamp point size.
         _pointSize = metadata.PointSize;
@@ -241,7 +241,8 @@ namespace Silent::Utils
                 }
             }
 
-            FT_Load_Glyph(_ftFonts[i], charIdx, FT_LOAD_DEFAULT | (_useNativeScale ? FT_LOAD_NO_SCALE : 0));
+            // @todo Use `FT_LOAD_MONOCHROME` and read 1-bit pixels.
+            FT_Load_Glyph(_ftFonts[i], charIdx, _enableAntialiasing ? FT_LOAD_DEFAULT : FT_LOAD_NO_HINTING);
             ftFont = _ftFonts[i];
             break;
         }
@@ -283,7 +284,15 @@ namespace Silent::Utils
         {
             for (int x = 0; x < bitmap.width; x++)
             {
-                pixelsTo[(ATLAS_SIZE * y) + x] = pixelsFrom[(bitmap.width * y) + x];
+                byte pixel = pixelsFrom[(bitmap.width * y) + x];
+                if (_enableAntialiasing)
+                {
+                    pixelsTo[(ATLAS_SIZE * y) + x] = pixel;
+                }
+                else
+                {
+                    pixelsTo[(ATLAS_SIZE * y) + x] = ((uchar)pixel > FP_COLOR(0.5f)) ? FP_COLOR(1.0f) : FP_COLOR(0.0f);
+                }
             }
         }
     }
