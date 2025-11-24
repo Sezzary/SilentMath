@@ -24,15 +24,9 @@ namespace Silent::Renderer
 
     static auto UniformBuffer = TestUniform{};
 
-    struct PositionTextureVertex
-    {
-        float x, y, z;
-        float u, v;
-    };
-
     // Texture test.
-    static SDL_GPUBuffer* VertexBuffer = nullptr;
-    static SDL_GPUBuffer* IndexBuffer  = nullptr;
+    //static SDL_GPUBuffer* VertexBuffer = nullptr;
+    //static SDL_GPUBuffer* IndexBuffer  = nullptr;
     static Texture TestTexture = Texture();
 
     void SdlGpuRenderer::Initialize(SDL_Window& window)
@@ -138,78 +132,33 @@ namespace Silent::Renderer
 
         TestTexture.Initialize(*_device, *copyPass, 1);
 
-        // Create GPU resources.
-        auto vertBufferInfo = SDL_GPUBufferCreateInfo
-        {
-            .usage = SDL_GPU_BUFFERUSAGE_VERTEX,
-            .size  = sizeof(PositionTextureVertex) * 4
-        };
-        VertexBuffer = SDL_CreateGPUBuffer(_device, &vertBufferInfo);
-        SDL_SetGPUBufferName(_device, VertexBuffer, "Derg Vertex Buffer");
+        _buffers.TestTextureVerts = Buffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, "Derg Vertex Buffer");
+        _buffers.TestTextureIdxs = Buffer<uint16>(*_device, SDL_GPU_BUFFERUSAGE_INDEX, 6, "Derg Index Buffer");
 
-        auto idxBufferInfo = SDL_GPUBufferCreateInfo
+        auto vertMap = std::vector<PositionTextureVertex>
         {
-            .usage = SDL_GPU_BUFFERUSAGE_INDEX,
-            .size  = sizeof(uint16) * 6
+            PositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f },
+            PositionTextureVertex{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f },
+            PositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f },
+            PositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f }
         };
-        IndexBuffer = SDL_CreateGPUBuffer(_device, &idxBufferInfo);
+        _buffers.TestTextureVerts.Update(*copyPass, ToSpan(vertMap), 0);
 
-        // Set up buffer data.
-        auto transferBufferInfo2 = SDL_GPUTransferBufferCreateInfo
+        auto idxMap = std::vector<uint16>
         {
-            .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-            .size  = (sizeof(PositionTextureVertex) * 4) + (sizeof(uint16) * 6)
+            0,
+            1,
+            2,
+            0,
+            2,
+            3
         };
-        auto* bufferTransferBuffer = SDL_CreateGPUTransferBuffer(_device, &transferBufferInfo2);
-
-        auto* transferData = (PositionTextureVertex*)SDL_MapGPUTransferBuffer(_device, bufferTransferBuffer, false);
-        transferData[0]    = PositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f };
-        transferData[1]    = PositionTextureVertex{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f };
-        transferData[2]    = PositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f };
-        transferData[3]    = PositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f };
-
-        uint16* idxData = (uint16*)&transferData[4];
-        idxData[0]      = 0;
-        idxData[1]      = 1;
-        idxData[2]      = 2;
-        idxData[3]      = 0;
-        idxData[4]      = 2;
-        idxData[5]      = 3;
-
-        SDL_UnmapGPUTransferBuffer(_device, bufferTransferBuffer);
-
-        auto transferBufferLoc = SDL_GPUTransferBufferLocation
-        {
-            .transfer_buffer = bufferTransferBuffer,
-            .offset          = 0
-        };
-        auto bufferRegion = SDL_GPUBufferRegion
-        {
-            .buffer = VertexBuffer,
-            .offset = 0,
-            .size   = sizeof(PositionTextureVertex) * 4
-        };
-        SDL_UploadToGPUBuffer(copyPass, &transferBufferLoc, &bufferRegion, false);
-
-        transferBufferLoc = SDL_GPUTransferBufferLocation
-        {
-            .transfer_buffer = bufferTransferBuffer,
-            .offset          = sizeof(PositionTextureVertex) * 4
-        };
-        bufferRegion = SDL_GPUBufferRegion
-        {
-            .buffer = IndexBuffer,
-            .offset = 0,
-            .size   = sizeof(uint16) * 6
-        };
-        SDL_UploadToGPUBuffer(copyPass, &transferBufferLoc, &bufferRegion, false);
-        SDL_ReleaseGPUTransferBuffer(_device, bufferTransferBuffer);
+        _buffers.TestTextureIdxs.Update(*copyPass, ToSpan(idxMap), 0);
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
     }
 
-    // @todo Has errors.
     void SdlGpuRenderer::Deinitialize()
     {
         SDL_WaitForGPUIdle(_device);
@@ -217,6 +166,10 @@ namespace Silent::Renderer
         ImGui_ImplSDL3_Shutdown();
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
+
+        // @todo Has errors. Do buffers etc. need to deinit first?
+        //_buffers = {};
+        //_pipelines.~PipelineManager();
 
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
@@ -345,11 +298,8 @@ namespace Silent::Renderer
 
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
 
-        auto bufferBinding = SDL_GPUBufferBinding{ .buffer = VertexBuffer, .offset = 0 };
-        SDL_BindGPUVertexBuffers(&renderPass, 0, &bufferBinding, 1);
-
-        bufferBinding = SDL_GPUBufferBinding{ .buffer = IndexBuffer, .offset = 0 };
-        SDL_BindGPUIndexBuffer(&renderPass, &bufferBinding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
+        _buffers.TestTextureVerts.Bind(renderPass, 0);
+        _buffers.TestTextureIdxs.Bind(renderPass, 0);
 
         TestTexture.Bind(renderPass, *_samplers[(int)options->TextureFilter]);
 
@@ -358,7 +308,7 @@ namespace Silent::Renderer
         //===============================
 
         // Bind.
-        _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::FastAlpha);
+        _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Add);
         _buffers.Primitives2d.Bind(renderPass, 0);
 
         // Upload uniform data.

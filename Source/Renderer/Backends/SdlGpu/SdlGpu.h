@@ -13,16 +13,19 @@ namespace Silent::Renderer
         Vector3 Position = Vector3::Zero;
         Color   Col      = Color::Clear;
     };
-    struct BufferTexVertex
+    struct PositionTextureVertex
     {
-        Vector3 Position = Vector3::Zero;
-        Vector2 Uv       = Vector2::Zero;
+        float x, y, z;
+        float u, v;
     };
 
     struct BufferData
     {
         Buffer<BufferVertex> Primitives2d = Buffer<BufferVertex>();
         Buffer<Vertex2d>     Sprites2d    = Buffer<Vertex2d>();
+
+        Buffer<PositionTextureVertex> TestTextureVerts = Buffer<PositionTextureVertex>();
+        Buffer<uint16>                TestTextureIdxs  = Buffer<uint16>();
     };
 
     class SdlGpuRenderer : public RendererBase
