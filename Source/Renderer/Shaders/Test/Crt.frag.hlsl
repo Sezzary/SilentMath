@@ -1,4 +1,5 @@
-// Reference: https://www.shadertoy.com/view/Ms23DR
+// References:
+// https://www.shadertoy.com/view/Ms23DR
 
 cbuffer UniformBlock : register(b0, space3)
 {

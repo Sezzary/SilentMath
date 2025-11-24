@@ -7,14 +7,14 @@ namespace Silent::Utils
      * @param str String to convert
      * @return String in upper case.
      */
-    std::string ToUpper(std::string str);
+    std::string ToUpper(const std::string& str);
 
     /** @brief Converts a string to lower case.
      *
      * @param str String to convert
      * @return String in lower case.
      */
-    std::string ToLower(std::string str);
+    std::string ToLower(const std::string& str);
 
     /** @brief Creates a heap-allocated string copy.
      *
@@ -37,7 +37,7 @@ namespace Silent::Utils
         return (val >= 0) ? 1 : -1;
     }
 
-    /** @brief Finds a read-only value associated with a given pair in a hash map.
+    /** @brief Finds a read-only value associated with a given key in a hash map.
      *
      * @tparam TKey Key type.
      * @tparam TValue Value type.
@@ -52,7 +52,7 @@ namespace Silent::Utils
         return (it != cont.end()) ? &it->second : nullptr;
     }
 
-    /** @brief Finds a writable value associated with a given pair in a hash map.
+    /** @brief Finds a writable value associated with a given key in a hash map.
      *
      * @tparam TKey Key type.
      * @tparam TValue Value type.

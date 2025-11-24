@@ -31,7 +31,7 @@ namespace Silent::Renderer
          * @param size Static buffer size.
          * @param name Buffer name.
          */
-        Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name);
+        Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
 
         // ==========
         // Utilities
@@ -73,10 +73,9 @@ namespace Silent::Renderer
         _buffer = SDL_CreateGPUBuffer(&device, &bufferInfo);
         if (_buffer == nullptr)
         {
-            Debug::Log(Fmt("Failed to create buffer: {}", SDL_GetError()), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to create buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
+            // @todo Handle error?
         }
-
-        // Set buffer name.
         SDL_SetGPUBufferName(_device, _buffer, name.c_str());
 
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
@@ -89,7 +88,7 @@ namespace Silent::Renderer
         _transfer = SDL_CreateGPUTransferBuffer(_device, &transferBufferInfo);
         if (_transfer == nullptr)
         {
-            Debug::Log(Fmt("Failed to create transfer buffer: {}", SDL_GetError()), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to create transfer buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
         }
     }
 
@@ -113,6 +112,9 @@ namespace Silent::Renderer
             .size   = (uint)data.size_bytes()
         };
         SDL_UploadToGPUBuffer(&copyPass, &transferBufferLoc, &bufferRegion, true);
+
+        // @todo Necessary or not?
+        //SDL_ReleaseGPUTransferBuffer(_device, _transfer);
     }
 
     template <typename T>

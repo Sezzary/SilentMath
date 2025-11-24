@@ -5,12 +5,16 @@ namespace Silent::Renderer
     /** @brief Render stages representing pipelines or shader programs depending on the renderer backend. */
     enum class RenderStage
     {
-        /** Material */
+        // =========
+        // Material
+        // =========
 
         Primitive2d,
         Primitive2dTextured,
 
-        /** Post-process */
+        // =============
+        // Post-process
+        // =============
 
         Vignette,
 

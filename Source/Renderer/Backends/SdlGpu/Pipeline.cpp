@@ -105,7 +105,7 @@ namespace Silent::Renderer
             }
         }
 
-        // Free shaders.
+        // Free resources.
         SDL_ReleaseGPUShader(_device, vertShader);
         SDL_ReleaseGPUShader(_device, fragShader);
     }
@@ -165,7 +165,7 @@ namespace Silent::Renderer
         void*  code     = SDL_LoadFile(fullPath, &codeSize);
         if (code == nullptr)
         {
-            Debug::Log(Fmt("Failed to load shader `{}`: {}", fullPath, SDL_GetError()), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to load shader `{}`: {}", filename, SDL_GetError()), Debug::LogLevel::Error);
             return nullptr;
         }
 
@@ -186,7 +186,7 @@ namespace Silent::Renderer
         auto* shader = SDL_CreateGPUShader(_device, &shaderInfo);
         if (shader == nullptr)
         {
-            Debug::Log(Fmt("Failed to create shader `{}`: {}", fullPath, SDL_GetError()));
+            Debug::Log(Fmt("Failed to create shader `{}`: {}", filename, SDL_GetError()));
         }
         SDL_free(code);
 
