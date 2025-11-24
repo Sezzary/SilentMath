@@ -2,6 +2,8 @@
 
 namespace Silent::Utils
 {
+    class Bitfield;
+
     /** @brief Binary file data stream. */
     class Stream
     {
@@ -129,6 +131,12 @@ namespace Silent::Utils
          */
         std::string ReadString();
 
+        /** @brief Reads a bitfield from the data stream and increments the file pointer.
+         *
+         * @return `Bitfield` data.
+         */
+        Bitfield ReadBitfield();
+
         /** @brief Reads an integer-based XY vector from the data stream and increments the file pointer.
          *
          * @return `Vector2i` data.
@@ -233,6 +241,12 @@ namespace Silent::Utils
          * @param val `std::string` data to write.
          */
         void WriteString(const std::string& val);
+
+        /** @brief Writes a bitfield to the data stream and increments the file pointer.
+         *
+         * @param val `Bitfield` data to write.
+         */
+        void WriteBitfield(const Bitfield& val);
 
         /** @brief Writes an integer-based XY vector to the data stream and increments the file pointer.
          *

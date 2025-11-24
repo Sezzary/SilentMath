@@ -2,6 +2,8 @@
 #include "Utils/Stream.h"
 
 #include "Services/Filesystem.h"
+#include "Utils/Bitfield.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Services;
 
@@ -137,7 +139,15 @@ namespace Silent::Utils
         Read(str.data(), size);
         return str;
     }
-    
+
+    Bitfield Stream::ReadBitfield()
+    {
+        uint size   = ReadUint32();
+        auto chunks = std::vector<Bitfield::ChunkType>((size + (Bitfield::CHUNK_SIZE - 1)) / Bitfield::CHUNK_SIZE);
+        ReadArray(ToSpan(chunks));
+        return Bitfield(chunks, size);
+    }
+
     Vector2i Stream::ReadVector2i()
     {
         int x = ReadInt32();
@@ -247,6 +257,12 @@ namespace Silent::Utils
     void Stream::WriteString(const std::string& val)
     {
         Write((byte*)val.data(), val.size());
+    }
+
+    void Stream::WriteBitfield(const Bitfield& val)
+    {
+        Write((byte*)val.GetSize(), sizeof(uint));
+        WriteArray(ToSpan(val.GetChunks()));
     }
 
     void Stream::WriteVector2i(const Vector2i& val)

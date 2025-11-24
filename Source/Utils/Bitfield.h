@@ -9,15 +9,16 @@ namespace Silent::Utils
         // Aliases
         // ========
 
-        using ChunkType = uint;
+        using ChunkType = uint32;
 
-    private:
         // ==========
         // Constants
         // ==========
 
-        static constexpr uint DEFAULT_SIZE = 32;
-        static constexpr uint CHUNK_SIZE   = std::numeric_limits<ChunkType>::digits;
+        static constexpr uint CHUNK_SIZE = std::numeric_limits<ChunkType>::digits;
+
+    private:
+        static constexpr uint DEFAULT_SIZE = CHUNK_SIZE;
 
         // =======
         // Fields
