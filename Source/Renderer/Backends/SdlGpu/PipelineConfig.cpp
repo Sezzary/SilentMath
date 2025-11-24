@@ -133,6 +133,16 @@ namespace Silent::Renderer
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
                     .offset      = sizeof(float) * 3
                 }
+            },
+            .BlendModes =
+            {
+                BlendMode::Opaque,
+                BlendMode::Alpha,
+                BlendMode::FastAlpha,
+                BlendMode::Multiply,
+                BlendMode::Add,
+                BlendMode::Subtract,
+                BlendMode::Wireframe
             }
         },
         // 2D textured primitive.
@@ -168,6 +178,16 @@ namespace Silent::Renderer
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
                     .offset      = sizeof(float) * 3
                 }
+            },
+            .BlendModes =
+            {
+                BlendMode::Opaque,
+                BlendMode::Alpha,
+                BlendMode::FastAlpha,
+                BlendMode::Multiply,
+                BlendMode::Add,
+                BlendMode::Subtract,
+                BlendMode::Wireframe
             }
         }
     };

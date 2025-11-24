@@ -5,8 +5,10 @@
 #include "Renderer/Backends/SdlGpu/PipelineConfig.h"
 #include "Renderer/Common/Enums.h"
 #include "Services/Filesystem.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Services;
+using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
@@ -30,8 +32,14 @@ namespace Silent::Renderer
 
     void PipelineManager::Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode)
     {
-        int pipelineHash = GetPipelineHash(renderStage, Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe : blendMode);
-        SDL_BindGPUGraphicsPipeline(&renderPass, _pipelines[pipelineHash]);
+        int   pipelineHash = GetPipelineHash(renderStage, Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe : blendMode);
+        auto* pipeline     = Find(_pipelines, pipelineHash);
+        if (pipeline == nullptr)
+        {
+            throw std::runtime_error(Fmt("Attempted to bind invalid pipeline for render stage {}, blend mode {}.", (int)renderStage, (int)blendMode));
+        }
+
+        SDL_BindGPUGraphicsPipeline(&renderPass, *pipeline);
     }
 
     void PipelineManager::InitializeGraphicsPipeline(SDL_Window& window, const PipelineConfig& config)
@@ -54,15 +62,14 @@ namespace Silent::Renderer
             throw std::runtime_error(Fmt("Failed to create fragment shader `{}`.", config.FragmentShaderName));
         }
 
-        // @todo Post-process pipelines don't need every variant.
         // Create pipelines with blend mode variants.
-        for (int i = 0; i < (int)BlendMode::Count; i++)
+        for (auto blendMode : config.BlendModes)
         {
             auto colorTargetDescs = config.ColorTargetDescs;
             colorTargetDescs.push_back(SDL_GPUColorTargetDescription
             {
                 .format      = SDL_GetGPUSwapchainTextureFormat(_device, &window),
-                .blend_state = PIPELINE_BLEND_MODE_COLOR_TARGETS[i]
+                .blend_state = PIPELINE_BLEND_MODE_COLOR_TARGETS[(int)blendMode]
             });
 
             auto pipelineInfo = SDL_GPUGraphicsPipelineCreateInfo
@@ -79,7 +86,7 @@ namespace Silent::Renderer
                 .primitive_type   = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
                 .rasterizer_state = SDL_GPURasterizerState
                 {
-                    .fill_mode = ((BlendMode)i == BlendMode::Wireframe) ? SDL_GPU_FILLMODE_LINE : SDL_GPU_FILLMODE_FILL
+                    .fill_mode = (blendMode == BlendMode::Wireframe) ? SDL_GPU_FILLMODE_LINE : SDL_GPU_FILLMODE_FILL
                 },
                 .target_info = SDL_GPUGraphicsPipelineTargetInfo
                 {
@@ -89,11 +96,12 @@ namespace Silent::Renderer
             };
 
             // Create pipeline variant.
-            int piplineHash         = GetPipelineHash(config.Stage, (BlendMode)i);
+            int piplineHash         = GetPipelineHash(config.Stage, blendMode);
             _pipelines[piplineHash] = SDL_CreateGPUGraphicsPipeline(_device, &pipelineInfo);
             if (_pipelines[piplineHash] == nullptr) 
             {
-                throw std::runtime_error(Fmt("Failed to create graphics pipeline for render stage {}, blend mode {}: {}", (int)config.Stage, i, SDL_GetError()));
+                throw std::runtime_error(Fmt("Failed to create graphics pipeline for render stage {}, blend mode {}: {}",
+                                             (int)config.Stage, (int)blendMode, SDL_GetError()));
             }
         }
 

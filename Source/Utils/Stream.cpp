@@ -261,7 +261,7 @@ namespace Silent::Utils
 
     void Stream::WriteBitfield(const Bitfield& val)
     {
-        Write((byte*)val.GetSize(), sizeof(uint));
+        WriteUint32(val.GetSize());
         WriteArray(ToSpan(val.GetChunks()));
     }
 

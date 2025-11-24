@@ -4,6 +4,8 @@
 
 namespace Silent::Renderer
 {
+    enum class BlendMode;
+
     /** @brief Pipeline configuration data. */
     struct PipelineConfig
     {
@@ -24,6 +26,7 @@ namespace Silent::Renderer
         std::vector<SDL_GPUVertexBufferDescription> VertBufferDescs   = {};
         std::vector<SDL_GPUVertexAttribute>         VertBufferAttribs = {};
         std::vector<SDL_GPUColorTargetDescription>  ColorTargetDescs  = {}; // @todo Maybe not needed except for special cases. Filled automatically.
+        std::vector<BlendMode>                      BlendModes        = {};
     };
 
     extern const std::vector<SDL_GPUColorTargetBlendState> PIPELINE_BLEND_MODE_COLOR_TARGETS;
