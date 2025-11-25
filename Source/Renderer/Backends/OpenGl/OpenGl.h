@@ -36,14 +36,14 @@ namespace Silent::Renderer
         VertexBufferObject                             _vertexCubeBuffer     = VertexBufferObject();
         ElementBufferObject                            _elementBuffer        = ElementBufferObject();
 
-        Texture                                        _texture0             = Texture();
-        Texture                                        _texture1             = Texture();
-        std::unordered_map<std::string, Texture> _textures     = {}; // Key = texture name, value = texture.
+        TextureGl                                        _texture0             = TextureGl();
+        TextureGl                                        _texture1             = TextureGl();
+        std::unordered_map<std::string, TextureGl> _textures     = {}; // Key = texture name, value = texture.
 
         VertexArrayObject   _fsqVao     = VertexArrayObject();
         VertexBufferObject  _fsqVbo     = VertexBufferObject();
         ElementBufferObject _fsqEbo     = ElementBufferObject();
-        Texture             _fsqTexture = Texture();
+        TextureGl             _fsqTexture = TextureGl();
 
     public:
         // Constructors

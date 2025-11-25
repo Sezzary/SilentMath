@@ -12,7 +12,7 @@ namespace Silent::Renderer
         // Fields
 
         uint               _frameBufferId = 0;
-        Texture            _texture       = Texture();
+        TextureGl            _texture       = TextureGl();
         VertexArrayObject  _vao           = VertexArrayObject();
         VertexBufferObject _vbo           = VertexBufferObject();
 

@@ -7,7 +7,7 @@ namespace Silent::Renderer
     enum class BlendMode;
     struct     PipelineConfig;
 
-    /** @brief Pipeline manager. */
+    /** @brief GPU pipeline manager. */
     class PipelineManager
     {
     private:
@@ -44,6 +44,7 @@ namespace Silent::Renderer
          *
          * @param renderPass Render pass to bind the pipeline to.
          * @param renderStage Pipeline render stage to bind.
+         * @throws `std::runtime_error` if the pipeline is invalid.
          */
         void Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode);
 

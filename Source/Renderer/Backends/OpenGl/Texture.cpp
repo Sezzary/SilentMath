@@ -11,7 +11,7 @@ using namespace Silent::Services;
 
 namespace Silent::Renderer
 {
-    void Texture::Initialize(const std::filesystem::path& filename, GLenum texUnit, GLenum format, GLenum pixelType)
+    void TextureGl::Initialize(const std::filesystem::path& filename, GLenum texUnit, GLenum format, GLenum pixelType)
     {
         const auto& options = g_App.GetOptions();
 
@@ -88,7 +88,7 @@ namespace Silent::Renderer
     }
 
     // For framebuffer.
-    void Texture::Initialize(const Vector2i& res, GLenum format, GLenum pixelType)
+    void TextureGl::Initialize(const Vector2i& res, GLenum format, GLenum pixelType)
     {
         // Generate texture object.
         glGenTextures(1, &_textureId);
@@ -108,23 +108,23 @@ namespace Silent::Renderer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _textureId, 0);
     }
 
-    void Texture::Bind()
+    void TextureGl::Bind()
     {
         glActiveTexture(_textureUnit);
         glBindTexture(GL_TEXTURE_2D, _textureId);
     }
 
-    void Texture::Unbind()
+    void TextureGl::Unbind()
     {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void Texture::Delete()
+    void TextureGl::Delete()
     {
         glDeleteTextures(1, &_textureId);
     }
 
-    void Texture::SetUnit(ShaderProgram& shaderProg, const std::string& uniName, GLenum texUnitId)
+    void TextureGl::SetUnit(ShaderProgram& shaderProg, const std::string& uniName, GLenum texUnitId)
     {
         // Get uniform location.
         uint texUniLoc = glGetUniformLocation(shaderProg.GetId(), uniName.c_str());
@@ -134,7 +134,7 @@ namespace Silent::Renderer
         glUniform1i(texUniLoc, texUnitId);
     }
 
-    void Texture::Resize(const Vector2& res, GLenum format, GLenum pixelType)
+    void TextureGl::Resize(const Vector2& res, GLenum format, GLenum pixelType)
     {
         Bind();
         glBindTexture(GL_TEXTURE_2D, _textureId);
@@ -142,7 +142,7 @@ namespace Silent::Renderer
         Unbind();
     }
 
-    void Texture::RefreshFilter()
+    void TextureGl::RefreshFilter()
     {
         const auto& options = g_App.GetOptions();
 
@@ -164,14 +164,14 @@ namespace Silent::Renderer
         Unbind();
     }
 
-    void Texture::SetNearestFilter()
+    void TextureGl::SetNearestFilter()
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
     }
 
-    void Texture::SetLinearFilter()
+    void TextureGl::SetLinearFilter()
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

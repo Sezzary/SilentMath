@@ -33,6 +33,8 @@ namespace Silent::Renderer
          */
         Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
 
+        // @todo Destructor?
+
         // ==========
         // Utilities
         // ==========

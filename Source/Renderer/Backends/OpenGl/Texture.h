@@ -4,7 +4,7 @@ namespace Silent::Renderer
 {
     class ShaderProgram;
 
-    class Texture
+    class TextureGl
     {
     private:
         // Fields
@@ -15,7 +15,7 @@ namespace Silent::Renderer
     public:
         // Constructors
 
-        Texture() = default;
+        TextureGl() = default;
 
         // Utilities
 

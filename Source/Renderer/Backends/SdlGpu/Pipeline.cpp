@@ -32,6 +32,8 @@ namespace Silent::Renderer
 
     void PipelineManager::Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode)
     {
+        Debug::Assert(_device != nullptr, "Attempted to bind uninitialized GPU pipeline manager.");
+
         int   pipelineHash = GetPipelineHash(renderStage, Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe : blendMode);
         auto* pipeline     = Find(_pipelines, pipelineHash);
         if (pipeline == nullptr)
