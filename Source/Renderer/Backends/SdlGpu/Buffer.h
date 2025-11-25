@@ -33,9 +33,6 @@ namespace Silent::Renderer
          */
         Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
 
-        /** @brief Gracefully destroys the `Buffer` and frees GPU resources. */
-        ~Buffer();
-
         // ==========
         // Utilities
         // ==========
@@ -96,13 +93,6 @@ namespace Silent::Renderer
     }
 
     template <typename T>
-    Buffer<T>::~Buffer()
-    {
-        SDL_ReleaseGPUBuffer(_device, _buffer);
-        SDL_ReleaseGPUTransferBuffer(_device, _transfer);
-    }
-
-    template <typename T>
     void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, uint startIdx)
     {
         // Map transfer data.
@@ -122,6 +112,9 @@ namespace Silent::Renderer
             .size   = (uint)data.size_bytes()
         };
         SDL_UploadToGPUBuffer(&copyPass, &transferBufferLoc, &bufferRegion, true);
+
+        // @todo Necessary or not?
+        //SDL_ReleaseGPUTransferBuffer(_device, _transfer);
     }
 
     template <typename T>
