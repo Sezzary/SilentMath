@@ -26,9 +26,6 @@ namespace Silent::Renderer
         /** @brief Constructs an uninitialized default `PipelineManager`. */
         PipelineManager() = default;
 
-        /** @brief Gracefull destroys the `PipelineManager` and releases GPU resources. */
-        ~PipelineManager();
-
         // ==========
         // Utilities
         // ==========
@@ -39,6 +36,9 @@ namespace Silent::Renderer
          * @param device GPU device.
          */
         void Initialize(SDL_Window& window, SDL_GPUDevice& device);
+
+        /** @brief Deinitializes all pipelines and frees GPU resources. */
+        void Deinitialize();
 
         /** @brief Binds the graphics pipeline render stage for use in rendering.
          *

@@ -161,15 +161,17 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::Deinitialize()
     {
+        // @todo Errors.
+
         SDL_WaitForGPUIdle(_device);
 
         ImGui_ImplSDL3_Shutdown();
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        // @todo Has errors. Do buffers etc. need to deinit first?
-        //_buffers = {};
-        //_pipelines.~PipelineManager();
+        TestTexture.~Texture();
+        _buffers = {};
+        _pipelines.Deinitialize();
 
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
@@ -267,6 +269,8 @@ namespace Silent::Renderer
             .store_op    = SDL_GPU_STOREOP_STORE
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+
+        // @todo
 
         // Process render pass.
         SDL_EndGPURenderPass(&renderPass);

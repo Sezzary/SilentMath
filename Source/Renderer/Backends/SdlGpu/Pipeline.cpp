@@ -12,14 +12,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    PipelineManager::~PipelineManager()
-    {
-        for (auto [keyHash, pipeline] : _pipelines)
-        {
-            SDL_ReleaseGPUGraphicsPipeline(_device, pipeline);
-        }
-    }
-
     void PipelineManager::Initialize(SDL_Window& window, SDL_GPUDevice& device)
     {
         _device = &device;
@@ -27,6 +19,14 @@ namespace Silent::Renderer
         for (const auto& pipelineConfig : PIPELINE_CONFIGS)
         {
             InitializeGraphicsPipeline(window, pipelineConfig);
+        }
+    }
+
+    void PipelineManager::Deinitialize()
+    {
+        for (auto [keyHash, pipeline] : _pipelines)
+        {
+            SDL_ReleaseGPUGraphicsPipeline(_device, pipeline);
         }
     }
 
