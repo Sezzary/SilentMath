@@ -25,8 +25,6 @@ namespace Silent::Renderer
     static auto UniformBuffer = TestUniform{};
 
     // Texture test.
-    //static SDL_GPUBuffer* VertexBuffer = nullptr;
-    //static SDL_GPUBuffer* IndexBuffer  = nullptr;
     static Texture TestTexture = Texture();
 
     void SdlGpuRenderer::Initialize(SDL_Window& window)
@@ -133,7 +131,7 @@ namespace Silent::Renderer
         TestTexture.Initialize(*_device, *copyPass, 1);
 
         _buffers.TestTextureVerts = Buffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, "Derg Vertex Buffer");
-        _buffers.TestTextureIdxs = Buffer<uint16>(*_device, SDL_GPU_BUFFERUSAGE_INDEX, 6, "Derg Index Buffer");
+        _buffers.TestTextureIdxs  = Buffer<uint16>(*_device, SDL_GPU_BUFFERUSAGE_INDEX, 6, "Derg Index Buffer");
 
         auto vertMap = std::vector<PositionTextureVertex>
         {
