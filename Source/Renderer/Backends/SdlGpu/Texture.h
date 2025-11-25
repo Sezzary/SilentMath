@@ -20,8 +20,11 @@ namespace Silent::Renderer
         // Constructors
         // =============
 
+        // @todo Deprecated.
         /** @brief Constructs an uninitialized default `Texture`. */
         SdlGpuTexture() = default;
+
+        SdlGpuTexture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name);
 
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
         ~SdlGpuTexture();
@@ -30,8 +33,10 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
+        // @todo Deprecated.
         void Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name = {});
 
+        // @todo Deprecated.
         /** @brief Initializes the texture and uploads it to the GPU.
          * If the TIM asset isn't already loaded, it will be loaded as a preliminary step.
          *
@@ -80,6 +85,20 @@ namespace Silent::Renderer
          */
         SdlGpuTextureManager(SDL_GPUDevice& device);
 
-        // @todo
+        /** @brief Loads a texture from a texture image.
+         *
+         * @param copyPass Copy pass.
+         * @param pixels Texture image pixels.
+         * @param res Texture image resolution.
+         * @param name Texture name.
+         */
+        void Load(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name = {});
+
+        /** @brief Loads a texture from a TIM asset.
+         *
+         * @param copyPass Copy pass.
+         * @param assetIdx TIM asset name.
+         */
+        void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
     };
 }
