@@ -21,6 +21,16 @@ namespace Silent::Renderer
         /** @brief Constructs an uninitialized default `Texture`. */
         Texture() = default;
 
+        /** @brief Constructs a `Texture` from a texture image and uploads it to the GPU.
+         *
+         * @param device GPU device.
+         * @param copyPass Copy pass.
+         * @param pixels Texture image pixels.
+         * @param res Texture image resolution.
+         * @param name Texture name.
+         */
+        Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i& res, const std::string& name);
+
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
         ~Texture();
 
@@ -29,16 +39,6 @@ namespace Silent::Renderer
         // ==========
 
         void Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name = {});
-
-        /** @brief Initializes the texture and uploads it to the GPU.
-         * If the TIM asset isn't already loaded, it will be loaded as a preliminary step.
-         *
-         * @param device GPU device.
-         * @param copyPass Copy pass.
-         * @param assetIdx TIM asset index.
-         * @exception `std::runtime_error` if the asset is invalid.
-         */
-        void Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, int assetIdx);
 
         /** @brief Updates a specified region of pixels in the texture.
          *
@@ -55,5 +55,39 @@ namespace Silent::Renderer
          * @param sampler Texture sampler.
          */
         void Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler);
+    };
+
+    /** @brief GPU texture manager. */
+    class TextureManager
+    {
+    private:
+        
+        SDL_GPUDevice*                           _device   = nullptr;
+        std::unordered_map<std::string, Texture> _textures = {}; /** Key = name, value = texture. */
+
+    public:
+        TextureManager() = default;
+
+        ~TextureManager();
+
+        Texture* Get(const std::string& name);
+
+        void Initialize(SDL_GPUDevice& device);
+
+        /** @brief Loads a texture from a texture image.
+         *
+         * @param copyPass Copy pass.
+         * @param pixels Texture image pixels.
+         * @param res Texture image resolution.
+         * @param Texture name.
+         */
+        void Load(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name = {});
+
+        /** @brief Loads a texture from a TIM asset.
+         *
+         * @param copyPass Copy pass.
+         * @param assetIdx TIM asset index.
+         */
+        void Load(SDL_GPUCopyPass& copyPass, int assetIdx);
     };
 }

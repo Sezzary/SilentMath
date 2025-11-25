@@ -24,9 +24,6 @@ namespace Silent::Renderer
 
     static auto UniformBuffer = TestUniform{};
 
-    // Texture test.
-    static Texture TestTexture = Texture();
-
     void SdlGpuRenderer::Initialize(SDL_Window& window)
     {
         Debug::Log("Using SDL_gpu renderer.");
@@ -74,8 +71,9 @@ namespace Silent::Renderer
             throw std::runtime_error("Failed to claim window for GPU device: " + std::string(SDL_GetError()));
         }
 
-        // Initialize pipelines.
+        // Initialize pipelines and textures.
         _pipelines.Initialize(*_window, *_device);
+        _textures.Initialize(*_device);
 
         // Create nearest-neighbor sampler.
         auto nearestSamplerInfo = SDL_GPUSamplerCreateInfo
@@ -128,7 +126,7 @@ namespace Silent::Renderer
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
-        TestTexture.Initialize(*_device, *copyPass, 1);
+        _textures.Load(*copyPass, 1);
 
         _buffers.TestTextureVerts = Buffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, "Derg Vertex Buffer");
         _buffers.TestTextureIdxs  = Buffer<uint16>(*_device, SDL_GPU_BUFFERUSAGE_INDEX, 6, "Derg Index Buffer");
@@ -167,9 +165,9 @@ namespace Silent::Renderer
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        TestTexture.~Texture();
         _buffers = {};
         _pipelines.Deinitialize();
+        _textures.~TextureManager();
 
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
@@ -303,7 +301,7 @@ namespace Silent::Renderer
         _buffers.TestTextureVerts.Bind(renderPass, 0);
         _buffers.TestTextureIdxs.Bind(renderPass, 0);
 
-        TestTexture.Bind(renderPass, *_samplers[(int)options->TextureFilter]);
+        _textures.Get("aaa")->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
 
         SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
 
