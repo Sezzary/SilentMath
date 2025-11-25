@@ -10,12 +10,12 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    Texture::~Texture()
+    SdlGpuTexture::~SdlGpuTexture()
     {
         SDL_ReleaseGPUTexture(_device, _texture);
     }
 
-    void Texture::Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name)
+    void SdlGpuTexture::Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name)
     {
         // Create texture.
         auto texInfo = SDL_GPUTextureCreateInfo
@@ -64,7 +64,7 @@ namespace Silent::Renderer
         SDL_ReleaseGPUTransferBuffer(_device, transferBuffer);
     }
 
-    void Texture::Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, int assetIdx)
+    void SdlGpuTexture::Initialize(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, int assetIdx)
     {
         auto& assets = g_App.GetAssets();
 
@@ -88,7 +88,7 @@ namespace Silent::Renderer
         Initialize(device, copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
     }
 
-    void Texture::Update(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i& region, const Vector2i& size)
+    void SdlGpuTexture::Update(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i& region, const Vector2i& size)
     {
         // Create transfer buffer.
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
@@ -123,7 +123,7 @@ namespace Silent::Renderer
         SDL_ReleaseGPUTransferBuffer(_device, transferBuffer);
     }
 
-    void Texture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler)
+    void SdlGpuTexture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler)
     {
         auto texSamplerBinding = SDL_GPUTextureSamplerBinding
         {
@@ -131,5 +131,10 @@ namespace Silent::Renderer
             .sampler = &sampler
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &texSamplerBinding, 1);
+    }
+
+    SdlGpuTextureManager::SdlGpuTextureManager(SDL_GPUDevice& device)
+    {
+        _device = &device;
     }
 }

@@ -5,6 +5,7 @@
 #include "Renderer/Backends/SdlGpu/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
+#include "Renderer/Common/Texture.h"
 #include "Renderer/Common/Utils.h"
 #include "Renderer/Common/View.h" // @todo Not used yet.
 #include "Renderer/Renderer.h"
@@ -25,7 +26,7 @@ namespace Silent::Renderer
     static auto UniformBuffer = TestUniform{};
 
     // Texture test.
-    static Texture TestTexture = Texture();
+    static SdlGpuTexture TestTexture = SdlGpuTexture();
 
     void SdlGpuRenderer::Initialize(SDL_Window& window)
     {
@@ -71,8 +72,11 @@ namespace Silent::Renderer
         // Claim window.
         if (!SDL_ClaimWindowForGPUDevice(_device, _window))
         {
-            throw std::runtime_error("Failed to claim window for GPU device: " + std::string(SDL_GetError()));
+            throw std::runtime_error(Fmt("Failed to claim window for GPU device: {}", std::string(SDL_GetError())));
         }
+
+        // Initialize texture manager.
+        _textures = std::make_unique<SdlGpuTextureManager>(*_device);
 
         // Initialize pipelines.
         _pipelines.Initialize(*_window, *_device);
@@ -167,7 +171,7 @@ namespace Silent::Renderer
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        TestTexture.~Texture();
+        TestTexture.~SdlGpuTexture();
         _buffers = {};
         _pipelines.Deinitialize();
 

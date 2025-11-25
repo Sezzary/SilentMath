@@ -6,6 +6,7 @@
 #include "Renderer/Common/Objects/Primitive3d.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
 #include "Renderer/Common/Objects/Scene/Text.h"
+#include "Renderer/Common/Texture.h"
 #include "Renderer/Common/View.h"
 
 namespace Silent::Renderer
@@ -17,6 +18,7 @@ namespace Silent::Renderer
         SdlGpu
     };
 
+    /** @brief Renderer interface. */
     class RendererBase
     {
     protected:
@@ -30,12 +32,13 @@ namespace Silent::Renderer
         Color        _clearColor    = Color::Clear;
         uint         _drawCallCount = 0;
         bool         _isResized     = false;
-        
-        std::vector<Primitive3d>           _primitives3d      = {};
-        std::vector<Primitive2d>           _primitives2d      = {};
-        std::vector<Sprite2d>              _sprites2d         = {};
-        std::vector<Primitive3d>           _debugPrimitives3d = {};
-        std::vector<std::function<void()>> _debugGuiDrawCalls = {};
+
+        std::unique_ptr<TextureManagerBase> _textures          = nullptr;
+        std::vector<Primitive3d>            _primitives3d      = {};
+        std::vector<Primitive2d>            _primitives2d      = {};
+        std::vector<Sprite2d>               _sprites2d         = {};
+        std::vector<Primitive3d>            _debugPrimitives3d = {};
+        std::vector<std::function<void()>>  _debugGuiDrawCalls = {};
 
     public:
         // =============

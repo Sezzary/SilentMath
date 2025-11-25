@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Renderer/Common/Texture.h"
+
 namespace Silent::Renderer
 {
     /** @brief GPU texture. */
-    class Texture
+    class SdlGpuTexture : public ITexture
     {
     private:
         // =======
@@ -19,10 +21,10 @@ namespace Silent::Renderer
         // =============
 
         /** @brief Constructs an uninitialized default `Texture`. */
-        Texture() = default;
+        SdlGpuTexture() = default;
 
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
-        ~Texture();
+        ~SdlGpuTexture();
 
         // ==========
         // Utilities
@@ -55,5 +57,29 @@ namespace Silent::Renderer
          * @param sampler Texture sampler.
          */
         void Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler);
+    };
+
+    /** @brief GPU texture cache manager. */
+    class SdlGpuTextureManager : public TextureManagerBase
+    {
+    private:
+        // =======
+        // Fields
+        // =======
+
+        SDL_GPUDevice* _device = nullptr;
+        
+    public:
+        // =============
+        // Constructors
+        // =============
+
+        /** @brief Constructs an `SdlGpuTextureManager` with a device reference.
+         *
+         * @param device GPU device.
+         */
+        SdlGpuTextureManager(SDL_GPUDevice& device);
+
+        // @todo
     };
 }
