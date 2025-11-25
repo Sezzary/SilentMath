@@ -2,7 +2,6 @@
 
 #include "Renderer/Backends/SdlGpu/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
-#include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
 #include "Renderer/Renderer.h"
@@ -36,13 +35,12 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        SDL_GPUDevice*               _device           = nullptr;
-        SDL_GPUTexture*              _swapchainTexture = nullptr;
-        SDL_GPUCommandBuffer*        _commandBuffer    = nullptr;
-        std::vector<SDL_GPUSampler*> _samplers         = {};
-        BufferData                   _buffers          = {};
-        PipelineManager              _pipelines        = PipelineManager();
-        TextureManager               _textures         = TextureManager();
+        SDL_GPUDevice*               _device           = nullptr;           /** GPU device. */
+        SDL_GPUTexture*              _swapchainTexture = nullptr;           /** Active swapchain texture. */
+        SDL_GPUCommandBuffer*        _commandBuffer    = nullptr;           /** Active command buffer. */
+        std::vector<SDL_GPUSampler*> _samplers         = {};                /** Texture samplers. */
+        BufferData                   _buffers          = {};                /** Vertex, index, and indirect buffers. */
+        PipelineManager              _pipelines        = PipelineManager(); /** Pipeline handler. */
 
         std::unordered_map<int, SDL_GPUTexture*> _textureCache = {}; /** Key = asset index, value = texture. */
 
