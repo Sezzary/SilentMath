@@ -118,7 +118,7 @@ namespace Silent::Math
         // Converters
         // ===========
 
-        /** Converts the sphere to an AABB.
+        /** Converts to an AABB.
          *
          * @return AABB encompassing the sphere.
          */

@@ -139,9 +139,20 @@ namespace Silent::Math
         // Utilities
         // ==========
 
-        static Color Lerp(const Color& color0, const Color& color1, float alpha);
+        /** @brief Linearly interpolates between two colors.
+         *
+         * @param from Start color.
+         * @param to End color.
+         * @param alpha Interpolation alpha.
+         */
+        static Color Lerp(const Color& from, const Color& to, float alpha);
 
-        void Lerp(const Color& color, float alpha);
+        /** @brief Linearly interpolates between the color and another color.
+         *
+         * @param to End color.
+         * @param alpha Interpolation alpha.
+         */
+        void Lerp(const Color& to, float alpha);
 
         /** @brief Inverts a color.
          *
@@ -153,8 +164,19 @@ namespace Silent::Math
         /** @brief Inverts the color. */
         void Invert();
 
+        /** @brief Blends two colors.
+         *
+         * @param color0 First color.
+         * @param color1 Second color.
+         * @param alpha Blend alpha.
+         */
         static Color Blend(const Color& color0, const Color& color1, float alpha);
 
+        /** @brief Blends the color with another color.
+         *
+         * @param color Second color.
+         * @param alpha Blend alpha.
+         */
         void Blend(const Color& color, float alpha);
 
         /** @brief Brightens a color by a given factor.
@@ -189,18 +211,34 @@ namespace Silent::Math
         // Converters
         // ===========
 
-        /** @brief Converts the color to packed 8-bit components.
+        /** @brief Converts to packed 8-bit components.
          *
          * @return Packed 8-bit components.
          */
         uint ToPacked8Bit() const;
 
+        /** Downcasts to a read-only `Vector4`.
+         *
+         * @return Read-only `Vector4`.
+         */
         const Vector4& ToVector4() const;
 
+        /** Downcasts to a writable `Vector4`.
+         *
+         * @return Writable `Vector4`.
+         */
         Vector4& ToVector4();
 
+        /** Downcasts to a read-only `glm::vec4`.
+         *
+         * @return Read-only `glm::vec4`.
+         */
         const glm::vec4& ToGlmVec4() const;
 
+        /** Downcasts to a writable `glm::vec4`.
+         *
+         * @return Writable `glm::vec4`.
+         */
         glm::vec4& ToGlmVec4();
 
         // ==========

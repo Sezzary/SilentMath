@@ -10,11 +10,15 @@ namespace Silent::Math
     class Matrix : public glm::mat4
     {
     public:
+        // ========
         // Presets
+        // ========
 
         static const Matrix Identity;
 
+        // =============
         // Constructors
+        // =============
 
         constexpr Matrix() : glm::mat4(1.0f, 0.0f, 0.0f, 0.0f,
                                        0.0f, 1.0f, 0.0f, 0.0f,
@@ -62,19 +66,29 @@ namespace Silent::Math
 
         /** @brief Constructs an orthographic projection `Matrix`.
          *
-         * 
+         * @param left Minimum X coordinate of the view volume.
+         * @param right Maximum X coordinate of the view volume.
+         * @param bottom Minimum Y coordinate of the view volume.
+         * @param top Maximum Y coordinate of the view volume.
+         * @param nearPlane Frustum near plane.
+         * @param farPlane Frustum far plane.
          */
         static Matrix CreateOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane);
 
         /** @brief Constructs a perspective projection `Matrix`.
          *
-         * 
+         * @param fov Field-of-view angle in radians.
+         * @param aspect 
+         * @param nearPlane Frustum near plane.
+         * @param farPlane Frustum far plane.
          */
         static Matrix CreatePerspective(float fov, float aspect, float nearPlane, float farPlane);
 
         /** @brief Constructs a view look-at `Matrix`.
          *
-         * 
+         * @param pos View position.
+         * @param target Look-at position.
+         * @param up Up axis.
          */
         static Matrix CreateLookAt(const Vector3& pos, const Vector3& target, const Vector3& up);
 
@@ -145,49 +159,49 @@ namespace Silent::Math
         // Converters
         // ===========
 
-        /** @brief Extracts the translation offset from the matrix.
+        /** @brief Extracts the translation offset as a vector.
          *
          * @return Translation offset.
          */
         Vector3 ToTranslation() const;
 
-        /** @brief Extracts the rotation from the matrix as a direction vector.
+        /** @brief Extracts the rotation as a direction vector.
          *
          * @return Direction vector corresponding to the rotation.
          */
         Vector3 ToDirection() const;
 
-        /** @brief Extracts the rotation from the matrix as Euler angles.
+        /** @brief Extracts the rotation as Euler angles.
          * 
          * @return Euler angles rotation.
          */
         EulerAngles ToEulerAngles() const;
 
-        /** @brief Extracts the rotation from the matrix as a quaternion.
+        /** @brief Extracts the rotation as a quaternion.
          * 
          * @return Quaternion rotation.
          */
         Quaternion ToQuaternion() const;
 
-        /** @brief Extracts the rotation from the matrix as an axis-angle.
+        /** @brief Extracts the rotation as an axis-angle.
          * 
          * @return Axis-angle rotation.
          */
         AxisAngle ToAxisAngle() const;
 
-        /** @brief Extracts the scale from the matrix as an XYZ scale factor.
+        /** @brief Extracts the scale as an XYZ scale factor.
          *
          * @return XYZ scale factor.
          */
         Vector3 ToScale() const;
 
-        /** @brief Downcasts the matrix to a read-only `glm::mat4`.
+        /** @brief Downcasts to a read-only `glm::mat4`.
          *
          * @return Read-only `glm::mat4`.
          */
         const glm::mat4& ToGlmMat4() const;
 
-        /** @brief Downcasts the matrix to a writable `glm::mat4`.
+        /** @brief Downcasts to a writable `glm::mat4`.
          *
          * @return Writable `glm::mat4`.
          */

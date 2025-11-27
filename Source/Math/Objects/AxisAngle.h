@@ -84,9 +84,9 @@ namespace Silent::Math
         // Converters
         // ===========
 
-        /** @brief Converts to a direction vector.
+        /** @brief Converts to a normalized direction vector.
          *
-         * @return Direction vector.
+         * @return Normalized direction vector.
          */
         Vector3 ToDirection() const;
 

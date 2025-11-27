@@ -115,17 +115,17 @@ namespace Silent::Math
         {
             auto axis = Vector3::Zero;
 
-            // X axis.
+            // X-axis.
             if (i == 0)
             {
                 axis = Vector3::UnitX;
             }
-            // Y axis.
+            // Y-axis.
             else if (i == 1)
             {
                 axis = Vector3::UnitY;
             }
-            // Z axis.
+            // Z-axis.
             else if (i == 2)
             {
                 axis = Vector3::UnitZ;

@@ -12,42 +12,149 @@ namespace Silent::Math
     class Quaternion : public glm::quat
     {
     public:
+        // ========
         // Presets
+        // ========
 
         static const Quaternion Identity;
 
+        // =============
         // Constructors
+        // =============
 
-        constexpr Quaternion()                                   : glm::quat(1.0f, 0.0f, 0.0f, 0.0f) {}
-        constexpr Quaternion(const glm::quat& quat)              : glm::quat(quat) {}
-        constexpr Quaternion(const Vector4& vec)                 : glm::quat(vec.ToGlmVec4()) {}
-        constexpr Quaternion(const Vector3& vec, float scalar)   : glm::quat(scalar, vec.ToGlmVec3()) {}
+        /** @brief Constructs a default identity `Quaternion`. */
+        constexpr Quaternion() : glm::quat(1.0f, 0.0f, 0.0f, 0.0f) {}
+
+        /** @brief Constructs a `Quaternion` from XYZW components.
+         *
+         * @param x X component.
+         * @param y Y component.
+         * @param z Z component.
+         * @param w W component.
+         */
         constexpr Quaternion(float x, float y, float z, float w) : glm::quat(w, x, y, z) {}
 
+        /** @brief Constructs a `Quaternion` from a `glm::quat`.
+         *
+         * @param quat GLM quaternion.
+         */
+        constexpr Quaternion(const glm::quat& quat) : glm::quat(quat) {}
+
+        /** @brief Constructs a `Quaternion` from a `Vector4`.
+         *
+         * @param vec XYZW vector.
+         */
+        constexpr Quaternion(const Vector4& vec) : glm::quat(vec.ToGlmVec4()) {}
+
+        /** @brief Constructs a `Quaternion` from a `Vector3` and a scalar.
+         *
+         * @param vec XYZ vector.
+         * @param scalar W scalar.
+         */
+        constexpr Quaternion(const Vector3& vec, float scalar) : glm::quat(scalar, vec.ToGlmVec3()) {}
+
+        /** @brief Constructs a quaternion from a direction vector.
+         *
+         * @param dir Direction vector.
+         */
         Quaternion(const Vector3& dir);
 
+        // ==========
         // Utilities
+        // ==========
 
+        /** @brief Computes the angular distance between two quaternions.
+         *
+         * @param from Start quaternion.
+         * @param to End quaternion.
+         * @return Angular distance.
+         */
         static short AngularDistance(const Quaternion& from, const Quaternion& to);
 
+        /** @brief Inverts a quaternion.
+         *
+         * @param quat Quaternion to invert.
+         * @return Inverted quaternion.
+         */
         static Quaternion Invert(const Quaternion& quat);
-        void              Invert();
+
+        /** @brief Inverts the quaternion. */
+        void Invert();
+
+        /** @brief Linearly interpolates between two quaternions.
+         *
+         * @param from Start quaternion.
+         * @param to End quaternion.
+         * @param alpha Interpolation alpha.
+         * @return Interpolated quaternion.
+         */
         static Quaternion Lerp(const Quaternion& from, const Quaternion& to, float alpha);
-        void              Lerp(const Quaternion& to, float alpha);
+
+        /** @brief @brief Linearly interpolates between the quaternion and another quaternion.
+         *
+         * @param to End quaternion.
+         */
+        void Lerp(const Quaternion& to, float alpha);
+
+        /** @brief Computes the spherical linear interpolation between two quaternions.
+         *
+         * @param from Start quaternion.
+         * @param to End quaternion
+         * @param alpha Interpolation alpha.
+         * @return Interpolated quaternion.
+         */
         static Quaternion Slerp(const Quaternion& from, const Quaternion& to, float alpha);
-        void              Slerp(const Quaternion& to, float alpha);
 
+        /** @brief Computes the spherical linear interpolation between the quaternion and another quaternion.
+         *
+         * @param to End quaternion
+         * @param alpha Interpolation alpha.
+         */
+        void Slerp(const Quaternion& to, float alpha);
+
+        // ===========
         // Converters
+        // ===========
 
-        Vector3     ToDirection() const;
+        /** @brief Converts the quaternion to a normalized direction vector.
+         *
+         * @return Normalized direction vector.
+         */
+        Vector3 ToDirection() const;
+
+        /** @brief Converts the quaternion to an Euler angles rotation.
+         *
+         * @return Euler angles rotation.
+         */
         EulerAngles ToEulerAngles() const;
-        AxisAngle   ToAxisAngle() const;
-        Matrix      ToRotationMatrix() const;
 
+        /** @brief Converts the quaternion to an axis angle rotation.
+         *
+         * @return Axis angle rotation.
+         */
+        AxisAngle ToAxisAngle() const;
+
+        /** @brief Converts the quaternion to a rotation matrix.
+         *
+         * @return Rotation matrix.
+         */
+        Matrix ToRotationMatrix() const;
+
+        /** @brief Downcasts the quaternion to a read-only `glm::quat`.
+         *
+         * @return Read-only `glm::quat`.
+         */
         const glm::quat& ToGlmQuat() const;
-        glm::quat&       ToGlmQuat();
 
+        /** @brief Downcasts the quaternion to a writable `glm::quat`.
+         *
+         * @return Writable `glm::quat`.
+         */
+        glm::quat& ToGlmQuat();
+
+        // ==========
         // Operators
+        // ==========
 
         bool        operator==(const Quaternion& quat) const;
         bool        operator!=(const Quaternion& quat) const;

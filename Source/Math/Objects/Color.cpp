@@ -72,15 +72,15 @@ namespace Silent::Math
         return FP_COLOR(A());
     }
 
-    Color Color::Lerp(const Color& color0, const Color& color1, float alpha)
+    Color Color::Lerp(const Color& from, const Color& to, float alpha)
     {
         return {}; // @todo
-        //return Color(glm::lerp(color0.ToGlmVec4(), color1.ToGlmVec4(), alpha));
+        //return Color(glm::lerp(from.ToGlmVec4(), to.ToGlmVec4(), alpha));
     }
 
-    void Color::Lerp(const Color& color, float alpha)
+    void Color::Lerp(const Color& to, float alpha)
     {
-        *this = Color::Lerp(*this, color, alpha);
+        *this = Color::Lerp(*this, to, alpha);
     }
 
     Color Color::Invert(const Color& color)

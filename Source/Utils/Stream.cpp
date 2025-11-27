@@ -15,6 +15,7 @@ namespace Silent::Utils
         {
             _flags |= std::fstream::in;
         }
+
         if (write)
         {
             _flags |= std::fstream::out | std::fstream::trunc;
