@@ -38,6 +38,7 @@ namespace Silent::Utils
     /** @brief Atlased font chain. */
     class Font
     {
+    public:
         // ==========
         // Constants
         // ==========
@@ -73,7 +74,7 @@ namespace Silent::Utils
         /** @brief Constructs an uninitialized default `Font`. */
         Font() = default;
 
-        /** @brief Constructs a `Font` from a chain of font file and adds it to a library, precaching a set of glyphs in its texture atlas.
+        /** @brief Constructs a `Font` from a chain of font files and adds it to a library and precaches a set of glyphs in the texture atlas.
          *
          * @param fontLib Library to load the font into.
          * @param metadata Font chain metadata.
@@ -82,7 +83,7 @@ namespace Silent::Utils
          */
         Font(FT_Library& fontLib, const FontMetadata& metadata, const std::filesystem::path& path, const std::string& precacheGlyphs);
 
-        /** @brief Gracefully destroys the `Font`, freeing resources. */
+        /** @brief Gracefully destroys the `Font` and frees resources. */
         ~Font();
 
         // ========
@@ -156,17 +157,17 @@ namespace Silent::Utils
         /** @brief Constructs a default `FontManager`. */
         FontManager();
 
-        /** @brief Gracefully destroys the `FontManager`, freeing resources. */
+        /** @brief Gracefully destroys the `FontManager` and frees resources. */
         ~FontManager();
 
         // ========
         // Getters
         // ========
 
-        /** @brief Gets a loaded font. If the font is missing, it returns `nullptr`.
+        /** @brief Gets a loaded font.
          *
          * @param name Name of the font to retrieve.
-         * @return Loaded font.
+         * @return Loaded font or `nullptr` if missing.
          */
         Font* GetFont(const std::string& name);
 
@@ -174,11 +175,11 @@ namespace Silent::Utils
         // Utilities
         // ==========
 
-        /** @brief Loads and registers a font chain.
+        /** @brief Loads and registers a font as a font chain.
          *
          * @param metadata Font chain metadata.
          * @param path Path containing font files.
-         * @param precacheGlyphs Glyphs to precache in the atlas upon font initialization.
+         * @param precacheGlyphs Glyphs to precache in the atlas on font initialization.
          */
         void LoadFont(const FontMetadata& metadata, const std::filesystem::path& path, const std::string& precacheGlyphs = {});
     };

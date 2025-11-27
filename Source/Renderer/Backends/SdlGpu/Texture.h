@@ -73,7 +73,7 @@ namespace Silent::Renderer
         // =======
 
         SDL_GPUDevice* _device = nullptr;
-        
+
     public:
         // =============
         // Constructors
@@ -84,6 +84,10 @@ namespace Silent::Renderer
          * @param device GPU device.
          */
         SdlGpuTextureManager(SDL_GPUDevice& device);
+
+        // ==========
+        // Utilities
+        // ==========
 
         /** @brief Loads a texture from a texture image.
          *

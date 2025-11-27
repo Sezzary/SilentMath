@@ -164,7 +164,7 @@ namespace Silent::Utils
                     shapingInfo.Positions = hb_buffer_get_glyph_positions(shapingInfo.Buffer, &glyphCount);
                 }
 
-                // Add shaped text.
+                // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
                     .Metadata = _glyphs[codePoints[i]],
@@ -239,7 +239,6 @@ namespace Silent::Utils
                 }
             }
 
-            // @todo Use `FT_LOAD_MONOCHROME` and read 1-bit pixels.
             FT_Load_Glyph(_ftFonts[i], charIdx, _enableAntialiasing ? FT_LOAD_DEFAULT : FT_LOAD_NO_HINTING);
             ftFont = _ftFonts[i];
             break;
@@ -260,6 +259,7 @@ namespace Silent::Utils
             _activeAtlasIdx++;
             rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
         }
+        Debug::Assert(rect != nullptr, Fmt("Failed to add glyph rectangle U+{:X} for font `{}`.", _name));
 
         // Register new glyph.
         _glyphs[codePoint] = GlyphMetadata
@@ -274,8 +274,8 @@ namespace Silent::Utils
         // Rasterize.
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
-        byte*       pixelsTo   = &_textureAtlases.back()[(glyph.Position.y * ATLAS_SIZE) + glyph.Position.x];
-        byte*       pixelsFrom = (byte*)bitmap.buffer;
+        auto        pixelsFrom = ToSpan((byte*)bitmap.buffer,                                                        bitmap.rows * bitmap.width);
+        auto        pixelsTo   = ToSpan(&_textureAtlases.back()[(glyph.Position.y * ATLAS_SIZE) + glyph.Position.x], bitmap.rows * bitmap.width);
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)
@@ -289,7 +289,7 @@ namespace Silent::Utils
                 }
                 else
                 {
-                    pixelsTo[(ATLAS_SIZE * y) + x] = ((uchar)pixel > FP_COLOR(0.5f)) ? FP_COLOR(1.0f) : FP_COLOR(0.0f);
+                    pixelsTo[(ATLAS_SIZE * y) + x] = ((uchar)pixel >= FP_COLOR(0.5f)) ? FP_COLOR(1.0f) : FP_COLOR(0.0f);
                 }
             }
         }
@@ -329,6 +329,12 @@ namespace Silent::Utils
 
     void FontManager::LoadFont(const FontMetadata& metadata, const std::filesystem::path& path, const std::string& glyphPrecache)
     {
+        if (metadata.Filenames.empty())
+        {
+            Debug::Log(Fmt("Attempted to load font `{}` without font files.", metadata.Name), Debug::LogLevel::Warning);
+            return;
+        }
+
         // Check if font is already loaded.
         if (Find(_fonts, metadata.Name) != nullptr)
         {
@@ -338,7 +344,7 @@ namespace Silent::Utils
         // Handle load.
         try
         {
-            _fonts[metadata.Name] = Font(_library, metadata, path, glyphPrecache);
+            _fonts.emplace(metadata.Name, Font(_library, metadata, path, glyphPrecache));
 
             Debug::Log(Fmt("Loaded font `{}` at point size {}.", metadata.Name, metadata.PointSize));
         }
