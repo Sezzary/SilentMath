@@ -122,13 +122,13 @@ namespace Silent::Math
          */
         Vector3 ToDirection() const;
 
-        /** @brief Converts the quaternion to an Euler angles rotation.
+        /** @brief Converts the quaternion to a set of Euler angles.
          *
          * @return Euler angles rotation.
          */
         EulerAngles ToEulerAngles() const;
 
-        /** @brief Converts the quaternion to an axis angle rotation.
+        /** @brief Converts the quaternion to an axis angle.
          *
          * @return Axis angle rotation.
          */

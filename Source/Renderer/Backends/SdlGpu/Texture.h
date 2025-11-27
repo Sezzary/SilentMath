@@ -24,6 +24,14 @@ namespace Silent::Renderer
         /** @brief Constructs an uninitialized default `Texture`. */
         SdlGpuTexture() = default;
 
+        /** @brief Constructs a `Texture` and uploads data to the GPU.
+         *
+         * @param device GPU device.
+         * @param copyPass Copy pass.
+         * @param pixels Texture image pixels.
+         * @param res Texture image resolution.
+         * @param name Texture image name.
+         */
         SdlGpuTexture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name);
 
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */

@@ -34,6 +34,11 @@ namespace Silent::Renderer
         // Getters
         // ========
 
+        /** @brief Gets a cached texture.
+         *
+         * @param name Texture name.
+         * @return Cached texture if it exists, otherwise `nullptr`.
+         */
         ITexture* Get(const std::string& name);
     };
 }

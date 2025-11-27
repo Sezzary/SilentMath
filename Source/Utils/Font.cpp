@@ -259,7 +259,7 @@ namespace Silent::Utils
             _activeAtlasIdx++;
             rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
         }
-        Debug::Assert(rect != nullptr, Fmt("Failed to add glyph rectangle U+{:X} for font `{}`.", _name));
+        Debug::Assert(rect != nullptr, Fmt("Failed to add glyph rectangle U+{:X} for font `{}`.", (int)codePoint, _name));
 
         // Register new glyph.
         _glyphs[codePoint] = GlyphMetadata
@@ -274,8 +274,8 @@ namespace Silent::Utils
         // Rasterize.
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
-        auto        pixelsFrom = ToSpan((byte*)bitmap.buffer,                                                        bitmap.rows * bitmap.width);
-        auto        pixelsTo   = ToSpan(&_textureAtlases.back()[(glyph.Position.y * ATLAS_SIZE) + glyph.Position.x], bitmap.rows * bitmap.width);
+        byte*       pixelsFrom = (byte*)bitmap.buffer;
+        byte*       pixelsTo   = &_textureAtlases.back()[(glyph.Position.y * ATLAS_SIZE) + glyph.Position.x];
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)

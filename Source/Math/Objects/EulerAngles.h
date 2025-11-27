@@ -119,25 +119,25 @@ namespace Silent::Math
         // Converters
         // ===========
 
-        /** @brief Converts to a normalized direction vector.
+        /** @brief Converts the set of Euler angles to a normalized direction vector.
          *
          * @return Normalized direction vector.
          */
         Vector3 ToDirection() const;
 
-        /** @brief Converts to a quaternion.
+        /** @brief Converts the set of Euler angles to a quaternion.
          *
          * @return Quaternion rotation.
          */
         Quaternion ToQuaternion() const;
 
-        /** @brief Converts to an axis-angle.
+        /** @brief Converts the set of Euler angles to an axis-angle.
          *
          * @return Axis angle rotation.
          */
         AxisAngle ToAxisAngle() const;
 
-        /** @brief Converts to a rotation matrix.
+        /** @brief Converts the set of Euler angles to a rotation matrix.
          *
          * @return Rotation matrix.
          */
