@@ -35,7 +35,7 @@ namespace Silent::Renderer
         Count
     };
 
-    /** @brief 2D sprite and shape align modes. */
+    /** @brief Screen space shape align modes. */
     enum class AlignMode
     {
         Center,
@@ -49,7 +49,7 @@ namespace Silent::Renderer
         BottomRight
     };
 
-    /** @brief 2D sprite and shape scale modes relative to the display aspect ratio. */
+    /** @brief Screen space shape scale modes relative to the display aspect ratio. */
     enum class ScaleMode
     {
         Fit,
