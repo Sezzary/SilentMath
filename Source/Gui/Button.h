@@ -27,13 +27,13 @@ namespace Silent::Gui
         Rectangle _bounds    = Rectangle();
         ScaleMode _scaleMode = ScaleMode::Fit;
 
-        Callback  _onEnter   = nullptr;
-        Callback  _onInside  = nullptr;
-        Callback  _onLeave   = nullptr;
-        Callback  _onOutside = nullptr;
-        Callback  _onClick   = nullptr;
-        Callback  _onHold    = nullptr;
-        Callback  _onRelease = nullptr;
+        std::optional<Callback> _onEnter   = std::nullopt;
+        std::optional<Callback> _onInside  = std::nullopt;
+        std::optional<Callback> _onLeave   = std::nullopt;
+        std::optional<Callback> _onOutside = std::nullopt;
+        std::optional<Callback> _onClick   = std::nullopt;
+        std::optional<Callback> _onHold    = std::nullopt;
+        std::optional<Callback> _onRelease = std::nullopt;
 
     public:
         // =============
@@ -44,22 +44,22 @@ namespace Silent::Gui
          *
          * @param bounds 2D rectangle representing interaction bounds.
          * @param scaleMode Renderer scale mode.
-         * @param onEnter Callback to execute on enter.
-         * @param onInside Callback to execute on inside.
-         * @param onLeave Callback to execute on leave.
-         * @param onOutside Callback to execute on outside.
-         * @param onClick Callback to execute on clicked input.
-         * @param onHold Callback to execute on held input.
-         * @param onRelease Callback to execute on released input.
+         * @param onEnter Callback to execute when entering.
+         * @param onInside Callback to execute when inside.
+         * @param onLeave Callback to execute when leaving.
+         * @param onOutside Callback to execute when outside.
+         * @param onClick Callback to execute when input is clicked.
+         * @param onHold Callback to execute when input is held.
+         * @param onRelease Callback to execute when input is released.
          */
-        Button(const Rectangle& bounds, Silent::Renderer::ScaleMode scaleMode,
-               std::optional<Callback> onEnter,
-               std::optional<Callback> onInside,
-               std::optional<Callback> onLeave,
-               std::optional<Callback> onOutside,
-               std::optional<Callback> onClick,
-               std::optional<Callback> onHold,
-               std::optional<Callback> onRelease);
+        Button(const Rectangle& bounds, ScaleMode scaleMode,
+               const std::optional<Callback>& onEnter,
+               const std::optional<Callback>& onInside,
+               const std::optional<Callback>& onLeave,
+               const std::optional<Callback>& onOutside,
+               const std::optional<Callback>& onClick,
+               const std::optional<Callback>& onHold,
+               const std::optional<Callback>& onRelease);
 
         // ==========
         // Utilities

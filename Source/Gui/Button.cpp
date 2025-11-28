@@ -13,25 +13,25 @@ using namespace Silent::Utils;
 namespace Silent::Gui
 {
     Button::Button(const Rectangle& bounds, ScaleMode scaleMode,
-                   std::optional<Callback> onEnter,
-                   std::optional<Callback> onInside,
-                   std::optional<Callback> onLeave,
-                   std::optional<Callback> onOutside,
-                   std::optional<Callback> onClick,
-                   std::optional<Callback> onHold,
-                   std::optional<Callback> onRelease)
+                   const std::optional<Callback>& onEnter,
+                   const std::optional<Callback>& onInside,
+                   const std::optional<Callback>& onLeave,
+                   const std::optional<Callback>& onOutside,
+                   const std::optional<Callback>& onClick,
+                   const std::optional<Callback>& onHold,
+                   const std::optional<Callback>& onRelease)
     {
         _bounds    = bounds;
         _scaleMode = scaleMode;
         _isActive  = false;
 
-        _onEnter   = onEnter.value_or(nullptr);
-        _onInside  = onInside.value_or(nullptr);
-        _onLeave   = onLeave.value_or(nullptr);
-        _onOutside = onOutside.value_or(nullptr);
-        _onClick   = onClick.value_or(nullptr);
-        _onHold    = onHold.value_or(nullptr);
-        _onRelease = onRelease.value_or(nullptr);
+        _onEnter   = onEnter;
+        _onInside  = onInside;
+        _onLeave   = onLeave;
+        _onOutside = onOutside;
+        _onClick   = onClick;
+        _onHold    = onHold;
+        _onRelease = onRelease;
     }
 
     void Button::Update(bool isFocused)
