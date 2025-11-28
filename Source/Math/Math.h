@@ -12,6 +12,7 @@
 #include "Math/Objects/Matrix.h"
 #include "Math/Objects/OrientedBoundingBox.h"
 #include "Math/Objects/Ray.h"
+#include "Math/Objects/Rectangle.h"
 #include "Math/Objects/Quaternion.h"
 #include "Math/Objects/Vector2.h"
 #include "Math/Objects/Vector2i.h"
