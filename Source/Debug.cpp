@@ -828,7 +828,7 @@ namespace Silent::Debug
             return;
         }
 
-        // Check if `Messages` is full.
+        // Check if `g_Work.Messages` is full.
         if (g_Work.Messages.size() >= MESSAGE_COUNT_MAX)
         {
             Log("Attempted to create too many debug messages.", LogLevel::Warning, LogMode::Debug);
