@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Input/Input.h"
 #include "Renderer/Common/Enums.h"
+#include "Renderer/Renderer.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Input;
@@ -12,7 +13,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Gui
 {
-    Button::Button(const AxisAlignedBoundingRect& bounds, ScaleMode scaleMode,
+    Button::Button(const Vector2& center, const Vector2& extents, ScaleMode scaleMode,
                    const std::optional<Callback>& onEnter,
                    const std::optional<Callback>& onInside,
                    const std::optional<Callback>& onLeave,
@@ -32,7 +33,8 @@ namespace Silent::Gui
         _onHold    = onHold;
         _onRelease = onRelease;
 
-        Bounds = bounds;
+        Center  = center;
+        Extents = extents;
     }
 
     void Button::Update(bool isFocused)
@@ -46,14 +48,44 @@ namespace Silent::Gui
         Update(isFocused, SELECT_ACTION_IDS);
     }
 
-    void Button::Update(const Vector2& point)
+    void Button::Update(const Vector2& pos)
     {
         static const auto SELECT_ACTION_IDS = std::vector<ActionId>
         {
             In::MouseClickLeft
         };
 
-        Update(Bounds.Intersects(point), SELECT_ACTION_IDS); 
+        const auto& renderer = g_App.GetRenderer();
+
+        // Compute screen aspect ratio.
+        auto  res    = renderer.GetScreenResolution().ToVector2();
+        float aspect = res.x / res.y;
+
+        // Compute extents aspect correction.
+        auto aspectCorrection = Vector2::One;
+        switch(_scaleMode)
+        {
+            case ScaleMode::Fit:
+            {
+                // @todo
+                aspectCorrection = Vector2();
+                break;
+            }
+            case ScaleMode::Fill:
+            {
+                // @todo
+                aspectCorrection = Vector2();
+                break;
+            }
+            default:
+            case ScaleMode::Stretch:
+            {
+                break;
+            }
+        }
+
+        auto bounds = AxisAlignedBoundingRect(Center, Extents * aspectCorrection);
+        Update(bounds.Intersects(pos), SELECT_ACTION_IDS); 
     }
 
     bool Button::CheckClickedAction(const std::vector<ActionId>& actionIds) const

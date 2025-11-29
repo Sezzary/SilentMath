@@ -34,16 +34,18 @@ namespace Silent::Gui
         std::optional<Callback> _onRelease = std::nullopt;
 
     public:
-        AxisAlignedBoundingRect Bounds = AxisAlignedBoundingRect();
+        Vector2 Center  = Vector2::Zero;
+        Vector2 Extents = Vector2::Zero;
 
         // =============
         // Constructors
         // =============
 
-        /** @brief Constructs a `Button` from interaction bounds and callbacks.
+        /** @brief Constructs a `Button` from a center, extents, and callbacks.
          *
-         * @param bounds Interaction bounds.
-         * @param scaleMode Interaction bounds scale mode.
+         * @param center Button center.
+         * @param extents Button extents.
+         * @param scaleMode Extents scale mode relative to screen aspect ratio.
          * @param onEnter Interaction callback to execute when entering.
          * @param onInside Interaction callback to execute when inside.
          * @param onLeave Interaction callback to execute when leaving.
@@ -52,7 +54,7 @@ namespace Silent::Gui
          * @param onHold Interaction callback to execute when input is held.
          * @param onRelease Interaction callback to execute when input is released.
          */
-        Button(const AxisAlignedBoundingRect& bounds, ScaleMode scaleMode,
+        Button(const Vector2& center, const Vector2& extents, ScaleMode scaleMode,
                const std::optional<Callback>& onEnter,
                const std::optional<Callback>& onInside,
                const std::optional<Callback>& onLeave,
@@ -65,17 +67,17 @@ namespace Silent::Gui
         // Utilities
         // ==========
 
-        /** @brief Updates the button state using a discrete focus state from keyboard or controller button navigation and executes callbacks.
+        /** @brief Updates the button state using a discrete focus state from input navigation and executes callbacks.
          *
          * @param isFocused `true` if the button is focused, `false` otherwise.
          */
         void Update(bool isFocused);
 
-        /** @brief Updates the button state using a screen space point from mouse or controller cursor navigation and executes callbacks.
+        /** @brief Updates the button state using a screen space position from cursor navigation and executes callbacks.
          *
-         * @param point Screen space point.
+         * @param pos Screen space cursor position.
          */
-        void Update(const Vector2& point);
+        void Update(const Vector2& pos);
 
     private:
         // ========
