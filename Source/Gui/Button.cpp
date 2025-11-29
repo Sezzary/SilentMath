@@ -132,8 +132,6 @@ namespace Silent::Gui
             {
                 ExecuteCallback(_onRelease);
             }
-
-            _prevActiveState = true;
         }
         else
         {
@@ -147,9 +145,9 @@ namespace Silent::Gui
             {
                 ExecuteCallback(_onOutside);
             }
-
-            _prevActiveState = false;
         }
+
+        _prevActiveState = activeState;
     }
 
     void Button::ExecuteCallback(const std::optional<Callback>& callback) const
