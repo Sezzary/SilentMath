@@ -105,12 +105,12 @@ namespace Silent::Gui
     {
         if (isActive)
         {
-            // Execute `_onEnter` callback if previous active state was outside.
+            // Execute `_onEnter` callback if previous state was inactive (outside).
             if (!_isActive)
             {
                 ExecuteCallback(_onEnter);
             }
-            // Execute `_onInside` callback if previous active state was also inside.
+            // Execute `_onInside` callback if previous state was active (also inside).
             else
             {
                 ExecuteCallback(_onInside);
@@ -137,12 +137,12 @@ namespace Silent::Gui
         }
         else
         {
-            // Execute `_onLeave` callback if previous active state was inside.
+            // Execute `_onLeave` callback if previous state was active (inside).
             if (_isActive)
             {
                 ExecuteCallback(_onLeave);
             }
-            // Execute `_onOutside` callback if previous active state was also outside.
+            // Execute `_onOutside` callback if previous state was inactive (also outside).
             else
             {
                 ExecuteCallback(_onOutside);
