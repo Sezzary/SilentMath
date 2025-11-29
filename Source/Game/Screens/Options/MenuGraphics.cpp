@@ -1,47 +1,146 @@
 #include "Framework.h"
 #include "Game/Screens/Options/MenuGraphics.h"
 
+#include "Application.h"
+#include "Assets/TranslationKeys.h"
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
+#include "Utils/Translator.h"
+
+#include "Game/Dummy.h"
 
 namespace Silent::Game
 {
     void Options_MainOptionsMenu_BgmVolumeBarDraw()
     {
-        // @todo
+        Options_MainOptionsMenu_VolumeBarDraw(false, g_GameWork.config_0.optVolumeBgm_1F);
     }
 
     void Options_MainOptionsMenu_SfxVolumeBarDraw()
     {
-        // @todo
+        Options_MainOptionsMenu_VolumeBarDraw(true, g_GameWork.config_0.optVolumeSe_20);
     }
 
     void Options_MainOptionsMenu_VolumeBarDraw(bool isSfx, uchar vol)
     {
-        // @todo
-    }
+        constexpr int STR_OFFSET_Y = 16;
+        constexpr int NOTCH_SIZE_X = 5;
+        constexpr int NOTCH_COUNT  = 16;
 
-    void Options_ExtraOptionsMenu_EntryStringsDraw()
-    {
-        // @todo
+        // Draw bar notches.
+        for (int i = 0; i < NOTCH_COUNT; i++)
+        {
+            for (int j = 1; j >= 0; j--)
+            {
+                if (i < (vol / 8))
+                {
+                    int shade = 160 + (64 * j);
+                    //setRGBC0(poly, color0, color0, color0, 0x28);
+                }
+                else if (i > (vol / 8))
+                {
+                    int shade = 64 + (64 * j);
+                    //setRGBC0(poly, color1, color1, color1, 0x28);
+                }
+                else
+                {
+                    int shade = (((vol & 0x7) * 12) + 64) + (64 * j);
+                    //setRGBC0(poly, color2, color2, color2, 0x28);
+                }
+
+                int xOffset = 24 + (i * 6);
+                int offset  = -69;
+
+                int x0Offset = j + 24;
+                int x0       = (x0Offset + (i * 6)) & 0xFFFF;
+                int yOffset  = j + 56;
+
+                //setXY0Fast(poly, x0,                           (isSfx * STR_OFFSET_Y) + yOffset);
+                //setXY1Fast(poly, x0,                           (isSfx * STR_OFFSET_Y) - (j + offset));
+                //setXY2Fast(poly, (xOffset - j) + NOTCH_SIZE_X, (isSfx * STR_OFFSET_Y) + yOffset);
+                //setXY3Fast(poly, (xOffset - j) + NOTCH_SIZE_X, (isSfx * STR_OFFSET_Y) - (j + offset));
+                //addPrim((u8*)ot->org + LAYER_24, poly);
+                //GsOUT_PACKET_P = (u8*)poly + sizeof(POLY_F4);
+            }
+        }
     }
 
     void Options_MainOptionsMenu_EntryStringsDraw()
     {
-        // @todo
+        constexpr int  LINE_BASE_X     = 64;
+        constexpr int  LINE_BASE_Y     = 56;
+        constexpr int  LINE_OFFSET_X   = 16;
+        constexpr int  LINE_OFFSET_Y   = 16;
+        constexpr auto HEADING_STR_POS = Vector2i(121, 20);
+        constexpr auto ENTRY_STR_KEYS  = std::array<const char*, 9>
+        {
+            KEY_MAIN_OPTIONS_MENU_EXIT,
+            KEY_MAIN_OPTIONS_MENU_BRIGHT_LEVEL,
+            KEY_MAIN_OPTIONS_MENU_CONT_CONFIG,
+            KEY_MAIN_OPTIONS_MENU_SCREEN_POS,
+            KEY_MAIN_OPTIONS_MENU_VIBRATION,
+            KEY_MAIN_OPTIONS_MENU_AUTO_LOAD,
+            KEY_MAIN_OPTIONS_MENU_SOUND,
+            KEY_MAIN_OPTIONS_MENU_BGM_VOL,
+            KEY_MAIN_OPTIONS_MENU_SE_VOL
+        };
+
+        const auto& translator = g_App.GetTranslator();
+
+        // Submit heading string.
+        //Gfx_StringSetColor(StringColorId_White);
+        //Gfx_StringSetPosition(HEADING_STR_POS.vx, HEADING_STR_POS.vy);
+        //Gfx_StringDraw(translator(KEY_MAIN_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
+
+        // Submit entry strings.
+        //for (i = 0; i < MainOptionsMenuEntry_Count; i++)
+        //{
+        //    Gfx_StringSetPosition(LINE_BASE_X, LINE_BASE_Y + (i * LINE_OFFSET_Y));
+        //    Gfx_StringDraw(ENTRY_STR_KEYS[i], DEFAULT_MAP_MESSAGE_LENGTH);
+        //}
     }
 
-    void Options_ExtraOptionsMenu_SelectionHighlightDraw()
+    void Options_ExtraOptionsMenu_EntryStringsDraw()
     {
-        // @todo
+        constexpr int  LINE_BASE_X     = 64;
+        constexpr int  LINE_BASE_Y     = 64;
+        constexpr int  LINE_OFFSET_X   = 16;
+        constexpr int  LINE_OFFSET_Y   = 16;
+        constexpr auto HEADING_STR_POS = Vector2i(86, 20);
+        constexpr auto ENTRY_STR_KEYS  = std::array<const char*, 9>
+        {
+            KEY_EXTRA_OPTIONS_MENU_WEAPON_CONTROL,
+            KEY_EXTRA_OPTIONS_MENU_BLOOD_COLOR,
+            KEY_EXTRA_OPTIONS_MENU_VIEW_CONTROL,
+            KEY_EXTRA_OPTIONS_MENU_RETREAT_TURN,
+            KEY_EXTRA_OPTIONS_MENU_WALK_RUN,
+            KEY_EXTRA_OPTIONS_MENU_CONTROL,
+            KEY_EXTRA_OPTIONS_MENU_AUTO_AIMING,
+            KEY_EXTRA_OPTIONS_MENU_VIEW_MODE,
+            KEY_EXTRA_OPTIONS_MENU_BULLET_ADJUST
+        };
+
+        const auto& translator = g_App.GetTranslator();
+
+        // Submit heading string.
+        //Gfx_StringSetColor(StringColorId_White);
+        //Gfx_StringSetPosition(HEADING_STR_POS.vx, HEADING_STR_POS.vy);
+        //Gfx_StringDraw(translator(KEY_EXTRA_OPTIONS_MENU_EXTRA), DEFAULT_MAP_MESSAGE_LENGTH);
+
+        // Submit entry strings.
+        for (int i = 0; i < g_ExtraOptionsMenu_EntryCount; i++)
+        {
+            //Gfx_StringSetPosition(LINE_BASE_X, LINE_BASE_Y + (i * LINE_OFFSET_Y));
+            //Gfx_StringDraw(translator(ENTRY_STR_KEYS[i]), DEFAULT_MAP_MESSAGE_LENGTH);
+        }
     }
 
     void Options_MainOptionsMenu_SelectionHighlightDraw()
     {
-        constexpr uint BULLET_QUAD_COUNT  = 2;
-        constexpr int  LINE_OFFSET_Y      = 16;
-        constexpr int  HIGHLIGHT_OFFSET_X = 39;
-        constexpr int  HIGHLIGHT_OFFSET_Y = 58;
+        constexpr int BULLET_QUAD_COUNT  = 2;
+        constexpr int LINE_OFFSET_Y      = 16;
+        constexpr int HIGHLIGHT_OFFSET_X = 39;
+        constexpr int HIGHLIGHT_OFFSET_Y = 58;
 
         // 12x12 quad.
         constexpr auto BULLET_QUAD_FRONT = s_Quad2d
@@ -122,18 +221,373 @@ namespace Silent::Game
         }
     }
     
-    void Options_Menu_VignetteDraw()
+    void Options_ExtraOptionsMenu_SelectionHighlightDraw()
     {
-        // @todo
+        constexpr int BULLET_QUAD_COUNT  = 2;
+        constexpr int LINE_BASE_X        = 64;
+        constexpr int LINE_BASE_Y        = 56;
+        constexpr int LINE_OFFSET_X      = 16;
+        constexpr int LINE_OFFSET_Y      = 16;
+        constexpr int HIGHLIGHT_OFFSET_X = -121;
+        constexpr int HIGHLIGHT_OFFSET_Y = 50;
+
+        const u8 SELECTION_HIGHLIGHT_WIDTHS[] =
+        {
+            157, 126, 135, 135, 157, 130, 112, 134
+        };
+
+        // 12x12 quad.
+        const Vector2i FRONT_BULLET_QUAD[] =
+        {
+            Vector2i(-120, -47),
+            Vector2i(-120, -35),
+            Vector2i(-108, -47),
+            Vector2i(-108, -35)
+        };
+
+        // 14x14 quad.
+        const Vector2i BACK_BULLET_QUAD[] =
+        {
+            Vector2i(-121, -48),
+            Vector2i(-121, -34),
+            Vector2i(-107, -48),
+            Vector2i(-107, -34)
+        };
+
+        // Set active selection highlight position references.
+        if (g_Options_SelectionHighlightTimer == 0)
+        {
+            g_ExtraOptions_SelectionHighlightFrom.x = SELECTION_HIGHLIGHT_WIDTHS[g_ExtraOptionsMenu_PrevSelectedEntry] + (65536 + HIGHLIGHT_OFFSET_X); // TODO
+            g_ExtraOptions_SelectionHighlightFrom.y = (g_ExtraOptionsMenu_PrevSelectedEntry * LINE_OFFSET_Y)           - HIGHLIGHT_OFFSET_Y;
+            g_ExtraOptions_SelectionHighlightTo.x   = SELECTION_HIGHLIGHT_WIDTHS[g_ExtraOptionsMenu_SelectedEntry]     + (65536 + HIGHLIGHT_OFFSET_X); // TODO
+            g_ExtraOptions_SelectionHighlightTo.y   = (g_ExtraOptionsMenu_SelectedEntry * LINE_OFFSET_Y)               - HIGHLIGHT_OFFSET_Y;
+        }
+
+        // Compute sine-based interpolation alpha.
+        q3_12 interpAlpha = Math_Sin(g_Options_SelectionHighlightTimer << 7);
+
+        // Draw active selection highlight.
+        auto highlightLine = s_Line2d
+        {
+            Vector2i(0, g_ExtraOptions_SelectionHighlightFrom.y) +
+            Vector2i(HIGHLIGHT_OFFSET_X,
+                     FP_MULTIPLY(g_ExtraOptions_SelectionHighlightTo.y - g_ExtraOptions_SelectionHighlightFrom.y, interpAlpha, Q12_SHIFT) + LINE_OFFSET_Y),
+            g_ExtraOptions_SelectionHighlightFrom.x +
+            Vector2i(FP_MULTIPLY(g_ExtraOptions_SelectionHighlightTo.x - g_ExtraOptions_SelectionHighlightFrom.x, interpAlpha, Q12_SHIFT),
+                     FP_MULTIPLY(g_ExtraOptions_SelectionHighlightTo.y - g_ExtraOptions_SelectionHighlightFrom.y, interpAlpha, Q12_SHIFT) + LINE_OFFSET_Y)
+        };
+        Options_Selection_HighlightDraw(highlightLine);
+
+        // Draw selection bullet points.
+        for (int i = 0; i < g_ExtraOptionsMenu_EntryCount; i++)
+        {
+            s_Quad2d bulletQuads[BULLET_QUAD_COUNT];
+
+            // Set bullet quads.
+            auto* quadVerts = (Vector2i*)&bulletQuads;
+            for (int j = 0; j < QUAD_VERTEX_COUNT; j++)
+            {
+                quadVerts[j].x                    = FRONT_BULLET_QUAD[j].x;
+                quadVerts[j].y                    = FRONT_BULLET_QUAD[j].y + (i * LINE_OFFSET_Y);
+                quadVerts[j + sizeof(Vector2i)].x = BACK_BULLET_QUAD[j].x;
+                quadVerts[j + sizeof(Vector2i)].y = BACK_BULLET_QUAD[j].y + (i * LINE_OFFSET_Y);
+            }
+
+            // Active selection bullet point.
+            if (i == g_ExtraOptionsMenu_SelectedEntry)
+            {
+                Options_Selection_BulletPointDraw(bulletQuads[0], false, false);
+                Options_Selection_BulletPointDraw(bulletQuads[1], true,  false);
+            }
+            // Inactive selection bullet point.
+            else
+            {
+                Options_Selection_BulletPointDraw(bulletQuads[0], false, true);
+                Options_Selection_BulletPointDraw(bulletQuads[1], true,  true);
+            }
+        }
     }
 
-    void Options_ExtraOptionsMenu_ConfigDraw()
+    void Options_Menu_VignetteDraw()
     {
         // @todo
     }
 
     void Options_MainOptionsMenu_ConfigDraw()
     {
-        // @todo
+        const s_Triangle2d FRONT_ARROWS[] =
+        {
+            { { 40,  14 }, { 48,  6  }, { 48,  22 } },
+            { { 96,  14 }, { 88,  6  }, { 88,  22 } },
+            { { 40,  30 }, { 48,  22 }, { 48,  38 } },
+            { { 96,  30 }, { 88,  22 }, { 88,  38 } },
+            { { 19,  46 }, { 27,  38 }, { 27,  54 } },
+            { { 124, 46 }, { 116, 38 }, { 116, 54 } },
+            { { 12,  62 }, { 20,  54 }, { 20,  70 } },
+            { { 131, 62 }, { 123, 54 }, { 123, 70 } },
+            { { 12,  78 }, { 20,  70 }, { 20,  86 } },
+            { { 131, 78 }, { 123, 70 }, { 123, 86 } }
+        };
+
+        const s_Triangle2d BACK_ARROWS[] =
+        {
+            { { 39,  14 }, { 49,  4  }, { 49,  24 } },
+            { { 97,  14 }, { 87,  4  }, { 87,  24 } },
+            { { 39,  30 }, { 49,  20 }, { 49,  40 } },
+            { { 97,  30 }, { 87,  20 }, { 87,  40 } },
+            { { 18,  46 }, { 28,  36 }, { 28,  56 } },
+            { { 125, 46 }, { 115, 36 }, { 115, 56 } },
+            { { 11,  62 }, { 21,  52 }, { 21,  72 } },
+            { { 132, 62 }, { 122, 52 }, { 122, 72 } },
+            { { 11,  78 }, { 21,  68 }, { 21,  88 } },
+            { { 132, 78 }, { 122, 68 }, { 122, 88 } }
+        };
+
+        const char* CONFIG_STR_KEYS[] =
+        {
+            KEY_MAIN_OPTIONS_MENU_ON,
+            KEY_MAIN_OPTIONS_MENU_OFF,
+            KEY_MAIN_OPTIONS_MENU_STEREO,
+            KEY_MAIN_OPTIONS_MENU_MONAURAL
+        };
+
+        const auto& input = g_App.GetInput();
+ 
+        //Gfx_StringSetColor(StringColorId_White);
+
+        // Draw left/right arrows for subset of options.
+        if (g_MainOptionsMenu_SelectedEntry >= 4 && g_MainOptionsMenu_SelectedEntry < 9)
+        {
+            // Draw flashing left/right arrows.
+            for (int i = 0; i < 2; i++)
+            {
+                Options_Selection_ArrowDraw(FRONT_ARROWS[(((g_MainOptionsMenu_SelectedEntry - 4) * 2) + i)], true);
+            }
+
+            // Draw border to highlight flashing left/right arrow corresponding to direction of UI navigation.
+            if (input.GetAction(In::Left).IsHeld())
+            {
+                Options_Selection_ArrowDraw(BACK_ARROWS[(g_MainOptionsMenu_SelectedEntry - 4) * 2], false);
+            }
+            if (input.GetAction(In::Right).IsHeld())
+            {
+                Options_Selection_ArrowDraw(BACK_ARROWS[((g_MainOptionsMenu_SelectedEntry - 4) * 2) + 1], false);
+            }
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    int strPosX = (!g_GameWork.config_0.optVibrationEnabled_21 == 0) ? 214 : 216;
+                    //Gfx_StringSetPosition(strPosX, 120);
+
+                    int strIdx = g_GameWork.config_0.optVibrationEnabled_21 == 0;
+                    //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
+                    break;
+
+                case 1:
+                    int strPosX = (!g_GameWork.config_0.optAutoLoad_25 == 0) ? 214 : 216;
+                    //Gfx_StringSetPosition(strPosX, 136);
+
+                    int strIdx = g_GameWork.config_0.optAutoLoad_25 == 0;
+                    //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
+                    break;
+
+                case 2:
+                    int strPosX = (g_GameWork.config_0.optSoundType_1E != 0) ? 194 : 206;
+                    //Gfx_StringSetPosition(strPosX, 152);
+
+                    int strIdx = g_GameWork.config_0.optSoundType_1E + 2;
+                    //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
+                    break;
+            }
+        }
+    }
+
+    void Options_ExtraOptionsMenu_ConfigDraw()
+    {
+        constexpr int STR_BASE_Y   = 64;
+        constexpr int STR_OFFSET_Y = 16;
+
+        const s_Triangle2d FRONT_ARROWS[] =
+        {
+            { { 38,  -42 }, { 46,  -50 }, { 46,  -34 } },
+            { { 120, -42 }, { 112, -50 }, { 112, -34 } },
+            { { 38,  -26 }, { 46,  -34 }, { 46,  -18 } },
+            { { 120, -26 }, { 112, -34 }, { 112, -18 } },
+            { { 35,  -10 }, { 43,  -18 }, { 43,  -2  } },
+            { { 123, -10 }, { 115, -18 }, { 115, -2  } },
+            { { 35,   6  }, { 43,  -2  }, { 43,   14 } },
+            { { 123,  6  }, { 115, -2  }, { 115,  14 } },
+            { { 35,   22 }, { 43,   14 }, { 43,   30 } },
+            { { 123,  22 }, { 115,  14 }, { 115,  30 } },
+            { { 51,   38 }, { 59,   30 }, { 59,   46 } },
+            { { 107,  38 }, { 99,   30 }, { 99,   46 } },
+            { { 24,   54 }, { 32,   46 }, { 32,   62 } },
+            { { 131,  54 }, { 123,  46 }, { 123,  62 } },
+            { { 57,   70 }, { 65,   62 }, { 65,   78 } },
+            { { 104,  70 }, { 96,   62 }, { 96,   78 } }
+        };
+
+        const s_Triangle2d BACK_ARROWS[] =
+        {
+            { { 37,  -42 }, { 47,  -52 }, { 47,  -32 } },
+            { { 121, -42 }, { 111, -52 }, { 111, -32 } },
+            { { 37,  -26 }, { 47,  -36 }, { 47,  -16 } },
+            { { 121, -26 }, { 111, -36 }, { 111, -16 } },
+            { { 34,  -10 }, { 44,  -20 }, { 44,   0  } },
+            { { 124, -10 }, { 114, -20 }, { 114,  0  } },
+            { { 34,   6  }, { 44,  -4  }, { 44,   16 } },
+            { { 124,  6  }, { 114, -4  }, { 114,  16 } },
+            { { 34,   22 }, { 44,   12 }, { 44,   32 } },
+            { { 124,  22 }, { 114,  12 }, { 114,  32 } },
+            { { 50,   38 }, { 60,   28 }, { 60,   48 } },
+            { { 108,  38 }, { 98,   28 }, { 98,   48 } },
+            { { 23,   54 }, { 33,   44 }, { 33,   64 } },
+            { { 132,  54 }, { 122,  44 }, { 122,  64 } },
+            { { 56,   70 }, { 66,   60 }, { 66,   80 } },
+            { { 105,  70 }, { 95,   60 }, { 95,   80 } }
+        };
+
+        // TODO: Can this be split?
+        const char* CONFIG_STRS[] =
+        {
+            "Press",
+            "Switch",
+
+            "Normal",
+            "Green",
+            "Violet",
+            "Black",
+
+            "_",
+
+            "Normal",
+            "Reverse",
+
+            "On",
+            "Off",
+
+            "Normal",
+            "Self_View",
+
+            "x1",
+            "x2",
+            "x3",
+            "x4",
+            "x5",
+            "x6"
+        };
+
+        const auto& input = g_App.GetInput();
+
+        //Gfx_StringSetColor(StringColorId_White);
+
+        // Draw left/right arrows for subset of options.
+        if (g_ExtraOptionsMenu_SelectedEntry < ExtraOptionsMenuEntry_Count)
+        {
+            // Draw flashing left/right arrows.
+            for (int i = 0; i < 2; i++)
+            {
+                Options_Selection_ArrowDraw(FRONT_ARROWS[(g_ExtraOptionsMenu_SelectedEntry * 2) + i], true);
+            }
+
+            // Draw border to highlight flashing left/right arrow corresponding to direction of UI navigation.
+            if (input.GetAction(In::Left).IsHeld())
+            {
+                Options_Selection_ArrowDraw(BACK_ARROWS[g_ExtraOptionsMenu_SelectedEntry << 1], false);
+            }
+            if (input.GetAction(In::Right).IsHeld())
+            {
+                Options_Selection_ArrowDraw(BACK_ARROWS[(g_ExtraOptionsMenu_SelectedEntry << 1) + 1], false);
+            }
+        }
+
+        // Submit entry strings.
+        for (int i = 0; i < g_ExtraOptionsMenu_EntryCount; i++)
+        {
+            switch (i)
+            {
+                case ExtraOptionsMenuEntry_WeaponCtrl:
+                {
+                    int strPosX = (g_GameWork.config_0.optExtraWeaponCtrl_23 != 0) ? 217 : 212;
+                    //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_WeaponCtrl));
+                    //Gfx_StringDraw(CONFIG_STRS[!g_GameWork.config_0.optExtraWeaponCtrl_23], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_Blood:
+                {
+                    switch (g_ExtraOptionsMenu_SelectedBloodColorEntry)
+                    {
+                        case BloodColorMenuEntry_Normal:
+                        {
+                            //Gfx_StringSetPosition(210, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_Blood));
+                            break;
+                        }
+                        case BloodColorMenuEntry_Green:
+                        {
+                            //Gfx_StringSetPosition(214, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_Blood));
+                            break;
+                        }
+                        case BloodColorMenuEntry_Violet:
+                        {
+                            //Gfx_StringSetPosition(214, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_Blood));
+                            break;
+                        }
+                        case BloodColorMenuEntry_Black:
+                        {
+                            //Gfx_StringSetPosition(217, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_Blood));
+                            break;
+                        }
+                    }
+
+                    //Gfx_StringDraw(CONFIG_STRS[g_ExtraOptionsMenu_SelectedBloodColorEntry + 2], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_ViewCtrl:
+                {
+                    int strPosX = !g_GameWork.config_0.optExtraViewCtrl_28 ? 210 : 206;
+                    //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_ViewCtrl));
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraViewCtrl_28 != 0) ? 32 : 28) >> 2], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_RetreatTurn:
+                {
+                    int strPosX = !g_GameWork.config_0.optExtraRetreatTurn_2A ? 210 : 206;
+                    //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_RetreatTurn));
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraRetreatTurn_2A != 0) ? 32 : 28) >> 2], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_MovementCtrl:
+                {
+                    int strPosX = !g_GameWork.config_0.optExtraWalkRunCtrl_2B ? 210 : 206;
+                    //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_MovementCtrl));
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraWalkRunCtrl_2B != 0) ? 32 : 28) >> 2], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_AutoAiming:
+                {
+                    int strPosX = !g_GameWork.config_0.optExtraAutoAiming_2C ? 228 : 226;
+                    //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_AutoAiming));
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraAutoAiming_2C != 0) ? 40 : 36) >> 2], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_ViewMode:
+                {
+                    int strPosX = !g_GameWork.config_0.optExtraViewMode_29 ? 210 : 200;
+                    //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_ViewMode));
+                    //Gfx_StringDraw(CONFIG_STRS[(g_GameWork.config_0.optExtraViewMode_29 ? 48 : 44) >> 2], 10);
+                    break;
+                }
+                case ExtraOptionsMenuEntry_BulletMult:
+                {
+                    //Gfx_StringSetPosition(230, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_BulletMult));
+                    //Gfx_StringDraw(CONFIG_STRS[g_GameWork.config_0.optExtraBulletAdjust_2D + 13], 10);
+                    break;
+                }
+            }
+        }
     }
 }
