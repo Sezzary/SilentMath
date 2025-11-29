@@ -42,7 +42,7 @@ namespace Silent::Gui
 
         /** @brief Constructs a `Button` with bounds and interaction callbacks.
          *
-         * @param bounds Axis-aligned bounding rectangle representing interaction bounds.
+         * @param bounds Interaction bounds.
          * @param scaleMode Renderer scale mode.
          * @param onEnter Callback to execute when entering.
          * @param onInside Callback to execute when inside.

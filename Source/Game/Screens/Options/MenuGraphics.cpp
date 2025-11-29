@@ -6,6 +6,36 @@
 
 namespace Silent::Game
 {
+    void Options_MainOptionsMenu_BgmVolumeBarDraw()
+    {
+        // @todo
+    }
+
+    void Options_MainOptionsMenu_SfxVolumeBarDraw()
+    {
+        // @todo
+    }
+
+    void Options_MainOptionsMenu_VolumeBarDraw(bool isSfx, uchar vol)
+    {
+        // @todo
+    }
+
+    void Options_ExtraOptionsMenu_EntryStringsDraw()
+    {
+        // @todo
+    }
+
+    void Options_MainOptionsMenu_EntryStringsDraw()
+    {
+        // @todo
+    }
+
+    void Options_ExtraOptionsMenu_SelectionHighlightDraw()
+    {
+        // @todo
+    }
+
     void Options_MainOptionsMenu_SelectionHighlightDraw()
     {
         constexpr uint BULLET_QUAD_COUNT  = 2;
@@ -90,5 +120,20 @@ namespace Silent::Game
                 Options_Selection_BulletPointDraw(bulletQuads[1], true,  true);
             }
         }
+    }
+    
+    void Options_Menu_VignetteDraw()
+    {
+        // @todo
+    }
+
+    void Options_ExtraOptionsMenu_ConfigDraw()
+    {
+        // @todo
+    }
+
+    void Options_MainOptionsMenu_ConfigDraw()
+    {
+        // @todo
     }
 }

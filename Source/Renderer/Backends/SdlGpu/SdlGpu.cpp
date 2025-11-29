@@ -314,7 +314,7 @@ namespace Silent::Renderer
         //===============================
 
         // Bind.
-        _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Add);
+        _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
         _buffers.Primitives2d.Bind(renderPass, 0);
 
         // Upload uniform data.

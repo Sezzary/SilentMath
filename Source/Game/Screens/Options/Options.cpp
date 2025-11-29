@@ -1,7 +1,12 @@
 #include "Framework.h"
 #include "Game/Screens/Options/Options.h"
 
+#include "Application.h"
 #include "Game/Dummy.h"
+#include "Game/Screens/Options/MenuGraphics.h"
+#include "Input/Input.h"
+
+using namespace Silent::Input;
 
 namespace Silent::Game
 {
@@ -230,9 +235,270 @@ namespace Silent::Game
                 break;
         }
     }
-/*
+
+    void Options_MainOptionsMenu_Control()
+    {
+        #define SOUND_VOL_STEP 8
+
+        const auto& input = g_App.GetInput();
+
+        // Draw graphics.
+        Options_MainOptionsMenu_EntryStringsDraw();
+        Options_MainOptionsMenu_ConfigDraw();
+        Options_MainOptionsMenu_SelectionHighlightDraw();
+        Options_Menu_VignetteDraw();
+        //Gfx_BackgroundSpriteDraw(&g_ItemInspectionImg);
+        Options_MainOptionsMenu_BgmVolumeBarDraw();
+        Options_MainOptionsMenu_SfxVolumeBarDraw();
+
+        if (g_GameWork.gameStateStep_598[0] != OptionsMenuState_MainOptions)
+        {
+            return;
+        }
+
+        // Increment line move timer.
+        if ((LINE_CURSOR_TIMER_MAX - 1) < g_Options_SelectionHighlightTimer)
+        {
+            g_Options_SelectionHighlightTimer = LINE_CURSOR_TIMER_MAX;
+        }
+        else
+        {
+            g_Options_SelectionHighlightTimer++;
+        }
+
+        if (g_Options_SelectionHighlightTimer != LINE_CURSOR_TIMER_MAX)
+        {
+            return;
+        }
+
+        g_MainOptionsMenu_PrevSelectedEntry = g_MainOptionsMenu_SelectedEntry;
+
+        // Leave to gameplay (if options menu was accessed with `Option` input action).
+        if (g_GameWork.gameStatePrev_590 == GameState_InGame &&
+            !input.GetAction(In::Enter).IsClicked() && input.GetAction(In::Option).IsClicked())
+        {
+            //Sd_PlaySfx(Sfx_MenuCancel, 0, 64);
+
+            g_GameWork.gameStateStep_598[0] = OptionsMenuState_Leave;
+            g_SysWork.timer_20              = 0;
+            g_GameWork.gameStateStep_598[1] = 0;
+            g_GameWork.gameStateStep_598[2] = 0;
+            return;
+        }
+
+        // @todo Accurate pulse delay.
+        // Move selection cursor up/down.
+        if (input.GetAction(In::Up).IsPulsed(0.2f, 0.4f))
+        {
+            //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
+
+            g_Options_SelectionHighlightTimer = 0;
+            g_MainOptionsMenu_SelectedEntry   = (g_MainOptionsMenu_SelectedEntry + (MainOptionsMenuEntry_Count - 1)) % MainOptionsMenuEntry_Count;
+        }
+        if (input.GetAction(In::Down).IsPulsed(0.2f, 0.4f))
+        {
+            //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
+
+            g_Options_SelectionHighlightTimer = 0;
+            g_MainOptionsMenu_SelectedEntry   = (g_MainOptionsMenu_SelectedEntry + 1) % MainOptionsMenuEntry_Count;
+        }
+
+        // Handle config change.
+        int vol = 0;
+        switch (g_MainOptionsMenu_SelectedEntry)
+        {
+            case MainOptionsMenuEntry_Exit:
+                // Exit menu to gameplay.
+                if (input.GetAction(In::Enter).IsClicked() || input.GetAction(In::Cancel).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuCancel, 0, 64);
+
+                    g_GameWork.gameStateStep_598[0] = OptionsMenuState_Leave;
+                    g_SysWork.timer_20              = 0;
+                    g_GameWork.gameStateStep_598[1] = 0;
+                    g_GameWork.gameStateStep_598[2] = 0;
+                }
+                break;
+
+            case MainOptionsMenuEntry_Controller:
+                // Enter controller screen.
+                if (input.GetAction(In::Enter).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
+                    //Fs_QueueStartReadTim(FILE_TIM_OPTION2_TIM, IMAGE_BUFFER_3, &g_ControllerButtonAtlasImg);
+
+                    //ScreenFade_Start(true, false, false);
+                    g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterController;
+                    g_SysWork.timer_20              = 0;
+                    g_GameWork.gameStateStep_598[1] = 0;
+                    g_GameWork.gameStateStep_598[2] = 0;
+                }
+                break;
+
+            case MainOptionsMenuEntry_ScreenPosition:
+                // Enter screen position screen.
+                if (input.GetAction(In::Enter).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
+
+                    //ScreenFade_Start(true, false, false);
+                    g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterScreenPos;
+                    g_SysWork.timer_20              = 0;
+                    g_GameWork.gameStateStep_598[1] = 0;
+                    g_GameWork.gameStateStep_598[2] = 0;
+                }
+                break;
+
+            case MainOptionsMenuEntry_Brightness:
+                if (input.GetAction(In::Enter).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
+                    if (g_GameWork.gameStatePrev_590 == GameState_MainMenu)
+                    {
+                        //Fs_QueueStartReadTim(FILE_TIM_OP_BRT_E_TIM, IMAGE_BUFFER_3, &g_BrightnessScreenImg0);
+                    }
+                    else
+                    {
+                        //Fs_QueueStartReadTim(FILE_TIM_OP_BRT_E_TIM, IMAGE_BUFFER_3, &g_BrightnessScreenImg1);
+                    }
+
+                    //ScreenFade_Start(true, false, false);
+                    g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterBrightness;
+                    g_SysWork.timer_20              = 0;
+                    g_GameWork.gameStateStep_598[1] = 0;
+                    g_GameWork.gameStateStep_598[2] = 0;
+                }
+                break;
+
+            case MainOptionsMenuEntry_Vibration:
+                if (input.GetAction(In::Left).IsClicked() || input.GetAction(In::Right).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
+                    g_GameWork.config_0.optVibrationEnabled_21 = !g_GameWork.config_0.optVibrationEnabled_21 << 7;
+                }
+                break;
+
+            case MainOptionsMenuEntry_AutoLoad:
+                if (input.GetAction(In::Left).IsClicked() || input.GetAction(In::Right).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
+                    g_GameWork.config_0.optAutoLoad_25 = (s8)g_GameWork.config_0.optAutoLoad_25 == 0;
+                }
+                break;
+
+            case MainOptionsMenuEntry_Sound:
+                if (input.GetAction(In::Left).IsClicked() || input.GetAction(In::Right).IsClicked())
+                {
+                    //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
+
+                    // Set config.
+                    /*int audioType                           = AUDIO_TYPE_STEREO;
+                    g_GameWork.config_0.optSoundType_1E = !g_GameWork.config_0.optSoundType_1E;
+                    if (g_GameWork.config_0.optSoundType_1E)
+                    {
+                        audioType = AUDIO_TYPE_MONO;
+                    }
+                    Sd_EngineCmd(audioType);*/
+                }
+                break;
+
+            case MainOptionsMenuEntry_BgmVolume:
+                vol = g_GameWork.config_0.optVolumeBgm_1F;
+
+                /*if ((vol < OPT_SOUND_VOLUME_MAX && input.GetAction(In::Right).IsPulsed(0.2f, 0.4f)) ||
+                    (vol > 0                    && input.GetAction(In::Left).IsPulsed(0.2f, 0.4f)))
+                {
+                    Sd_EngineCmd(Sfx_MenuMove);
+                }
+                if ((vol == OPT_SOUND_VOLUME_MAX && input.GetAction(In::Right).IsClicked()) ||
+                    (vol == 0                    && input.GetAction(In::Left).IsClicked()))
+                {
+                    Sd_EngineCmd(Sfx_MenuError);
+                }*/
+
+                // Scroll left/right.
+                if (input.GetAction(In::Left).IsPulsed(0.2f, 0.4f))
+                {
+                    vol = vol - SOUND_VOL_STEP;
+                }
+                if (input.GetAction(In::Right).IsPulsed(0.2f, 0.4f))
+                {
+                    vol = vol + SOUND_VOL_STEP;
+                }
+
+                // Set config.
+                //vol = CLAMP(vol, 0, OPT_SOUND_VOLUME_MAX);
+                //Sd_SetVolume(OPT_SOUND_VOLUME_MAX, vol, g_GameWork.config_0.optVolumeSe_20);
+                g_GameWork.config_0.optVolumeBgm_1F = vol;
+                break;
+
+            case MainOptionsMenuEntry_SfxVolume:
+                vol = g_GameWork.config_0.optVolumeSe_20;
+
+                /*if ((vol < OPT_SOUND_VOLUME_MAX && input.GetAction(In::Right).IsPulsed(0.2f, 0.4f)) ||
+                    (vol > 0                    && input.GetAction(In::Left).IsPulsed(0.2f, 0.4f)))
+                {
+                    Sd_EngineCmd(Sfx_MenuMove);
+                }
+                if ((vol == OPT_SOUND_VOLUME_MAX && input.GetAction(In::Right).IsClicked()) ||
+                    (vol == 0                    && input.GetAction(In::Left).IsClicked()))
+                {
+                    Sd_EngineCmd(Sfx_MenuError);
+                }*/
+
+                if (input.GetAction(In::Left).IsPulsed(0.2f, 0.4f))
+                {
+                    vol = vol - SOUND_VOL_STEP;
+                }
+                if (input.GetAction(In::Right).IsPulsed(0.2f, 0.4f))
+                {
+                    vol = vol + SOUND_VOL_STEP;
+                }
+
+                /*vol = CLAMP(vol, 0, OPT_SOUND_VOLUME_MAX);
+
+                Sd_SetVolume(OPT_SOUND_VOLUME_MAX, vol, g_GameWork.config_0.optVolumeSe_20);*/
+                g_GameWork.config_0.optVolumeSe_20 = vol;
+                break;
+
+            default:
+                break;
+        }
+
+        if (input.GetAction(In::StepLeft).IsClicked()            || input.GetAction(In::StepRight).IsClicked()            ||
+            input.GetAction(In::GamepadShoulderLeft).IsClicked() || input.GetAction(In::GamepadShoulderRight).IsClicked() ||
+            input.GetAction(In::GamepadTriggerLeft).IsClicked()  || input.GetAction(In::GamepadTriggerRight).IsClicked())
+        {
+            if (g_GameWork.gameStateStep_598[0] == OptionsMenuState_EnterExtraOptions)
+            {
+                return;
+            }
+
+            //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
+
+            //ScreenFade_Start(true, false, false);
+            g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterExtraOptions;
+            g_SysWork.timer_20              = 0;
+            g_GameWork.gameStateStep_598[1] = 0;
+            g_GameWork.gameStateStep_598[2] = 0;
+        }
+
+        // Reset selection cursor.
+        if (((g_GameWork.gameStateStep_598[0] != OptionsMenuState_EnterExtraOptions &&
+              g_MainOptionsMenu_SelectedEntry != MainOptionsMenuEntry_Exit) &&
+            !input.GetAction(In::Enter).IsClicked()) &&
+            input.GetAction(In::Cancel).IsClicked())
+        {
+            //Sd_PlaySfx(Sfx_MenuCancel, 0, 64);
+
+            g_Options_SelectionHighlightTimer = 0;
+            g_MainOptionsMenu_SelectedEntry   = MainOptionsMenuEntry_Exit;
+        }
+    }
+
     void Options_ExtraOptionsMenu_Control()
     {
+/*
         //Options_ExtraOptionsMenu_EntryStringsDraw();
         //Options_ExtraOptionsMenu_ConfigDraw();
         //Options_ExtraOptionsMenu_SelectionHighlightDraw();
@@ -431,5 +697,6 @@ namespace Silent::Game
             g_GameWork.gameStateStep_598[1] = 0;
             g_GameWork.gameStateStep_598[2] = 0;
         }
-    }*/
+*/
+    }
 }
