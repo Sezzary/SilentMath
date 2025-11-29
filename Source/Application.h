@@ -69,18 +69,77 @@ namespace Silent
         // Getters
         // ========
 
-        AssetManager&       GetAssets();
-        AudioManager&       GetAudio();
-        ParallelExecutor&   GetExecutor();
-        FilesystemManager&  GetFilesystem();
-        FontManager&        GetFonts();
-        InputManager&       GetInput();
-        OptionsManager&     GetOptions();
-        RendererBase&       GetRenderer();
-        SavegameManager&    GetSavegame();
-        ClockManager&       GetClock();
+        /** @brief Gets the assets subsystem instance.
+         *
+         * @return Assets instance.
+         */
+        AssetManager& GetAssets();
+
+        /** @brief Gets the audio subsystem instance.
+         *
+         * @return Audio instance.
+         */
+        AudioManager& GetAudio();
+
+        /** @brief Gets the executor subsystem instance.
+         *
+         * @return Executor instance.
+         */
+        ParallelExecutor& GetExecutor();
+
+        /** @brief Gets the filesystem subsystem instance.
+         *
+         * @return Filesystem instance.
+         */
+        FilesystemManager& GetFilesystem();
+
+        /** @brief Gets the fonts subsystem instance.
+         *
+         * @return Fonts instance.
+         */
+        FontManager& GetFonts();
+
+        /** @brief Gets the input subsystem instance.
+         *
+         * @return Input instance.
+         */
+        InputManager& GetInput();
+
+        /** @brief Gets the options subsystem instance.
+         *
+         * @return Options instance.
+         */
+        OptionsManager& GetOptions();
+
+        /** @brief Gets the renderer subsystem instance.
+         *
+         * @return Renderer instance.
+         */
+        RendererBase& GetRenderer();
+
+        /** @brief Gets the savegame subsystem instance.
+         *
+         * @return Savegame instance.
+         */
+        SavegameManager& GetSavegame();
+
+        /** @brief Gets the clock subsystem instance.
+         *
+         * @return Clock instance.
+         */
+        ClockManager& GetClock();
+
+        /** @brief Gets the translator subsystem instance.
+         *
+         * @return Translator instance.
+         */
         TranslationManager& GetTranslator();
-        ToastManager&       GetToaster();
+
+        /** @brief Gets the toaster subsystem instance.
+         *
+         * @return Toaster instance.
+         */
+        ToastManager& GetToaster();
 
         /** @brief Gets the window resolution.
          *
