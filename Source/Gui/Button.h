@@ -24,9 +24,7 @@ namespace Silent::Gui
 
         bool _prevActiveState  = false;
 
-        AxisAlignedBoundingRect _bounds    = AxisAlignedBoundingRect();
         ScaleMode               _scaleMode = ScaleMode::Fit;
-
         std::optional<Callback> _onEnter   = std::nullopt;
         std::optional<Callback> _onInside  = std::nullopt;
         std::optional<Callback> _onLeave   = std::nullopt;
@@ -36,21 +34,23 @@ namespace Silent::Gui
         std::optional<Callback> _onRelease = std::nullopt;
 
     public:
+        AxisAlignedBoundingRect Bounds = AxisAlignedBoundingRect();
+
         // =============
         // Constructors
         // =============
 
-        /** @brief Constructs a `Button` with bounds and interaction callbacks.
+        /** @brief Constructs a `Button` from interaction bounds and callbacks.
          *
          * @param bounds Interaction bounds.
-         * @param scaleMode Renderer scale mode.
-         * @param onEnter Callback to execute when entering.
-         * @param onInside Callback to execute when inside.
-         * @param onLeave Callback to execute when leaving.
-         * @param onOutside Callback to execute when outside.
-         * @param onClick Callback to execute when input is clicked.
-         * @param onHold Callback to execute when input is held.
-         * @param onRelease Callback to execute when input is released.
+         * @param scaleMode Interaction bounds scale mode.
+         * @param onEnter Interaction callback to execute when entering.
+         * @param onInside Interaction callback to execute when inside.
+         * @param onLeave Interaction callback to execute when leaving.
+         * @param onOutside Interaction callback to execute when outside.
+         * @param onClick Interaction callback to execute when input is clicked.
+         * @param onHold Interaction callback to execute when input is held.
+         * @param onRelease Interaction callback to execute when input is released.
          */
         Button(const AxisAlignedBoundingRect& bounds, ScaleMode scaleMode,
                const std::optional<Callback>& onEnter,

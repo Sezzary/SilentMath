@@ -172,7 +172,7 @@ namespace Silent::Services
         auto optionsJson = ToOptionsJson(_options);
 
         // Write options JSON file.
-        auto stream = Stream(fs.GetWorkDirectory() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT), false, true);
+        auto stream = Stream(fs.GetWorkDirectory() / Fmt("{}{}", OPTIONS_FILENAME, JSON_FILE_EXT), false, true);
         stream.WriteJson(optionsJson);
         stream.Close();
     }
@@ -182,7 +182,7 @@ namespace Silent::Services
         const auto& fs = g_App.GetFilesystem();
 
         // Open options JSON file.
-        auto stream = Stream(fs.GetWorkDirectory() / (std::string(OPTIONS_FILENAME) + JSON_FILE_EXT), true, false);
+        auto stream = Stream(fs.GetWorkDirectory() / Fmt("{}{}", OPTIONS_FILENAME, JSON_FILE_EXT), true, false);
         if (!stream.IsOpen())
         {
             Debug::Log(Fmt("Creating new `{}{}` file.", OPTIONS_FILENAME, JSON_FILE_EXT), Debug::LogLevel::Info);

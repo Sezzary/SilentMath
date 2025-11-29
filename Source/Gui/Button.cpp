@@ -23,9 +23,7 @@ namespace Silent::Gui
     {
         _prevActiveState = false;
 
-        _bounds    = bounds;
         _scaleMode = scaleMode;
-
         _onEnter   = onEnter;
         _onInside  = onInside;
         _onLeave   = onLeave;
@@ -33,6 +31,8 @@ namespace Silent::Gui
         _onClick   = onClick;
         _onHold    = onHold;
         _onRelease = onRelease;
+
+        Bounds = bounds;
     }
 
     void Button::Update(bool isFocused)
@@ -53,7 +53,7 @@ namespace Silent::Gui
             In::MouseClickLeft
         };
 
-        Update(_bounds.Intersects(point), SELECT_ACTION_IDS);
+        Update(Bounds.Intersects(point), SELECT_ACTION_IDS); 
     }
 
     bool Button::CheckClickedAction(const std::vector<ActionId>& actionIds) const
@@ -116,11 +116,10 @@ namespace Silent::Gui
                 ExecuteCallback(_onInside);
             }
 
-            // Execute `_onClick` and `_onHold` callbacks if select action is clicked.
+            // Execute `_onClick` callback if select action is clicked.
             if (CheckClickedAction(selectActionIds))
             {
                 ExecuteCallback(_onClick);
-                ExecuteCallback(_onHold);
             }
             // Execute `_onHold` callback if select action is held.
             else if (CheckHeldAction(selectActionIds))

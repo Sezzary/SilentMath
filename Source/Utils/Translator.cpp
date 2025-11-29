@@ -98,7 +98,7 @@ namespace Silent::Utils
         constexpr char LOCALE_FILENAME[] = "Locale";
 
         // Open locale file stream and set new locale.
-        auto localePath = _localesPath / localeName / (std::string(LOCALE_FILENAME) + JSON_FILE_EXT);
+        auto localePath = _localesPath / localeName / Fmt("{}{}", LOCALE_FILENAME, JSON_FILE_EXT);
         auto stream     = Stream(localePath, true, false);
         if (!stream.IsOpen())
         {

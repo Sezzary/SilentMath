@@ -16,8 +16,8 @@ namespace Silent::Renderer
         _name = name;
 
         // Read source files as strings.
-        auto vertCode = GetFileContents("Shaders/" + name + VERT_FILE_EXT);
-        auto fragCode = GetFileContents("Shaders/" + name + FRAG_FILE_EXT);
+        auto vertCode = GetFileContents(Fmt("Shaders/{}{}", name, VERT_FILE_EXT));
+        auto fragCode = GetFileContents(Fmt("Shaders/{}{}", name, FRAG_FILE_EXT));
 
         const char* vertSrc = vertCode.c_str();
         const char* fragSrc = fragCode.c_str();
