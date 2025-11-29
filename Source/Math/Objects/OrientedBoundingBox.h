@@ -10,6 +10,7 @@ namespace Silent::Math
     class      Matrix;
     enum class ContainmentType;
 
+    /** @brief 3D oriented bounding box (OBB). */
     class OrientedBoundingBox
     {
     public:

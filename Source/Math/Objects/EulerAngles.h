@@ -7,7 +7,10 @@ namespace Silent::Math
     class Quaternion;
     class Vector3;
 
-    // NOTE: Angle components in fixed-point Q1.15 format.
+    /** @brief Euler angles rotation representation.
+     *
+     * @note Angle components are in fixed-point Q1.15 format.
+     */
     class EulerAngles
     {
     private:

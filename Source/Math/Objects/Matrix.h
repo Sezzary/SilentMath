@@ -7,6 +7,7 @@ namespace Silent::Math
     class Quaternion;
     class Vector3;
 
+    /** @brief 4-component matrix. */
     class Matrix : public glm::mat4
     {
     public:

@@ -24,8 +24,8 @@ namespace Silent::Gui
 
         bool _isActive  = false;
 
-        Rectangle _bounds    = Rectangle();
-        ScaleMode _scaleMode = ScaleMode::Fit;
+        AxisAlignedBoundingRect _bounds    = AxisAlignedBoundingRect();
+        ScaleMode               _scaleMode = ScaleMode::Fit;
 
         std::optional<Callback> _onEnter   = std::nullopt;
         std::optional<Callback> _onInside  = std::nullopt;
@@ -42,7 +42,7 @@ namespace Silent::Gui
 
         /** @brief Constructs a `Button` with bounds and interaction callbacks.
          *
-         * @param bounds 2D rectangle representing interaction bounds.
+         * @param bounds Axis-aligned bounding rectangle representing interaction bounds.
          * @param scaleMode Renderer scale mode.
          * @param onEnter Callback to execute when entering.
          * @param onInside Callback to execute when inside.
@@ -52,7 +52,7 @@ namespace Silent::Gui
          * @param onHold Callback to execute when input is held.
          * @param onRelease Callback to execute when input is released.
          */
-        Button(const Rectangle& bounds, ScaleMode scaleMode,
+        Button(const AxisAlignedBoundingRect& bounds, ScaleMode scaleMode,
                const std::optional<Callback>& onEnter,
                const std::optional<Callback>& onInside,
                const std::optional<Callback>& onLeave,
@@ -84,28 +84,31 @@ namespace Silent::Gui
 
         /** @brief Checks if an input action in a given list is clicked.
          *
+         * @param actionIds IDs of input actions to checks
          * @return `true` if an action is clicked, `false` otherwise.
          */
-        bool CheckClickedAction(const std::span<const ActionId>& actionIds) const;
+        bool CheckClickedAction(const std::vector<ActionId>& actionIds) const;
 
         /** @brief Checks if an input action in a given list is held.
          *
+         * @param actionIds IDs of input actions to checks
          * @return `true` if an action is held, `false` otherwise.
          */
-        bool CheckHeldAction(const std::span<const ActionId>& actionIds) const;
+        bool CheckHeldAction(const std::vector<ActionId>& actionIds) const;
 
         /** @brief Checks if an input action in a given list is released.
          *
+         * @param actionIds IDs of input actions to checks
          * @return `true` if an action is released, `false` otherwise.
          */
-        bool CheckReleasedAction(const std::span<const ActionId>& actionIds) const;
+        bool CheckReleasedAction(const std::vector<ActionId>& actionIds) const;
 
         /** @brief Updates the button state using a screen space point from mouse or controller cursor navigation and executes callbacks.
          *
          * @param isActive `true` if the button is active, `false` otherwise.
          * @param selectActionIds Input action IDs used for selection.
          */
-        void Update(bool isActive, const std::span<const ActionId>& selectActionIds);
+        void Update(bool isActive, const std::vector<ActionId>& selectActionIds);
 
         /** @brief Executes an interaction callback.
          *

@@ -8,6 +8,7 @@ namespace Silent::Math
     class Matrix;
     class Quaternion;
 
+    /** @brief Axis angle rotation representation. */
     class AxisAngle
     {
     public:

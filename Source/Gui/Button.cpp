@@ -12,7 +12,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Gui
 {
-    Button::Button(const Rectangle& bounds, ScaleMode scaleMode,
+    Button::Button(const AxisAlignedBoundingRect& bounds, ScaleMode scaleMode,
                    const std::optional<Callback>& onEnter,
                    const std::optional<Callback>& onInside,
                    const std::optional<Callback>& onLeave,
@@ -21,9 +21,10 @@ namespace Silent::Gui
                    const std::optional<Callback>& onHold,
                    const std::optional<Callback>& onRelease)
     {
+        _isActive = false;
+
         _bounds    = bounds;
         _scaleMode = scaleMode;
-        _isActive  = false;
 
         _onEnter   = onEnter;
         _onInside  = onInside;
@@ -36,26 +37,26 @@ namespace Silent::Gui
 
     void Button::Update(bool isFocused)
     {
-        constexpr auto SELECT_ACTION_IDS = std::array<ActionId, 2>
+        static const auto SELECT_ACTION_IDS = std::vector<ActionId>
         {
             In::Enter,
             In::Action
         };
 
-        Update(isFocused, ToSpan(SELECT_ACTION_IDS));
+        Update(isFocused, SELECT_ACTION_IDS);
     }
 
     void Button::Update(const Vector2& point)
     {
-        constexpr auto SELECT_ACTION_IDS = std::array<ActionId, 1>
+        static const auto SELECT_ACTION_IDS = std::vector<ActionId>
         {
             In::MouseClickLeft
         };
 
-        Update(_bounds.Intersects(point), ToSpan(SELECT_ACTION_IDS));
+        Update(_bounds.Intersects(point), SELECT_ACTION_IDS);
     }
 
-    bool Button::CheckClickedAction(const std::span<const ActionId>& actionIds) const
+    bool Button::CheckClickedAction(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();
 
@@ -70,7 +71,7 @@ namespace Silent::Gui
         return false;
     }
 
-    bool Button::CheckHeldAction(const std::span<const ActionId>& actionIds) const
+    bool Button::CheckHeldAction(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();
 
@@ -85,7 +86,7 @@ namespace Silent::Gui
         return false;
     }
 
-    bool Button::CheckReleasedAction(const std::span<const ActionId>& actionIds) const
+    bool Button::CheckReleasedAction(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();
 
@@ -100,51 +101,54 @@ namespace Silent::Gui
         return false;
     }
 
-    void Button::Update(bool isActive, const std::span<const ActionId>& selectActionIds)
+    void Button::Update(bool isActive, const std::vector<ActionId>& selectActionIds)
     {
         if (isActive)
         {
-            // Execute On Enter callback if previous active state was outside.
+            // Execute `_onEnter` callback if previous active state was outside.
             if (!_isActive)
             {
                 ExecuteCallback(_onEnter);
-                _isActive = true;
             }
-            // Execute On Inside callback if previous active state was also inside.
+            // Execute `_onInside` callback if previous active state was also inside.
             else
             {
                 ExecuteCallback(_onInside);
             }
 
-            // Execute On Click callback if select action is clicked.
+            // Execute `_onClick` and `_onHold` callbacks if select action is clicked.
             if (CheckClickedAction(selectActionIds))
             {
                 ExecuteCallback(_onClick);
+                ExecuteCallback(_onHold);
             }
-            // Execute On Hold callback if select action is held.
+            // Execute `_onHold` callback if select action is held.
             else if (CheckHeldAction(selectActionIds))
             {
                 ExecuteCallback(_onHold);
             }
-            // Execute On Release callback if select action is released.
+            // Execute `_onRelease` callback if select action is released.
             else if (CheckReleasedAction(selectActionIds))
             {
                 ExecuteCallback(_onRelease);
             }
+
+            _isActive = true;
         }
         else
         {
-            // Execute On Leave callback if previous active state was inside.
+            // Execute `_onLeave` callback if previous active state was inside.
             if (_isActive)
             {
                 ExecuteCallback(_onLeave);
-                _isActive = false;
             }
-            // Execute On Outside callback if previous active state was also outside.
+            // Execute `_onOutside` callback if previous active state was also outside.
             else
             {
                 ExecuteCallback(_onOutside);
             }
+
+            _isActive = false;
         }
     }
 

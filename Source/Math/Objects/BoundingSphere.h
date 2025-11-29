@@ -8,6 +8,7 @@ namespace Silent::Math
     class      OrientedBoundingBox;
     enum class ContainmentType;
 
+    /** @brief 3D bounding sphere. */
     class BoundingSphere
     {
     public:

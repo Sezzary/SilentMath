@@ -4,6 +4,7 @@
 
 namespace Silent::Math
 {
+    /** @brief 2D bezier curve. */
     class BezierCurve2
     {
     private:

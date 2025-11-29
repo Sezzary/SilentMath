@@ -8,6 +8,7 @@ namespace Silent::Math
     class      OrientedBoundingBox;
     enum class ContainmentType;
 
+    /** @brief 3D axis-aligned bounding box (AABB). */
     class AxisAlignedBoundingBox
     {
     public:

@@ -4,8 +4,8 @@
 
 namespace Silent::Math
 {
-    /** @brief 2D rectangle. */
-    class Rectangle
+    /** @brief 2D axis-aligned bounding rectangle (AABR). */
+    class AxisAlignedBoundingRect
     {
     public:
         // =======
@@ -19,14 +19,14 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Rectangle`. */
-        Rectangle() = default;
+        /** @brief Constructs a default `AxisAlignedBoundingRect`. */
+        AxisAlignedBoundingRect() = default;
 
         // ==========
         // Inquirers
         // ==========
 
-        /** @brief Checks if a point intersects the rectangle.
+        /** @brief Checks if a point intersects the AABR.
          *
          * @param point Point to test against.
          * @return `true` if the intersection is valid, `false` otherwise.

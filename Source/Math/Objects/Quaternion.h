@@ -9,6 +9,7 @@ namespace Silent::Math
     class EulerAngles;
     class Matrix;
 
+    /** @brief Quaternion rotation representation. */
     class Quaternion : public glm::quat
     {
     public:

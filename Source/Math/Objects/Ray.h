@@ -8,6 +8,7 @@ namespace Silent::Math
     class BoundingSphere;
     class OrientedBoundingBox;
 
+    /** @brief 3D ray. */
     class Ray
     {
     public:
