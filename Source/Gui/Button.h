@@ -22,7 +22,7 @@ namespace Silent::Gui
         // Fields
         // =======
 
-        bool _isActive  = false;
+        bool _prevActiveState  = false;
 
         AxisAlignedBoundingRect _bounds    = AxisAlignedBoundingRect();
         ScaleMode               _scaleMode = ScaleMode::Fit;
@@ -105,10 +105,10 @@ namespace Silent::Gui
 
         /** @brief Updates the button state using a screen space point from mouse or controller cursor navigation and executes callbacks.
          *
-         * @param isActive `true` if the button is active, `false` otherwise.
+         * @param activeState `true` if the button is active, `false` otherwise.
          * @param selectActionIds Input action IDs used for selection.
          */
-        void Update(bool isActive, const std::vector<ActionId>& selectActionIds);
+        void Update(bool activeState, const std::vector<ActionId>& selectActionIds);
 
         /** @brief Executes an interaction callback.
          *

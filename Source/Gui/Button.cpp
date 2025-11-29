@@ -21,7 +21,7 @@ namespace Silent::Gui
                    const std::optional<Callback>& onHold,
                    const std::optional<Callback>& onRelease)
     {
-        _isActive = false;
+        _prevActiveState = false;
 
         _bounds    = bounds;
         _scaleMode = scaleMode;
@@ -101,16 +101,16 @@ namespace Silent::Gui
         return false;
     }
 
-    void Button::Update(bool isActive, const std::vector<ActionId>& selectActionIds)
+    void Button::Update(bool activeState, const std::vector<ActionId>& selectActionIds)
     {
-        if (isActive)
+        if (activeState)
         {
-            // Execute `_onEnter` callback if previous state was inactive (outside).
-            if (!_isActive)
+            // Execute `_onEnter` callback if previous state was inactive.
+            if (!_prevActiveState)
             {
                 ExecuteCallback(_onEnter);
             }
-            // Execute `_onInside` callback if previous state was active (also inside).
+            // Execute `_onInside` callback if previous state was also active.
             else
             {
                 ExecuteCallback(_onInside);
@@ -133,22 +133,22 @@ namespace Silent::Gui
                 ExecuteCallback(_onRelease);
             }
 
-            _isActive = true;
+            _prevActiveState = true;
         }
         else
         {
-            // Execute `_onLeave` callback if previous state was active (inside).
-            if (_isActive)
+            // Execute `_onLeave` callback if previous state was active.
+            if (_prevActiveState)
             {
                 ExecuteCallback(_onLeave);
             }
-            // Execute `_onOutside` callback if previous state was inactive (also outside).
+            // Execute `_onOutside` callback if previous state was also inactive.
             else
             {
                 ExecuteCallback(_onOutside);
             }
 
-            _isActive = false;
+            _prevActiveState = false;
         }
     }
 
