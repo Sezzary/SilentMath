@@ -58,6 +58,12 @@ namespace Silent::Renderer
         return res;
     }
 
+    float RendererBase::GetScreenAspectRatio() const
+    {
+        auto res = GetScreenResolution().ToVector2();
+        return res.x / res.y;
+    }
+
     void RendererBase::SignalResize()
     {
         _isResized = true;

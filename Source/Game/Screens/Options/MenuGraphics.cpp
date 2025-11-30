@@ -11,6 +11,10 @@
 
 namespace Silent::Game
 {
+    // @temp
+    int g_ExtraOptionsMenu_EntryCount;
+    int g_ExtraOptionsMenu_SelectedBloodColorEntry;
+
     void Options_MainOptionsMenu_BgmVolumeBarDraw()
     {
         Options_MainOptionsMenu_VolumeBarDraw(false, g_GameWork.config_0.optVolumeBgm_1F);
@@ -380,28 +384,32 @@ namespace Silent::Game
             switch (i)
             {
                 case 0:
+                {
                     int strPosX = (!g_GameWork.config_0.optVibrationEnabled_21 == 0) ? 214 : 216;
                     //Gfx_StringSetPosition(strPosX, 120);
 
                     int strIdx = g_GameWork.config_0.optVibrationEnabled_21 == 0;
                     //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
                     break;
-
+                }
                 case 1:
+                {
                     int strPosX = (!g_GameWork.config_0.optAutoLoad_25 == 0) ? 214 : 216;
                     //Gfx_StringSetPosition(strPosX, 136);
 
                     int strIdx = g_GameWork.config_0.optAutoLoad_25 == 0;
                     //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
                     break;
-
+                }
                 case 2:
+                {
                     int strPosX = (g_GameWork.config_0.optSoundType_1E != 0) ? 194 : 206;
                     //Gfx_StringSetPosition(strPosX, 152);
 
                     int strIdx = g_GameWork.config_0.optSoundType_1E + 2;
                     //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
                     break;
+                }
             }
         }
     }

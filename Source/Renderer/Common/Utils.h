@@ -4,6 +4,13 @@ namespace Silent::Renderer
 {
     enum class ScaleMode;
 
+    /** @brief Computes the screen aspect ratio correction scale according to a provided scale mode.
+     *
+     * @param scaleMode Renderer scale mode.
+     * @return Screen aspect correction.
+     */
+    Vector2 GetScreenAspectCorrection(ScaleMode scaleMode);
+
     /** @brief Computes a screen position in percent corrected according to the aspect ratio of the screen and a scale mode.
      *
      * @param pos Screen position in percent.

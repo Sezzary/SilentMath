@@ -5,7 +5,6 @@
 #include "Input/Input.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Utils.h"
-#include "Renderer/Renderer.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Input;
@@ -47,19 +46,16 @@ namespace Silent::Gui
                    const std::optional<Callback>& onHold,
                    const std::optional<Callback>& onRelease)
     {
-        _prevActiveState = false;
-
-        _scaleMode = scaleMode;
-        _onEnter   = onEnter;
-        _onInside  = onInside;
-        _onLeave   = onLeave;
-        _onOutside = onOutside;
-        _onClick   = onClick;
-        _onHold    = onHold;
-        _onRelease = onRelease;
-
-        Center  = ConvertRetroScreenCoordsToScreenPosition(center);
-        Extents = ConvertRetroScreenCoordsToScreenPosition(extents);
+        *this = Button(ConvertRetroScreenCoordsToScreenPosition(center),
+                       ConvertRetroScreenCoordsToScreenPosition(extents),
+                       scaleMode,
+                       onEnter,
+                       onInside,
+                       onLeave,
+                       onOutside,
+                       onClick,
+                       onHold,
+                       onRelease);
     }
 
     void Button::Update(bool isFocused)
@@ -80,36 +76,8 @@ namespace Silent::Gui
             In::MouseClickLeft
         };
 
-        const auto& renderer = g_App.GetRenderer();
-
-        // Compute screen aspect ratio.
-        auto  res    = renderer.GetScreenResolution().ToVector2();
-        float aspect = res.x / res.y;
-
-        // Compute extents aspect correction.
-        auto aspectCorrection = Vector2::One;
-        switch(_scaleMode)
-        {
-            case ScaleMode::Fit:
-            {
-                // @todo
-                aspectCorrection = Vector2();
-                break;
-            }
-            case ScaleMode::Fill:
-            {
-                // @todo
-                aspectCorrection = Vector2();
-                break;
-            }
-            default:
-            case ScaleMode::Stretch:
-            {
-                break;
-            }
-        }
-
-        auto bounds = AxisAlignedBoundingRect(Center, Extents * aspectCorrection);
+        auto correctedExtents = Extents * GetScreenAspectCorrection(_scaleMode);
+        auto bounds           = AxisAlignedBoundingRect(Center, correctedExtents);
         Update(bounds.Intersects(pos), SELECT_ACTION_IDS); 
     }
 
@@ -173,17 +141,15 @@ namespace Silent::Gui
                 ExecuteCallback(_onInside);
             }
 
-            // Execute `_onClick` callback if select action is clicked.
+            // Execute `_onClick`, `_onHold`, or `_onRelease` callback if select action is registered.
             if (CheckClickedAction(selectActionIds))
             {
                 ExecuteCallback(_onClick);
             }
-            // Execute `_onHold` callback if select action is held.
             else if (CheckHeldAction(selectActionIds))
             {
                 ExecuteCallback(_onHold);
             }
-            // Execute `_onRelease` callback if select action is released.
             else if (CheckReleasedAction(selectActionIds))
             {
                 ExecuteCallback(_onRelease);

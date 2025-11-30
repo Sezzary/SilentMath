@@ -8,6 +8,49 @@
 
 namespace Silent::Renderer
 {
+    Vector2 GetScreenAspectCorrection(ScaleMode scaleMode)
+    {
+        const auto& renderer = g_App.GetRenderer();
+        
+        float aspect = renderer.GetScreenAspectRatio();
+
+        auto aspectCorrection = Vector2::One;
+        switch(scaleMode)
+        {
+            case ScaleMode::Fit:
+            {
+                if (aspect >= 1.0f)
+                {
+                    aspectCorrection.x = 1.0f / aspect;
+                }
+                else
+                {
+                    aspectCorrection.y = 1.0f / (1.0f / aspect);
+                }
+                break;
+            }
+            case ScaleMode::Fill:
+            {
+                if (aspect >= 1.0f)
+                {
+                    aspectCorrection.y = 1.0f / (1.0f / aspect);
+                }
+                else
+                {
+                    aspectCorrection.x = 1.0f / aspect;
+                }
+                break;
+            }
+            default:
+            case ScaleMode::Stretch:
+            {
+                break;
+            }
+        }
+        
+        return aspectCorrection;
+    }
+
     Vector2 GetAspectCorrectScreenPosition(const Vector2 pos, ScaleMode scaleMode)
     {
         if (scaleMode == ScaleMode::Stretch)
@@ -20,35 +63,8 @@ namespace Silent::Renderer
         auto  screenRes       = renderer.GetScreenResolution().ToVector2();
         float screenResAspect = screenRes.x / screenRes.y;
         
-        // Compute aspect correction.
-        auto aspectCorrection = Vector2::One;
-        switch (scaleMode)
-        {
-            default:
-            case ScaleMode::Fit:
-            {
-                if (screenResAspect >= 1.0f)
-                {
-                    aspectCorrection.x = 1.0f / screenResAspect;
-                }
-                else
-                {
-                    aspectCorrection.y = 1.0f / (1.0f / screenResAspect);
-                }
-                break;
-            }
-            case ScaleMode::Fill:
-            {
-                break;
-            }
-            case ScaleMode::Stretch:
-            {
-                break;
-            }
-        }
-
         // @todo Needs another adjustment.
-        return pos * aspectCorrection;
+        return pos * GetScreenAspectCorrection(scaleMode);
     }
 
     Vector2 ConvertRetroScreenCoordsToScreenPosition(const Vector2i& pos)
