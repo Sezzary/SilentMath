@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Input/Input.h"
+#include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Renderer.h"
 #include "Utils/Utils.h"
@@ -35,6 +36,30 @@ namespace Silent::Gui
 
         Center  = center;
         Extents = extents;
+    }
+
+    Button::Button(const Vector2i& center, const Vector2i& extents, ScaleMode scaleMode,
+                   const std::optional<Callback>& onEnter,
+                   const std::optional<Callback>& onInside,
+                   const std::optional<Callback>& onLeave,
+                   const std::optional<Callback>& onOutside,
+                   const std::optional<Callback>& onClick,
+                   const std::optional<Callback>& onHold,
+                   const std::optional<Callback>& onRelease)
+    {
+        _prevActiveState = false;
+
+        _scaleMode = scaleMode;
+        _onEnter   = onEnter;
+        _onInside  = onInside;
+        _onLeave   = onLeave;
+        _onOutside = onOutside;
+        _onClick   = onClick;
+        _onHold    = onHold;
+        _onRelease = onRelease;
+
+        Center  = (center.ToVector2()  / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
+        Extents = (extents.ToVector2() / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
     }
 
     void Button::Update(bool isFocused)

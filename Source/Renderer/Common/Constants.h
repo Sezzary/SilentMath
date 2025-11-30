@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    constexpr auto SCREEN_SPACE_RES           = Vector2(100.0f);
+    constexpr auto SCREEN_SPACE_RES           = Vector2(100.0f, 100.0f);
     constexpr auto RETRO_SCREEN_SPACE_RES     = Vector2(320.0f, 240.0f);
     constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
 

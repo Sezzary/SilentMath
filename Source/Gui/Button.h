@@ -41,10 +41,10 @@ namespace Silent::Gui
         // Constructors
         // =============
 
-        /** @brief Constructs a `Button` from a center, extents, and callbacks.
+        /** @brief Constructs a `Button` from a center and extents in screen percent with callbacks.
          *
-         * @param center Button center.
-         * @param extents Button extents.
+         * @param center Center in screen percent.
+         * @param extents Extents in screen percent.
          * @param scaleMode Extents scale mode relative to screen aspect ratio.
          * @param onEnter Interaction callback to execute when entering.
          * @param onInside Interaction callback to execute when inside.
@@ -55,6 +55,28 @@ namespace Silent::Gui
          * @param onRelease Interaction callback to execute when input is released.
          */
         Button(const Vector2& center, const Vector2& extents, ScaleMode scaleMode,
+               const std::optional<Callback>& onEnter,
+               const std::optional<Callback>& onInside,
+               const std::optional<Callback>& onLeave,
+               const std::optional<Callback>& onOutside,
+               const std::optional<Callback>& onClick,
+               const std::optional<Callback>& onHold,
+               const std::optional<Callback>& onRelease);
+
+        /** @brief Constructs a `Button` from a center and extents in retro screen coordinates with callbacks.
+         *
+         * @param center Screen-space center in retro screen coordinates (320x240).
+         * @param extents Screen-space extents in retro screen coordinates (320x240).
+         * @param scaleMode Extents scale mode relative to screen aspect ratio.
+         * @param onEnter Interaction callback to execute when entering.
+         * @param onInside Interaction callback to execute when inside.
+         * @param onLeave Interaction callback to execute when leaving.
+         * @param onOutside Interaction callback to execute when outside.
+         * @param onClick Interaction callback to execute when input is clicked.
+         * @param onHold Interaction callback to execute when input is held.
+         * @param onRelease Interaction callback to execute when input is released.
+         */
+        Button(const Vector2i& center, const Vector2i& extents, ScaleMode scaleMode,
                const std::optional<Callback>& onEnter,
                const std::optional<Callback>& onInside,
                const std::optional<Callback>& onLeave,

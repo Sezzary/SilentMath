@@ -32,4 +32,8 @@ namespace Silent::Renderer
      * @return Retro screen coordinates normalized for negative values.
      */
     Vector2i NormalizeRetroScreenPosition(const Vector2i pos);
+    
+    Vector2 ConvertRetroScreenCoordsToScreenPosition(const Vector2i& pos);
+
+    Vector2i ConvertScreenPositionToRetroScreenCoords(const Vector2& pos);
 }
