@@ -3,8 +3,8 @@
 
 #include "Application.h"
 #include "Input/Input.h"
-#include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
+#include "Renderer/Common/Utils.h"
 #include "Renderer/Renderer.h"
 #include "Utils/Utils.h"
 
@@ -58,8 +58,8 @@ namespace Silent::Gui
         _onHold    = onHold;
         _onRelease = onRelease;
 
-        Center  = (center.ToVector2()  / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
-        Extents = (extents.ToVector2() / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
+        Center  = ConvertRetroScreenCoordsToScreenPosition(center);
+        Extents = ConvertRetroScreenCoordsToScreenPosition(extents);
     }
 
     void Button::Update(bool isFocused)

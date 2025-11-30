@@ -51,6 +51,16 @@ namespace Silent::Renderer
         return pos * aspectCorrection;
     }
 
+    Vector2 ConvertRetroScreenCoordsToScreenPosition(const Vector2i& pos)
+    {
+        return (pos.ToVector2() / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
+    }
+
+    Vector2i ConvertScreenPositionToRetroScreenCoords(const Vector2& pos)
+    {
+        return Vector2i((pos / SCREEN_SPACE_RES) * RETRO_SCREEN_SPACE_RES);
+    }
+
     Vector2 ConvertScreenPositionToNdc(const Vector2& pos)
     {
         return Vector2(((pos.x * 2) / SCREEN_SPACE_RES.x) - 1.0f,
@@ -67,15 +77,5 @@ namespace Silent::Renderer
     {
         return Vector2i((pos.x < 0) ? (((int)RETRO_SCREEN_SPACE_RES.x / 2) + pos.x) : pos.x,
                         (pos.y < 0) ? (((int)RETRO_SCREEN_SPACE_RES.y / 2) + pos.y) : pos.y);
-    }
-
-    Vector2 ConvertRetroScreenCoordsToScreenPosition(const Vector2i& pos)
-    {
-        return (pos.ToVector2()  / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
-    }
-
-    Vector2i ConvertScreenPositionToRetroScreenCoords(const Vector2& pos)
-    {
-        return Vector2i((pos / SCREEN_SPACE_RES) * RETRO_SCREEN_SPACE_RES);
     }
 }
