@@ -254,64 +254,65 @@ namespace Silent::Input
         { EventId::Shift,                  { "Shift" } },
         { EventId::Alt,                    { "Alt" } },
 
-        { EventId::MouseClickLeft,         { "Left Click" } },
+        { EventId::MouseClickLeft,         { "Left Click"   } },
         { EventId::MouseClickMiddle,       { "Middle Click" } },
-        { EventId::MouseClickRight,        { "Right Click" } },
-        { EventId::MouseScrollUp,          { "Scroll Up" } },
-        { EventId::MouseScrollDown,        { "Scroll Down" } },
-        { EventId::MouseScrollLeft,        { "Scroll Left" } },
+        { EventId::MouseClickRight,        { "Right Click"  } },
+        { EventId::MouseScrollUp,          { "Scroll Up"    } },
+        { EventId::MouseScrollDown,        { "Scroll Down"  } },
+        { EventId::MouseScrollLeft,        { "Scroll Left"  } },
         { EventId::MouseScrollRight,       { "Scroll Right" } },
-        { EventId::MouseUp,                { "Mouse Up" } },
-        { EventId::MouseDown,              { "Mouse Down" } },
-        { EventId::MouseLeft,              { "Mouse Left" } },
-        { EventId::MouseRight,             { "Mouse Right" } },
+        { EventId::MouseUp,                { "Mouse Up"     } },
+        { EventId::MouseDown,              { "Mouse Down"   } },
+        { EventId::MouseLeft,              { "Mouse Left"   } },
+        { EventId::MouseRight,             { "Mouse Right"  } },
 
-        { EventId::GamepadSouth,           { "South", "Gamepad A", "Gamepad B", "Cross" } },
-        { EventId::GamepadEast,            { "East", "Gamepad B", "Gamepad A", "Circle" } },
-        { EventId::GamepadWest,            { "West", "Gamepad X", "Gamepad Y", "Square" } },
-        { EventId::GamepadNorth,           { "North", "Gamepad Y", "Gamepad X", "Triangle" } },
-        { EventId::GamepadSelect,          { "Select", "Back", "Minus", "Select" } },
-        { EventId::GamepadStart,           { "Start", "Start", "Plus", "Start" } },
-        { EventId::GamepadStickLeft,       { "Left Stick In" } },
-        { EventId::GamepadStickRight,      { "Right Stick In" } },
-        { EventId::GamepadShoulderLeft,    { "Left Shoulder", "LB", "L", "L1" } },
-        { EventId::GamepadShoulderRight,   { "Right Shoulder", "RB", "R", "R1" } },
-        { EventId::GamepadDpadUp,          { "D-Pad Up" } },
-        { EventId::GamepadDpadDown,        { "D-Pad Down" } },
-        { EventId::GamepadDpadLeft,        { "D-Pad Left" } },
-        { EventId::GamepadDpadRight,       { "D-Pad Right" } },
-        { EventId::GamepadPaddleRight0,    { "Right Primary Paddle" } },
-        { EventId::GamepadPaddleLeft0,     { "Left Primary Paddle" } },
-        { EventId::GamepadPaddleRight1,    { "Right Secondary Paddle" } },
-        { EventId::GamepadPaddelLeft1,     { "Left Secondary Paddle" } },
-        { EventId::GamepadMisc0,           { "Gamepad Misc 1" } },
-        { EventId::GamepadMisc1,           { "Gamepad Misc 2" } },
-        { EventId::GamepadMisc2,           { "Gamepad Misc 3" } },
-        { EventId::GamepadMisc3,           { "Gamepad Misc 4" } },
-        { EventId::GamepadMisc4,           { "Gamepad Misc 5" } },
-        { EventId::GamepadStickLeftLeft,   { "Left Stick Left" } },
-        { EventId::GamepadStickLeftRight,  { "Left Stick Right" } },
-        { EventId::GamepadStickLeftUp,     { "Left Stick Up" } },
-        { EventId::GamepadStickLeftDown,   { "Left Stick Down" } },
-        { EventId::GamepadStickRightLeft,  { "Right Stick Left" } },
-        { EventId::GamepadStickRightRight, { "Right Stick Right" } },
-        { EventId::GamepadStickRightUp,    { "Right Stick Up" } },
-        { EventId::GamepadStickRightDown,  { "Right Stick Down" } },
-        { EventId::GamepadTriggerLeft,     { "Left Trigger", "LT", "ZL", "L2" } },
-        { EventId::GamepadTriggerRight,    { "Right Trigger", "RT", "ZR", "R2" } }
+        { EventId::GamepadSouth,           { "South",  "Gamepad A", "Gamepad B", "Cross"    } },
+        { EventId::GamepadEast,            { "East",   "Gamepad B", "Gamepad A", "Circle"   } },
+        { EventId::GamepadWest,            { "West",   "Gamepad X", "Gamepad Y", "Square"   } },
+        { EventId::GamepadNorth,           { "North",  "Gamepad Y", "Gamepad X", "Triangle" } },
+        { EventId::GamepadSelect,          { "Select", "Back",      "Minus",     "Select"   } },
+        { EventId::GamepadStart,           { "Start",  "Start",     "Plus",      "Start"     } },
+        { EventId::GamepadStickLeft,       { "Left Stick In"                                } },
+        { EventId::GamepadStickRight,      { "Right Stick In"                               } },
+        { EventId::GamepadShoulderLeft,    { "Left Shoulder",  "LB", "L", "L1"              } },
+        { EventId::GamepadShoulderRight,   { "Right Shoulder", "RB", "R", "R1"              } },
+        { EventId::GamepadDpadUp,          { "D-Pad Up"                                     } },
+        { EventId::GamepadDpadDown,        { "D-Pad Down"                                   } },
+        { EventId::GamepadDpadLeft,        { "D-Pad Left"                                   } },
+        { EventId::GamepadDpadRight,       { "D-Pad Right"                                  } },
+        { EventId::GamepadPaddleRight0,    { "Right Primary Paddle"                         } },
+        { EventId::GamepadPaddleLeft0,     { "Left Primary Paddle"                          } },
+        { EventId::GamepadPaddleRight1,    { "Right Secondary Paddle"                       } },
+        { EventId::GamepadPaddelLeft1,     { "Left Secondary Paddle"                        } },
+        { EventId::GamepadMisc0,           { "Gamepad Misc 1"                               } },
+        { EventId::GamepadMisc1,           { "Gamepad Misc 2"                               } },
+        { EventId::GamepadMisc2,           { "Gamepad Misc 3"                               } },
+        { EventId::GamepadMisc3,           { "Gamepad Misc 4"                               } },
+        { EventId::GamepadMisc4,           { "Gamepad Misc 5"                               } },
+        { EventId::GamepadStickLeftLeft,   { "Left Stick Left"                              } },
+        { EventId::GamepadStickLeftRight,  { "Left Stick Right"                             } },
+        { EventId::GamepadStickLeftUp,     { "Left Stick Up"                                } },
+        { EventId::GamepadStickLeftDown,   { "Left Stick Down"                              } },
+        { EventId::GamepadStickRightLeft,  { "Right Stick Left"                             } },
+        { EventId::GamepadStickRightRight, { "Right Stick Right"                            } },
+        { EventId::GamepadStickRightUp,    { "Right Stick Up"                               } },
+        { EventId::GamepadStickRightDown,  { "Right Stick Down"                             } },
+        { EventId::GamepadTriggerLeft,     { "Left Trigger",  "LT", "ZL", "L2"              } },
+        { EventId::GamepadTriggerRight,    { "Right Trigger", "RT", "ZR", "R2"              } }
     };
 
     const std::string& GetEventName(EventId eventId)
     {
         static const auto DEFAULT_NAME = std::string("None");
 
+        // Find vendor-appropriate event names.
         const auto* names = Find(EVENT_NAMES, eventId);
         if (names == nullptr)
         {
             return DEFAULT_NAME;
         }
 
-        // Pick vendor-appropriate name.
+        // Pick vendor-appropriate event name.
         if (names->size() == 1)
         {
             return names->front();

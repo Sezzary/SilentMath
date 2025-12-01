@@ -286,20 +286,20 @@ namespace Silent::Input
 
     const std::vector<EventId>& BindingManager::GetBoundEventIds(BindingProfileId profileId, ActionId actionId) const
     {
-        static const auto EMPTY = std::vector<EventId>{};
+        static const auto NO_EVENT_IDS = std::vector<EventId>{};
 
         // Find binding profile.
         const auto* profile = Find(_bindings, profileId);
         if (profile == nullptr)
         {
-            return EMPTY;
+            return NO_EVENT_IDS;
         }
 
         // Find action-event binding.
         const auto* eventIds = Find(*profile, actionId);
         if (eventIds == nullptr)
         {
-            return EMPTY;
+            return NO_EVENT_IDS;
         }
 
         // Return bound event IDs.

@@ -253,6 +253,111 @@ namespace Silent::Input
         return GENERIC_VENDOR_NAME;
     }
 
+    void InputManager::UpdateActions()
+    {
+        const auto& options  = g_App.GetOptions();
+        auto&       executor = g_App.GetExecutor();
+
+        // 1) Update user action states.
+        auto updateUserActions = [&]()
+        {
+            // Get user action binding profiles.
+            auto gamepadProfile = _bindings.GetBindingProfile(options->ActiveGamepadProfileId);
+            auto kmProfile      = _bindings.GetBindingProfile(options->ActiveKeyboardMouseProfileId);
+
+            for (auto actionGroupId : USER_ACTION_GROUP_IDS)
+            {
+                const auto& actionIds = ACTION_ID_GROUPS.at(actionGroupId);
+                for (auto actionId : actionIds)
+                {
+                    auto& action = _actions[(int)actionId];
+                    float state  = 0.0f;
+
+                    // Get max gamepad event state.
+                    if (IsGamepadConnected())
+                    {
+                        auto gamepadEventIds = gamepadProfile.at(actionId);
+                        for (const auto& eventId : gamepadEventIds)
+                        {
+                            state = std::max(state, _states.Events[(int)eventId]);
+                        }
+                    }
+
+                    // If no valid gamepad event state, get max keyboard/mouse event state.
+                    if (state == 0.0f)
+                    {
+                        auto kmEventIds = kmProfile.at(actionId);
+                        for (const auto& eventId : kmEventIds)
+                        {
+                            state = std::max(state, _states.Events[(int)eventId]);
+                        }
+                    }
+
+                    // Use max bound event state.
+                    action.Update(state);
+                }
+            }
+        };
+
+        // 2) Update raw action states.
+        auto updateRawActions = [&]()
+        {
+            for (auto profileId : RAW_EVENT_BINDING_PROFILE_IDS)
+            {
+                const auto& profile = _bindings.GetBindingProfile(profileId);
+                for (auto& [keyActionId, eventIds] : profile)
+                {
+                    auto& action = _actions[(int)keyActionId];
+                    float state  = 0.0f;
+
+                    for (auto eventId : eventIds)
+                    {
+                        state = std::max(state, _states.Events[(int)eventId]);
+                    }
+
+                    // Use max bound event state.
+                    action.Update(state);
+                }
+            }
+        };
+
+        // Update action states asynchronously.
+        auto tasks = ParallelTasks
+        {
+            TASK(updateUserActions()),
+            TASK(updateRawActions())
+        };
+        executor.AddTasks(tasks).wait();
+    }
+
+    void InputManager::UpdateRumble()
+    {
+        if (_rumble.Ticks == 0 || !IsGamepadConnected())
+        {
+            _rumble = {};
+            return;
+        }
+
+        // Compute intensity.
+        float alpha     = (float)_rumble.Ticks / (float)_rumble.DurationTicks;
+        float intensity = std::lerp(_rumble.IntensityFrom, _rumble.IntensityTo, alpha);
+
+        // Compute frequencies.
+        ushort freqLow  = (_rumble.Mode == RumbleMode::Low  || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
+        ushort freqHigh = (_rumble.Mode == RumbleMode::High || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
+
+        // Compute duration.
+        uint durationMs = (uint)round(TICK_TO_SEC(_rumble.DurationTicks) * 1000);
+
+        // Rumble gamepad.
+        if (!SDL_RumbleGamepad(_gamepad.Device, freqLow, freqHigh, durationMs))
+        {
+            Debug::Log(Fmt("Failed to rumble gamepad: {}", SDL_GetError()), Debug::LogLevel::Error);
+        }
+
+        _rumble.Ticks--;
+    }
+
     void InputManager::ReadKeyboard()
     {
         int eventIdx = (int)START_KEYBOARD_EVENT_ID;
@@ -322,6 +427,7 @@ namespace Silent::Input
             _states.HasMouseInput = true;
         }
 
+        // @todo Must investigate. Unclear how SDL3 mouse wheel values work.
         // Set mouse scroll event states.
         _states.Events[eventIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
         _states.Events[eventIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
@@ -467,111 +573,6 @@ namespace Silent::Input
             _states.Events[eventIdx] = state;
             eventIdx++;
         }
-    }
-
-    void InputManager::UpdateRumble()
-    {
-        if (_rumble.Ticks == 0 || !IsGamepadConnected())
-        {
-            _rumble = {};
-            return;
-        }
-
-        // Compute intensity.
-        float alpha     = (float)_rumble.Ticks / (float)_rumble.DurationTicks;
-        float intensity = std::lerp(_rumble.IntensityFrom, _rumble.IntensityTo, alpha);
-
-        // Compute frequencies.
-        ushort freqLow  = (_rumble.Mode == RumbleMode::Low  || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
-        ushort freqHigh = (_rumble.Mode == RumbleMode::High || _rumble.Mode == RumbleMode::LowAndHigh) ? (ushort)(intensity * USHRT_MAX) : 0;
-
-        // Compute duration.
-        uint durationMs = (uint)round(TICK_TO_SEC(_rumble.DurationTicks) * 1000);
-
-        // Rumble gamepad.
-        if (!SDL_RumbleGamepad(_gamepad.Device, freqLow, freqHigh, durationMs))
-        {
-            Debug::Log(Fmt("Failed to rumble gamepad: {}", SDL_GetError()), Debug::LogLevel::Error);
-        }
-
-        _rumble.Ticks--;
-    }
-
-    void InputManager::UpdateActions()
-    {
-        const auto& options  = g_App.GetOptions();
-        auto&       executor = g_App.GetExecutor();
-
-        // 1) Update user action states.
-        auto updateUserActions = [&]()
-        {
-            // Get user action binding profiles.
-            auto gamepadProfile = _bindings.GetBindingProfile(options->ActiveGamepadProfileId);
-            auto kmProfile      = _bindings.GetBindingProfile(options->ActiveKeyboardMouseProfileId);
-
-            for (auto actionGroupId : USER_ACTION_GROUP_IDS)
-            {
-                const auto& actionIds = ACTION_ID_GROUPS.at(actionGroupId);
-                for (auto actionId : actionIds)
-                {
-                    auto& action = _actions[(int)actionId];
-                    float state  = 0.0f;
-
-                    // Get max gamepad event state.
-                    if (IsGamepadConnected())
-                    {
-                        auto gamepadEventIds = gamepadProfile.at(actionId);
-                        for (const auto& eventId : gamepadEventIds)
-                        {
-                            state = std::max(state, _states.Events[(int)eventId]);
-                        }
-                    }
-
-                    // If no valid gamepad event state, get max keyboard/mouse event state.
-                    if (state == 0.0f)
-                    {
-                        auto kmEventIds = kmProfile.at(actionId);
-                        for (const auto& eventId : kmEventIds)
-                        {
-                            state = std::max(state, _states.Events[(int)eventId]);
-                        }
-                    }
-
-                    // Use max bound event state.
-                    action.Update(state);
-                }
-            }
-        };
-
-        // 2) Update raw action states.
-        auto updateRawActions = [&]()
-        {
-            for (auto profileId : RAW_EVENT_BINDING_PROFILE_IDS)
-            {
-                const auto& profile = _bindings.GetBindingProfile(profileId);
-                for (auto& [keyActionId, eventIds] : profile)
-                {
-                    auto& action = _actions[(int)keyActionId];
-                    float state  = 0.0f;
-
-                    for (auto eventId : eventIds)
-                    {
-                        state = std::max(state, _states.Events[(int)eventId]);
-                    }
-
-                    // Use max bound event state.
-                    action.Update(state);
-                }
-            }
-        };
-
-        // Update action states asynchronously.
-        auto tasks = ParallelTasks
-        {
-            TASK(updateUserActions()),
-            TASK(updateRawActions())
-        };
-        executor.AddTasks(tasks).wait();
     }
 
     void InputManager::HandleHotkeyActions()

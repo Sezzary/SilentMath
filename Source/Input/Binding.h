@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Input/Action.h"
-#include "Input/Event.h"
-
 namespace Silent::Input
 {
+    enum class ActionId;
+    enum class EventId;
+
     using BindingProfile = std::unordered_map<ActionId, std::vector<EventId>>; /** Key = action ID, value = event IDs. */
 
     extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;

@@ -85,7 +85,7 @@ namespace Silent::Input
         TextManager          _text       = TextManager();
         States               _states     = {};
         Rumble               _rumble     = {};
-        std::vector<Action>  _actions    = {};
+        std::vector<Action>  _actions    = {}; /** Index = `ActionId`. */
         std::vector<Vector2> _analogAxes = {}; /** Index = `AnalogAxisId`. */
 
     public:
@@ -125,10 +125,9 @@ namespace Silent::Input
          */
         GamepadVendorId GetGamepadVendorId() const;
 
+        // @todo
         const std::string& GetText(const std::string& textId) const;
-
         std::vector<std::string> GetTextLines(const std::string& bufferId, uint low = (uint)NO_VALUE, uint high = (uint)NO_VALUE) const;
-
         uint GetTextCursorPosition(const std::string& textId) const;
 
         // ========
@@ -190,6 +189,7 @@ namespace Silent::Input
          */
         void DisconnectGamepad(int deviceId);
 
+        // @todo
         void InsertText(const std::string& textId, uint lineWidthMax = 50, uint charCountMax = UINT_MAX);
         void UpdateText(const std::string& textId);
         void RemoveText(const std::string& textId);
@@ -206,6 +206,12 @@ namespace Silent::Input
          */
         std::string GetGamepadVendorName(GamepadVendorId vendorId) const;
 
+        /** @brief Updates input actions for the current tick. */
+        void UpdateActions();
+
+        /** @brief Updates rumble data for the current tick if a rumble is active. */
+        void UpdateRumble();
+
         /** @brief Reads keyboard data and captures keyboard event states for the current tick. Called before `ReadMouse`. */
         void ReadKeyboard();
 
@@ -214,12 +220,6 @@ namespace Silent::Input
 
         /** @brief Reads mouse data and captures gamepad event states for the current tick. */
         void ReadGamepad();
-
-        /** @brief Updates rumble data for the current tick if a rumble is active. */
-        void UpdateRumble();
-
-        /** @brief Updates input actions for the current tick. */
-        void UpdateActions();
 
         /** @brief Handles hardcoded hotkey actions for the current tick.
          *
