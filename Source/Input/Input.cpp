@@ -501,8 +501,8 @@ namespace Silent::Input
         eventIdx                          += SQUARE(Vector2::AXIS_COUNT);
 
         // Set cursor position state.
-        _deviceStates.PrevCursorPosition = _deviceStates.CursorPosition;
-        _deviceStates.CursorPosition     = pos;
+        auto prevCursorPos           = _deviceStates.CursorPosition;
+        _deviceStates.CursorPosition = pos;
 
         auto res = Vector2i::Zero;
         if (!SDL_GetWindowSize(&window, &res.x, &res.y))
@@ -511,7 +511,7 @@ namespace Silent::Input
         }
 
         float sensitivity = (options->MouseSensitivity * 0.1f) + 0.4f;
-        auto  moveAxis    = (((_deviceStates.CursorPosition - _deviceStates.PrevCursorPosition) / SCREEN_SPACE_RES) * (res.ToVector2() / SCREEN_SPACE_RES)) * sensitivity;
+        auto  moveAxis    = (((_deviceStates.CursorPosition - prevCursorPos) / SCREEN_SPACE_RES) * (res.ToVector2() / SCREEN_SPACE_RES)) * sensitivity;
         if (moveAxis != Vector2::Zero)
         {
             _deviceStates.HasMouseInput = true;
@@ -588,7 +588,7 @@ namespace Silent::Input
             }
         }
 
-        // Set gamepad stick axis event states and control axes.
+        // Set gamepad stick axis event states.
         for (int i = 0; i < stickAxes.size(); i++)
         {
             const auto& axis = stickAxes[i];

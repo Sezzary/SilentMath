@@ -62,9 +62,8 @@ namespace Silent::Input
     /** @brief Raw input device state data. */
     struct DeviceStates
     {
-        std::vector<float> Events             = {}; /** Index = `EventId`. */
-        Vector2            CursorPosition     = {};
-        Vector2            PrevCursorPosition = {};
+        std::vector<float> Events         = {}; /** Index = `EventId`. */
+        Vector2            CursorPosition = {};
 
         bool IsUsingGamepad     = false;
         bool HasKeyboardInput   = false;
