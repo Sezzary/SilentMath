@@ -19,12 +19,12 @@ namespace Silent::Input
     /** @brief Analog axis IDs for specialized gameplay and input device axes. */
     enum class AnalogAxisId
     {
-        /** Gameplay axes */
+        /** Gameplay */
 
         Move,
         Camera,
 
-        /** Input device axes */
+        /** Raw */
 
         Mouse,
         StickLeft,
@@ -208,6 +208,9 @@ namespace Silent::Input
 
         /** @brief Updates input actions for the current tick. */
         void UpdateActions();
+
+        /** @brief Updates analog axes for the current tick. */
+        void UpdateAnalogAxes();
 
         /** @brief Updates rumble data for the current tick if a rumble is active. */
         void UpdateRumble();

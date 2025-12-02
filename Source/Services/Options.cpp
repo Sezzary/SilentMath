@@ -81,8 +81,8 @@ namespace Silent::Services
     constexpr int  DEFAULT_SE_VOLUME                                = 16;
     constexpr auto DEFAULT_BLOOD_COLOR                              = BloodColorType::Normal;
     constexpr int  DEFAULT_BULLET_ADJUST                            = 1;
-    constexpr auto DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID = BindingProfileId::KeyboardMouseType1;
-    constexpr auto DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID        = BindingProfileId::GamepadType1;
+    constexpr auto DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID = BindingProfileId::DefaultKeyboardMouseType1;
+    constexpr auto DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID        = BindingProfileId::DefaultGamepadType1;
     constexpr bool DEFAULT_ENABLE_VIBRATION                         = true;
     constexpr int  DEFAULT_MOUSE_SENSITIVITY                        = 6;
     constexpr auto DEFAULT_WEAPON_CONTROL                           = WeaponControlType::Press;
@@ -129,7 +129,7 @@ namespace Silent::Services
         _options.KeyboardMouseBindings = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;
     }
 
-    void OptionsManager::SetDefaultInputGamepadCustomBindingOptions()
+    void OptionsManager::SetDefaultInputCustomGamepadBindingOptions()
     {
         _options.GamepadBindings = USER_GAMEPAD_BINDING_PROFILE_TYPE_1;
     }
@@ -207,7 +207,7 @@ namespace Silent::Services
         SetDefaultInputKmBindingsOptions();
         _options.ActiveKeyboardMouseProfileId = DEFAULT_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID;
 
-        SetDefaultInputGamepadCustomBindingOptions();
+        SetDefaultInputCustomGamepadBindingOptions();
         _options.ActiveGamepadProfileId = DEFAULT_ACTIVE_GAMEPAD_BINDING_PROFILE_ID;
 
         SetDefaultInputControlsOptions();

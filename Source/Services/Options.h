@@ -140,14 +140,14 @@ namespace Silent::Services
         // ================================
 
         BindingProfile   KeyboardMouseBindings        = {};
-        BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::KeyboardMouseType1;
+        BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::DefaultKeyboardMouseType1;
 
         // =========================
         // Input (gamepad bindings)
         // =========================
 
         BindingProfile   GamepadBindings        = {};
-        BindingProfileId ActiveGamepadProfileId = BindingProfileId::GamepadType1;
+        BindingProfileId ActiveGamepadProfileId = BindingProfileId::DefaultGamepadType1;
 
         // =================
         // Input (controls)
@@ -215,7 +215,7 @@ namespace Silent::Services
         void SetDefaultInputKmBindingsOptions();
 
         /** @brief Sets all gamepad input binding options to defaults. */
-        void SetDefaultInputGamepadCustomBindingOptions();
+        void SetDefaultInputCustomGamepadBindingOptions();
 
         /** @brief Sets all control input options to defaults. */
         void SetDefaultInputControlsOptions();
