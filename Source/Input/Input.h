@@ -16,7 +16,15 @@ namespace Silent::Input
         Sony
     };
 
-    /** @brief Analog axis IDs for specialized gameplay and input device axes. */
+    /** @brief Gamepad rumble modes. */
+    enum class RumbleMode
+    {
+        Low,
+        High,
+        LowAndHigh
+    };
+
+    /** @brief Analog axis IDs for specialized gameplay and raw device axes. */
     enum class AnalogAxisId
     {
         /** Gameplay */
@@ -31,27 +39,6 @@ namespace Silent::Input
         StickRight,
 
         Count
-    };
-
-    /** @brief Gamepad rumble modes. */
-    enum class RumbleMode
-    {
-        Low,
-        High,
-        LowAndHigh
-    };
-
-    /** @brief Raw input state data. */
-    struct States
-    {
-        std::vector<float> Events             = {}; /** Index = `EventId`, value = event state. */
-        Vector2            CursorPosition     = {};
-        Vector2            PrevCursorPosition = {};
-
-        bool IsUsingGamepad     = false;
-        bool HasKeyboardInput   = false;
-        bool HasMouseInput      = false;
-        bool HasGamepadInput    = false;
     };
 
     /** @brief Connected gamepad data. */
@@ -72,6 +59,19 @@ namespace Silent::Input
         uint       Ticks         = 0;
     };
 
+    /** @brief Raw input device state data. */
+    struct DeviceStates
+    {
+        std::vector<float> Events             = {}; /** Index = `EventId`. */
+        Vector2            CursorPosition     = {};
+        Vector2            PrevCursorPosition = {};
+
+        bool IsUsingGamepad     = false;
+        bool HasKeyboardInput   = false;
+        bool HasMouseInput      = false;
+        bool HasGamepadInput    = false;
+    };
+
     /** @brief Input manager. */
     class InputManager
     {
@@ -80,11 +80,12 @@ namespace Silent::Input
         // Fields
         // =======
 
-        Gamepad              _gamepad    = {};
+        Gamepad      _gamepad      = {};
+        Rumble       _rumble       = {};
+        DeviceStates _deviceStates = {};
+
         BindingManager       _bindings   = BindingManager();
         TextManager          _text       = TextManager();
-        States               _states     = {};
-        Rumble               _rumble     = {};
         std::vector<Action>  _actions    = {}; /** Index = `ActionId`. */
         std::vector<Vector2> _analogAxes = {}; /** Index = `AnalogAxisId`. */
 
@@ -101,7 +102,7 @@ namespace Silent::Input
 
         /** @brief Gets a reference to an input action.
          *
-         * @param actionId Input action ID.
+         * @param actionId ID of the input action to check.
          * @return Input action reference.
          */
         const Action& GetAction(ActionId actionId) const;
@@ -118,6 +119,13 @@ namespace Silent::Input
          * @return Current mouse cursor screeb position.
          */
         const Vector2& GetCursorPosition() const;
+
+        /** @brief Gets the analog state of a raw input event.
+         *
+         * @param eventId ID of the input event to check.
+         * @return Raw analog input event state.
+         */
+        float GetRawEventState(EventId eventId) const;
 
         /** @brief Gets a connected gamepad's vendor ID. If no gamepad is connected, it defaults to the generic vendor.
          *

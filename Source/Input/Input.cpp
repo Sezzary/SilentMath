@@ -31,7 +31,12 @@ namespace Silent::Input
 
     const Vector2& InputManager::GetCursorPosition() const
     {
-        return _states.CursorPosition;
+        return _deviceStates.CursorPosition;
+    }
+
+    float InputManager::GetRawEventState(EventId eventId) const
+    {
+        return _deviceStates.Events[(int)eventId];
     }
 
     GamepadVendorId InputManager::GetGamepadVendorId() const
@@ -70,7 +75,7 @@ namespace Silent::Input
 
     bool InputManager::IsUsingGamepad() const
     {
-        return _states.IsUsingGamepad;
+        return _deviceStates.IsUsingGamepad;
     }
 
     void InputManager::Initialize()
@@ -83,7 +88,7 @@ namespace Silent::Input
         }
 
         // Initialize event states and control axes.
-        _states.Events.resize((int)EventId::Count);
+        _deviceStates.Events.resize((int)EventId::Count);
         _analogAxes.resize((int)AnalogAxisId::Count);
 
         // Initialize actions.
@@ -117,13 +122,13 @@ namespace Silent::Input
         executor.AddTasks(tasks).wait();
 
         // Update "using gamepad" state.
-        if (_states.HasKeyboardInput || _states.HasMouseInput)
+        if (_deviceStates.HasKeyboardInput || _deviceStates.HasMouseInput)
         {
-            _states.IsUsingGamepad = false;
+            _deviceStates.IsUsingGamepad = false;
         }
-        else if (_states.HasGamepadInput)
+        else if (_deviceStates.HasGamepadInput)
         {
-            _states.IsUsingGamepad = true;
+            _deviceStates.IsUsingGamepad = true;
         }
 
         // Update components.
@@ -133,9 +138,9 @@ namespace Silent::Input
         HandleHotkeyActions();
 
         // Clear data.
-        _states.HasKeyboardInput = false;
-        _states.HasMouseInput    = false;
-        _states.HasGamepadInput  = false;
+        _deviceStates.HasKeyboardInput = false;
+        _deviceStates.HasMouseInput    = false;
+        _deviceStates.HasGamepadInput  = false;
     }
 
     void InputManager::ConnectGamepad(int deviceId)
@@ -280,7 +285,7 @@ namespace Silent::Input
                         const auto& gamepadEventIds = gamepadProfile.at(actionId);
                         for (const auto& eventId : gamepadEventIds)
                         {
-                            state = std::max(state, _states.Events[(int)eventId]);
+                            state = std::max(state, _deviceStates.Events[(int)eventId]);
                         }
                     }
 
@@ -290,7 +295,7 @@ namespace Silent::Input
                         const auto& kmEventIds = kmProfile.at(actionId);
                         for (const auto& eventId : kmEventIds)
                         {
-                            state = std::max(state, _states.Events[(int)eventId]);
+                            state = std::max(state, _deviceStates.Events[(int)eventId]);
                         }
                     }
 
@@ -313,7 +318,7 @@ namespace Silent::Input
 
                     for (auto eventId : eventIds)
                     {
-                        state = std::max(state, _states.Events[(int)eventId]);
+                        state = std::max(state, _deviceStates.Events[(int)eventId]);
                     }
 
                     // Use max bound event state.
@@ -376,10 +381,13 @@ namespace Silent::Input
         }
 
         // Set camera axis.
-        camAxis = mouseAxis;
         if (stickRightAxis != Vector2::Zero)
         {
             camAxis = stickRightAxis;
+        }
+        else
+        {
+            camAxis = mouseAxis;
         }
     }
 
@@ -427,10 +435,10 @@ namespace Silent::Input
                 bool state = keyboardState[scanCode];
                 if (state)
                 {
-                    _states.HasKeyboardInput = true;
+                    _deviceStates.HasKeyboardInput = true;
                 }
 
-                _states.Events[eventIdx] = state ? 1.0f : 0.0f;
+                _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
             }
 
             eventIdx++;
@@ -443,10 +451,10 @@ namespace Silent::Input
             bool state = modState & modCode;
             if (state)
             {
-                _states.HasKeyboardInput = true;
+                _deviceStates.HasKeyboardInput = true;
             }
 
-            _states.Events[eventIdx] = state ? 1.0f : 0.0f;
+            _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
             eventIdx++;
         }
     }
@@ -472,29 +480,29 @@ namespace Silent::Input
             bool state = butState & SDL_BUTTON_MASK(butCode);
             if (state)
             {
-                _states.HasMouseInput = true;
+                _deviceStates.HasMouseInput = true;
             }
 
-            _states.Events[eventIdx] = state ? 1.0f : 0.0f;
+            _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
             eventIdx++;
         }
 
         if (wheelAxis != Vector2::Zero)
         {
-            _states.HasMouseInput = true;
+            _deviceStates.HasMouseInput = true;
         }
 
         // @todo Must investigate. Unclear how SDL3 mouse wheel values work.
         // Set mouse scroll event states.
-        _states.Events[eventIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
-        _states.Events[eventIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
-        _states.Events[eventIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
-        _states.Events[eventIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
+        _deviceStates.Events[eventIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
+        _deviceStates.Events[eventIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
+        _deviceStates.Events[eventIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
+        _deviceStates.Events[eventIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
         eventIdx                    += SQUARE(Vector2::AXIS_COUNT);
 
         // Set cursor position state.
-        _states.PrevCursorPosition = _states.CursorPosition;
-        _states.CursorPosition     = pos;
+        _deviceStates.PrevCursorPosition = _deviceStates.CursorPosition;
+        _deviceStates.CursorPosition     = pos;
 
         auto res = Vector2i::Zero;
         if (!SDL_GetWindowSize(&window, &res.x, &res.y))
@@ -503,17 +511,17 @@ namespace Silent::Input
         }
 
         float sensitivity = (options->MouseSensitivity * 0.1f) + 0.4f;
-        auto  moveAxis    = (((_states.CursorPosition - _states.PrevCursorPosition) / SCREEN_SPACE_RES) * (res.ToVector2() / SCREEN_SPACE_RES)) * sensitivity;
+        auto  moveAxis    = (((_deviceStates.CursorPosition - _deviceStates.PrevCursorPosition) / SCREEN_SPACE_RES) * (res.ToVector2() / SCREEN_SPACE_RES)) * sensitivity;
         if (moveAxis != Vector2::Zero)
         {
-            _states.HasMouseInput = true;
+            _deviceStates.HasMouseInput = true;
         }
 
         // Set mouse movement event states.
-        _states.Events[eventIdx]     = (moveAxis.x < 0.0f) ? abs(moveAxis.x) : 0.0f;
-        _states.Events[eventIdx + 1] = (moveAxis.x > 0.0f) ? abs(moveAxis.x) : 0.0f;
-        _states.Events[eventIdx + 2] = (moveAxis.y < 0.0f) ? abs(moveAxis.y) : 0.0f;
-        _states.Events[eventIdx + 3] = (moveAxis.y > 0.0f) ? abs(moveAxis.y) : 0.0f;
+        _deviceStates.Events[eventIdx]     = (moveAxis.x < 0.0f) ? abs(moveAxis.x) : 0.0f;
+        _deviceStates.Events[eventIdx + 1] = (moveAxis.x > 0.0f) ? abs(moveAxis.x) : 0.0f;
+        _deviceStates.Events[eventIdx + 2] = (moveAxis.y < 0.0f) ? abs(moveAxis.y) : 0.0f;
+        _deviceStates.Events[eventIdx + 3] = (moveAxis.y > 0.0f) ? abs(moveAxis.y) : 0.0f;
         eventIdx                    += SQUARE(Vector2::AXIS_COUNT);
 
         // Set raw mouse axis.
@@ -537,10 +545,10 @@ namespace Silent::Input
             }
             if (state)
             {
-                _states.HasGamepadInput = true;
+                _deviceStates.HasGamepadInput = true;
             }
 
-            _states.Events[eventIdx] = state ? 1.0f : 0.0f;
+            _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
             eventIdx++;
         }
 
@@ -586,13 +594,13 @@ namespace Silent::Input
             const auto& axis = stickAxes[i];
             if (axis != Vector2::Zero)
             {
-                _states.HasGamepadInput = true;
+                _deviceStates.HasGamepadInput = true;
             }
 
-            _states.Events[eventIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
-            _states.Events[eventIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
-            _states.Events[eventIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
-            _states.Events[eventIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
+            _deviceStates.Events[eventIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
+            _deviceStates.Events[eventIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
+            _deviceStates.Events[eventIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
+            _deviceStates.Events[eventIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
             eventIdx                          += Vector2::AXIS_COUNT * 2;
         }
 
@@ -611,10 +619,10 @@ namespace Silent::Input
             }
             if (state > 0.0f)
             {
-                _states.HasGamepadInput = true;
+                _deviceStates.HasGamepadInput = true;
             }
 
-            _states.Events[eventIdx] = state;
+            _deviceStates.Events[eventIdx] = state;
             eventIdx++;
         }
 
@@ -627,31 +635,31 @@ namespace Silent::Input
     {
         // Capture screenshot.
         static bool dbScreenshot = true;
-        if ((_states.Events[(int)EventId::PrintScreen] || _states.Events[(int)EventId::F12]) && dbScreenshot)
+        if ((_deviceStates.Events[(int)EventId::PrintScreen] || _deviceStates.Events[(int)EventId::F12]) && dbScreenshot)
         {
             const auto& renderer = g_App.GetRenderer();
             renderer.SaveScreenshot();
         }
-        dbScreenshot = !(_states.Events[(int)EventId::PrintScreen] || _states.Events[(int)EventId::F12]);
+        dbScreenshot = !(_deviceStates.Events[(int)EventId::PrintScreen] || _deviceStates.Events[(int)EventId::F12]);
 
         // Toggle fullscreen.
         static bool dbFullscreen = true;
-        if (((_states.Events[(int)EventId::Alt] && _states.Events[(int)EventId::Return]) || _states.Events[(int)EventId::F11]) && dbFullscreen)
+        if (((_deviceStates.Events[(int)EventId::Alt] && _deviceStates.Events[(int)EventId::Return]) || _deviceStates.Events[(int)EventId::F11]) && dbFullscreen)
         {
             g_App.ToggleFullscreen();
         }
-        dbFullscreen = !((_states.Events[(int)EventId::Alt] && _states.Events[(int)EventId::Return]) || _states.Events[(int)EventId::F11]);
+        dbFullscreen = !((_deviceStates.Events[(int)EventId::Alt] && _deviceStates.Events[(int)EventId::Return]) || _deviceStates.Events[(int)EventId::F11]);
 
         auto& options = g_App.GetOptions();
         if (options->EnableDebugMode)
         {
             // Toggle debug GUI.
             static bool dbDebugGui = true;
-            if (_states.Events[(int)EventId::Grave] && dbDebugGui)
+            if (_deviceStates.Events[(int)EventId::Grave] && dbDebugGui)
             {
                 g_App.ToggleDebugGui();
             }
-            dbDebugGui = !_states.Events[(int)EventId::Grave];
+            dbDebugGui = !_deviceStates.Events[(int)EventId::Grave];
         }
     }
 }
