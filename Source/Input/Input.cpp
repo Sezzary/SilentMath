@@ -285,7 +285,7 @@ namespace Silent::Input
                         const auto& gamepadEventIds = gamepadProfile.at(actionId);
                         for (const auto& eventId : gamepadEventIds)
                         {
-                            state = std::max(state, _deviceStates.Events[(int)eventId]);
+                            state = std::max(state, GetRawEventState(eventId));
                         }
                     }
 
@@ -295,7 +295,7 @@ namespace Silent::Input
                         const auto& kmEventIds = kmProfile.at(actionId);
                         for (const auto& eventId : kmEventIds)
                         {
-                            state = std::max(state, _deviceStates.Events[(int)eventId]);
+                            state = std::max(state, GetRawEventState(eventId));
                         }
                     }
 
@@ -318,7 +318,7 @@ namespace Silent::Input
 
                     for (auto eventId : eventIds)
                     {
-                        state = std::max(state, _deviceStates.Events[(int)eventId]);
+                        state = std::max(state, GetRawEventState(eventId));
                     }
 
                     // Use max bound event state.
@@ -498,7 +498,7 @@ namespace Silent::Input
         _deviceStates.Events[eventIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
         _deviceStates.Events[eventIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
         _deviceStates.Events[eventIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
-        eventIdx                    += SQUARE(Vector2::AXIS_COUNT);
+        eventIdx                          += SQUARE(Vector2::AXIS_COUNT);
 
         // Set cursor position state.
         _deviceStates.PrevCursorPosition = _deviceStates.CursorPosition;
@@ -522,7 +522,7 @@ namespace Silent::Input
         _deviceStates.Events[eventIdx + 1] = (moveAxis.x > 0.0f) ? abs(moveAxis.x) : 0.0f;
         _deviceStates.Events[eventIdx + 2] = (moveAxis.y < 0.0f) ? abs(moveAxis.y) : 0.0f;
         _deviceStates.Events[eventIdx + 3] = (moveAxis.y > 0.0f) ? abs(moveAxis.y) : 0.0f;
-        eventIdx                    += SQUARE(Vector2::AXIS_COUNT);
+        eventIdx                          += SQUARE(Vector2::AXIS_COUNT);
 
         // Set raw mouse axis.
         _analogAxes[(int)AnalogAxisId::Mouse] = moveAxis;
@@ -601,7 +601,7 @@ namespace Silent::Input
             _deviceStates.Events[eventIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
             _deviceStates.Events[eventIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
             _deviceStates.Events[eventIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
-            eventIdx                          += Vector2::AXIS_COUNT * 2;
+            eventIdx                                += Vector2::AXIS_COUNT * 2;
         }
 
         // Set gamepad trigger axis event states.
@@ -635,31 +635,31 @@ namespace Silent::Input
     {
         // Capture screenshot.
         static bool dbScreenshot = true;
-        if ((_deviceStates.Events[(int)EventId::PrintScreen] || _deviceStates.Events[(int)EventId::F12]) && dbScreenshot)
+        if ((GetRawEventState(EventId::PrintScreen) || GetRawEventState(EventId::F12)) && dbScreenshot)
         {
             const auto& renderer = g_App.GetRenderer();
             renderer.SaveScreenshot();
         }
-        dbScreenshot = !(_deviceStates.Events[(int)EventId::PrintScreen] || _deviceStates.Events[(int)EventId::F12]);
+        dbScreenshot = !(GetRawEventState(EventId::PrintScreen) || GetRawEventState(EventId::F12));
 
         // Toggle fullscreen.
         static bool dbFullscreen = true;
-        if (((_deviceStates.Events[(int)EventId::Alt] && _deviceStates.Events[(int)EventId::Return]) || _deviceStates.Events[(int)EventId::F11]) && dbFullscreen)
+        if (((GetRawEventState(EventId::Alt) && GetRawEventState(EventId::Return)) || GetRawEventState(EventId::F11)) && dbFullscreen)
         {
             g_App.ToggleFullscreen();
         }
-        dbFullscreen = !((_deviceStates.Events[(int)EventId::Alt] && _deviceStates.Events[(int)EventId::Return]) || _deviceStates.Events[(int)EventId::F11]);
+        dbFullscreen = !((GetRawEventState(EventId::Alt) && GetRawEventState(EventId::Return)) || GetRawEventState(EventId::F11));
 
         auto& options = g_App.GetOptions();
         if (options->EnableDebugMode)
         {
             // Toggle debug GUI.
             static bool dbDebugGui = true;
-            if (_deviceStates.Events[(int)EventId::Grave] && dbDebugGui)
+            if (GetRawEventState(EventId::Grave) && dbDebugGui)
             {
                 g_App.ToggleDebugGui();
             }
-            dbDebugGui = !_deviceStates.Events[(int)EventId::Grave];
+            dbDebugGui = !GetRawEventState(EventId::Grave);
         }
     }
 }
