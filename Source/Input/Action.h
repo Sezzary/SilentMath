@@ -97,9 +97,9 @@ namespace Silent::Input
         Printable
     };
 
-    extern const std::unordered_map<ActionGroupId, std::vector<ActionId>> ACTION_ID_GROUPS;
-    extern const std::vector<ActionGroupId>                               USER_ACTION_GROUP_IDS;
-    extern const std::vector<ActionGroupId>                               RAW_ACTION_GROUP_IDS;
+    extern const std::vector<std::vector<ActionId>> ACTION_ID_GROUPS; /** Index = `ActionGroupId`. */
+    extern const std::vector<ActionGroupId>         USER_ACTION_GROUP_IDS;
+    extern const std::vector<ActionGroupId>         RAW_ACTION_GROUP_IDS;
 
     /** @brief Input action. */
     class Action

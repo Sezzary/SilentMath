@@ -3,21 +3,16 @@
 namespace Silent::Input
 {
     enum class ActionId;
+    enum class BindingProfileId;
     enum class EventId;
 
     using BindingProfile = std::unordered_map<ActionId, std::vector<EventId>>; /** Key = action ID, value = event IDs. */
 
-    extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;
-    extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2;
-    extern const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3;
-
-    extern const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_1;
-    extern const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_2;
-    extern const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_3;
-
-    extern const BindingProfile RAW_KEYBOARD_BINDING_PROFILE;
-    extern const BindingProfile RAW_MOUSE_BINDING_PROFILE;
-    extern const BindingProfile RAW_GAMEPAD_BINDING_PROFILE;
+    extern const BindingProfile                DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE;
+    extern const BindingProfile                DEFAULT_USER_GAMEPAD_BINDING_PROFILE;
+    extern const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> DEFAULT_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> RAW_BINDING_PROFILE_IDS;
 
     /** @brief Input binding profile IDs. */
     enum class BindingProfileId
@@ -44,10 +39,6 @@ namespace Silent::Input
 
         Count
     };
-
-    extern const std::vector<BindingProfileId> USER_KEYBOARD_MOUSE_BINDING_PROFILE_IDS;
-    extern const std::vector<BindingProfileId> USER_GAMEPAD_BINDING_PROFILE_IDS;
-    extern const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS;
 
     /** @brief Input binder. */
     class BindingManager
@@ -83,7 +74,7 @@ namespace Silent::Input
          * @param profileId Input binding profile ID to retrieve.
          * @return Input binding profile reference.
          */
-        const BindingProfile& GetBindingProfile(BindingProfileId profileId) const;
+        const BindingProfile& GetProfile(BindingProfileId profileId) const;
 
         // @todo Set bindings.
 
@@ -105,12 +96,5 @@ namespace Silent::Input
          * @param eventId Device event ID to bind to the input action.
          */
         void BindEventId(BindingProfileId profileId, ActionId actionId, EventId eventId);
-
-        /** @brief Unbinds all device event indings from an input action in an input binding profile.
-         *
-         * @param profileId Input binding profile ID to update.
-         * @param actionId Input action ID to clear all bindings for.
-         */
-        void UnbindEventIds(BindingProfileId profileId, ActionId actionId);
     };
 }

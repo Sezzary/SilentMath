@@ -11,273 +11,321 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
-    const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 =
+    static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 = BindingProfile
     {
-        { In::Up,        { EventId::W, EventId::Up } },
-        { In::Down,      { EventId::S, EventId::Down } },
-        { In::Left,      { EventId::A, EventId::Left } },
-        { In::Right,     { EventId::D, EventId::Right } },
+        { In::Up,        { EventId::W, EventId::Up                } },
+        { In::Down,      { EventId::S, EventId::Down              } },
+        { In::Left,      { EventId::A, EventId::Left              } },
+        { In::Right,     { EventId::D, EventId::Right             } },
 
-        { In::Enter,     { EventId::Return } },
-        { In::Cancel,    { EventId::Escape } },
-        { In::Skip,      { EventId::Escape } },
+        { In::Enter,     { EventId::Return                        } },
+        { In::Cancel,    { EventId::Escape                        } },
+        { In::Skip,      { EventId::Escape                        } },
 
         { In::Action,    { EventId::Ctrl, EventId::MouseClickLeft } },
-        { In::Aim,       { EventId::Space } },
-        { In::Light,     { EventId::L } },
-        { In::Run,       { EventId::J } },
-        { In::View,      { EventId::K } },
-        { In::StepLeft,  { EventId::Q } },
-        { In::StepRight, { EventId::E } },
-        { In::Pause,     { EventId::P } },
-        { In::Item,      { EventId::I } },
-        { In::Map,       { EventId::M } },
-        { In::Option,    { EventId::O } }
+        { In::Aim,       { EventId::Space                         } },
+        { In::Light,     { EventId::L                             } },
+        { In::Run,       { EventId::J                             } },
+        { In::View,      { EventId::K                             } },
+        { In::StepLeft,  { EventId::Q                             } },
+        { In::StepRight, { EventId::E                             } },
+        { In::Pause,     { EventId::P                             } },
+        { In::Item,      { EventId::I                             } },
+        { In::Map,       { EventId::M                             } },
+        { In::Option,    { EventId::O                             } }
     };
 
-    const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 =
+    static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 = BindingProfile
     {
-        { In::Up,        { EventId::W, EventId::Up } },
-        { In::Down,      { EventId::S, EventId::Down } },
-        { In::Left,      { EventId::A, EventId::Left } },
-        { In::Right,     { EventId::D, EventId::Right } },
+        { In::Up,        { EventId::W, EventId::Up             } },
+        { In::Down,      { EventId::S, EventId::Down           } },
+        { In::Left,      { EventId::A, EventId::Left           } },
+        { In::Right,     { EventId::D, EventId::Right          } },
 
-        { In::Enter,     { EventId::Return } },
-        { In::Cancel,    { EventId::Escape } },
-        { In::Skip,      { EventId::Escape } },
+        { In::Enter,     { EventId::Return                     } },
+        { In::Cancel,    { EventId::Escape                     } },
+        { In::Skip,      { EventId::Escape                     } },
 
         { In::Action,    { EventId::MouseClickLeft, EventId::F } },
-        { In::Aim,       { EventId::MouseClickRight } },
-        { In::Light,     { EventId::L } },
-        { In::Run,       { EventId::Shift } },
-        { In::View,      { EventId::Ctrl } },
-        { In::StepLeft,  { EventId::Q } },
-        { In::StepRight, { EventId::E } },
-        { In::Pause,     { EventId::P } },
-        { In::Item,      { EventId::I } },
-        { In::Map,       { EventId::M } },
-        { In::Option,    { EventId::O } }
+        { In::Aim,       { EventId::MouseClickRight            } },
+        { In::Light,     { EventId::L                          } },
+        { In::Run,       { EventId::Shift                      } },
+        { In::View,      { EventId::Ctrl                       } },
+        { In::StepLeft,  { EventId::Q                          } },
+        { In::StepRight, { EventId::E                          } },
+        { In::Pause,     { EventId::P                          } },
+        { In::Item,      { EventId::I                          } },
+        { In::Map,       { EventId::M                          } },
+        { In::Option,    { EventId::O                          } }
     };
 
-    const BindingProfile USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 =
+    static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 = BindingProfile
     {
-        { In::Up,        { EventId::Up } },
-        { In::Down,      { EventId::Down } },
-        { In::Left,      { EventId::Left } },
-        { In::Right,     { EventId::Right } },
+        { In::Up,        { EventId::Up                            } },
+        { In::Down,      { EventId::Down                          } },
+        { In::Left,      { EventId::Left                          } },
+        { In::Right,     { EventId::Right                         } },
 
-        { In::Enter,     { EventId::Return } },
-        { In::Cancel,    { EventId::Escape } },
-        { In::Skip,      { EventId::Escape } },
+        { In::Enter,     { EventId::Return                        } },
+        { In::Cancel,    { EventId::Escape                        } },
+        { In::Skip,      { EventId::Escape                        } },
 
         { In::Action,    { EventId::Ctrl, EventId::MouseClickLeft } },
-        { In::Aim,       { EventId::Space } },
-        { In::Light,     { EventId::L } },
-        { In::Run,       { EventId::Z } },
-        { In::View,      { EventId::Pad0 } },
-        { In::StepLeft,  { EventId::A } },
-        { In::StepRight, { EventId::D } },
-        { In::Pause,     { EventId::P } },
-        { In::Item,      { EventId::I } },
-        { In::Map,       { EventId::M } },
-        { In::Option,    { EventId::O } }
+        { In::Aim,       { EventId::Space                         } },
+        { In::Light,     { EventId::L                             } },
+        { In::Run,       { EventId::Z                             } },
+        { In::View,      { EventId::Pad0                          } },
+        { In::StepLeft,  { EventId::A                             } },
+        { In::StepRight, { EventId::D                             } },
+        { In::Pause,     { EventId::P                             } },
+        { In::Item,      { EventId::I                             } },
+        { In::Map,       { EventId::M                             } },
+        { In::Option,    { EventId::O                             } }
     };
 
-    const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_1 =
+    static const auto DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1 = BindingProfile
     {
-        { In::Up,        { EventId::GamepadDpadUp, EventId::GamepadStickLeftUp } },
-        { In::Down,      { EventId::GamepadDpadDown, EventId::GamepadStickLeftDown } },
-        { In::Left,      { EventId::GamepadDpadLeft, EventId::GamepadStickLeftLeft } },
-        { In::Right,     { EventId::GamepadDpadRight, EventId::GamepadStickLeftRight } },
+        { In::Up,        { EventId::GamepadDpadUp,    EventId::GamepadStickLeftUp            } },
+        { In::Down,      { EventId::GamepadDpadDown,  EventId::GamepadStickLeftDown          } },
+        { In::Left,      { EventId::GamepadDpadLeft,  EventId::GamepadStickLeftLeft          } },
+        { In::Right,     { EventId::GamepadDpadRight, EventId::GamepadStickLeftRight         } },
 
-        { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart } },
+        { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart                      } },
         { In::Cancel,    { EventId::GamepadNorth, EventId::GamepadEast, EventId::GamepadWest } },
-        { In::Skip,      { EventId::GamepadStart } },
+        { In::Skip,      { EventId::GamepadStart                                             } },
 
-        { In::Action,    { EventId::GamepadSouth } },
-        { In::Aim,       { EventId::GamepadTriggerRight } },
-        { In::Light,     { EventId::GamepadEast } },
-        { In::Run,       { EventId::GamepadWest } },
-        { In::View,      { EventId::GamepadTriggerLeft } },
-        { In::StepLeft,  { EventId::GamepadShoulderLeft } },
-        { In::StepRight, { EventId::GamepadShoulderRight} },
-        { In::Pause,     { EventId::GamepadStart } },
-        { In::Item,      { EventId::GamepadSelect } },
-        { In::Map,       { EventId::GamepadNorth } },
-        { In::Option,    { EventId::O } }
+        { In::Action,    { EventId::GamepadSouth                                             } },
+        { In::Aim,       { EventId::GamepadTriggerRight                                      } },
+        { In::Light,     { EventId::GamepadEast                                              } },
+        { In::Run,       { EventId::GamepadWest                                              } },
+        { In::View,      { EventId::GamepadTriggerLeft                                       } },
+        { In::StepLeft,  { EventId::GamepadShoulderLeft                                      } },
+        { In::StepRight, { EventId::GamepadShoulderRight                                     } },
+        { In::Pause,     { EventId::GamepadStart                                             } },
+        { In::Item,      { EventId::GamepadSelect                                            } },
+        { In::Map,       { EventId::GamepadNorth                                             } },
+        { In::Option,    { EventId::O                                                        } }
     };
 
-    const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_2 =
+    static const auto DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_2 = BindingProfile
     {
-        { In::Up,        { EventId::GamepadDpadUp, EventId::GamepadStickLeftUp } },
-        { In::Down,      { EventId::GamepadDpadDown, EventId::GamepadStickLeftDown } },
-        { In::Left,      { EventId::GamepadDpadLeft, EventId::GamepadStickLeftLeft } },
-        { In::Right,     { EventId::GamepadDpadRight, EventId::GamepadStickLeftRight } },
+        { In::Up,        { EventId::GamepadDpadUp,    EventId::GamepadStickLeftUp            } },
+        { In::Down,      { EventId::GamepadDpadDown,  EventId::GamepadStickLeftDown          } },
+        { In::Left,      { EventId::GamepadDpadLeft,  EventId::GamepadStickLeftLeft          } },
+        { In::Right,     { EventId::GamepadDpadRight, EventId::GamepadStickLeftRight         } },
         
-        { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart } },
+        { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart                      } },
         { In::Cancel,    { EventId::GamepadNorth, EventId::GamepadWest, EventId::GamepadEast } },
-        { In::Skip,      { EventId::GamepadStart } },
+        { In::Skip,      { EventId::GamepadStart                                             } },
 
-        { In::Action,    { EventId::GamepadSouth } },
-        { In::Aim,       { EventId::GamepadShoulderRight } },
-        { In::Light,     { EventId::GamepadEast } },
-        { In::Run,       { EventId::GamepadWest } },
-        { In::View,      { EventId::GamepadShoulderLeft } },
-        { In::StepLeft,  { EventId::GamepadTriggerLeft } },
-        { In::StepRight, { EventId::GamepadTriggerRight} },
-        { In::Pause,     { EventId::GamepadStart } },
-        { In::Item,      { EventId::GamepadSelect } },
-        { In::Map,       { EventId::GamepadNorth } },
-        { In::Option,    { EventId::O } }
+        { In::Action,    { EventId::GamepadSouth                                             } },
+        { In::Aim,       { EventId::GamepadShoulderRight                                     } },
+        { In::Light,     { EventId::GamepadEast                                              } },
+        { In::Run,       { EventId::GamepadWest                                              } },
+        { In::View,      { EventId::GamepadShoulderLeft                                      } },
+        { In::StepLeft,  { EventId::GamepadTriggerLeft                                       } },
+        { In::StepRight, { EventId::GamepadTriggerRight                                      } },
+        { In::Pause,     { EventId::GamepadStart                                             } },
+        { In::Item,      { EventId::GamepadSelect                                            } },
+        { In::Map,       { EventId::GamepadNorth                                             } },
+        { In::Option,    { EventId::O                                                        } }
     };
 
-    const BindingProfile USER_GAMEPAD_BINDING_PROFILE_TYPE_3 =
+    static const auto DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_3 = BindingProfile
     {
-        { In::Up,        { EventId::GamepadDpadUp, EventId::GamepadStickLeftUp } },
-        { In::Down,      { EventId::GamepadDpadDown, EventId::GamepadStickLeftDown } },
-        { In::Left,      { EventId::GamepadDpadLeft, EventId::GamepadStickLeftLeft } },
-        { In::Right,     { EventId::GamepadDpadRight, EventId::GamepadStickLeftRight } },
+        { In::Up,        { EventId::GamepadDpadUp,    EventId::GamepadStickLeftUp            } },
+        { In::Down,      { EventId::GamepadDpadDown,  EventId::GamepadStickLeftDown          } },
+        { In::Left,      { EventId::GamepadDpadLeft,  EventId::GamepadStickLeftLeft          } },
+        { In::Right,     { EventId::GamepadDpadRight, EventId::GamepadStickLeftRight         } },
         
-        { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart } },
+        { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart                      } },
         { In::Cancel,    { EventId::GamepadNorth, EventId::GamepadWest, EventId::GamepadEast } },
-        { In::Skip,      { EventId::GamepadStart } },
+        { In::Skip,      { EventId::GamepadStart                                             } },
 
-        { In::Action,    { EventId::GamepadSouth } },
-        { In::Aim,       { EventId::GamepadTriggerRight } },
-        { In::Light,     { EventId::GamepadEast } },
-        { In::Run,       { EventId::GamepadWest } },
-        { In::View,      { EventId::GamepadTriggerLeft } },
-        { In::StepLeft,  { EventId::GamepadShoulderLeft } },
-        { In::StepRight, { EventId::GamepadShoulderRight} },
-        { In::Pause,     { EventId::GamepadStart } },
-        { In::Item,      { EventId::GamepadNorth } },
-        { In::Map,       { EventId::GamepadSelect } },
-        { In::Option,    { EventId::O } }
+        { In::Action,    { EventId::GamepadSouth                                             } },
+        { In::Aim,       { EventId::GamepadTriggerRight                                      } },
+        { In::Light,     { EventId::GamepadEast                                              } },
+        { In::Run,       { EventId::GamepadWest                                              } },
+        { In::View,      { EventId::GamepadTriggerLeft                                       } },
+        { In::StepLeft,  { EventId::GamepadShoulderLeft                                      } },
+        { In::StepRight, { EventId::GamepadShoulderRight                                     } },
+        { In::Pause,     { EventId::GamepadStart                                             } },
+        { In::Item,      { EventId::GamepadNorth                                             } },
+        { In::Map,       { EventId::GamepadSelect                                            } },
+        { In::Option,    { EventId::O                                                        } }
     };
 
-    const BindingProfile RAW_KEYBOARD_BINDING_PROFILE
+    static const auto RAW_KEYBOARD_BINDING_PROFILE = BindingProfile
     {
-        { In::A,            { EventId::A } },
-        { In::B,            { EventId::B } },
-        { In::C,            { EventId::C } },
-        { In::D,            { EventId::D } },
-        { In::E,            { EventId::E } },
-        { In::F,            { EventId::F } },
-        { In::G,            { EventId::G } },
-        { In::H,            { EventId::H } },
-        { In::I,            { EventId::I } },
-        { In::J,            { EventId::J } },
-        { In::K,            { EventId::K } },
-        { In::L,            { EventId::L } },
-        { In::M,            { EventId::M } },
-        { In::N,            { EventId::N } },
-        { In::O,            { EventId::O } },
-        { In::P,            { EventId::P } },
-        { In::Q,            { EventId::Q } },
-        { In::R,            { EventId::R } },
-        { In::S,            { EventId::S } },
-        { In::T,            { EventId::T } },
-        { In::U,            { EventId::U } },
-        { In::V,            { EventId::V } },
-        { In::W,            { EventId::W } },
-        { In::X,            { EventId::X } },
-        { In::Y,            { EventId::Y } },
-        { In::Z,            { EventId::Z } },
-        { In::Num1,         { EventId::Row1, EventId::Pad1 } },
-        { In::Num2,         { EventId::Row2, EventId::Pad2 } },
-        { In::Num3,         { EventId::Row3, EventId::Pad3 } },
-        { In::Num4,         { EventId::Row4, EventId::Pad4 } },
-        { In::Num5,         { EventId::Row5, EventId::Pad5 } },
-        { In::Num6,         { EventId::Row6, EventId::Pad6 } },
-        { In::Num7,         { EventId::Row7, EventId::Pad7 } },
-        { In::Num8,         { EventId::Row8, EventId::Pad8 } },
-        { In::Num9,         { EventId::Row9, EventId::Pad9 } },
-        { In::Num0,         { EventId::Row0, EventId::Pad0 } },
-        { In::Return,       { EventId::Return, EventId::PadEnter } },
-        { In::Escape,       { EventId::Escape } },
-        { In::Backspace,    { EventId::Backspace } },
-        { In::Tab,          { EventId::Tab } },
-        { In::Space,        { EventId::Space } },
-        { In::Home,         { EventId::Home } },
-        { In::End,          { EventId::End } },
-        { In::Delete,       { EventId::Delete } },
-        { In::Minus,        { EventId::Minus, EventId::PadMinus } },
-        { In::Equals,       { EventId::Equals, EventId::PadPlus } },
-        { In::BracketLeft,  { EventId::BracketLeft } },
-        { In::BracketRight, { EventId::BracketRight } },
-        { In::Backslash,    { EventId::Backslash } },
-        { In::Semicolon,    { EventId::Semicolon } },
-        { In::Apostrophe,   { EventId::Apostrophe } },
-        { In::Comma,        { EventId::Comma } },
+        { In::A,            { EventId::A                          } },
+        { In::B,            { EventId::B                          } },
+        { In::C,            { EventId::C                          } },
+        { In::D,            { EventId::D                          } },
+        { In::E,            { EventId::E                          } },
+        { In::F,            { EventId::F                          } },
+        { In::G,            { EventId::G                          } },
+        { In::H,            { EventId::H                          } },
+        { In::I,            { EventId::I                          } },
+        { In::J,            { EventId::J                          } },
+        { In::K,            { EventId::K                          } },
+        { In::L,            { EventId::L                          } },
+        { In::M,            { EventId::M                          } },
+        { In::N,            { EventId::N                          } },
+        { In::O,            { EventId::O                          } },
+        { In::P,            { EventId::P                          } },
+        { In::Q,            { EventId::Q                          } },
+        { In::R,            { EventId::R                          } },
+        { In::S,            { EventId::S                          } },
+        { In::T,            { EventId::T                          } },
+        { In::U,            { EventId::U                          } },
+        { In::V,            { EventId::V                          } },
+        { In::W,            { EventId::W                          } },
+        { In::X,            { EventId::X                          } },
+        { In::Y,            { EventId::Y                          } },
+        { In::Z,            { EventId::Z                          } },
+        { In::Num1,         { EventId::Row1,   EventId::Pad1      } },
+        { In::Num2,         { EventId::Row2,   EventId::Pad2      } },
+        { In::Num3,         { EventId::Row3,   EventId::Pad3      } },
+        { In::Num4,         { EventId::Row4,   EventId::Pad4      } },
+        { In::Num5,         { EventId::Row5,   EventId::Pad5      } },
+        { In::Num6,         { EventId::Row6,   EventId::Pad6      } },
+        { In::Num7,         { EventId::Row7,   EventId::Pad7      } },
+        { In::Num8,         { EventId::Row8,   EventId::Pad8      } },
+        { In::Num9,         { EventId::Row9,   EventId::Pad9      } },
+        { In::Num0,         { EventId::Row0,   EventId::Pad0      } },
+        { In::Return,       { EventId::Return, EventId::PadEnter  } },
+        { In::Escape,       { EventId::Escape                     } },
+        { In::Backspace,    { EventId::Backspace                  } },
+        { In::Tab,          { EventId::Tab                        } },
+        { In::Space,        { EventId::Space                      } },
+        { In::Home,         { EventId::Home                       } },
+        { In::End,          { EventId::End                        } },
+        { In::Delete,       { EventId::Delete                     } },
+        { In::Minus,        { EventId::Minus,  EventId::PadMinus  } },
+        { In::Equals,       { EventId::Equals, EventId::PadPlus   } },
+        { In::BracketLeft,  { EventId::BracketLeft                } },
+        { In::BracketRight, { EventId::BracketRight               } },
+        { In::Backslash,    { EventId::Backslash                  } },
+        { In::Semicolon,    { EventId::Semicolon                  } },
+        { In::Apostrophe,   { EventId::Apostrophe                 } },
+        { In::Comma,        { EventId::Comma                      } },
         { In::Period,       { EventId::Period, EventId::PadPeriod } },
-        { In::Slash,        { EventId::Slash, EventId::PadDivide } },
-        { In::ArrowUp,      { EventId::Up } },
-        { In::ArrowDown,    { EventId::Down } },
-        { In::ArrowLeft,    { EventId::Left } },
-        { In::ArrowRight,   { EventId::Right } },
-        { In::Ctrl,         { EventId::Ctrl } },
-        { In::Shift,        { EventId::Shift } },
-        { In::Alt,          { EventId::Alt } }
+        { In::Slash,        { EventId::Slash,  EventId::PadDivide } },
+        { In::ArrowUp,      { EventId::Up                         } },
+        { In::ArrowDown,    { EventId::Down                       } },
+        { In::ArrowLeft,    { EventId::Left                       } },
+        { In::ArrowRight,   { EventId::Right                      } },
+        { In::Ctrl,         { EventId::Ctrl                       } },
+        { In::Shift,        { EventId::Shift                      } },
+        { In::Alt,          { EventId::Alt                        } }
     };
 
-    const BindingProfile RAW_MOUSE_BINDING_PROFILE
+    static const auto RAW_MOUSE_BINDING_PROFILE = BindingProfile
     {
-        { In::MouseClickLeft,   { EventId::MouseClickLeft } },
+        { In::MouseClickLeft,   { EventId::MouseClickLeft   } },
         { In::MouseClickMiddle, { EventId::MouseClickMiddle } },
-        { In::MouseClickRight,  { EventId::MouseClickRight } },
-        { In::MouseScrollUp,    { EventId::MouseScrollUp } },
-        { In::MouseScrollDown,  { EventId::MouseScrollDown } },
-        { In::MouseUp,          { EventId::MouseUp } },
-        { In::MouseDown,        { EventId::MouseDown } },
-        { In::MouseLeft,        { EventId::MouseLeft } },
-        { In::MouseRight,       { EventId::MouseRight } }
+        { In::MouseClickRight,  { EventId::MouseClickRight  } },
+        { In::MouseScrollUp,    { EventId::MouseScrollUp    } },
+        { In::MouseScrollDown,  { EventId::MouseScrollDown  } },
+        { In::MouseUp,          { EventId::MouseUp          } },
+        { In::MouseDown,        { EventId::MouseDown        } },
+        { In::MouseLeft,        { EventId::MouseLeft        } },
+        { In::MouseRight,       { EventId::MouseRight       } }
     };
 
-    const BindingProfile RAW_GAMEPAD_BINDING_PROFILE
+    static const auto RAW_GAMEPAD_BINDING_PROFILE = BindingProfile
     {
-        { In::GamepadNorth,           { EventId::GamepadNorth } },
-        { In::GamepadSouth,           { EventId::GamepadSouth } },
-        { In::GamepadEast,            { EventId::GamepadEast } },
-        { In::GamepadWest,            { EventId::GamepadWest } },
-        { In::GamepadStart,           { EventId::GamepadStart } },
-        { In::GamepadSelect,          { EventId::GamepadSelect } },
-        { In::GamepadShoulderLeft,    { EventId::GamepadShoulderLeft } },
-        { In::GamepadShoulderRight,   { EventId::GamepadShoulderRight } },
-        { In::GamepadTriggerLeft,     { EventId::GamepadTriggerLeft } },
-        { In::GamepadTriggerRight,    { EventId::GamepadTriggerRight } },
-        { In::GamepadDpadUp,          { EventId::GamepadDpadUp } },
-        { In::GamepadDpadDown,        { EventId::GamepadDpadDown } },
-        { In::GamepadDpadLeft,        { EventId::GamepadDpadLeft } },
-        { In::GamepadDpadRight,       { EventId::GamepadDpadRight } },
-        { In::GamepadStickLeftIn,     { EventId::GamepadStickLeft } },
-        { In::GamepadStickLeftUp,     { EventId::GamepadStickLeftUp } },
-        { In::GamepadStickLeftDown,   { EventId::GamepadStickLeftDown } },
-        { In::GamepadStickLeftLeft,   { EventId::GamepadStickLeftLeft } },
-        { In::GamepadStickLeftRight,  { EventId::GamepadStickLeftRight } },
-        { In::GamepadStickRightIn,    { EventId::GamepadStickRight } },
-        { In::GamepadStickRightUp,    { EventId::GamepadStickRightUp } },
-        { In::GamepadStickRightDown,  { EventId::GamepadStickRightDown } },
-        { In::GamepadStickRightLeft,  { EventId::GamepadStickRightLeft } },
+        { In::GamepadNorth,           { EventId::GamepadNorth           } },
+        { In::GamepadSouth,           { EventId::GamepadSouth           } },
+        { In::GamepadEast,            { EventId::GamepadEast            } },
+        { In::GamepadWest,            { EventId::GamepadWest            } },
+        { In::GamepadStart,           { EventId::GamepadStart           } },
+        { In::GamepadSelect,          { EventId::GamepadSelect          } },
+        { In::GamepadShoulderLeft,    { EventId::GamepadShoulderLeft    } },
+        { In::GamepadShoulderRight,   { EventId::GamepadShoulderRight   } },
+        { In::GamepadTriggerLeft,     { EventId::GamepadTriggerLeft     } },
+        { In::GamepadTriggerRight,    { EventId::GamepadTriggerRight    } },
+        { In::GamepadDpadUp,          { EventId::GamepadDpadUp          } },
+        { In::GamepadDpadDown,        { EventId::GamepadDpadDown        } },
+        { In::GamepadDpadLeft,        { EventId::GamepadDpadLeft        } },
+        { In::GamepadDpadRight,       { EventId::GamepadDpadRight       } },
+        { In::GamepadStickLeftIn,     { EventId::GamepadStickLeft       } },
+        { In::GamepadStickLeftUp,     { EventId::GamepadStickLeftUp     } },
+        { In::GamepadStickLeftDown,   { EventId::GamepadStickLeftDown   } },
+        { In::GamepadStickLeftLeft,   { EventId::GamepadStickLeftLeft   } },
+        { In::GamepadStickLeftRight,  { EventId::GamepadStickLeftRight  } },
+        { In::GamepadStickRightIn,    { EventId::GamepadStickRight      } },
+        { In::GamepadStickRightUp,    { EventId::GamepadStickRightUp    } },
+        { In::GamepadStickRightDown,  { EventId::GamepadStickRightDown  } },
+        { In::GamepadStickRightLeft,  { EventId::GamepadStickRightLeft  } },
         { In::GamepadStickRightRight, { EventId::GamepadStickRightRight } }
     };
 
-    const std::vector<BindingProfileId> USER_KEYBOARD_MOUSE_BINDING_PROFILE_IDS
+    const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE =
     {
-        BindingProfileId::CustomKeyboardMouse,
-        BindingProfileId::DefaultKeyboardMouseType1,
-        BindingProfileId::DefaultKeyboardMouseType2,
-        BindingProfileId::DefaultKeyboardMouseType3
+        { In::Up,        { EventId::Up     } },
+        { In::Down,      { EventId::Down   } },
+        { In::Left,      { EventId::Left   } },
+        { In::Right,     { EventId::Right  } },
+
+        { In::Enter,     { EventId::Return } },
+        { In::Cancel,    { EventId::Escape } },
+        { In::Skip,      { EventId::Escape } },
+
+        { In::Action,    { EventId::Ctrl   } },
+        { In::Aim,       { EventId::Space  } },
+        { In::Light,     { EventId::L      } },
+        { In::Run,       { EventId::J      } },
+        { In::View,      { EventId::K      } },
+        { In::StepLeft,  { EventId::Q      } },
+        { In::StepRight, { EventId::E      } },
+        { In::Pause,     { EventId::P      } },
+        { In::Item,      { EventId::I      } },
+        { In::Map,       { EventId::M      } },
+        { In::Option,    { EventId::O      } }
     };
 
-    const std::vector<BindingProfileId> USER_GAMEPAD_BINDING_PROFILE_IDS
+    const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE =
     {
-        BindingProfileId::CustomGamepad,
+        { In::Up,        { EventId::GamepadDpadUp        } },
+        { In::Down,      { EventId::GamepadDpadDown      } },
+        { In::Left,      { EventId::GamepadDpadLeft      } },
+        { In::Right,     { EventId::GamepadDpadRight     } },
+
+        { In::Enter,     { EventId::GamepadSouth         } },
+        { In::Cancel,    { EventId::GamepadNorth         } },
+        { In::Skip,      { EventId::GamepadStart         } },
+
+        { In::Action,    { EventId::GamepadSouth         } },
+        { In::Aim,       { EventId::GamepadTriggerRight  } },
+        { In::Light,     { EventId::GamepadEast          } },
+        { In::Run,       { EventId::GamepadWest          } },
+        { In::View,      { EventId::GamepadTriggerLeft   } },
+        { In::StepLeft,  { EventId::GamepadShoulderLeft  } },
+        { In::StepRight, { EventId::GamepadShoulderRight } },
+        { In::Pause,     { EventId::GamepadStart         } },
+        { In::Item,      { EventId::GamepadSelect        } },
+        { In::Map,       { EventId::GamepadNorth         } },
+        { In::Option,    { EventId::O                    } }
+    };
+
+    const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS =
+    {
+        BindingProfileId::CustomKeyboardMouse,
+        BindingProfileId::CustomGamepad
+    };
+
+    const std::vector<BindingProfileId> DEFAULT_BINDING_PROFILE_IDS =
+    {
+        BindingProfileId::DefaultKeyboardMouseType1,
+        BindingProfileId::DefaultKeyboardMouseType2,
+        BindingProfileId::DefaultKeyboardMouseType3,
         BindingProfileId::DefaultGamepadType1,
         BindingProfileId::DefaultGamepadType2,
         BindingProfileId::DefaultGamepadType3
     };
 
-    const std::vector<BindingProfileId> RAW_EVENT_BINDING_PROFILE_IDS
+    const std::vector<BindingProfileId> RAW_BINDING_PROFILE_IDS =
     {
         BindingProfileId::RawKeyboard,
         BindingProfileId::RawMouse,
@@ -306,7 +354,7 @@ namespace Silent::Input
         return *eventIds;
     }
 
-    const BindingProfile& BindingManager::GetBindingProfile(BindingProfileId profileId) const
+    const BindingProfile& BindingManager::GetProfile(BindingProfileId profileId) const
     {
         // Find binding profile.
         auto* profile = Find(_bindings, profileId);
@@ -320,34 +368,80 @@ namespace Silent::Input
     {
         _bindings =
         {
-            { BindingProfileId::CustomKeyboardMouse,       customKeyboardMouseBinds                   },
-            { BindingProfileId::CustomGamepad,             customGamepadBinds                         },
-            { BindingProfileId::DefaultKeyboardMouseType1, USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
-            { BindingProfileId::DefaultKeyboardMouseType2, USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 },
-            { BindingProfileId::DefaultKeyboardMouseType3, USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 },
-            { BindingProfileId::DefaultGamepadType1,       USER_GAMEPAD_BINDING_PROFILE_TYPE_1        },
-            { BindingProfileId::DefaultGamepadType2,       USER_GAMEPAD_BINDING_PROFILE_TYPE_2        },
-            { BindingProfileId::DefaultGamepadType3,       USER_GAMEPAD_BINDING_PROFILE_TYPE_3        },
-            { BindingProfileId::RawKeyboard,               RAW_KEYBOARD_BINDING_PROFILE               },
-            { BindingProfileId::RawMouse,                  RAW_MOUSE_BINDING_PROFILE                  },
-            { BindingProfileId::RawGamepad,                RAW_GAMEPAD_BINDING_PROFILE                }
+            { BindingProfileId::CustomKeyboardMouse,       customKeyboardMouseBinds                      },
+            { BindingProfileId::CustomGamepad,             customGamepadBinds                            },
+            { BindingProfileId::DefaultKeyboardMouseType1, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
+            { BindingProfileId::DefaultKeyboardMouseType2, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 },
+            { BindingProfileId::DefaultKeyboardMouseType3, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 },
+            { BindingProfileId::DefaultGamepadType1,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1        },
+            { BindingProfileId::DefaultGamepadType2,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_2        },
+            { BindingProfileId::DefaultGamepadType3,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_3        },
+            { BindingProfileId::RawKeyboard,               RAW_KEYBOARD_BINDING_PROFILE                  },
+            { BindingProfileId::RawMouse,                  RAW_MOUSE_BINDING_PROFILE                     },
+            { BindingProfileId::RawGamepad,                RAW_GAMEPAD_BINDING_PROFILE                   }
         };
     }
 
     void BindingManager::BindEventId(BindingProfileId profileId, ActionId actionId, EventId eventId)
     {
-        if (Contains(_bindings[profileId][actionId], eventId))
+        static const auto CUSTOM_PROFILE_IDS = std::vector<BindingProfileId>
         {
-            Debug::Log(Fmt("Attempted to bind existing event {} to action {} in binding profile {}.", (int)eventId, (int)actionId, (int)profileId),
+            BindingProfileId::CustomKeyboardMouse,
+            BindingProfileId::CustomGamepad
+        };
+
+        // Check if binding profile is customizable.
+        if (!Contains(CUSTOM_PROFILE_IDS, profileId))
+        {
+            Debug::Log(Fmt("Attempted to bind event {} to action {} in non-customizable binding profile {}.", (int)eventId, (int)actionId, (int)profileId),
                        Debug::LogLevel::Warning);
             return;
         }
 
-        _bindings[profileId][actionId].push_back(eventId);
-    }
+        // Get binding profile.
+        auto* profile = Find(_bindings, profileId);
+        Debug::Assert(profile != nullptr, Fmt("Attempted to get missing binding profile {}.", (int)profileId));
 
-    void BindingManager::UnbindEventIds(BindingProfileId profileId, ActionId actionId)
-    {
-        _bindings[profileId][actionId].clear();
+        // Swap action-event binding if event is already bound to another action in same group.
+        bool hasSwap = false;
+        for (auto actionGroupId : USER_ACTION_GROUP_IDS)
+        {
+            // Check if action ID exists in current group.
+            const auto& actionIds = ACTION_ID_GROUPS[(int)actionGroupId];
+            if (!Contains(actionIds, actionId))
+            {
+                continue;
+            }
+
+            // Run through action IDs in group.
+            for (auto otherActionId : actionIds)
+            {
+                // Skip action to bind.
+                if (actionId == otherActionId)
+                {
+                    continue;
+                }
+
+                // Swap if event is already bound.
+                auto& eventIds = profile->at(otherActionId);
+                if (Contains(eventIds, eventId))
+                {
+                    std::swap(eventIds, (*profile)[actionId]);
+                    hasSwap = true;
+                    break;
+                }
+            }
+
+            if (hasSwap)
+            {
+                break;
+            }
+        }
+
+        // Add action-event binding.
+        if (!hasSwap)
+        {
+            (*profile)[actionId] = { eventId };
+        }
     }
 }

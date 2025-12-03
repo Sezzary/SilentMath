@@ -126,12 +126,12 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultInputKmBindingsOptions()
     {
-        _options.KeyboardMouseBindings = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1;
+        _options.KeyboardMouseBindings = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE;
     }
 
     void OptionsManager::SetDefaultInputCustomGamepadBindingOptions()
     {
-        _options.GamepadBindings = USER_GAMEPAD_BINDING_PROFILE_TYPE_1;
+        _options.GamepadBindings = DEFAULT_USER_GAMEPAD_BINDING_PROFILE;
     }
 
     void OptionsManager::SetDefaultInputControlsOptions()
@@ -266,7 +266,7 @@ namespace Silent::Services
         const auto& gamepadBindsJson = inputJson[KEY_GAMEPAD_BINDINGS];
         for (auto actionGroupId : USER_ACTION_GROUP_IDS)
         {
-            const auto& actionIds = ACTION_ID_GROUPS.at(actionGroupId);
+            const auto& actionIds = ACTION_ID_GROUPS[(int)actionGroupId];
             for (auto actionId : actionIds)
             {
                 auto actionStr = std::to_string((int)actionId);
@@ -283,11 +283,11 @@ namespace Silent::Services
                         events.push_back((EventId)eventJson.get<int>());
                     }
 
-                    options.KeyboardMouseBindings[actionId] = !events.empty() ? std::move(events) : USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.KeyboardMouseBindings[actionId] = !events.empty() ? std::move(events) : DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE.at(actionId);
                 }
                 else
                 {
-                    options.KeyboardMouseBindings[actionId] = USER_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.KeyboardMouseBindings[actionId] = DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE.at(actionId);
                 }
 
                 // Gamepad.
@@ -302,11 +302,11 @@ namespace Silent::Services
                         events.push_back((EventId)eventJson.get<int>());
                     }
 
-                    options.GamepadBindings[actionId] = !events.empty() ? std::move(events) : USER_GAMEPAD_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.GamepadBindings[actionId] = !events.empty() ? std::move(events) : DEFAULT_USER_GAMEPAD_BINDING_PROFILE.at(actionId);
                 }
                 else
                 {
-                    options.GamepadBindings[actionId] = USER_GAMEPAD_BINDING_PROFILE_TYPE_1.at(actionId);
+                    options.GamepadBindings[actionId] = DEFAULT_USER_GAMEPAD_BINDING_PROFILE.at(actionId);
                 }
             }
         }

@@ -323,7 +323,7 @@ namespace Silent::Input
         const auto& shiftAction = input.GetAction(In::Shift);
 
         bool hasNewChar = false;
-        for (auto actionId : ACTION_ID_GROUPS.at(ActionGroupId::Printable))
+        for (auto actionId : ACTION_ID_GROUPS[(int)ActionGroupId::Printable])
         {
             const auto& action = input.GetAction(actionId);
             const auto& chars  = PRINTABLE_ACTION_CHARS.at(actionId);

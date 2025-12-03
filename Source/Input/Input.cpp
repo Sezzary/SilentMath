@@ -267,13 +267,13 @@ namespace Silent::Input
         // 1) Update user action states.
         auto updateUserActions = [&]()
         {
-            // Get user action binding profiles.
-            const auto& kmProfile      = _bindings.GetBindingProfile(options->ActiveKeyboardMouseProfileId);
-            const auto& gamepadProfile = _bindings.GetBindingProfile(options->ActiveGamepadProfileId);
+            // Get active action binding profiles.
+            const auto& kmProfile      = _bindings.GetProfile(options->ActiveKeyboardMouseProfileId);
+            const auto& gamepadProfile = _bindings.GetProfile(options->ActiveGamepadProfileId);
 
             for (auto actionGroupId : USER_ACTION_GROUP_IDS)
             {
-                const auto& actionIds = ACTION_ID_GROUPS.at(actionGroupId);
+                const auto& actionIds = ACTION_ID_GROUPS[(int)actionGroupId];
                 for (auto actionId : actionIds)
                 {
                     auto& action = _actions[(int)actionId];
@@ -308,9 +308,9 @@ namespace Silent::Input
         // 2) Update raw action states.
         auto updateRawActions = [&]()
         {
-            for (auto profileId : RAW_EVENT_BINDING_PROFILE_IDS)
+            for (auto profileId : RAW_BINDING_PROFILE_IDS)
             {
-                const auto& profile = _bindings.GetBindingProfile(profileId);
+                const auto& profile = _bindings.GetProfile(profileId);
                 for (auto& [keyActionId, eventIds] : profile)
                 {
                     auto& action = _actions[(int)keyActionId];
