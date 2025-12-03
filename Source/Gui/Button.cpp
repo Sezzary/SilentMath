@@ -46,8 +46,8 @@ namespace Silent::Gui
                    const std::optional<Callback>& onHold,
                    const std::optional<Callback>& onRelease)
     {
-        *this = Button(ConvertRetroScreenCoordsToScreenPosition(center),
-                       ConvertRetroScreenCoordsToScreenPosition(extents),
+        *this = Button(ConvertRetroScreenPixelsToPercent(center),
+                       ConvertRetroScreenPixelsToPercent(extents),
                        scaleMode,
                        onEnter,
                        onInside,

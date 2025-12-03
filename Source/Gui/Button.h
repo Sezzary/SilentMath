@@ -65,8 +65,8 @@ namespace Silent::Gui
 
         /** @brief Constructs a `Button` from a center and extents in retro screen coordinates with callbacks.
          *
-         * @param center Screen-space center in retro screen coordinates (320x240).
-         * @param extents Screen-space extents in retro screen coordinates (320x240).
+         * @param center Screen space center in retro screen coordinates (320x240).
+         * @param extents Screen space extents in retro screen coordinates (320x240).
          * @param scaleMode Extents scale mode relative to screen aspect ratio.
          * @param onEnter Interaction callback to execute when entering.
          * @param onInside Interaction callback to execute when inside.

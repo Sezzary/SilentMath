@@ -27,9 +27,9 @@ namespace Silent::Renderer
                 Vertex2d{ to   + offset, colorTo   },
                 Vertex2d{ from + offset, colorFrom }
             },
-            .Depth  = depth,
-            .ScaleM = scaleMode,
-            .BlendM = blendMode
+            .Depth   = depth,
+            .ScaleMd = scaleMode,
+            .BlendMd = blendMode
         };
     }
 
@@ -55,9 +55,9 @@ namespace Silent::Renderer
                 Vertex2d{ vert1, color1 },
                 Vertex2d{ vert2, color2 }
             },
-            .Depth  = depth,
-            .ScaleM = scaleMode,
-            .BlendM = blendMode
+            .Depth   = depth,
+            .ScaleMd = scaleMode,
+            .BlendMd = blendMode
         };
     }
 
@@ -85,9 +85,9 @@ namespace Silent::Renderer
                 Vertex2d{ vert2, color2 },
                 Vertex2d{ vert3, color3 }
             },
-            .Depth  = depth,
-            .ScaleM = scaleMode,
-            .BlendM = blendMode
+            .Depth   = depth,
+            .ScaleMd = scaleMode,
+            .BlendMd = blendMode
         };
     }
 

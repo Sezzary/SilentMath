@@ -67,23 +67,23 @@ namespace Silent::Renderer
         return pos * GetScreenAspectCorrection(scaleMode);
     }
 
-    Vector2 ConvertRetroScreenCoordsToScreenPosition(const Vector2i& pos)
+    Vector2 ConvertRetroScreenPixelsToPercent(const Vector2i& pos)
     {
         return (pos.ToVector2() / RETRO_SCREEN_SPACE_RES) * SCREEN_SPACE_RES;
     }
 
-    Vector2i ConvertScreenPositionToRetroScreenCoords(const Vector2& pos)
+    Vector2i ConvertScreenPercentToRetroPixels(const Vector2& pos)
     {
         return Vector2i((pos / SCREEN_SPACE_RES) * RETRO_SCREEN_SPACE_RES);
     }
 
-    Vector2 ConvertScreenPositionToNdc(const Vector2& pos)
+    Vector2 ConvertScreenPercentToNdc(const Vector2& pos)
     {
         return Vector2(((pos.x * 2) / SCREEN_SPACE_RES.x) - 1.0f,
                        1.0f - ((pos.y * 2) / SCREEN_SPACE_RES.y));
     }
 
-    Vector2 ConvertNdcToScreenPosition(const Vector2& ndc)
+    Vector2 ConvertNdcToScreenPercent(const Vector2& ndc)
     {
         return Vector2(((ndc.x + 1.0f) * SCREEN_SPACE_RES.x) / 2,
                        ((1.0f - ndc.y) * SCREEN_SPACE_RES.y) / 2);

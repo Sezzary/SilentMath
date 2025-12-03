@@ -13,10 +13,10 @@ namespace Silent::Renderer
     {
         std::vector<Vertex2d> Vertices = {};
         uint                  Depth    = 0;
-        ScaleMode             ScaleM   = ScaleMode::Fit;
-        BlendMode             BlendM   = BlendMode::Alpha;
+        ScaleMode             ScaleMd  = ScaleMode::Fit;
+        BlendMode             BlendMd  = BlendMode::Alpha;
 
-        /** @brief Constructs a 2D line primitive with a width at the retro resolution pixel scale (320x240) using screen positions in percent.
+        /** @brief Constructs a 2D line primitive with a width of 1 retro pixel (320x240 resolution) using screen positions in percent.
          *
          * @param from Start position in screen percent.
          * @param to End position in screen percent.
@@ -29,10 +29,10 @@ namespace Silent::Renderer
                                       const Color& colorFrom, const Color& colorTo,
                                       uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D line primitive with a width at the retro resolution pixel scale (320x240) using retro screen coordinates.
+        /** @brief Constructs a 2D line primitive with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
          *
-         * @param from Start position in retro screen coordinates (320x240).
-         * @param to End position in retro screen coordinates (320x240).
+         * @param from Start position in retro pixels (320x240 resolution).
+         * @param to End position in retro pixels (320x240 resolution).
          * @param colorFrom Start color.
          * @param colorTo End color.
          * @param depth Render priority.
@@ -57,11 +57,11 @@ namespace Silent::Renderer
                                           const Color& color0, const Color& color1, const Color& color2,
                                           uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D triangle primitive using retro screen coordinates.
+        /** @brief Constructs a 2D triangle primitive using retro pixels.
          *
-         * @param vert0 First vertex position in retro screen coordinates (320x240).
-         * @param vert1 Second vertex position in retro screen coordinates (320x240).
-         * @param vert2 Third vertex position in retro screen coordinates (320x240).
+         * @param vert0 First vertex position in retro pixels (320x240 resolution).
+         * @param vert1 Second vertex position in retro pixels (320x240 resolution).
+         * @param vert2 Third vertex position in retro pixels (320x240 resolution).
          * @param color0 First vertex color.
          * @param color1 Second vertex color.
          * @param color2 Third vertex color.
@@ -89,14 +89,14 @@ namespace Silent::Renderer
                                       const Color& color0, const Color& color1, const Color& color2, const Color& color3,
                                       uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D quad primitive using retro screen coordinates.
+        /** @brief Constructs a 2D quad primitive using retro pixels.
          *
          * @note Vertex order: top-left, bottom-left, top-right, bottom-right.
          *
-         * @param vert0 First vertex position in retro screen coordinates (320x240).
-         * @param vert1 Second vertex position in retro screen coordinates (320x240).
-         * @param vert2 Third vertex position in retro screen coordinates (320x240).
-         * @param vert3 Fourth vertex position in retro screen coordinates (320x240).
+         * @param vert0 First vertex position in retro pixels (320x240 resolution).
+         * @param vert1 Second vertex position in retro pixels (320x240 resolution).
+         * @param vert2 Third vertex position in retro pixels (320x240 resolution).
+         * @param vert3 Fourth vertex position in retro pixels (320x240 resolution).
          * @param color0 First vertex color.
          * @param color1 Second vertex color.
          * @param color2 Third vertex color.
