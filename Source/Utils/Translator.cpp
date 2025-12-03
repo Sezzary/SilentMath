@@ -20,7 +20,7 @@ namespace Silent::Utils
         _localeNames = localeNames;
         if (_localeNames.empty())
         {
-            Debug::Log("No translator locales registered.", Debug::LogLevel::Warning);
+            Debug::Log("No translator locales registered.", Debug::LogLevel::Error);
             return;
         }
 
@@ -30,7 +30,11 @@ namespace Silent::Utils
 
     std::string TranslationManager::GetTranslation(const std::string& translationKey) const
     {
-        // Get translated text or use translation key as fallback if it doesn't exist.
+        if (_activeLocale.empty())
+        {
+            return translationKey;
+        }
+
         return _activeLocale.value(translationKey, translationKey);
     }
 
@@ -56,7 +60,7 @@ namespace Silent::Utils
         // Check if new locale is registered.
         if (!Contains(_localeNames, localeName))
         {
-            Debug::Log(Fmt("Attempted to set unregistered translator locale `{}`.", localeName), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to set unregistered translator locale `{}`.", localeName), Debug::LogLevel::Error);
             return;
         }
 

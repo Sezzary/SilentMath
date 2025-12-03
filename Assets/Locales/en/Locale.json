@@ -1,4 +1,6 @@
 {
+    "sys_FullscreenHintGeneric": "Press Alt+Return or F11 to toggle fullscreen.",
+    "sys_FullscreenHintMac": "Press Option+Return or F11 to toggle fullscreen.",
     "sys_GamepadConnected": "Gamepad connected.",
     "sys_GamepadDisonnected": "Gamepad disconnected.",
     

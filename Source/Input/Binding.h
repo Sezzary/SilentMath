@@ -61,15 +61,15 @@ namespace Silent::Input
         // Getters
         // ========
 
-        /** @brief Gets the device event IDs bound to an input action within a binding profile.
+        /** @brief Gets the input event IDs bound to an input action within a binding profile.
          *
          * @param profileID Input binding profile ID.
          * @param actionID Input action ID.
-         * @return `std::vector` containing the device event IDs bound to the given input action.
+         * @return `std::vector` containing the input event IDs bound to the given input action.
          */
         const std::vector<EventId>& GetBoundEventIds(BindingProfileId profileId, ActionId actionId) const;
 
-        /** @brief Gets a reference to an input binding profile containing associations between device events and input actions.
+        /** @brief Gets a reference to an input binding profile containing associations between input events and input actions.
          *
          * @param profileId Input binding profile ID to retrieve.
          * @return Input binding profile reference.
@@ -89,11 +89,11 @@ namespace Silent::Input
          */
         void Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds);
 
-        /** @brief Binds a device event to an input action, storing the new association inside an input binding profile.
+        /** @brief Binds an input event to an input action, storing the new association inside an input binding profile.
          *
          * @param profileId Input binding profile ID to update.
          * @param actionId Input action ID to create a new binding for.
-         * @param eventId Device event ID to bind to the input action.
+         * @param eventId Input event ID to bind to the input action.
          */
         void BindEventId(BindingProfileId profileId, ActionId actionId, EventId eventId);
     };

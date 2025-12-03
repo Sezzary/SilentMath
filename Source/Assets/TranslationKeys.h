@@ -6,8 +6,10 @@ namespace Silent::Assets
     // System
     // =======
 
-    constexpr char KEY_SYS_GAMEPAD_CONNECTED[]    = "sys_GamepadConnected";
-    constexpr char KEY_SYS_GAMEPAD_DISCONNECTED[] = "sys_GamepadDisconnected";
+    constexpr char KEY_SYS_FULLSCREEN_HINT_GENERIC[] = "sys_FullscreenHintGeneric";
+    constexpr char KEY_SYS_FULLSCREEN_HINT_MAC[]     = "sys_FullscreenHintMac";
+    constexpr char KEY_SYS_GAMEPAD_CONNECTED[]       = "sys_GamepadConnected";
+    constexpr char KEY_SYS_GAMEPAD_DISCONNECTED[]    = "sys_GamepadDisconnected";
 
     // ========================
     // Splash Screen and Intro

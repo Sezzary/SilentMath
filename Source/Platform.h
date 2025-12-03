@@ -11,10 +11,13 @@ namespace Silent
     };
 
 #if defined(_WIN32) || defined(_WIN64)
+    #define _WINDOWS
     constexpr auto OS_TYPE = OsType::Windows;
 #elif defined(__APPLE__)
+    #define _MAC_OS
     constexpr auto OS_TYPE = OsType::MacOs;
 #elif defined(__linux__)
+    #define _LINUX
     constexpr auto OS_TYPE = OsType::Linux;
 #endif
 

@@ -4,6 +4,7 @@
 #include "Assets/Assets.h"
 #include "Assets/Fonts.h"
 #include "Assets/Locales.h"
+#include "Assets/TranslationKeys.h"
 #include "Audio/Audio.h"
 #include "Game/Game.h"
 #include "Input/Input.h"
@@ -154,7 +155,9 @@ namespace Silent
         // Input.
         _work.Input.Initialize();
 
-        // Finish.
+        // Show fullscreen toggle toaster hint.
+        _work.Toaster.Add(_work.Translator((OS_TYPE == OsType::MacOs) ? KEY_SYS_FULLSCREEN_HINT_MAC : KEY_SYS_FULLSCREEN_HINT_GENERIC));
+
         Debug::Log("Startup complete.");
     }
 

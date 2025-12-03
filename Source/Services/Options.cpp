@@ -3,11 +3,13 @@
 
 #include "Application.h"
 #include "Input/Input.h"
+#include "Renderer/Common/Constants.h"
 #include "Services/Filesystem.h"
 #include "Utils/Parallel.h"
 #include "Utils/Stream.h"
 
 using namespace Silent::Input;
+using namespace Silent::Renderer;
 using namespace Silent::Utils;
 
 namespace Silent::Services
@@ -59,7 +61,7 @@ namespace Silent::Services
     constexpr char KEY_ENABLE_TOASTS[]                            = "enableToasts";
     constexpr char KEY_ENABLE_PARALLELISM[]                       = "enableParallelism";
 
-    constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i(800, 600);
+    constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i((int)RETRO_SCREEN_SPACE_RES.x * 3, (int)RETRO_SCREEN_SPACE_RES.y * 3);
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
@@ -269,12 +271,12 @@ namespace Silent::Services
             const auto& actionIds = ACTION_ID_GROUPS[(int)actionGroupId];
             for (auto actionId : actionIds)
             {
-                auto actionStr = std::to_string((int)actionId);
+                auto actionIdStr = std::to_string((int)actionId);
 
                 // Keyboard/mouse.
-                if (kmBindsJson.contains(actionStr))
+                if (kmBindsJson.contains(actionIdStr))
                 {
-                    const auto& eventsJson = kmBindsJson[actionStr];
+                    const auto& eventsJson = kmBindsJson[actionIdStr];
 
                     auto events = std::vector<EventId>{};
                     events.reserve(eventsJson.size());
@@ -291,9 +293,9 @@ namespace Silent::Services
                 }
 
                 // Gamepad.
-                if (gamepadBindsJson.contains(actionStr))
+                if (gamepadBindsJson.contains(actionIdStr))
                 {
-                    const auto& eventsJson = gamepadBindsJson[actionStr];
+                    const auto& eventsJson = gamepadBindsJson[actionIdStr];
 
                     auto events = std::vector<EventId>{};
                     events.reserve(eventsJson.size());
