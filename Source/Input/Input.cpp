@@ -19,6 +19,11 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
+    BindingManager& InputManager::GetBindings()
+    {
+        return _bindings;
+    }
+
     const Action& InputManager::GetAction(ActionId actionId) const
     {
         return _actions[(int)actionId];
