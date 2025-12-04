@@ -38,7 +38,7 @@ namespace Silent::Assets
     {
         FontMetadata
         {
-            .Name      = "Smooth",
+            .Name      = "SmoothSerif",
             .Filenames =
             {
                 "FreeSerif.otf",
@@ -50,7 +50,7 @@ namespace Silent::Assets
         },
         FontMetadata
         {
-            .Name      = "Retro",
+            .Name      = "RetroSerif",
             .Filenames =
             {
                 "Times_16.ttf",
@@ -62,12 +62,26 @@ namespace Silent::Assets
         },
         FontMetadata
         {
-            .Name      = "Toast",
+            .Name      = "SmoothSans",
             .Filenames =
             {
-                "UnifontExMono.ttf"
+                "NotoSans-Bold.ttf",
+                //"NotoSansJP-Bold.ttf",
+                //"NotoSansKR-Bold.ttf"
             },
-            .PointSize          = 16,
+            .PointSize          = 32,
+            .EnableAntialiasing = false
+        },
+        FontMetadata
+        {
+            .Name      = "RetroSans",
+            .Filenames =
+            {
+                "den-8x8.ttf", // @todo Many required glyphs are missing.
+                "misaki_gothic_2nd.ttf",
+                "dalmoori.ttf"
+            },
+            .PointSize          = 8,
             .EnableAntialiasing = false
         }
     };

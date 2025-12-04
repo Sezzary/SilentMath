@@ -124,10 +124,10 @@ namespace Silent
         // Collect window flags.
         int fullscreenFlag = _work.Options->EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
         int maximizedFlag  = _work.Options->EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
-        int flags          = SDL_WINDOW_RESIZABLE | fullscreenFlag | maximizedFlag;
+        int windowFlags    = SDL_WINDOW_RESIZABLE | fullscreenFlag | maximizedFlag;
 
         // Create window.
-        _window = SDL_CreateWindow(APP_NAME, _work.Options->WindowedSize.x, _work.Options->WindowedSize.y, flags);
+        _window = SDL_CreateWindow(APP_NAME, _work.Options->WindowedSize.x, _work.Options->WindowedSize.y, windowFlags);
         if (_window == nullptr)
         {
             throw std::runtime_error(Fmt("Failed to create window: {}", SDL_GetError()));
