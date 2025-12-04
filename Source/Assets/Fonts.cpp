@@ -66,8 +66,8 @@ namespace Silent::Assets
             .Filenames =
             {
                 "NotoSans-Bold.ttf",
-                //"NotoSansJP-Bold.ttf",
-                //"NotoSansKR-Bold.ttf"
+                "NotoSansJP-Bold.ttf",
+                "NotoSansKR-Bold.ttf"
             },
             .PointSize          = 32,
             .EnableAntialiasing = false

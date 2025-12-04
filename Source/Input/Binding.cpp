@@ -11,7 +11,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
-    static const auto CUSTOM_PROFILE_IDS = std::vector<BindingProfileId>
+    static const auto CUSTOM_BINDING_PROFILE_IDS = std::vector<BindingProfileId>
     {
         BindingProfileId::CustomKeyboardMouse,
         BindingProfileId::CustomGamepad
@@ -338,28 +338,10 @@ namespace Silent::Input
         return *profile;
     }
 
-    void BindingManager::Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds)
-    {
-        _bindings =
-        {
-            { BindingProfileId::CustomKeyboardMouse,       customKeyboardMouseBinds                      },
-            { BindingProfileId::CustomGamepad,             customGamepadBinds                            },
-            { BindingProfileId::DefaultKeyboardMouseType1, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
-            { BindingProfileId::DefaultKeyboardMouseType2, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 },
-            { BindingProfileId::DefaultKeyboardMouseType3, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 },
-            { BindingProfileId::DefaultGamepadType1,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1        },
-            { BindingProfileId::DefaultGamepadType2,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_2        },
-            { BindingProfileId::DefaultGamepadType3,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_3        },
-            { BindingProfileId::RawKeyboard,               RAW_KEYBOARD_BINDING_PROFILE                  },
-            { BindingProfileId::RawMouse,                  RAW_MOUSE_BINDING_PROFILE                     },
-            { BindingProfileId::RawGamepad,                RAW_GAMEPAD_BINDING_PROFILE                   }
-        };
-    }
-
     void BindingManager::SetProfile(BindingProfileId profileId, const BindingProfile& newProfile)
     {
         // Check if profile is customizable.
-        if (!Contains(CUSTOM_PROFILE_IDS, profileId))
+        if (!Contains(CUSTOM_BINDING_PROFILE_IDS, profileId))
         {
             Debug::Log(Fmt("Attempted to set all bindings for non-customizable binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
             return;
@@ -380,7 +362,7 @@ namespace Silent::Input
     void BindingManager::SetBinding(BindingProfileId profileId, ActionId actionId, EventId eventId)
     {
         // Check if profile is customizable.
-        if (!Contains(CUSTOM_PROFILE_IDS, profileId))
+        if (!Contains(CUSTOM_BINDING_PROFILE_IDS, profileId))
         {
             Debug::Log(Fmt("Attempted to bind event {} to action {} for non-customizable binding profile {}.", (int)eventId, (int)actionId, (int)profileId),
                        Debug::LogLevel::Warning);
@@ -433,5 +415,23 @@ namespace Silent::Input
         {
             (*profile)[actionId] = { eventId };
         }
+    }
+
+    void BindingManager::Initialize(const BindingProfile& customKeyboardMouseProfile, const BindingProfile& customGamepadProfile)
+    {
+        _bindings =
+        {
+            { BindingProfileId::CustomKeyboardMouse,       customKeyboardMouseProfile                    },
+            { BindingProfileId::CustomGamepad,             customGamepadProfile                          },
+            { BindingProfileId::DefaultKeyboardMouseType1, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
+            { BindingProfileId::DefaultKeyboardMouseType2, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 },
+            { BindingProfileId::DefaultKeyboardMouseType3, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 },
+            { BindingProfileId::DefaultGamepadType1,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1        },
+            { BindingProfileId::DefaultGamepadType2,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_2        },
+            { BindingProfileId::DefaultGamepadType3,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_3        },
+            { BindingProfileId::RawKeyboard,               RAW_KEYBOARD_BINDING_PROFILE                  },
+            { BindingProfileId::RawMouse,                  RAW_MOUSE_BINDING_PROFILE                     },
+            { BindingProfileId::RawGamepad,                RAW_GAMEPAD_BINDING_PROFILE                   }
+        };
     }
 }

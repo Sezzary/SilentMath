@@ -68,6 +68,10 @@ namespace Silent::Input
          */
         const BindingProfile& GetProfile(BindingProfileId profileId) const;
 
+        // ========
+        // Setters
+        // ========
+
         /** @brief Sets all bindings in an input binding profile to a new input binding profile.
          *
          * @param profileId ID of the input binding profile to update.
@@ -87,11 +91,11 @@ namespace Silent::Input
         // Utilities
         // ==========
 
-        /** @brief Initializes the input binding manager, setting default bindings and active user bindings.
+        /** @brief Initializes the input binding manager with custom, default, and raw input binding profiles.
          *
-         * @param customKeyboardMouseBinds Active keyboard/mouse input bindings to set for the user.
-         * @param customGamepadBinds Active gamepoad input bindings to set for the user.
+         * @param customKeyboardMouseProfile Custom user input binding profile for keyboard/mouse.
+         * @param customGamepadProfile Custom user input binding profile for gamepad.
          */
-        void Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds);
+        void Initialize(const BindingProfile& customKeyboardMouseProfile, const BindingProfile& customGamepadProfile);
     };
 }
