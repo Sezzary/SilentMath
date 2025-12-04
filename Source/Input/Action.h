@@ -16,7 +16,6 @@ namespace Silent::Input
 
         Enter,
         Cancel,
-        Skip,
 
         /** Gameplay */
         

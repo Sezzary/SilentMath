@@ -22,7 +22,7 @@ namespace Silent::Gui
                    const std::optional<Callback>& onHold,
                    const std::optional<Callback>& onRelease)
     {
-        _prevActiveState = false;
+        _prevState = false;
 
         _scaleMode = scaleMode;
         _onEnter   = onEnter;
@@ -81,7 +81,7 @@ namespace Silent::Gui
         Update(bounds.Intersects(pos), SELECT_ACTION_IDS); 
     }
 
-    bool Button::CheckClickedAction(const std::vector<ActionId>& actionIds) const
+    bool Button::IsActionClicked(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();
 
@@ -96,7 +96,7 @@ namespace Silent::Gui
         return false;
     }
 
-    bool Button::CheckHeldAction(const std::vector<ActionId>& actionIds) const
+    bool Button::IsActionHeld(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();
 
@@ -111,7 +111,7 @@ namespace Silent::Gui
         return false;
     }
 
-    bool Button::CheckReleasedAction(const std::vector<ActionId>& actionIds) const
+    bool Button::IsActionReleased(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();
 
@@ -126,12 +126,12 @@ namespace Silent::Gui
         return false;
     }
 
-    void Button::Update(bool activeState, const std::vector<ActionId>& selectActionIds)
+    void Button::Update(bool state, const std::vector<ActionId>& selectActionIds)
     {
-        if (activeState)
+        if (state)
         {
             // Execute `_onEnter` callback if previous state was inactive.
-            if (!_prevActiveState)
+            if (!_prevState)
             {
                 ExecuteCallback(_onEnter);
             }
@@ -142,15 +142,15 @@ namespace Silent::Gui
             }
 
             // Execute `_onClick`, `_onHold`, or `_onRelease` callback if select action is registered.
-            if (CheckClickedAction(selectActionIds))
+            if (IsActionClicked(selectActionIds))
             {
                 ExecuteCallback(_onClick);
             }
-            else if (CheckHeldAction(selectActionIds))
+            else if (IsActionHeld(selectActionIds))
             {
                 ExecuteCallback(_onHold);
             }
-            else if (CheckReleasedAction(selectActionIds))
+            else if (IsActionReleased(selectActionIds))
             {
                 ExecuteCallback(_onRelease);
             }
@@ -158,7 +158,7 @@ namespace Silent::Gui
         else
         {
             // Execute `_onLeave` callback if previous state was active.
-            if (_prevActiveState)
+            if (_prevState)
             {
                 ExecuteCallback(_onLeave);
             }
@@ -169,7 +169,7 @@ namespace Silent::Gui
             }
         }
 
-        _prevActiveState = activeState;
+        _prevState = state;
     }
 
     void Button::ExecuteCallback(const std::optional<Callback>& callback) const

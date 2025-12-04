@@ -19,8 +19,7 @@ namespace Silent::Input
         /** Menu */
         {
             In::Enter,
-            In::Cancel,
-            In::Skip
+            In::Cancel
         },
         /** Gameplay */
         {

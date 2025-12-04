@@ -13,48 +13,46 @@ namespace Silent::Input
 {
     static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 = BindingProfile
     {
-        { In::Up,        { EventId::W, EventId::Up                } },
-        { In::Down,      { EventId::S, EventId::Down              } },
-        { In::Left,      { EventId::A, EventId::Left              } },
-        { In::Right,     { EventId::D, EventId::Right             } },
+        { In::Up,        { EventId::W, EventId::Up                   } },
+        { In::Down,      { EventId::S, EventId::Down                 } },
+        { In::Left,      { EventId::A, EventId::Left                 } },
+        { In::Right,     { EventId::D, EventId::Right                } },
 
-        { In::Enter,     { EventId::Return                        } },
-        { In::Cancel,    { EventId::Escape                        } },
-        { In::Skip,      { EventId::Escape                        } },
+        { In::Enter,     { EventId::Return                           } },
+        { In::Cancel,    { EventId::Escape                           } },
 
-        { In::Action,    { EventId::Ctrl, EventId::MouseClickLeft } },
-        { In::Aim,       { EventId::Space                         } },
-        { In::Light,     { EventId::L                             } },
-        { In::Run,       { EventId::J                             } },
-        { In::View,      { EventId::K                             } },
-        { In::StepLeft,  { EventId::Q                             } },
-        { In::StepRight, { EventId::E                             } },
-        { In::Pause,     { EventId::P                             } },
-        { In::Item,      { EventId::I                             } },
-        { In::Map,       { EventId::M                             } },
-        { In::Option,    { EventId::O                             } }
+        { In::Action,    { EventId::MouseClickLeft,   EventId::Ctrl  } },
+        { In::Aim,       { EventId::MouseClickRight,  EventId::Space } },
+        { In::Light,     { EventId::MouseClickMiddle, EventId::L     } },
+        { In::Run,       { EventId::Shift,                           } },
+        { In::View,      { EventId::F                                } },
+        { In::StepLeft,  { EventId::Q, EventId::Delete,              } },
+        { In::StepRight, { EventId::E, EventId::PageDown             } },
+        { In::Pause,     { EventId::P                                } },
+        { In::Item,      { EventId::Escape, EventId::I               } },
+        { In::Map,       { EventId::M                                } },
+        { In::Option,    { EventId::O                                } }
     };
 
     static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 = BindingProfile
     {
-        { In::Up,        { EventId::W, EventId::Up             } },
-        { In::Down,      { EventId::S, EventId::Down           } },
-        { In::Left,      { EventId::A, EventId::Left           } },
-        { In::Right,     { EventId::D, EventId::Right          } },
+        { In::Up,        { EventId::W                          } },
+        { In::Down,      { EventId::S                          } },
+        { In::Left,      { EventId::A                          } },
+        { In::Right,     { EventId::D                          } },
 
         { In::Enter,     { EventId::Return                     } },
         { In::Cancel,    { EventId::Escape                     } },
-        { In::Skip,      { EventId::Escape                     } },
 
-        { In::Action,    { EventId::MouseClickLeft, EventId::F } },
-        { In::Aim,       { EventId::MouseClickRight            } },
+        { In::Action,    { EventId::Ctrl                       } },
+        { In::Aim,       { EventId::Space                      } },
         { In::Light,     { EventId::L                          } },
-        { In::Run,       { EventId::Shift                      } },
-        { In::View,      { EventId::Ctrl                       } },
+        { In::Run,       { EventId::J                          } },
+        { In::View,      { EventId::K                          } },
         { In::StepLeft,  { EventId::Q                          } },
         { In::StepRight, { EventId::E                          } },
         { In::Pause,     { EventId::P                          } },
-        { In::Item,      { EventId::I                          } },
+        { In::Item,      { EventId::Escape, EventId::I         } },
         { In::Map,       { EventId::M                          } },
         { In::Option,    { EventId::O                          } }
     };
@@ -68,17 +66,16 @@ namespace Silent::Input
 
         { In::Enter,     { EventId::Return                        } },
         { In::Cancel,    { EventId::Escape                        } },
-        { In::Skip,      { EventId::Escape                        } },
 
-        { In::Action,    { EventId::Ctrl, EventId::MouseClickLeft } },
+        { In::Action,    { EventId::Ctrl,                         } },
         { In::Aim,       { EventId::Space                         } },
         { In::Light,     { EventId::L                             } },
-        { In::Run,       { EventId::Z                             } },
+        { In::Run,       { EventId::Shift                         } },
         { In::View,      { EventId::Pad0                          } },
-        { In::StepLeft,  { EventId::A                             } },
-        { In::StepRight, { EventId::D                             } },
+        { In::StepLeft,  { EventId::Q, EventId::Delete,           } },
+        { In::StepRight, { EventId::E, EventId::PageDown          } },
         { In::Pause,     { EventId::P                             } },
-        { In::Item,      { EventId::I                             } },
+        { In::Item,      { EventId::Escape, EventId::I            } },
         { In::Map,       { EventId::M                             } },
         { In::Option,    { EventId::O                             } }
     };
@@ -92,7 +89,6 @@ namespace Silent::Input
 
         { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart                      } },
         { In::Cancel,    { EventId::GamepadNorth, EventId::GamepadEast, EventId::GamepadWest } },
-        { In::Skip,      { EventId::GamepadStart                                             } },
 
         { In::Action,    { EventId::GamepadSouth                                             } },
         { In::Aim,       { EventId::GamepadTriggerRight                                      } },
@@ -116,7 +112,6 @@ namespace Silent::Input
         
         { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart                      } },
         { In::Cancel,    { EventId::GamepadNorth, EventId::GamepadWest, EventId::GamepadEast } },
-        { In::Skip,      { EventId::GamepadStart                                             } },
 
         { In::Action,    { EventId::GamepadSouth                                             } },
         { In::Aim,       { EventId::GamepadShoulderRight                                     } },
@@ -140,7 +135,6 @@ namespace Silent::Input
         
         { In::Enter,     { EventId::GamepadSouth, EventId::GamepadStart                      } },
         { In::Cancel,    { EventId::GamepadNorth, EventId::GamepadWest, EventId::GamepadEast } },
-        { In::Skip,      { EventId::GamepadStart                                             } },
 
         { In::Action,    { EventId::GamepadSouth                                             } },
         { In::Aim,       { EventId::GamepadTriggerRight                                      } },
@@ -263,26 +257,25 @@ namespace Silent::Input
 
     const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE =
     {
-        { In::Up,        { EventId::Up     } },
-        { In::Down,      { EventId::Down   } },
-        { In::Left,      { EventId::Left   } },
-        { In::Right,     { EventId::Right  } },
+        { In::Up,        { EventId::W                  } },
+        { In::Down,      { EventId::S                  } },
+        { In::Left,      { EventId::A                  } },
+        { In::Right,     { EventId::D                  } },
 
-        { In::Enter,     { EventId::Return } },
-        { In::Cancel,    { EventId::Escape } },
-        { In::Skip,      { EventId::Escape } },
+        { In::Enter,     { EventId::Return             } },
+        { In::Cancel,    { EventId::Escape             } },
 
-        { In::Action,    { EventId::Ctrl   } },
-        { In::Aim,       { EventId::Space  } },
-        { In::Light,     { EventId::L      } },
-        { In::Run,       { EventId::J      } },
-        { In::View,      { EventId::K      } },
-        { In::StepLeft,  { EventId::Q      } },
-        { In::StepRight, { EventId::E      } },
-        { In::Pause,     { EventId::P      } },
-        { In::Item,      { EventId::I      } },
-        { In::Map,       { EventId::M      } },
-        { In::Option,    { EventId::O      } }
+        { In::Action,    { EventId::MouseClickLeft     } },
+        { In::Aim,       { EventId::MouseClickRight    } },
+        { In::Light,     { EventId::MouseClickMiddle   } },
+        { In::Run,       { EventId::Shift,             } },
+        { In::View,      { EventId::F                  } },
+        { In::StepLeft,  { EventId::Q                  } },
+        { In::StepRight, { EventId::E                  } },
+        { In::Pause,     { EventId::P                  } },
+        { In::Item,      { EventId::Escape             } },
+        { In::Map,       { EventId::M                  } },
+        { In::Option,    { EventId::O                  } }
     };
 
     const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE =
@@ -294,7 +287,6 @@ namespace Silent::Input
 
         { In::Enter,     { EventId::GamepadSouth         } },
         { In::Cancel,    { EventId::GamepadNorth         } },
-        { In::Skip,      { EventId::GamepadStart         } },
 
         { In::Action,    { EventId::GamepadSouth         } },
         { In::Aim,       { EventId::GamepadTriggerRight  } },
@@ -432,10 +424,7 @@ namespace Silent::Input
                 }
             }
 
-            if (hasSwap)
-            {
-                break;
-            }
+            break;
         }
 
         // Add action-event binding.
