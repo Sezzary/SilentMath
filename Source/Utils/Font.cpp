@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Utils/Font.h"
 
+#include "Application.h"
 #include "Utils/Utils.h"
 
 namespace Silent::Utils
@@ -74,7 +75,7 @@ namespace Silent::Utils
         // Debug.
         for (int i = 0; i < _textureAtlases.size(); i++)
         {
-            //stbi_write_png((g_App.GetFilesystem().GetAppDirectory() / (_name + Fmt("_Atlas{}.png", i))).string().c_str(), ATLAS_SIZE, ATLAS_SIZE, 1, _textureAtlases[i].data(), ATLAS_SIZE);
+            stbi_write_png((g_App.GetFilesystem().GetAppDirectory() / (_name + Fmt("_Atlas{}.png", i))).string().c_str(), ATLAS_SIZE, ATLAS_SIZE, 1, _textureAtlases[i].data(), ATLAS_SIZE);
             break;
         }
     }

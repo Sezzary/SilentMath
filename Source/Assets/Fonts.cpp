@@ -70,18 +70,18 @@ namespace Silent::Assets
                 "NotoSansKR-Bold.ttf"
             },
             .PointSize          = 32,
-            .EnableAntialiasing = false
+            .EnableAntialiasing = true
         },
         FontMetadata
         {
             .Name      = "RetroSans",
             .Filenames =
             {
-                "den-8x8.ttf", // @todo Many required glyphs are missing.
-                "misaki_gothic_2nd.ttf",
-                "dalmoori.ttf"
+                "den-8x10.ttf", // @todo Many required glyphs are missing and need to be drawn by hand.
+                "PixelMplus10-Regular.ttf",
+                "dalmoori.ttf" // @todo This is an 8-point font. Need to convert it to be compliant at 10-point.
             },
-            .PointSize          = 8,
+            .PointSize          = 10,
             .EnableAntialiasing = false
         }
     };

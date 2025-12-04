@@ -11,12 +11,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
-    static const auto CUSTOM_BINDING_PROFILE_IDS = std::vector<BindingProfileId>
-    {
-        BindingProfileId::CustomKeyboardMouse,
-        BindingProfileId::CustomGamepad
-    };
-
     static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 = BindingProfile
     {
         { In::Up,        { EventId::W, EventId::Up                   } },
@@ -307,12 +301,6 @@ namespace Silent::Input
         { In::Option,    { EventId::O                    } }
     };
 
-    const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS =
-    {
-        BindingProfileId::CustomKeyboardMouse,
-        BindingProfileId::CustomGamepad
-    };
-
     const std::vector<BindingProfileId> DEFAULT_BINDING_PROFILE_IDS =
     {
         BindingProfileId::DefaultKeyboardMouseType1,
@@ -321,6 +309,12 @@ namespace Silent::Input
         BindingProfileId::DefaultGamepadType1,
         BindingProfileId::DefaultGamepadType2,
         BindingProfileId::DefaultGamepadType3
+    };
+
+    const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS =
+    {
+        BindingProfileId::CustomKeyboardMouse,
+        BindingProfileId::CustomGamepad
     };
 
     const std::vector<BindingProfileId> RAW_BINDING_PROFILE_IDS =

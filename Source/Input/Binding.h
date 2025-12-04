@@ -12,6 +12,7 @@ namespace Silent::Input
     extern const BindingProfile                DEFAULT_USER_GAMEPAD_BINDING_PROFILE;
     extern const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS;
     extern const std::vector<BindingProfileId> DEFAULT_PROFILE_IDS;
+    extern const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS;
     extern const std::vector<BindingProfileId> RAW_BINDING_PROFILE_IDS;
 
     /** @brief Input binding profile IDs. */
