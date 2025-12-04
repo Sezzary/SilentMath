@@ -11,6 +11,12 @@ using namespace Silent::Utils;
 
 namespace Silent::Input
 {
+    static const auto CUSTOM_PROFILE_IDS = std::vector<BindingProfileId>
+    {
+        BindingProfileId::CustomKeyboardMouse,
+        BindingProfileId::CustomGamepad
+    };
+
     static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 = BindingProfile
     {
         { In::Up,        { EventId::W, EventId::Up                   } },
@@ -328,7 +334,7 @@ namespace Silent::Input
     {
         static const auto NO_EVENT_IDS = std::vector<EventId>{};
 
-        // Find binding profile.
+        // Find profile.
         const auto* profile = Find(_bindings, profileId);
         if (profile == nullptr)
         {
@@ -348,11 +354,9 @@ namespace Silent::Input
 
     const BindingProfile& BindingManager::GetProfile(BindingProfileId profileId) const
     {
-        // Find binding profile.
         auto* profile = Find(_bindings, profileId);
         Debug::Assert(profile != nullptr, Fmt("Attempted to get missing binding profile {}.", (int)profileId));
 
-        // Return binding profile.
         return *profile;
     }
 
@@ -374,27 +378,46 @@ namespace Silent::Input
         };
     }
 
-    void BindingManager::BindEventId(BindingProfileId profileId, ActionId actionId, EventId eventId)
+    void BindingManager::SetProfile(BindingProfileId profileId, const BindingProfile& newProfile)
     {
-        static const auto CUSTOM_PROFILE_IDS = std::vector<BindingProfileId>
-        {
-            BindingProfileId::CustomKeyboardMouse,
-            BindingProfileId::CustomGamepad
-        };
-
-        // Check if binding profile is customizable.
+        // Check if profile is customizable.
         if (!Contains(CUSTOM_PROFILE_IDS, profileId))
         {
-            Debug::Log(Fmt("Attempted to bind event {} to action {} in non-customizable binding profile {}.", (int)eventId, (int)actionId, (int)profileId),
+            Debug::Log(Fmt("Attempted to set all bindings for non-customizable binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
+            return;
+        }
+
+        // Get profile.
+        auto* profile = Find(_bindings, profileId);
+        if (profile == nullptr)
+        {
+            Debug::Log(Fmt("Attempted to get missing binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
+            return;
+        }
+
+        // Set new bindings.
+        *profile = newProfile;
+    }
+
+    void BindingManager::SetBinding(BindingProfileId profileId, ActionId actionId, EventId eventId)
+    {
+        // Check if profile is customizable.
+        if (!Contains(CUSTOM_PROFILE_IDS, profileId))
+        {
+            Debug::Log(Fmt("Attempted to bind event {} to action {} for non-customizable binding profile {}.", (int)eventId, (int)actionId, (int)profileId),
                        Debug::LogLevel::Warning);
             return;
         }
 
-        // Get binding profile.
+        // Get profile.
         auto* profile = Find(_bindings, profileId);
-        Debug::Assert(profile != nullptr, Fmt("Attempted to get missing binding profile {}.", (int)profileId));
+        if (profile == nullptr)
+        {
+            Debug::Log(Fmt("Attempted to get missing binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
+            return;
+        }
 
-        // Swap action-event binding if event is already bound to another action in same group.
+        // Swap binding if event is already bound to another action in same group.
         bool hasSwap = false;
         for (auto actionGroupId : USER_ACTION_GROUP_IDS)
         {
@@ -427,7 +450,7 @@ namespace Silent::Input
             break;
         }
 
-        // Add action-event binding.
+        // Set new binding.
         if (!hasSwap)
         {
             (*profile)[actionId] = { eventId };

@@ -108,21 +108,21 @@ namespace Silent::Gui
 
         /** @brief Checks if an input action in a given list is clicked.
          *
-         * @param actionIds IDs of input actions to checks
+         * @param actionIds IDs of input actions to check.
          * @return `true` if an action is clicked, `false` otherwise.
          */
         bool IsActionClicked(const std::vector<ActionId>& actionIds) const;
 
         /** @brief Checks if an input action in a given list is held.
          *
-         * @param actionIds IDs of input actions to checks
+         * @param actionIds IDs of input actions to check.
          * @return `true` if an action is held, `false` otherwise.
          */
         bool IsActionHeld(const std::vector<ActionId>& actionIds) const;
 
         /** @brief Checks if an input action in a given list is released.
          *
-         * @param actionIds IDs of input actions to checks
+         * @param actionIds IDs of input actions to check.
          * @return `true` if an action is released, `false` otherwise.
          */
         bool IsActionReleased(const std::vector<ActionId>& actionIds) const;

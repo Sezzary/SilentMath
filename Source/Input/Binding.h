@@ -61,7 +61,7 @@ namespace Silent::Input
         // Getters
         // ========
 
-        /** @brief Gets the input event IDs bound to an input action within a binding profile.
+        /** @brief Gets the input event IDs bound to an input action in an input binding profile.
          *
          * @param profileID Input binding profile ID.
          * @param actionID Input action ID.
@@ -69,14 +69,27 @@ namespace Silent::Input
          */
         const std::vector<EventId>& GetBoundEventIds(BindingProfileId profileId, ActionId actionId) const;
 
-        /** @brief Gets a reference to an input binding profile containing associations between input events and input actions.
+        /** @brief Gets an input binding profile containing associations between input events and input actions.
          *
          * @param profileId Input binding profile ID to retrieve.
-         * @return Input binding profile reference.
+         * @return Existing input binding profile.
          */
         const BindingProfile& GetProfile(BindingProfileId profileId) const;
 
-        // @todo Set bindings.
+        /** @brief Sets all bindings in an input binding profile to a new input binding profile.
+         *
+         * @param profileId ID of the input binding profile to update.
+         * @param newProfile New input binding profile to set.
+         */
+        void SetProfile(BindingProfileId profileId, const BindingProfile& profile);
+
+        /** @brief Sets a custom input event binding for an input action, storing the new association in an input binding profile.
+         *
+         * @param profileId ID of the input binding profile to update.
+         * @param actionId ID of the input action to create a new binding for.
+         * @param eventId ID of the input event to bind to the input action.
+         */
+        void SetBinding(BindingProfileId profileId, ActionId actionId, EventId eventId);
 
         // ==========
         // Utilities
@@ -88,13 +101,5 @@ namespace Silent::Input
          * @param customGamepadBinds Active gamepoad input bindings to set for the user.
          */
         void Initialize(const BindingProfile& customKeyboardMouseBinds, const BindingProfile& customGamepadBinds);
-
-        /** @brief Binds an input event to an input action, storing the new association inside an input binding profile.
-         *
-         * @param profileId Input binding profile ID to update.
-         * @param actionId Input action ID to create a new binding for.
-         * @param eventId Input event ID to bind to the input action.
-         */
-        void BindEventId(BindingProfileId profileId, ActionId actionId, EventId eventId);
     };
 }
