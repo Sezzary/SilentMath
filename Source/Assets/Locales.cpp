@@ -5,6 +5,6 @@ namespace Silent::Assets
 {
     const std::vector<std::string> LOCALE_NAMES
     {
-        "en"
+        "English (US)"
     };
 }

@@ -326,9 +326,15 @@ namespace Silent::Input
 
     const BindingProfile& BindingManager::GetProfile(BindingProfileId profileId) const
     {
+        // Find profile.
         auto* profile = Find(_bindings, profileId);
-        Debug::Assert(profile != nullptr, Fmt("Attempted to get missing binding profile {}.", (int)profileId));
+        if (profile == nullptr)
+        {
+            Debug::Log(Fmt("Attempted to get missing binding profile {}.", (int)profileId));
+            return _bindings.at(BindingProfileId::DefaultKeyboardMouseType1);
+        }
 
+        // Return profile.
         return *profile;
     }
 

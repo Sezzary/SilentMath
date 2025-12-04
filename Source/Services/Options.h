@@ -135,19 +135,14 @@ namespace Silent::Services
         BloodColorType BloodColor      = BloodColorType::Normal;
         int            BulletAdjust    = 0;
 
-        // ================================
-        // Input (keyboard/mouse bindings)
-        // ================================
+        // =================
+        // Input (bindings)
+        // =================
 
-        BindingProfile   KeyboardMouseBindings        = {};
         BindingProfileId ActiveKeyboardMouseProfileId = BindingProfileId::DefaultKeyboardMouseType1;
-
-        // =========================
-        // Input (gamepad bindings)
-        // =========================
-
-        BindingProfile   GamepadBindings        = {};
-        BindingProfileId ActiveGamepadProfileId = BindingProfileId::DefaultGamepadType1;
+        BindingProfileId ActiveGamepadProfileId       = BindingProfileId::DefaultGamepadType1;
+        BindingProfile   KeyboardMouseBindings        = {};
+        BindingProfile   GamepadBindings              = {};
 
         // =================
         // Input (controls)
