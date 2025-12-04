@@ -99,6 +99,12 @@ namespace Silent::Input
         // Getters
         // ========
 
+        /** @brief Gets the bindings subsystem instance.
+         *
+         * @return Bindings instance.
+         */
+        BindingManager& GetBindings();
+
         /** @brief Gets a reference to an input action.
          *
          * @param actionId ID of the input action to check.

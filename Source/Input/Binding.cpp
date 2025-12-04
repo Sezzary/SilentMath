@@ -330,28 +330,6 @@ namespace Silent::Input
         BindingProfileId::RawGamepad
     };
 
-    const std::vector<EventId>& BindingManager::GetBoundEventIds(BindingProfileId profileId, ActionId actionId) const
-    {
-        static const auto NO_EVENT_IDS = std::vector<EventId>{};
-
-        // Find profile.
-        const auto* profile = Find(_bindings, profileId);
-        if (profile == nullptr)
-        {
-            return NO_EVENT_IDS;
-        }
-
-        // Find action-event binding.
-        const auto* eventIds = Find(*profile, actionId);
-        if (eventIds == nullptr)
-        {
-            return NO_EVENT_IDS;
-        }
-
-        // Return bound event IDs.
-        return *eventIds;
-    }
-
     const BindingProfile& BindingManager::GetProfile(BindingProfileId profileId) const
     {
         auto* profile = Find(_bindings, profileId);
