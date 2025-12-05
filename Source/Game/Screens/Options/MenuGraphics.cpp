@@ -76,17 +76,17 @@ namespace Silent::Game
         constexpr int  LINE_OFFSET_X   = 16;
         constexpr int  LINE_OFFSET_Y   = 16;
         constexpr auto HEADING_STR_POS = Vector2i(121, 20);
-        constexpr auto ENTRY_STR_KEYS  = std::array<const char*, 9>
+        constexpr auto ENTRY_STR_KEYS  = std::array<const char*, 8>
         {
-            KEY_MAIN_OPTIONS_MENU_EXIT,
-            KEY_MAIN_OPTIONS_MENU_BRIGHT_LEVEL,
-            KEY_MAIN_OPTIONS_MENU_CONT_CONFIG,
-            KEY_MAIN_OPTIONS_MENU_SCREEN_POS,
-            KEY_MAIN_OPTIONS_MENU_VIBRATION,
-            KEY_MAIN_OPTIONS_MENU_AUTO_LOAD,
-            KEY_MAIN_OPTIONS_MENU_SOUND,
-            KEY_MAIN_OPTIONS_MENU_BGM_VOL,
-            KEY_MAIN_OPTIONS_MENU_SE_VOL
+            KEY_OPTIONS_MENU_EXIT,
+            KEY_OPTIONS_MENU_BRIGHT_LEVEL,
+            KEY_OPTIONS_MENU_CONT_CONFIG,
+            //KEY_OPTIONS_MENU_SCREEN_POS,
+            KEY_OPTIONS_MENU_VIBRATION,
+            KEY_OPTIONS_MENU_AUTO_LOAD,
+            KEY_OPTIONS_MENU_SOUND,
+            KEY_OPTIONS_MENU_BGM_VOL,
+            KEY_OPTIONS_MENU_SE_VOL
         };
 
         const auto& translator = g_App.GetTranslator();
@@ -94,7 +94,7 @@ namespace Silent::Game
         // Submit heading string.
         //Gfx_StringSetColor(StringColorId_White);
         //Gfx_StringSetPosition(HEADING_STR_POS.vx, HEADING_STR_POS.vy);
-        //Gfx_StringDraw(translator(KEY_MAIN_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
+        //Gfx_StringDraw(translator(KEY_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
 
         // Submit entry strings.
         //for (i = 0; i < MainOptionsMenuEntry_Count; i++)
@@ -113,15 +113,15 @@ namespace Silent::Game
         constexpr auto HEADING_STR_POS = Vector2i(86, 20);
         constexpr auto ENTRY_STR_KEYS  = std::array<const char*, 9>
         {
-            KEY_EXTRA_OPTIONS_MENU_WEAPON_CONTROL,
-            KEY_EXTRA_OPTIONS_MENU_BLOOD_COLOR,
-            KEY_EXTRA_OPTIONS_MENU_VIEW_CONTROL,
-            KEY_EXTRA_OPTIONS_MENU_RETREAT_TURN,
-            KEY_EXTRA_OPTIONS_MENU_WALK_RUN,
-            KEY_EXTRA_OPTIONS_MENU_CONTROL,
-            KEY_EXTRA_OPTIONS_MENU_AUTO_AIMING,
-            KEY_EXTRA_OPTIONS_MENU_VIEW_MODE,
-            KEY_EXTRA_OPTIONS_MENU_BULLET_ADJUST
+            KEY_OPTIONS_MENU_WEAPON_CONTROL,
+            KEY_OPTIONS_MENU_BLOOD_COLOR,
+            KEY_OPTIONS_MENU_VIEW_CONTROL,
+            KEY_OPTIONS_MENU_RETREAT_TURN,
+            KEY_OPTIONS_MENU_WALK_RUN_CONTROL,
+            KEY_OPTIONS_MENU_CONTROL,
+            KEY_OPTIONS_MENU_AUTO_AIMING,
+            KEY_OPTIONS_MENU_VIEW_MODE,
+            KEY_OPTIONS_MENU_BULLET_ADJUST
         };
 
         const auto& translator = g_App.GetTranslator();
@@ -129,7 +129,7 @@ namespace Silent::Game
         // Submit heading string.
         //Gfx_StringSetColor(StringColorId_White);
         //Gfx_StringSetPosition(HEADING_STR_POS.vx, HEADING_STR_POS.vy);
-        //Gfx_StringDraw(translator(KEY_EXTRA_OPTIONS_MENU_EXTRA), DEFAULT_MAP_MESSAGE_LENGTH);
+        //Gfx_StringDraw(translator(KEY_OPTIONS_MENU_EXTRA), DEFAULT_MAP_MESSAGE_LENGTH);
 
         // Submit entry strings.
         for (int i = 0; i < g_ExtraOptionsMenu_EntryCount; i++)
@@ -349,10 +349,10 @@ namespace Silent::Game
 
         const char* CONFIG_STR_KEYS[] =
         {
-            KEY_MAIN_OPTIONS_MENU_ON,
-            KEY_MAIN_OPTIONS_MENU_OFF,
-            KEY_MAIN_OPTIONS_MENU_STEREO,
-            KEY_MAIN_OPTIONS_MENU_MONAURAL
+            KEY_OPTIONS_MENU_ON,
+            KEY_OPTIONS_MENU_OFF,
+            KEY_OPTIONS_MENU_STEREO,
+            KEY_OPTIONS_MENU_MONAURAL
         };
 
         const auto& input = g_App.GetInput();

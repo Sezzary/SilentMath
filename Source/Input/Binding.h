@@ -8,8 +8,8 @@ namespace Silent::Input
 
     using BindingProfile = std::unordered_map<ActionId, std::vector<EventId>>; /** Key = action ID, value = event IDs. */
 
-    extern const BindingProfile                DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE;
-    extern const BindingProfile                DEFAULT_USER_GAMEPAD_BINDING_PROFILE;
+    extern const BindingProfile                DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE;
+    extern const BindingProfile                DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE;
     extern const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS;
     extern const std::vector<BindingProfileId> DEFAULT_PROFILE_IDS;
     extern const std::vector<BindingProfileId> CUSTOM_BINDING_PROFILE_IDS;
@@ -49,7 +49,7 @@ namespace Silent::Input
         // Fields
         // =======
 
-        std::unordered_map<BindingProfileId, BindingProfile> _bindings = {}; /** Key = binding profile ID, value = binding profile. */
+        std::vector<BindingProfile> _bindings = {}; /** Index = `BindingProfileId`. */
 
     public:
         // =============

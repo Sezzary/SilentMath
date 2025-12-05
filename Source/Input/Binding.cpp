@@ -255,7 +255,7 @@ namespace Silent::Input
         { In::GamepadStickRightRight, { EventId::GamepadStickRightRight } }
     };
 
-    const BindingProfile DEFAULT_USER_KEYBOARD_MOUSE_BINDING_PROFILE =
+    const BindingProfile DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE =
     {
         { In::Up,        { EventId::W                  } },
         { In::Down,      { EventId::S                  } },
@@ -278,7 +278,7 @@ namespace Silent::Input
         { In::Option,    { EventId::O                  } }
     };
 
-    const BindingProfile DEFAULT_USER_GAMEPAD_BINDING_PROFILE =
+    const BindingProfile DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE =
     {
         { In::Up,        { EventId::GamepadDpadUp        } },
         { In::Down,      { EventId::GamepadDpadDown      } },
@@ -326,16 +326,7 @@ namespace Silent::Input
 
     const BindingProfile& BindingManager::GetProfile(BindingProfileId profileId) const
     {
-        // Find profile.
-        auto* profile = Find(_bindings, profileId);
-        if (profile == nullptr)
-        {
-            Debug::Log(Fmt("Attempted to get missing binding profile {}.", (int)profileId));
-            return _bindings.at(BindingProfileId::DefaultKeyboardMouseType1);
-        }
-
-        // Return profile.
-        return *profile;
+        return _bindings[(int)profileId];
     }
 
     void BindingManager::SetProfile(BindingProfileId profileId, const BindingProfile& newProfile)
@@ -347,16 +338,8 @@ namespace Silent::Input
             return;
         }
 
-        // Get profile.
-        auto* profile = Find(_bindings, profileId);
-        if (profile == nullptr)
-        {
-            Debug::Log(Fmt("Attempted to get missing binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
-            return;
-        }
-
         // Set new bindings.
-        *profile = newProfile;
+        _bindings[(int)profileId] = newProfile;
     }
 
     void BindingManager::SetBinding(BindingProfileId profileId, ActionId actionId, EventId eventId)
@@ -369,13 +352,7 @@ namespace Silent::Input
             return;
         }
 
-        // Get profile.
-        auto* profile = Find(_bindings, profileId);
-        if (profile == nullptr)
-        {
-            Debug::Log(Fmt("Attempted to get missing binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
-            return;
-        }
+        auto& profile = _bindings[(int)profileId];
 
         // Swap binding if event is already bound to another action in same group.
         bool hasSwap = false;
@@ -398,10 +375,10 @@ namespace Silent::Input
                 }
 
                 // Swap if event is already bound.
-                auto& eventIds = profile->at(otherActionId);
+                auto& eventIds = profile.at(otherActionId);
                 if (Contains(eventIds, eventId))
                 {
-                    std::swap(eventIds, (*profile)[actionId]);
+                    std::swap(eventIds, profile[actionId]);
                     hasSwap = true;
                     break;
                 }
@@ -413,7 +390,7 @@ namespace Silent::Input
         // Set new binding.
         if (!hasSwap)
         {
-            (*profile)[actionId] = { eventId };
+            profile[actionId] = { eventId };
         }
     }
 
@@ -421,17 +398,17 @@ namespace Silent::Input
     {
         _bindings =
         {
-            { BindingProfileId::CustomKeyboardMouse,       customKeyboardMouseProfile                    },
-            { BindingProfileId::CustomGamepad,             customGamepadProfile                          },
-            { BindingProfileId::DefaultKeyboardMouseType1, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1 },
-            { BindingProfileId::DefaultKeyboardMouseType2, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 },
-            { BindingProfileId::DefaultKeyboardMouseType3, DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 },
-            { BindingProfileId::DefaultGamepadType1,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1        },
-            { BindingProfileId::DefaultGamepadType2,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_2        },
-            { BindingProfileId::DefaultGamepadType3,       DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_3        },
-            { BindingProfileId::RawKeyboard,               RAW_KEYBOARD_BINDING_PROFILE                  },
-            { BindingProfileId::RawMouse,                  RAW_MOUSE_BINDING_PROFILE                     },
-            { BindingProfileId::RawGamepad,                RAW_GAMEPAD_BINDING_PROFILE                   }
+            /* `BindingProfileId::CustomKeyboardMouse`       */ customKeyboardMouseProfile,
+            /* `BindingProfileId::CustomGamepad`             */ customGamepadProfile,
+            /* `BindingProfileId::DefaultKeyboardMouseType1` */ DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_1,
+            /* `BindingProfileId::DefaultKeyboardMouseType2` */ DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2,
+            /* `BindingProfileId::DefaultKeyboardMouseType3` */ DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3,
+            /* `BindingProfileId::DefaultGamepadType1`       */ DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1,
+            /* `BindingProfileId::DefaultGamepadType2`       */ DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_2,
+            /* `BindingProfileId::DefaultGamepadType3`       */ DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_3,
+            /* `BindingProfileId::RawKeyboard`               */ RAW_KEYBOARD_BINDING_PROFILE,
+            /* `BindingProfileId::RawMouse`                  */ RAW_MOUSE_BINDING_PROFILE,
+            /* `BindingProfileId::RawGamepad`                */ RAW_GAMEPAD_BINDING_PROFILE
         };
     }
 }
