@@ -1,0 +1,11 @@
+NOTICE
+
+This font includes modifications to the original work by RanolP and contributors.
+Copyright 2020 RanolP and contributors
+Modifications by Sezz, 2025.
+
+This font is licensed under the Apache License, Version 2.0. You may obtain a copy of the license at:
+http://www.apache.org/licenses/LICENSE-2.0
+
+Modifications include:
+- @todo
