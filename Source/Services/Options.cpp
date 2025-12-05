@@ -275,7 +275,7 @@ namespace Silent::Services
                 if (kmBindsJson.contains(actionIdStr))
                 {
                     const auto& eventIdJson                 = kmBindsJson[actionIdStr];
-                    auto        eventId                     = !eventIdJson.empty() ? (EventId)kmBindsJson[actionIdStr] : DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE.at(actionId).front();
+                    auto        eventId                     = !eventIdJson.empty() ? (EventId)eventIdJson : DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE.at(actionId).front();
                     options.KeyboardMouseBindings[actionId] = { eventId };
                 }
                 else
@@ -287,7 +287,7 @@ namespace Silent::Services
                 if (gamepadBindsJson.contains(actionIdStr))
                 {
                     const auto& eventIdJson           = gamepadBindsJson[actionIdStr];
-                    auto        eventId               = !eventIdJson.empty() ? (EventId)gamepadBindsJson[actionIdStr] : DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE.at(actionId).front();
+                    auto        eventId               = !eventIdJson.empty() ? (EventId)eventIdJson : DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE.at(actionId).front();
                     options.GamepadBindings[actionId] = { eventId };
                 }
                 else
