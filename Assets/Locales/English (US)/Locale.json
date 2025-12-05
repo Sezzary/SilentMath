@@ -48,6 +48,9 @@
 
     "contMenu_KeyboardMouse": "KEYBOARD/MOUSE",
     "contMenu_Controller": "CONTROLLER",
+    "contMenu_GeneralActions": "GENERAL ACTIONS",
+    "contMenu_MenuActions": "MENU ACTIONS",
+    "contMenu_GameplayActions": "GAMEPLAY ACTIONS",
     "contMenu_Exit": "EXIT",
     "contMenu_Type1": "TYPE 1",
     "contMenu_Type2": "TYPE 2",
@@ -65,6 +68,7 @@
     "contMenu_Item": "ITEM",
     "contMenu_Map": "MAP",
     "contMenu_Option": "OPTION",
+    "contMenu_Reset": "Reset",
     "contMenu_Waiting": "Waiting for input...",
 
 
