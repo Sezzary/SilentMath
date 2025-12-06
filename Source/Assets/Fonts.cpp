@@ -34,6 +34,7 @@ namespace Silent::Assets
         Color::From8Bit(128, 128, 128)
     };
 
+    // @todo Could be defined in a Lua script instead.
     const std::vector<FontMetadata> FONTS_METADATA
     {
         FontMetadata

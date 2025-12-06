@@ -45,10 +45,10 @@ namespace Silent::Services
     constexpr char KEY_SE_VOLUME[]                                = "seVolume";
     constexpr char KEY_BLOOD_COLOR[]                              = "bloodColor";
     constexpr char KEY_BULLET_ADJUST[]                            = "bulletAdjust";
-    constexpr char KEY_KEYBOARD_MOUSE_BINDINGS[]                  = "keyboardMouseBindings";
     constexpr char KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID[] = "activeKeyboardMouseBindingProfileId";
-    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "gamepadBindings";
     constexpr char KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID[]        = "activeGamepadBindingProfileId";
+    constexpr char KEY_KEYBOARD_MOUSE_BINDINGS[]                  = "keyboardMouseBindings";
+    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "gamepadBindings";
     constexpr char KEY_ENABLE_VIBRATION[]                         = "enableVibration";
     constexpr char KEY_MOUSE_SENSITIVITY[]                        = "mouseSensitivity";
     constexpr char KEY_WEAPON_CONTROL[]                           = "weaponControl";
@@ -77,7 +77,7 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr bool DEFAULT_ENABLE_SUBTITLES                         = true;
-    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishOriginal;
+    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishOriginalUs;
     constexpr auto DEFAULT_SOUND                                    = SoundType::Stereo;
     constexpr int  DEFAULT_BGM_VOLUME                               = 16;
     constexpr int  DEFAULT_SE_VOLUME                                = 16;
