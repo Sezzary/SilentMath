@@ -205,7 +205,7 @@ namespace Silent::Input
         const auto& translator = g_App.GetTranslator();
         auto&       toaster    = g_App.GetToaster();
 
-        // Check if a gamepad is connected and device IDs match.
+        // Check if a gamepad is not connected or device IDs don't match.
         if (!IsGamepadConnected() || _gamepad.Id != deviceId)
         {
             return;
