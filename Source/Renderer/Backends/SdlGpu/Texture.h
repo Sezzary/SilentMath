@@ -93,6 +93,17 @@ namespace Silent::Renderer
          */
         SdlGpuTextureManager(SDL_GPUDevice& device);
 
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets a cached texture.
+         *
+         * @param name Texture name.
+         * @return Cached texture if it exists, otherwise `nullptr`.
+         */
+        SdlGpuTexture* Get(const std::string& name);
+
         // ==========
         // Utilities
         // ==========

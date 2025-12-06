@@ -189,9 +189,20 @@ namespace Silent::Renderer
         _device = &device;
     }
 
+    SdlGpuTexture* SdlGpuTextureManager::Get(const std::string& name)
+    {
+        auto* tex = Find(_textures, name);
+        if (tex == nullptr)
+        {
+            Debug::Log(Fmt("Texture manager attempted to get invalid GPU texture `{}`.", name));
+            return nullptr;
+        }
+
+        return (SdlGpuTexture*)tex->get();
+    }
+
     void SdlGpuTextureManager::Load(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name)
     {
-        // @todo Can't use `emplace`? Results in a crash.
         _textures.emplace(name, std::make_unique<SdlGpuTexture>(*_device, copyPass, pixels, res, name));
     }
 
