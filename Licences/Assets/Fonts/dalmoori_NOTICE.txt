@@ -8,4 +8,5 @@ This font is licensed under the Apache License, Version 2.0. You may obtain a co
 http://www.apache.org/licenses/LICENSE-2.0
 
 Modifications include:
-- @todo
+- Rescaled to work correctly at a 10-point pixel scale.
+- Renamed to `dalmoori10`.

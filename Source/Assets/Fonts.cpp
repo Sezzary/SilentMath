@@ -79,7 +79,7 @@ namespace Silent::Assets
             {
                 "den-8x10.ttf", // @todo Many required glyphs are missing and need to be drawn by hand.
                 "PixelMplus10-Regular.ttf",
-                "dalmoori.ttf" // @todo This is an 8-point font. Need to convert it to be compliant at 10-point.
+                "dalmoori10.ttf"
             },
             .PointSize          = 10,
             .EnableAntialiasing = false
