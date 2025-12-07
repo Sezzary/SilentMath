@@ -37,14 +37,14 @@ namespace Silent::Renderer
          */
         IndexedBuffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint dataSize, uint idxCount, const std::string& name = {});
 
-        /** @brief Uploads data to the GPU  databuffer.
+        /** @brief Uploads data to the indexed data buffer.
          *
          * @param data New data to transfer to the data buffer.
          * @param startIdx Start index in the data buffer at which to transfer the new data.
          */
         void UpdateData(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx);
 
-        /** @brief Uploads indices to the GPU index buffer.
+        /** @brief Uploads indices to the index buffer.
          *
          * @param idxs New indices to transfer to the index buffer.
          * @param startIdx Start index in the index buffer at which to transfer the new indices.
