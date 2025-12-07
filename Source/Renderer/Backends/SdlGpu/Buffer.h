@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU vertex, index, or indirect buffer with data of type `T`. */
+    /** @brief GPU vertex, index, or indirect buffer. */
     template <typename T>
     class Buffer
     {
@@ -11,10 +11,10 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        SDL_GPUDevice*          _device     = nullptr;
-        SDL_GPUBuffer*          _buffer     = nullptr;
-        SDL_GPUTransferBuffer*  _transfer   = nullptr;
-        SDL_GPUBufferUsageFlags _usageFlags = 0;
+        SDL_GPUDevice*          _device         = nullptr;
+        SDL_GPUBuffer*          _resourceBuffer = nullptr;
+        SDL_GPUTransferBuffer*  _transferBuffer = nullptr;
+        SDL_GPUBufferUsageFlags _usageFlags     = 0;
 
     public:
         // =============
@@ -28,12 +28,13 @@ namespace Silent::Renderer
          *
          * @param device GPU device.
          * @param usageFlags Buffer usage flags.
-         * @param size Static buffer size.
+         * @param size Max buffer size in number of elements.
          * @param name Buffer name.
          */
         Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
 
-        // @todo Destructor?
+        /** @brief Gracefully destroys the `Buffer` and releases GPU resources. */
+        ~Buffer();
 
         // ==========
         // Utilities
@@ -44,7 +45,7 @@ namespace Silent::Renderer
          * @param data New data to transfer to the buffer.
          * @param startIdx Start index in the buffer at which to transfer the new data.
          */
-        void Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, uint startIdx);
+        void Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx);
 
         /** @brief Binds the GPU buffer for drawing.
          *
@@ -52,6 +53,17 @@ namespace Silent::Renderer
          * @param startIdx Data start index.
          */
         void Bind(SDL_GPURenderPass& renderPass, uint startIdx);
+
+    private:
+        // ========
+        // Helpers
+        // ========
+
+        /** @brief Checks if the GPU buffer is valid and ready to be used.
+         *
+         * @return `true` if valid, `false` otherwise.
+         */
+        bool IsValid() const;
     };
 
     template <typename T>
@@ -72,13 +84,13 @@ namespace Silent::Renderer
         };
 
         // Create buffer.
-        _buffer = SDL_CreateGPUBuffer(&device, &bufferInfo);
-        if (_buffer == nullptr)
+        _resourceBuffer = SDL_CreateGPUBuffer(&device, &bufferInfo);
+        if (_resourceBuffer == nullptr)
         {
             Debug::Log(Fmt("Failed to create buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
             // @todo Handle error?
         }
-        SDL_SetGPUBufferName(_device, _buffer, name.c_str());
+        SDL_SetGPUBufferName(_device, _resourceBuffer, name.c_str());
 
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
         {
@@ -87,44 +99,68 @@ namespace Silent::Renderer
         };
 
         // Create transfer buffer.
-        _transfer = SDL_CreateGPUTransferBuffer(_device, &transferBufferInfo);
-        if (_transfer == nullptr)
+        _transferBuffer = SDL_CreateGPUTransferBuffer(_device, &transferBufferInfo);
+        if (_transferBuffer == nullptr)
         {
             Debug::Log(Fmt("Failed to create transfer buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
         }
     }
 
     template <typename T>
-    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, uint startIdx)
+    Buffer<T>::~Buffer()
     {
+        // @todo Crashes??
+        /*if (_resourceBuffer != nullptr)
+        {
+            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
+        }
+
+        if (_transferBuffer != nullptr)
+        {
+            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
+        }*/
+    }
+
+    template <typename T>
+    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx)
+    {
+        if (!IsValid())
+        {
+            Debug::Log("Attempted to update invalid GPU buffer.", Debug::LogLevel::Warning);
+            return;
+        }
+
         // Map transfer data.
-        auto* mappedTransferData = (T*)SDL_MapGPUTransferBuffer(_device, _transfer, false);
+        auto* mappedTransferData = (T*)SDL_MapGPUTransferBuffer(_device, _transferBuffer, false);
         memcpy(mappedTransferData, data.data(), data.size_bytes());
-        SDL_UnmapGPUTransferBuffer(_device, _transfer);
+        SDL_UnmapGPUTransferBuffer(_device, _transferBuffer);
 
         // Upload data.
         auto transferBufferLoc = SDL_GPUTransferBufferLocation
         {
-            .transfer_buffer = _transfer
+            .transfer_buffer = _transferBuffer
         };
         auto bufferRegion = SDL_GPUBufferRegion
         {
-            .buffer = _buffer,
+            .buffer = _resourceBuffer,
             .offset = startIdx * sizeof(T),
             .size   = (uint)data.size_bytes()
         };
         SDL_UploadToGPUBuffer(&copyPass, &transferBufferLoc, &bufferRegion, true);
-
-        // @todo Necessary or not?
-        //SDL_ReleaseGPUTransferBuffer(_device, _transfer);
     }
 
     template <typename T>
     void Buffer<T>::Bind(SDL_GPURenderPass& renderPass, uint startIdx)
     {
+        if (!IsValid())
+        {
+            Debug::Log("Attempted to bind invalid GPU buffer.", Debug::LogLevel::Warning);
+            return;
+        }
+
         auto bufferBindings = SDL_GPUBufferBinding
         {
-            .buffer = _buffer,
+            .buffer = _resourceBuffer,
             .offset = startIdx * sizeof(T)
         };
 
@@ -138,5 +174,11 @@ namespace Silent::Renderer
         }
 
         // @todo Can indirect buffer be bound?
+    }
+
+    template <typename T>
+    bool Buffer<T>::IsValid() const
+    {
+        return _resourceBuffer != nullptr && _transferBuffer != nullptr;
     }
 };

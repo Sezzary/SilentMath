@@ -72,7 +72,7 @@ namespace Silent::Renderer
         // Claim window.
         if (!SDL_ClaimWindowForGPUDevice(_device, _window))
         {
-            throw std::runtime_error(Fmt("Failed to claim window for GPU device: {}", std::string(SDL_GetError())));
+            throw std::runtime_error(Fmt("Failed to claim window for GPU device: {}", SDL_GetError()));
         }
 
         // Initialize texture manager.

@@ -71,9 +71,9 @@ namespace Silent::Renderer
          */
         SDL_GPUShader* LoadShader(const std::string& filename, uint samplerCount, uint storageTexCount, uint storageBufferCount, uint uniBufferCount);
 
-        /** @brief Computes a pipeline hash from a pipeline render stage and blend mode.
+        /** @brief Computes a pipeline hash from a render stage and blend mode.
          *
-         * @param renderStage Pipeline render stage.
+         * @param renderStage Render stage.
          * @param blendMode Blend mode.
          * @return Pipeline hash.
          */
