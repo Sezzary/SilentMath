@@ -22,10 +22,8 @@ namespace Silent::Renderer
 
     struct BufferData
     {
-        Buffer<BufferVertex> Primitives2d = {};
-        Buffer<Vertex2d>     Sprites2d    = {};
-
-        IndexedBuffer<PositionTextureVertex> TestTextureVerts = {};
+        Buffer<BufferVertex>                 Primitives2d = {};
+        IndexedBuffer<PositionTextureVertex> Sprites2d    = {};
     };
 
     class SdlGpuRenderer : public RendererBase
@@ -70,5 +68,6 @@ namespace Silent::Renderer
         void DrawDebugGui() override;
 
         void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferVertex>& bufferVerts);
+        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<PositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs);
     };
 }

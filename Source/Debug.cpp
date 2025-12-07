@@ -52,6 +52,10 @@ namespace Silent::Debug
 
             auto& renderer = g_App.GetRenderer();
 
+            // Sprite test.
+            renderer.SubmitScreenSprite(0, Vector2::Zero, Vector2::Zero, Vector2::Zero, 0, Vector2::Zero, Color::Clear, 0,
+                                        AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+
             // GUI button test.
             static auto but = Button(Vector2(25.0f, 75.0f), Vector2(25.0f, 25.0f), ScaleMode::Fit,
                                      []() { Debug::Log("Entering!"); },

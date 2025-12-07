@@ -103,11 +103,13 @@ namespace Silent::Renderer
         };
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
 
-        // Initialize vertex, index, and indirect buffers.
+        // Initialize buffers.
         _buffers.Primitives2d = Buffer<BufferVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
+        _buffers.Sprites2d    = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, SPRITE_2D_COUNT_MAX * 4, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
 
         // Reserve memory.
         _primitives2d.reserve(PRIMITIVE_2D_COUNT_MAX);
+        _sprites2d.reserve(SPRITE_2D_COUNT_MAX);
 
         // Create ImGui context.
         ImGui::CreateContext();
@@ -131,26 +133,6 @@ namespace Silent::Renderer
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
         (*(SdlGpuTextureManager*)_textures.get()).Load(*copyPass, g_App.GetAssets().GetAssetName(1854));
-
-        _buffers.TestTextureVerts = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, 6, "Derg Vertex Buffer");
-        auto vertMap = std::vector<PositionTextureVertex>
-        {
-            PositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f },
-            PositionTextureVertex{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f },
-            PositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f },
-            PositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f }
-        };
-        auto idxMap = std::vector<uint16>
-        {
-            0,
-            1,
-            2,
-            0,
-            2,
-            3
-        };
-        _buffers.TestTextureVerts.UpdateData(*copyPass, ToSpan(vertMap), 0);
-        _buffers.TestTextureVerts.UpdateIdxs(*copyPass, ToSpan(idxMap), 0);
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
@@ -283,6 +265,10 @@ namespace Silent::Renderer
         auto bufferVerts = std::vector<BufferVertex>{};
         Copy2dPrimitives(*copyPass, bufferVerts);
 
+        auto spriteBufferVerts = std::vector<PositionTextureVertex>{};
+        auto spriteBufferIdxs  = std::vector<uint16>{};
+        Copy2dSprites(*copyPass, spriteBufferVerts, spriteBufferIdxs);
+
         SDL_EndGPUCopyPass(copyPass);
 
         // Begin render pass.
@@ -294,30 +280,20 @@ namespace Silent::Renderer
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // Texture test.
-        // ===========================
-
+        // 2D textures.
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
-
-        _buffers.TestTextureVerts.Bind(renderPass, 0, 0);
-
+        _buffers.Sprites2d.Bind(renderPass, 0, 0);
         (*(SdlGpuTextureManager*)_textures.get()).Get(g_App.GetAssets().GetAssetName(1854))->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
+        SDL_DrawGPUIndexedPrimitives(&renderPass, 6, sizeof(spriteBufferVerts) / sizeof(PositionTextureVertex), 0, 0, 0);
 
-        SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
-
-        //===============================
-
-        // Bind.
+        // 2D primitives.
         _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
         _buffers.Primitives2d.Bind(renderPass, 0);
-
-        // Upload uniform data.
         UniformBuffer.IsFastAlpha = false;
         SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
-
-        // Process render pass.
         SDL_DrawGPUPrimitives(&renderPass, bufferVerts.size(), sizeof(bufferVerts) / sizeof(BufferVertex), 0, 0);
-
+        
+        // End render pass.
         SDL_EndGPURenderPass(&renderPass);
     }
 
@@ -437,5 +413,44 @@ namespace Silent::Renderer
 
         // Update buffer.
         _buffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
+    }
+
+    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<PositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs)
+    {
+        // Create 2D sprite vertex buffer data.
+        bufferVerts.reserve(_sprites2d.size() * 4);
+        bufferIdxs.reserve(_sprites2d.size() * 6);
+        for (const auto& sprite : _sprites2d)
+        {
+            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
+            auto ndc = ConvertScreenPercentToNdc(sprite.Position);
+            /*for (int i = 0; i < 4; i++)
+            {
+                bufferVerts.push_back(PositionTextureVertex
+                {
+                    .x = ndc.x,
+                    .y = ndc.y,
+                    .z = 0.0f,
+                    .u = sprite.UvMin,
+                    .v = ndc.v
+                });
+            }*/
+
+            bufferVerts.push_back(PositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f });
+            bufferVerts.push_back(PositionTextureVertex{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f });
+            bufferVerts.push_back(PositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f });
+            bufferVerts.push_back(PositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f });
+
+            bufferIdxs.push_back(0);
+            bufferIdxs.push_back(1);
+            bufferIdxs.push_back(2);
+            bufferIdxs.push_back(0);
+            bufferIdxs.push_back(2);
+            bufferIdxs.push_back(3);
+        }
+
+        // Update buffer.
+        _buffers.Sprites2d.UpdateData(copyPass, ToSpan(bufferVerts), 0);
+        _buffers.Sprites2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs),  0);
     }
 }

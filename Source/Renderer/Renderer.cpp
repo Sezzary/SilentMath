@@ -92,7 +92,13 @@ namespace Silent::Renderer
             return;
         }
 
-        // @todo
+        auto sprite = Sprite2d
+        {
+            .UvMin    = uvMin,
+            .UvMax    = uvMax,
+            .Position = pos
+        };
+        _sprites2d.push_back(sprite);
     }
 
     void RendererBase::SubmitDebugText(const std::string& msg, const Vector2& pos, const Color& color, TextAlignMode alignMode)

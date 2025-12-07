@@ -259,7 +259,7 @@ namespace Silent
         // Update input.
         _work.Input.Update(*_window, _mouseWheelAxis);
 
-        // Update game state.
+        // Tick game state.
         for (int i = 0; i < _work.Clock.GetTicks(); i++)
         {
             Entry();
