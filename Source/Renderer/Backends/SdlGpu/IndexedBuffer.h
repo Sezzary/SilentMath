@@ -70,19 +70,19 @@ namespace Silent::Renderer
     template <typename T>
     void IndexedBuffer<T>::UpdateData(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx)
     {
-        _dataBuffer.Update(data, startIdx);
+        _dataBuffer.Update(copyPass, data, startIdx);
     }
 
     template <typename T>
     void IndexedBuffer<T>::UpdateIdxs(SDL_GPUCopyPass& copyPass, const std::span<const uint16>& idxs, uint startIdx)
     {
-        _idxBuffer.Update(idxs, startIdx);
+        _idxBuffer.Update(copyPass, idxs, startIdx);
     }
 
     template <typename T>
     void IndexedBuffer<T>::Bind(SDL_GPURenderPass& renderPass, uint dataStartIdx, uint idxsStartIdx)
     {
-        _dataBuffer.Bind(dataStartIdx);
-        _idxBuffer.Bind(idxsStartIdx);
+        _dataBuffer.Bind(renderPass, dataStartIdx);
+        _idxBuffer.Bind(renderPass, idxsStartIdx);
     }
 }

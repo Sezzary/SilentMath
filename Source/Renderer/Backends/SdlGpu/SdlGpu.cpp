@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Renderer/Backends/SdlGpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/IndexedBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Texture.h"
@@ -134,9 +135,7 @@ namespace Silent::Renderer
 
         TestTexture.Initialize(*_device, *copyPass, 1);
 
-        _buffers.TestTextureVerts = Buffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, "Derg Vertex Buffer");
-        _buffers.TestTextureIdxs  = Buffer<uint16>(*_device, SDL_GPU_BUFFERUSAGE_INDEX, 6, "Derg Index Buffer");
-
+        _buffers.TestTextureVerts = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, 6, "Derg Vertex Buffer");
         auto vertMap = std::vector<PositionTextureVertex>
         {
             PositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f },
@@ -144,8 +143,6 @@ namespace Silent::Renderer
             PositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f },
             PositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f }
         };
-        _buffers.TestTextureVerts.Update(*copyPass, ToSpan(vertMap), 0);
-
         auto idxMap = std::vector<uint16>
         {
             0,
@@ -155,7 +152,8 @@ namespace Silent::Renderer
             2,
             3
         };
-        _buffers.TestTextureIdxs.Update(*copyPass, ToSpan(idxMap), 0);
+        _buffers.TestTextureVerts.UpdateData(*copyPass, ToSpan(vertMap), 0);
+        _buffers.TestTextureVerts.UpdateIdxs(*copyPass, ToSpan(idxMap), 0);
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
@@ -304,8 +302,7 @@ namespace Silent::Renderer
 
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
 
-        _buffers.TestTextureVerts.Bind(renderPass, 0);
-        _buffers.TestTextureIdxs.Bind(renderPass, 0);
+        _buffers.TestTextureVerts.Bind(renderPass, 0, 0);
 
         TestTexture.Bind(renderPass, *_samplers[(int)options->TextureFilter]);
 

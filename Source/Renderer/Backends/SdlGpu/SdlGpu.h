@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/Backends/SdlGpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/IndexedBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
@@ -21,11 +22,10 @@ namespace Silent::Renderer
 
     struct BufferData
     {
-        Buffer<BufferVertex> Primitives2d = Buffer<BufferVertex>();
-        Buffer<Vertex2d>     Sprites2d    = Buffer<Vertex2d>();
+        Buffer<BufferVertex> Primitives2d = {};
+        Buffer<Vertex2d>     Sprites2d    = {};
 
-        Buffer<PositionTextureVertex> TestTextureVerts = Buffer<PositionTextureVertex>();
-        Buffer<uint16>                TestTextureIdxs  = Buffer<uint16>();
+        IndexedBuffer<PositionTextureVertex> TestTextureVerts = {};
     };
 
     class SdlGpuRenderer : public RendererBase
