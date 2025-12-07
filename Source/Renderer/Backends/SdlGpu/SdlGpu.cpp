@@ -26,9 +26,6 @@ namespace Silent::Renderer
 
     static auto UniformBuffer = TestUniform{};
 
-    // Texture test.
-    static SdlGpuTexture TestTexture = SdlGpuTexture();
-
     void SdlGpuRenderer::Initialize(SDL_Window& window)
     {
         Debug::Log("Using SDL_gpu renderer.");
@@ -133,7 +130,7 @@ namespace Silent::Renderer
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
-        TestTexture.Initialize(*_device, *copyPass, 1);
+        (*(SdlGpuTextureManager*)_textures.get()).Load(*copyPass, g_App.GetAssets().GetAssetName(1854));
 
         _buffers.TestTextureVerts = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, 4, 6, "Derg Vertex Buffer");
         auto vertMap = std::vector<PositionTextureVertex>
@@ -169,7 +166,7 @@ namespace Silent::Renderer
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        TestTexture.~SdlGpuTexture();
+        //_textures TestTexture.~SdlGpuTexture();
         _buffers = {};
         _pipelines.Deinitialize();
 
@@ -304,7 +301,7 @@ namespace Silent::Renderer
 
         _buffers.TestTextureVerts.Bind(renderPass, 0, 0);
 
-        TestTexture.Bind(renderPass, *_samplers[(int)options->TextureFilter]);
+        (*(SdlGpuTextureManager*)_textures.get()).Get(g_App.GetAssets().GetAssetName(1854))->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
 
         SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
 
