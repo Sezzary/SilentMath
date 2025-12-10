@@ -132,7 +132,6 @@ namespace Silent::Assets
     // ==================
 
     constexpr char KEY_ITEM_DESC_KITCHEN_KNIFE[] = "itemDescKitchenKnife";
-
     // @todo
 
     // ==========
@@ -156,6 +155,19 @@ namespace Silent::Assets
     constexpr char KEY_GAME_OVER_TIP_13[]       = "gameOver_Tip13";
     constexpr char KEY_GAME_OVER_TIP_14[]       = "gameOver_Tip14";
     constexpr char KEY_GAME_OVER_TIP_15[]       = "gameOver_Tip15";
+
+    // =================
+    // Paper Map Labels
+    // =================
+
+    constexpr char KEY_PAPER_MAP_BASEMENT[] = "paperMap_Basement";
+    constexpr char KEY_PAPER_MAP_FLOOR_1[]  = "paperMap_Floor1";
+    constexpr char KEY_PAPER_MAP_FLOOR_2[]  = "paperMap_Floor2";
+    constexpr char KEY_PAPER_MAP_FLOOR_3[]  = "paperMap_Floor3";
+    constexpr char KEY_PAPER_MAP_ROOF[]     = "paperMap_Roof";
+    constexpr char KEY_PAPER_MAP_SCHOOL[]   = "paperMap_School";
+    constexpr char KEY_PAPER_MAP_HOSPITAL[] = "paperMap_Hospital";
+    constexpr char KEY_PAPER_MAP_LADDER[]   = "paperMap_Ladder";
 
     // ====================
     // Common Map Messages
