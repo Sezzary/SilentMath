@@ -104,8 +104,10 @@ namespace Silent::Renderer
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
 
         // Initialize buffers.
-        _buffers.Primitives2d = Buffer<BufferVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
-        _buffers.Sprites2d    = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, SPRITE_2D_COUNT_MAX * 4, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
+        _buffers.Primitives2d = Buffer<BufferVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX,
+                                                     (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
+        _buffers.Sprites2d    = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX,
+                                                                     SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
 
         // Reserve memory.
         _primitives2d.reserve(PRIMITIVE_2D_COUNT_MAX);
@@ -124,9 +126,6 @@ namespace Silent::Renderer
             .MSAASamples       = SDL_GPU_SAMPLECOUNT_1
         };
         ImGui_ImplSDLGPU3_Init(&initInfo);
-
-        // Texture test.
-        // ======================
 
         // Upload transfer data to GPU resources.
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
