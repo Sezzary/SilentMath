@@ -57,6 +57,7 @@ namespace Silent::Services
     constexpr char KEY_WALK_RUN_CONTROL[]                         = "walkRunControl";
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "disableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "viewMode";
+    constexpr char KEY_PAPER_MAP[]                                = "paperMap";
     constexpr char KEY_DIALOG_PAUSE[]                             = "dialogPause";
     constexpr char KEY_ENABLE_TOASTS[]                            = "enableToasts";
     constexpr char KEY_ENABLE_PARALLELISM[]                       = "enableParallelism";
@@ -92,6 +93,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_RETREAT_TURN_CONTROL                     = ControlInversionType::Normal;
     constexpr auto DEFAULT_WALK_RUN_CONTROL                         = ControlInversionType::Normal;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
+    constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Hd;
     constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Retro;
     constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
@@ -150,6 +152,7 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultEnhancementsOptions()
     {
+        _options.PaperMap    = DEFAULT_PAPER_MAP;
         _options.DialogPause = DEFAULT_DIALOG_PAUSE;
     }
 
@@ -299,6 +302,7 @@ namespace Silent::Services
 
         // Load enhancements options.
         const auto& enhancementsJson = optionsJson[KEY_ENHANCEMENTS];
+        options.PaperMap             = enhancementsJson.value(KEY_PAPER_MAP,    DEFAULT_PAPER_MAP);
         options.DialogPause          = enhancementsJson.value(KEY_DIALOG_PAUSE, DEFAULT_DIALOG_PAUSE);
 
         // Load system options.
@@ -391,6 +395,7 @@ namespace Silent::Services
             {
                 KEY_ENHANCEMENTS,
                 {
+                    { KEY_PAPER_MAP,    options.PaperMap    },
                     { KEY_DIALOG_PAUSE, options.DialogPause }
                 }
             },

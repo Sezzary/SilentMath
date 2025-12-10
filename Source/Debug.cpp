@@ -286,6 +286,7 @@ namespace Silent::Debug
             constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
             constexpr const char* WEAPON_CONTROL_ITEMS[]    = { "Switch", "Press" };
             constexpr const char* VIEW_MODE_ITEMS[]         = { "Normal", "Self view" };
+            constexpr const char* PAPER_MAP_ITEMS[]         = { "Hd", "Retro" };
             constexpr const char* DIALOG_PAUSE_ITEMS[]      = { "Condensed", "Retro" };
 
             const auto& assets     = g_App.GetAssets();
@@ -774,6 +775,14 @@ namespace Silent::Debug
                         {
                             options->DialogPause = (DialogPauseType)dialogPause;
                             isOptChanged         = true;
+                        }
+
+                        // `Paper map` combo.
+                        int paperMap = (int)options->PaperMap;
+                        if (ImGui::Combo("Paper map", &paperMap, PAPER_MAP_ITEMS, IM_ARRAYSIZE(PAPER_MAP_ITEMS)))
+                        {
+                            options->PaperMap = (PaperMapQuality)paperMap;
+                            isOptChanged      = true;
                         }
                     }
 

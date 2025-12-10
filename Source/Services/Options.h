@@ -90,6 +90,12 @@ namespace Silent::Services
         SelfView
     };
 
+    enum class PaperMapQuality
+    {
+        Hd,
+        Retro
+    };
+
     enum class DialogPauseType
     {
         Condensed,
@@ -162,6 +168,7 @@ namespace Silent::Services
         // Enhancements
         // =============
 
+        PaperMapQuality PaperMap    = PaperMapQuality::Hd;
         DialogPauseType DialogPause = DialogPauseType::Retro;
 
         // ==================
