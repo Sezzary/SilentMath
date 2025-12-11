@@ -94,7 +94,7 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Loads a texture from a texture image.
+        /** @brief Loads a texture from a texture image. If the texture is already loaded, it will be overwritten with new data.
          *
          * @param copyPass Copy pass.
          * @param pixels Texture image pixels.

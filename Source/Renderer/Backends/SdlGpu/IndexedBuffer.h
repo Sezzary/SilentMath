@@ -63,8 +63,9 @@ namespace Silent::Renderer
     template <typename T>
     IndexedBuffer<T>::IndexedBuffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint dataSize, uint idxCount, const std::string& name)
     {
+        // @todo Or hardcode it to be a vertex buffer?
         _dataBuffer = Buffer<T>(device, usageFlags, dataSize, name);
-        _idxBuffer  = Buffer<uint16>(device, SDL_GPU_BUFFERUSAGE_INDEX, idxCount, name + " (indices)");
+        _idxBuffer  = Buffer<uint16>(device, SDL_GPU_BUFFERUSAGE_INDEX, idxCount, name + " Indices");
     }
 
     template <typename T>

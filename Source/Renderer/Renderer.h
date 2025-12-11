@@ -4,6 +4,7 @@
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Objects/Primitive2d.h"
 #include "Renderer/Common/Objects/Primitive3d.h"
+#include "Renderer/Common/Objects/Scene/Glyph.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
 #include "Renderer/Common/Objects/Scene/Text.h"
 #include "Renderer/Common/Texture.h"
@@ -18,7 +19,19 @@ namespace Silent::Renderer
         SdlGpu
     };
 
-    /** @brief Renderer interface. */
+    /** @brief Generic renderer resources. */
+    struct RendererResources
+    {
+        std::unique_ptr<TextureManagerBase> _textures          = nullptr;
+        std::vector<Primitive3d>            _primitives3d      = {};
+        std::vector<Primitive2d>            _primitives2d      = {};
+        std::vector<Sprite2d>               _sprites2d         = {};
+        std::vector<Glyph>                  _glyphs            = {};
+        std::vector<Primitive3d>            _debugPrimitives3d = {};
+        std::vector<std::function<void()>>  _debugGuiDrawCalls = {};
+    };
+
+    /** @brief Renderer base. */
     class RendererBase
     {
     protected:
@@ -33,10 +46,12 @@ namespace Silent::Renderer
         uint         _drawCallCount = 0;
         bool         _isResized     = false;
 
+        //RendererResources Resources = {};
         std::unique_ptr<TextureManagerBase> _textures          = nullptr;
         std::vector<Primitive3d>            _primitives3d      = {};
         std::vector<Primitive2d>            _primitives2d      = {};
         std::vector<Sprite2d>               _sprites2d         = {};
+        std::vector<Glyph>                  _glyphs            = {};
         std::vector<Primitive3d>            _debugPrimitives3d = {};
         std::vector<std::function<void()>>  _debugGuiDrawCalls = {};
 
@@ -98,6 +113,12 @@ namespace Silent::Renderer
          * @param prim 2D primitive to draw.
          */
         void Submit2dPrimitive(const Primitive2d& prim);
+
+        /** @brief Submits a glyph for drawing.
+         *
+         * @param glyph Glyph to draw.
+         */
+        void SubmitGlyph(const Glyph& glyph);
 
         /** @brief Submits a screen sprite for drawing.
          *

@@ -6,6 +6,7 @@
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
 #include "Renderer/Common/Objects/Primitive2d.h"
 #include "Renderer/Common/Objects/Primitive3d.h"
+#include "Renderer/Common/Objects/Scene/Glyph.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
 #include "Renderer/Common/Objects/Scene/Text.h"
 #include "Renderer/Backends/OpenGl/OpenGl.h"

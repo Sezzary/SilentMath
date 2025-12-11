@@ -115,7 +115,7 @@ namespace Silent::Renderer
     SDL_GPUShader* PipelineManager::LoadShader(const std::string& filename, uint samplerCount, uint storageTexCount, uint storageBufferCount, uint uniBufferCount)
     {
         // Define shader stage.
-        auto stage = SDL_GPUShaderStage{};
+        auto stage = SDL_GPUShaderStage::SDL_GPU_SHADERSTAGE_VERTEX;
         if (SDL_strstr(filename.c_str(), ".vert"))
         {
             stage = SDL_GPU_SHADERSTAGE_VERTEX;

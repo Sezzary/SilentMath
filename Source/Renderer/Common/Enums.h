@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Render stages representing pipelines or shader programs depending on the renderer backend. */
+    /** @brief Render stages representing pipelines or shader programs, depending on the renderer backend. */
     enum class RenderStage
     {
         // =========
@@ -11,6 +11,7 @@ namespace Silent::Renderer
 
         Primitive2d,
         Primitive2dTextured,
+        //GlyphGradient, // @todo
 
         // =============
         // Post-process
@@ -55,5 +56,12 @@ namespace Silent::Renderer
         Fit,
         Fill,
         Stretch
+    };
+
+    /** @brief Text embellishment styles. */
+    enum class TextStyle
+    {
+        Flat,
+        Gradient
     };
 }

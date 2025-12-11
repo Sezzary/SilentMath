@@ -183,7 +183,7 @@ namespace Silent::Assets
     constexpr char KEY_PAPER_MAP_TOP_SALES[]            = "paperMap_TopSales";
     constexpr char KEY_PAPER_MAP_BOOK_AND_GIFT_SHOP[]   = "paperMap_BookAndGiftShop";
 
-    constexpr char KEY_PAPER_MAP_SCHOOL[]      = "paperMap_School";
+    //constexpr char KEY_PAPER_MAP_SCHOOL[]      = "paperMap_School";
     constexpr char KEY_PAPER_MAP_HOSPITAL[]    = "paperMap_Hospital";
     constexpr char KEY_PAPER_MAP_BASEMENT[]    = "paperMap_Basement";
     constexpr char KEY_PAPER_MAP_FLOOR_1[]     = "paperMap_Floor1";
