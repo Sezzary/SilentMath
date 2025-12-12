@@ -7,24 +7,16 @@
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
 #include "Renderer/Renderer.h"
 
+// @todo Temp. placement.
+#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferColorVertex2d.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferTexVertex2d.h"
+
 namespace Silent::Renderer
 {
-    // @todo Move to dedicated headers in `Buffer/Data`.
-    struct BufferVertex
-    {
-        Vector3 Position = Vector3::Zero;
-        Color   Col      = Color::Clear;
-    };
-    struct BufferPositionTextureVertex
-    {
-        float x, y, z;
-        float u, v;
-    };
-
     struct BufferData
     {
-        Buffer<BufferVertex>                      Primitives2d = {};
-        VertexBuffer<BufferPositionTextureVertex> Sprites2d    = {};
+        Buffer<BufferColorVertex2d>     Primitives2d = {};
+        VertexBuffer<BufferTexVertex2d> Sprites2d    = {};
     };
 
     class SdlGpuRenderer : public RendererBase
@@ -68,7 +60,7 @@ namespace Silent::Renderer
         void DrawPostProcess() override;
         void DrawDebugGui() override;
 
-        void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferVertex>& bufferVerts);
-        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferPositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs);
+        void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferColorVertex2d>& bufferVerts);
+        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs);
     };
 }

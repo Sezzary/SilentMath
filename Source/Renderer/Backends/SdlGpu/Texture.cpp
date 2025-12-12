@@ -121,7 +121,7 @@ namespace Silent::Renderer
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
         {
-            Debug::Log(Fmt("Texture manager attempted to get invalid GPU texture `{}`.", name));
+            Debug::Log(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name));
             return nullptr;
         }
 
