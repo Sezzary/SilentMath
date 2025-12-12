@@ -78,7 +78,7 @@ namespace Silent::Assets
             .Name      = "RetroSans",
             .Filenames =
             {
-                "den-8x10.ttf", // @todo Many required glyphs are missing and need to be drawn by hand.
+                "SilentControl10.ttf",
                 "PixelMplus10-Regular.ttf",
                 "dalmoori10.ttf"
             },

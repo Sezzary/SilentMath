@@ -43,7 +43,7 @@ namespace Silent::Renderer
         /** @brief Uploads data to the GPU buffer.
          *
          * @param data New data to transfer to the buffer.
-         * @param startIdx Start index in the buffer at which to transfer the new data.
+         * @param startIdx Start index in the buffer at which to insert the new data.
          */
         void Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx);
 
@@ -59,7 +59,7 @@ namespace Silent::Renderer
         // Helpers
         // ========
 
-        /** @brief Checks if the GPU buffer is valid and ready to be used.
+        /** @brief Checks if the GPU buffer is valid and ready to use.
          *
          * @return `true` if valid, `false` otherwise.
          */
@@ -172,8 +172,10 @@ namespace Silent::Renderer
         {
             SDL_BindGPUIndexBuffer(&renderPass, &bufferBindings, SDL_GPU_INDEXELEMENTSIZE_16BIT);
         }
-
-        // @todo Can indirect buffer be bound?
+        else if (_usageFlags & SDL_GPU_BUFFERUSAGE_INDIRECT)
+        {
+            Debug::Log("Attempted to bind indirect GPU buffer.", Debug::LogLevel::Info);
+        }
     }
 
     template <typename T>

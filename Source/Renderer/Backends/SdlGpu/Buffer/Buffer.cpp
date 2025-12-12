@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
 
 namespace Silent::Renderer
 {

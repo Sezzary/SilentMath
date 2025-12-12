@@ -2,8 +2,8 @@
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 
 #include "Application.h"
-#include "Renderer/Backends/SdlGpu/Buffer.h"
-#include "Renderer/Backends/SdlGpu/IndexedBuffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Texture.h"
@@ -106,8 +106,7 @@ namespace Silent::Renderer
         // Initialize buffers.
         _buffers.Primitives2d = Buffer<BufferVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX,
                                                      (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
-        _buffers.Sprites2d    = IndexedBuffer<PositionTextureVertex>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX,
-                                                                     SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
+        _buffers.Sprites2d    = VertexBuffer<BufferPositionTextureVertex>(*_device, SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
 
         // Reserve memory.
         _primitives2d.reserve(PRIMITIVE_2D_COUNT_MAX);
@@ -264,7 +263,7 @@ namespace Silent::Renderer
         auto bufferVerts = std::vector<BufferVertex>{};
         Copy2dPrimitives(*copyPass, bufferVerts);
 
-        auto spriteBufferVerts = std::vector<PositionTextureVertex>{};
+        auto spriteBufferVerts = std::vector<BufferPositionTextureVertex>{};
         auto spriteBufferIdxs  = std::vector<uint16>{};
         Copy2dSprites(*copyPass, spriteBufferVerts, spriteBufferIdxs);
 
@@ -283,7 +282,7 @@ namespace Silent::Renderer
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
         _buffers.Sprites2d.Bind(renderPass, 0, 0);
         (*(SdlGpuTextureManager*)_textures.get()).Get(g_App.GetAssets().GetAssetName(1854))->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
-        SDL_DrawGPUIndexedPrimitives(&renderPass, 6, sizeof(spriteBufferVerts) / sizeof(PositionTextureVertex), 0, 0, 0);
+        SDL_DrawGPUIndexedPrimitives(&renderPass, 6, sizeof(spriteBufferVerts) / sizeof(BufferPositionTextureVertex), 0, 0, 0);
 
         // 2D primitives.
         _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
@@ -414,7 +413,7 @@ namespace Silent::Renderer
         _buffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
     }
 
-    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<PositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs)
+    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferPositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs)
     {
         // Create 2D sprite vertex buffer data.
         bufferVerts.reserve(_sprites2d.size() * 4);
@@ -435,10 +434,10 @@ namespace Silent::Renderer
                 });
             }*/
 
-            bufferVerts.push_back(PositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f });
-            bufferVerts.push_back(PositionTextureVertex{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f });
-            bufferVerts.push_back(PositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f });
-            bufferVerts.push_back(PositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f });
+            bufferVerts.push_back(BufferPositionTextureVertex{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f });
+            bufferVerts.push_back(BufferPositionTextureVertex{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f });
+            bufferVerts.push_back(BufferPositionTextureVertex{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f });
+            bufferVerts.push_back(BufferPositionTextureVertex{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f });
 
             bufferIdxs.push_back(0);
             bufferIdxs.push_back(1);
@@ -449,7 +448,7 @@ namespace Silent::Renderer
         }
 
         // Update buffer.
-        _buffers.Sprites2d.UpdateData(copyPass, ToSpan(bufferVerts), 0);
-        _buffers.Sprites2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs),  0);
+        _buffers.Sprites2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        _buffers.Sprites2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 }

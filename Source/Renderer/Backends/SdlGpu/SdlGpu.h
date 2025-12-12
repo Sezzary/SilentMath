@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Buffer.h"
-#include "Renderer/Backends/SdlGpu/IndexedBuffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
@@ -9,12 +9,13 @@
 
 namespace Silent::Renderer
 {
+    // @todo Move to dedicated headers in `Buffer/Data`.
     struct BufferVertex
     {
         Vector3 Position = Vector3::Zero;
         Color   Col      = Color::Clear;
     };
-    struct PositionTextureVertex
+    struct BufferPositionTextureVertex
     {
         float x, y, z;
         float u, v;
@@ -22,8 +23,8 @@ namespace Silent::Renderer
 
     struct BufferData
     {
-        Buffer<BufferVertex>                 Primitives2d = {};
-        IndexedBuffer<PositionTextureVertex> Sprites2d    = {};
+        Buffer<BufferVertex>                      Primitives2d = {};
+        VertexBuffer<BufferPositionTextureVertex> Sprites2d    = {};
     };
 
     class SdlGpuRenderer : public RendererBase
@@ -68,6 +69,6 @@ namespace Silent::Renderer
         void DrawDebugGui() override;
 
         void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferVertex>& bufferVerts);
-        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<PositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs);
+        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferPositionTextureVertex>& bufferVerts, std::vector<uint16>& bufferIdxs);
     };
 }
