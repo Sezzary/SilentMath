@@ -434,10 +434,10 @@ namespace Silent::Renderer
                 });
             }*/
 
-            bufferVerts.push_back(BufferTexVertex2d{ -1.0f,  1.0f, 0.0f, 0.0f, 0.0f });
-            bufferVerts.push_back(BufferTexVertex2d{  1.0f,  1.0f, 0.0f, 1.0f, 0.0f });
-            bufferVerts.push_back(BufferTexVertex2d{  1.0f, -1.0f, 0.0f, 1.0f, 1.0f });
-            bufferVerts.push_back(BufferTexVertex2d{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f });
+            bufferVerts.push_back(BufferTexVertex2d{ Vector3(-1.0f,  1.0f, 0.0f), Vector2(0.0f, 0.0f) });
+            bufferVerts.push_back(BufferTexVertex2d{ Vector3( 1.0f,  1.0f, 0.0f), Vector2(1.0f, 0.0f) });
+            bufferVerts.push_back(BufferTexVertex2d{ Vector3( 1.0f, -1.0f, 0.0f), Vector2(1.0f, 1.0f) });
+            bufferVerts.push_back(BufferTexVertex2d{ Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 1.0f) });
 
             bufferIdxs.push_back(0);
             bufferIdxs.push_back(1);

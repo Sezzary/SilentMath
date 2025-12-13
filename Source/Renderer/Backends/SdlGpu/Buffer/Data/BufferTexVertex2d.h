@@ -4,7 +4,7 @@ namespace Silent::Renderer
 {
     struct BufferTexVertex2d
     {
-        float x, y, z;
-        float u, v;
+        Vector3 Position = Vector3::Zero;
+        Vector2 Uv       = Vector2::Zero;
     };
 }

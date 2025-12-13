@@ -4,7 +4,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Indexed GPU vertex buffer. */
+    /** @brief Indexed GPU vertex buffer with 16-bit indices. */
     template <typename T>
     class VertexBuffer
     {
