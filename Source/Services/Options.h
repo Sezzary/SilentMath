@@ -175,7 +175,7 @@ namespace Silent::Services
         // System (internal)
         // ==================
 
-        bool EnableDebugMode = true;
+        bool EnableDebugMode = Debug::IS_DEBUG_BUILD;
         bool EnableDebugGui  = false;
 
         // ==============
