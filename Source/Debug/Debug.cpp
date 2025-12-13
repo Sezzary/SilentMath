@@ -223,10 +223,22 @@ namespace Silent::Debug
         renderer.SubmitDebugGui(drawFunc);
     }
 
+    void CreateLine(const Vector2& from, const Vector2& to, const Color& color, ScaleMode scaleMode, Debug::Page page)
+    {
+        auto& renderer = g_App.GetRenderer();
+        renderer.SubmitDebugLine(from, to, color, scaleMode, page);
+    }
+
     void CreateLine(const Vector3& from, const Vector3& to, const Color& color, Page page)
     {
         auto& renderer = g_App.GetRenderer();
         renderer.SubmitDebugLine(from, to, color, page);
+    }
+
+    void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, ScaleMode scaleMode, Debug::Page page)
+    {
+        auto& renderer = g_App.GetRenderer();
+        renderer.SubmitDebugTriangle(vert0, vert1, vert2, color, scaleMode, page);
     }
 
     void CreateTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, Page page)

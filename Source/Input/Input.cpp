@@ -54,12 +54,12 @@ namespace Silent::Input
         return _text.GetText(textId);
     }
 
-    std::vector<std::string> InputManager::GetTextLines(const std::string& bufferId, uint low, uint high) const
+    std::vector<std::string> InputManager::GetTextLines(const std::string& bufferId, int low, int high) const
     {
         return _text.GetTextLines(bufferId, low, high);
     }
 
-    uint InputManager::GetTextCursorPosition(const std::string& textId) const
+    int InputManager::GetTextCursorPosition(const std::string& textId) const
     {
         return _text.GetCursorPosition(textId);
     }
@@ -219,7 +219,7 @@ namespace Silent::Input
         Debug::Log("Gamepad disconnected.");
     }
 
-    void InputManager::InsertText(const std::string& textId, uint lineWidthMax, uint charCountMax)
+    void InputManager::InsertText(const std::string& textId, int lineWidthMax, int charCountMax)
     {
         _text.InsertBuffer(textId, lineWidthMax, charCountMax);
     }

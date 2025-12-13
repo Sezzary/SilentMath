@@ -8,9 +8,9 @@ namespace Silent::Input
     struct TextSnapshot
     {
 
-        std::string                          Text      = {};
-        std::optional<std::pair<uint, uint>> Selection = {}; // First = selection start, second = selection end.
-        uint                                 Cursor    = 0;
+        std::string                        Text      = {};
+        std::optional<std::pair<int, int>> Selection = {}; // First = selection start, second = selection end.
+        uint                               Cursor    = 0;
     };
 
     /** @brief Text block buffer. */
@@ -20,9 +20,9 @@ namespace Silent::Input
         std::deque<TextSnapshot> Undo     = {};
         std::deque<TextSnapshot> Redo     = {};
 
-        std::vector<uint> LineStarts   = {};
-        uint              LineWidthMax = 0;
-        uint              CharCountMax = 0;
+        std::vector<int> LineStarts   = {};
+        int              LineWidthMax = 0;
+        int              CharCountMax = 0;
     };
 
     /** @brief Text block manager. */
@@ -35,7 +35,7 @@ namespace Silent::Input
 
         static constexpr float PULSE_DELAY_SEC         = 0.025f;
         static constexpr float PULSE_INITIAL_DELAY_SEC = 0.3f;
-        static constexpr uint  HISTORY_SIZE_MAX        = 128;
+        static constexpr int   HISTORY_SIZE_MAX        = 128;
 
         // =======
         // Fields
@@ -71,21 +71,36 @@ namespace Silent::Input
          * @param high @todo
          * @return Text block split into lines.
          */
-        std::vector<std::string> GetTextLines(const std::string& bufferId, uint low, uint high) const;
+        std::vector<std::string> GetTextLines(const std::string& bufferId, int low, int high) const;
 
         /** @brief Gets the position of the text block cursor from a buffer.
          *
          * @param bufferId Text buffer ID.
          * @return Text block cursor position.
          */
-        uint GetCursorPosition(const std::string& bufferId) const;
+        int GetCursorPosition(const std::string& bufferId) const;
 
         // ==========
         // Utilities
         // ==========
 
-        void InsertBuffer(const std::string& bufferId, uint lineWidthMax, uint charCountMax);
+        /** @brief Inserts a new buffer.
+         *
+         * @param lineWidthMax Max line width in characters.
+         * @param charCountMax Max character count in the text block.
+         */
+        void InsertBuffer(const std::string& bufferId, int lineWidthMax, int charCountMax);
+
+        /** @brief Updates the text block in a buffer.
+         *
+         * @param bufferId Text buffer ID.
+         */
         void UpdateBuffer(const std::string& bufferId);
+
+        /** @brief Removes a buffer.
+         *
+         * @param bufferId Text buffer ID.
+         */
         void RemoveBuffer(const std::string& bufferId);
 
     private:

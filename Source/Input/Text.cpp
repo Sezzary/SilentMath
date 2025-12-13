@@ -11,54 +11,54 @@ namespace Silent::Input
 {
     static const auto PRINTABLE_ACTION_CHARS = std::unordered_map<ActionId, std::pair<char, char>>
     {
-        { In::A,            { 'a', 'A' } },
-        { In::B,            { 'b', 'B' } },
-        { In::C,            { 'c', 'C' } },
-        { In::D,            { 'd', 'D' } },
-        { In::E,            { 'e', 'E' } },
-        { In::F,            { 'f', 'F' } },
-        { In::G,            { 'g', 'G' } },
-        { In::H,            { 'h', 'H' } },
-        { In::I,            { 'i', 'I' } },
-        { In::J,            { 'j', 'J' } },
-        { In::K,            { 'k', 'K' } },
-        { In::L,            { 'l', 'L' } },
-        { In::M,            { 'm', 'M' } },
-        { In::N,            { 'n', 'N' } },
-        { In::O,            { 'o', 'O' } },
-        { In::P,            { 'p', 'P' } },
-        { In::Q,            { 'q', 'Q' } },
-        { In::R,            { 'r', 'R' } },
-        { In::S,            { 's', 'S' } },
-        { In::T,            { 't', 'T' } },
-        { In::U,            { 'u', 'U' } },
-        { In::V,            { 'v', 'V' } },
-        { In::W,            { 'w', 'W' } },
-        { In::X,            { 'x', 'X' } },
-        { In::Y,            { 'y', 'Y' } },
-        { In::Z,            { 'z', 'Z' } },
-        { In::Num1,         { '1', '!' } },
-        { In::Num2,         { '2', '@' } },
-        { In::Num3,         { '3', '#' } },
-        { In::Num4,         { '4', '$' } },
-        { In::Num5,         { '5', '%' } },
-        { In::Num6,         { '6', '^' } },
-        { In::Num7,         { '7', '&' } },
-        { In::Num8,         { '8', '*' } },
-        { In::Num9,         { '9', '(' } },
-        { In::Num0,         { '0', ')' } },
+        { In::A,            { 'a',  'A'  } },
+        { In::B,            { 'b',  'B'  } },
+        { In::C,            { 'c',  'C'  } },
+        { In::D,            { 'd',  'D'  } },
+        { In::E,            { 'e',  'E'  } },
+        { In::F,            { 'f',  'F'  } },
+        { In::G,            { 'g',  'G'  } },
+        { In::H,            { 'h',  'H'  } },
+        { In::I,            { 'i',  'I'  } },
+        { In::J,            { 'j',  'J'  } },
+        { In::K,            { 'k',  'K'  } },
+        { In::L,            { 'l',  'L'  } },
+        { In::M,            { 'm',  'M'  } },
+        { In::N,            { 'n',  'N'  } },
+        { In::O,            { 'o',  'O'  } },
+        { In::P,            { 'p',  'P'  } },
+        { In::Q,            { 'q',  'Q'  } },
+        { In::R,            { 'r',  'R'  } },
+        { In::S,            { 's',  'S'  } },
+        { In::T,            { 't',  'T'  } },
+        { In::U,            { 'u',  'U'  } },
+        { In::V,            { 'v',  'V'  } },
+        { In::W,            { 'w',  'W'  } },
+        { In::X,            { 'x',  'X'  } },
+        { In::Y,            { 'y',  'Y'  } },
+        { In::Z,            { 'z',  'Z'  } },
+        { In::Num1,         { '1',  '!'  } },
+        { In::Num2,         { '2',  '@'  } },
+        { In::Num3,         { '3',  '#'  } },
+        { In::Num4,         { '4',  '$'  } },
+        { In::Num5,         { '5',  '%'  } },
+        { In::Num6,         { '6',  '^'  } },
+        { In::Num7,         { '7',  '&'  } },
+        { In::Num8,         { '8',  '*'  } },
+        { In::Num9,         { '9',  '('  } },
+        { In::Num0,         { '0',  ')'  } },
         { In::Return,       { '\n', '\n' } },
-        { In::Space,        { ' ', ' ' } },
-        { In::Minus,        { '-', '_' } },
-        { In::Equals,       { '=', '+' } },
-        { In::BracketLeft,  { '[', '{' } },
-        { In::BracketRight, { ']', '}' } },
-        { In::Backslash,    { '\\', '|' } },
-        { In::Semicolon,    { ';', ':' } },
-        { In::Apostrophe,   { '\'', '"' } },
-        { In::Comma,        { ',', '<' } },
-        { In::Period,       { '.', '>' } },
-        { In::Slash,        { '/', '?' } }
+        { In::Space,        { ' ',  ' '  } },
+        { In::Minus,        { '-',  '_'  } },
+        { In::Equals,       { '=',  '+'  } },
+        { In::BracketLeft,  { '[',  '{'  } },
+        { In::BracketRight, { ']',  '}'  } },
+        { In::Backslash,    { '\\', '|'  } },
+        { In::Semicolon,    { ';', ':'   } },
+        { In::Apostrophe,   { '\'', '"'  } },
+        { In::Comma,        { ',',  '<'  } },
+        { In::Period,       { '.',  '>'  } },
+        { In::Slash,        { '/',  '?'  } }
     };
 
     const std::string& TextManager::GetText(const std::string& bufferId) const
@@ -68,19 +68,19 @@ namespace Silent::Input
         const auto* buffer = Find(_buffers, bufferId);
         if (buffer == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get text for missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get text from missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
             return EMPTY;
         }
 
         return buffer->Snapshot.Text;
     }
 
-    std::vector<std::string> TextManager::GetTextLines(const std::string& bufferId, uint low, uint high) const
+    std::vector<std::string> TextManager::GetTextLines(const std::string& bufferId, int low, int high) const
     {
         const auto* buffer = Find(_buffers, bufferId);
         if (buffer == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get text lines for missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get text lines from missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
             return {};
         }
 
@@ -90,8 +90,8 @@ namespace Silent::Input
         }
 
         // Compute line range.
-        uint lineLow  = (low  == (uint)NO_VALUE) ? 0                         : std::clamp<uint>(low,  0, buffer->LineStarts.size());
-        uint lineHigh = (high == (uint)NO_VALUE) ? buffer->LineStarts.size() : std::clamp<uint>(high, 0, buffer->LineStarts.size());
+        int lineLow  = (low  == NO_VALUE) ? 0                         : std::clamp<int>(low,  0, buffer->LineStarts.size());
+        int lineHigh = (high == NO_VALUE) ? buffer->LineStarts.size() : std::clamp<int>(high, 0, buffer->LineStarts.size());
         if (lineLow > lineHigh)
         {
             std::swap(lineLow, lineHigh);
@@ -102,8 +102,8 @@ namespace Silent::Input
         lines.reserve((lineHigh - lineLow) / buffer->LineWidthMax);
         for (int i = lineLow; i < lineHigh; i++)
         {
-            uint lineStart = buffer->LineStarts[i];
-            uint lineEnd   = (i < (buffer->LineStarts.size() - 1)) ? buffer->LineStarts[i + 1] : buffer->Snapshot.Text.size();
+            int lineStart = buffer->LineStarts[i];
+            int lineEnd   = (i < (buffer->LineStarts.size() - 1)) ? buffer->LineStarts[i + 1] : buffer->Snapshot.Text.size();
 
             auto start = buffer->Snapshot.Text.begin() + lineStart;
             auto end   = buffer->Snapshot.Text.begin() + lineEnd;
@@ -114,24 +114,23 @@ namespace Silent::Input
         return lines;
     }
 
-    uint TextManager::GetCursorPosition(const std::string& bufferId) const
+    int TextManager::GetCursorPosition(const std::string& bufferId) const
     {
         const auto* buffer = Find(_buffers, bufferId);
         if (buffer == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get cursor position for missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get cursor position from missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
             return 0;
         }
 
         return buffer->Snapshot.Cursor;
     }
 
-    void TextManager::InsertBuffer(const std::string& bufferId, uint lineWidthMax, uint charCountMax)
+    void TextManager::InsertBuffer(const std::string& bufferId, int lineWidthMax, int charCountMax)
     {
         if (lineWidthMax == 0 || charCountMax == 0)
         {
-            Debug::Log(Fmt("Attempted to insert invalid text buffer `{}` with max line width {} and character limit {}.",
-                                   bufferId, lineWidthMax, charCountMax),
+            Debug::Log(Fmt("Attempted to insert invalid text buffer `{}` with max line width {} and character limit {}.", bufferId, lineWidthMax, charCountMax),
                        Debug::LogLevel::Warning);
             return;
         }
@@ -284,7 +283,7 @@ namespace Silent::Input
                     // Replace selection.
                     if (buffer.Snapshot.Selection.has_value())
                     {
-                        uint selectLength = buffer.Snapshot.Selection->second - buffer.Snapshot.Selection->first;
+                        int selectLength = buffer.Snapshot.Selection->second - buffer.Snapshot.Selection->first;
                         if (((buffer.Snapshot.Text.size() + _clipboard.size()) - selectLength) <= buffer.CharCountMax)
                         {
                             auto start = buffer.Snapshot.Text.begin() + buffer.Snapshot.Selection->first;
@@ -570,12 +569,12 @@ namespace Silent::Input
         {
             if (buffer.Snapshot.Cursor > 0 && leftAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
-                uint prevCursor = buffer.Snapshot.Cursor;
+                int prevCursor = buffer.Snapshot.Cursor;
 
                 // Move back to previous word.
                 if (ctrlAction.IsHeld())
                 {
-                    uint prevCursor = buffer.Snapshot.Cursor;
+                    int prevCursor = buffer.Snapshot.Cursor;
 
                     // Skip spaces before word.
                     while (buffer.Snapshot.Cursor > 0 && buffer.Snapshot.Text[buffer.Snapshot.Cursor - 1] == ' ')
@@ -610,7 +609,7 @@ namespace Silent::Input
             }
             else if (buffer.Snapshot.Cursor < buffer.Snapshot.Text.size() && rightAction.IsPulsed(PULSE_DELAY_SEC, PULSE_INITIAL_DELAY_SEC))
             {
-                uint prevCursor = buffer.Snapshot.Cursor;
+                int prevCursor = buffer.Snapshot.Cursor;
 
                 // Move forward to next word.
                 if (ctrlAction.IsHeld())
@@ -669,17 +668,17 @@ namespace Silent::Input
         buffer.LineStarts.clear();
         buffer.LineStarts.push_back(0);
 
-        uint lineStart = 0;
-        uint wordStart = 0;
+        int lineStart = 0;
+        int wordStart = 0;
 
-        uint i = 0;
+        int i = 0;
         while (i < buffer.Snapshot.Text.size())
         {
             // Track word boundaries.
             if (buffer.Snapshot.Text[i] == ' ' || buffer.Snapshot.Text[i] == '\n')
             {
                 // Wrap before word.
-                uint wordEnd = i;
+                int wordEnd = i;
                 if ((wordEnd - lineStart) > buffer.LineWidthMax)
                 {
                     buffer.LineStarts.push_back(wordStart);

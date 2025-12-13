@@ -138,10 +138,28 @@ namespace Silent::Input
          */
         GamepadVendorId GetGamepadVendorId() const;
 
-        // @todo
+        /** @brief Gets a text block from a text buffer.
+         *
+         * @param bufferId Text buffer ID.
+         * @return Text block.
+         */
         const std::string& GetText(const std::string& textId) const;
-        std::vector<std::string> GetTextLines(const std::string& bufferId, uint low = (uint)NO_VALUE, uint high = (uint)NO_VALUE) const;
-        uint GetTextCursorPosition(const std::string& textId) const;
+
+        /** @brief Gets a text block from a text buffer split into lines.
+         *
+         * @param bufferId Text buffer ID.
+         * @param low @todo
+         * @param high @todo
+         * @return Text block split into lines.
+         */
+        std::vector<std::string> GetTextLines(const std::string& bufferId, int low = NO_VALUE, int high = NO_VALUE) const;
+
+        /** @brief Gets the position of the text block cursor from a text buffer.
+         *
+         * @param bufferId Text buffer ID.
+         * @return Text block cursor position.
+         */
+        int GetTextCursorPosition(const std::string& textId) const;
 
         // ========
         // Setters
@@ -202,9 +220,23 @@ namespace Silent::Input
          */
         void DisconnectGamepad(int deviceId);
 
-        // @todo
-        void InsertText(const std::string& textId, uint lineWidthMax = 50, uint charCountMax = UINT_MAX);
+        /** @brief Inserts a new text buffer.
+         *
+         * @param lineWidthMax Max line width in characters.
+         * @param charCountMax Max character count in the text block.
+         */
+        void InsertText(const std::string& textId, int lineWidthMax = 50, int charCountMax = UINT_MAX);
+
+        /** @brief Updates the text block in a text buffer.
+         *
+         * @param bufferId Text buffer ID.
+         */
         void UpdateText(const std::string& textId);
+
+        /** @brief Removes a text buffer.
+         *
+         * @param bufferId Text buffer ID.
+         */
         void RemoveText(const std::string& textId);
         
     private:
