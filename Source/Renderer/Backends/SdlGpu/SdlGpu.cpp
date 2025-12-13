@@ -103,10 +103,9 @@ namespace Silent::Renderer
         };
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
 
-        // Initialize buffers.
-        _buffers.Primitives2d = Buffer<BufferColorVertex2d>(*_device, SDL_GPU_BUFFERUSAGE_VERTEX,
-                                                            (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
-        _buffers.Sprites2d    = VertexBuffer<BufferTexVertex2d>(*_device, SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
+        // Initialize GPU buffers.
+        _buffers.Primitives2d.Initialize(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
+        _buffers.Sprites2d.Initialize(*_device, SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
 
         // Reserve memory.
         _primitives2d.reserve(PRIMITIVE_2D_COUNT_MAX);

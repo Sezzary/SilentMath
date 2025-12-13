@@ -24,21 +24,21 @@ namespace Silent::Renderer
         /** @brief Constructs an uninitialized default `Buffer`. */
         Buffer() = default;
 
-        /** @brief Constructs a vertex, index, or indirect `Buffer`.
-         *
-         * @param device GPU device.
-         * @param usageFlags Buffer usage flags.
-         * @param size Max buffer size in number of elements.
-         * @param name Buffer name.
-         */
-        Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
-
         /** @brief Gracefully destroys the `Buffer` and releases GPU resources. */
         ~Buffer();
 
         // ==========
         // Utilities
         // ==========
+
+        /** @brief Initializes the GPU buffer.
+         *
+         * @param device GPU device.
+         * @param usageFlags Buffer usage flags.
+         * @param size Max buffer size in number of elements.
+         * @param name Buffer name.
+         */
+        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
 
         /** @brief Uploads data to the GPU buffer.
          *
@@ -67,7 +67,21 @@ namespace Silent::Renderer
     };
 
     template <typename T>
-    Buffer<T>::Buffer(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name)
+    Buffer<T>::~Buffer()
+    {
+        if (_resourceBuffer != nullptr)
+        {
+            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
+        }
+
+        if (_transferBuffer != nullptr)
+        {
+            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
+        }
+    }
+
+    template <typename T>
+    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name)
     {
         _usageFlags = usageFlags;
         if (!(_usageFlags & (SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX | SDL_GPU_BUFFERUSAGE_INDIRECT)))
@@ -88,9 +102,11 @@ namespace Silent::Renderer
         if (_resourceBuffer == nullptr)
         {
             Debug::Log(Fmt("Failed to create buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
-            // @todo Handle error?
         }
-        SDL_SetGPUBufferName(_device, _resourceBuffer, name.c_str());
+        else
+        {
+            SDL_SetGPUBufferName(_device, _resourceBuffer, name.c_str());
+        }
 
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
         {
@@ -104,21 +120,6 @@ namespace Silent::Renderer
         {
             Debug::Log(Fmt("Failed to create transfer buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
         }
-    }
-
-    template <typename T>
-    Buffer<T>::~Buffer()
-    {
-        // @todo Crashes??
-        /*if (_resourceBuffer != nullptr)
-        {
-            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
-        }
-
-        if (_transferBuffer != nullptr)
-        {
-            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
-        }*/
     }
 
     template <typename T>

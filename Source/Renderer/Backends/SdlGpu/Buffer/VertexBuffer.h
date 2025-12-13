@@ -27,14 +27,14 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Constructs a `VertexBuffer`.
+        /** @brief Initializes the indexed GPU vertex buffer.
          *
          * @param device GPU device.
          * @param vertCount Vertex count.
          * @param idxCount Index count.
          * @param name Buffer name.
          */
-        VertexBuffer(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name = {});
+        void Initialize(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name = {});
 
         /** @brief Uploads vertices to the internal GPU vertex buffer.
          *
@@ -60,10 +60,10 @@ namespace Silent::Renderer
     };
 
     template <typename T>
-    VertexBuffer<T>::VertexBuffer(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name)
+    void VertexBuffer<T>::Initialize(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name)
     {
-        _vertexBuffer = Buffer<T>(device, SDL_GPU_BUFFERUSAGE_VERTEX, vertCount, name);
-        _idxBuffer    = Buffer<uint16>(device, SDL_GPU_BUFFERUSAGE_INDEX, idxCount, name + " (indices)");
+        _vertexBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_VERTEX, vertCount, name);
+        _idxBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_INDEX, idxCount, name + " (indices)");
     }
 
     template <typename T>
