@@ -5,12 +5,10 @@
 #include "Input/Input.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Utils.h"
-#include "Services/Options.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Input;
 using namespace Silent::Renderer;
-using namespace Silent::Services;
 using namespace Silent::Utils;
 
 namespace Silent::Gui
@@ -137,13 +135,6 @@ namespace Silent::Gui
 
     void Button::Update(bool state, const std::vector<ActionId>& selectActionIds)
     {
-        // Check if debug GUI is enabled.
-        const auto& options = g_App.GetOptions();
-        if (options->EnableDebugGui)
-        {
-            return;
-        }
-
         if (state)
         {
             // Execute `_onEnter` callback if previous state was inactive.

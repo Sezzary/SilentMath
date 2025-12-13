@@ -42,7 +42,7 @@ namespace Silent::Assets
             .Name      = "SmoothSerif",
             .Filenames =
             {
-                "FreeSerif.otf",
+                "FreeSerif.ttf",
                 "NotoSerifJP-Medium.ttf",
                 "NotoSerifKR-Medium.ttf"
             },

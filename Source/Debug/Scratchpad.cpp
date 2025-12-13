@@ -4,13 +4,16 @@
 #include "Application.h"
 #include "Debug/Debug.h"
 #include "Input/Input.h"
+#include "Renderer/Common/Enums.h"
+#include "Renderer/Renderer.h"
+#include "Services/Options.h"
 #include "Utils/Parallel.h"
+
+using namespace Silent::Services;
 
 // `Scratchpad` includes.
 #ifdef _DEBUG
     #include "Gui/Button.h"
-    #include "Renderer/Renderer.h"
-    #include "Renderer/Common/Enums.h"
 
     using namespace Silent::Gui;
 #endif
@@ -100,7 +103,13 @@ namespace Silent::Debug
                                      []() { Debug::Log("Clicking!"); },
                                      []() { Debug::Log("Holding!"); },
                                      []() { Debug::Log("Releasing!"); });
-            but.Update(input.GetCursorPosition());
+
+            // Check if debug GUI is enabled.
+            const auto& options = g_App.GetOptions();
+            if (!options->EnableDebugGui)
+            {
+                but.Update(input.GetCursorPosition());
+            }
 
             // @temp
             auto tri0 = Primitive2d::CreateTriangle(Vector2(0.0f + 0.2f, 0.5f + 0.2f),
