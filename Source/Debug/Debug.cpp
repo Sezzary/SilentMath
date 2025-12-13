@@ -1,14 +1,13 @@
 #include "Framework.h"
-#include "Debug.h"
+#include "Debug/Debug.h"
 
 #include "Application.h"
 #include "Assets/Locales.h"
-#include "Input/Input.h"
+#include "Debug/Scratchpad.h"
 #include "Renderer/Renderer.h"
-#include "Services/Clock.h"
+#include "Services/Filesystem.h"
 #include "Services/Options.h"
 #include "Utils/Bitfield.h"
-#include "Utils/Parallel.h"
 #include "Utils/Translator.h"
 #include "Utils/Utils.h"
 
@@ -17,14 +16,6 @@ using namespace Silent::Renderer;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
-// Includes and namespace usings required for `Scratchpad` function go here.
-#ifdef _DEBUG
-#include "Gui/Button.h"
-#include "Renderer/Common/Enums.h"
-
-using namespace Silent::Gui;
-#endif
-
 namespace Silent::Debug
 {
     constexpr char LOGGER_NAME[]     = "Logger";
@@ -32,185 +23,10 @@ namespace Silent::Debug
 
     DebugWork g_Work = {};
 
-    void Scratchpad()
+    bool CheckPage(Debug::Page page)
     {
-        if constexpr (IS_DEBUG_BUILD)
-        {
-            auto& input = g_App.GetInput();
-
-            bool isInit = true;
-            if (isInit)
-            {
-                input.InsertText("Test");
-                isInit = false;
-            }
-
-            input.UpdateText("Test");
-            Message(input.GetText("Test").c_str());
-
-            // ====================================
-
-            auto& renderer = g_App.GetRenderer();
-
-            // Sprite test.
-            renderer.SubmitScreenSprite(0, Vector2::Zero, Vector2::Zero, Vector2::Zero, 0, Vector2::Zero, Color::Clear, 0,
-                                        AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
-
-            // GUI button test.
-            static auto but = Button(Vector2(25.0f, 75.0f), Vector2(25.0f, 25.0f), ScaleMode::Fit,
-                                     []() { Debug::Log("Entering!"); },
-                                     [&]()
-                                     {
-                                        auto& renderer2 = g_App.GetRenderer();
-                                        auto  res    = renderer.GetScreenResolution().ToVector2();
-                                        float aspect = res.x / res.y;
-                                        auto aspectCorrection = Vector2::One;
-                                        if (aspect >= 1.0f)
-                                        {
-                                            aspectCorrection.x = 1.0f / aspect;
-                                        }
-                                        else
-                                        {
-                                            aspectCorrection.y = 1.0f / (1.0f / aspect);
-                                        }
-                                     
-                                        auto quad = Primitive2d::CreateQuad(Vector2(0.0f,  00.0f),
-                                                                            Vector2(0.0f,  50.0f),
-                                                                            Vector2(50.0f, 50.0f) * aspectCorrection,
-                                                                            Vector2(50.0f, 0.0f) * aspectCorrection,
-                                                                            Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            0, ScaleMode::Fit, BlendMode::Alpha);
-                                        renderer.Submit2dPrimitive(quad);
-                                     },
-                                     []() { Debug::Log("Leaving!"); },
-                                     [&]()
-                                     {
-                                        auto& renderer2 = g_App.GetRenderer();
-                                        auto  res    = renderer.GetScreenResolution().ToVector2();
-                                        float aspect = res.x / res.y;
-                                        auto aspectCorrection = Vector2::One;
-                                        if (aspect >= 1.0f)
-                                        {
-                                            aspectCorrection.x = 1.0f / aspect;
-                                        }
-                                        else
-                                        {
-                                            aspectCorrection.y = 1.0f / (1.0f / aspect);
-                                        }
-                                     
-                                        auto quad = Primitive2d::CreateQuad(Vector2(0.0f,  00.0f),
-                                                                            Vector2(0.0f,  50.0f),
-                                                                            Vector2(50.0f, 50.0f) * aspectCorrection,
-                                                                            Vector2(50.0f, 0.0f) * aspectCorrection,
-                                                                            Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            0, ScaleMode::Fit, BlendMode::Alpha);
-                                        renderer.Submit2dPrimitive(quad);
-                                     },
-                                     []() { Debug::Log("Clicking!"); },
-                                     []() { Debug::Log("Holding!"); },
-                                     []() { Debug::Log("Releasing!"); });
-            but.Update(input.GetCursorPosition());
-
-            // @temp
-            auto tri0 = Primitive2d::CreateTriangle(Vector2(0.0f + 0.2f, 0.5f + 0.2f),
-                                                    Vector2(-0.5f + 0.2f, -0.5f + 0.2f),
-                                                    Vector2(0.5f + 0.2f, -0.5f + 0.2f),
-                                                    Color(1.0f, 0.0f, 1.0f, 0.5f),
-                                                    Color(1.0f, 1.0f, 1.0f, 0.5f),
-                                                    Color(1.0f, 0.0f, 1.0f, 0.5f),
-                                                    0);
-            auto tri1 = Primitive2d::CreateTriangle(Vector2(0.2f, 0.25f),
-                                                    Vector2(-0.25f, -0.25f),
-                                                    Vector2(0.25f, -0.25f),
-                                                    Color(1.0f, 0.0f, 0.0f, 0.75f),
-                                                    Color(0.0f, 1.0f, 1.0f, 0.75f),
-                                                    Color(0.0f, 0.0f, 1.0f, 0.75f),
-                                                    0);
-            auto quad = Primitive2d::CreateQuad(Vector2(40.0f, 40.0f),
-                                                Vector2(50.0f, 40.0f),
-                                                Vector2(50.0f, 50.0f),
-                                                Vector2(40.0f, 50.0f),
-                                                Color(0.0f, 0.0f, 0.0f, 0.0f),
-                                                Color(0.0f, 1.0f, 0.0f, 1.0f),
-                                                Color(0.0f, 1.0f, 0.0f, 1.0f),
-                                                Color(0.0f, 0.0f, 0.0f, 0.0f),
-                                                0, ScaleMode::Fit, BlendMode::Alpha);
-            auto line0 = Primitive2d::CreateLine(Vector2i(10, 10),
-                                                Vector2i(50, 10),
-                                                Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                Color(0.0f, 0.0f, 0.0f, 0.0f),
-                                                0);
-            auto line1 = Primitive2d::CreateLine(Vector2i(15, 11),
-                                                Vector2i(70, 11),
-                                                Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                0);
-            auto line2 = Primitive2d::CreateLine(Vector2i(0, 1),
-                                                 Vector2i(0, 239),
-                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                 0);
-            auto line3 = Primitive2d::CreateLine(Vector2i(319, 0),
-                                                 Vector2i(1, 0),
-                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),
-                                                 0);
-            //renderer.Submit2dPrimitive(tri0);
-            //renderer.Submit2dPrimitive(tri1);
-            renderer.Submit2dPrimitive(quad);
-            renderer.Submit2dPrimitive(line0);
-            renderer.Submit2dPrimitive(line1);
-            //renderer.Submit2dPrimitive(line2);
-            renderer.Submit2dPrimitive(line3);
-
-            for (int i = 0; i < 11; i++)
-            {
-                auto line3 = Primitive2d::CreateLine(Vector2i(39,  82 + (i * 16)),
-                                                     Vector2i(200, 82 + (i * 16)),
-                                                     Color::From8Bit(176, 176, 176),
-                                                     Color::From8Bit(160, 128, 64),
-                                                     0);
-                auto quadB0 = Primitive2d::CreateQuad(
-                                                    Vector2i(52, 69 + (i * 16)),
-                                                    Vector2i(52, 81 + (i * 16)),
-                                                    Vector2i(40, 69 + (i * 16)),
-                                                    Vector2i(40, 81 + (i * 16)),
-                                                    Color::From8Bit(255, 255, 255),
-                                                    Color::From8Bit(160, 128, 64),
-                                                    Color::From8Bit(160, 128, 64),
-                                                    Color::From8Bit(255, 255, 255),
-                                                    0);
-                auto quadB1 = Primitive2d::CreateQuad(
-                                                    Vector2i(39, 68 + (i * 16)),
-                                                    Vector2i(39, 82 + (i * 16)),
-                                                    Vector2i(53, 68 + (i * 16)),
-                                                    Vector2i(53, 82 + (i * 16)),
-                                                    Color::From8Bit(255, 255, 255),
-                                                    Color::From8Bit(160, 128, 64),
-                                                    Color::From8Bit(160, 128, 64),
-                                                    Color::From8Bit(64,  64,  64),
-                                                    1);
-                renderer.Submit2dPrimitive(line3);
-                renderer.Submit2dPrimitive(quadB1);
-                renderer.Submit2dPrimitive(quadB0);
-            }
-
-            auto tri = Primitive2d::CreateTriangle(
-                                                   Vector2i(8, 84),
-                                                   Vector2i(16, 76),
-                                                   Vector2i(16, 92),
-                                                   Color::From8Bit(48, 255, 255),
-                                                   Color::From8Bit(48, 255, 128),
-                                                   Color::From8Bit(48, 255, 128),
-                                                   0);
-            renderer.Submit2dPrimitive(tri);
-        }
+        const auto& options = g_App.GetOptions();
+        return options->EnableDebugMode && (page == Debug::g_Work.Page || page == Debug::Page::None);
     }
 
     void Initialize()
@@ -987,7 +803,7 @@ namespace Silent::Debug
         renderer.SubmitDebugGui(drawFunc);
     }
 
-    void CreateLine(const Vector3& from, const Vector3& to, const Color& color, Page page)
+        void CreateLine(const Vector3& from, const Vector3& to, const Color& color, Page page)
     {
         auto& renderer = g_App.GetRenderer();
         renderer.SubmitDebugLine(from, to, color, page);
@@ -1001,37 +817,199 @@ namespace Silent::Debug
 
     void CreateTarget(const Vector3& center, const Quaternion& rot, float radius, const Color& color, Page page)
     {
+        if (!CheckPage(page))
+        {
+            return;
+        }
+
         auto& renderer = g_App.GetRenderer();
-        renderer.SubmitDebugTarget(center, rot, radius, color, page);
+
+        auto rotMatrix = rot.ToRotationMatrix();
+
+        auto from0 = center + Vector3::Transform(Vector3(radius,  0.0f, 0.0f), rotMatrix);
+        auto to0   = center + Vector3::Transform(Vector3(-radius, 0.0f, 0.0f), rotMatrix);
+        renderer.SubmitDebugLine(from0, to0, color, page);
+
+        auto from1 = center + Vector3::Transform(Vector3(0.0f,  radius, 0.0f), rotMatrix);
+        auto to1   = center + Vector3::Transform(Vector3(0.0f, -radius, 0.0f), rotMatrix);
+        renderer.SubmitDebugLine(from1, to1, color, page);
+
+        auto from2 = center + Vector3::Transform(Vector3(0.0f, 0.0f,  radius), rotMatrix);
+        auto to2   = center + Vector3::Transform(Vector3(0.0f, 0.0f, -radius), rotMatrix);
+        renderer.SubmitDebugLine(from2, to2, color, page);
     }
 
     void CreateBox(const OrientedBoundingBox& obb, const Color& color, bool isWireframe, Page page)
     {
+        if (!CheckPage(page))
+        {
+            return;
+        }
+
         auto& renderer = g_App.GetRenderer();
-        renderer.SubmitDebugBox(obb, color, isWireframe, page);
+
+        auto corners = obb.GetCorners();
+
+        // Wireframe.
+        if (isWireframe)
+        {
+            renderer.SubmitDebugLine(corners[0], corners[1], color, page);
+            renderer.SubmitDebugLine(corners[1], corners[2], color, page);
+            renderer.SubmitDebugLine(corners[2], corners[3], color, page);
+            renderer.SubmitDebugLine(corners[3], corners[0], color, page);
+
+            renderer.SubmitDebugLine(corners[4], corners[5], color, page);
+            renderer.SubmitDebugLine(corners[5], corners[6], color, page);
+            renderer.SubmitDebugLine(corners[6], corners[7], color, page);
+            renderer.SubmitDebugLine(corners[7], corners[4], color, page);
+
+            renderer.SubmitDebugLine(corners[0], corners[4], color, page);
+            renderer.SubmitDebugLine(corners[1], corners[5], color, page);
+            renderer.SubmitDebugLine(corners[2], corners[6], color, page);
+            renderer.SubmitDebugLine(corners[3], corners[7], color, page);
+        }
+        // Solid.
+        else
+        {
+            renderer.SubmitDebugTriangle(corners[0], corners[1], corners[2], color, page);
+            renderer.SubmitDebugTriangle(corners[0], corners[2], corners[3], color, page);
+
+            renderer.SubmitDebugTriangle(corners[4], corners[5], corners[6], color, page);
+            renderer.SubmitDebugTriangle(corners[4], corners[6], corners[7], color, page);
+
+            renderer.SubmitDebugTriangle(corners[0], corners[1], corners[4], color, page);
+            renderer.SubmitDebugTriangle(corners[1], corners[4], corners[5], color, page);
+
+            renderer.SubmitDebugTriangle(corners[1], corners[2], corners[5], color, page);
+            renderer.SubmitDebugTriangle(corners[2], corners[5], corners[6], color, page);
+
+            renderer.SubmitDebugTriangle(corners[2], corners[3], corners[6], color, page);
+            renderer.SubmitDebugTriangle(corners[3], corners[6], corners[7], color, page);
+
+            renderer.SubmitDebugTriangle(corners[0], corners[3], corners[4], color, page);
+            renderer.SubmitDebugTriangle(corners[3], corners[4], corners[7], color, page);
+        }
     }
 
     void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe, Page page)
     {
+        constexpr uint WIREFRAME_SEGMENT_COUNT = 24;
+
+        if (!CheckPage(page))
+        {
+            return;
+        }
+
         auto& renderer = g_App.GetRenderer();
-        renderer.SubmitDebugSphere(sphere, color, isWireframe, page);
+
+        // Wireframe.
+        if (isWireframe)
+        {
+            // Draw circles in XY, YZ, and XZ planes.
+            for (int plane = 0; plane < Vector3::AXIS_COUNT; plane++)
+            {
+                for (int i = 0; i < WIREFRAME_SEGMENT_COUNT; i++)
+                {
+                    float theta0 = (((float)i       / WIREFRAME_SEGMENT_COUNT) * 2.0f) * PI;
+                    float theta1 = (((float)(i + 1) / WIREFRAME_SEGMENT_COUNT) * 2.0f) * PI;
+
+                    auto point0 = Vector3::Zero;
+                    auto point1 = Vector3::Zero;
+                    switch (plane)
+                    {
+                        // XY plane.
+                        case 0:
+                        {
+                            point0 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta0), sphere.Radius * glm::sin(theta0), 0.0f);
+                            point1 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta1), sphere.Radius * glm::sin(theta1), 0.0f);
+                            break;
+                        }
+                        // YZ plane.
+                        case 1:
+                        {
+                            point0 = sphere.Center + Vector3(0.0f, sphere.Radius * glm::cos(theta0), sphere.Radius * glm::sin(theta0));
+                            point1 = sphere.Center + Vector3(0.0f, sphere.Radius * glm::cos(theta1), sphere.Radius * glm::sin(theta1));
+                            break;
+                        }
+                        // ZX plane.
+                        case 2:
+                        {
+                            point0 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta0), 0.0f, sphere.Radius * glm::sin(theta0));
+                            point1 = sphere.Center + Vector3(sphere.Radius * glm::cos(theta1), 0.0f, sphere.Radius * glm::sin(theta1));
+                            break;
+                        }
+                    }
+                    renderer.SubmitDebugLine(point0, point1, color, page);
+                }
+            }
+        }
+        // Solid.
+        else
+        {
+            // @todo
+        }
     }
 
     void CreateCylinder(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, Page page)
     {
+        if (!CheckPage(page))
+        {
+            return;
+        }
+
         auto& renderer = g_App.GetRenderer();
-        renderer.SubmitDebugCylinder(center, rot, radius, length, color, isWireframe, page);
+
+        // Wireframe.
+        if (isWireframe)
+        {
+            // @todo
+        }
+        // Solid.
+        else
+        {
+            // @todo
+        }
     }
 
     void CreateCone(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, Page page)
     {
+        if (!CheckPage(page))
+        {
+            return;
+        }
+
         auto& renderer = g_App.GetRenderer();
-        renderer.SubmitDebugCone(center, rot, radius, length, color, isWireframe, page);
+
+        // Wireframe.
+        if (isWireframe)
+        {
+            // @todo
+        }
+        // Solid.
+        else
+        {
+            // @todo
+        }
     }
 
     void CreateDebugDiamond(const Vector3& center, const Quaternion& rot, float radius, float length, const Color& color, bool isWireframe, Page page)
     {
+        if (!CheckPage(page))
+        {
+            return;
+        }
+
         auto& renderer = g_App.GetRenderer();
-        renderer.SubmitDebugDiamond(center, rot, radius, length, color, isWireframe, page);
+
+        // Wireframe.
+        if (isWireframe)
+        {
+            // @todo
+        }
+        // Solid.
+        else
+        {
+            // @todo
+        }
     }
 }

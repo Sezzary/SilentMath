@@ -128,4 +128,4 @@ using json = nlohmann::json;
 using namespace Silent;
 using namespace Silent::Math;
 
-#include "Debug.h"
+#include "Debug/Debug.h"

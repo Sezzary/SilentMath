@@ -81,6 +81,12 @@ namespace Silent::Gui
         Update(bounds.Intersects(pos), SELECT_ACTION_IDS); 
     }
 
+    void Button::Debug() const
+    {
+        // @todo
+        //Debug::CreateRectangle();
+    }
+
     bool Button::IsActionClicked(const std::vector<ActionId>& actionIds) const
     {
         const auto& input = g_App.GetInput();

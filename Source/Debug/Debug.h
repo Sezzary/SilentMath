@@ -72,8 +72,11 @@ namespace Silent::Debug
     /** @brief Global debug workspace data. */
     extern DebugWork g_Work;
 
-    /** @brief Executes scratch code. This is a dedicated space which can be used to test anything. */
-    void Scratchpad();
+    /** @brief Checks if a debug page is currently open in the debug menu.
+     *
+     * @return `true` if the debug page is open, `false` otherwise.
+     */
+    bool CheckPage(Debug::Page page);
 
     /** @brief Initializes the debug logger, log file for flushing, and GUI. */
     void Initialize();

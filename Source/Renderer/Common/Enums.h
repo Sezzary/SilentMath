@@ -50,7 +50,7 @@ namespace Silent::Renderer
         BottomRight
     };
 
-    /** @brief Screen space shape scale modes relative to the display aspect ratio. */
+    /** @brief Screen space scale modes relative to the display aspect ratio. */
     enum class ScaleMode
     {
         Fit,
