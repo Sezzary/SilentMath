@@ -23,7 +23,7 @@ if(MSVC)
     add_compile_options(/wd4244)    # Suppress type conversion warnings.
     add_compile_options(/wd4267)    # Suppress type conversion warnings.
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    add_compile_options(-fmodules)         # Enable modules.
+    add_compile_options(-fmodules-ts)      # Enable modules.
     add_compile_options(-Wno-sign-compare) # Suppress sign comparison warnings.
     add_compile_options(-Wno-conversion)   # Suppress type conversion warnings.
 endif()

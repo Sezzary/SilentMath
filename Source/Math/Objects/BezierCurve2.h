@@ -12,7 +12,7 @@ namespace Silent::Math
         // Constants
         // ==========
 
-        static constexpr auto CONTROL_POINT_COUNT = 4;
+        static constexpr int CONTROL_POINT_COUNT = 4;
 
         // ========
         // Fields
