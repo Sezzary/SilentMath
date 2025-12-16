@@ -7,10 +7,10 @@ namespace Silent::Utils
 {
     ParallelExecutor::ParallelExecutor()
     {
-        constexpr uint THREAD_COUNT_MIN = 2;
+        constexpr int THREAD_COUNT_MIN = 2;
 
         // Reserve threads.
-        uint threadCount = std::max(GetCoreCount(), THREAD_COUNT_MIN);
+        int threadCount = std::max(GetCoreCount(), THREAD_COUNT_MIN);
         _threads.reserve(threadCount);
 
         // Create threads.
@@ -35,18 +35,18 @@ namespace Silent::Utils
         _taskCond.notify_all();
     }
 
-    uint ParallelExecutor::GetThreadCount() const
+    int ParallelExecutor::GetThreadCount() const
     {
-        return (uint)_threads.size();
+        return (int)_threads.size();
     }
 
-    uint ParallelExecutor::GetPendingTaskCount()
+    int ParallelExecutor::GetPendingTaskCount()
     {
         // @lock Restrict task queue access.
         {
             auto taskLock = std::lock_guard(_taskMutex);
 
-            return (uint)_tasks.size();
+            return (int)_tasks.size();
         }
     }
 
@@ -160,9 +160,9 @@ namespace Silent::Utils
         }
     }
 
-    uint GetCoreCount()
+    int GetCoreCount()
     {
-        return std::max<uint>(std::jthread::hardware_concurrency(), 1);
+        return std::max<int>(std::jthread::hardware_concurrency(), 1);
     }
 
     std::future<void> GenerateReadyFuture()

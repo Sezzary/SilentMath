@@ -10,7 +10,7 @@ namespace Silent::Input
 
         std::string                        Text      = {};
         std::optional<std::pair<int, int>> Selection = {}; // First = selection start, second = selection end.
-        uint                               Cursor    = 0;
+        int                                Cursor    = 0;
     };
 
     /** @brief Text block buffer. */

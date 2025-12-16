@@ -46,13 +46,13 @@ namespace Silent::Utils
          *
          * @return Worker thread count.
          */
-        uint GetThreadCount() const;
+        int GetThreadCount() const;
 
         /** @brief Gets the number of pending tasks to be executed.
          *
          * @return Queued task count.
          */
-        uint GetPendingTaskCount();
+        int GetPendingTaskCount();
 
         // ==========
         // Utilities
@@ -102,7 +102,7 @@ namespace Silent::Utils
      *
      * @return CPU core count.
      */
-    uint GetCoreCount();
+    int GetCoreCount();
 
     /** @brief Generates a ready future.
      *

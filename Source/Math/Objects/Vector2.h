@@ -11,7 +11,7 @@ namespace Silent::Math
         // Constants
         // ==========
 
-        static constexpr uint AXIS_COUNT = 2;
+        static constexpr int AXIS_COUNT = 2;
 
         // ========
         // Presets

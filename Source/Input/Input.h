@@ -55,8 +55,8 @@ namespace Silent::Input
         RumbleMode Mode          = RumbleMode::Low;
         float      IntensityFrom = 0.0f;
         float      IntensityTo   = 0.0f;
-        uint       DurationTicks = 0;
-        uint       Ticks         = 0;
+        int        DurationTicks = 0;
+        int        Ticks         = 0;
     };
 
     /** @brief Raw input device state data. */

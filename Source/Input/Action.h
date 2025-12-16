@@ -111,9 +111,9 @@ namespace Silent::Input
         ActionId _id              = In::Up;
         float    _state           = 0.0f;
         float    _prevState       = 0.0f;
-        uint     _ticksActive     = 0;
-        uint     _prevTicksActive = 0;
-        uint     _ticksInactive   = 0;
+        int      _ticksActive     = 0;
+        int      _prevTicksActive = 0;
+        int      _ticksInactive   = 0;
 
     public:
         // =============
@@ -149,13 +149,13 @@ namespace Silent::Input
          *
          * @return Active tick count.
          */
-        uint GetTicksActive() const;
+        int GetTicksActive() const;
 
         /** @brief Gets the number of ticks the action has been inactive.
          *
          * @return Inactive tick count.
          */
-        uint GetTicksInactive() const;
+        int GetTicksInactive() const;
 
         // ==========
         // Inquirers

@@ -4,12 +4,12 @@
 
 namespace Silent::Math
 {
-    constexpr uint Q4_SHIFT       = 4;
-    constexpr uint Q6_SHIFT       = 6;
-    constexpr uint Q8_SHIFT       = 8;
-    constexpr uint Q12_SHIFT      = 12;
-    constexpr uint FP_ANGLE_COUNT = 1 << Q12_SHIFT;
-    constexpr int  FP_PI          = 0x5000 / 2;
+    constexpr int Q4_SHIFT       = 4;
+    constexpr int Q6_SHIFT       = 6;
+    constexpr int Q8_SHIFT       = 8;
+    constexpr int Q12_SHIFT      = 12;
+    constexpr int FP_ANGLE_COUNT = 1 << Q12_SHIFT;
+    constexpr int FP_PI          = 0x5000 / 2;
 
     // =====================
     // Arithmetic and Utils
@@ -23,19 +23,19 @@ namespace Silent::Math
      * @param shift Fixed-point shift.
      * @return `x` converted to fixed-point.
      */
-    constexpr int FP_TO(float x, uint shift)
+    constexpr int FP_TO(float x, int shift)
     {
         return (int)ROUND(x * (1 << shift));
     }
 
     /** @brief Converts an integer from a fixed-point Q format. */
-    constexpr int FP_FROM(int x, uint shift)
+    constexpr int FP_FROM(int x, int shift)
     {
         return x >> shift;
     }
 
     /** @brief Converts an integet from a fixed-point Q format to floating-point. */
-    constexpr float FP_FLOAT(int x, uint shift)
+    constexpr float FP_FLOAT(int x, int shift)
     {
         return (float)x / (float)FP_TO(1.0f, shift);
     }
@@ -60,7 +60,7 @@ namespace Silent::Math
         ((s32)(FP_FROM(x, shift) + ((u32)(x) >> 31)) >> 1)
 
     /** @brief Multiplies two integers in a fixed-point Q format and converts the result from the fixed-point Q format. */
-    constexpr int FP_MULTIPLY(int a, int b, uint shift)
+    constexpr int FP_MULTIPLY(int a, int b, int shift)
     {
         return (a * b) >> shift;
     }
@@ -68,19 +68,19 @@ namespace Silent::Math
     /** @brief Multiplies two integers in a fixed-point Q format, using 64-bit intermediates for higher precision,
      * and converts the result from the fixed-point Q format.
      */
-    constexpr int FP_MULTIPLY_PRECISE(int a, int b, uint shift)
+    constexpr int FP_MULTIPLY_PRECISE(int a, int b, int shift)
     {
         return ((int64)a * (int64)b) >> shift;
     }
 
     /** @brief Multiplies an integer by a float converted to fixed-point Q format and converts the result from the fixed-point Q format. */
-    constexpr int FP_MULTIPLY_FLOAT(int a, float b, uint shift)
+    constexpr int FP_MULTIPLY_FLOAT(int a, float b, int shift)
     {
         return FP_MULTIPLY(a, FP_TO(b, shift), shift);
     }
 
     /** @brief Multiplies an integer by a float converted to fixed-point Q format, using a 64-bit intermediate for higher precision. */
-    constexpr int FP_MULTIPLY_FLOAT_PRECISE(int a, float b, uint shift)
+    constexpr int FP_MULTIPLY_FLOAT_PRECISE(int a, float b, int shift)
     {
         return FP_MULTIPLY((int64)a, FP_TO(b, shift), shift);
     }

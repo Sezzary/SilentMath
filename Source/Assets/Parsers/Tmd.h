@@ -38,10 +38,10 @@ namespace Silent::Assets
     {
         struct Triangle
         {
-            static constexpr uint TRI_VERTEX_COUNT = 3;
+            static constexpr int TRI_VERTEX_COUNT = 3;
 
-            std::array<uint, TRI_VERTEX_COUNT> Vertices = {};
-            std::array<uint, TRI_VERTEX_COUNT> Normals  = {};
+            std::array<int, TRI_VERTEX_COUNT> Vertices = {};
+            std::array<int, TRI_VERTEX_COUNT> Normals  = {};
         };
 
         struct Mesh
