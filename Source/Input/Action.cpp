@@ -156,9 +156,9 @@ namespace Silent::Input
             return false;
         }
 
-        delaySec = std::clamp(stateMin, 0.0f, FLT_MAX);
+        delaySec = std::max(stateMin, 0.0f);
 
-        int delayTicks = (delaySec <= 0.0f) ? 0 : SEC_TO_TICK(delaySec);
+        int delayTicks = SEC_TO_TICK(delaySec);
         return _ticksActive >= delayTicks;
     }
 
@@ -175,8 +175,8 @@ namespace Silent::Input
             return false;
         }
 
-        delaySec        = std::clamp(delaySec,        0.0f, FLT_MAX);
-        initialDelaySec = std::clamp(initialDelaySec, 0.0f, FLT_MAX);
+        delaySec        = std::max(delaySec, 0.0f);
+        initialDelaySec = std::max(initialDelaySec, 0.0f);
         
         float activeDelaySec   = (_ticksActive > SEC_TO_TICK(initialDelaySec)) ? delaySec : initialDelaySec;
         int   activeDelayTicks = SEC_TO_TICK(activeDelaySec);
@@ -188,8 +188,8 @@ namespace Silent::Input
 
     bool Action::IsReleased(float delaySecMax, float stateMin) const
     {
-        delaySecMax = std::clamp(delaySecMax, 0.0f, FLT_MAX);
-        stateMin    = std::clamp(stateMin,    0.0f, 1.0f);
+        delaySecMax = std::max(delaySecMax, 0.0f);
+        stateMin    = std::clamp(stateMin, 0.0f, 1.0f);
 
         int delayTicksMax = (delaySecMax == FLT_MAX) ? UINT_MAX : SEC_TO_TICK(delaySecMax);
         return _state <= stateMin && _prevState > stateMin && _ticksActive <= delayTicksMax;

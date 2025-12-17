@@ -14,13 +14,16 @@ namespace Silent::Services
         return std::min((float)elapsedDur / 1000000.0f, ((float)TICKS_PER_SECOND / 6.0f) / (float)TICKS_PER_SECOND);
     }
 
-    uint ClockManager::GetTicks() const
+    int ClockManager::GetTicks() const
     {
         return std::min(_ticks, TICKS_PER_SECOND / 6);
     }
 
-    bool ClockManager::TestInterval(uint intervalTicks, uint offsetTicks) const
+    bool ClockManager::TestInterval(int intervalTicks, int offsetTicks) const
     {
+        intervalTicks = std::max(intervalTicks, 0);
+        offsetTicks   = std::max(offsetTicks, 0);
+
         if (offsetTicks >= intervalTicks)
         {
             offsetTicks = 0;
@@ -35,7 +38,7 @@ namespace Silent::Services
     {
         _ticks              = 0;
         _prevUptimeDuration = 0;
-        _startDuration       = GetEpochDuration();
+        _startDuration      = GetEpochDuration();
     }
 
     void ClockManager::Update()
@@ -44,7 +47,7 @@ namespace Silent::Services
         uint64 elapsedDur = uptimeDur - _prevUptimeDuration;
 
         // Calculate ticks for elapsed period.
-        _ticks = (uint)(elapsedDur / TICK_INTERVAL_DURATION);
+        _ticks = (int)(elapsedDur / TICK_INTERVAL_DURATION);
 
         // Set previous uptime if new ticks accumulated.
         if (_ticks != 0)

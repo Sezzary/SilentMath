@@ -2,7 +2,7 @@
 
 namespace Silent::Services
 {
-    constexpr uint TICKS_PER_SECOND = 60;
+    constexpr int TICKS_PER_SECOND = 60;
 
     /** @brief Game clock manager. */
     class ClockManager
@@ -12,13 +12,13 @@ namespace Silent::Services
         // Constants
         // ==========
 
-        static constexpr uint TICK_INTERVAL_DURATION = 1000000 / TICKS_PER_SECOND;
+        static constexpr int TICK_INTERVAL_DURATION = 1000000 / TICKS_PER_SECOND;
 
         // =======
         // Fields
         // =======
 
-        uint   _ticks              = 0;
+        int    _ticks              = 0;
         uint64 _prevUptimeDuration = 0;
         uint64 _startDuration      = 0;
 
@@ -45,7 +45,7 @@ namespace Silent::Services
          *
          * @return Accumulated ticks.
          */
-        uint GetTicks() const;
+        int GetTicks() const;
 
         // ==========
         // Inquirers
@@ -57,7 +57,7 @@ namespace Silent::Services
          * @param offsetTicks Tick offset.
          * @return `true` if the interval has passed, `false` otherwise.
          */
-        bool TestInterval(uint intervalTicks, uint offsetTicks = 0) const;
+        bool TestInterval(int intervalTicks, int offsetTicks = 0) const;
 
         // ==========
         // Utilities
@@ -97,9 +97,10 @@ namespace Silent::Services
      * @param sec Seconds to convert.
      * @return Seconds converted to ticks.
      */
-    constexpr uint SEC_TO_TICK(float sec)
+    constexpr int SEC_TO_TICK(float sec)
     {
-        return (sec > 0.0f) ? std::max<uint>((uint)ROUND(sec * (float)TICKS_PER_SECOND), 1) : 0;
+        sec = std::max(sec, 0.0f);
+        return std::max((int)ROUND(sec * (float)TICKS_PER_SECOND), 1);
     }
 
     /** @brief Converts ticks to seconds.
@@ -107,8 +108,9 @@ namespace Silent::Services
      * @param ticks Ticks to convert.
      * @return Ticks converted to seconds.
      */
-    constexpr float TICK_TO_SEC(uint ticks)
+    constexpr float TICK_TO_SEC(int ticks)
     {
+        ticks = std::max(ticks, 0);
         return (float)ticks / (float)TICKS_PER_SECOND;
     }
 
