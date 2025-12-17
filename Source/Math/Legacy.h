@@ -7,9 +7,9 @@
 
 namespace Silent::Math
 {
-    constexpr uint LINE_VERTEX_COUNT = 2;
-    constexpr uint RECT_VERTEX_COUNT = 4;
-    constexpr uint BOX_VERTEX_COUNT  = 8;
+    constexpr int LINE_VERTEX_COUNT = 2;
+    constexpr int RECT_VERTEX_COUNT = 4;
+    constexpr int BOX_VERTEX_COUNT  = 8;
 
     /** @brief Fixed-point Q types. */
     enum class QType

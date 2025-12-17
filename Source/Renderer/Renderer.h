@@ -43,7 +43,7 @@ namespace Silent::Renderer
         SDL_Window*  _window        = nullptr;
         View         _view          = View();
         Color        _clearColor    = Color::Clear;
-        uint         _drawCallCount = 0;
+        int          _drawCallCount = 0;
         bool         _isResized     = false;
 
         //RendererResources Resources = {};
@@ -90,7 +90,7 @@ namespace Silent::Renderer
          *
          * @return Draw call count.
          */
-        uint GetDrawCallCount() const;
+        int GetDrawCallCount() const;
 
         // ========
         // Setters

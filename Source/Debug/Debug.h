@@ -58,8 +58,8 @@ namespace Silent::Debug
         /** Renderer (internal) */
 
         float    Fps        = 0.0f;
-        uint     FrameTime  = 0;
-        uint     FrameCount = 0;
+        int      FrameTime  = 0;
+        int      FrameCount = 0;
         TimeType PrevTime   = {};
 
         /** Renderer (user) */

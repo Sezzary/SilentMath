@@ -77,7 +77,7 @@ namespace Silent::Assets
         std::unordered_map<std::string, int>       _idxs         = {}; /** Key = asset name, value = asset index. */
         std::unordered_map<int, std::string>       _names        = {}; /** Key = asset index, value = asset name. */
         std::unordered_map<int, std::future<void>> _loadFutures  = {}; /** Key = asset index, value = load future. */
-        std::atomic<uint>                          _loadingCount = 0;  /** Number of currently loading assets. */
+        std::atomic<int>                           _loadingCount = 0;  /** Number of currently loading assets. */
 
     public:
         // =============

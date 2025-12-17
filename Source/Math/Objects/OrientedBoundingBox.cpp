@@ -150,7 +150,7 @@ namespace Silent::Math
 
     ContainmentType OrientedBoundingBox::Contains(const OrientedBoundingBox& obb) const
     {
-        /*constexpr uint AXIS_COUNT = 3;
+        /*constexpr int AXIS_COUNT = 3;
 
         // Transform other OBB into local space of this OBB.
         auto rotMat = glm::transpose(Rotation); // Inverse rotation.

@@ -17,7 +17,7 @@ using namespace Silent::Utils;
 namespace Silent::Debug
 {
     constexpr char LOGGER_NAME[]     = "Logger";
-    constexpr uint MESSAGE_COUNT_MAX = 128;
+    constexpr int  MESSAGE_COUNT_MAX = 128;
 
     DebugWork g_Work = {};
 
@@ -93,7 +93,7 @@ namespace Silent::Debug
     // @todo Not working.
     void Message(const char* msg, ...)
     {
-        constexpr uint BUFFER_SIZE = 255;
+        constexpr int BUFFER_SIZE = 255;
 
         // Check if debug GUI is enabled.
         const auto& options = g_App.GetOptions();
@@ -325,7 +325,7 @@ namespace Silent::Debug
 
     void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe, Page page)
     {
-        constexpr uint WIREFRAME_SEGMENT_COUNT = 24;
+        constexpr  WIREFRAME_SEGMENT_COUNT = 24;
 
         if (!CheckPage(page))
         {

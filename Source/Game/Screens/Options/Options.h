@@ -9,10 +9,10 @@
 
 namespace Silent::Game
 {
-    constexpr uint DEPTH_24   = 24;
-    constexpr uint DEPTH_40   = 40;
-    constexpr uint DEPTH_36   = 36;
-    constexpr uint DEPTH_8148 = 8148;
+    constexpr int DEPTH_24   = 24;
+    constexpr int DEPTH_40   = 40;
+    constexpr int DEPTH_36   = 36;
+    constexpr int DEPTH_8148 = 8148;
 
     /** @brief Options menu states. Facilitates menu switching via `s_GameWork::gameStateStep[0]`. */
     enum e_OptionsMenuState

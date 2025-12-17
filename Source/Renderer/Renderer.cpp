@@ -23,7 +23,7 @@ namespace Silent::Renderer
         return _type;
     }
 
-    uint RendererBase::GetDrawCallCount() const
+    int RendererBase::GetDrawCallCount() const
     {
         return _drawCallCount;
     }

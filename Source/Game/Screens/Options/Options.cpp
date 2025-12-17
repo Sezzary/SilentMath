@@ -10,7 +10,7 @@ using namespace Silent::Input;
 
 namespace Silent::Game
 {
-    constexpr uint LINE_CURSOR_TIMER_MAX = 8;
+    constexpr int LINE_CURSOR_TIMER_MAX = 8;
 
     s32 g_Options_SelectionHighlightTimer = 0;
 
