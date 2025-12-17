@@ -332,9 +332,8 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::DrawDebugGui()
     {
-        // If debug GUI is disabled, return early.
-        const auto& options = g_App.GetOptions();
-        if (!options->EnableDebugGui)
+        // If power menu is disabled, return early.
+        if (!Debug::g_Work.EnablePowerMenu)
         {
             return;
         }

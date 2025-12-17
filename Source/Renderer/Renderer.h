@@ -166,9 +166,9 @@ namespace Silent::Renderer
          */
         void SubmitDebugText(const std::string& msg, const Vector2& pos, const Color& color, TextAlignMode alignMode = TextAlignMode::Left);
 
-        /** @brief Submits a function used to construct an ImGui debug GUI for drawing.
+        /** @brief Submits a function used to construct an ImGui power menu for drawing.
          *
-         * @param drawFunc Function defining a debug GUI.
+         * @param drawFunc Function defining a power menu.
          */
         void SubmitDebugGui(std::function<void()> drawFunc);
 
@@ -236,7 +236,7 @@ namespace Silent::Renderer
         /** @brief Draws post-process effects on top of the 3D and 2D scene. Called after `Draw2dScene` and before `DrawDebugGui`. */
         virtual void DrawPostProcess() = 0;
 
-        /** @brief Draws a debug GUI on top of the post-processed 3D and 2D scenes. Called after `DrawPostProcess`. */
+        /** @brief Draws a power menu on top of the post-processed 3D and 2D scenes. Called after `DrawPostProcess`. */
         virtual void DrawDebugGui() = 0;
     };
 

@@ -104,9 +104,8 @@ namespace Silent::Debug
                                      []() { Debug::Log("Holding!"); },
                                      []() { Debug::Log("Releasing!"); });
 
-            // Check if debug GUI is enabled.
-            const auto& options = g_App.GetOptions();
-            if (!options->EnableDebugGui)
+            // Check if power menu is enabled.
+            if (!Debug::g_Work.EnablePowerMenu)
             {
                 but.Update(input.GetCursorPosition());
             }

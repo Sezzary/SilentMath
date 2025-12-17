@@ -2,5 +2,5 @@
 
 namespace Silent::Debug
 {
-    void CreateMainGui();
+    void CreatePowerMenu();
 }

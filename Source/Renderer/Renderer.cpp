@@ -110,7 +110,7 @@ namespace Silent::Renderer
     void RendererBase::SubmitDebugGui(std::function<void()> drawFunc)
     {
         const auto& options = g_App.GetOptions();
-        if (!options->EnableDebugMode)
+        if (!options->EnablePowerMode)
         {
             return;
         }

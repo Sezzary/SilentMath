@@ -2,7 +2,7 @@
 #include "Debug/Debug.h"
 
 #include "Application.h"
-#include "Debug/Gui.h"
+#include "Debug/PowerMenu.h"
 #include "Debug/Scratchpad.h"
 #include "Renderer/Renderer.h"
 #include "Services/Filesystem.h"
@@ -24,7 +24,7 @@ namespace Silent::Debug
     bool CheckPage(Debug::Page page)
     {
         const auto& options = g_App.GetOptions();
-        return options->EnableDebugMode && (page == Debug::g_Work.Page || page == Debug::Page::None);
+        return options->EnablePowerMode && (page == Debug::g_Work.Page || page == Debug::Page::None);
     }
 
     void Initialize()
@@ -65,9 +65,8 @@ namespace Silent::Debug
     {
         Scratchpad();
 
-        // If debug GUI is disabled, return early.
-        const auto& options = g_App.GetOptions();
-        if (!options->EnableDebugGui)
+        // Check if power menu is enabled.
+        if (!Debug::g_Work.EnablePowerMenu)
         {
             //g_Work.Messages.clear();
             return;
@@ -85,7 +84,7 @@ namespace Silent::Debug
             g_Work.PrevTime   = now;
         }
 
-        CreateMainGui();
+        CreatePowerMenu();
 
         g_Work.Messages.clear();
     }
@@ -95,9 +94,8 @@ namespace Silent::Debug
     {
         constexpr int BUFFER_SIZE = 255;
 
-        // Check if debug GUI is enabled.
-        const auto& options = g_App.GetOptions();
-        if (!options->EnableDebugGui)
+        // Check if power menu is enabled.
+        if (!Debug::g_Work.EnablePowerMenu)
         {
             return;
         }
@@ -325,7 +323,7 @@ namespace Silent::Debug
 
     void CreateSphere(const BoundingSphere& sphere, const Color& color, bool isWireframe, Page page)
     {
-        constexpr  WIREFRAME_SEGMENT_COUNT = 24;
+        constexpr int WIREFRAME_SEGMENT_COUNT = 24;
 
         if (!CheckPage(page))
         {

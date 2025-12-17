@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Debug/Gui.h"
+#include "Debug/PowerMenu.h"
 
 #include "Application.h"
 #include "Assets/Assets.h"
@@ -11,7 +11,7 @@
 
 namespace Silent::Debug
 {
-    void CreateMainGui()
+    void CreatePowerMenu()
     {
         CreateGui([]()
         {

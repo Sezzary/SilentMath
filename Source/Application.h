@@ -169,8 +169,8 @@ namespace Silent
         /** @brief Toggles the mouse cursor on and off. */
         void ToggleCursor();
 
-        /** @brief Toggles the debug GUI on and off. */
-        void ToggleDebugGui();
+        /** @brief Toggles the power menu on and off. */
+        void TogglePowerMenu();
 
     private:
         // ========

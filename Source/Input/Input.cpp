@@ -656,13 +656,13 @@ namespace Silent::Input
         dbFullscreen = !((GetRawEventState(EventId::Alt) && GetRawEventState(EventId::Return)) || GetRawEventState(EventId::F11));
 
         auto& options = g_App.GetOptions();
-        if (options->EnableDebugMode)
+        if (options->EnablePowerMode)
         {
-            // Toggle debug GUI.
+            // Toggle power menu.
             static bool dbDebugGui = true;
             if (GetRawEventState(EventId::Grave) && dbDebugGui)
             {
-                g_App.ToggleDebugGui();
+                g_App.TogglePowerMenu();
             }
             dbDebugGui = !GetRawEventState(EventId::Grave);
         }

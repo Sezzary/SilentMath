@@ -42,33 +42,21 @@ namespace Silent::Debug
     {
         using TimeType = std::chrono::steady_clock::time_point;
 
-        /** Temp */
-
-        float BlendAlpha = 0.0f;
-
-        /** System (internal) */
+        float BlendAlpha = 0.0f; // @temp
 
         std::vector<std::string> Messages  = {};
         TimeType                 StartTime = {};
-
-        /** System (user) */
-
-        Page Page = Page::Renderer;
-
-        /** Renderer (internal) */
 
         float    Fps        = 0.0f;
         int      FrameTime  = 0;
         int      FrameCount = 0;
         TimeType PrevTime   = {};
 
-        /** Renderer (user) */
 
+        Page Page                = Page::Renderer;
+        bool EnablePowerMenu     = false;
         bool EnableWireframeMode = false;
-
-        /** Cheats */
-
-        bool EnableFreezeMode = false;
+        bool EnableFreezeMode    = false;
     };
 
     /** @brief Global debug workspace data. */
@@ -86,10 +74,10 @@ namespace Silent::Debug
     /** @brief Gracefully shuts down the logger. */
     void Deinitialize();
 
-    /** @brief Updates the debug GUI. */
+    /** @brief Updates the power menu. */
     void Update();
 
-    /** @brief Displays a message in the debug GUI.
+    /** @brief Displays a message in the power menu.
      *
      * @param msg Message to display.
      */
@@ -118,7 +106,7 @@ namespace Silent::Debug
     /** @brief Stops the debug timer and prints the execution time in microseconds via a `Message` call. Placed after the relevant code block. */
     void EndTimer();
 
-    /** @brief Creates a debug GUI and submits it to the renderer for drawing.
+    /** @brief Creates a power menu and submits it to the renderer for drawing.
      *
      * @param drawFunc Function defining the GUI to construct.
      */
