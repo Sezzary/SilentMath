@@ -4,7 +4,7 @@
     "sys_GamepadConnected": "Gamepad connected.",
     "sys_GamepadDisonnected": "Gamepad disconnected.",
     
-    "splashScreen_Warning": "There are violent and disturbing{N}images in this game.",
+    "intro_Warning": "There are violent and disturbing{N}images in this game.",
     "intro_FearOfBlood": "The fear of blood tends to create fear for the flesh.",
 
     "mainMenu_Start": "START",

@@ -11,12 +11,12 @@ namespace Silent::Assets
     constexpr char KEY_SYS_GAMEPAD_CONNECTED[]       = "sys_GamepadConnected";
     constexpr char KEY_SYS_GAMEPAD_DISCONNECTED[]    = "sys_GamepadDisconnected";
 
-    // ========================
-    // Splash Screen and Intro
-    // ========================
+    // ======
+    // Intro
+    // ======
 
-    constexpr char KEY_SPLASH_SCREEN_WARNING[] = "splashScreen_Warning";
-    constexpr char KEY_INTRO_FEAR_OF_BLOOD[]   = "intro_FearOfBlood";
+    constexpr char KEY_INTRO_WARNING[]       = "intro_Warning";
+    constexpr char KEY_INTRO_FEAR_OF_BLOOD[] = "intro_FearOfBlood";
 
     // ======
     // Menus
