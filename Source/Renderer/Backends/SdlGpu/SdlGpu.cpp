@@ -130,7 +130,7 @@ namespace Silent::Renderer
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
-        (*(SdlGpuTextureManager*)_textures.get()).Load(*copyPass, g_App.GetAssets().GetName(1854));
+        GetTextures().Load(*copyPass, g_App.GetAssets().GetName(1854));
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
@@ -253,6 +253,11 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(&renderPass);
     }
 
+    SdlGpuTextureManager& SdlGpuRenderer::GetTextures()
+    {
+        return *(SdlGpuTextureManager*)_textures.get();
+    }
+
     void SdlGpuRenderer::Draw2dScene()
     {
         const auto& options = g_App.GetOptions();
@@ -278,10 +283,10 @@ namespace Silent::Renderer
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // 2D textures.
+        // 2D sprites. @todo 6 indices should be a constant.
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
         _buffers.Sprites2d.Bind(renderPass, 0, 0);
-        (*(SdlGpuTextureManager*)_textures.get()).Get(g_App.GetAssets().GetName(1854))->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
+        GetTextures().Get(g_App.GetAssets().GetName(1854))->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
         SDL_DrawGPUIndexedPrimitives(&renderPass, 6, sizeof(spriteBufferVerts) / sizeof(BufferTexVertex2d), 0, 0, 0);
 
         // 2D primitives.

@@ -1,22 +1,12 @@
 #include "Framework.h"
 #include "Renderer/Backends/SdlGpu/PipelineConfig.h"
 
+#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferColorVertex2d.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferTexVertex2d.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 
 namespace Silent::Renderer
 {
-    // @todo Temporary placement. Should keep these in a folder as common structs?
-    struct BufferVertex
-    {
-        Vector3 Position = Vector3::Zero;
-        Color   Col      = Color::Clear;
-    };
-    struct BufferPositionTextureVertex
-    {
-        Vector3 Position = Vector3::Zero;
-        Vector2 Uv       = Vector2::Zero;
-    };
-
     const std::vector<SDL_GPUColorTargetBlendState> PIPELINE_BLEND_MODE_COLOR_TARGETS = 
     {
         // Opaque.
@@ -112,7 +102,7 @@ namespace Silent::Renderer
                 SDL_GPUVertexBufferDescription
                 {
                     .slot               = 0,
-                    .pitch              = sizeof(BufferVertex),
+                    .pitch              = sizeof(BufferColorVertex2d),
                     .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     .instance_step_rate = 0
                 }
@@ -157,7 +147,7 @@ namespace Silent::Renderer
                 SDL_GPUVertexBufferDescription
                 {
                     .slot               = 0,
-                    .pitch              = sizeof(BufferPositionTextureVertex),
+                    .pitch              = sizeof(BufferTexVertex2d),
                     .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     .instance_step_rate = 0
                 }

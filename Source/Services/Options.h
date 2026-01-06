@@ -92,7 +92,7 @@ namespace Silent::Services
 
     enum class PaperMapQuality
     {
-        Hd,
+        High,
         Retro
     };
 
@@ -168,7 +168,7 @@ namespace Silent::Services
         // Enhancements
         // =============
 
-        PaperMapQuality PaperMap    = PaperMapQuality::Hd;
+        PaperMapQuality PaperMap    = PaperMapQuality::Retro;
         DialogPauseType DialogPause = DialogPauseType::Retro;
 
         // ==================

@@ -3,6 +3,7 @@
 #include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Buffer/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
+#include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
 #include "Renderer/Renderer.h"
@@ -54,6 +55,8 @@ namespace Silent::Renderer
         // ========
         // Helpers
         // ========
+
+        SdlGpuTextureManager& GetTextures();
 
         void Draw3dScene() override;
         void Draw2dScene() override;
