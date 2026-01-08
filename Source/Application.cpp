@@ -278,11 +278,6 @@ namespace Silent
         _work.Toaster.Update();
     }
 
-    void ApplicationManager::UpdateRenderBuffer()
-    {
-        // @todo
-    }
-
     void ApplicationManager::Render()
     {
         if (_work.Clock.GetTicks() <= 0)
@@ -298,7 +293,7 @@ namespace Silent
         }
 
         // Render frame asynchronously.
-        UpdateRenderBuffer();
+        _work.Renderer->UpdateRenderDataBuffer();
         prevFrameFuture = _work.Executor.AddTask(TASK(_work.Renderer->Update()));
     }
 

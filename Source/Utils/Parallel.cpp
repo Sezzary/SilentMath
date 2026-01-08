@@ -77,9 +77,8 @@ namespace Silent::Utils
         auto counter = std::make_shared<std::atomic<int>>();
         auto promise = std::make_shared<std::promise<void>>();
 
-        counter->store((int)tasks.size(), std::memory_order::release);
-
         // Add group tasks.
+        counter->store((int)tasks.size(), std::memory_order::release);
         for (const auto& task : tasks)
         {
             AddTask(task, counter, promise);
@@ -130,9 +129,6 @@ namespace Silent::Utils
 
     void ParallelExecutor::AddTask(const ParallelTask& task, std::shared_ptr<std::atomic<int>> counter, std::shared_ptr<std::promise<void>> promise)
     {
-        // Increment counter for task group.
-        counter->fetch_add(1, std::memory_order_relaxed);
-
         // @lock Restrict task queue access.
         {
             auto taskLock = std::lock_guard(_taskMutex);

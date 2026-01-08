@@ -64,6 +64,20 @@ namespace Silent::Renderer
         return res.x / res.y;
     }
 
+    void RendererBase::UpdateRenderDataBuffer()
+    {
+        _drawCallCount = 0;
+
+        std::swap(_renderBuffer, _activeBuffer);
+
+        _activeBuffer.Primitives2d.clear();
+        _activeBuffer.Primitives3d.clear();
+        _activeBuffer.Sprites2d.clear();
+        _activeBuffer.Glyphs.clear();
+        _activeBuffer.DebugPrimitives3d.clear();
+        _activeBuffer.DebugGuiDrawCalls.clear();
+    }
+
     void RendererBase::SignalResize()
     {
         _isResized = true;
@@ -71,13 +85,13 @@ namespace Silent::Renderer
 
     void RendererBase::Submit2dPrimitive(const Primitive2d& prim)
     {
-        if (_primitives2d.size() >= PRIMITIVE_2D_COUNT_MAX)
+        if (_activeBuffer.Primitives2d.size() >= PRIMITIVE_2D_COUNT_MAX)
         {
             Debug::Log("Attampted to add 2D primitive to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return;
         }
 
-        _primitives2d.push_back(prim);
+        _activeBuffer.Primitives2d.push_back(prim);
     }
 
     void RendererBase::SubmitScreenSprite(int assetIdx, const Vector2& uvMin, const Vector2& uvMax, const Vector2& pos, short rot, const Vector2& scale,
@@ -98,7 +112,7 @@ namespace Silent::Renderer
             .UvMax    = uvMax,
             .Position = pos
         };
-        _sprites2d.push_back(sprite);
+        _activeBuffer.Sprites2d.push_back(sprite);
     }
 
     void RendererBase::SubmitDebugText(const std::string& msg, const Vector2& pos, const Color& color, TextAlignMode alignMode)
@@ -114,7 +128,7 @@ namespace Silent::Renderer
             return;
         }
 
-        _debugGuiDrawCalls.push_back(drawFunc);
+        _activeBuffer.DebugGuiDrawCalls.push_back(drawFunc);
     }
 
     void RendererBase::SubmitDebugLine(const Vector2& from, const Vector2& to, const Color& color, ScaleMode scaleMode, Debug::Page page)
@@ -125,7 +139,7 @@ namespace Silent::Renderer
         }
 
         auto line = Primitive2d::CreateLine(from, to, color, color, 0, scaleMode, BlendMode::Add);
-        _debugPrimitives2d.push_back(line);
+        _activeBuffer.DebugPrimitives2d.push_back(line);
     }
 
     void RendererBase::SubmitDebugLine(const Vector3& from, const Vector3& to, const Color& color, Debug::Page page)
@@ -136,7 +150,7 @@ namespace Silent::Renderer
         }
 
         auto line = Primitive3d::CreateDebugLine(from, to, color);
-        _debugPrimitives3d.push_back(line);
+        _activeBuffer.DebugPrimitives3d.push_back(line);
     }
 
     void RendererBase::SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, ScaleMode scaleMode, Debug::Page page)
@@ -147,7 +161,7 @@ namespace Silent::Renderer
         }
 
         auto tri = Primitive2d::CreateTriangle(vert0, vert1, vert2, color, color, color, 0, scaleMode, BlendMode::Add);
-        _debugPrimitives2d.push_back(tri);
+        _activeBuffer.DebugPrimitives2d.push_back(tri);
     }
 
     void RendererBase::SubmitDebugTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, Debug::Page page)
@@ -158,10 +172,10 @@ namespace Silent::Renderer
         }
 
         auto tri = Primitive3d::CreateDebugTriangle(vert0, vert1, vert2, color);
-        _debugPrimitives3d.push_back(tri);
+        _activeBuffer.DebugPrimitives3d.push_back(tri);
     }
 
-    void RendererBase::PrepareFrameData()
+    void RendererBase::PrepareRenderBufferData()
     {
         auto& executor = g_App.GetExecutor();
 
@@ -179,16 +193,6 @@ namespace Silent::Renderer
         executor.AddTasks(sortTasks).wait();
 
         // @todo Intermediate data -> renderer-ready data. At later stages, outside this method, renderer-ready data -> GPU copy-ready data.
-    }
-
-    void RendererBase::ClearFrameData()
-    {
-        _drawCallCount = 0;
-
-        _primitives2d.clear();
-        _sprites2d.clear();
-        _debugPrimitives3d.clear();
-        _debugGuiDrawCalls.clear();
     }
 
     std::unique_ptr<RendererBase> CreateRenderer(RendererType type)

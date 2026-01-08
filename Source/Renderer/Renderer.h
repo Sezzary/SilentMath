@@ -18,16 +18,16 @@ namespace Silent::Renderer
         SdlGpu
     };
 
-    /** @brief Generic renderer resources. */
-    struct RendererResources
+    /** @brief Data for double-buffering. */
+    struct DataBuffer
     {
-        std::unique_ptr<TextureManagerBase> _textures          = nullptr;
-        std::vector<Primitive3d>            _primitives3d      = {};
-        std::vector<Primitive2d>            _primitives2d      = {};
-        std::vector<Sprite2d>               _sprites2d         = {};
-        std::vector<Glyph>                  _glyphs            = {};
-        std::vector<Primitive3d>            _debugPrimitives3d = {};
-        std::vector<std::function<void()>>  _debugGuiDrawCalls = {};
+        std::vector<Primitive3d>            Primitives3d      = {};
+        std::vector<Primitive2d>            Primitives2d      = {};
+        std::vector<Sprite2d>               Sprites2d         = {};
+        std::vector<Glyph>                  Glyphs            = {};
+        std::vector<Primitive2d>            DebugPrimitives2d = {};
+        std::vector<Primitive3d>            DebugPrimitives3d = {};
+        std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
     };
 
     /** @brief Renderer base. */
@@ -42,18 +42,14 @@ namespace Silent::Renderer
         SDL_Window*  _window        = nullptr;
         View         _view          = View();
         Color        _clearColor    = Color::Clear;
-        int          _drawCallCount = 0;
+        int          _drawCallCount = 0; // @todo Probably belongs in `DataBuffer` as well.
         bool         _isResized     = false;
 
-        //RendererResources Resources = {};
-        std::unique_ptr<TextureManagerBase> _textures          = nullptr;
-        std::vector<Primitive3d>            _primitives3d      = {};
-        std::vector<Primitive2d>            _primitives2d      = {};
-        std::vector<Sprite2d>               _sprites2d         = {};
-        std::vector<Glyph>                  _glyphs            = {};
-        std::vector<Primitive2d>            _debugPrimitives2d = {};
-        std::vector<Primitive3d>            _debugPrimitives3d = {};
-        std::vector<std::function<void()>>  _debugGuiDrawCalls = {};
+        std::unique_ptr<TextureManagerBase> _textures = nullptr;
+
+        // @todo Cleaner way to manage this.
+        DataBuffer _activeBuffer = {};
+        DataBuffer _renderBuffer = {};
 
     public:
         // =============
@@ -104,6 +100,9 @@ namespace Silent::Renderer
         // ==========
         // Utilities
         // ==========
+
+        /** @brief Updates the render data buffer for the current frame and clears the active data buffer for the next update. */
+        void UpdateRenderDataBuffer();
 
         /** @brief Signals a viewport resize. */
         void SignalResize();
@@ -220,11 +219,8 @@ namespace Silent::Renderer
         // Helpers
         // ========
 
-        /** @brief Prepares renderer data used for the current frame. Called at the start of `Update`. */
-        void PrepareFrameData();
-
-        /** @brief Clears renderer data used for the previous frame. Called at the end of `Update`. */
-        void ClearFrameData();
+        /** @brief Prepares renderer buffer data used for the current frame. Called at the start of `Update`. */
+        void PrepareRenderBufferData();
 
         /** @brief Draws a 3D scene. Called before `Draw2dScene`. */
         virtual void Draw3dScene() = 0;
