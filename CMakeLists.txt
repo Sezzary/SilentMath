@@ -59,9 +59,7 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
 
 # Add library sources.
 file(GLOB LIB_SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/src/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_opengl3.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl3.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdlgpu3.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo/*.cpp"
@@ -101,7 +99,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 #add_subdirectory(Libraries/assimp)
 add_subdirectory(Libraries/flatbuffers)
 add_subdirectory(Libraries/freetype)
-add_subdirectory(Libraries/glad/cmake)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/harfbuzz)
 add_subdirectory(Libraries/json)
@@ -115,7 +112,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/flatbuffers/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/freetype/include
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/glad/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/harfbuzz
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui

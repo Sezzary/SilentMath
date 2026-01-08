@@ -51,9 +51,6 @@
 // FreeType
 #include <ft2build.h>
 
-// GLAD
-#include <glad/glad.h>
-
 // GLM
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
@@ -70,7 +67,6 @@
 
 // ImGui
 #include <imgui.h>
-#include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
@@ -88,8 +84,6 @@ using json = nlohmann::json;
 // SDL
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gpu.h>
-#include <SDL3/SDL_opengl.h>
-#include <SDL3/SDL_opengl_glext.h>
 #include <SDL3/SDL_vulkan.h>
 
 // smol-atlas

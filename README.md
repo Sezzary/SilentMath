@@ -131,7 +131,7 @@ Available commands:
 - Configure Debug:`cmake -S . -B Build/Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug`
 - Build Debug: `cmake --build Build/Debug`
 
-- Configure Debug:`cmake -S . -B Build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release`
+- Configure Release:`cmake -S . -B Build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release`
 - Build Release: `cmake --build Build/Release`
 
 - Activate Python virtual environment: `source .venv/bin/activate`

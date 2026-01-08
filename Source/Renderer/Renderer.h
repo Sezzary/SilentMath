@@ -15,7 +15,6 @@ namespace Silent::Renderer
     /** @brief Renderer backend types. */
     enum class RendererType
     {
-        OpenGl,
         SdlGpu
     };
 

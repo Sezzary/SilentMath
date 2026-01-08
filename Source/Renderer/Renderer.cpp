@@ -9,7 +9,6 @@
 #include "Renderer/Common/Objects/Scene/Glyph.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
 #include "Renderer/Common/Objects/Scene/Text.h"
-#include "Renderer/Backends/OpenGl/OpenGl.h"
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
@@ -196,10 +195,6 @@ namespace Silent::Renderer
     {
         switch (type)
         {
-            case RendererType::OpenGl:
-            {
-                return std::make_unique<OpenGlRenderer>();
-            }
             case RendererType::SdlGpu:
             {
                 return std::make_unique<SdlGpuRenderer>();
