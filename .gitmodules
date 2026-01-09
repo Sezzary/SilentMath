@@ -10,10 +10,6 @@
     path = Libraries/freetype
     url = https://github.com/freetype/freetype.git
 
-[submodule "Libraries/glad"]
-    path = Libraries/glad
-    url = https://github.com/Dav1dde/glad.git
-
 [submodule "Libraries/glm"]
     path = Libraries/glm
     url = https://github.com/g-truc/glm.git

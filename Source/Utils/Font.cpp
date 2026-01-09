@@ -26,7 +26,7 @@ namespace Silent::Utils
         _pointSize = metadata.PointSize;
         if (_pointSize > POINT_SIZE_MAX)
         {
-            Debug::Log(Fmt("Attempted to initialize font `{}` with invalid point size {}. Max is {}.", _name, _pointSize, POINT_SIZE_MAX),
+            Debug::Log(Fmt("Attempted to initialize font chain `{}` with invalid point size {}. Max is {}.", _name, _pointSize, POINT_SIZE_MAX),
                        Debug::LogLevel::Warning);
 
             _pointSize = std::min<int>(_pointSize, POINT_SIZE_MAX);
@@ -50,7 +50,7 @@ namespace Silent::Utils
                 throw std::runtime_error("Failed to set font point size.");
             }
         }
-        Debug::Assert(_ftFonts.size() == _fontCount && _hbFonts.size() == _fontCount, Fmt("Invalid initialization for font `{}`.", _name));
+        Debug::Assert(_ftFonts.size() == _fontCount && _hbFonts.size() == _fontCount, Fmt("Invalid initialization for font chain `{}`.", _name));
 
         // Set scale factor.
         _scaleFactor = (float)_pointSize / (float)_ftFonts.front()->size->metrics.x_ppem;
@@ -64,7 +64,7 @@ namespace Silent::Utils
         {
             if (Find(_glyphs, codePoint) != nullptr)
             {
-                Debug::Log(Fmt("Attempted to precache existing glyph U+{:X} for font `{}`. Check precache string for duplicates.", (int)codePoint, _name),
+                Debug::Log(Fmt("Attempted to precache existing glyph U+{:X} for font chain `{}`. Check precache string for duplicates.", (int)codePoint, _name),
                            Debug::LogLevel::Warning);
                 continue;
             }
@@ -244,7 +244,7 @@ namespace Silent::Utils
             ftFont = _ftFonts[i];
             break;
         }
-        Debug::Assert(ftFont != nullptr, Fmt("Failed to cache glyph U+{:X} for font `{}`.", (int)codePoint, _name));
+        Debug::Assert(ftFont != nullptr, Fmt("Failed to cache glyph U+{:X} for font chain `{}`.", (int)codePoint, _name));
 
         const auto& metrics = ftFont->glyph->metrics;
         auto        size    = Vector2i(FP_FROM(metrics.width, Q6_SHIFT), FP_FROM(metrics.height, Q6_SHIFT)) + Vector2i(GLYPH_PADDING * 2);
@@ -253,14 +253,14 @@ namespace Silent::Utils
         const auto* rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
         if (rect == nullptr)
         {
-            Debug::Log(Fmt("Active atlas {} for font `{}` is full. Creating new atlas.", _activeAtlasIdx, _name), Debug::LogLevel::Info);
+            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name), Debug::LogLevel::Info);
 
             // Start new atlas.
             AddAtlas();
             _activeAtlasIdx++;
             rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
         }
-        Debug::Assert(rect != nullptr, Fmt("Failed to add glyph rectangle U+{:X} for font `{}`.", (int)codePoint, _name));
+        Debug::Assert(rect != nullptr, Fmt("Failed to add glyph rectangle U+{:X} for font chain `{}`.", (int)codePoint, _name));
 
         // Register new glyph.
         _glyphs[codePoint] = GlyphMetadata
@@ -322,7 +322,7 @@ namespace Silent::Utils
         auto* font = Find(_fonts, name);
         if (font == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get missing font `{}`.", name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get missing font chain `{}`.", name), Debug::LogLevel::Warning);
         }
 
         return font;
@@ -332,7 +332,7 @@ namespace Silent::Utils
     {
         if (metadata.Filenames.empty())
         {
-            Debug::Log(Fmt("Attempted to load font `{}` without font files.", metadata.Name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to load font chain `{}` without font files.", metadata.Name), Debug::LogLevel::Warning);
             return;
         }
 
@@ -347,11 +347,11 @@ namespace Silent::Utils
         {
             _fonts.emplace(metadata.Name, Font(_library, metadata, path, glyphPrecache));
 
-            Debug::Log(Fmt("Loaded font `{}` at point size {}.", metadata.Name, metadata.PointSize));
+            Debug::Log(Fmt("Loaded font chain `{}` at point size {}.", metadata.Name, metadata.PointSize));
         }
         catch (const std::runtime_error& ex)
         {
-            Debug::Log(Fmt("Failed to load font `{}`: {}", metadata.Name, ex.what()), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to load font chain `{}`: {}", metadata.Name, ex.what()), Debug::LogLevel::Error);
         }
     }
 }

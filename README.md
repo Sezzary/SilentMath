@@ -33,7 +33,6 @@ All considerations are being made to establish a flexible, readable, and accessi
 - Test math classes.
 - Extensive documentation.
 - Lua scripting.
-- Remove GLAD dependency. Primary renderer backend currently in progress uses `SDL_gpu`, others can be added in the future.
 
 ## Building (Windows/macOS/Linux)
 
@@ -93,12 +92,6 @@ git submodule update --init --recursive
 Build LuaJIT locally:
 ```
 cd Libraries/LuaJIT && make && cd ../..
-```
-
-Generate GLAD source:
-```
-pip install glad
-glad --generator=c --api=gl=4.6 --profile=core --out-path=Libraries/glad
 ```
 
 <details>
