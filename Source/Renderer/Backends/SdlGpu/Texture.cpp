@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Assets/Assets.h"
+#include "Renderer/Common/Constants.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Assets;

@@ -280,12 +280,11 @@ namespace Silent::Renderer
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // 2D sprites.
-        // @todo 6 indices should be a constant.
         // @todo Batching.
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
         _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
         GetTextures().Get("TIM/HERO_PIC.TIM")->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
-        SDL_DrawGPUIndexedPrimitives(&renderPass, _renderBuffer.Sprites2d.size() * 6, 1, 0, 0, 0);
+        SDL_DrawGPUIndexedPrimitives(&renderPass, _renderBuffer.Sprites2d.size() * QUAD_INDEX_COUNT, 1, 0, 0, 0);
 
         // 2D primitives.
         _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
@@ -418,8 +417,8 @@ namespace Silent::Renderer
     void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs)
     {
         // Create 2D sprite vertex buffer data.
-        bufferVerts.reserve(_renderBuffer.Sprites2d.size() * 4);
-        bufferIdxs.reserve(_renderBuffer.Sprites2d.size() * 6);
+        bufferVerts.reserve(_renderBuffer.Sprites2d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_renderBuffer.Sprites2d.size() * QUAD_INDEX_COUNT);
 
         // Convert render buffer data to GPU buffer.
         for (int i = 0; i < _renderBuffer.Sprites2d.size(); i++)

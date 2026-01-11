@@ -8,12 +8,6 @@ namespace Silent::Renderer
     class SdlGpuTexture : public ITexture
     {
     private:
-        // ==========
-        // Constants
-        // ==========
-
-        static constexpr int RGBA_COMP_COUNT = 4;
-
         // =======
         // Fields
         // =======

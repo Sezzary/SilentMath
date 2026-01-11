@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Render stages representing pipelines or shader programs, depending on the renderer backend. */
+    /** @brief Render stages representing pipelines or shader programs, depending on the backend. */
     enum class RenderStage
     {
         // =========
