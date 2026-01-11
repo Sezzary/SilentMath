@@ -24,6 +24,13 @@ namespace Silent::Renderer
     /** SDL_gpu renderer backend. */
     class SdlGpuRenderer : public RendererBase
     {
+    public:
+        // ==========
+        // Constants
+        // ==========
+
+        static constexpr char NAME[] = "SDL_gpu";
+
     private:
         // =======
         // Fields
@@ -66,7 +73,25 @@ namespace Silent::Renderer
         void DrawPostProcess() override;
         void DrawDebugGui() override;
 
+        // -----------------------
+        // `SdlGpuBufferCopy.cpp`
+        // -----------------------
+
+        /** @brief Converts render buffer data for 2D primitives to the corresponding GPU buffer data
+         * and uploads it to the GPU.
+         *
+         * @param copyPass Copy pass.
+         * @param bufferVerts Output GPU buffer vertices.
+         */
         void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferColorVertex2d>& bufferVerts);
+
+        /** @brief Converts render buffer data for 2D sprites to the corresponding GPU buffer data
+         * and uploads it to the GPU.
+         *
+         * @param copyPass Copy pass.
+         * @param bufferVerts Output GPU buffer vertices.
+         * @param bufferIdxs Output GPU buffer indices.
+         */
         void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs);
     };
 }

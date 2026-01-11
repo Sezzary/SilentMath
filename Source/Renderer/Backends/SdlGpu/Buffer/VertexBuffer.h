@@ -23,6 +23,16 @@ namespace Silent::Renderer
 
         VertexBuffer() = default;
 
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the name of the GPU vertex buffer.
+         *
+         * @return GPU buffer name.
+         */
+        const std::string& GetName() const;
+
         // ==========
         // Utilities
         // ==========
@@ -58,6 +68,12 @@ namespace Silent::Renderer
          */
         void Bind(SDL_GPURenderPass& renderPass, uint vertsStartIdx, uint idxsStartIdx);
     };
+
+    template <typename T>
+    const std::string& VertexBuffer<T>::GetName() const
+    {
+        return _vertexBuffer.GetName();
+    }
 
     template <typename T>
     void VertexBuffer<T>::Initialize(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name)

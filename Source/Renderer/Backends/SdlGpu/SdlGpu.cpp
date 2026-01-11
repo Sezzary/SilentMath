@@ -29,8 +29,6 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::Initialize(SDL_Window& window)
     {
-        Debug::Log("Using SDL_gpu renderer.");
-
         _type   = RendererType::SdlGpu;
         _window = &window;
 
@@ -59,14 +57,9 @@ namespace Silent::Renderer
         _device = SDL_CreateGPUDevice(formatFlags, Debug::IS_DEBUG_BUILD, nullptr);
         if (_device == nullptr)
         {
-            throw std::runtime_error(Fmt("Failed to create GPU device: {}", SDL_GetError()));
+            throw std::runtime_error(Fmt("Failed to create GPU device for {} renderer: {}", NAME, SDL_GetError()));
         }
-
-        const char* deviceDriverName = SDL_GetGPUDeviceDriver(_device);
-        if (deviceDriverName != nullptr)
-        {
-            Debug::Log(Fmt("Using {} backend.", deviceDriverName));
-        }
+        Debug::Log(Fmt("Using {} renderer with {} backend.", NAME, SDL_GetGPUDeviceDriver(_device)));
 
         // Claim window.
         if (!SDL_ClaimWindowForGPUDevice(_device, _window))
@@ -416,11 +409,11 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs)
     {
-        // Create 2D sprite vertex buffer data.
+        // Create GPU buffer data.
         bufferVerts.reserve(_renderBuffer.Sprites2d.size() * QUAD_VERTEX_COUNT);
         bufferIdxs.reserve(_renderBuffer.Sprites2d.size() * QUAD_INDEX_COUNT);
 
-        // Convert render buffer data to GPU buffer.
+        // Convert render buffer data for GPU buffer.
         for (int i = 0; i < _renderBuffer.Sprites2d.size(); i++)
         {
             const auto& sprite = _renderBuffer.Sprites2d[i];
@@ -441,13 +434,13 @@ namespace Silent::Renderer
             auto uv2 = sprite.UvMax;
             auto uv3 = Vector2(sprite.UvMin.x, sprite.UvMax.y);
 
-            // Submit vertices.
+            // Add vertices.
             bufferVerts.push_back(BufferTexVertex2d{ pos0, uv0 });
             bufferVerts.push_back(BufferTexVertex2d{ pos1, uv1 });
             bufferVerts.push_back(BufferTexVertex2d{ pos2, uv2 });
             bufferVerts.push_back(BufferTexVertex2d{ pos3, uv3 });
 
-            // Submit indices.
+            // Add indices.
             bufferIdxs.push_back((QUAD_VERTEX_COUNT * i) + 0);
             bufferIdxs.push_back((QUAD_VERTEX_COUNT * i) + 1);
             bufferIdxs.push_back((QUAD_VERTEX_COUNT * i) + 2);

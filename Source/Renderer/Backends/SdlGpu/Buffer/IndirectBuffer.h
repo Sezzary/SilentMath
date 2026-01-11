@@ -4,6 +4,7 @@
 
 namespace Silent::Renderer
 {
+    /** @brief GPU indirect buffer. */
     class IndirectBuffer
     {
     private:
@@ -18,12 +19,25 @@ namespace Silent::Renderer
         // Constructors
         // =============
 
-        IndirectBuffer(SDL_GPUDevice& device, const std::vector<SDL_GPUIndexedIndirectDrawCommand>& commands, const std::string& name = {})
-        {
-            _commandBuffer = Buffer<SDL_GPUIndexedIndirectDrawCommand>(device, SDL_GPU_BUFFERUSAGE_INDIRECT, commands.size());
-            _commandBuffer.Update();
-        }
+        IndirectBuffer(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::vector<SDL_GPUIndexedIndirectDrawCommand>& commands,
+                       const std::string& name = {});
 
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the name of the GPU buffer.
+         *
+         * @return GPU buffer name.
+         */
+        const std::string& GetName() const;
+
+        // @todo
         void Draw(SDL_GPURenderPass& renderPass);
     };
+
+    const std::string& IndirectBuffer::GetName() const
+    {
+        return _vertexBuffer.GetName();
+    }
 }

@@ -11,6 +11,7 @@ namespace Silent::Renderer
         // Fields
         // =======
 
+        std::string             _name           = {};
         SDL_GPUDevice*          _device         = nullptr;
         SDL_GPUBuffer*          _resourceBuffer = nullptr;
         SDL_GPUTransferBuffer*  _transferBuffer = nullptr;
@@ -26,6 +27,16 @@ namespace Silent::Renderer
 
         /** @brief Gracefully destroys the `Buffer` and releases GPU resources. */
         ~Buffer();
+
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the name of the GPU buffer.
+         *
+         * @return GPU buffer name.
+         */
+        const std::string& GetName() const;
 
         // ==========
         // Utilities
@@ -67,6 +78,12 @@ namespace Silent::Renderer
     };
 
     template <typename T>
+    const std::string& Buffer<T>::GetName() const
+    {
+        return _name;
+    }
+
+    template <typename T>
     Buffer<T>::~Buffer()
     {
         if (_resourceBuffer != nullptr)
@@ -83,12 +100,19 @@ namespace Silent::Renderer
     template <typename T>
     void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name)
     {
+        if (IsValid())
+        {
+            Debug::Log(Fmt("Attempted to reinitialize GPU buffer `{}` as `{}`.", _name, name), Debug::LogLevel::Warning);
+            return;
+        }
+
         _usageFlags = usageFlags;
         if (!(_usageFlags & (SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX | SDL_GPU_BUFFERUSAGE_INDIRECT)))
         {
             throw std::runtime_error("Attempted to create GPU buffer with invalid usage flags.");
         }
 
+        _name   = name;
         _device = &device;
 
         auto bufferInfo = SDL_GPUBufferCreateInfo
@@ -127,7 +151,7 @@ namespace Silent::Renderer
     {
         if (!IsValid())
         {
-            Debug::Log("Attempted to update invalid GPU buffer.", Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to update invalid GPU buffer `{}`.", _name), Debug::LogLevel::Warning);
             return;
         }
 
@@ -155,7 +179,7 @@ namespace Silent::Renderer
     {
         if (!IsValid())
         {
-            Debug::Log("Attempted to bind invalid GPU buffer.", Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to bind invalid GPU buffer `{}`.", _name), Debug::LogLevel::Warning);
             return;
         }
 
@@ -175,7 +199,7 @@ namespace Silent::Renderer
         }
         else if (_usageFlags & SDL_GPU_BUFFERUSAGE_INDIRECT)
         {
-            Debug::Log("Attempted to bind indirect GPU buffer.", Debug::LogLevel::Info);
+            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name), Debug::LogLevel::Info);
         }
     }
 
