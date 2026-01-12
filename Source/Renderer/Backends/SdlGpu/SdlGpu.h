@@ -67,6 +67,7 @@ namespace Silent::Renderer
         // ========
 
         SdlGpuTextureManager& GetTextures();
+        SDL_GPUSampler&       GetActiveSampler();
 
         void Draw3dScene() override;
         void Draw2dScene() override;

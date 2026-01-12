@@ -247,10 +247,15 @@ namespace Silent::Renderer
         return *(SdlGpuTextureManager*)_textures.get();
     }
 
-    void SdlGpuRenderer::Draw2dScene()
+    SDL_GPUSampler& SdlGpuRenderer::GetActiveSampler()
     {
         const auto& options = g_App.GetOptions();
 
+        return *_samplers[(int)options->TextureFilter];
+    }
+
+    void SdlGpuRenderer::Draw2dScene()
+    {
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
@@ -272,11 +277,10 @@ namespace Silent::Renderer
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // 2D sprites.
-        // @todo Batching.
+        // 2D sprites. @todo Batching.
         _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
         _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
-        GetTextures().Get("TIM/HERO_PIC.TIM")->Bind(renderPass, *_samplers[(int)options->TextureFilter]);
+        GetTextures().Get(_renderBuffer.Sprites2d.front().TextureName)->Bind(renderPass, GetActiveSampler());
         SDL_DrawGPUIndexedPrimitives(&renderPass, _renderBuffer.Sprites2d.size() * QUAD_INDEX_COUNT, 1, 0, 0, 0);
 
         // 2D primitives.
@@ -367,8 +371,10 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferColorVertex2d>& bufferVerts)
     {
-        // Create 2D primitive vertex buffer data.
+        // Create GPU buffer data.
         bufferVerts.reserve((_renderBuffer.Primitives2d.size() * 2) * TRIANGLE_VERTEX_COUNT);
+
+        // Convert render buffer data for GPU buffer.
         for (const auto& prim : _renderBuffer.Primitives2d)
         {
             // 2D triangle primitive.
@@ -403,7 +409,7 @@ namespace Silent::Renderer
             }
         }
 
-        // Update buffer.
+        // Update GPU buffer.
         _gpuBuffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
     }
 
