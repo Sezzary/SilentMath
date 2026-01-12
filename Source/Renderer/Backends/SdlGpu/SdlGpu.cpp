@@ -124,7 +124,9 @@ namespace Silent::Renderer
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
-        GetTextures().Load(*copyPass, g_App.GetAssets().GetName(1854));
+        // Load temp. textures.
+        GetTextures().Load(*copyPass, "TIM/HERO_PIC.TIM");
+        GetTextures().Load(*copyPass, "1ST/2ZANKO_E.TIM");
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
@@ -277,13 +279,21 @@ namespace Silent::Renderer
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // 2D sprites. @todo Batching.
-        _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
-        _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
-        GetTextures().Get(_renderBuffer.Sprites2d.front().TextureName)->Bind(renderPass, GetActiveSampler());
-        SDL_DrawGPUIndexedPrimitives(&renderPass, _renderBuffer.Sprites2d.size() * QUAD_INDEX_COUNT, 1, 0, 0, 0);
+        // 2D primitives. @todo Batching.
+        if (!_renderBuffer.Sprites2d.empty())
+        {
+            _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
 
-        // 2D primitives.
+            for (int i = 0; i < _renderBuffer.Sprites2d.size(); i++)
+            {
+                auto& sprite = _renderBuffer.Sprites2d[i];
+
+                _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
+                GetTextures().Get(sprite.TextureName).Bind(renderPass, GetActiveSampler());
+                SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_INDEX_COUNT, 1, 0, i * QUAD_VERTEX_COUNT, 0);
+            }
+        }
+        
         _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
         _gpuBuffers.Primitives2d.Bind(renderPass, 0);
         UniformBuffer.IsFastAlpha = false;

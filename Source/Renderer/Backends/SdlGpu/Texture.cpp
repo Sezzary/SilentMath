@@ -115,16 +115,15 @@ namespace Silent::Renderer
         _device = &device;
     }
 
-    SdlGpuTexture* SdlGpuTextureManager::Get(const std::string& name)
+    SdlGpuTexture& SdlGpuTextureManager::Get(const std::string& name)
     {
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
         {
-            Debug::Log(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name));
-            return nullptr;
+            throw std::runtime_error(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name));
         }
 
-        return (SdlGpuTexture*)tex->get();
+        return *(SdlGpuTexture*)tex->get();
     }
 
     void SdlGpuTextureManager::Load(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name)

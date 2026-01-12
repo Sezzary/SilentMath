@@ -86,9 +86,10 @@ namespace Silent::Renderer
         /** @brief Gets a cached texture.
          *
          * @param name Texture name.
-         * @return Cached texture if it exists, otherwise `nullptr`.
+         * @return Cached texture.
+         * @throws `std::runtime_error`if the texture isn't cached.
          */
-        SdlGpuTexture* Get(const std::string& name);
+        SdlGpuTexture& Get(const std::string& name);
 
         // ==========
         // Utilities
