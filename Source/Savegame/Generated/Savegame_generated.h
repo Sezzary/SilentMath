@@ -9,8 +9,8 @@
 // Ensure the included flatbuffers.h is the same version as when this file was
 // generated, otherwise it may not be compatible.
 static_assert(FLATBUFFERS_VERSION_MAJOR == 25 &&
-              FLATBUFFERS_VERSION_MINOR == 9 &&
-              FLATBUFFERS_VERSION_REVISION == 23,
+              FLATBUFFERS_VERSION_MINOR == 12 &&
+              FLATBUFFERS_VERSION_REVISION == 19,
              "Non-compatible flatbuffers version included");
 
 namespace Silent {
@@ -37,7 +37,8 @@ struct Stuff FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool my_bool() const {
     return GetField<uint8_t>(VT_MY_BOOL, 0) != 0;
   }
-  bool Verify(::flatbuffers::Verifier &verifier) const {
+  template <bool B = false>
+  bool Verify(::flatbuffers::VerifierTemplate<B> &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, VT_MY_INT, 4) &&
            VerifyField<uint8_t>(verifier, VT_MY_BOOL, 1) &&
@@ -88,7 +89,8 @@ struct Things FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   const ::flatbuffers::Vector<uint8_t> *my_bools() const {
     return GetPointer<const ::flatbuffers::Vector<uint8_t> *>(VT_MY_BOOLS);
   }
-  bool Verify(::flatbuffers::Verifier &verifier) const {
+  template <bool B = false>
+  bool Verify(::flatbuffers::VerifierTemplate<B> &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, VT_MY_INT, 4) &&
            VerifyOffset(verifier, VT_MY_BOOLS) &&
@@ -151,7 +153,8 @@ struct Savegame FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   const ::flatbuffers::Vector<::flatbuffers::Offset<Silent::Buffers::Things>> *things() const {
     return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<Silent::Buffers::Things>> *>(VT_THINGS);
   }
-  bool Verify(::flatbuffers::Verifier &verifier) const {
+  template <bool B = false>
+  bool Verify(::flatbuffers::VerifierTemplate<B> &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_STUFF) &&
            verifier.VerifyVector(stuff()) &&
@@ -214,14 +217,16 @@ inline const Silent::Buffers::Savegame *GetSizePrefixedSavegame(const void *buf)
   return ::flatbuffers::GetSizePrefixedRoot<Silent::Buffers::Savegame>(buf);
 }
 
+template <bool B = false>
 inline bool VerifySavegameBuffer(
-    ::flatbuffers::Verifier &verifier) {
-  return verifier.VerifyBuffer<Silent::Buffers::Savegame>(nullptr);
+    ::flatbuffers::VerifierTemplate<B> &verifier) {
+  return verifier.template VerifyBuffer<Silent::Buffers::Savegame>(nullptr);
 }
 
+template <bool B = false>
 inline bool VerifySizePrefixedSavegameBuffer(
-    ::flatbuffers::Verifier &verifier) {
-  return verifier.VerifySizePrefixedBuffer<Silent::Buffers::Savegame>(nullptr);
+    ::flatbuffers::VerifierTemplate<B> &verifier) {
+  return verifier.template VerifySizePrefixedBuffer<Silent::Buffers::Savegame>(nullptr);
 }
 
 inline void FinishSavegameBuffer(

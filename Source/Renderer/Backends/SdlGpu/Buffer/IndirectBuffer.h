@@ -35,9 +35,4 @@ namespace Silent::Renderer
         // @todo
         void Draw(SDL_GPURenderPass& renderPass);
     };
-
-    const std::string& IndirectBuffer::GetName() const
-    {
-        return _vertexBuffer.GetName();
-    }
 }

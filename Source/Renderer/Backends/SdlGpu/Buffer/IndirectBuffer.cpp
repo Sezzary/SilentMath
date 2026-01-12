@@ -11,7 +11,7 @@ namespace Silent::Renderer
     IndirectBuffer::IndirectBuffer(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::vector<SDL_GPUIndexedIndirectDrawCommand>& commands,
                                    const std::string& name)
     {
-        _commandBuffer = Buffer<SDL_GPUIndexedIndirectDrawCommand>(device, SDL_GPU_BUFFERUSAGE_INDIRECT, commands.size());
+        _commandBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_INDIRECT, commands.size(), name);
         _commandBuffer.Update(copyPass, ToSpan(commands), 0);
     }
 
