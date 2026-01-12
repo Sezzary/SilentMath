@@ -225,7 +225,7 @@ namespace Silent::Input
          * @param lineWidthMax Max line width in characters.
          * @param charCountMax Max character count in the text block.
          */
-        void InsertText(const std::string& textId, int lineWidthMax = 50, int charCountMax = UINT_MAX);
+        void InsertText(const std::string& textId, int lineWidthMax = 50, int charCountMax = INT_MAX);
 
         /** @brief Updates the text block in a text buffer.
          *

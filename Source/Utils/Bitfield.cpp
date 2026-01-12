@@ -14,7 +14,7 @@ namespace Silent::Utils
         _size = DEFAULT_SIZE;
     }
 
-    Bitfield::Bitfield(uint size)
+    Bitfield::Bitfield(int size)
     {
         _chunks.resize((size + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = size;
@@ -23,13 +23,13 @@ namespace Silent::Utils
     Bitfield::Bitfield(const std::initializer_list<bool>& bits)
     {
         _chunks.resize((bits.size() + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
-        _size = (uint)bits.size();
+        _size = (int)bits.size();
 
-        uint bitIdx = 0;
+        int bitIdx = 0;
         for (auto it = bits.begin(); it != bits.end(); it++, bitIdx++)
         {
-            uint localBitIdx = bitIdx % CHUNK_SIZE;
-            uint chunkIdx    = bitIdx / CHUNK_SIZE;
+            int localBitIdx = bitIdx % CHUNK_SIZE;
+            int chunkIdx    = bitIdx / CHUNK_SIZE;
 
             bool bit = *it;
             if (bit)
@@ -39,22 +39,22 @@ namespace Silent::Utils
         }
     }
 
-    Bitfield::Bitfield(const std::vector<ChunkType>& bitChunks, uint size)
+    Bitfield::Bitfield(const std::vector<ChunkType>& bitChunks, int size)
     {
         _chunks = bitChunks;
-        _size   = std::min(size, (uint)bitChunks.size() * CHUNK_SIZE);
+        _size   = std::min(size, (int)bitChunks.size() * CHUNK_SIZE);
     }
 
     Bitfield::Bitfield(const std::string& bitStr)
     {
         _chunks.resize((bitStr.size() + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
-        _size = (uint)bitStr.size();
+        _size = (int)bitStr.size();
 
-        uint bitIdx = 0;
+        int bitIdx = 0;
         for (char bit : bitStr)
         {
-            uint i        = bitIdx % CHUNK_SIZE;
-            uint chunkIdx = bitIdx / CHUNK_SIZE;
+            int i        = bitIdx % CHUNK_SIZE;
+            int chunkIdx = bitIdx / CHUNK_SIZE;
 
             if (bit == '1')
             {
@@ -65,14 +65,14 @@ namespace Silent::Utils
         }
     }
 
-    uint Bitfield::GetSize() const
+    int Bitfield::GetSize() const
     {
         return _size;
     }
 
-    uint Bitfield::GetCount() const
+    int Bitfield::GetCount() const
     {
-        uint count = 0;
+        int count = 0;
         for (auto chunk : _chunks)
         {
             for (int localBitIdx = 0; localBitIdx < CHUNK_SIZE; localBitIdx++)
@@ -92,7 +92,7 @@ namespace Silent::Utils
         return _chunks;
     }
 
-    void Bitfield::Set(uint bitIdx)
+    void Bitfield::Set(int bitIdx)
     {
         if constexpr (Debug::IS_DEBUG_BUILD)
         {
@@ -102,12 +102,12 @@ namespace Silent::Utils
             }
         }
 
-        uint localBitIdx   = bitIdx % CHUNK_SIZE;
-        uint chunkIdx      = bitIdx / CHUNK_SIZE;
+        int localBitIdx    = bitIdx % CHUNK_SIZE;
+        int chunkIdx       = bitIdx / CHUNK_SIZE;
         _chunks[chunkIdx] |= (ChunkType)1 << localBitIdx;
     }
 
-    void Bitfield::Set(const std::vector<uint>& bitIdxs)
+    void Bitfield::Set(const std::vector<int>& bitIdxs)
     {
         for (int bitIdx : bitIdxs)
         {
@@ -120,7 +120,7 @@ namespace Silent::Utils
         Fill(true);
     }
 
-    void Bitfield::Clear(uint bitIdx)
+    void Bitfield::Clear(int bitIdx)
     {
         if constexpr (Debug::IS_DEBUG_BUILD)
         {
@@ -130,12 +130,12 @@ namespace Silent::Utils
             }
         }
 
-        uint localBitIdx   = bitIdx % CHUNK_SIZE;
-        uint chunkIdx      = bitIdx / CHUNK_SIZE;
+        int localBitIdx    = bitIdx % CHUNK_SIZE;
+        int chunkIdx       = bitIdx / CHUNK_SIZE;
         _chunks[chunkIdx] &= ~((ChunkType)1 << localBitIdx);
     }
 
-    void Bitfield::Clear(const std::vector<uint>& bitIdxs)
+    void Bitfield::Clear(const std::vector<int>& bitIdxs)
     {
         for (int bitIdx : bitIdxs)
         {
@@ -148,7 +148,7 @@ namespace Silent::Utils
         Fill(false);
     }
 
-    void Bitfield::Flip(uint bitIdx)
+    void Bitfield::Flip(int bitIdx)
     {
         if constexpr (Debug::IS_DEBUG_BUILD)
         {
@@ -158,12 +158,12 @@ namespace Silent::Utils
             }
         }
 
-        uint localBitIdx   = bitIdx % CHUNK_SIZE;
-        uint chunkIdx      = bitIdx / CHUNK_SIZE;
+        int localBitIdx    = bitIdx % CHUNK_SIZE;
+        int chunkIdx       = bitIdx / CHUNK_SIZE;
         _chunks[chunkIdx] ^= (ChunkType)1 << localBitIdx;
     }
 
-    void Bitfield::Flip(const std::vector<uint>& bitIdxs)
+    void Bitfield::Flip(const std::vector<int>& bitIdxs)
     {
         for (int bitIdx : bitIdxs)
         {
@@ -178,7 +178,7 @@ namespace Silent::Utils
             _chunks[chunkIdx] = ~_chunks[chunkIdx];
         }
 
-        uint endBitCount = _size % CHUNK_SIZE;
+        int endBitCount = _size % CHUNK_SIZE;
         if (endBitCount > 0)
         {
             for (int localBitIdx = endBitCount; localBitIdx < CHUNK_SIZE; localBitIdx++)
@@ -206,7 +206,7 @@ namespace Silent::Utils
         return true;
     }
 
-    bool Bitfield::Test(uint bitIdx) const
+    bool Bitfield::Test(int bitIdx) const
     {
         if constexpr (Debug::IS_DEBUG_BUILD)
         {
@@ -216,12 +216,12 @@ namespace Silent::Utils
             }
         }
 
-        uint localBitIdx = bitIdx % CHUNK_SIZE;
-        uint chunkIdx    = bitIdx / CHUNK_SIZE;
+        int localBitIdx = bitIdx % CHUNK_SIZE;
+        int chunkIdx    = bitIdx / CHUNK_SIZE;
         return _chunks[chunkIdx] & ((ChunkType)1 << localBitIdx);
     }
 
-    bool Bitfield::Test(const std::vector<uint>& bitIdxs, bool testAny) const
+    bool Bitfield::Test(const std::vector<int>& bitIdxs, bool testAny) const
     {
         for (int bitIdx : bitIdxs)
         {
@@ -267,7 +267,7 @@ namespace Silent::Utils
             }
         }
 
-        uint endBitCount = _size % CHUNK_SIZE;
+        int endBitCount = _size % CHUNK_SIZE;
         if (endBitCount > 0)
         {
             auto validMask = ((ChunkType)1 << endBitCount) - 1;
@@ -280,12 +280,12 @@ namespace Silent::Utils
         return true;
     }
 
-    void Bitfield::Resize(uint size)
+    void Bitfield::Resize(int size)
     {
         _chunks.resize((size + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = size;
 
-        uint endBitCount = size % CHUNK_SIZE;
+        int endBitCount = size % CHUNK_SIZE;
         if (endBitCount > 0)
         {
             for (int localBitID = endBitCount; localBitID < CHUNK_SIZE; localBitID++)
@@ -347,7 +347,7 @@ namespace Silent::Utils
             _chunks[chunkIdx] &= bitField.GetChunks()[chunkIdx];
         }
 
-        _chunks.resize(std::min((uint)_chunks.size(), bitField.GetSize()));
+        _chunks.resize(std::min((int)_chunks.size(), bitField.GetSize()));
         _size = std::min(_size, bitField.GetSize());
         return *this;
     }
@@ -442,14 +442,14 @@ namespace Silent::Utils
         auto fillChunk = state ? ~(ChunkType)0 : (ChunkType)0;
         Utils::Fill(_chunks, fillChunk);
 
-        uint endBitCount = _size % CHUNK_SIZE;
+        int endBitCount = _size % CHUNK_SIZE;
         if (endBitCount > 0 && state)
         {
             _chunks.back() &= ((ChunkType)1 << endBitCount) - 1;
         }
     }
 
-    bool Bitfield::IsBitIdxValid(uint bitIdx) const
+    bool Bitfield::IsBitIdxValid(int bitIdx) const
     {
         if (bitIdx >= _size)
         {

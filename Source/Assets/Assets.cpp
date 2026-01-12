@@ -39,7 +39,7 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to get name of invalid streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to get name of missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return EMPTY_STRING;
         }
         const auto asset = _assets[assetIdx];
@@ -67,7 +67,7 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to get invalid streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to get missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return nullptr;
         }
         const auto asset = _assets[assetIdx];
@@ -96,7 +96,7 @@ namespace Silent::Assets
         const int* assetIdx = Find(_idxs, assetName);
         if (assetIdx == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get invalid streamable asset `{}`.", assetName), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to get missing streamable asset `{}`.", assetName), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return nullptr;
         }
 
@@ -166,7 +166,7 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to load invalid streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to load missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return _loadFutures[NO_VALUE];
         }
         auto& asset = _assets[assetIdx];
@@ -180,7 +180,7 @@ namespace Silent::Assets
         // Check if file is valid.
         if (!std::filesystem::exists(asset->File))
         {
-            Debug::Log(Fmt("Attempted to load streamable asset `{}` from invalid file `{}`.", asset->Name, asset->File.string()),
+            Debug::Log(Fmt("Attempted to load streamable asset `{}` from missing file `{}`.", asset->Name, asset->File.string()),
                        Debug::LogLevel::Error, Debug::LogMode::Debug);
 
             asset->State = AssetState::Error;
@@ -246,7 +246,7 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to unload invalid streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to unload missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return;
         }
         auto& asset = _assets[assetIdx];

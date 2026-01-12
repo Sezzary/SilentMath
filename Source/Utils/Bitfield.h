@@ -15,16 +15,16 @@ namespace Silent::Utils
         // Constants
         // ==========
 
-        static constexpr uint CHUNK_SIZE = std::numeric_limits<ChunkType>::digits;
+        static constexpr int CHUNK_SIZE = std::numeric_limits<ChunkType>::digits;
 
     private:
-        static constexpr uint DEFAULT_SIZE = CHUNK_SIZE;
+        static constexpr int DEFAULT_SIZE = CHUNK_SIZE;
 
         // =======
         // Fields
         // =======
 
-        uint                   _size   = 0;  /** Number of bits. */
+        int                    _size   = 0;  /** Number of bits. */
         std::vector<ChunkType> _chunks = {}; /** Integers containing the bits. */
 
     public:
@@ -46,7 +46,7 @@ namespace Silent::Utils
          *
          * @param size Number of bits.
          */
-        Bitfield(uint size);
+        Bitfield(int size);
 
         /** @brief Constructs a `Bitfield` with the specified bits.
          *
@@ -59,7 +59,7 @@ namespace Silent::Utils
          * @param bitChunks Chunks containing bits.
          * @param size Number of bits.
          */
-        Bitfield(const std::vector<ChunkType>& bitChunks, uint size);
+        Bitfield(const std::vector<ChunkType>& bitChunks, int size);
 
         /** @brief Constructs a `Bitfield` from a string of `1`s (`true`) and `0`s (`false`).
          *
@@ -75,13 +75,13 @@ namespace Silent::Utils
          *
          * @return Number of bits.
          */
-        uint GetSize() const;
+        int GetSize() const;
 
         /** @brief Gets the number of bits set to `true`.
          *
          * @return Number of set bits.
          */
-        uint GetCount() const;
+        int GetCount() const;
 
         /** @brief Gets the chunks of the bitfield.
          *
@@ -97,13 +97,13 @@ namespace Silent::Utils
          *
          * @param bitIdx Index of the bit to set.
          */
-        void Set(uint bitIdx);
+        void Set(int bitIdx);
 
         /** @brief Sets the states of specified bits to `true`.
          *
          * @param bitIdxs Indices of the bits to set.
          */
-        void Set(const std::vector<uint>& bitIdxs);
+        void Set(const std::vector<int>& bitIdxs);
 
         /** @brief Sets the states of specified bits to `true`.
          *
@@ -120,13 +120,13 @@ namespace Silent::Utils
          *
          * @param bitIdx Index of the bit to clear.
          */
-        void Clear(uint bitIdx);
+        void Clear(int bitIdx);
 
         /** @brief Sets the states of specified bits to `false`.
          *
          * @param bitIdxs Indices of the bits to clear.
          */
-        void Clear(const std::vector<uint>& bitIdxs);
+        void Clear(const std::vector<int>& bitIdxs);
 
         /** @brief Sets the states of specified bits to `false`.
          *
@@ -143,13 +143,13 @@ namespace Silent::Utils
          *
          * @param bitIdx Index of the bit to flip.
          */
-        void Flip(uint bitIdx);
+        void Flip(int bitIdx);
 
         /** @brief Flips the states of specified bits.
          *
          * @param bitIdxs Indices of the bits to flip.
          */
-        void Flip(const std::vector<uint>& bitIdxs);
+        void Flip(const std::vector<int>& bitIdxs);
 
         /** @brief Flips the states of specified bits.
          *
@@ -178,14 +178,14 @@ namespace Silent::Utils
          * @param testAny If any set bit will satisfy the condition.
          * @return `true` if the bits are set, `false` otherwise.
          */
-        bool Test(const std::vector<uint>& bitIdxs, bool testAny = true) const;
+        bool Test(const std::vector<int>& bitIdxs, bool testAny = true) const;
 
         /** @brief Checks if a specified bit is set to `true`.
          *
          * @param bitIdxs Index of the bit to check.
          * @param `true` if the bit is set, `false` otherwise.
          */
-        bool Test(uint bitIdx) const;
+        bool Test(int bitIdx) const;
 
         /** @brief Checks if any bits are set to `true`.
          *
@@ -207,7 +207,7 @@ namespace Silent::Utils
          *
          * @param size New size.
          */
-        void Resize(uint size);
+        void Resize(int size);
 
         // ===========
         // Converters
@@ -250,7 +250,7 @@ namespace Silent::Utils
          * @param bitIdx Index of the bit to check.
          * @return `true` if the bit exists, `false` otherwise.
          */
-        bool IsBitIdxValid(uint bitIdx) const;
+        bool IsBitIdxValid(int bitIdx) const;
     };
 
     template <typename... Args>

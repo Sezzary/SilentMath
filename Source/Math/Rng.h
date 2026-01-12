@@ -33,7 +33,7 @@ namespace Silent::Math
      * 15   | 0x7FFF | 1 in 32768 | 0.003%
      * 16   | 0xFFFF | 1 in 65536 | 0.002%
      */
-    bool TestRng(uint bits);
+    bool TestRng(int bits);
 
     /** @brief Generates a new random 32-bit unsigned integer and updates
      * `g_RngSeed`.

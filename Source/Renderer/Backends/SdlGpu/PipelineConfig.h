@@ -12,16 +12,16 @@ namespace Silent::Renderer
         RenderStage Stage = RenderStage::Primitive2d;
 
         std::string VertexShaderName             = {};
-        uint        VertShaderSamplerCount       = 0;
-        uint        VertShaderUniBufferCount     = 0;
-        uint        VertShaderStorageBufferCount = 0;
-        uint        VertShaderStorageTexCount    = 0;
+        int         VertShaderSamplerCount       = 0;
+        int         VertShaderUniBufferCount     = 0;
+        int         VertShaderStorageBufferCount = 0;
+        int         VertShaderStorageTexCount    = 0;
 
         std::string FragmentShaderName           = {};
-        uint        FragShaderSamplerCount       = 0;
-        uint        FragShaderUniBufferCount     = 0;
-        uint        FragShaderStorageBufferCount = 0;
-        uint        FragShaderStorageTexCount    = 0;
+        int         FragShaderSamplerCount       = 0;
+        int         FragShaderUniBufferCount     = 0;
+        int         FragShaderStorageBufferCount = 0;
+        int         FragShaderStorageTexCount    = 0;
 
         std::vector<SDL_GPUVertexBufferDescription> VertBufferDescs   = {};
         std::vector<SDL_GPUVertexAttribute>         VertBufferAttribs = {};

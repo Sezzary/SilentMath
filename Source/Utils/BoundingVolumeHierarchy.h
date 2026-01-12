@@ -67,7 +67,7 @@ namespace Silent::Utils
          *
          * @return Object count.
          */
-        uint GetSize() const;
+        int GetSize() const;
 
         /** @brief Gets all object IDs in the tree.
          *

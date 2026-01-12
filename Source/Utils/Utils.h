@@ -22,7 +22,7 @@ namespace Silent::Utils
      * @param size String size.
      * @return String copy.
      */
-    char* CopyString(const char src[], uint size);
+    char* CopyString(const char src[], int size);
 
     /** @brief Gets the sign of a value.
      *
@@ -148,7 +148,7 @@ namespace Silent::Utils
      * @return Read-only `std::span` representing the raw array.
      */
     template<typename T>
-    std::span<const T> ToSpan(const T* rawArray, uint size)
+    std::span<const T> ToSpan(const T* rawArray, int size)
     {
         return std::span<const T>(rawArray, size);
     }
@@ -161,7 +161,7 @@ namespace Silent::Utils
      * @return Writable `std::span` representing the raw array.
      */
     template<typename T>
-    std::span<T> ToSpan(T* rawArray, uint size)
+    std::span<T> ToSpan(T* rawArray, int size)
     {
         return std::span<T>(rawArray, size);
     }
@@ -173,7 +173,7 @@ namespace Silent::Utils
      * @param size Array size.
      * @return `std::span` representing the C array.
      */
-    template <typename T, uint size>
+    template <typename T, int size>
     std::span<T> ToSpan(T(&cArray)[size])
     {
         return std::span<T>(cArray, size);

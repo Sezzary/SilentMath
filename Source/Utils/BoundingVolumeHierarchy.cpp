@@ -22,9 +22,9 @@ namespace Silent::Utils
         Build(objectIds, aabbs, strategy);
     }
 
-    uint BoundingVolumeHierarchy::GetSize() const
+    int BoundingVolumeHierarchy::GetSize() const
     {
-        return (uint)_leafIdMap.size();
+        return (int)_leafIdMap.size();
     }
 
     std::vector<int> BoundingVolumeHierarchy::GetBoundedObjectIds() const
@@ -759,7 +759,7 @@ namespace Silent::Utils
             auto objectIds = GetBoundedObjectIds();
             for (int refObjectId : objectIds)
             {
-                uint count = 0;
+                int count = 0;
                 for (int objectId : objectIds)
                 {
                     if (refObjectId == objectId)

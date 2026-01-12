@@ -42,7 +42,7 @@ namespace Silent::Utils
          *
          * @return Object count.
          */
-        uint GetSize() const;
+        int GetSize() const;
 
         /** @brief Gets all bounded object IDs in the hash.
          *

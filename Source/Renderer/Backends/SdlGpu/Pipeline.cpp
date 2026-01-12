@@ -112,7 +112,7 @@ namespace Silent::Renderer
         SDL_ReleaseGPUShader(_device, fragShader);
     }
 
-    SDL_GPUShader* PipelineManager::LoadShader(const std::string& filename, uint samplerCount, uint storageTexCount, uint storageBufferCount, uint uniBufferCount)
+    SDL_GPUShader* PipelineManager::LoadShader(const std::string& filename, int samplerCount, int storageTexCount, int storageBufferCount, int uniBufferCount)
     {
         // Define shader stage.
         auto stage = SDL_GPUShaderStage::SDL_GPU_SHADERSTAGE_VERTEX;
@@ -178,10 +178,10 @@ namespace Silent::Renderer
             .entrypoint           = entryPoint,
             .format               = activeFormatFlag,
             .stage                = stage,
-            .num_samplers         = samplerCount,
-            .num_storage_textures = storageTexCount,
-            .num_storage_buffers  = storageBufferCount,
-            .num_uniform_buffers  = uniBufferCount
+            .num_samplers         = (uint)samplerCount,
+            .num_storage_textures = (uint)storageTexCount,
+            .num_storage_buffers  = (uint)storageBufferCount,
+            .num_uniform_buffers  = (uint)uniBufferCount
         };
 
         // Create shader.

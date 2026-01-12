@@ -49,21 +49,21 @@ namespace Silent::Renderer
          * @param size Max buffer size in number of elements.
          * @param name Buffer name.
          */
-        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name = {});
+        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int size, const std::string& name = {});
 
         /** @brief Uploads data to the GPU buffer.
          *
          * @param data New data to transfer to the buffer.
          * @param startIdx Start index in the buffer at which to insert the new data.
          */
-        void Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx);
+        void Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, int startIdx);
 
         /** @brief Binds the GPU buffer for drawing.
          *
          * @param renderPass Render pass.
          * @param startIdx Data start index.
          */
-        void Bind(SDL_GPURenderPass& renderPass, uint startIdx);
+        void Bind(SDL_GPURenderPass& renderPass, int startIdx);
 
     private:
         // ========
@@ -98,7 +98,7 @@ namespace Silent::Renderer
     }
 
     template <typename T>
-    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, uint size, const std::string& name)
+    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int size, const std::string& name)
     {
         if (IsValid())
         {
@@ -147,7 +147,7 @@ namespace Silent::Renderer
     }
 
     template <typename T>
-    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, uint startIdx)
+    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, int startIdx)
     {
         if (!IsValid())
         {
@@ -175,7 +175,7 @@ namespace Silent::Renderer
     }
 
     template <typename T>
-    void Buffer<T>::Bind(SDL_GPURenderPass& renderPass, uint startIdx)
+    void Buffer<T>::Bind(SDL_GPURenderPass& renderPass, int startIdx)
     {
         if (!IsValid())
         {

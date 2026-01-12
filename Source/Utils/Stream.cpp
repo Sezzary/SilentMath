@@ -30,7 +30,7 @@ namespace Silent::Utils
         Close();
     }
 
-    uint Stream::GetSize()
+    int Stream::GetSize()
     {
         if (!IsOpen())
         {
@@ -42,7 +42,7 @@ namespace Silent::Utils
 
         // Get size from file end and return to current position.
         _stream.seekg(0, std::fstream::end);
-        uint size = (uint)_stream.tellg();
+        int size = (int)_stream.tellg();
         _stream.seekg(curPos);
         return size;
     }
@@ -63,7 +63,7 @@ namespace Silent::Utils
         _stream.close();
     }
 
-    void Stream::Read(void* buffer, uint size)
+    void Stream::Read(void* buffer, int size)
     {
         if (!TestRead())
         {
@@ -143,7 +143,7 @@ namespace Silent::Utils
 
     Bitfield Stream::ReadBitfield()
     {
-        uint size   = ReadUint32();
+        int  size   = ReadInt32();
         auto chunks = std::vector<Bitfield::ChunkType>((size + (Bitfield::CHUNK_SIZE - 1)) / Bitfield::CHUNK_SIZE);
         ReadArray(ToSpan(chunks));
         return Bitfield(chunks, size);
@@ -199,7 +199,7 @@ namespace Silent::Utils
         }
     }
 
-    void Stream::Write(const void* buffer, uint size)
+    void Stream::Write(const void* buffer, int size)
     {
         if (!_stream.good() && !(_flags & std::fstream::out))
         {
@@ -262,7 +262,7 @@ namespace Silent::Utils
 
     void Stream::WriteBitfield(const Bitfield& val)
     {
-        WriteUint32(val.GetSize());
+        WriteInt32(val.GetSize());
         WriteArray(ToSpan(val.GetChunks()));
     }
 

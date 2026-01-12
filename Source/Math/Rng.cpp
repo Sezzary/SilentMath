@@ -8,7 +8,7 @@ namespace Silent::Math
      */
     static uint32 Seed = 0;
 
-    bool TestRng(uint bits)
+    bool TestRng(int bits)
     {
         return GenerateInt16() & ((1 << bits) - 1);
     }
@@ -29,7 +29,7 @@ namespace Silent::Math
         return GenerateInt32() >> 20;
     }
 
-    uint GetSeed()
+    uint32 GetSeed()
     {
         return Seed;
     }

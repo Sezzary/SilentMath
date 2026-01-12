@@ -114,9 +114,9 @@ namespace Silent::Renderer
             .Scale       = scale,
             .Col         = color,
             .Depth       = depth,
-            .AlignM      = alignMode,
-            .ScaleM      = scaleMode,
-            .BlendM      = blendMode
+            .AlignMd     = alignMode,
+            .ScaleMd     = scaleMode,
+            .BlendMd     = blendMode
         };
         _activeBuffer.Sprites2d.push_back(sprite);
     }

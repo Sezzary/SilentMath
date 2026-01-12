@@ -5,14 +5,14 @@
 
 namespace Silent::Renderer
 {
-    constexpr uint                                       DEPTH_MAX          = 1024;
+    constexpr int                                        DEPTH_MAX          = 1024;
     constexpr std::array<int, TRIANGLE_VERTEX_COUNT * 2> QUAD_TRIANGLE_IDXS = { 0, 1, 2, 0, 2, 3 };
 
     /** @brief 2D screen space primitive representing a line, triangle, or quad. */
     struct Primitive2d
     {
         std::vector<Vertex2d> Vertices = {};
-        uint                  Depth    = 0;
+        int                   Depth    = 0;
         ScaleMode             ScaleMd  = ScaleMode::Fit;
         BlendMode             BlendMd  = BlendMode::Alpha;
 
@@ -27,7 +27,7 @@ namespace Silent::Renderer
          */
         static Primitive2d CreateLine(const Vector2& from, const Vector2& to,
                                       const Color& colorFrom, const Color& colorTo,
-                                      uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
         /** @brief Constructs a 2D line primitive with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
          *
@@ -40,7 +40,7 @@ namespace Silent::Renderer
          */
         static Primitive2d CreateLine(const Vector2i& from, const Vector2i& to,
                                       const Color& colorFrom, const Color& colorTo,
-                                      uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
         /** @brief Constructs a 2D triangle primitive using screen positions in percent.
          *
@@ -55,7 +55,7 @@ namespace Silent::Renderer
          */
         static Primitive2d CreateTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2,
                                           const Color& color0, const Color& color1, const Color& color2,
-                                          uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                          int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
         /** @brief Constructs a 2D triangle primitive using retro pixels.
          *
@@ -70,7 +70,7 @@ namespace Silent::Renderer
          */
         static Primitive2d CreateTriangle(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2,
                                           const Color& color0, const Color& color1, const Color& color2,
-                                          uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                          int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
         /** @brief Constructs a 2D quad primitive.
          *
@@ -87,7 +87,7 @@ namespace Silent::Renderer
          */
         static Primitive2d CreateQuad(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Vector2& vert3,
                                       const Color& color0, const Color& color1, const Color& color2, const Color& color3,
-                                      uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
         /** @brief Constructs a 2D quad primitive using retro pixels.
          *
@@ -106,6 +106,6 @@ namespace Silent::Renderer
          */
         static Primitive2d CreateQuad(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2, const Vector2i& vert3,
                                       const Color& color0, const Color& color1, const Color& color2, const Color& color3,
-                                      uint depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
     };
 }

@@ -44,21 +44,21 @@ namespace Silent::Renderer
          * @param idxCount Index count.
          * @param name Buffer name.
          */
-        void Initialize(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name = {});
+        void Initialize(SDL_GPUDevice& device, int vertCount, int idxCount, const std::string& name = {});
 
         /** @brief Uploads vertices to the internal GPU vertex buffer.
          *
          * @param verts New vertices to transfer to the vertex buffer.
          * @param startIdx Start index in the vertex buffer at which to insert the new vertices.
          */
-        void UpdateVertices(SDL_GPUCopyPass& copyPass, const std::span<const T>& verts, uint startIdx);
+        void UpdateVertices(SDL_GPUCopyPass& copyPass, const std::span<const T>& verts, int startIdx);
 
         /** @brief Uploads indices to the internal GPU index buffer.
          *
          * @param idxs New indices to transfer to the index buffer.
          * @param startIdx Start index in the index buffer at which to insert the new indices.
          */
-        void UpdateIdxs(SDL_GPUCopyPass& copyPass, const std::span<const uint16>& idxs, uint startIdx);
+        void UpdateIdxs(SDL_GPUCopyPass& copyPass, const std::span<const uint16>& idxs, int startIdx);
 
         /** @brief Binds the indexed GPU vertex buffer for drawing.
          *
@@ -66,7 +66,7 @@ namespace Silent::Renderer
          * @param vertsStartIdx Vertices start index.
          * @param idxsStartIdx Indices start index.
          */
-        void Bind(SDL_GPURenderPass& renderPass, uint vertsStartIdx, uint idxsStartIdx);
+        void Bind(SDL_GPURenderPass& renderPass, int vertsStartIdx, int idxsStartIdx);
     };
 
     template <typename T>
@@ -76,26 +76,26 @@ namespace Silent::Renderer
     }
 
     template <typename T>
-    void VertexBuffer<T>::Initialize(SDL_GPUDevice& device, uint vertCount, uint idxCount, const std::string& name)
+    void VertexBuffer<T>::Initialize(SDL_GPUDevice& device, int vertCount, int idxCount, const std::string& name)
     {
         _vertexBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_VERTEX, vertCount, name);
         _idxBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_INDEX, idxCount, name + " (indices)");
     }
 
     template <typename T>
-    void VertexBuffer<T>::UpdateVertices(SDL_GPUCopyPass& copyPass, const std::span<const T>& verts, uint startIdx)
+    void VertexBuffer<T>::UpdateVertices(SDL_GPUCopyPass& copyPass, const std::span<const T>& verts, int startIdx)
     {
         _vertexBuffer.Update(copyPass, verts, startIdx);
     }
 
     template <typename T>
-    void VertexBuffer<T>::UpdateIdxs(SDL_GPUCopyPass& copyPass, const std::span<const uint16>& idxs, uint startIdx)
+    void VertexBuffer<T>::UpdateIdxs(SDL_GPUCopyPass& copyPass, const std::span<const uint16>& idxs, int startIdx)
     {
         _idxBuffer.Update(copyPass, idxs, startIdx);
     }
 
     template <typename T>
-    void VertexBuffer<T>::Bind(SDL_GPURenderPass& renderPass, uint vertsStartIdx, uint idxsStartIdx)
+    void VertexBuffer<T>::Bind(SDL_GPURenderPass& renderPass, int vertsStartIdx, int idxsStartIdx)
     {
         _vertexBuffer.Bind(renderPass, vertsStartIdx);
         _idxBuffer.Bind(renderPass, idxsStartIdx);

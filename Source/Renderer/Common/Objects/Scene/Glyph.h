@@ -15,6 +15,6 @@ namespace Silent::Renderer
         static Glyph CreateGlyph(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                  const Vector2& pos, float rot, const Vector2& scale, const Color& color,
                                  TextStyle style, bool hasDropShadow,
-                                 uint depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                 int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
     };
 }

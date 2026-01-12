@@ -16,9 +16,9 @@ namespace Silent::Utils
         _cellAabbExtents = Vector3(cellSize / 2.0f);
     }
 
-    uint SpatialHash::GetSize() const
+    int SpatialHash::GetSize() const
     {
-        return (uint)_cells.size();
+        return (int)_cells.size();
     }
 
     std::set<int> SpatialHash::GetBoundedObjectIds() const

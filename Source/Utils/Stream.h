@@ -39,7 +39,7 @@ namespace Silent::Utils
          *
          * @return Size in bytes.
          */
-        uint GetSize();
+        int GetSize();
 
         // ==========
         // Inquirers
@@ -69,7 +69,7 @@ namespace Silent::Utils
          * @param[out] buffer Output buffer.
          * @param size Buffer size in bytes.
          */
-        void Read(void* buffer, uint size);
+        void Read(void* buffer, int size);
 
         /** @brief Reads a boolean from the data stream and increments the file pointer.
          *
@@ -180,7 +180,7 @@ namespace Silent::Utils
          * @param buffer Input buffer.
          * @param size Buffer size in bytes.
          */
-        void Write(const void* buffer, uint size);
+        void Write(const void* buffer, int size);
 
         /** @brief Writes a boolean to the data stream and increments the file pointer.
          *

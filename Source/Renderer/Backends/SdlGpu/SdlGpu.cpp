@@ -185,7 +185,7 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::SaveScreenshot() const
     {
-        constexpr uint COLOR_CHANNEL_COUNT = 3; // RGB.
+        constexpr int COLOR_CHANNEL_COUNT = 3; // RGB.
 
         const auto& fs = g_App.GetFilesystem();
 

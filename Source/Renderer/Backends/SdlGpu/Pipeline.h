@@ -69,7 +69,7 @@ namespace Silent::Renderer
          * @param storageTexCount Storage texture count.
          * @return Compiled vertex or fragment shader.
          */
-        SDL_GPUShader* LoadShader(const std::string& filename, uint samplerCount, uint storageTexCount, uint storageBufferCount, uint uniBufferCount);
+        SDL_GPUShader* LoadShader(const std::string& filename, int samplerCount, int storageTexCount, int storageBufferCount, int uniBufferCount);
 
         /** @brief Computes a pipeline hash from a render stage and blend mode.
          *

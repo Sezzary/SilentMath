@@ -30,7 +30,7 @@ namespace Silent::Utils
         return transformedStr;
     }
 
-    char* CopyString(const char src[], uint size)
+    char* CopyString(const char src[], int size)
     {
         char* dest = (char*)malloc((size + 1) * sizeof(char));
         if (dest != nullptr)

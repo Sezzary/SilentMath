@@ -4,7 +4,7 @@ namespace Silent::Buffers { struct Savegame; }
 
 namespace Silent::Savegame
 {
-    constexpr uint SAVEGAME_COUNT_MAX = 165; // Max savegames per file.
+    constexpr int SAVEGAME_COUNT_MAX = 165; // Max savegames per file.
 
     /** @brief Savegame info. */
     struct Savegame
@@ -15,11 +15,11 @@ namespace Silent::Savegame
     /** @brief Savegame metadata. */
     struct SavegameMetadata
     {
-        int  FileIdx       = 0;
-        int  DataIdx       = 0;
-        int  SaveCount     = 0;
-        int  LocationId    = 0;
-        uint GameplayTimer = 0;
+        int FileIdx       = 0;
+        int DataIdx       = 0;
+        int SaveCount     = 0;
+        int LocationId    = 0;
+        int GameplayTimer = 0;
 
         bool IsNextFearMode = false;
         int  Flags          = 0;

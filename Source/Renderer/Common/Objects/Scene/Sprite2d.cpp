@@ -15,7 +15,7 @@ namespace Silent::Renderer
     
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                       const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                      uint depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
+                                      int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
     {
         return Sprite2d
         {
@@ -27,14 +27,14 @@ namespace Silent::Renderer
             .Scale       = scale,
             .Col         = color,
             .Depth       = depth,
-            .AlignM      = alignMode,
-            .ScaleM      = scaleMode,
-            .BlendM      = blendMode
+            .AlignMd     = alignMode,
+            .ScaleMd     = scaleMode,
+            .BlendMd     = blendMode
         };
     }
 
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2i& uvMin, const Vector2i& uvMax,
-                                      uint depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
+                                      int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
     {
         return {}; // @todo
     }

@@ -220,7 +220,7 @@ namespace Silent::Renderer
         // Helpers
         // ========
 
-        /** @brief Prepares submitted high-level object data to intermediate renderer buffer data used for the current frame.
+        /** @brief Processes render buffer data for the current frame, preparing it for parsing to GPU buffer data.
          * Called at the start of `Update`.
          */
         void PrepareRenderBufferData();
