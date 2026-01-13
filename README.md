@@ -69,7 +69,6 @@ sudo apt install build-essential git ninja-build python3 python3-pip
 
 Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will ensure the following submodules are included in the process:
 - assimp
-- FlatBuffers
 - FreeType
 - GLM
 - HarfBuzz

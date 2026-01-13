@@ -3,8 +3,9 @@
 
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
-#include "Savegame/Generated/Savegame_generated.h"
+#include "Savegame/Schemas.h"
 #include "Services/Filesystem.h"
+#include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
@@ -62,11 +63,11 @@ namespace Silent::Savegame
         std::filesystem::create_directories(saveFile.parent_path());
 
         // Write savegame buffer.
-        auto outputFile = std::ofstream(saveFile);
-        if (outputFile.is_open())
+        auto stream = Stream(saveFile, false, true);
+        if (stream.IsOpen())
         {
-            outputFile.write((const char*)saveBuffer->GetBufferPointer(), saveBuffer->GetSize());
-            outputFile.close();
+            // @todo
+            //stream.WriteArray(ToSpan(*saveBuffer));
         }
 
         Debug::Log(Fmt("Saved game to file {}, savegame {}.", fileIdx + 1, saveIdx + 1), Debug::LogLevel::Info);
@@ -77,8 +78,8 @@ namespace Silent::Savegame
         auto saveFile = GetSavegamePath(fileIdx, saveIdx);
 
         // Open savegame buffer file.
-        auto inputFile = std::ifstream(saveFile, std::ios::binary);
-        if (!inputFile.is_open())
+        auto stream = Stream(saveFile, true, false);
+        if (!stream.IsOpen())
         {
             Debug::Log(Fmt("Attempted to load missing savegame for file {}, savegame {}.", fileIdx + 1, saveIdx + 1),
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
@@ -86,17 +87,16 @@ namespace Silent::Savegame
         }
 
         // Get file size.
-        inputFile.seekg(0, std::ios::end);
-        auto fileSize = inputFile.tellg();
-        inputFile.seekg(0, std::ios::beg);
+        auto fileSize = stream.GetSize();
 
-        // Read file into buffer object.
-        auto fileBuffer = std::vector<char>(fileSize);
-        inputFile.read(fileBuffer.data(), fileSize);
-        auto* saveBuffer = flatbuffers::GetRoot<Silent::Buffers::Savegame>(fileBuffer.data());
+        // Read file into savegame buffer.
+        auto fileBuffer = std::vector<byte>(fileSize);
+        stream.ReadArray(ToSpan(fileBuffer));
+        auto saveBuffer = struct_pack::deserialize<Schemas::Savegame>(fileBuffer);
 
+        // @todo
         // Read savegame buffer.
-        _savegame = std::move(*FromSavegameBuffer(*saveBuffer));
+        //_savegame = std::move(*FromSavegameBuffer(*saveBuffer));
 
         Debug::Log(Fmt("Loaded game from file {}, savegame {}.", fileIdx + 1, saveIdx + 1), Debug::LogLevel::Info);
     }
@@ -123,8 +123,8 @@ namespace Silent::Savegame
     SavegameMetadata SavegameManager::GetMetadata(const std::filesystem::path& saveFile) const
     {
         // Open savegame buffer file.
-        auto inputFile = std::ifstream(saveFile, std::ios::binary);
-        if (!inputFile.is_open())
+        auto stream = Stream(saveFile, true, false);
+        if (!stream.IsOpen())
         {
             Debug::Log(Fmt("Attempted to get metadata for missing savegame file `{}`.", saveFile.string()), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return SavegameMetadata
@@ -140,16 +140,14 @@ namespace Silent::Savegame
         }
 
         // Get file size.
-        inputFile.seekg(0, std::ios::end);
-        auto fileSize = inputFile.tellg();
-        inputFile.seekg(0, std::ios::beg);
+        auto fileSize = stream.GetSize();
 
-        // Read file into buffer object.
-        auto fileBuffer = std::vector<char>(fileSize);
-        inputFile.read(fileBuffer.data(), fileSize);
-        auto* saveBuffer = flatbuffers::GetRoot<Silent::Buffers::Savegame>(fileBuffer.data());
+        // Read file into savegame buffer.
+        auto fileBuffer = std::vector<byte>(fileSize);
+        stream.Read(fileBuffer.data(), fileSize);
+        auto saveBuffer = struct_pack::deserialize<Schemas::Savegame>(fileBuffer);
         
-        // @todo Read metadata from savegame buffer.
+        // @todo Read metadata.
         auto metadata = SavegameMetadata{};
 
         return metadata;
@@ -233,7 +231,7 @@ namespace Silent::Savegame
         }
     }
 
-    std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const Buffers::Savegame& saveBuffer) const
+    std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const std::vector<byte>& saveBuffer) const
     {
         auto save = std::make_unique<Savegame>();
 
@@ -242,9 +240,9 @@ namespace Silent::Savegame
         return save;
     }
 
-    std::unique_ptr<flatbuffers::FlatBufferBuilder> SavegameManager::ToSavegameBuffer(const Savegame& save) const
+    std::unique_ptr<std::vector<byte>> SavegameManager::ToSavegameBuffer(const Savegame& save) const
     {
-        auto saveBuffer = std::make_unique<flatbuffers::FlatBufferBuilder>();
+        auto saveBuffer = std::make_unique<std::vector<byte>>();
 
         // @todo
 

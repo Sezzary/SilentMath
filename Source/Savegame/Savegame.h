@@ -1,7 +1,5 @@
 #pragma once
 
-namespace Silent::Buffers { struct Savegame; }
-
 namespace Silent::Savegame
 {
     constexpr int SAVEGAME_COUNT_MAX = 165; // Max savegames per file.
@@ -53,8 +51,21 @@ namespace Silent::Savegame
         // Utilities
         // ==========
 
+        /** @brief Initializes the `SavegameManager`. */
         void Initialize();
+
+        /** @brief Saves the active savegame to a file.
+         *
+         * @param fileIdx Index of a file containing savegames.
+         * @param saveIdx Index of a savegame within the file.
+         */
         void Save(int fileIdx, int saveIdx);
+
+        /** @brief Loads an active savegame from a file.
+         *
+         * @param fileIdx Index of a file containing savegames.
+         * @param saveIdx Index of a savegame within the file.
+         */
         void Load(int fileIdx, int saveIdx);
 
         // ==========
@@ -69,11 +80,30 @@ namespace Silent::Savegame
         // Helpers
         // ========
 
+        /** @brief Gets the path of a savegame file.
+         *
+         * @param fileIdx Index of a file containing savegames.
+         * @param saveIdx Index of a savegame within the file.
+         * @return Savegame path.
+         */
         std::filesystem::path GetSavegamePath(int fileIdx, int saveIdx) const;
-        SavegameMetadata      GetMetadata(const std::filesystem::path& saveFile) const;
+
+        SavegameMetadata GetMetadata(const std::filesystem::path& saveFile) const;
         
-        void                                            PopulateSlotMetadata();
-        std::unique_ptr<Savegame>                       FromSavegameBuffer(const Buffers::Savegame& saveBuffer) const;
-        std::unique_ptr<flatbuffers::FlatBufferBuilder> ToSavegameBuffer(const Savegame& save) const;
+        void PopulateSlotMetadata();
+
+        /** @brief Converts a savegame serialized buffer to a savegame.
+         *
+         * @param saveBuffer Serialized savegame buffer.
+         * @return Savegame.
+         */
+        std::unique_ptr<Savegame> FromSavegameBuffer(const std::vector<byte>& saveBuffer) const;
+
+        /** @brief Converts a savegame to a serialized savegame buffer.
+         *
+         * @param save Savegame.
+         * @return Serialized savegame buffer.
+         */
+        std::unique_ptr<std::vector<byte>> ToSavegameBuffer(const Savegame& save) const;
     };
 }

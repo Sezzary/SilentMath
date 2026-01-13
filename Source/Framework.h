@@ -46,9 +46,6 @@
 //#include <assimp/postprocess.h>
 //#include <assimp/scene.h>
 
-// FlatBuffers
-#include <flatbuffers/flatbuffers.h>
-
 // FreeType
 #include <ft2build.h>
 
