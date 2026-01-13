@@ -67,6 +67,8 @@ namespace Silent::Renderer
             throw std::runtime_error(Fmt("Failed to claim window for GPU device: {}", SDL_GetError()));
         }
 
+        InitializeDoubleBuffer();
+
         // Initialize texture manager.
         _textures = std::make_unique<SdlGpuTextureManager>(*_device);
 
@@ -97,14 +99,10 @@ namespace Silent::Renderer
         };
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
 
+        // @todo Make generic helper?
         // Initialize GPU buffers.
         _gpuBuffers.Primitives2d.Initialize(*_device, SDL_GPU_BUFFERUSAGE_VERTEX, (PRIMITIVE_2D_COUNT_MAX * 2) * TRIANGLE_VERTEX_COUNT, "2d primitive triangle vertices");
         _gpuBuffers.Sprites2d.Initialize(*_device, SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT, SPRITE_2D_COUNT_MAX * 6, "2D sprite vertices");
-
-        // Reserve memory.
-        _activeBuffer.Primitives2d.reserve(PRIMITIVE_2D_COUNT_MAX);
-        _activeBuffer.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
-        _renderBuffer = _activeBuffer; // @todo Check if this reserves memory like it's supposed to. `_activeBuffer` and `_renderBuffer` should have identical memory pools.
 
         // Create ImGui context.
         ImGui::CreateContext();
@@ -280,13 +278,13 @@ namespace Silent::Renderer
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // 2D primitives. @todo Batching.
-        if (!_renderBuffer.Sprites2d.empty())
+        if (!_doubleBuffer.Render.Sprites2d.empty())
         {
             _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
 
-            for (int i = 0; i < _renderBuffer.Sprites2d.size(); i++)
+            for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
             {
-                auto& sprite = _renderBuffer.Sprites2d[i];
+                auto& sprite = _doubleBuffer.Render.Sprites2d[i];
 
                 _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
                 GetTextures().Get(sprite.TextureName).Bind(renderPass, GetActiveSampler());
@@ -354,7 +352,7 @@ namespace Silent::Renderer
         ImGui::NewFrame();
 
         // Draw GUIs.
-        for (auto& drawCall : _renderBuffer.DebugGuiDrawCalls)
+        for (auto& drawCall : _doubleBuffer.Render.DebugGuiDrawCalls)
         {
             drawCall();
         }
@@ -382,10 +380,10 @@ namespace Silent::Renderer
     void SdlGpuRenderer::Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferColorVertex2d>& bufferVerts)
     {
         // Create GPU buffer data.
-        bufferVerts.reserve((_renderBuffer.Primitives2d.size() * 2) * TRIANGLE_VERTEX_COUNT);
+        bufferVerts.reserve((_doubleBuffer.Render.Primitives2d.size() * 2) * TRIANGLE_VERTEX_COUNT);
 
         // Convert render buffer data for GPU buffer.
-        for (const auto& prim : _renderBuffer.Primitives2d)
+        for (const auto& prim : _doubleBuffer.Render.Primitives2d)
         {
             // 2D triangle primitive.
             if (prim.Vertices.size() == TRIANGLE_VERTEX_COUNT)
@@ -426,13 +424,13 @@ namespace Silent::Renderer
     void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs)
     {
         // Create GPU buffer data.
-        bufferVerts.reserve(_renderBuffer.Sprites2d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_renderBuffer.Sprites2d.size() * QUAD_INDEX_COUNT);
+        bufferVerts.reserve(_doubleBuffer.Render.Sprites2d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_doubleBuffer.Render.Sprites2d.size() * QUAD_INDEX_COUNT);
 
         // Convert render buffer data for GPU buffer.
-        for (int i = 0; i < _renderBuffer.Sprites2d.size(); i++)
+        for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
         {
-            const auto& sprite = _renderBuffer.Sprites2d[i];
+            const auto& sprite = _doubleBuffer.Render.Sprites2d[i];
 
             // @todo Apply scale mode later. Should merge primitives with sprites first, this way they can be layered easily.
             //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);

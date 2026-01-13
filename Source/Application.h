@@ -50,12 +50,13 @@ namespace Silent
         // Fields
         // =======
 
-        SDL_Window* _window   = nullptr; /** Application window. */
-        bool        _isPaused = false;   /** "Window out of focus" state. */
-        bool        _quit     = false;   /** Quit procedure state. */
+        SDL_Window*       _window          = nullptr;
+        std::future<void> _prevFrameFuture = std::future<void>();
+        bool              _isPaused        = false;
+        bool              _quit            = false;
 
-        ApplicationWork _work           = {};            /** Subsystem workspace. */
-        Vector2         _mouseWheelAxis = Vector2::Zero; /** Mouse wheel axis input. */
+        ApplicationWork _work           = {};
+        Vector2         _mouseWheelAxis = Vector2::Zero;
 
     public:
         // =============
@@ -157,7 +158,7 @@ namespace Silent
         /** @brief Gracefully deinitializes the application and its subsystems. */
         void Deinitialize();
 
-        /** @brief Runs the application loop. */
+        /** @brief Runs the application loop at at a fixed timestep. */
         void Run();
 
         /** @brief Prompts the application to run the shutdown procedure. */
@@ -177,7 +178,7 @@ namespace Silent
         // Helpers
         // ========
 
-        /** @brief Updates the game application at a fixed timestep. */
+        /** @brief Updates the application state. */
         void Update();
 
         /** @brief Renders the application scene. */
@@ -185,7 +186,7 @@ namespace Silent
 
         /** @brief Polls window events to handle quitting, window resizing, toggling fullscreen mode, and connecting or disconnecting a gamepad.
          *
-         * @note Additionally polls mouse wheel input as a workaround to input device query limitations.
+         * @note Additionally polls mouse wheel input as a workaround to SDL's input device query limitations.
          */
         void PollEvents();
     };

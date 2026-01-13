@@ -233,6 +233,7 @@ namespace Silent::Savegame
 
     std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const std::vector<byte>& saveBuffer) const
     {
+        // @heapalloc
         auto save = std::make_unique<Savegame>();
 
         // @todo
@@ -242,6 +243,7 @@ namespace Silent::Savegame
 
     std::unique_ptr<std::vector<byte>> SavegameManager::ToSavegameBuffer(const Savegame& save) const
     {
+        // @heapalloc
         auto saveBuffer = std::make_unique<std::vector<byte>>();
 
         // @todo

@@ -18,18 +18,24 @@ namespace Silent::Renderer
         SdlGpu
     };
 
-    /** @brief Data for double-buffering. */
-    struct DataBuffer
+    /** @brief Double-buffered renderer data. */
+    struct DoubleBuffer
     {
-        int DrawCallCount = 0;
+        struct Data
+        {
+            int DrawCallCount = 0;
 
-        std::vector<Primitive3d>            Primitives3d      = {};
-        std::vector<Primitive2d>            Primitives2d      = {};
-        std::vector<Sprite2d>               Sprites2d         = {};
-        std::vector<Glyph>                  Glyphs            = {};
-        std::vector<Primitive2d>            DebugPrimitives2d = {};
-        std::vector<Primitive3d>            DebugPrimitives3d = {};
-        std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
+            std::vector<Primitive3d>            Primitives3d      = {};
+            std::vector<Primitive2d>            Primitives2d      = {};
+            std::vector<Sprite2d>               Sprites2d         = {};
+            std::vector<Glyph>                  Glyphs            = {};
+            std::vector<Primitive2d>            DebugPrimitives2d = {};
+            std::vector<Primitive3d>            DebugPrimitives3d = {};
+            std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
+        };
+
+        Data Active = {};
+        Data Render = {};
     };
 
     /** @brief Renderer base. */
@@ -46,11 +52,8 @@ namespace Silent::Renderer
         Color        _clearColor = Color::Clear;
         bool         _isResized  = false;
 
-        std::unique_ptr<TextureManagerBase> _textures = nullptr;
-
-        // @todo Cleaner way to manage this.
-        DataBuffer _activeBuffer = {};
-        DataBuffer _renderBuffer = {};
+        DoubleBuffer                        _doubleBuffer = {};
+        std::unique_ptr<TextureManagerBase> _textures     = nullptr;
 
     public:
         // =============
@@ -102,8 +105,8 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Updates the render data buffer for the current tick and clears the active data buffer for the next update. */
-        void UpdateRenderDataBuffer();
+        /** @brief Swaps the double buffer and clears active data for new updates on the next tick. */
+        void SwapDoubleBuffer();
 
         /** @brief Signals a viewport resize. */
         void SignalResize();
@@ -220,7 +223,10 @@ namespace Silent::Renderer
         // Helpers
         // ========
 
-        /** @brief Processes render buffer data for the current frame, preparing it for parsing to GPU buffer data.
+        /** @brief Initializes the double buffer. */
+        void InitializeDoubleBuffer();
+
+        /** @brief Processes render data in the double buffer for parsing to GPU buffer data.
          * Called at the start of `Update`.
          */
         void PrepareRenderBufferData();
