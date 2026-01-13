@@ -259,12 +259,15 @@ namespace Silent::Renderer
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
+        // @todo Should all be done in a separate method, but 2D primitives vertex count needs access later.
+        //////
         auto bufferVerts = std::vector<BufferColorVertex2d>{};
         Copy2dPrimitives(*copyPass, bufferVerts);
 
         auto spriteBufferVerts = std::vector<BufferTexVertex2d>{};
         auto spriteBufferIdxs  = std::vector<uint16>{};
         Copy2dSprites(*copyPass, spriteBufferVerts, spriteBufferIdxs);
+        //////
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -277,7 +280,7 @@ namespace Silent::Renderer
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // 2D primitives. @todo Batching.
+        // 2D sprites. @todo Batching.
         if (!_doubleBuffer.Render.Sprites2d.empty())
         {
             _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
@@ -286,12 +289,13 @@ namespace Silent::Renderer
             {
                 auto& sprite = _doubleBuffer.Render.Sprites2d[i];
 
-                _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, BlendMode::Opaque);
+                _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, sprite.BlendMd);
                 GetTextures().Get(sprite.TextureName).Bind(renderPass, GetActiveSampler());
                 SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_INDEX_COUNT, 1, 0, i * QUAD_VERTEX_COUNT, 0);
             }
         }
         
+        // 2D primitives.
         _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
         _gpuBuffers.Primitives2d.Bind(renderPass, 0);
         UniformBuffer.IsFastAlpha = false;

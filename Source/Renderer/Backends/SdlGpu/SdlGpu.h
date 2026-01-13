@@ -14,8 +14,8 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU buffer data. */
-    struct BufferData
+    /** @brief GPU buffers. */
+    struct GpuBuffers
     {
         Buffer<BufferColorVertex2d>     Primitives2d = {};
         VertexBuffer<BufferTexVertex2d> Sprites2d    = {};
@@ -42,7 +42,7 @@ namespace Silent::Renderer
         std::vector<SDL_GPUSampler*> _samplers         = {};
         PipelineManager              _pipelines        = PipelineManager();
 
-        BufferData _gpuBuffers = {};
+        GpuBuffers _gpuBuffers = {};
 
     public:
         // =============

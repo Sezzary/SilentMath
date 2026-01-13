@@ -7,16 +7,16 @@ RELEASE_DIR = $(BUILD_DIR)/Release
 
 # Targets
 
-.PHONY: all debug release configure-debug configure-release build-debug build-release
+.PHONY: debug-config release-config debug-build release-build
 
-configure-debug:
+debug-config:
 	$(CMAKE) -S $(PWD) -B $(DEBUG_DIR) -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
-configure-release:
+release-config:
 	$(CMAKE) -S $(PWD) -B $(RELEASE_DIR) -DCMAKE_BUILD_TYPE=Release
 
-build-debug:
+debug-build:
 	$(CMAKE) --build $(DEBUG_DIR)
 
-build-release:
+release-build:
 	$(CMAKE) --build $(RELEASE_DIR)
