@@ -16,7 +16,7 @@ namespace Silent::Utils
         // Create threads.
         for (int i = 0; i < threadCount; i++)
         {
-            _threads.push_back(std::jthread(&ParallelExecutor::Worker, this));
+            _threads.push_back(std::thread(&ParallelExecutor::Worker, this));
         }
 
         _deinitialize = false;
@@ -33,6 +33,25 @@ namespace Silent::Utils
 
         // Notify all threads they should stop.
         _taskCond.notify_all();
+
+        // Join all threads.
+        for (int i = 0; i < _threads.size(); i++)
+        {
+            auto& thread = _threads[i];
+            if (!thread.joinable())
+            {
+                continue;
+            }
+
+            try
+            {
+                thread.join();
+            }
+            catch (const std::exception& ex)
+            {
+                Debug::Log(Fmt("Error joining `ParallelExecutor` thread {}: {}", i, ex.what()), Debug::LogLevel::Error);
+            }
+		}
     }
 
     int ParallelExecutor::GetThreadCount() const
@@ -158,7 +177,7 @@ namespace Silent::Utils
 
     int GetCoreCount()
     {
-        return std::max<int>(std::jthread::hardware_concurrency(), 1);
+        return std::max<int>(std::thread::hardware_concurrency(), 1);
     }
 
     std::future<void> GenerateReadyFuture()

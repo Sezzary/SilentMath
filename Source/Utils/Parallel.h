@@ -21,11 +21,11 @@ namespace Silent::Utils
         // Fields
         // =======
 
-        std::vector<std::jthread> _threads      = {};
-        std::queue<ParallelTask>  _tasks        = {};
-        std::mutex                _taskMutex    = {};
-        std::condition_variable   _taskCond     = {};
-        bool                      _deinitialize = false;
+        std::vector<std::thread> _threads      = {};
+        std::queue<ParallelTask> _tasks        = {};
+        std::mutex               _taskMutex    = {};
+        std::condition_variable  _taskCond     = {};
+        bool                     _deinitialize = false;
 
     public:
         // =============
