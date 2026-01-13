@@ -294,7 +294,14 @@ namespace Silent
 
         // Render frame asynchronously.
         _work.Renderer->UpdateRenderDataBuffer();
-        prevFrameFuture = _work.Executor.AddTask(TASK(_work.Renderer->Update()));
+        if (_work.Options->EnableParallelism)
+        {
+            prevFrameFuture = std::async(std::launch::async, TASK(_work.Renderer->Update()));
+        }
+        else
+        {
+            _work.Renderer->Update();
+        }
     }
 
     void ApplicationManager::PollEvents()
