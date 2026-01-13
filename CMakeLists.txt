@@ -97,7 +97,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add library directories.
 #add_subdirectory(Libraries/assimp)
-add_subdirectory(Libraries/flatbuffers)
 add_subdirectory(Libraries/freetype)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/harfbuzz)
@@ -111,7 +110,6 @@ add_subdirectory(Libraries/yalantinglibs)
 # Add library header paths.
 target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/flatbuffers/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/freetype/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/harfbuzz
@@ -137,7 +135,6 @@ set_target_properties(luajit PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_LIST_
 # Add libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     #assimp
-    flatbuffers
     freetype
     glm
     harfbuzz
