@@ -84,6 +84,7 @@ Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning
 - stb
 - UTF8-CPP
 - VLC
+- yalantinglibs
 ```
 git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive

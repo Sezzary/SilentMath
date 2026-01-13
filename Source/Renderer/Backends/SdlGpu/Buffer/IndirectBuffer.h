@@ -32,7 +32,6 @@ namespace Silent::Renderer
          */
         const std::string& GetName() const;
 
-        // @todo
         void Draw(SDL_GPURenderPass& renderPass);
     };
 }

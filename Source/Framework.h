@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <deque>
+#include <expected>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -110,6 +111,9 @@ using json = nlohmann::json;
 
 // VLC
 #include <vlc/vlc.h>
+
+// yaLanTingLibs
+#include <ylt/struct_pack.hpp>
 
 // ==========
 // Resources
