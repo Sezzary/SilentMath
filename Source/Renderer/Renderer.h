@@ -114,14 +114,9 @@ namespace Silent::Renderer
         /** @brief Submits a 2D primitive for drawing.
          *
          * @param prim 2D primitive to draw.
+         * @return `true` if the 2D primitive was successfully submitted, `false` otherwise.
          */
-        void Submit2dPrimitive(const Primitive2d& prim);
-
-        /** @brief Submits a glyph for drawing.
-         *
-         * @param glyph Glyph to draw.
-         */
-        void SubmitGlyph(const Glyph& glyph);
+        bool Submit2dPrimitive(const Primitive2d& prim);
 
         /** @brief Submits a screen sprite for drawing.
          *
@@ -136,9 +131,17 @@ namespace Silent::Renderer
          * @param alignMode Sprite align mode relative to the screen aspect ratio.
          * @param scaleMode Sprite scale mode relative to the screen aspect ratio.
          * @param blendMode Draw blend mode.
+         * @return `true` if the screen sprite was successfully submitted, `false` otherwise.
          */
-        void SubmitScreenSprite(const std::string& assetName, const Vector2& uvMin, const Vector2& uvMax, const Vector2& pos, float rot, const Vector2& scale,
+        bool SubmitScreenSprite(const std::string& assetName, const Vector2& uvMin, const Vector2& uvMax, const Vector2& pos, float rot, const Vector2& scale,
                                 const Color& color, int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode);
+
+        /** @brief Submits a glyph for drawing.
+         *
+         * @param glyph Glyph to draw.
+         * @return `true` if the glyph was successfully submitted, `false` otherwise.
+         */
+        //bool SubmitGlyph(const Glyph& glyph);
 
         /** @brief Initializes the renderer and its subsystems.
          *

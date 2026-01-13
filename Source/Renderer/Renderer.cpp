@@ -80,18 +80,19 @@ namespace Silent::Renderer
         _isResized = true;
     }
 
-    void RendererBase::Submit2dPrimitive(const Primitive2d& prim)
+    bool RendererBase::Submit2dPrimitive(const Primitive2d& prim)
     {
         if (_doubleBuffer.Active.Primitives2d.size() >= PRIMITIVE_2D_COUNT_MAX)
         {
             Debug::Log("Attampted to add 2D primitive to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return;
+            return false;
         }
 
         _doubleBuffer.Active.Primitives2d.push_back(prim);
+        return true;
     }
 
-    void RendererBase::SubmitScreenSprite(const std::string& assetName, const Vector2& uvMin, const Vector2& uvMax,
+    bool RendererBase::SubmitScreenSprite(const std::string& assetName, const Vector2& uvMin, const Vector2& uvMax,
                                           const Vector2& pos, float rot, const Vector2& scale, const Color& color,
                                           int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
     {
@@ -100,14 +101,14 @@ namespace Silent::Renderer
         if (_doubleBuffer.Active.Sprites2d.size() >= SPRITE_2D_COUNT_MAX)
         {
             Debug::Log("Attampted to add 2D sprite to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return;
+            return false;
         }
 
         const auto asset = assets.GetAsset(assetName);
         if (asset->Type != AssetType::Tim)
         {
             Debug::Log("Attempted to submit non-image asset as screen sprite.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return;
+            return false;
         }
 
         auto sprite = Sprite2d
@@ -125,6 +126,7 @@ namespace Silent::Renderer
             .BlendMd     = blendMode
         };
         _doubleBuffer.Active.Sprites2d.push_back(sprite);
+        return true;
     }
 
     void RendererBase::SubmitDebugText(const std::string& msg, const Vector2& pos, const Color& color, TextAlignMode alignMode)
@@ -136,7 +138,11 @@ namespace Silent::Renderer
 
     void RendererBase::SubmitDebugGui(std::function<void()> drawFunc)
     {
-        // @todo Max?
+        if (_doubleBuffer.Active.DebugGuiDrawCalls.size() >= DEBUG_GUI_DRAW_CALL_COUNT_MAX)
+        {
+            Debug::Log("Attampted to add debug GUI draw call to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            return;
+        }
 
         const auto& options = g_App.GetOptions();
         if (!options->EnablePowerMode)
@@ -145,6 +151,7 @@ namespace Silent::Renderer
         }
 
         _doubleBuffer.Active.DebugGuiDrawCalls.push_back(drawFunc);
+        return;
     }
 
     void RendererBase::SubmitDebugLine(const Vector2& from, const Vector2& to, const Color& color, ScaleMode scaleMode, Debug::Page page)
