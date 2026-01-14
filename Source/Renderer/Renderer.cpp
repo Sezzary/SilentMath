@@ -204,20 +204,19 @@ namespace Silent::Renderer
         auto sortTasks = ParallelTasks
         {
             // @todo Is sorting like this on the CPU necessary?
-            //[&]()
-            //{
-            //    // Sort 2D primitives by depth.
-            //    Sort(_doubleBuffer.Render.Primitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
-            //    {
-            //        return prim0.Depth > prim1.Depth; // @todo Weird reverse order necessary here.
-            //    });
-            //},
+            [&]()
+            {
+                // Sort 2D shapes by depth.
+                Sort(_doubleBuffer.Render.Shapes2d, [](const Shape2d& shape0, const Shape2d& shape1)
+                {
+                    return shape0.Depth > shape1.Depth;
+                });
+            },
             [&]()
             {
                 // Sort 2D sprites by depth.
                 // @todo Sort based on other heuristics too. Use sort keys for speed?
-                Sort(_doubleBuffer.Render.Sprites2d,
-                [](const Sprite2d& sprite0, const Sprite2d& sprite1)
+                Sort(_doubleBuffer.Render.Sprites2d, [](const Sprite2d& sprite0, const Sprite2d& sprite1)
                 {
                     return sprite0.Depth > sprite1.Depth;
                 });
