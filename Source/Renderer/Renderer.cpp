@@ -67,10 +67,11 @@ namespace Silent::Renderer
 
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.Shapes2d.clear();
-        _doubleBuffer.Active.Primitives3d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
-        _doubleBuffer.Active.DebugPrimitives3d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
+
+        _doubleBuffer.Active.Primitives3d.clear();
+        _doubleBuffer.Active.DebugPrimitives3d.clear();
     }
 
     void RendererBase::SignalResize()

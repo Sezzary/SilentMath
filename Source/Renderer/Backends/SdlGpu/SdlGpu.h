@@ -11,6 +11,21 @@
 
 namespace Silent::Renderer
 {
+    /** @brief Renderer draw batch. */
+    struct DrawBatch
+    {
+        std::string TextureName  = {};
+        BlendMode   BlendMd      = BlendMode::Opaque;
+        int         BufferStride = 0;
+        int         BufferOffset = 0;
+    };
+
+    /** @brief Sorted draw batches. */
+    struct DrawBatches
+    {
+        std::vector<DrawBatch> Triangles2d = {};
+    };
+
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
@@ -33,13 +48,14 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        SDL_GPUDevice*               _device           = nullptr;
-        SDL_GPUTexture*              _swapchainTexture = nullptr;
-        SDL_GPUCommandBuffer*        _commandBuffer    = nullptr;
-        std::vector<SDL_GPUSampler*> _samplers         = {};
-        PipelineManager              _pipelines        = PipelineManager();
-
-        GpuBuffers _gpuBuffers = {};
+        SDL_GPUDevice*               _device    = nullptr;
+        std::vector<SDL_GPUSampler*> _samplers  = {};
+        PipelineManager              _pipelines = PipelineManager();
+        
+        SDL_GPUTexture*       _swapchainTexture = nullptr;
+        SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
+        DrawBatches           _drawBatches      = {};
+        GpuBuffers            _gpuBuffers       = {};
 
     public:
         // =============

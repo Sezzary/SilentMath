@@ -25,12 +25,13 @@ namespace Silent::Renderer
         {
             int DrawCallCount = 0;
 
-            std::vector<Primitive3d>            Primitives3d      = {};
             std::vector<Shape2d>                Shapes2d          = {};
             std::vector<Sprite2d>               Sprites2d         = {};
+            std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
+
+            std::vector<Primitive3d>            Primitives3d      = {};
             std::vector<Shape2d>                DebugShapes2d     = {};
             std::vector<Primitive3d>            DebugPrimitives3d = {};
-            std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
         };
 
         Data Active = {};

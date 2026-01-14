@@ -275,26 +275,22 @@ namespace Silent::Renderer
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // 2D triangles. @todo Batching.
-        if (!_doubleBuffer.Render.Sprites2d.empty())
+        // 2D triangles.
+        _gpuBuffers.Triangles2d.Bind(renderPass, 0, 0);
+        UniformBuffer.UseTexture  = true;
+        UniformBuffer.IsFastAlpha = false;
+        SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
+        for (const auto& drawBatch : _drawBatches.Triangles2d)
         {
-            _gpuBuffers.Triangles2d.Bind(renderPass, 0, 0);
-            UniformBuffer.UseTexture  = true;
-            UniformBuffer.IsFastAlpha = false;
-            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
+            auto& tex = GetTextures()[drawBatch.TextureName];
 
-            // @todo How will texture binding work? Need buckets?? Too complex for now.
-            for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
-            {
-                auto& sprite = _doubleBuffer.Render.Sprites2d[i];
-                auto& tex    = GetTextures()[sprite.TextureName];
+            _pipelines.Bind(renderPass, RenderStage::Triangle2d, drawBatch.BlendMd);
+            tex.Bind(renderPass, GetActiveSampler());
+            SDL_DrawGPUIndexedPrimitives(&renderPass, drawBatch.BufferStride, 1, 0, drawBatch.BufferOffset, 0);
 
-                _pipelines.Bind(renderPass, RenderStage::Triangle2d, sprite.BlendMd);
-                tex.Bind(renderPass, GetActiveSampler());
-                SDL_DrawGPUIndexedPrimitives(&renderPass, TRI_IDX_COUNT * 2, 1, 0, i * (TRI_VERTEX_COUNT * 2), 0);
-            }
+            _doubleBuffer.Active.DrawCallCount++;
         }
-        
+
         // 2D primitives. @todo Combine into triangles above.
         _pipelines.Bind(renderPass, RenderStage::Triangle2d, BlendMode::Alpha);
         _gpuBuffers.Primitives2d.Bind(renderPass, 0);
@@ -302,6 +298,7 @@ namespace Silent::Renderer
         UniformBuffer.IsFastAlpha = false;
         SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
         SDL_DrawGPUPrimitives(&renderPass, bufferVerts.size(), 1, 0, 0);
+        _doubleBuffer.Active.DrawCallCount++;
         
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
@@ -470,6 +467,15 @@ namespace Silent::Renderer
             bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 3);
             bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 4);
             bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 5);
+
+            // @todo Batching. For now, collect each as its own batch of 2 triangles.
+            _drawBatches.Triangles2d.push_back(DrawBatch
+            {
+                .TextureName  = sprite.TextureName,
+                .BlendMd      = sprite.BlendMd,
+                .BufferStride = TRI_IDX_COUNT * 2,
+                .BufferOffset = i * (TRI_VERTEX_COUNT * 2)
+            });
         }
 
         // Update GPU buffer.
