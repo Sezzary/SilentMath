@@ -33,6 +33,12 @@ namespace Silent::Renderer
          */
         const std::string& GetName() const;
 
+        /** @brief Gets the number of vertices currently in the GPU vertex buffer.
+         *
+         * @return vertices count.
+         */
+        int GetSize() const;
+
         // ==========
         // Utilities
         // ==========
@@ -73,6 +79,12 @@ namespace Silent::Renderer
     const std::string& VertexBuffer<T>::GetName() const
     {
         return _vertexBuffer.GetName();
+    }
+
+    template <typename T>
+    int VertexBuffer<T>::GetSize() const
+    {
+        return _vertexBuffer.GetSize();
     }
 
     template <typename T>

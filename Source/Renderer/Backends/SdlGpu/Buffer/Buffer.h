@@ -12,6 +12,7 @@ namespace Silent::Renderer
         // =======
 
         std::string             _name           = {};
+        int                     _size           = 0;
         SDL_GPUDevice*          _device         = nullptr;
         SDL_GPUBuffer*          _resourceBuffer = nullptr;
         SDL_GPUTransferBuffer*  _transferBuffer = nullptr;
@@ -38,6 +39,12 @@ namespace Silent::Renderer
          */
         const std::string& GetName() const;
 
+        /** @brief Gets the number of elements currently in the GPU buffer.
+         *
+         * @return Element count.
+         */
+        int GetSize() const;
+
         // ==========
         // Utilities
         // ==========
@@ -46,10 +53,10 @@ namespace Silent::Renderer
          *
          * @param device GPU device.
          * @param usageFlags Buffer usage flags.
-         * @param size Max buffer size in number of elements.
+         * @param sizeMax Max number of elements.
          * @param name Buffer name.
          */
-        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int size, const std::string& name = {});
+        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int sizeMax, const std::string& name = {});
 
         /** @brief Uploads data to the GPU buffer.
          *
@@ -84,6 +91,12 @@ namespace Silent::Renderer
     }
 
     template <typename T>
+    int Buffer<T>::GetSize() const
+    {
+        return _size;
+    }
+
+    template <typename T>
     Buffer<T>::~Buffer()
     {
         if (_resourceBuffer != nullptr)
@@ -98,7 +111,7 @@ namespace Silent::Renderer
     }
 
     template <typename T>
-    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int size, const std::string& name)
+    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int sizeMax, const std::string& name)
     {
         if (IsValid())
         {
@@ -113,12 +126,13 @@ namespace Silent::Renderer
         }
 
         _name   = name;
+        _size   = 0;
         _device = &device;
 
         auto bufferInfo = SDL_GPUBufferCreateInfo
         {
             .usage = _usageFlags,
-            .size  = size * sizeof(T)
+            .size  = sizeMax * sizeof(T)
         };
 
         // Create buffer.
@@ -135,7 +149,7 @@ namespace Silent::Renderer
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
         {
             .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-            .size  = size * sizeof(T)
+            .size  = sizeMax * sizeof(T)
         };
 
         // Create transfer buffer.
@@ -154,6 +168,8 @@ namespace Silent::Renderer
             Debug::Log(Fmt("Attempted to update invalid GPU buffer `{}`.", _name), Debug::LogLevel::Warning);
             return;
         }
+
+        _size = data.size();
 
         // Map transfer data.
         auto* mappedTransferData = (T*)SDL_MapGPUTransferBuffer(_device, _transferBuffer, false);

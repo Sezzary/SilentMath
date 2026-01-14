@@ -283,7 +283,8 @@ namespace Silent::Renderer
             UniformBuffer.IsFastAlpha = false;
             SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
 
-            for (int i = 0; i < (_doubleBuffer.Render.Sprites2d.size()); i++)
+            // @todo How will texture binding work? Need buckets?? Too complex for now.
+            for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
             {
                 auto& sprite = _doubleBuffer.Render.Sprites2d[i];
                 auto& tex    = GetTextures()[sprite.TextureName];
