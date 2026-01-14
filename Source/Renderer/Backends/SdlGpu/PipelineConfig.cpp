@@ -89,10 +89,10 @@ namespace Silent::Renderer
 
     const std::vector<PipelineConfig> PIPELINE_CONFIGS =
     {
-        // 2D primitive.
+        // 2D triangle.
         PipelineConfig
         {
-            .Stage                        = RenderStage::Primitive2d,
+            .Stage                        = RenderStage::Triangle2d,
             .VertexShaderName             = "Primitive2d.vert",
             .VertShaderSamplerCount       = 0,
             .VertShaderUniBufferCount     = 0,

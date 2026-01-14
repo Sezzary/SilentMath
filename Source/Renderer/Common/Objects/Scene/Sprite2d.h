@@ -4,7 +4,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief 2D screen sprite. */
+    /** @brief 2D screen space triangle. */
     struct Sprite2d
     {
         std::string TextureName = {};

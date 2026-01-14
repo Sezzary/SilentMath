@@ -11,6 +11,7 @@ namespace Silent::Renderer
     constexpr int PRIMITIVE_3D_COUNT_MAX        = 256;
     constexpr int DEBUG_GUI_DRAW_CALL_COUNT_MAX = 8;
 
+    constexpr int TRI_IDX_COUNT    = 3;
     constexpr int QUAD_INDEX_COUNT = 6;
     constexpr int RGBA_COMP_COUNT  = 4;
 }

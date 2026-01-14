@@ -26,9 +26,9 @@ namespace Silent::Renderer
             int DrawCallCount = 0;
 
             std::vector<Primitive3d>            Primitives3d      = {};
-            std::vector<Primitive2d>            Primitives2d      = {}; // } @todo Combine.
-            std::vector<Sprite2d>               Sprites2d         = {}; // }
-            std::vector<Primitive2d>            DebugPrimitives2d = {};
+            std::vector<Shape2d>                Shapes2d          = {};
+            std::vector<Sprite2d>               Sprites2d         = {};
+            std::vector<Shape2d>                DebugShapes2d     = {};
             std::vector<Primitive3d>            DebugPrimitives3d = {};
             std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
         };
@@ -115,7 +115,7 @@ namespace Silent::Renderer
          * @param prim 2D primitive to draw.
          * @return `true` if the 2D primitive was successfully submitted, `false` otherwise.
          */
-        bool Submit2dPrimitive(const Primitive2d& prim);
+        bool Submit2dPrimitive(const Shape2d& prim);
 
         /** @brief Submits a screen sprite for drawing.
          *

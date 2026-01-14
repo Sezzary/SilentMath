@@ -9,7 +9,7 @@ namespace Silent::Renderer
         // Material
         // =========
 
-        Primitive2d,
+        Triangle2d,
         //GlyphGradient, // @todo
 
         // =============

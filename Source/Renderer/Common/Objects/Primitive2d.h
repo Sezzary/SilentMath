@@ -6,43 +6,43 @@
 namespace Silent::Renderer
 {
     constexpr int                                        DEPTH_MAX          = 1024;
-    constexpr std::array<int, TRIANGLE_VERTEX_COUNT * 2> QUAD_TRIANGLE_IDXS = { 0, 1, 2, 0, 2, 3 };
+    constexpr std::array<int, TRI_VERTEX_COUNT * 2> QUAD_TRIANGLE_IDXS = { 0, 1, 2, 0, 2, 3 };
 
-    /** @brief 2D screen space primitive representing a line, triangle, or quad. */
-    struct Primitive2d
+    /** @brief 2D screen space shape representing a line, triangle, or quad. */
+    struct Shape2d
     {
         std::vector<Vertex2d> Vertices = {};
         int                   Depth    = 0;
         ScaleMode             ScaleMd  = ScaleMode::Fit;
         BlendMode             BlendMd  = BlendMode::Alpha;
 
-        /** @brief Constructs a 2D line primitive with a width of 1 retro pixel (320x240 resolution) using screen positions in percent.
+        /** @brief Constructs a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in percent.
          *
          * @param from Start position in screen percent.
          * @param to End position in screen percent.
          * @param colorFrom Start color.
          * @param colorTo End color.
          * @param depth Render priority.
-         * @return 2D line primitive.
+         * @return 2D line shape.
          */
-        static Primitive2d CreateLine(const Vector2& from, const Vector2& to,
-                                      const Color& colorFrom, const Color& colorTo,
-                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+        static Shape2d CreateLine(const Vector2& from, const Vector2& to,
+                                  const Color& colorFrom, const Color& colorTo,
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D line primitive with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
+        /** @brief Constructs a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
          *
          * @param from Start position in retro pixels (320x240 resolution).
          * @param to End position in retro pixels (320x240 resolution).
          * @param colorFrom Start color.
          * @param colorTo End color.
          * @param depth Render priority.
-         * @return 2D line primitive.
+         * @return 2D line shape.
          */
-        static Primitive2d CreateLine(const Vector2i& from, const Vector2i& to,
-                                      const Color& colorFrom, const Color& colorTo,
-                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+        static Shape2d CreateLine(const Vector2i& from, const Vector2i& to,
+                                  const Color& colorFrom, const Color& colorTo,
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D triangle primitive using screen positions in percent.
+        /** @brief Constructs a 2D triangle shape using screen positions in percent.
          *
          * @param vert0 First vertex position in screen percent.
          * @param vert1 Second vertex position in screen percent.
@@ -51,13 +51,13 @@ namespace Silent::Renderer
          * @param color1 Second vertex color.
          * @param color2 Third vertex color.
          * @param depth Render priority.
-         * @return 2D triangle primitive.
+         * @return 2D triangle shape.
          */
-        static Primitive2d CreateTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2,
-                                          const Color& color0, const Color& color1, const Color& color2,
-                                          int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+        static Shape2d CreateTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2,
+                                      const Color& color0, const Color& color1, const Color& color2,
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D triangle primitive using retro pixels.
+        /** @brief Constructs a 2D triangle shape using retro pixels.
          *
          * @param vert0 First vertex position in retro pixels (320x240 resolution).
          * @param vert1 Second vertex position in retro pixels (320x240 resolution).
@@ -66,13 +66,13 @@ namespace Silent::Renderer
          * @param color1 Second vertex color.
          * @param color2 Third vertex color.
          * @param depth Render priority.
-         * @return 2D triangle primitive.
+         * @return 2D triangle shape.
          */
-        static Primitive2d CreateTriangle(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2,
-                                          const Color& color0, const Color& color1, const Color& color2,
-                                          int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+        static Shape2d CreateTriangle(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2,
+                                      const Color& color0, const Color& color1, const Color& color2,
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D quad primitive.
+        /** @brief Constructs a 2D quad shape.
          *
          * @param vert0 First vertex position in screen percent.
          * @param vert1 Second vertex position in screen percent.
@@ -83,13 +83,13 @@ namespace Silent::Renderer
          * @param color2 Third vertex color.
          * @param color3 Fourth vertex color.
          * @param depth Render priority.
-         * @return 2D quad primitive.
+         * @return 2D quad shape.
          */
-        static Primitive2d CreateQuad(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Vector2& vert3,
-                                      const Color& color0, const Color& color1, const Color& color2, const Color& color3,
-                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+        static Shape2d CreateQuad(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Vector2& vert3,
+                                  const Color& color0, const Color& color1, const Color& color2, const Color& color3,
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D quad primitive using retro pixels.
+        /** @brief Constructs a 2D quad shape using retro pixels.
          *
          * @note Vertex order: top-left, bottom-left, top-right, bottom-right.
          *
@@ -102,10 +102,10 @@ namespace Silent::Renderer
          * @param color2 Third vertex color.
          * @param color3 Fourth vertex color.
          * @param depth Render priority.
-         * @return 2D quad primitive.
+         * @return 2D quad shape.
          */
-        static Primitive2d CreateQuad(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2, const Vector2i& vert3,
-                                      const Color& color0, const Color& color1, const Color& color2, const Color& color3,
-                                      int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+        static Shape2d CreateQuad(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2, const Vector2i& vert3,
+                                  const Color& color0, const Color& color1, const Color& color2, const Color& color3,
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
     };
 }

@@ -9,7 +9,7 @@ namespace Silent::Renderer
     /** @brief Pipeline configuration data. */
     struct PipelineConfig
     {
-        RenderStage Stage = RenderStage::Primitive2d;
+        RenderStage Stage = RenderStage::Triangle2d;
 
         std::string VertexShaderName             = {};
         int         VertShaderSamplerCount       = 0;

@@ -66,7 +66,7 @@ namespace Silent::Renderer
         std::swap(_doubleBuffer.Render, _doubleBuffer.Active);
 
         _doubleBuffer.Active.DrawCallCount = 0;
-        _doubleBuffer.Active.Primitives2d.clear();
+        _doubleBuffer.Active.Shapes2d.clear();
         _doubleBuffer.Active.Primitives3d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
         _doubleBuffer.Active.DebugPrimitives3d.clear();
@@ -78,15 +78,15 @@ namespace Silent::Renderer
         _isResized = true;
     }
 
-    bool RendererBase::Submit2dPrimitive(const Primitive2d& prim)
+    bool RendererBase::Submit2dPrimitive(const Shape2d& prim)
     {
-        if (_doubleBuffer.Active.Primitives2d.size() >= PRIMITIVE_2D_COUNT_MAX)
+        if (_doubleBuffer.Active.Shapes2d.size() >= PRIMITIVE_2D_COUNT_MAX)
         {
             Debug::Log("Attampted to add 2D primitive to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
-        _doubleBuffer.Active.Primitives2d.push_back(prim);
+        _doubleBuffer.Active.Shapes2d.push_back(prim);
         return true;
     }
 
@@ -152,8 +152,8 @@ namespace Silent::Renderer
             return;
         }
 
-        auto line = Primitive2d::CreateLine(from, to, color, color, 0, scaleMode, BlendMode::Add);
-        _doubleBuffer.Active.DebugPrimitives2d.push_back(line);
+        auto line = Shape2d::CreateLine(from, to, color, color, 0, scaleMode, BlendMode::Add);
+        _doubleBuffer.Active.DebugShapes2d.push_back(line);
     }
 
     void RendererBase::SubmitDebugLine(const Vector3& from, const Vector3& to, const Color& color, Debug::Page page)
@@ -174,8 +174,8 @@ namespace Silent::Renderer
             return;
         }
 
-        auto tri = Primitive2d::CreateTriangle(vert0, vert1, vert2, color, color, color, 0, scaleMode, BlendMode::Add);
-        _doubleBuffer.Active.DebugPrimitives2d.push_back(tri);
+        auto tri = Shape2d::CreateTriangle(vert0, vert1, vert2, color, color, color, 0, scaleMode, BlendMode::Add);
+        _doubleBuffer.Active.DebugShapes2d.push_back(tri);
     }
 
     void RendererBase::SubmitDebugTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, Debug::Page page)
@@ -191,7 +191,7 @@ namespace Silent::Renderer
 
     void RendererBase::InitializeDoubleBuffer()
     {
-        _doubleBuffer.Active.Primitives2d.reserve(PRIMITIVE_2D_COUNT_MAX);
+        _doubleBuffer.Active.Shapes2d.reserve(PRIMITIVE_2D_COUNT_MAX);
         _doubleBuffer.Active.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
 
         _doubleBuffer.Render = _doubleBuffer.Active; 

@@ -15,7 +15,7 @@ namespace Silent::Renderer
     struct GpuBuffers
     {
         Buffer<Vertex2dBuffer>       Primitives2d = {};
-        VertexBuffer<Vertex2dBuffer> Sprites2d    = {};
+        VertexBuffer<Vertex2dBuffer> Triangles2d    = {};
     };
 
     /** SDL_gpu renderer backend. */
