@@ -175,6 +175,25 @@ namespace Silent::Utils
         }
     }
 
+    ParallelLock::ParallelLock(std::mutex& mutex)
+    {
+        const auto& options = g_App.GetOptions();
+
+        _mutex = options->EnableParallelism ? &mutex : nullptr;
+        if (_mutex != nullptr)
+        {
+            _mutex->lock();
+        }
+    }
+
+    ParallelLock::~ParallelLock()
+    {
+        if (_mutex != nullptr)
+        {
+            _mutex->unlock();
+        }
+    }
+
     int GetCoreCount()
     {
         return std::max<int>(std::thread::hardware_concurrency(), 1);

@@ -147,6 +147,8 @@ namespace Silent::Renderer
     {
         // Frame setup.
         SortRenderBufferData();
+    
+        _drawBatches.Triangles2d.clear(); // @todo Manage this properly.
 
         // Acquire command buffer.
         _commandBuffer = SDL_AcquireGPUCommandBuffer(_device);
@@ -251,13 +253,19 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::Draw2dScene()
     {
+        auto& executor = g_App.GetExecutor();
+
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
         // @todo Move to separate method? `bufferVerts` needed for now.
         auto bufferVerts = std::vector<Vertex2dBuffer>{};
-        Copy2dPrimitives(*copyPass, bufferVerts);
-        Copy2dSprites(*copyPass);
+        auto copyTasks = ParallelTasks
+        {
+            TASK(Copy2dPrimitives(*copyPass, bufferVerts)),
+            TASK(Copy2dSprites(*copyPass))
+        };
+        executor.AddTasks(copyTasks).wait();
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -417,7 +425,12 @@ namespace Silent::Renderer
         }
 
         // Update GPU buffer.
-        _gpuBuffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
+        // @lock Restrict GPU access.
+        {
+            auto lock = ParallelLock(_gpuMutex);
+
+            _gpuBuffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
+        }
     }
 
     void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass)
@@ -454,30 +467,33 @@ namespace Silent::Renderer
             bufferVerts.push_back(Vertex2dBuffer{ pos0, uv0, sprite.Col });
             bufferVerts.push_back(Vertex2dBuffer{ pos1, uv1, sprite.Col });
             bufferVerts.push_back(Vertex2dBuffer{ pos2, uv2, sprite.Col });
-            bufferVerts.push_back(Vertex2dBuffer{ pos0, uv0, sprite.Col });
-            bufferVerts.push_back(Vertex2dBuffer{ pos2, uv2, sprite.Col });
             bufferVerts.push_back(Vertex2dBuffer{ pos3, uv3, sprite.Col });
 
             // Add indices.
-            bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 0);
-            bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 1);
-            bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 2);
-            bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 3);
-            bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 4);
-            bufferIdxs.push_back((i * (TRI_IDX_COUNT * 2)) + 5);
+            bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 0);
+            bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 1);
+            bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 2);
+            bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 0);
+            bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 2);
+            bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 3);
 
             // @todo Batching. For now, collect each as its own batch of 2 triangles.
             _drawBatches.Triangles2d.push_back(DrawBatch
             {
                 .TextureName  = sprite.TextureName,
                 .BlendMd      = sprite.BlendMd,
-                .BufferStride = TRI_IDX_COUNT * 2,
-                .BufferOffset = i * (TRI_VERTEX_COUNT * 2)
+                .BufferStride = QUAD_IDX_COUNT,
+                .BufferOffset = i * QUAD_VERTEX_COUNT
             });
         }
 
         // Update GPU buffer.
-        _gpuBuffers.Triangles2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.Triangles2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        // @lock Restrict GPU access.
+        {
+            auto lock = ParallelLock(_gpuMutex);
+    
+            _gpuBuffers.Triangles2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+            _gpuBuffers.Triangles2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        }
     }
 }

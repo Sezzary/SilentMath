@@ -98,6 +98,31 @@ namespace Silent::Utils
         void HandleTask(const ParallelTask& task, std::atomic<int>& counter, std::promise<void>& promise);
     };
 
+    /** @brief Parallel mutex lock. */
+    class ParallelLock
+    {
+    private:
+        // =======
+        // Fields
+        // =======
+
+        std::mutex* _mutex = nullptr;
+
+    public:
+        // =============
+        // Constructors
+        // =============
+
+        /** @brief Constructs a `ParallelLock` and locks a mutex if parallelism is enabled.
+         *
+         * @param mutex Mutex to lock.
+         */
+        ParallelLock(std::mutex& mutex);
+
+        /** @brief Gracefully destroys the `ParallelLock`. */
+        ~ParallelLock();
+    };
+
     /** @brief Gets the number of CPU cores on the system.
      *
      * @return CPU core count.
