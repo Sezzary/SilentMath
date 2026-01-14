@@ -198,24 +198,23 @@ namespace Silent::Renderer
         _doubleBuffer.Render = _doubleBuffer.Active; 
     }
 
-    void RendererBase::PrepareRenderBufferData()
+    void RendererBase::SortRenderBufferData()
     {
         auto& executor = g_App.GetExecutor();
 
         auto sortTasks = ParallelTasks
         {
-            // @todo Is sorting like this on the CPU necessary?
+            // Sort 2D shapes.
             [&]()
             {
-                // Sort 2D shapes by depth.
                 Sort(_doubleBuffer.Render.Shapes2d, [](const Shape2d& shape0, const Shape2d& shape1)
                 {
                     return shape0.Depth > shape1.Depth;
                 });
             },
+            // Sort 2D sprites.
             [&]()
             {
-                // Sort 2D sprites by depth.
                 // @todo Sort based on other heuristics too. Use sort keys for speed?
                 Sort(_doubleBuffer.Render.Sprites2d, [](const Sprite2d& sprite0, const Sprite2d& sprite1)
                 {

@@ -103,9 +103,7 @@ namespace Silent::Renderer
          * and uploads it to the GPU.
          *
          * @param copyPass Copy pass.
-         * @param bufferVerts Output GPU buffer vertices.
-         * @param bufferIdxs Output GPU buffer indices.
          */
-        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts, std::vector<uint16>& bufferIdxs);
+        void Copy2dSprites(SDL_GPUCopyPass& copyPass);
     };
 }

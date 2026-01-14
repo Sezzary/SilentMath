@@ -146,7 +146,7 @@ namespace Silent::Renderer
     void SdlGpuRenderer::Update()
     {
         // Frame setup.
-        PrepareRenderBufferData();
+        SortRenderBufferData();
 
         // Acquire command buffer.
         _commandBuffer = SDL_AcquireGPUCommandBuffer(_device);
@@ -254,15 +254,10 @@ namespace Silent::Renderer
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        // @todo Should all be done in a separate method, but 2D primitives vertex count needs access later.
-        //////
+        // @todo Move to separate method? `bufferVerts` needed for now.
         auto bufferVerts = std::vector<Vertex2dBuffer>{};
         Copy2dPrimitives(*copyPass, bufferVerts);
-
-        auto spriteBufferVerts = std::vector<Vertex2dBuffer>{};
-        auto spriteBufferIdxs  = std::vector<uint16>{};
-        Copy2dSprites(*copyPass, spriteBufferVerts, spriteBufferIdxs);
-        //////
+        Copy2dSprites(*copyPass);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -425,9 +420,12 @@ namespace Silent::Renderer
         _gpuBuffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
     }
 
-    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts, std::vector<uint16>& bufferIdxs)
+    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass)
     {
         // Create GPU buffer data.
+        auto bufferVerts = std::vector<Vertex2dBuffer>{};
+        auto bufferIdxs  = std::vector<uint16>{};
+
         bufferVerts.reserve((_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT);
         bufferIdxs.reserve((_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_IDX_COUNT);
 
