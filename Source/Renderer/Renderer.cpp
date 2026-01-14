@@ -8,7 +8,6 @@
 #include "Renderer/Common/Objects/Primitive3d.h"
 #include "Renderer/Common/Objects/Scene/Glyph.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
-#include "Renderer/Common/Objects/Scene/Text.h"
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
@@ -70,7 +69,6 @@ namespace Silent::Renderer
         _doubleBuffer.Active.Primitives2d.clear();
         _doubleBuffer.Active.Primitives3d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
-        _doubleBuffer.Active.Glyphs.clear();
         _doubleBuffer.Active.DebugPrimitives3d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
     }
@@ -127,13 +125,6 @@ namespace Silent::Renderer
         };
         _doubleBuffer.Active.Sprites2d.push_back(sprite);
         return true;
-    }
-
-    void RendererBase::SubmitDebugText(const std::string& msg, const Vector2& pos, const Color& color, TextAlignMode alignMode)
-    {
-        // @todo Max?
-
-        // @todo
     }
 
     void RendererBase::SubmitDebugGui(std::function<void()> drawFunc)

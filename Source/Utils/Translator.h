@@ -36,13 +36,6 @@ namespace Silent::Utils
         // Getters
         // ========
 
-        /** @brief Gets the translated text for the active locale using a given translation key.
-         *
-         * @param translationKey Translation key.
-         * @return Translated text.
-         */
-        std::string GetTranslation(const std::string& translationKey) const;
-
         /** @brief Gets the name of the active locale.
          *
          * @return Active locale name.

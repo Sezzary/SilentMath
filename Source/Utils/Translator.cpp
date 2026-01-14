@@ -28,16 +28,6 @@ namespace Silent::Utils
         LoadActiveLocale(_localeNames.front());
     }
 
-    std::string TranslationManager::GetTranslation(const std::string& translationKey) const
-    {
-        if (_activeLocale.empty())
-        {
-            return translationKey;
-        }
-
-        return _activeLocale.value(translationKey, translationKey);
-    }
-
     const std::string& TranslationManager::GetActiveLocaleName() const
     {
         return _activeLocaleName;
@@ -94,7 +84,12 @@ namespace Silent::Utils
 
     std::string TranslationManager::operator()(const std::string& translationKey) const
     {
-        return GetTranslation(translationKey);
+        if (_activeLocale.empty())
+        {
+            return translationKey;
+        }
+
+        return _activeLocale.value(translationKey, translationKey);
     }
 
     void TranslationManager::LoadActiveLocale(const std::string& localeName)

@@ -286,9 +286,10 @@ namespace Silent::Renderer
             for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
             {
                 auto& sprite = _doubleBuffer.Render.Sprites2d[i];
+                auto& tex    = GetTextures()[sprite.TextureName];
 
                 _pipelines.Bind(renderPass, RenderStage::Primitive2d, sprite.BlendMd);
-                GetTextures().Get(sprite.TextureName).Bind(renderPass, GetActiveSampler());
+                tex.Bind(renderPass, GetActiveSampler());
                 SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_INDEX_COUNT, 1, 0, i * QUAD_VERTEX_COUNT, 0);
             }
         }

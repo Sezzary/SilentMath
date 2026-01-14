@@ -79,18 +79,6 @@ namespace Silent::Renderer
          */
         SdlGpuTextureManager(SDL_GPUDevice& device);
 
-        // ========
-        // Getters
-        // ========
-
-        /** @brief Gets a cached texture.
-         *
-         * @param name Texture name.
-         * @return Cached texture.
-         * @throws `std::runtime_error`if the texture isn't cached.
-         */
-        SdlGpuTexture& Get(const std::string& name);
-
         // ==========
         // Utilities
         // ==========
@@ -110,5 +98,7 @@ namespace Silent::Renderer
          * @param assetIdx TIM asset name.
          */
         void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
+
+        SdlGpuTexture& operator[](const std::string& name);
     };
 }

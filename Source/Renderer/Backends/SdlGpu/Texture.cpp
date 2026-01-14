@@ -115,17 +115,6 @@ namespace Silent::Renderer
         _device = &device;
     }
 
-    SdlGpuTexture& SdlGpuTextureManager::Get(const std::string& name)
-    {
-        auto* tex = Find(_textures, name);
-        if (tex == nullptr)
-        {
-            throw std::runtime_error(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name));
-        }
-
-        return *(SdlGpuTexture*)tex->get();
-    }
-
     void SdlGpuTextureManager::Load(SDL_GPUCopyPass& copyPass, const std::span<byte>& pixels, const Vector2i res, const std::string& name)
     {
         _textures[name] = std::make_unique<SdlGpuTexture>(*_device, copyPass, pixels, res, name);
@@ -151,5 +140,16 @@ namespace Silent::Renderer
         // Initialize TIM image texture.
         auto data = asset->GetData<TimAsset>();
         Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
+    }
+
+    SdlGpuTexture& SdlGpuTextureManager::operator[](const std::string& name)
+    {
+        auto* tex = Find(_textures, name);
+        if (tex == nullptr)
+        {
+            throw std::runtime_error(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name));
+        }
+
+        return *(SdlGpuTexture*)tex->get();
     }
 }
