@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Buffer/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
@@ -8,17 +9,13 @@
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
 #include "Renderer/Renderer.h"
 
-// @todo Temp. placement.
-#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferColorVertex2d.h"
-#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferTexVertex2d.h"
-
 namespace Silent::Renderer
 {
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        Buffer<BufferColorVertex2d>     Primitives2d = {};
-        VertexBuffer<BufferTexVertex2d> Sprites2d    = {};
+        Buffer<Vertex2dBuffer>       Primitives2d = {};
+        VertexBuffer<Vertex2dBuffer> Sprites2d    = {};
     };
 
     /** SDL_gpu renderer backend. */
@@ -84,7 +81,7 @@ namespace Silent::Renderer
          * @param copyPass Copy pass.
          * @param bufferVerts Output GPU buffer vertices.
          */
-        void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferColorVertex2d>& bufferVerts);
+        void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts);
 
         /** @brief Converts render buffer data for 2D sprites to the corresponding GPU buffer data
          * and uploads it to the GPU.
@@ -93,6 +90,6 @@ namespace Silent::Renderer
          * @param bufferVerts Output GPU buffer vertices.
          * @param bufferIdxs Output GPU buffer indices.
          */
-        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs);
+        void Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts, std::vector<uint16>& bufferIdxs);
     };
 }

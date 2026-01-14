@@ -2,8 +2,8 @@
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 
 #include "Application.h"
-#include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Buffer/VertexBuffer.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Layouts/Primitive2dUniform.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Texture.h"
@@ -20,12 +20,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    struct TestUniform
-    {
-        bool IsFastAlpha = false;
-    };
-
-    static auto UniformBuffer = TestUniform{};
+    static auto UniformBuffer = Primitive2dUniform{};
 
     void SdlGpuRenderer::Initialize(SDL_Window& window)
     {
@@ -261,10 +256,10 @@ namespace Silent::Renderer
 
         // @todo Should all be done in a separate method, but 2D primitives vertex count needs access later.
         //////
-        auto bufferVerts = std::vector<BufferColorVertex2d>{};
+        auto bufferVerts = std::vector<Vertex2dBuffer>{};
         Copy2dPrimitives(*copyPass, bufferVerts);
 
-        auto spriteBufferVerts = std::vector<BufferTexVertex2d>{};
+        auto spriteBufferVerts = std::vector<Vertex2dBuffer>{};
         auto spriteBufferIdxs  = std::vector<uint16>{};
         Copy2dSprites(*copyPass, spriteBufferVerts, spriteBufferIdxs);
         //////
@@ -284,12 +279,15 @@ namespace Silent::Renderer
         if (!_doubleBuffer.Render.Sprites2d.empty())
         {
             _gpuBuffers.Sprites2d.Bind(renderPass, 0, 0);
+            UniformBuffer.UseTexture  = true;
+            UniformBuffer.IsFastAlpha = false;
+            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
 
             for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
             {
                 auto& sprite = _doubleBuffer.Render.Sprites2d[i];
 
-                _pipelines.Bind(renderPass, RenderStage::Primitive2dTextured, sprite.BlendMd);
+                _pipelines.Bind(renderPass, RenderStage::Primitive2d, sprite.BlendMd);
                 GetTextures().Get(sprite.TextureName).Bind(renderPass, GetActiveSampler());
                 SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_INDEX_COUNT, 1, 0, i * QUAD_VERTEX_COUNT, 0);
             }
@@ -298,6 +296,7 @@ namespace Silent::Renderer
         // 2D primitives.
         _pipelines.Bind(renderPass, RenderStage::Primitive2d, BlendMode::Alpha);
         _gpuBuffers.Primitives2d.Bind(renderPass, 0);
+        UniformBuffer.UseTexture  = false;
         UniformBuffer.IsFastAlpha = false;
         SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
         SDL_DrawGPUPrimitives(&renderPass, bufferVerts.size(), 1, 0, 0);
@@ -381,7 +380,7 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(renderPass);
     }
 
-    void SdlGpuRenderer::Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<BufferColorVertex2d>& bufferVerts)
+    void SdlGpuRenderer::Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts)
     {
         // Create GPU buffer data.
         bufferVerts.reserve((_doubleBuffer.Render.Primitives2d.size() * 2) * TRIANGLE_VERTEX_COUNT);
@@ -396,9 +395,10 @@ namespace Silent::Renderer
                 {
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
-                    bufferVerts.push_back(BufferColorVertex2d
+                    bufferVerts.push_back(Vertex2dBuffer
                     {
                         .Position = Vector3(ndc.x, ndc.y, std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
+                        .Uv       = Vector2::Zero,
                         .Col      = vert.Col
                     });
                 }
@@ -412,9 +412,10 @@ namespace Silent::Renderer
 
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
-                    bufferVerts.push_back(BufferColorVertex2d
+                    bufferVerts.push_back(Vertex2dBuffer
                     {
                         .Position = Vector3(ndc.x, ndc.y, std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
+                        .Uv       = Vector2::Zero,
                         .Col      = vert.Col
                     });
                 }
@@ -425,7 +426,7 @@ namespace Silent::Renderer
         _gpuBuffers.Primitives2d.Update(copyPass, ToSpan(bufferVerts), 0);
     }
 
-    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<BufferTexVertex2d>& bufferVerts, std::vector<uint16>& bufferIdxs)
+    void SdlGpuRenderer::Copy2dSprites(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts, std::vector<uint16>& bufferIdxs)
     {
         // Create GPU buffer data.
         bufferVerts.reserve(_doubleBuffer.Render.Sprites2d.size() * QUAD_VERTEX_COUNT);
@@ -453,10 +454,10 @@ namespace Silent::Renderer
             auto uv3 = Vector2(sprite.UvMin.x, sprite.UvMax.y);
 
             // Add vertices.
-            bufferVerts.push_back(BufferTexVertex2d{ pos0, uv0 });
-            bufferVerts.push_back(BufferTexVertex2d{ pos1, uv1 });
-            bufferVerts.push_back(BufferTexVertex2d{ pos2, uv2 });
-            bufferVerts.push_back(BufferTexVertex2d{ pos3, uv3 });
+            bufferVerts.push_back(Vertex2dBuffer{ pos0, uv0, Color::White });
+            bufferVerts.push_back(Vertex2dBuffer{ pos1, uv1, Color::White });
+            bufferVerts.push_back(Vertex2dBuffer{ pos2, uv2, Color::White });
+            bufferVerts.push_back(Vertex2dBuffer{ pos3, uv3, Color::White });
 
             // Add indices.
             bufferIdxs.push_back((QUAD_VERTEX_COUNT * i) + 0);

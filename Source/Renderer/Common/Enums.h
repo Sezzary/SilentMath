@@ -10,7 +10,6 @@ namespace Silent::Renderer
         // =========
 
         Primitive2d,
-        Primitive2dTextured,
         //GlyphGradient, // @todo
 
         // =============

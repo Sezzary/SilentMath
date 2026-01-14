@@ -27,8 +27,8 @@ namespace Silent::Utils
     /** @brief Gets the sign of a value.
      *
      * @tparam T Numeric type.
-     * @param val Value.
-     * @return `1` if the value is >=0, `-1` otherwise.
+     * @param val Value to check.
+     * @return `1` if the value is >= 0, `-1` otherwise.
      */
     template <typename T>
     requires std::is_arithmetic_v<T>

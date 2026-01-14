@@ -1,8 +1,7 @@
 #include "Framework.h"
 #include "Renderer/Backends/SdlGpu/PipelineConfig.h"
 
-#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferColorVertex2d.h"
-#include "Renderer/Backends/SdlGpu/Buffer/Data/BufferTexVertex2d.h"
+#include "Renderer/Backends/SdlGpu/Buffer/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 
 namespace Silent::Renderer
@@ -93,80 +92,46 @@ namespace Silent::Renderer
         // 2D primitive.
         PipelineConfig
         {
-            .Stage                    = RenderStage::Primitive2d,
-            .VertexShaderName         = "2dPrimitive.vert",
-            .FragmentShaderName       = "2dPrimitive.frag",
-            .FragShaderUniBufferCount = 1,
-            .VertBufferDescs          =
+            .Stage                        = RenderStage::Primitive2d,
+            .VertexShaderName             = "Primitive2d.vert",
+            .VertShaderSamplerCount       = 0,
+            .VertShaderUniBufferCount     = 0,
+            .VertShaderStorageBufferCount = 0,
+            .VertShaderStorageTexCount    = 0,
+            .FragmentShaderName           = "Primitive2d.frag",
+            .FragShaderSamplerCount       = 1,
+            .FragShaderUniBufferCount     = 1,
+            .FragShaderStorageBufferCount = 0,
+            .FragShaderStorageTexCount    = 0,
+            .VertBufferDescs              =
             {
-                SDL_GPUVertexBufferDescription
                 {
                     .slot               = 0,
-                    .pitch              = sizeof(BufferColorVertex2d),
+                    .pitch              = sizeof(Vertex2dBuffer),
                     .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     .instance_step_rate = 0
                 }
             },
             .VertBufferAttribs =
             {
-                SDL_GPUVertexAttribute
                 {
                     .location    = 0,
                     .buffer_slot = 0,
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
                     .offset      = 0
                 },
-                SDL_GPUVertexAttribute
-                {
-                    .location    = 1,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                    .offset      = sizeof(float) * 3
-                }
-            },
-            .BlendModes =
-            {
-                BlendMode::Opaque,
-                BlendMode::Alpha,
-                BlendMode::FastAlpha,
-                BlendMode::Multiply,
-                BlendMode::Add,
-                BlendMode::Subtract,
-                BlendMode::Wireframe
-            }
-        },
-        // 2D textured primitive.
-        PipelineConfig
-        {
-            .Stage                  = RenderStage::Primitive2dTextured,
-            .VertexShaderName       = "TexturedQuad.vert",
-            .FragmentShaderName     = "TexturedQuad.frag",
-            .FragShaderSamplerCount = 1,
-            .VertBufferDescs        =
-            {
-                SDL_GPUVertexBufferDescription
-                {
-                    .slot               = 0,
-                    .pitch              = sizeof(BufferTexVertex2d),
-                    .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
-                    .instance_step_rate = 0
-                }
-            },
-            .VertBufferAttribs =
-            {
-                SDL_GPUVertexAttribute
-                {
-                    .location    = 0,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-                    .offset      = 0
-                },
-                SDL_GPUVertexAttribute
                 {
                     .location    = 1,
                     .buffer_slot = 0,
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                    .offset      = sizeof(float) * 3
+                    .offset      = sizeof(float) * Vector3::AXIS_COUNT
+                },
+                {
+                    .location    = 2,
+                    .buffer_slot = 0,
+                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+                    .offset      = (sizeof(float) * Vector3::AXIS_COUNT) +
+                                   (sizeof(float) * Vector2::AXIS_COUNT)
                 }
             },
             .BlendModes =
