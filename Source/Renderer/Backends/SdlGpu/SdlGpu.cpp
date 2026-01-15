@@ -252,10 +252,10 @@ namespace Silent::Renderer
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        // @todo Move to separate method?
+        // Copy prepared GPU data.
         auto copyTasks = ParallelTasks
         {
-            TASK(PrepareTriangles2d(*copyPass))
+            TASK(CopyGpuTriangles2d(*copyPass))
         };
         executor.AddTasks(copyTasks).wait();
 
@@ -271,7 +271,7 @@ namespace Silent::Renderer
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // 2D triangles.
-        _gpuBuffers.Triangles2d.Bind(renderPass, 0, 0);
+        _gpuBuffers.Triangle2dVertices.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Triangles2d)
         {
             if (!batch.TextureName.empty())
@@ -294,15 +294,6 @@ namespace Silent::Renderer
 
             _doubleBuffer.Active.DrawCallCount++;
         }
-
-        // 2D primitives. @todo Combine into triangles above.
-        /*_pipelines.Bind(renderPass, RenderStage::Triangle2d, BlendMode::Alpha);
-        _gpuBuffers.Shapes2d.Bind(renderPass, 0);
-        _gpuBuffers.Triangle2dUni.UseTexture  = false;
-        _gpuBuffers.Triangle2dUni.IsFastAlpha = false;
-        SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.Triangle2dUni, sizeof(_gpuBuffers.Triangle2dUni));
-        SDL_DrawGPUPrimitives(&renderPass, bufferVerts.size(), 1, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;*/
 
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
@@ -399,7 +390,7 @@ namespace Silent::Renderer
         _drawBatches.Triangles2d.reserve(TRI_BATCH_COUNT_MAX);
 
         // Initialize GPU buffers.
-        _gpuBuffers.Triangles2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
+        _gpuBuffers.Triangle2dVertices.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
     }
 
     void SdlGpuRenderer::ClearDrawBatches()
@@ -407,7 +398,7 @@ namespace Silent::Renderer
         _drawBatches.Triangles2d.clear();
     }
 
-    void SdlGpuRenderer::PrepareTriangles2d(SDL_GPUCopyPass& copyPass)
+    void SdlGpuRenderer::CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass)
     {
         // Compute sizes.
         int sprite2dVertCount = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT;
@@ -432,10 +423,11 @@ namespace Silent::Renderer
             auto ndc = ConvertScreenPercentToNdc(sprite.Position);
 
             // Compute vertex positions.
-            auto pos0 = Vector3(ndc.x - sprite.Scale.x, ndc.y + sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
-            auto pos1 = Vector3(ndc.x + sprite.Scale.x, ndc.y + sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
-            auto pos2 = Vector3(ndc.x + sprite.Scale.x, ndc.y - sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
-            auto pos3 = Vector3(ndc.x - sprite.Scale.x, ndc.y - sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
+            float depthZ = std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
+            auto  pos0   = Vector3(ndc.x - sprite.Scale.x, ndc.y + sprite.Scale.y, depthZ);
+            auto  pos1   = Vector3(ndc.x + sprite.Scale.x, ndc.y + sprite.Scale.y, depthZ);
+            auto  pos2   = Vector3(ndc.x + sprite.Scale.x, ndc.y - sprite.Scale.y, depthZ);
+            auto  pos3   = Vector3(ndc.x - sprite.Scale.x, ndc.y - sprite.Scale.y, depthZ);
 
             // Compute vertex UVs.
             auto uv0 = sprite.UvMin;
@@ -468,11 +460,12 @@ namespace Silent::Renderer
         }
 
         // Process 2D shapes.
-        int vertOffset = bufferVerts.size();
+        int shape2dVertOffset = bufferVerts.size();
         for (const auto& shape : _doubleBuffer.Render.Shapes2d)
         {
-            int curVertCount = 0;
-            int curIdxCount  = 0;
+            float depthZ       = std::clamp((float)shape.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
+            int   curVertCount = 0;
+            int   curIdxCount  = 0;
 
             // Triangle.
             if (shape.Vertices.size() == TRI_VERTEX_COUNT)
@@ -482,21 +475,16 @@ namespace Silent::Renderer
                 {
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
-                    bufferVerts.push_back(Vertex2dBuffer
-                    {
-                        .Position = Vector3(ndc.x, ndc.y, std::clamp((float)shape.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
-                        .Uv       = Vector2::Zero,
-                        .Col      = vert.Col
-                    });
+                    bufferVerts.push_back(Vertex2dBuffer{ Vector3(ndc.x, ndc.y, depthZ), Vector2::Zero, vert.Col });
                 }
 
                 // Add indices.
-                bufferIdxs.push_back(vertOffset + 0);
-                bufferIdxs.push_back(vertOffset + 1);
-                bufferIdxs.push_back(vertOffset + 2);
+                bufferIdxs.push_back(shape2dVertOffset + 0);
+                bufferIdxs.push_back(shape2dVertOffset + 1);
+                bufferIdxs.push_back(shape2dVertOffset + 2);
 
                 curVertCount = TRI_VERTEX_COUNT;
-                curIdxCount  = TRI_VERTEX_COUNT;
+                curIdxCount  = TRI_IDX_COUNT;
             }
             // Line or quad.
             else if (shape.Vertices.size() == QUAD_VERTEX_COUNT)
@@ -506,36 +494,31 @@ namespace Silent::Renderer
                 {
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
-                    bufferVerts.push_back(Vertex2dBuffer
-                    {
-                        .Position = Vector3(ndc.x, ndc.y, std::clamp((float)shape.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
-                        .Uv       = Vector2::Zero,
-                        .Col      = vert.Col
-                    });
+                    bufferVerts.push_back(Vertex2dBuffer{ Vector3(ndc.x, ndc.y, depthZ), Vector2::Zero, vert.Col });
                 }
 
                 // Add indices.
-                bufferIdxs.push_back(vertOffset + 0);
-                bufferIdxs.push_back(vertOffset + 1);
-                bufferIdxs.push_back(vertOffset + 2);
-                bufferIdxs.push_back(vertOffset + 0);
-                bufferIdxs.push_back(vertOffset + 2);
-                bufferIdxs.push_back(vertOffset + 3);
+                bufferIdxs.push_back(shape2dVertOffset + 0);
+                bufferIdxs.push_back(shape2dVertOffset + 1);
+                bufferIdxs.push_back(shape2dVertOffset + 2);
+                bufferIdxs.push_back(shape2dVertOffset + 0);
+                bufferIdxs.push_back(shape2dVertOffset + 2);
+                bufferIdxs.push_back(shape2dVertOffset + 3);
 
                 curVertCount = QUAD_VERTEX_COUNT;
                 curIdxCount  = QUAD_IDX_COUNT;
             }
 
-            // @todo Batching. For now, collect each as its own batch of 2 triangles.
+            // @todo Batching. For now, collect each as its own batch.
             _drawBatches.Triangles2d.push_back(DrawBatch
             {
                 .TextureName  = {},
                 .BlendMd      = shape.BlendMd,
-                .BufferOffset = vertOffset,
+                .BufferOffset = shape2dVertOffset,
                 .BufferStride = curIdxCount
             });
 
-            vertOffset += curVertCount;
+            shape2dVertOffset += curVertCount;
         }
 
         // Update GPU buffer.
@@ -543,8 +526,8 @@ namespace Silent::Renderer
         {
             auto lock = ParallelLock(_gpuMutex);
     
-            _gpuBuffers.Triangles2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-            _gpuBuffers.Triangles2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+            _gpuBuffers.Triangle2dVertices.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+            _gpuBuffers.Triangle2dVertices.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
         }
     }
 }

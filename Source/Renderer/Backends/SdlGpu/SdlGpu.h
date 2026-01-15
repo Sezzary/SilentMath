@@ -30,7 +30,7 @@ namespace Silent::Renderer
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        VertexBuffer<Vertex2dBuffer> Triangles2d = {};
+        VertexBuffer<Vertex2dBuffer> Triangle2dVertices = {};
 
         Triangle2dUni Triangle2dUni = {};
     };
@@ -101,6 +101,6 @@ namespace Silent::Renderer
          *
          * @param copyPass Copy pass.
          */
-        void PrepareTriangles2d(SDL_GPUCopyPass& copyPass);
+        void CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass);
     };
 }

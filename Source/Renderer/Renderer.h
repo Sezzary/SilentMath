@@ -211,7 +211,7 @@ namespace Silent::Renderer
         /** @brief Initializes the double buffer. */
         void InitializeDoubleBuffer();
 
-        /** @brief Sorts render data in the double buffer, preparing it for batching parsing to GPU buffer data.
+        /** @brief Sorts render data in the double buffer, preparing it for batching and parsing to GPU buffer data.
          * Called at the start of `Update`.
          */
         void SortRenderBufferData();
