@@ -43,16 +43,19 @@ namespace Silent::Debug
             // Sprite test.
 
             // Cursor.
-            renderer.SubmitScreenSprite("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
-                                        input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::Clear, 0,
-                                        AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
-            // Harry portrait.
-            renderer.SubmitScreenSprite("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
-                                        Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 1,
-                                        AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
-            renderer.SubmitScreenSprite("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
-                                        Vector2(50.0f, 50.0f), 0.0f, Vector2(0.5f, 1.0f), Color::Clear, 2,
-                                        AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+            auto cursorSprite = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
+                                                         input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::Clear, 0,
+                                                         AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+            renderer.SubmitSprite2d(cursorSprite);
+
+            auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
+                                                    Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 1,
+                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+            renderer.SubmitSprite2d(sprite0);
+            auto sprite1 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
+                                                    Vector2(50.0f, 50.0f), 0.0f, Vector2(0.5f, 1.0f), Color::Clear, 2,
+                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+            renderer.SubmitSprite2d(sprite1);
 
             // GUI button test.
             static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::Fit,
@@ -81,7 +84,7 @@ namespace Silent::Debug
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             0, ScaleMode::Fit, BlendMode::Alpha);
-                                        renderer.Submit2dPrimitive(quad);
+                                        renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Leaving!"); },
                                      [&]()
@@ -108,7 +111,7 @@ namespace Silent::Debug
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             0, ScaleMode::Fit, BlendMode::Alpha);
-                                        renderer.Submit2dPrimitive(quad);
+                                        renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Clicking!"); },
                                      []() { Debug::Log("Holding!"); },
@@ -164,13 +167,13 @@ namespace Silent::Debug
                                                  Color(1.0f, 1.0f, 0.0f, 1.0f),
                                                  Color(1.0f, 1.0f, 0.0f, 1.0f),
                                                  0);
-            //renderer.Submit2dPrimitive(tri0);
-            //renderer.Submit2dPrimitive(tri1);
-            renderer.Submit2dPrimitive(quad);
-            renderer.Submit2dPrimitive(line0);
-            renderer.Submit2dPrimitive(line1);
-            //renderer.Submit2dPrimitive(line2);
-            renderer.Submit2dPrimitive(line3);
+            //renderer.SubmitShape2d(tri0);
+            //renderer.SubmitShape2d(tri1);
+            renderer.SubmitShape2d(quad);
+            renderer.SubmitShape2d(line0);
+            renderer.SubmitShape2d(line1);
+            //renderer.SubmitShape2d(line2);
+            renderer.SubmitShape2d(line3);
 
             for (int i = 0; i < 11; i++)
             {
@@ -199,9 +202,9 @@ namespace Silent::Debug
                                                     Color::From8Bit(160, 128, 64),
                                                     Color::From8Bit(64,  64,  64),
                                                     1);
-                renderer.Submit2dPrimitive(line3);
-                renderer.Submit2dPrimitive(quadB1);
-                renderer.Submit2dPrimitive(quadB0);
+                renderer.SubmitShape2d(line3);
+                renderer.SubmitShape2d(quadB1);
+                renderer.SubmitShape2d(quadB0);
             }
 
             auto tri = Shape2d::CreateTriangle(
@@ -212,7 +215,7 @@ namespace Silent::Debug
                                                    Color::From8Bit(48, 255, 128),
                                                    Color::From8Bit(48, 255, 128),
                                                    0);
-            renderer.Submit2dPrimitive(tri);
+            renderer.SubmitShape2d(tri);
         }
     }
 }

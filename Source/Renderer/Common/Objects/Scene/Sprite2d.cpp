@@ -5,14 +5,13 @@
 #include "Assets/Assets.h"
 #include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Primitive2d.h"
+#include "Renderer/Common/Objects/Scene/Shape2d.h"
 #include "Renderer/Common/Utils.h"
 
 using namespace Silent::Assets;
 
 namespace Silent::Renderer
 {
-    
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                       const Vector2& pos, float rot, const Vector2& scale, const Color& color,
                                       int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
@@ -31,11 +30,5 @@ namespace Silent::Renderer
             .ScaleMd     = scaleMode,
             .BlendMd     = blendMode
         };
-    }
-
-    Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2i& uvMin, const Vector2i& uvMax,
-                                      int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
-    {
-        return {}; // @todo
     }
 }

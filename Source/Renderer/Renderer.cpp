@@ -4,9 +4,9 @@
 #include "Application.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
-#include "Renderer/Common/Objects/Primitive2d.h"
 #include "Renderer/Common/Objects/Primitive3d.h"
 #include "Renderer/Common/Objects/Scene/Glyph.h"
+#include "Renderer/Common/Objects/Scene/Shape2d.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 #include "Utils/Parallel.h"
@@ -79,21 +79,19 @@ namespace Silent::Renderer
         _isResized = true;
     }
 
-    bool RendererBase::Submit2dPrimitive(const Shape2d& prim)
+    bool RendererBase::SubmitShape2d(const Shape2d& shape)
     {
-        if (_doubleBuffer.Active.Shapes2d.size() >= PRIMITIVE_2D_COUNT_MAX)
+        if (_doubleBuffer.Active.Shapes2d.size() >= SHAPE_2D_COUNT_MAX)
         {
-            Debug::Log("Attampted to add 2D primitive to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log("Attampted to add 2D shape to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
-        _doubleBuffer.Active.Shapes2d.push_back(prim);
+        _doubleBuffer.Active.Shapes2d.push_back(shape);
         return true;
     }
 
-    bool RendererBase::SubmitScreenSprite(const std::string& assetName, const Vector2& uvMin, const Vector2& uvMax,
-                                          const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                          int depth, AlignMode alignMode, ScaleMode scaleMode, BlendMode blendMode)
+    bool RendererBase::SubmitSprite2d(const Sprite2d& sprite)
     {
         auto& assets = g_App.GetAssets();
 
@@ -103,34 +101,20 @@ namespace Silent::Renderer
             return false;
         }
 
-        const auto asset = assets.GetAsset(assetName);
+        const auto asset = assets.GetAsset(sprite.TextureName);
         if (asset->Type != AssetType::Tim)
         {
             Debug::Log("Attempted to submit non-image asset as screen sprite.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
-        auto sprite = Sprite2d
-        {
-            .TextureName = assetName,
-            .UvMin       = uvMin,
-            .UvMax       = uvMax,
-            .Position    = pos,
-            .Rotation    = rot,
-            .Scale       = scale,
-            .Col         = color,
-            .Depth       = depth,
-            .AlignMd     = alignMode,
-            .ScaleMd     = scaleMode,
-            .BlendMd     = blendMode
-        };
         _doubleBuffer.Active.Sprites2d.push_back(sprite);
         return true;
     }
 
     void RendererBase::SubmitDebugGui(std::function<void()> drawFunc)
     {
-        if (_doubleBuffer.Active.DebugGuiDrawCalls.size() >= DEBUG_GUI_DRAW_CALL_COUNT_MAX)
+        if (_doubleBuffer.Active.DebugGuiDrawCalls.size() >= DEBUG_GUI_COUNT_MAX)
         {
             Debug::Log("Attampted to add debug GUI draw call to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return;
@@ -192,7 +176,7 @@ namespace Silent::Renderer
 
     void RendererBase::InitializeDoubleBuffer()
     {
-        _doubleBuffer.Active.Shapes2d.reserve(PRIMITIVE_2D_COUNT_MAX);
+        _doubleBuffer.Active.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
         _doubleBuffer.Active.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
 
         _doubleBuffer.Render = _doubleBuffer.Active; 

@@ -5,10 +5,10 @@
 
 namespace Silent::Renderer
 {
-    constexpr int                                        DEPTH_MAX          = 1024;
+    constexpr int                                   DEPTH_MAX          = 1024;
     constexpr std::array<int, TRI_VERTEX_COUNT * 2> QUAD_TRIANGLE_IDXS = { 0, 1, 2, 0, 2, 3 };
 
-    /** @brief 2D screen space shape representing a line, triangle, or quad. */
+    /** @brief 2D screen shape representing a line, triangle, or quad. */
     struct Shape2d
     {
         std::vector<Vertex2d> Vertices = {};

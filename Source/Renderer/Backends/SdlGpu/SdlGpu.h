@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Buffer/Layouts/Vertex2dBuffer.h"
-#include "Renderer/Backends/SdlGpu/Buffer/VertexBuffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
@@ -29,8 +29,8 @@ namespace Silent::Renderer
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        Buffer<Vertex2dBuffer>       Primitives2d = {};
-        VertexBuffer<Vertex2dBuffer> Triangles2d    = {};
+        Buffer<Vertex2dBuffer>       Shapes2d    = {}; // @todo Combile with `Triangles2d`.
+        VertexBuffer<Vertex2dBuffer> Triangles2d = {};
     };
 
     /** SDL_gpu renderer backend. */
@@ -87,23 +87,21 @@ namespace Silent::Renderer
         void DrawPostProcess() override;
         void DrawDebugGui() override;
 
-        // -----------------------
-        // `SdlGpuBufferCopy.cpp`
-        // -----------------------
+        /** @brief Allocates pools for for draw batches and GPU buffers. */
+        void AllocateMemory();
 
-        /** @brief Converts render buffer data for 2D primitives to the corresponding GPU buffer data
-         * and uploads it to the GPU.
-         *
-         * @param copyPass Copy pass.
-         * @param bufferVerts Output GPU buffer vertices.
-         */
+        /** @brief Clears draw batches for reuse. */
+        void ClearDrawBatches();
+
+        // @todo Combine into `PrepareTriangles2d`.
         void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts);
 
-        /** @brief Converts render buffer data for 2D sprites to the corresponding GPU buffer data
-         * and uploads it to the GPU.
+        /** @brief Converts render buffer data to 2D triangle buffer data and uploads it to the GPU.
+         *
+         * Processes 2D sprites. @todo Also process 2D shapes.
          *
          * @param copyPass Copy pass.
          */
-        void Copy2dSprites(SDL_GPUCopyPass& copyPass);
+        void PrepareTriangles2d(SDL_GPUCopyPass& copyPass);
     };
 }

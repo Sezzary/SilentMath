@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Buffer/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
 
 namespace Silent::Renderer
 {

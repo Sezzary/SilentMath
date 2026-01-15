@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Renderer/Backends/SdlGpu/PipelineConfig.h"
 
-#include "Renderer/Backends/SdlGpu/Buffer/Layouts/Vertex2dBuffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 
 namespace Silent::Renderer

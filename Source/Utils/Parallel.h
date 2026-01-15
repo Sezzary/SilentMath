@@ -119,7 +119,7 @@ namespace Silent::Utils
          */
         ParallelLock(std::mutex& mutex);
 
-        /** @brief Gracefully destroys the `ParallelLock`. */
+        /** @brief Gracefully destroys the `ParallelLock` and unlocks the mutex. */
         ~ParallelLock();
     };
 
