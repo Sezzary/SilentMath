@@ -17,8 +17,8 @@ namespace Silent::Renderer
     {
         std::string TextureName  = {};
         BlendMode   BlendMd      = BlendMode::Opaque;
-        int         BufferStride = 0;
         int         BufferOffset = 0;
+        int         BufferStride = 0;
     };
 
     /** @brief Sorted draw batches. */
@@ -30,7 +30,6 @@ namespace Silent::Renderer
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        Buffer<Vertex2dBuffer>       Shapes2d    = {}; // @todo Combile with `Triangles2d`.
         VertexBuffer<Vertex2dBuffer> Triangles2d = {};
 
         Triangle2dUni Triangle2dUni = {};
@@ -90,18 +89,15 @@ namespace Silent::Renderer
         void DrawPostProcess() override;
         void DrawDebugGui() override;
 
-        /** @brief Allocates pools for for draw batches and GPU buffers. */
+        /** @brief Allocates memory pools for for draw batches and GPU buffers. */
         void AllocateMemory();
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
 
-        // @todo Combine into `PrepareTriangles2d`.
-        void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts);
-
         /** @brief Converts render buffer data to 2D triangle GPU buffer data and uploads it to the GPU.
          *
-         * Processes 2D sprites. @todo Also process 2D shapes.
+         * Processes 2D sprites and shapes.
          *
          * @param copyPass Copy pass.
          */

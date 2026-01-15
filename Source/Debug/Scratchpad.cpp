@@ -45,16 +45,16 @@ namespace Silent::Debug
             // Cursor.
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
                                                          input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::Clear, 0,
-                                                         AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+                                                         AlignMode::Center, ScaleMode::Fill, BlendMode::Subtract);
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                     Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 1,
-                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
             auto sprite1 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
                                                     Vector2(50.0f, 50.0f), 0.0f, Vector2(0.5f, 1.0f), Color::Clear, 2,
-                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Opaque);
+                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
             renderer.SubmitSprite2d(sprite1);
 
             // GUI button test.
