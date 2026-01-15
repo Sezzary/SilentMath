@@ -2,7 +2,7 @@
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 
 #include "Application.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Primitive2dUniform.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Triangle2dUniform.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
@@ -20,8 +20,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    static auto UniformBuffer = Primitive2dUniform{};
-
     void SdlGpuRenderer::Initialize(SDL_Window& window)
     {
         _type   = RendererType::SdlGpu;
@@ -276,16 +274,25 @@ namespace Silent::Renderer
 
         // 2D triangles.
         _gpuBuffers.Triangles2d.Bind(renderPass, 0, 0);
-        UniformBuffer.UseTexture  = true;
-        UniformBuffer.IsFastAlpha = false;
-        SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
-        for (const auto& drawBatch : _drawBatches.Triangles2d)
+        for (const auto& batch : _drawBatches.Triangles2d)
         {
-            auto& tex = GetTextures()[drawBatch.TextureName];
+            if (!batch.TextureName.empty())
+            {
+                auto& tex = GetTextures()[batch.TextureName];
+                tex.Bind(renderPass, GetActiveSampler());
 
-            _pipelines.Bind(renderPass, RenderStage::Triangle2d, drawBatch.BlendMd);
-            tex.Bind(renderPass, GetActiveSampler());
-            SDL_DrawGPUIndexedPrimitives(&renderPass, drawBatch.BufferStride, 1, 0, drawBatch.BufferOffset, 0);
+                _gpuBuffers.Triangle2dUni.UseTexture = true;
+            }
+            else
+            {
+                _gpuBuffers.Triangle2dUni.UseTexture = false;
+            }
+
+            _gpuBuffers.Triangle2dUni.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
+            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.Triangle2dUni, sizeof(_gpuBuffers.Triangle2dUni));
+
+            _pipelines.Bind(renderPass, RenderStage::Triangle2d, batch.BlendMd);
+            SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
 
             _doubleBuffer.Active.DrawCallCount++;
         }
@@ -293,12 +300,12 @@ namespace Silent::Renderer
         // 2D primitives. @todo Combine into triangles above.
         _pipelines.Bind(renderPass, RenderStage::Triangle2d, BlendMode::Alpha);
         _gpuBuffers.Shapes2d.Bind(renderPass, 0);
-        UniformBuffer.UseTexture  = false;
-        UniformBuffer.IsFastAlpha = false;
-        SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &UniformBuffer, sizeof(UniformBuffer));
+        _gpuBuffers.Triangle2dUni.UseTexture  = false;
+        _gpuBuffers.Triangle2dUni.IsFastAlpha = false;
+        SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.Triangle2dUni, sizeof(_gpuBuffers.Triangle2dUni));
         SDL_DrawGPUPrimitives(&renderPass, bufferVerts.size(), 1, 0, 0);
         _doubleBuffer.Active.DrawCallCount++;
-        
+
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
     }
@@ -398,36 +405,36 @@ namespace Silent::Renderer
         // Create GPU buffer data.
         bufferVerts.reserve((_doubleBuffer.Render.Shapes2d.size() * 2) * TRI_VERTEX_COUNT);
 
-        // Convert render buffer data for GPU buffer.
-        for (const auto& prim : _doubleBuffer.Render.Shapes2d)
+        // Process 2D screen shapes.
+        for (const auto& shape : _doubleBuffer.Render.Shapes2d)
         {
-            // 2D triangle primitive.
-            if (prim.Vertices.size() == TRI_VERTEX_COUNT)
+            // 2D triangle shape.
+            if (shape.Vertices.size() == TRI_VERTEX_COUNT)
             {
-                for (const auto& vert : prim.Vertices)
+                for (const auto& vert : shape.Vertices)
                 {
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
                     bufferVerts.push_back(Vertex2dBuffer
                     {
-                        .Position = Vector3(ndc.x, ndc.y, std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
+                        .Position = Vector3(ndc.x, ndc.y, std::clamp((float)shape.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
                         .Uv       = Vector2::Zero,
                         .Col      = vert.Col
                     });
                 }
             }
-            // 2D line or quad primitive.
-            else if (prim.Vertices.size() == QUAD_VERTEX_COUNT)
+            // 2D line or quad shape.
+            else if (shape.Vertices.size() == QUAD_VERTEX_COUNT)
             {
-                for (int i : QUAD_TRIANGLE_IDXS)
+                for (int i : QUAD_TRI_IDXS)
                 {
-                    const auto& vert = prim.Vertices[i];
+                    const auto& vert = shape.Vertices[i];
 
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
                     bufferVerts.push_back(Vertex2dBuffer
                     {
-                        .Position = Vector3(ndc.x, ndc.y, std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
+                        .Position = Vector3(ndc.x, ndc.y, std::clamp((float)shape.Depth / (float)DEPTH_MAX, 0.0f, 1.0f)),
                         .Uv       = Vector2::Zero,
                         .Col      = vert.Col
                     });
@@ -453,7 +460,7 @@ namespace Silent::Renderer
         bufferVerts.reserve((_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT);
         bufferIdxs.reserve((_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_IDX_COUNT);
 
-        // Convert render buffer data for GPU buffer.
+        // Process 2D screen sprites.
         for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
         {
             const auto& sprite = _doubleBuffer.Render.Sprites2d[i];
@@ -463,10 +470,10 @@ namespace Silent::Renderer
             auto ndc = ConvertScreenPercentToNdc(sprite.Position);
 
             // Compute vertex positions.
-            auto pos0 = Vector3(ndc.x - sprite.Scale.x, ndc.y + sprite.Scale.y, 0.0f);
-            auto pos1 = Vector3(ndc.x + sprite.Scale.x, ndc.y + sprite.Scale.y, 0.0f);
-            auto pos2 = Vector3(ndc.x + sprite.Scale.x, ndc.y - sprite.Scale.y, 0.0f);
-            auto pos3 = Vector3(ndc.x - sprite.Scale.x, ndc.y - sprite.Scale.y, 0.0f);
+            auto pos0 = Vector3(ndc.x - sprite.Scale.x, ndc.y + sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
+            auto pos1 = Vector3(ndc.x + sprite.Scale.x, ndc.y + sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
+            auto pos2 = Vector3(ndc.x + sprite.Scale.x, ndc.y - sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
+            auto pos3 = Vector3(ndc.x - sprite.Scale.x, ndc.y - sprite.Scale.y, std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f));
 
             // Compute vertex UVs.
             auto uv0 = sprite.UvMin;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Triangle2dUniform.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
@@ -31,6 +32,8 @@ namespace Silent::Renderer
     {
         Buffer<Vertex2dBuffer>       Shapes2d    = {}; // @todo Combile with `Triangles2d`.
         VertexBuffer<Vertex2dBuffer> Triangles2d = {};
+
+        Triangle2dUni Triangle2dUni = {};
     };
 
     /** SDL_gpu renderer backend. */
@@ -96,7 +99,7 @@ namespace Silent::Renderer
         // @todo Combine into `PrepareTriangles2d`.
         void Copy2dPrimitives(SDL_GPUCopyPass& copyPass, std::vector<Vertex2dBuffer>& bufferVerts);
 
-        /** @brief Converts render buffer data to 2D triangle buffer data and uploads it to the GPU.
+        /** @brief Converts render buffer data to 2D triangle GPU buffer data and uploads it to the GPU.
          *
          * Processes 2D sprites. @todo Also process 2D shapes.
          *

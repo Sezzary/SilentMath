@@ -93,12 +93,12 @@ namespace Silent::Renderer
         PipelineConfig
         {
             .Stage                        = RenderStage::Triangle2d,
-            .VertexShaderName             = "Primitive2d.vert",
+            .VertexShaderName             = "Triangle2d.vert",
             .VertShaderSamplerCount       = 0,
             .VertShaderUniBufferCount     = 0,
             .VertShaderStorageBufferCount = 0,
             .VertShaderStorageTexCount    = 0,
-            .FragmentShaderName           = "Primitive2d.frag",
+            .FragmentShaderName           = "Triangle2d.frag",
             .FragShaderSamplerCount       = 1,
             .FragShaderUniBufferCount     = 1,
             .FragShaderStorageBufferCount = 0,
