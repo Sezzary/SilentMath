@@ -250,12 +250,14 @@ namespace Silent::Utils
         // Register new glyph.
         _glyphs[codePoint] = GlyphMetadata
         {
-            .CodePoint = codePoint,
-            .AtlasIdx  = _activeAtlasIdx,
-            .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
-            .Size      = size - Vector2i(GLYPH_PADDING * 2),
-            .Bearing   = Vector2i(FP_FROM(metrics.horiBearingX, Q6_SHIFT), FP_FROM(metrics.horiBearingY, Q6_SHIFT)),
-            .Advance   = (int)metrics.horiAdvance
+            .CodePoint     = codePoint,
+            .AtlasIdx      = _activeAtlasIdx,
+            .AtlasPosition = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
+            .AtlasSize     = size - Vector2i(GLYPH_PADDING * 2),
+            .Bearing       = Vector2i(FP_FROM(metrics.horiBearingX, Q6_SHIFT), FP_FROM(metrics.horiBearingY, Q6_SHIFT)),
+            .Advance       = (int)metrics.horiAdvance,
+            .Ascender      = FP_FROM(ftFont->ascender, Q6_SHIFT),
+            .Descender     = FP_FROM(ftFont->descender, Q6_SHIFT)
         };
         const auto& glyph = _glyphs[codePoint];
 

@@ -14,12 +14,15 @@ namespace Silent::Utils
     /** @brief Rasterized glyph metadata. */
     struct GlyphMetadata
     {
-        char32   CodePoint = 0;
-        int      AtlasIdx  = 0;
-        Vector2i Position  = Vector2i::Zero;
-        Vector2i Size      = Vector2i::Zero;
+        char32   CodePoint     = 0;
+        int      AtlasIdx      = 0;
+        Vector2i AtlasPosition = Vector2i::Zero;
+        Vector2i AtlasSize     = Vector2i::Zero;
+
         Vector2i Bearing   = Vector2i::Zero;
         int      Advance   = 0;
+        int      Ascender  = 0;
+        int      Descender = 0;
     };
 
     /** @brief Shaped glyph data. */
@@ -91,7 +94,7 @@ namespace Silent::Utils
 
         /** @brief Gets the point size.
          *
-         * @return point size.
+         * @return Point size.
          */
         int GetPointSize() const;
 
