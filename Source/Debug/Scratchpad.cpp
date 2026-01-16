@@ -54,27 +54,23 @@ namespace Silent::Debug
                                                     AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
 
-            /*auto* font = fonts.GetFont("RetroSerif");
+            auto* font = fonts.GetFont("RetroSerif");
             if (font != nullptr)
             {
-                auto chars = std::vector<std::string>{"S", "E", "N", "D", " ", "H", "E", "L", "P"};
                 float offset = 0.0f;
-                //for (auto c : chars)
+                auto shapedText = font->GetShapedText("SEND HELP");
+                for (const auto& glyph : shapedText.Glyphs)
                 {
-                    auto shapedText = font->GetShapedText("SEND HELP");
-                    for (const auto& glyph : shapedText.Glyphs)
-                    {
-                        auto localScale = Vector2((float)glyph.Metadata.Size.x / (float)(float)glyph.Metadata.Size.y, 1.0f);
-                        auto uvMin = glyph.Metadata.Position.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-                        auto uvMax = uvMin + glyph.Metadata.Size.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-                        auto sprite1 = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                                Vector2(20.0f + offset, 78.0f), 0.0f, localScale * 0.05f, Color::Clear, 2,
-                                                                AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
-                        renderer.SubmitSprite2d(sprite1);
+                    auto localScale = Vector2((float)glyph.Metadata.Size.x / (float)(float)glyph.Metadata.Size.y, 1.0f);
+                    auto uvMin = glyph.Metadata.Position.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+                    auto uvMax = uvMin + glyph.Metadata.Size.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+                    auto sprite1 = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
+                                                            Vector2(20.0f + offset, 78.0f), 0.0f, localScale * 0.05f, Color::Clear, 2,
+                                                            AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
+                    renderer.SubmitSprite2d(sprite1);
 
-                        offset += 4.0f;
-                    }
-                }*/
+                    offset += 4.0f;
+                }
             }
 
             // GUI button test.

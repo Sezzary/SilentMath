@@ -126,7 +126,7 @@ namespace Silent::Utils
         }
         _isAtlasUpdated = hasNewGlyphs;
 
-        auto shapingInfos = std::vector<ShapingInfo>(_fontCount);
+        //auto shapingInfos = std::vector<ShapingInfo>(_fontCount);
         auto shapedText   = ShapedText{};
         shapedText.Glyphs.reserve(codePoints.size());
 
@@ -134,10 +134,10 @@ namespace Silent::Utils
         for (int i = 0; i < codePoints.size(); i++)
         {
             // Run through font chain.
-            //for (int j = 0; j < _fontCount; j++)
+            for (int j = 0; j < 1/*_fontCount*/; j++)
             {
                 // Check if glyph is valid.
-                uint charIdx = FT_Get_Char_Index(_ftFonts[0], codePoints[i]);
+                uint charIdx = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
                 /*if (charIdx == 0)
                 {
                     // If no valid glyphs exist, use first font's invalid glyph.
@@ -152,7 +152,7 @@ namespace Silent::Utils
                 }*/
 
                 // Get shaping info.
-                auto& shapingInfo = shapingInfos[0];
+                /*auto& shapingInfo = shapingInfos[0];
                 if (shapingInfo.Buffer == nullptr)
                 {
                     // Get buffer.
@@ -163,29 +163,34 @@ namespace Silent::Utils
                     }
 
                     // Fill buffer.
-                    //hb_shape(_hbFonts[0], shapingInfo.Buffer, nullptr, 0);
-                    //uint glyphCount       = 0;
-                    //shapingInfo.Glyphs    = hb_buffer_get_glyph_infos(shapingInfo.Buffer, &glyphCount);
-                    //shapingInfo.Positions = hb_buffer_get_glyph_positions(shapingInfo.Buffer, &glyphCount);
-                }
+                    hb_shape(_hbFonts[0], shapingInfo.Buffer, nullptr, 0);
+                    uint glyphCount       = 0;
+                    shapingInfo.Glyphs    = hb_buffer_get_glyph_infos(shapingInfo.Buffer, &glyphCount);
+                    shapingInfo.Positions = hb_buffer_get_glyph_positions(shapingInfo.Buffer, &glyphCount);
+                }*/
+
+
+                ///FT_Load_Glyph(_ftFonts[0], charIdx, FT_LOAD_DEFAULT);
+                ///auto ftFont = _ftFonts[0];
+                ///const auto& metrics = ftFont->glyph->metrics;
 
                 // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
                     .Metadata = _glyphs[codePoints[i]],
-                    .Advance  = Vector2i::Zero,//Vector2i(shapingInfo.Positions[i].x_advance, shapingInfo.Positions[i].y_advance) * _scaleFactor,
-                    .Offset   = Vector2i::Zero,//Vector2i(shapingInfo.Positions[i].x_offset,  shapingInfo.Positions[i].y_offset)  * _scaleFactor
+                    //.Advance  = metrics.horiAdvance,//Vector2i::Zero,//Vector2i(shapingInfo.Positions[i].x_advance, shapingInfo.Positions[i].y_advance) * _scaleFactor,
+                    //.Offset   = Vector2i((int)metrics.horiBearingX / 64, (int)metrics.horiBearingY / 64),//Vector2i(shapingInfo.Positions[i].x_offset,  shapingInfo.Positions[i].y_offset)  * _scaleFactor
                 });
-                shapedText.Width += 0;//shapedText.Glyphs.back().Advance.x;
+                shapedText.Width += shapedText.Glyphs.back().Metadata.Advance.x;
                 break;
             }
         }
 
         // Free resources.
-        for (auto& shapingInfo : shapingInfos)
+        /*for (auto& shapingInfo : shapingInfos)
         {
             hb_buffer_destroy(shapingInfo.Buffer);
-        }
+        }*/
 
         return shapedText;
     }
@@ -222,13 +227,14 @@ namespace Silent::Utils
         }
 
         // Insert characters.
-        hb_buffer_add_utf8(buffer, msg.c_str(), msg.size(), 0, msg.size());
+        hb_buffer_add_utf8(buffer, msg.c_str(), NO_VALUE, 0, NO_VALUE);
 
         // @todo Extend this later when a language needs it.
         // Set text direction and script.
-        hb_buffer_set_direction(buffer, HB_DIRECTION_LTR);                       // Left-to-right text.
-        hb_buffer_set_script(buffer, HB_SCRIPT_LATIN);                           // Latin script.
-        hb_buffer_set_language(buffer, hb_language_from_string("en", NO_VALUE)); // English language.
+        //hb_buffer_set_direction(buffer, HB_DIRECTION_LTR);                       // Left-to-right text.
+        //hb_buffer_set_script(buffer, HB_SCRIPT_LATIN);                           // Latin script.
+        //hb_buffer_set_language(buffer, hb_language_from_string("en", NO_VALUE)); // English language.
+        hb_buffer_guess_segment_properties(buffer);
 
         return buffer;
     }
@@ -282,7 +288,9 @@ namespace Silent::Utils
             .CodePoint = codePoint,
             .AtlasIdx  = _activeAtlasIdx,
             .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)),// + Vector2i(GLYPH_PADDING),
-            .Size      = size// - Vector2i(GLYPH_PADDING * 2)
+            .Size      = size,// - Vector2i(GLYPH_PADDING * 2)
+            .Offset    = Vector2i(FP_FROM(metrics.horiBearingX, Q6_SHIFT), FP_FROM(metrics.horiBearingY, Q6_SHIFT)),
+            .Advance   = metrics.horiAdvance
         };
         const auto& glyph = _glyphs[codePoint];
 

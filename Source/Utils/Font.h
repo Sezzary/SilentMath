@@ -18,14 +18,16 @@ namespace Silent::Utils
         int      AtlasIdx  = 0;
         Vector2i Position  = Vector2i::Zero;
         Vector2i Size      = Vector2i::Zero;
+        Vector2i Offset    = Vector2i::Zero;
+        Vector2i Advance   = Vector2i::Zero;
     };
 
     /** @brief Shaped glyph data. */
     struct ShapedGlyph
     {
         const GlyphMetadata& Metadata;
-        Vector2i             Advance = Vector2i::Zero;
         Vector2i             Offset  = Vector2i::Zero;
+        Vector2i             Advance = Vector2i::Zero;
     };
 
     /** @brief Shaped text data. */
