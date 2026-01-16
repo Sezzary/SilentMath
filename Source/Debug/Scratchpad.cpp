@@ -57,19 +57,22 @@ namespace Silent::Debug
             auto* font = fonts.GetFont("RetroSerif");
             if (font != nullptr)
             {
-                float offset = 0.0f;
-                auto shapedText = font->GetShapedText("SEND HELP");
+                int offset = 0;
+                auto shapedText = font->GetShapedText("Have you seen a little girl?");
                 for (const auto& glyph : shapedText.Glyphs)
                 {
                     auto localScale = Vector2((float)glyph.Metadata.Size.x / (float)(float)glyph.Metadata.Size.y, 1.0f);
+                    auto scale = localScale * 0.05f;
+                    auto ofs = glyph.Metadata.Offset.ToVector2() * 0.5f;
+
                     auto uvMin = glyph.Metadata.Position.ToVector2() / Vector2(Font::ATLAS_SIZE); 
                     auto uvMax = uvMin + glyph.Metadata.Size.ToVector2() / Vector2(Font::ATLAS_SIZE); 
                     auto sprite1 = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                            Vector2(20.0f + offset, 78.0f), 0.0f, localScale * 0.05f, Color::Clear, 2,
+                                                            Vector2(20.0f + ((float)offset * 0.005), 78.0f) - ofs, 0.0f, scale, Color::Clear, 2,
                                                             AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
                     renderer.SubmitSprite2d(sprite1);
 
-                    offset += 4.0f;
+                    offset += glyph.Kerning;
                 }
             }
 

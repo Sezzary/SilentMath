@@ -19,15 +19,14 @@ namespace Silent::Utils
         Vector2i Position  = Vector2i::Zero;
         Vector2i Size      = Vector2i::Zero;
         Vector2i Offset    = Vector2i::Zero;
-        Vector2i Advance   = Vector2i::Zero;
+        int      Advance   = 0;
     };
 
     /** @brief Shaped glyph data. */
     struct ShapedGlyph
     {
         const GlyphMetadata& Metadata;
-        Vector2i             Offset  = Vector2i::Zero;
-        Vector2i             Advance = Vector2i::Zero;
+        int                  Kerning = 0;
     };
 
     /** @brief Shaped text data. */
@@ -54,20 +53,17 @@ namespace Silent::Utils
         // Fields
         // =======
 
-        std::string _name               = {};
-        int         _pointSize          = 0;
-        bool        _enableAntialiasing = false;
-        float       _scaleFactor        = 0.0f;
+        std::string          _name               = {};
+        std::vector<FT_Face> _ftFonts            = {};
+        int                  _pointSize          = 0;
+        bool                 _enableAntialiasing = false;
+        float                _scaleFactor        = 0.0f;
 
         std::unordered_map<char32, GlyphMetadata> _glyphs         = {}; /** Key = code point, value = rasterized glyph metadata. */
         std::vector<smol_atlas_t*>                _rectAtlases    = {};
         std::vector<std::vector<byte>>            _textureAtlases = {};
         int                                       _activeAtlasIdx = 0;
         bool                                      _isAtlasUpdated = false;
-        
-        int                     _fontCount = 0;
-        std::vector<FT_Face>    _ftFonts   = {};
-        std::vector<hb_font_t*> _hbFonts   = {};
 
     public:
         // =============
@@ -141,13 +137,6 @@ namespace Silent::Utils
          * @return Code points for each glyph.
          */
         std::vector<char32> GetCodePoints(const std::string& msg) const;
-
-        /** @brief Gets a shaping buffer for a given message.
-         *
-         * @param msg Message to create the buffer for.
-         * @return Shaping buffer.
-         */
-        hb_buffer_t* GetShapingBuffer(const std::string& msg) const;
 
         /** @brief Caches a new glyph in the texture atlas.
          *

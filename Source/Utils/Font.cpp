@@ -21,7 +21,6 @@ namespace Silent::Utils
         _name               = metadata.Name;
         _enableAntialiasing = metadata.EnableAntialiasing;
         _isAtlasUpdated     = false;
-        _fontCount          = metadata.Filenames.size();
 
         // Clamp point size.
         _pointSize = metadata.PointSize;
@@ -34,6 +33,7 @@ namespace Silent::Utils
         }
 
         // Add chained fonts to library.
+        _ftFonts.reserve(metadata.Filenames.size());
         for (const auto& filename : metadata.Filenames)
         {
             FT_Face ftFont = nullptr;
@@ -41,9 +41,7 @@ namespace Silent::Utils
             {
                 throw std::runtime_error("Failed to initialize font.");
             }
-
             _ftFonts.push_back(ftFont);
-            _hbFonts.push_back(hb_ft_font_create(ftFont, nullptr));
 
             // Set point size.
             if (FT_Set_Pixel_Sizes(ftFont, 0, _pointSize))
@@ -51,7 +49,6 @@ namespace Silent::Utils
                 throw std::runtime_error("Failed to set font point size.");
             }
         }
-        Debug::Assert(_ftFonts.size() == _fontCount && _hbFonts.size() == _fontCount, Fmt("Invalid initialization for font chain `{}`.", _name));
 
         // Set scale factor.
         _scaleFactor = (float)_pointSize / (float)_ftFonts.front()->size->metrics.x_ppem;
@@ -91,11 +88,6 @@ namespace Silent::Utils
         for (auto& ftFont : _ftFonts)
         {
             FT_Done_Face(ftFont);
-        }
-
-        for (auto& hbFont : _hbFonts)
-        {
-            hb_font_destroy(hbFont);
         }
     }
 
@@ -137,7 +129,7 @@ namespace Silent::Utils
             for (int j = 0; j < 1/*_fontCount*/; j++)
             {
                 // Check if glyph is valid.
-                uint charIdx = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
+                int charIdx = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
                 /*if (charIdx == 0)
                 {
                     // If no valid glyphs exist, use first font's invalid glyph.
@@ -151,46 +143,42 @@ namespace Silent::Utils
                     }
                 }*/
 
-                // Get shaping info.
-                /*auto& shapingInfo = shapingInfos[0];
-                if (shapingInfo.Buffer == nullptr)
+                // Compute kerning.
+                int kerning = 0;
+                if (i < (codePoints.size() - 1))
                 {
-                    // Get buffer.
-                    shapingInfo.Buffer = GetShapingBuffer(msg);
-                    if (shapingInfo.Buffer == nullptr)
+                    // From kerning table.
+                    if (FT_HAS_KERNING(_ftFonts[j]))
                     {
-                        return {};
+                        int charIdx0 = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
+                        int charIdx1 = FT_Get_Char_Index(_ftFonts[j], codePoints[i + 1]);
+
+                        auto kerningDelta = FT_Vector{};
+                        // Pass FT_KERNING_DEFAULT for standard horizontal kerning
+                        FT_Get_Kerning(_ftFonts[j], charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
+                        kerning = kerningDelta.x;
                     }
-
-                    // Fill buffer.
-                    hb_shape(_hbFonts[0], shapingInfo.Buffer, nullptr, 0);
-                    uint glyphCount       = 0;
-                    shapingInfo.Glyphs    = hb_buffer_get_glyph_infos(shapingInfo.Buffer, &glyphCount);
-                    shapingInfo.Positions = hb_buffer_get_glyph_positions(shapingInfo.Buffer, &glyphCount);
-                }*/
-
-
-                ///FT_Load_Glyph(_ftFonts[0], charIdx, FT_LOAD_DEFAULT);
-                ///auto ftFont = _ftFonts[0];
-                ///const auto& metrics = ftFont->glyph->metrics;
+                    // From glyph advance.
+                    else
+                    {
+                        kerning = _glyphs[codePoints[i]].Advance;
+                    }
+                }
+                else
+                {
+                    kerning = 0;
+                }
 
                 // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
                     .Metadata = _glyphs[codePoints[i]],
-                    //.Advance  = metrics.horiAdvance,//Vector2i::Zero,//Vector2i(shapingInfo.Positions[i].x_advance, shapingInfo.Positions[i].y_advance) * _scaleFactor,
-                    //.Offset   = Vector2i((int)metrics.horiBearingX / 64, (int)metrics.horiBearingY / 64),//Vector2i(shapingInfo.Positions[i].x_offset,  shapingInfo.Positions[i].y_offset)  * _scaleFactor
+                    .Kerning  = kerning
                 });
-                shapedText.Width += shapedText.Glyphs.back().Metadata.Advance.x;
+                shapedText.Width += kerning;
                 break;
             }
         }
-
-        // Free resources.
-        /*for (auto& shapingInfo : shapingInfos)
-        {
-            hb_buffer_destroy(shapingInfo.Buffer);
-        }*/
 
         return shapedText;
     }
@@ -214,29 +202,6 @@ namespace Silent::Utils
         // Collect code points.
         utf8::utf8to32(msg.begin(), msg.end(), std::back_inserter(codePoints));
         return codePoints;
-    }
-
-    hb_buffer_t* Font::GetShapingBuffer(const std::string& msg) const
-    {
-        // Allocate buffer.
-        auto* buffer = hb_buffer_create();
-        if (!hb_buffer_allocation_successful(buffer))
-        {
-            Debug::Log(Fmt("Failed to allocate shaping buffer for message `{}`", msg), Debug::LogLevel::Error);
-            return nullptr;
-        }
-
-        // Insert characters.
-        hb_buffer_add_utf8(buffer, msg.c_str(), NO_VALUE, 0, NO_VALUE);
-
-        // @todo Extend this later when a language needs it.
-        // Set text direction and script.
-        //hb_buffer_set_direction(buffer, HB_DIRECTION_LTR);                       // Left-to-right text.
-        //hb_buffer_set_script(buffer, HB_SCRIPT_LATIN);                           // Latin script.
-        //hb_buffer_set_language(buffer, hb_language_from_string("en", NO_VALUE)); // English language.
-        hb_buffer_guess_segment_properties(buffer);
-
-        return buffer;
     }
 
     void Font::CacheGlyph(char32 codePoint)
@@ -290,7 +255,7 @@ namespace Silent::Utils
             .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)),// + Vector2i(GLYPH_PADDING),
             .Size      = size,// - Vector2i(GLYPH_PADDING * 2)
             .Offset    = Vector2i(FP_FROM(metrics.horiBearingX, Q6_SHIFT), FP_FROM(metrics.horiBearingY, Q6_SHIFT)),
-            .Advance   = metrics.horiAdvance
+            .Advance   = (int)metrics.horiAdvance
         };
         const auto& glyph = _glyphs[codePoint];
 
