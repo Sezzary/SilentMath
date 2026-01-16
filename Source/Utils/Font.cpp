@@ -252,9 +252,9 @@ namespace Silent::Utils
         {
             .CodePoint = codePoint,
             .AtlasIdx  = _activeAtlasIdx,
-            .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)),// + Vector2i(GLYPH_PADDING),
-            .Size      = size,// - Vector2i(GLYPH_PADDING * 2)
-            .Offset    = Vector2i(FP_FROM(metrics.horiBearingX, Q6_SHIFT), FP_FROM(metrics.horiBearingY, Q6_SHIFT)),
+            .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
+            .Size      = size - Vector2i(GLYPH_PADDING * 2),
+            .Bearing   = Vector2i(FP_FROM(metrics.horiBearingX, Q6_SHIFT), FP_FROM(metrics.horiBearingY, Q6_SHIFT)),
             .Advance   = (int)metrics.horiAdvance
         };
         const auto& glyph = _glyphs[codePoint];
@@ -263,7 +263,7 @@ namespace Silent::Utils
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
-        byte*       pixelsTo   = &_textureAtlases.back()[(((glyph.Position.y + GLYPH_PADDING) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((glyph.Position.x + GLYPH_PADDING) * RGBA_COMP_COUNT)];
+        byte*       pixelsTo   = &_textureAtlases.back()[(((glyph.Position.y) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((glyph.Position.x) * RGBA_COMP_COUNT)];
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)

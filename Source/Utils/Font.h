@@ -18,7 +18,7 @@ namespace Silent::Utils
         int      AtlasIdx  = 0;
         Vector2i Position  = Vector2i::Zero;
         Vector2i Size      = Vector2i::Zero;
-        Vector2i Offset    = Vector2i::Zero;
+        Vector2i Bearing   = Vector2i::Zero;
         int      Advance   = 0;
     };
 

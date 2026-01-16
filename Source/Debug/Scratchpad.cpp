@@ -57,22 +57,37 @@ namespace Silent::Debug
             auto* font = fonts.GetFont("RetroSerif");
             if (font != nullptr)
             {
+                // Base position in 100x100 relative space
+                auto basePos = Vector2(50);//Vector2(20.0f, 78.0f);
+
+                float sc = 100.0f / font->GetPointSize();
+
+                // Get point size for scaling, calculate scale factor
+
                 int offset = 0;
-                auto shapedText = font->GetShapedText("Have you seen a little girl?");
+                auto shapedText = font->GetShapedText("Have");
                 for (const auto& glyph : shapedText.Glyphs)
                 {
-                    auto localScale = Vector2((float)glyph.Metadata.Size.x / (float)(float)glyph.Metadata.Size.y, 1.0f);
-                    auto scale = localScale * 0.05f;
-                    auto ofs = glyph.Metadata.Offset.ToVector2() * 0.5f;
-
+                    // Calculate relative position based on glyph bearing and advance
+                    auto relPixelPos = Vector2i(offset, 0);// + Vector2i(glyph.Metadata.Bearing.x, -(glyph.Metadata.Size.y - glyph.Metadata.Bearing.y));
+                    
+                    // Convert the relative position to screen space by applying scaleFactor
+                    auto pos = basePos + ((relPixelPos.ToVector2() * sc) * 0.05f);
+                    
+                    // Calculate UVs based on the atlas size
                     auto uvMin = glyph.Metadata.Position.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-                    auto uvMax = uvMin + glyph.Metadata.Size.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+                    auto uvMax = uvMin + glyph.Metadata.Size.ToVector2() / Vector2(Font::ATLAS_SIZE);
+
+                    auto sizeThing = Vector2((float)glyph.Metadata.Size.x / glyph.Metadata.Size.y) * ((float)glyph.Metadata.Size.y / font->GetPointSize());
+
+                    // Create the sprite with appropriate parameters
                     auto sprite1 = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                            Vector2(20.0f + ((float)offset * 0.005), 78.0f) - ofs, 0.0f, scale, Color::Clear, 2,
+                                                            pos, 0.0f, sizeThing * Vector2(0.05f), Color::Clear, 2,
                                                             AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
                     renderer.SubmitSprite2d(sprite1);
 
-                    offset += glyph.Kerning;
+                    // Update the offset for kerning between characters
+                    offset += 32;//glyph.Kerning;
                 }
             }
 
