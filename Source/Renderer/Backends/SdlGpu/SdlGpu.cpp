@@ -483,12 +483,63 @@ namespace Silent::Renderer
             //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
             auto ndc = ConvertScreenPercentToNdc(sprite.Position);
 
+            // Set alignment offset.
+            auto offset = Vector2::Zero;
+            switch (sprite.AlignMd)
+            {
+                default:
+                case AlignMode::Center:
+                {
+                    break;
+                }
+                case AlignMode::CenterTop:
+                {
+                    offset = Vector2(0.0f, -sprite.Scale.y);
+                    break;
+                }
+                case AlignMode::CenterBottom:
+                {
+                    offset = Vector2(0.0f, sprite.Scale.y);
+                    break;
+                }
+                case AlignMode::CenterLeft:
+                {
+                    offset = Vector2(sprite.Scale.x, 0.0f);
+                    break;
+                }
+                case AlignMode::CenterRight:
+                {
+                    offset = Vector2(-sprite.Scale.x, 0.0f);
+                    break;
+                }
+                case AlignMode::TopLeft:
+                {
+                    offset = Vector2(sprite.Scale.x, sprite.Scale.y);
+                    break;
+                }
+                case AlignMode::TopRight:
+                {
+                    offset = Vector2(-sprite.Scale.x, sprite.Scale.y);
+                    break;
+                }
+                case AlignMode::BottomLeft:
+                {
+                    offset = Vector2(sprite.Scale.x, -sprite.Scale.y);
+                    break;
+                }
+                case AlignMode::BottomRight:
+                {
+                    offset = Vector2(-sprite.Scale.x, -sprite.Scale.y);
+                    break;
+                }
+            }
+
             // Compute vertex positions.
             float depthZ = std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
-            auto  pos0   = Vector3(ndc.x - sprite.Scale.x, ndc.y + sprite.Scale.y, depthZ);
-            auto  pos1   = Vector3(ndc.x + sprite.Scale.x, ndc.y + sprite.Scale.y, depthZ);
-            auto  pos2   = Vector3(ndc.x + sprite.Scale.x, ndc.y - sprite.Scale.y, depthZ);
-            auto  pos3   = Vector3(ndc.x - sprite.Scale.x, ndc.y - sprite.Scale.y, depthZ);
+            auto  pos0   = Vector3((ndc.x - sprite.Scale.x) + offset.x, (ndc.y + sprite.Scale.y) + offset.y, depthZ);
+            auto  pos1   = Vector3((ndc.x + sprite.Scale.x) + offset.x, (ndc.y + sprite.Scale.y) + offset.y, depthZ);
+            auto  pos2   = Vector3((ndc.x + sprite.Scale.x) + offset.x, (ndc.y - sprite.Scale.y) + offset.y, depthZ);
+            auto  pos3   = Vector3((ndc.x - sprite.Scale.x) + offset.x, (ndc.y - sprite.Scale.y) + offset.y, depthZ);
 
             // Compute vertex UVs.
             auto uv0 = sprite.UvMin;

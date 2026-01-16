@@ -57,40 +57,38 @@ namespace Silent::Debug
             auto* font = fonts.GetFont("RetroSerif");
             if (font != nullptr)
             {
-                float strScale = (1.0f / 16.0f) + ((1.0f / 12.0f) - (1.0f / 16.0f));
+                float strScale = (1.0f / 14.0f);
 
                 // Base position in 100x100 relative space
-                auto pos = Vector2(50);//Vector2(20.0f, 78.0f);
+                auto pos = Vector2(20.0f, 80.0f);
 
-                float sc = 100.0f / font->GetPointSize();
+                auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
 
-                // Get point size for scaling, calculate scale factor
-
-                int offset = 0;
-                auto shapedText = font->GetShapedText("Have");
+                float offset = 0.0f;
+                auto shapedText = font->GetShapedText("Have you seen a little girl?");
                 for (const auto& glyph : shapedText.Glyphs)
                 {
-                    // Compute UVs based on the atlas size.
-                    auto uvMin = glyph.Metadata.Position.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-                    auto uvMax = uvMin + (glyph.Metadata.Size.ToVector2() / Vector2(Font::ATLAS_SIZE));
+                    // Compute UVs.
+                    auto uvMin = glyph.Metadata.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+                    auto uvMax = uvMin + (glyph.Metadata.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
 
-                    // Compute relative position based on glyph bearing and advance
-                    auto relPixelPos = Vector2i(offset, 0);// + Vector2i(glyph.Metadata.Bearing.x, -(glyph.Metadata.Size.y - glyph.Metadata.Bearing.y));
-                    
-                    // Convert the relative position to screen space by applying scaleFactor
-                    auto glyphPos = pos + ((relPixelPos.ToVector2() * sc) * strScale);
-                    
-                    auto glyphScale = Vector2((float)glyph.Metadata.Size.x / (float)glyph.Metadata.Size.y) *
-                                      ((float)glyph.Metadata.Size.y / (float)font->GetPointSize());
+                    // Compute glyph position.
+                    auto relPixelPos = Vector2(offset, 0.0f) +
+                                       Vector2(glyph.Metadata.Bearing.x, -glyph.Metadata.Bearing.y);
+                    auto relGlyphPos = (relPixelPos * scaleFactor) * strScale;
 
-                    // Create the sprite with appropriate parameters
+                    // Compute glyph scale.
+                    auto glyphScale = Vector2((float)glyph.Metadata.AtlasSize.x / (float)glyph.Metadata.AtlasSize.y, 1.0f) *
+                                      Vector2((float)glyph.Metadata.AtlasSize.y / (float)font->GetPointSize());
+
+                    // Submit glyph sprite.
                     auto sprite1 = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                            glyphPos, 0.0f, glyphScale * strScale, Color::Clear, 2,
+                                                            pos + relGlyphPos, 0.0f, glyphScale * strScale, Color::Clear, 2,
                                                             AlignMode::BottomLeft, ScaleMode::Fill, BlendMode::Add);
                     renderer.SubmitSprite2d(sprite1);
 
-                    // Update the offset for kerning between characters
-                    offset += glyph.Kerning >> 6;
+                    // Update horizontal offset.
+                    offset += FP_FLOAT(glyph.Kerning, Q6_SHIFT);
                 }
             }
 

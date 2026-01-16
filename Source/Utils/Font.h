@@ -19,10 +19,10 @@ namespace Silent::Utils
         Vector2i AtlasPosition = Vector2i::Zero;
         Vector2i AtlasSize     = Vector2i::Zero;
 
-        Vector2i Bearing   = Vector2i::Zero;
-        int      Advance   = 0;
-        int      Ascender  = 0;
-        int      Descender = 0;
+        Vector2 Bearing   = Vector2::Zero;
+        float   Advance   = 0.0f;
+        float   Ascender  = 0.0f;
+        float   Descender = 0.0f;
     };
 
     /** @brief Shaped glyph data. */
