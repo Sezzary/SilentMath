@@ -61,6 +61,7 @@ namespace Silent::Utils
         std::vector<smol_atlas_t*>                _rectAtlases    = {};
         std::vector<std::vector<byte>>            _textureAtlases = {};
         int                                       _activeAtlasIdx = 0;
+        bool                                      _isAtlasUpdated = false;
         
         int                     _fontCount = 0;
         std::vector<FT_Face>    _ftFonts   = {};
@@ -108,6 +109,24 @@ namespace Silent::Utils
          * @return Shaped text.
          */
         ShapedText GetShapedText(const std::string& msg);
+
+        // ========
+        // Setters
+        // ========
+
+        /** @brief Set by renderer after a GPU texture update. @todo name this properly. ClearAtlasUpdatedFlag? */
+        void SetAtlasUnupdated();
+
+        // ==========
+        // Inquirers
+        // ==========
+
+        /** @brief Checks if an atlas has been updated with new glyphs.
+         * Used by the renderer to update the GPU texture.
+         *
+         * @return `true` if an atlas has been updated, `false` otherwise.
+         */
+        bool IsAtlasUpdated() const;
 
     private:
         // ========

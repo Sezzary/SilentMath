@@ -279,7 +279,7 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
-        // Wait for previous frame to finish rendering in case state update finished early.
+        // Wait for previous frame to finish rendering.
         if (_prevFrameFuture.valid())
         {
             _prevFrameFuture.wait();

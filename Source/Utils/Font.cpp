@@ -20,6 +20,7 @@ namespace Silent::Utils
 
         _name               = metadata.Name;
         _enableAntialiasing = metadata.EnableAntialiasing;
+        _isAtlasUpdated     = false;
         _fontCount          = metadata.Filenames.size();
 
         // Clamp point size.
@@ -73,11 +74,11 @@ namespace Silent::Utils
         }
 
         // Debug.
-        for (int i = 0; i < _textureAtlases.size(); i++)
+        /*for (int i = 0; i < _textureAtlases.size(); i++)
         {
-            //stbi_write_png((g_App.GetFilesystem().GetAppDirectory() / (_name + Fmt("_Atlas{}.png", i))).string().c_str(), ATLAS_SIZE, ATLAS_SIZE, 1, _textureAtlases[i].data(), ATLAS_SIZE);
+            stbi_write_png((g_App.GetFilesystem().GetAppDirectory() / (_name + Fmt("_Atlas{}.png", i))).string().c_str(), ATLAS_SIZE, ATLAS_SIZE, RGBA_COMP_COUNT, _textureAtlases[i].data(), ATLAS_SIZE * 4);
             break;
-        }
+        }*/
     }
 
     Font::~Font()
@@ -110,8 +111,11 @@ namespace Silent::Utils
 
     ShapedText Font::GetShapedText(const std::string& msg)
     {
+        int glyphCount = _glyphs.size();
+
         // Cache new glyphs.
-        auto codePoints = GetCodePoints(msg);
+        bool hasNewGlyphs = false;
+        auto codePoints   = GetCodePoints(msg);
         for (char32 codePoint : codePoints)
         {
             if (Find(_glyphs, codePoint) != nullptr)
@@ -119,8 +123,10 @@ namespace Silent::Utils
                 continue;
             }
 
+            hasNewGlyphs = true;
             CacheGlyph(codePoint);
         }
+        _isAtlasUpdated = hasNewGlyphs;
 
         auto shapingInfos = std::vector<ShapingInfo>(_fontCount);
         auto shapedText   = ShapedText{};
@@ -184,6 +190,16 @@ namespace Silent::Utils
         }
 
         return shapedText;
+    }
+
+    bool Font::IsAtlasUpdated() const
+    {
+        return _isAtlasUpdated;
+    }
+
+    void Font::SetAtlasUnupdated()
+    {
+        _isAtlasUpdated = false;
     }
 
     std::vector<char32> Font::GetCodePoints(const std::string& msg) const
@@ -276,7 +292,7 @@ namespace Silent::Utils
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
-        byte*       pixelsTo   = &_textureAtlases.back()[(glyph.Position.y * ATLAS_SIZE) + glyph.Position.x];
+        byte*       pixelsTo   = &_textureAtlases.back()[((glyph.Position.y * ATLAS_SIZE) * RGBA_COMP_COUNT) + (glyph.Position.x * RGBA_COMP_COUNT)];
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)
@@ -284,14 +300,13 @@ namespace Silent::Utils
             for (int x = 0; x < bitmap.width; x++)
             {
                 byte pixel = pixelsFrom[(bitmap.width * y) + x];
-                if (_enableAntialiasing)
-                {
-                    pixelsTo[(ATLAS_SIZE * y) + x] = pixel;
-                }
-                else
-                {
-                    pixelsTo[(ATLAS_SIZE * y) + x] = ((uchar)pixel >= FP_COLOR(0.5f)) ? FP_COLOR(1.0f) : FP_COLOR(0.0f);
-                }
+                pixel      = _enableAntialiasing ? pixel : ((uchar)pixel >= FP_COLOR(0.5f)) ? FP_COLOR(1.0f) : FP_COLOR(0.0f);
+
+                int pixelBaseIdx           = ((ATLAS_SIZE * y) * RGBA_COMP_COUNT) + (x * RGBA_COMP_COUNT);
+                pixelsTo[pixelBaseIdx + 0] =
+                pixelsTo[pixelBaseIdx + 1] =
+                pixelsTo[pixelBaseIdx + 2] =
+                pixelsTo[pixelBaseIdx + 3] = pixel;
             }
         }
     }
@@ -299,7 +314,7 @@ namespace Silent::Utils
     void Font::AddAtlas()
     {
         _rectAtlases.push_back(sma_atlas_create(ATLAS_SIZE, ATLAS_SIZE));
-        _textureAtlases.emplace_back(std::vector<byte>(ATLAS_SIZE * ATLAS_SIZE));
+        _textureAtlases.emplace_back(std::vector<byte>((ATLAS_SIZE * ATLAS_SIZE) * RGBA_COMP_COUNT));
     }
 
     FontManager::FontManager()

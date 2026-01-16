@@ -2,6 +2,7 @@
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 
 #include "Application.h"
+#include "Assets/Fonts.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/Triangle2dUniform.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
@@ -15,6 +16,7 @@
 #include "Services/Platform.h"
 #include "Utils/Utils.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
@@ -92,7 +94,7 @@ namespace Silent::Renderer
         };
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
 
-        AllocateMemory();
+        InitializeMemory();
 
         // Create ImGui context.
         ImGui::CreateContext();
@@ -111,6 +113,11 @@ namespace Silent::Renderer
         // Upload transfer data to GPU resources.
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
+
+        // @todo If this isn't called and the texture is missing, for some reason
+        // the app hangs instead of crashing like it's supposed to. Why isn't such an error
+        // handled as written?
+        InitializeFontAtlasTextures(*copyPass);
 
         // Load temp. textures.
         GetTextures().Load(*copyPass, "TIM/HERO_PIC.TIM");
@@ -158,6 +165,13 @@ namespace Silent::Renderer
         {
             return;
         }
+
+        // Process copy pass.
+        auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
+
+        UpdateFontAtlasTextures(*copyPass);
+
+        SDL_EndGPUCopyPass(copyPass);
 
         // Draw frame.
         if (_swapchainTexture != nullptr)
@@ -274,16 +288,16 @@ namespace Silent::Renderer
         _gpuBuffers.Triangle2dVertices.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Triangles2d)
         {
-            if (!batch.TextureName.empty())
+            if (batch.TextureName.empty())
+            {
+                _gpuBuffers.Triangle2dUni.UseTexture = false;
+            }
+            else
             {
                 auto& tex = GetTextures()[batch.TextureName];
                 tex.Bind(renderPass, GetActiveSampler());
 
                 _gpuBuffers.Triangle2dUni.UseTexture = true;
-            }
-            else
-            {
-                _gpuBuffers.Triangle2dUni.UseTexture = false;
             }
 
             _gpuBuffers.Triangle2dUni.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
@@ -374,7 +388,7 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(renderPass);
     }
 
-    void SdlGpuRenderer::AllocateMemory()
+    void SdlGpuRenderer::InitializeMemory()
     {
         constexpr int SPRITE_2D_VERT_COUNT_MAX = SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT;
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
@@ -393,9 +407,56 @@ namespace Silent::Renderer
         _gpuBuffers.Triangle2dVertices.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
     }
 
+    void SdlGpuRenderer::InitializeFontAtlasTextures(SDL_GPUCopyPass& copyPass)
+    {
+        auto& fonts = g_App.GetFonts();
+
+        // Initialize GPU font atlas textures.
+        for (const auto& metadata : FONTS_METADATA)
+        {
+            const auto* font = fonts.GetFont(metadata.Name);
+            if (font != nullptr)
+            {
+                const auto& atlases = font->GetTextureAtlases();
+                for (int i = 0; i < atlases.size(); i++)
+                {
+                    const auto& atlas = atlases[i];
+
+                    auto name = metadata.Name + std::to_string(i);
+                    GetTextures().Load(copyPass, ToSpan(atlas), Vector2i(Font::ATLAS_SIZE), name);
+                }
+            }
+        }
+    }
+
     void SdlGpuRenderer::ClearDrawBatches()
     {
         _drawBatches.Triangles2d.clear();
+    }
+
+    void SdlGpuRenderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
+    {
+        auto& fonts = g_App.GetFonts();
+
+        // Update GPU font atlas textures.
+        for (const auto& metadata : FONTS_METADATA)
+        {
+            auto* font = fonts.GetFont(metadata.Name);
+            if (font != nullptr && font->IsAtlasUpdated())
+            {
+                const auto& atlases = font->GetTextureAtlases();
+                for (int i = 0; i < atlases.size(); i++)
+                {
+                    const auto& atlas = atlases[i];
+
+                    auto  name = metadata.Name + std::to_string(i);
+                    auto& tex  = GetTextures()[name];
+                    tex.Update(copyPass, ToSpan(atlas), Vector2i::Zero, Vector2i(Font::ATLAS_SIZE));
+                }
+
+                font->SetAtlasUnupdated();
+            }
+        }
     }
 
     void SdlGpuRenderer::CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass)

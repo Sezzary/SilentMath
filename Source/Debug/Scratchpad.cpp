@@ -52,7 +52,7 @@ namespace Silent::Debug
                                                     Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 1,
                                                     AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
-            auto sprite1 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
+            auto sprite1 = Sprite2d::CreateSprite2d("SmoothSerif0", Vector2::Zero, Vector2::One,
                                                     Vector2(50.0f, 50.0f), 0.0f, Vector2(0.5f, 1.0f), Color::Clear, 2,
                                                     AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
             renderer.SubmitSprite2d(sprite1);

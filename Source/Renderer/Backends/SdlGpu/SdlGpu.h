@@ -90,10 +90,14 @@ namespace Silent::Renderer
         void DrawDebugGui() override;
 
         /** @brief Allocates memory pools for for draw batches and GPU buffers. */
-        void AllocateMemory();
+        void InitializeMemory();
+
+        void InitializeFontAtlasTextures(SDL_GPUCopyPass& copyPass);
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
+
+        void UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass);
 
         /** @brief Converts render buffer data to 2D triangle GPU buffer data and uploads it to the GPU.
          *
