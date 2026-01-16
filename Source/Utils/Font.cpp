@@ -111,8 +111,6 @@ namespace Silent::Utils
 
     ShapedText Font::GetShapedText(const std::string& msg)
     {
-        int glyphCount = _glyphs.size();
-
         // Cache new glyphs.
         bool hasNewGlyphs = false;
         auto codePoints   = GetCodePoints(msg);
@@ -136,11 +134,11 @@ namespace Silent::Utils
         for (int i = 0; i < codePoints.size(); i++)
         {
             // Run through font chain.
-            for (int j = 0; j < _fontCount; j++)
+            //for (int j = 0; j < _fontCount; j++)
             {
                 // Check if glyph is valid.
-                uint charIdx = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
-                if (charIdx == 0)
+                uint charIdx = FT_Get_Char_Index(_ftFonts[0], codePoints[i]);
+                /*if (charIdx == 0)
                 {
                     // If no valid glyphs exist, use first font's invalid glyph.
                     if (j < (_fontCount - 1))
@@ -151,10 +149,10 @@ namespace Silent::Utils
                     {
                         j = 0;
                     }
-                }
+                }*/
 
                 // Get shaping info.
-                auto& shapingInfo = shapingInfos[j];
+                auto& shapingInfo = shapingInfos[0];
                 if (shapingInfo.Buffer == nullptr)
                 {
                     // Get buffer.
@@ -165,20 +163,20 @@ namespace Silent::Utils
                     }
 
                     // Fill buffer.
-                    hb_shape(_hbFonts[j], shapingInfo.Buffer, nullptr, 0);
-                    uint glyphCount       = 0;
-                    shapingInfo.Glyphs    = hb_buffer_get_glyph_infos(shapingInfo.Buffer, &glyphCount);
-                    shapingInfo.Positions = hb_buffer_get_glyph_positions(shapingInfo.Buffer, &glyphCount);
+                    //hb_shape(_hbFonts[0], shapingInfo.Buffer, nullptr, 0);
+                    //uint glyphCount       = 0;
+                    //shapingInfo.Glyphs    = hb_buffer_get_glyph_infos(shapingInfo.Buffer, &glyphCount);
+                    //shapingInfo.Positions = hb_buffer_get_glyph_positions(shapingInfo.Buffer, &glyphCount);
                 }
 
                 // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
                     .Metadata = _glyphs[codePoints[i]],
-                    .Advance  = Vector2i(shapingInfo.Positions[i].x_advance, shapingInfo.Positions[i].y_advance) * _scaleFactor,
-                    .Offset   = Vector2i(shapingInfo.Positions[i].x_offset,  shapingInfo.Positions[i].y_offset)  * _scaleFactor
+                    .Advance  = Vector2i::Zero,//Vector2i(shapingInfo.Positions[i].x_advance, shapingInfo.Positions[i].y_advance) * _scaleFactor,
+                    .Offset   = Vector2i::Zero,//Vector2i(shapingInfo.Positions[i].x_offset,  shapingInfo.Positions[i].y_offset)  * _scaleFactor
                 });
-                shapedText.Width += shapedText.Glyphs.back().Advance.x;
+                shapedText.Width += 0;//shapedText.Glyphs.back().Advance.x;
                 break;
             }
         }
@@ -283,8 +281,8 @@ namespace Silent::Utils
         {
             .CodePoint = codePoint,
             .AtlasIdx  = _activeAtlasIdx,
-            .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
-            .Size      = size
+            .Position  = Vector2i(sma_item_x(rect), sma_item_y(rect)),// + Vector2i(GLYPH_PADDING),
+            .Size      = size// - Vector2i(GLYPH_PADDING * 2)
         };
         const auto& glyph = _glyphs[codePoint];
 
@@ -292,7 +290,7 @@ namespace Silent::Utils
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
-        byte*       pixelsTo   = &_textureAtlases.back()[((glyph.Position.y * ATLAS_SIZE) * RGBA_COMP_COUNT) + (glyph.Position.x * RGBA_COMP_COUNT)];
+        byte*       pixelsTo   = &_textureAtlases.back()[(((glyph.Position.y + GLYPH_PADDING) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((glyph.Position.x + GLYPH_PADDING) * RGBA_COMP_COUNT)];
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)
