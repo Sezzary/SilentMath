@@ -8,6 +8,7 @@ namespace Silent::Utils
         std::string              Name               = {};
         std::vector<std::string> Filenames          = {};
         int                      PointSize          = 0;
+        float                    KerningScale       = 0.0f; // @todo Use this when shaping.
         bool                     EnableAntialiasing = false;
     };
 

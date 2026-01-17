@@ -118,22 +118,26 @@ namespace Silent::Utils
         }
         _isAtlasUpdated = hasNewGlyphs;
 
-        //auto shapingInfos = std::vector<ShapingInfo>(_fontCount);
-        auto shapedText   = ShapedText{};
+        auto shapedText = ShapedText{};
         shapedText.Glyphs.reserve(codePoints.size());
 
         // Build shaped text.
         for (int i = 0; i < codePoints.size(); i++)
         {
+            char32 curCodePoint = codePoints[i];
+
             // Run through font chain.
-            for (int j = 0; j < 1/*_fontCount*/; j++)
+            for (int j = 0; j < _ftFonts.size(); j++)
             {
+                auto* curFtFont = _ftFonts[j];
+
+                // @todo Unpredicatable segmentation fault occurs here. Why?
                 // Check if glyph is valid.
-                int charIdx = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
+                int charIdx = FT_Get_Char_Index(curFtFont, curCodePoint);
                 /*if (charIdx == 0)
                 {
                     // If no valid glyphs exist, use first font's invalid glyph.
-                    if (j < (_fontCount - 1))
+                    if (j < (_ftFonts.size() - 1))
                     {
                         continue;
                     }
@@ -148,20 +152,21 @@ namespace Silent::Utils
                 if (i < (codePoints.size() - 1))
                 {
                     // From kerning table.
-                    if (FT_HAS_KERNING(_ftFonts[j]))
+                    if (FT_HAS_KERNING(curFtFont))
                     {
-                        int charIdx0 = FT_Get_Char_Index(_ftFonts[j], codePoints[i]);
-                        int charIdx1 = FT_Get_Char_Index(_ftFonts[j], codePoints[i + 1]);
+                        char32 nextCodePoint = codePoints[i + 1];
+
+                        int charIdx0 = FT_Get_Char_Index(curFtFont, curCodePoint);
+                        int charIdx1 = FT_Get_Char_Index(curFtFont, nextCodePoint);
 
                         auto kerningDelta = FT_Vector{};
-                        // Pass FT_KERNING_DEFAULT for standard horizontal kerning
-                        FT_Get_Kerning(_ftFonts[j], charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
-                        kerning = kerningDelta.x;
+                        FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
+                        kerning = kerningDelta.x; // @todo Check if this needs conversion from FP.
                     }
                     // From glyph advance.
                     else
                     {
-                        kerning = _glyphs[codePoints[i]].Advance;
+                        kerning = _glyphs[curCodePoint].Advance;
                     }
                 }
                 else
@@ -172,7 +177,7 @@ namespace Silent::Utils
                 // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
-                    .Metadata = _glyphs[codePoints[i]],
+                    .Metadata = _glyphs[curCodePoint],
                     .Kerning  = kerning
                 });
                 shapedText.Width += kerning;

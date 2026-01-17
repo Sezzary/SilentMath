@@ -21,6 +21,12 @@ namespace Silent::Renderer
         int         BufferStride = 0;
     };
 
+    // @todo Better name for this. Adds an extra step to prepare renderable data.
+    struct Sortable
+    {
+
+    };
+
     /** @brief Sorted draw batches. */
     struct DrawBatches
     {

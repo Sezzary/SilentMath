@@ -2,11 +2,10 @@
 
 #include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Scene/Shape2d.h"
 #include "Renderer/Common/Objects/Primitive3d.h"
-#include "Renderer/Common/Objects/Scene/Glyph.h"
+#include "Renderer/Common/Objects/Scene/Shape2d.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
-#include "Renderer/Common/Objects/Scene/Text.h"
+#include "Renderer/Common/Objects/Scene/Text2d.h"
 #include "Renderer/Common/Texture.h"
 #include "Renderer/Common/View.h"
 
@@ -27,6 +26,7 @@ namespace Silent::Renderer
 
             std::vector<Shape2d>                Shapes2d          = {};
             std::vector<Sprite2d>               Sprites2d         = {};
+            std::vector<Text2d>                 Texts2d           = {};
             std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
 
             std::vector<Primitive3d>            Primitives3d      = {};

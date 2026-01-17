@@ -19,6 +19,7 @@ namespace Silent::Assets
         Red,
         LightGrey,
         White,
+        Black, // @todo Need to add this one for paper maps.
 
         Count
     };
@@ -35,6 +36,7 @@ namespace Silent::Assets
     };
 
     // @todo Could be defined in a Lua script instead.
+    // @todo Add handwritten italic font for map notes?
     const std::vector<FontMetadata> FONTS_METADATA
     {
         FontMetadata
@@ -47,6 +49,7 @@ namespace Silent::Assets
                 "NotoSerifKR-Medium.ttf"
             },
             .PointSize          = 48,
+            .KerningScale       = 1.1f,
             .EnableAntialiasing = true
         },
         FontMetadata
@@ -59,6 +62,7 @@ namespace Silent::Assets
                 "UnifontExMono.ttf"
             },
             .PointSize          = 16,
+            .KerningScale       = 1.0f,
             .EnableAntialiasing = false
         },
         FontMetadata
@@ -71,6 +75,7 @@ namespace Silent::Assets
                 "NotoSansKR-Bold.ttf"
             },
             .PointSize          = 32,
+            .KerningScale       = 1.0f,
             .EnableAntialiasing = true
         },
         FontMetadata
@@ -83,6 +88,7 @@ namespace Silent::Assets
                 "dalmoori10.ttf"
             },
             .PointSize          = 10,
+            .KerningScale       = 1.0f,
             .EnableAntialiasing = false
         }
     };

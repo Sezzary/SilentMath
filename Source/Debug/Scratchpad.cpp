@@ -98,6 +98,8 @@ namespace Silent::Debug
                 }
             }
 
+            return;
+
             // GUI button test.
             static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::Fit,
                                      []() { Debug::Log("Entering!"); },

@@ -56,11 +56,4 @@ namespace Silent::Renderer
         Fill,
         Stretch
     };
-
-    /** @brief Text embellishment styles. */
-    enum class TextStyle
-    {
-        Flat,
-        Gradient
-    };
 }
