@@ -50,17 +50,19 @@ namespace Silent::Debug
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
-                                                    Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 1,
+                                                    Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 2,
                                                     AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
 
             auto* font = fonts.GetFont("RetroSerif");
             if (font != nullptr)
             {
-                float strScale = (1.0f / 14.0f);
+                float msgScale     = 1.0f / 14.0f;
+                float kerningScale = 1.0f;
+                auto  shadowOffset = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
 
-                // Base position in 100x100 relative space
-                auto pos = Vector2(20.0f, 80.0f);
+                auto pos = Vector2(10.0f, 10.0f);
+                auto color = Color(0.0f, 1.0f, 0.0f, 1.0f);
 
                 auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
 
@@ -75,20 +77,24 @@ namespace Silent::Debug
                     // Compute glyph position.
                     auto relPixelPos = Vector2(offset, 0.0f) +
                                        Vector2(glyph.Metadata.Bearing.x, -glyph.Metadata.Bearing.y);
-                    auto relGlyphPos = (relPixelPos * scaleFactor) * strScale;
+                    auto relGlyphPos = (relPixelPos * scaleFactor) * msgScale;
 
                     // Compute glyph scale.
                     auto glyphScale = Vector2((float)glyph.Metadata.AtlasSize.x / (float)glyph.Metadata.AtlasSize.y, 1.0f) *
                                       Vector2((float)glyph.Metadata.AtlasSize.y / (float)font->GetPointSize());
 
                     // Submit glyph sprite.
-                    auto sprite1 = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                            pos + relGlyphPos, 0.0f, glyphScale * strScale, Color::Clear, 2,
-                                                            AlignMode::BottomLeft, ScaleMode::Fill, BlendMode::Add);
-                    renderer.SubmitSprite2d(sprite1);
+                    auto glyphSprite  = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
+                                                                 pos + relGlyphPos, 0.0f, glyphScale * msgScale, color, 1,
+                                                                 AlignMode::BottomLeft, ScaleMode::Fill, BlendMode::FastAlpha);
+                    auto shadowSprite = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
+                                                                 (pos + shadowOffset) + relGlyphPos, 0.0f, glyphScale * msgScale, color, 1,
+                                                                 AlignMode::BottomLeft, ScaleMode::Fill, BlendMode::FastAlpha);
+                    renderer.SubmitSprite2d(glyphSprite);
+                    //renderer.SubmitSprite2d(shadowSprite);
 
                     // Update horizontal offset.
-                    offset += FP_FLOAT(glyph.Kerning, Q6_SHIFT);
+                    offset += FP_FLOAT(glyph.Kerning, Q6_SHIFT) * kerningScale;
                 }
             }
 
