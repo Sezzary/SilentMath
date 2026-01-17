@@ -142,19 +142,19 @@ namespace Silent::Renderer
         {
             snprintf(fullPath, sizeof(fullPath), "%s.spv", (fs.GetShadersDirectory() / filename).string().c_str());
             activeFormatFlag = SDL_GPU_SHADERFORMAT_SPIRV;
-            entryPoint = "main";
+            entryPoint       = "main";
         }
         else if (formatFlags & SDL_GPU_SHADERFORMAT_MSL)
         {
             snprintf(fullPath, sizeof(fullPath), "%s.msl", (fs.GetShadersDirectory() / filename).string().c_str());
             activeFormatFlag = SDL_GPU_SHADERFORMAT_MSL;
-            entryPoint = "main0";
+            entryPoint       = "main0";
         }
         else if (formatFlags & SDL_GPU_SHADERFORMAT_DXIL)
         {
             snprintf(fullPath, sizeof(fullPath), "%s.dxil", (fs.GetShadersDirectory() / filename).string().c_str());
             activeFormatFlag = SDL_GPU_SHADERFORMAT_DXIL;
-            entryPoint = "main";
+            entryPoint       = "main";
         }
         else
         {

@@ -212,7 +212,7 @@ namespace Silent
                 // @todo Non-functioning call. Submit fullscreen sprite with luma-multiply blending.
                 auto color = Color(1.0f, 1.0f, 1.0f, (float)fade / (float)FP_COLOR(1.0f));
                 //renderer.SubmitSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One, SCREEN_SPACE_RES / 2.0f, FP_ANGLE(0.0f), Vector2::One,
-                //                            color, 0, AlignMode::Center, ScaleMode::Fit, BlendMode::Opaque);
+                //                            color, 0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
 
                 g_FullscreenAlphaBlend = (float)fade / (float)FP_COLOR(1.0f); // TEMP.
 

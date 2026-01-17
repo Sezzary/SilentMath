@@ -17,7 +17,7 @@ namespace Silent::Renderer
         auto aspectCorrection = Vector2::One;
         switch(scaleMode)
         {
-            case ScaleMode::Fit:
+            case ScaleMode::ShortEdge:
             {
                 if (aspect >= 1.0f)
                 {
@@ -29,7 +29,7 @@ namespace Silent::Renderer
                 }
                 break;
             }
-            case ScaleMode::Fill:
+            case ScaleMode::LongEdge:
             {
                 if (aspect >= 1.0f)
                 {

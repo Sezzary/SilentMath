@@ -45,8 +45,8 @@ namespace Silent::Renderer
          *
          * @param copyPass Copy pass.
          * @param pixels Updated texture image pixels.
-         * @param region Update region position.
-         * @param size Update region size.
+         * @param region Start pixel position of the region to update (top-left corner).
+         * @param size Pixel size of the region to update.
          */
         void Update(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i& region, const Vector2i& size);
 

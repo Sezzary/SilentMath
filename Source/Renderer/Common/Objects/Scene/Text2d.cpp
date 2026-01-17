@@ -10,7 +10,20 @@ namespace Silent::Renderer
                                 TextStyle style, bool hasDropShadow,
                                 int depth, ScaleMode scaleMode, BlendMode blendMode)
     {
-        // @todo
-        return Text2d();
+        return Text2d
+        {
+            .Message      = msg,
+            .FontName     = fontName,
+            .Position     = pos,
+            .Rotation     = rot,
+            .Scale        = scale,
+            .KerningScale = kernScale,
+            .Opacity      = opacity,
+            .Style        = style,
+            .HasShadow    = hasDropShadow,
+            .Depth        = depth,
+            .ScaleMd      = scaleMode,
+            .BlendMd      = blendMode
+        };
     }
 }

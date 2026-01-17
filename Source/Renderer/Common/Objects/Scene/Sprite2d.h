@@ -4,6 +4,8 @@
 
 namespace Silent::Renderer
 {
+    constexpr int SPRITE_2D_COUNT_MAX = 256;
+
     /** @brief 2D screen sprite. */
     struct Sprite2d
     {
@@ -16,11 +18,11 @@ namespace Silent::Renderer
         Color       Col         = Color::Clear;
         int         Depth       = 0;
         AlignMode   AlignMd     = AlignMode::Center;
-        ScaleMode   ScaleMd     = ScaleMode::Fit;
+        ScaleMode   ScaleMd     = ScaleMode::ShortEdge;
         BlendMode   BlendMd     = BlendMode::Opaque;
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                        const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                       int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::Fit, BlendMode blendMode = BlendMode::Alpha);
+                                       int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
     };
 }

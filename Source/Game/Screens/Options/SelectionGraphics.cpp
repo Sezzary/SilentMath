@@ -24,14 +24,14 @@ namespace Silent::Game
         // Submit line primitive for underline.
         auto underlinePrim = Shape2d::CreateLine(line.vertex0, line.vertex1,
                                                      COLOR_LINE_START, COLOR_LINE_END,
-                                                     DEPTH_36, ScaleMode::Fit, BlendMode::Opaque);
+                                                     DEPTH_36, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitShape2d(underlinePrim);
 
         // Submit quad primitive for shadow.
         auto shadowPrim = Shape2d::CreateQuad(Vector2i(line.vertex0.x, line.vertex0.y - SHADOW_WIDTH), line.vertex0,
                                                   Vector2i(line.vertex1.x, line.vertex1.y - SHADOW_WIDTH), line.vertex1,
                                                   COLOR_SHADOW_END, COLOR_SHADOW_START, COLOR_SHADOW_END, COLOR_SHADOW_START,
-                                                  DEPTH_36, ScaleMode::Fit, BlendMode::Subtract);
+                                                  DEPTH_36, ScaleMode::ShortEdge, BlendMode::Subtract);
         renderer.SubmitShape2d(shadowPrim);
     }
 
@@ -112,7 +112,7 @@ namespace Silent::Game
         // Submit triangle primitive for arrow.
         auto arrowPrim = Shape2d::CreateTriangle(tri.vertex0, tri.vertex1, tri.vertex2,
                                                      color0, color1, color2,
-                                                     DEPTH_40, ScaleMode::Fit, BlendMode::Opaque);
+                                                     DEPTH_40, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitShape2d(arrowPrim);
     }
 
@@ -156,7 +156,7 @@ namespace Silent::Game
         // Submit quad primitive for bullet point element.
         auto elementPrim = Shape2d::CreateQuad(quad.vertex0, quad.vertex1, quad.vertex2, quad.vertex3,
                                                    color0, color1, color2, color3,
-                                                   DEPTH_24, ScaleMode::Fit, BlendMode::Opaque);
+                                                   DEPTH_24, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitShape2d(elementPrim);
     }
 }

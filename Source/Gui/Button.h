@@ -24,7 +24,7 @@ namespace Silent::Gui
 
         bool _prevState  = false;
 
-        ScaleMode               _scaleMode = ScaleMode::Fit;
+        ScaleMode               _scaleMode = ScaleMode::ShortEdge;
         std::optional<Callback> _onEnter   = std::nullopt;
         std::optional<Callback> _onInside  = std::nullopt;
         std::optional<Callback> _onLeave   = std::nullopt;

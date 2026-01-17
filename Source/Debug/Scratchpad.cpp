@@ -13,11 +13,9 @@ using namespace Silent::Input;
 using namespace Silent::Services;
 
 // `Scratchpad` includes.
-#ifdef _DEBUG
-    #include "Gui/Button.h"
+#include "Gui/Button.h"
 
-    using namespace Silent::Gui;
-#endif
+using namespace Silent::Gui;
 
 namespace Silent::Debug
 {
@@ -46,12 +44,12 @@ namespace Silent::Debug
             // Cursor.
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
                                                          input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::Clear, 0,
-                                                         AlignMode::TopLeft, ScaleMode::Fill, BlendMode::Subtract);
+                                                         AlignMode::TopLeft, ScaleMode::LongEdge, BlendMode::Subtract);
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                     Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 2,
-                                                    AlignMode::Center, ScaleMode::Fill, BlendMode::Add);
+                                                    AlignMode::Center, ScaleMode::LongEdge, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
 
             auto* font = fonts.GetFont("RetroSerif");
@@ -84,10 +82,10 @@ namespace Silent::Debug
                     // Submit glyph sprite.
                     auto glyphSprite  = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
                                                                  pos + relGlyphPos, 0.0f, glyphScale * msgScale, color, 1,
-                                                                 AlignMode::BottomLeft, ScaleMode::Fill, BlendMode::FastAlpha);
+                                                                 AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
                     auto shadowSprite = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
                                                                  (pos + shadowOffset) + relGlyphPos, 0.0f, glyphScale * msgScale, color, 1,
-                                                                 AlignMode::BottomLeft, ScaleMode::Fill, BlendMode::FastAlpha);
+                                                                 AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
                     renderer.SubmitSprite2d(glyphSprite);
                     //renderer.SubmitSprite2d(shadowSprite);
 
@@ -99,7 +97,7 @@ namespace Silent::Debug
             return;
 
             // GUI button test.
-            static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::Fit,
+            static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::ShortEdge,
                                      []() { Debug::Log("Entering!"); },
                                      [&]()
                                      {
@@ -124,7 +122,7 @@ namespace Silent::Debug
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            0, ScaleMode::Fit, BlendMode::Alpha);
+                                                                            0, ScaleMode::ShortEdge, BlendMode::Alpha);
                                         renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Leaving!"); },
@@ -151,7 +149,7 @@ namespace Silent::Debug
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            0, ScaleMode::Fit, BlendMode::Alpha);
+                                                                            0, ScaleMode::ShortEdge, BlendMode::Alpha);
                                         renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Clicking!"); },
@@ -187,7 +185,7 @@ namespace Silent::Debug
                                                 Color(0.0f, 1.0f, 0.0f, 1.0f),
                                                 Color(0.0f, 1.0f, 0.0f, 1.0f),
                                                 Color(0.0f, 0.0f, 0.0f, 0.0f),
-                                                0, ScaleMode::Fit, BlendMode::Alpha);
+                                                0, ScaleMode::ShortEdge, BlendMode::Alpha);
             auto line0 = Shape2d::CreateLine(Vector2i(10, 10),
                                                 Vector2i(50, 10),
                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),
