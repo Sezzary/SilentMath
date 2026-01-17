@@ -71,7 +71,6 @@ Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning
 - assimp
 - FreeType
 - GLM
-- HarfBuzz
 - ImGui
 - ImGuizmo
 - json

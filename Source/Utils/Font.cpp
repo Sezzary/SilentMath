@@ -6,19 +6,12 @@
 
 namespace Silent::Utils
 {
-    /** @brief HarfBuzz text shaping data. */
-    struct ShapingInfo
-    {
-        hb_glyph_info_t*     Glyphs    = nullptr;
-        hb_glyph_position_t* Positions = nullptr;
-        hb_buffer_t*         Buffer    = nullptr;
-    };
-
     Font::Font(FT_Library& fontLib, const FontMetadata& metadata, const std::filesystem::path& path, const std::string& precacheGlyphs)
     {
         constexpr int POINT_SIZE_MAX = ATLAS_SIZE / 8;
 
         _name               = metadata.Name;
+        _kerningScale       = metadata.KerningScale;
         _enableAntialiasing = metadata.EnableAntialiasing;
         _isAtlasUpdated     = false;
 
@@ -49,9 +42,6 @@ namespace Silent::Utils
                 throw std::runtime_error("Failed to set font point size.");
             }
         }
-
-        // Set scale factor.
-        _scaleFactor = (float)_pointSize / (float)_ftFonts.front()->size->metrics.x_ppem;
 
         // Add first atlas.
         AddAtlas();
@@ -148,30 +138,23 @@ namespace Silent::Utils
                 }*/
 
                 // Compute kerning.
-                int kerning = 0;
-                if (i < (codePoints.size() - 1))
+                float kerning = 0.0f;
+                if (FT_HAS_KERNING(curFtFont) && i < (codePoints.size() - 1))
                 {
-                    // From kerning table.
-                    if (FT_HAS_KERNING(curFtFont))
-                    {
-                        char32 nextCodePoint = codePoints[i + 1];
+                    char32 nextCodePoint = codePoints[i + 1];
 
-                        int charIdx0 = FT_Get_Char_Index(curFtFont, curCodePoint);
-                        int charIdx1 = FT_Get_Char_Index(curFtFont, nextCodePoint);
+                    int charIdx0 = FT_Get_Char_Index(curFtFont, curCodePoint);
+                    int charIdx1 = FT_Get_Char_Index(curFtFont, nextCodePoint);
 
-                        auto kerningDelta = FT_Vector{};
-                        FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
-                        kerning = kerningDelta.x; // @todo Check if this needs conversion from FP.
-                    }
-                    // From glyph advance.
-                    else
-                    {
-                        kerning = _glyphs[curCodePoint].Advance;
-                    }
+                    // @todo Check if this needs conversion from FP or not.
+                    auto kerningDelta = FT_Vector{};
+                    FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
+                    kerning = kerningDelta.x;
+                    //kerning = FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale;
                 }
                 else
                 {
-                    kerning = 0;
+                    kerning = _glyphs[curCodePoint].Advance;
                 }
 
                 // Add shaped glyph.
@@ -260,7 +243,7 @@ namespace Silent::Utils
             .AtlasPosition = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
             .AtlasSize     = size - Vector2i(GLYPH_PADDING * 2),
             .Bearing       = Vector2(FP_FLOAT(metrics.horiBearingX, Q6_SHIFT), FP_FLOAT(metrics.horiBearingY, Q6_SHIFT)),
-            .Advance       = (float)metrics.horiAdvance,
+            .Advance       = (float)metrics.horiAdvance,// * _kerningScale,
             .Ascender      = FP_FLOAT(ftFont->ascender, Q6_SHIFT),
             .Descender     = FP_FLOAT(ftFont->descender, Q6_SHIFT)
         };

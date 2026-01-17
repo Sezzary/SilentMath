@@ -10,10 +10,6 @@
     path = Libraries/glm
     url = https://github.com/g-truc/glm.git
 
-[submodule "Libraries/harfbuzz"]
-    path = Libraries/harfbuzz
-    url = https://github.com/harfbuzz/harfbuzz.git
-
 [submodule "Libraries/imgui"]
     path = Libraries/imgui
     url = https://github.com/ocornut/imgui.git

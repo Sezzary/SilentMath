@@ -58,7 +58,6 @@ namespace Silent::Debug
             if (font != nullptr)
             {
                 float msgScale     = 1.0f / 14.0f;
-                float kerningScale = 1.0f;
                 auto  shadowOffset = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
 
                 auto pos = Vector2(10.0f, 10.0f);
@@ -94,7 +93,7 @@ namespace Silent::Debug
                     //renderer.SubmitSprite2d(shadowSprite);
 
                     // Update horizontal offset.
-                    offset += FP_FLOAT(glyph.Kerning, Q6_SHIFT) * kerningScale;
+                    offset += FP_FLOAT(glyph.Kerning, Q6_SHIFT);
                 }
             }
 

@@ -99,7 +99,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 #add_subdirectory(Libraries/assimp)
 add_subdirectory(Libraries/freetype)
 add_subdirectory(Libraries/glm)
-add_subdirectory(Libraries/harfbuzz)
 add_subdirectory(Libraries/json)
 add_subdirectory(Libraries/SDL)
 add_subdirectory(Libraries/sol2)
@@ -112,7 +111,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/freetype/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/harfbuzz
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo
@@ -137,7 +135,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     #assimp
     freetype
     glm
-    harfbuzz
     luajit
     sol2
     SDL3::SDL3-static

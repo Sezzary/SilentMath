@@ -8,7 +8,7 @@ namespace Silent::Utils
         std::string              Name               = {};
         std::vector<std::string> Filenames          = {};
         int                      PointSize          = 0;
-        float                    KerningScale       = 0.0f; // @todo Use this when shaping.
+        float                    KerningScale       = 1.0f;
         bool                     EnableAntialiasing = false;
     };
 
@@ -30,14 +30,14 @@ namespace Silent::Utils
     struct ShapedGlyph
     {
         const GlyphMetadata& Metadata;
-        int                  Kerning = 0;
+        float                Kerning = 0.0f;
     };
 
     /** @brief Shaped text data. */
     struct ShapedText
     {
         std::vector<ShapedGlyph> Glyphs = {};
-        int                      Width  = 0;
+        float                    Width  = 0.0f;
     };
 
     /** @brief Atlased font chain. */
@@ -57,17 +57,18 @@ namespace Silent::Utils
         // Fields
         // =======
 
-        std::string          _name               = {};
-        std::vector<FT_Face> _ftFonts            = {};
-        int                  _pointSize          = 0;
-        bool                 _enableAntialiasing = false;
-        float                _scaleFactor        = 0.0f;
-
+        std::string _name               = {};
+        int         _pointSize          = 0;
+        float       _kerningScale       = 1.0f;
+        bool        _enableAntialiasing = false;
+        
+        std::vector<FT_Face>                      _ftFonts        = {};
         std::unordered_map<char32, GlyphMetadata> _glyphs         = {}; /** Key = code point, value = rasterized glyph metadata. */
         std::vector<smol_atlas_t*>                _rectAtlases    = {};
         std::vector<std::vector<byte>>            _textureAtlases = {};
         int                                       _activeAtlasIdx = 0;
-        bool                                      _isAtlasUpdated = false;
+
+        bool _isAtlasUpdated = false;
 
     public:
         // =============
