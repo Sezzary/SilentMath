@@ -149,8 +149,7 @@ namespace Silent::Utils
                     // @todo Check if this needs conversion from FP or not.
                     auto kerningDelta = FT_Vector{};
                     FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
-                    kerning = kerningDelta.x;
-                    //kerning = FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale;
+                    kerning = FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale;
                 }
                 else
                 {
@@ -243,7 +242,7 @@ namespace Silent::Utils
             .AtlasPosition = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
             .AtlasSize     = size - Vector2i(GLYPH_PADDING * 2),
             .Bearing       = Vector2(FP_FLOAT(metrics.horiBearingX, Q6_SHIFT), FP_FLOAT(metrics.horiBearingY, Q6_SHIFT)),
-            .Advance       = (float)metrics.horiAdvance,// * _kerningScale,
+            .Advance       = FP_FLOAT(metrics.horiAdvance, Q6_SHIFT) * _kerningScale,
             .Ascender      = FP_FLOAT(ftFont->ascender, Q6_SHIFT),
             .Descender     = FP_FLOAT(ftFont->descender, Q6_SHIFT)
         };

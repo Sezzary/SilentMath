@@ -46,7 +46,7 @@ namespace Silent::Debug
             // Cursor.
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
                                                          input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::Clear, 0,
-                                                         AlignMode::Center, ScaleMode::Fill, BlendMode::Subtract);
+                                                         AlignMode::TopLeft, ScaleMode::Fill, BlendMode::Subtract);
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
@@ -65,8 +65,8 @@ namespace Silent::Debug
 
                 auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
 
-                float offset = 0.0f;
-                auto shapedText = font->GetShapedText("Have you seen a little girl?");
+                auto glyphOffset =  Vector2::Zero;
+                auto shapedText  = font->GetShapedText("Have you seen a little girl?");
                 for (const auto& glyph : shapedText.Glyphs)
                 {
                     // Compute UVs.
@@ -74,8 +74,7 @@ namespace Silent::Debug
                     auto uvMax = uvMin + (glyph.Metadata.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
 
                     // Compute glyph position.
-                    auto relPixelPos = Vector2(offset, 0.0f) +
-                                       Vector2(glyph.Metadata.Bearing.x, -glyph.Metadata.Bearing.y);
+                    auto relPixelPos = glyphOffset + Vector2(glyph.Metadata.Bearing.x, glyph.Metadata.AtlasSize.y - glyph.Metadata.Bearing.y);
                     auto relGlyphPos = (relPixelPos * scaleFactor) * msgScale;
 
                     // Compute glyph scale.
@@ -93,7 +92,7 @@ namespace Silent::Debug
                     //renderer.SubmitSprite2d(shadowSprite);
 
                     // Update horizontal offset.
-                    offset += FP_FLOAT(glyph.Kerning, Q6_SHIFT);
+                    glyphOffset.x += glyph.Kerning;
                 }
             }
 

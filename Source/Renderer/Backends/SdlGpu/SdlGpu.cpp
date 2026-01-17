@@ -514,22 +514,22 @@ namespace Silent::Renderer
                 }
                 case AlignMode::TopLeft:
                 {
-                    offset = Vector2(sprite.Scale.x, sprite.Scale.y);
+                    offset = Vector2(sprite.Scale.x, -sprite.Scale.y);
                     break;
                 }
                 case AlignMode::TopRight:
                 {
-                    offset = Vector2(-sprite.Scale.x, sprite.Scale.y);
+                    offset = Vector2(-sprite.Scale.x, -sprite.Scale.y);
                     break;
                 }
                 case AlignMode::BottomLeft:
                 {
-                    offset = Vector2(sprite.Scale.x, -sprite.Scale.y);
+                    offset = Vector2(sprite.Scale.x, sprite.Scale.y);
                     break;
                 }
                 case AlignMode::BottomRight:
                 {
-                    offset = Vector2(-sprite.Scale.x, -sprite.Scale.y);
+                    offset = Vector2(-sprite.Scale.x, sprite.Scale.y);
                     break;
                 }
             }
