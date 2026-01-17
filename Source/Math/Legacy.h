@@ -20,6 +20,7 @@ namespace Silent::Math
         Q12
     };
 
+#if 0
     /** @brief PsyQ matrix. */
     struct MATRIX
     {
@@ -85,7 +86,8 @@ namespace Silent::Math
         struct GsCOORDINATE2* super; /** Parent. */
         struct GsCOORDINATE2* sub;   /** Child. */
     };
-    
+#endif
+
     struct s_Line2d
     {
         Vector2i vertex0;

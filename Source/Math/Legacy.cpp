@@ -9,6 +9,7 @@
 
 namespace Silent::Math
 {
+#if 0
     constexpr float Q4_SCALE  = 1.0f / (float)FP_TO(1, Q4_SHIFT);
     constexpr float Q6_SCALE  = 1.0f / (float)FP_TO(1, Q6_SHIFT);
     constexpr float Q8_SCALE  = 1.0f / (float)FP_TO(1, Q8_SHIFT);
@@ -85,6 +86,7 @@ namespace Silent::Math
 
         return Vector3((float)x, (float)y, (float)z) * scale;
     }
+#endif
 
     q19_12 Math_Sin(q19_12 angle)
     {

@@ -26,6 +26,10 @@
     path = Libraries/LuaJIT
     url = https://github.com/LuaJIT/LuaJIT.git
 
+[submodule "Libraries/psyz"]
+    path = Libraries/psyz
+    url = https://github.com/Xeeynamo/psyz.git
+
 [submodule "Libraries/rectpack2D"]
     path = Libraries/rectpack2D
     url = https://github.com/TeamHypersomnia/rectpack2D.git
