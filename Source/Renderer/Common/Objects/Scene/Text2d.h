@@ -5,8 +5,6 @@
 
 namespace Silent::Renderer
 {
-    constexpr int TEXT_2D_COUNT_MAX = 32;
-
     /** @brief Text embellishment styles. */
     enum class TextStyle
     {
@@ -29,6 +27,7 @@ namespace Silent::Renderer
         int         Depth        = 0;
         ScaleMode   ScaleMd      = ScaleMode::ShortEdge;
         BlendMode   BlendMd      = BlendMode::Alpha;
+        // @todo Align mode.
 
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
                                    const Vector2& pos, float rot, float scale, float kernScale, float opacity,

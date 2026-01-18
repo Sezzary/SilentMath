@@ -5,6 +5,7 @@
 #include "Debug/Debug.h"
 #include "Input/Input.h"
 #include "Renderer/Common/Enums.h"
+#include "Renderer/Common/Objects/Scene/Text2d.h"
 #include "Renderer/Renderer.h"
 #include "Services/Options.h"
 #include "Utils/Parallel.h"
@@ -52,48 +53,11 @@ namespace Silent::Debug
                                                     AlignMode::Center, ScaleMode::LongEdge, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
 
-            auto* font = fonts.GetFont("RetroSerif");
-            if (false)
-            //if (font != nullptr)
-            {
-                float msgScale     = 1.0f / 14.0f;
-                auto  shadowOffset = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
-
-                auto pos = Vector2(10.0f, 10.0f);
-                auto color = Color(0.0f, 1.0f, 0.0f, 1.0f);
-
-                auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
-
-                auto glyphOffset =  Vector2::Zero;
-                auto shapedText  = font->GetShapedText("Have you seen a little girl?");
-                for (const auto& glyph : shapedText.Glyphs)
-                {
-                    // Compute UVs.
-                    auto uvMin = glyph.Metadata.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-                    auto uvMax = uvMin + (glyph.Metadata.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
-
-                    // Compute glyph position.
-                    auto relPixelPos = glyphOffset + Vector2(glyph.Metadata.Bearing.x, glyph.Metadata.AtlasSize.y - glyph.Metadata.Bearing.y);
-                    auto relGlyphPos = (relPixelPos * scaleFactor) * msgScale;
-
-                    // Compute glyph scale.
-                    auto glyphScale = Vector2((float)glyph.Metadata.AtlasSize.x / (float)glyph.Metadata.AtlasSize.y, 1.0f) *
-                                      Vector2((float)glyph.Metadata.AtlasSize.y / (float)font->GetPointSize());
-
-                    // Submit glyph sprite.
-                    auto glyphSprite  = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                                 pos + relGlyphPos, 0.0f, glyphScale * msgScale, color, 1,
-                                                                 AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
-                    auto shadowSprite = Sprite2d::CreateSprite2d("RetroSerif0", uvMin, uvMax,
-                                                                 (pos + shadowOffset) + relGlyphPos, 0.0f, glyphScale * msgScale, color, 1,
-                                                                 AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
-                    renderer.SubmitSprite2d(glyphSprite);
-                    //renderer.SubmitSprite2d(shadowSprite);
-
-                    // Update horizontal offset.
-                    glyphOffset.x += glyph.Kerning;
-                }
-            }
+            // Text.
+            auto text = Text2d::CreateText2d("Have you seen a little girl?", "RetroSerif",
+                                             Vector2(10.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
+                                             TextStyle::Flat, false, 1);
+            renderer.SubmitText2d(text);
 
             return;
 

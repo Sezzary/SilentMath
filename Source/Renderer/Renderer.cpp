@@ -68,7 +68,6 @@ namespace Silent::Renderer
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.Shapes2d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
-        _doubleBuffer.Active.Texts2d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
 
         _doubleBuffer.Active.Primitives3d.clear();
@@ -84,7 +83,7 @@ namespace Silent::Renderer
     {
         if (_doubleBuffer.Active.Shapes2d.size() >= SHAPE_2D_COUNT_MAX)
         {
-            Debug::Log("Attampted to add 2D shape to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log("Attempted to submit 2D shape to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
@@ -98,7 +97,7 @@ namespace Silent::Renderer
 
         if (_doubleBuffer.Active.Sprites2d.size() >= SPRITE_2D_COUNT_MAX)
         {
-            Debug::Log("Attampted to add 2D sprite to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log("Attempted to submit 2D sprite to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
@@ -117,13 +116,76 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
-        if (_doubleBuffer.Active.Texts2d.size() >= TEXT_2D_COUNT_MAX)
+        // @todo Improve `constexpr` compatibility of math classes.
+        static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
+        constexpr auto SHADOW_COLOR = Color(0.0f, 0.0f, 1.0f); // @todo Actual colour is off-black.
+
+        auto& fonts = g_App.GetFonts();
+
+        // Get font.
+        auto* font = fonts.GetFont(text.FontName);
+        if (font == nullptr)
         {
-            Debug::Log("Attampted to add 2D text to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to submit 2D text with missing font `{}`.", text.FontName), Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
-        _doubleBuffer.Active.Texts2d.push_back(text);
+        auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
+        auto glyphOffset =  Vector2::Zero;
+
+        // Run through shaped glyphs in text.
+        auto shapedText = font->GetShapedText(text.Message);
+        for (const auto& glyph : shapedText.Glyphs)
+        {
+            // Compute UVs.
+            auto uvMin = glyph.Metadata.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+            auto uvMax = uvMin + (glyph.Metadata.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
+
+            // Compute rotated offset.
+            // @todo Not used yet. Check if this is correct.
+            auto rotMat    = Matrix::CreateRotationZ(text.Rotation);
+            auto rotOffset = Vector2::Transform(glyphOffset, rotMat);
+
+            // @todo Align mode.
+
+            // Compute glyph position.
+            auto relPixelPos = glyphOffset + Vector2(glyph.Metadata.Bearing.x, glyph.Metadata.AtlasSize.y - glyph.Metadata.Bearing.y);
+            auto relGlyphPos = (relPixelPos * scaleFactor) * text.Scale;
+
+            // Compute glyph scale.
+            auto glyphScale = Vector2((float)glyph.Metadata.AtlasSize.x / (float)glyph.Metadata.AtlasSize.y, 1.0f) *
+                              Vector2((float)glyph.Metadata.AtlasSize.y / (float)font->GetPointSize());
+
+            // Concatenate name for texture atlas containing glyph.
+            auto atlasName = text.FontName + std::to_string(glyph.Metadata.AtlasIdx);
+
+            // Submit 2D glyph sprite.
+            auto glyphPos    = text.Position + relGlyphPos;
+            auto glyphSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
+                                                        glyphPos, text.Rotation, glyphScale * text.Scale, text.Col,
+                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
+            if (!SubmitSprite2d(glyphSprite))
+            {
+                return false;
+            }
+
+            // Submit 2D drop shadow sprite. @todo Needs special rotated offset.
+            if (text.HasShadow)
+            {
+                auto shadowPos    = glyphPos + SHADOW_OFFSET;
+                auto shadowSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
+                                                             shadowPos, text.Rotation, glyphScale * text.Scale, SHADOW_COLOR,
+                                                             text.Depth + 1, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
+                if (!SubmitSprite2d(shadowSprite))
+                {
+                    return false;
+                }
+            }
+
+            // Update horizontal offset.
+            glyphOffset.x += glyph.Kerning;
+        }
+
         return true;
     }
 
@@ -131,7 +193,7 @@ namespace Silent::Renderer
     {
         if (_doubleBuffer.Active.DebugGuiDrawCalls.size() >= DEBUG_GUI_COUNT_MAX)
         {
-            Debug::Log("Attampted to add debug GUI draw call to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log("Attempted to submit debug GUI draw call to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return;
         }
 

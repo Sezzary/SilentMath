@@ -4,7 +4,7 @@
 
 namespace Silent::Renderer
 {
-    constexpr int SPRITE_2D_COUNT_MAX = 256;
+    constexpr int SPRITE_2D_COUNT_MAX = 512;
 
     /** @brief 2D screen sprite. */
     struct Sprite2d
