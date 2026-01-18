@@ -12,12 +12,6 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Submitted data groups for sorting. @todo Use this. Might need a better name. */
-    struct SortableGroups
-    {
-
-    };
-
     /** @brief GPU buffer draw raw batch. */
     struct DrawBatch
     {
@@ -62,7 +56,6 @@ namespace Silent::Renderer
         
         SDL_GPUTexture*       _swapchainTexture = nullptr;
         SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
-        SortableGroups        _sortableGroups   = {};
         DrawBatches           _drawBatches      = {};
         GpuBuffers            _gpuBuffers       = {};
 
@@ -103,10 +96,6 @@ namespace Silent::Renderer
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
-
-        void ProcessText2d();
-        void ProcessSprites2d();
-        void ProcessShapes2d();
 
         void UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass);
 

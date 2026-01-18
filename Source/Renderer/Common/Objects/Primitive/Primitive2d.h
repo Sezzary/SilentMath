@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Renderer/Common/Objects/Primitive/Vertex2d.h"
+
 namespace Silent::Renderer
 {
     /** @brief 2D screen primitive representing a quad or triangle. */

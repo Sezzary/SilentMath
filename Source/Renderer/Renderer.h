@@ -3,6 +3,7 @@
 #include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Objects/Primitive3d.h"
+#include "Renderer/Common/Objects/Primitive/Primitive2d.h"
 #include "Renderer/Common/Objects/Scene/Shape2d.h"
 #include "Renderer/Common/Objects/Scene/Sprite2d.h"
 #include "Renderer/Common/Objects/Scene/Text2d.h"
@@ -23,6 +24,8 @@ namespace Silent::Renderer
         struct Data
         {
             int DrawCallCount = 0;
+
+            std::vector<Primitive2d> Primitives2d = {}; // @todo Sprites, shapes, and texts processed into this.
 
             std::vector<Shape2d>                Shapes2d          = {}; // } @todo Not really renderer objects. Should be external.
             std::vector<Sprite2d>               Sprites2d         = {}; // }
@@ -210,6 +213,11 @@ namespace Silent::Renderer
 
         /** @brief Initializes the double buffer. */
         void InitializeDoubleBuffer();
+
+        // @todo Process these into 2D primitives.
+        void ProcessText2d();
+        void ProcessSprites2d();
+        void ProcessShapes2d();
 
         /** @brief Sorts render data in the double buffer, preparing it for batching and parsing to GPU buffer data.
          * Called at the start of `Update`.
