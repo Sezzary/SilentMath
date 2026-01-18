@@ -13,7 +13,6 @@ namespace Silent::Utils
         _name               = metadata.Name;
         _kerningScale       = metadata.KerningScale;
         _enableAntialiasing = metadata.EnableAntialiasing;
-        _isAtlasUpdated     = false;
 
         // Clamp point size.
         _pointSize = metadata.PointSize;
@@ -94,8 +93,7 @@ namespace Silent::Utils
     ShapedText Font::GetShapedText(const std::string& msg)
     {
         // Cache new glyphs.
-        bool hasNewGlyphs = false;
-        auto codePoints   = GetCodePoints(msg);
+        auto codePoints = GetCodePoints(msg);
         for (char32 codePoint : codePoints)
         {
             if (Find(_glyphs, codePoint) != nullptr)
@@ -103,10 +101,8 @@ namespace Silent::Utils
                 continue;
             }
 
-            hasNewGlyphs = true;
             CacheGlyph(codePoint);
         }
-        _isAtlasUpdated = hasNewGlyphs;
 
         auto shapedText = ShapedText{};
         shapedText.Glyphs.reserve(codePoints.size());
@@ -170,14 +166,9 @@ namespace Silent::Utils
         return shapedText;
     }
 
-    bool Font::IsAtlasUpdated() const
+    const std::set<int>& Font::GetDirtyGpuAtlasIdxs() const
     {
-        return _isAtlasUpdated;
-    }
-
-    void Font::SetAtlasUnupdated()
-    {
-        _isAtlasUpdated = false;
+        return _dirtyGpuAtlasIdxs;
     }
 
     std::vector<char32> Font::GetCodePoints(const std::string& msg) const
@@ -189,6 +180,11 @@ namespace Silent::Utils
         // Collect code points.
         utf8::utf8to32(msg.begin(), msg.end(), std::back_inserter(codePoints));
         return codePoints;
+    }
+
+    void Font::ClearDirtyGpuAtlasIdxs()
+    {
+        _dirtyGpuAtlasIdxs.clear();
     }
 
     void Font::CacheGlyph(char32 codePoint)
@@ -269,6 +265,9 @@ namespace Silent::Utils
                 pixelsTo[pixelBaseIdx + 3] = pixel;
             }
         }
+
+        // Mark relevant GPU atlas texture as dirty.
+        _dirtyGpuAtlasIdxs.insert(_activeAtlasIdx);
     }
 
     void Font::AddAtlas()

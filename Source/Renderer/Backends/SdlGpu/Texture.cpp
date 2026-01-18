@@ -142,14 +142,15 @@ namespace Silent::Renderer
         Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
     }
 
-    SdlGpuTexture& SdlGpuTextureManager::operator[](const std::string& name)
+    SdlGpuTexture* SdlGpuTextureManager::operator[](const std::string& name)
     {
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
         {
-            throw std::runtime_error(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name));
+            Debug::Log(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name), Debug::LogLevel::Warning);
+            return nullptr;
         }
 
-        return *(SdlGpuTexture*)tex->get();
+        return (SdlGpuTexture*)tex->get();
     }
 }

@@ -162,7 +162,7 @@ namespace Silent::Renderer
             // Submit 2D glyph sprite.
             auto glyphPos    = text.Position + relGlyphPos;
             auto glyphSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
-                                                        glyphPos, text.Rotation, glyphScale * text.Scale, text.Col,
+                                                        glyphPos, text.Rotation, glyphScale * text.Scale, Color(1.0f, 1.0f, 1.0f, text.Opacity),
                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
             if (!SubmitSprite2d(glyphSprite))
             {

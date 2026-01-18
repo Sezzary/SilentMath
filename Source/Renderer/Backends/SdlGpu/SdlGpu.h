@@ -92,11 +92,15 @@ namespace Silent::Renderer
         /** @brief Allocates memory pools for for draw batches and GPU buffers. */
         void InitializeMemory();
 
-        void InitializeFontAtlasTextures(SDL_GPUCopyPass& copyPass);
-
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
 
+        /** @brief Adds new glyph texture atlases and updates old ones if new glyphs have been added.
+         *
+         * @todo Race condition! Should run this before render thread.
+         *
+         * @param copyPass Copy pass.
+         */
         void UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass);
 
         /** @brief Converts render buffer data to 2D triangle GPU buffer data and uploads it to the GPU.

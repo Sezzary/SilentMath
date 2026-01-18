@@ -48,8 +48,8 @@ namespace Silent::Assets
                 "NotoSerifJP-Medium.ttf",
                 "NotoSerifKR-Medium.ttf"
             },
-            .PointSize          = 48,
-            .KerningScale       = 1.1f,
+            .PointSize          = 64,
+            .KerningScale       = 1.15f,
             .EnableAntialiasing = true
         },
         FontMetadata
@@ -74,7 +74,7 @@ namespace Silent::Assets
                 "NotoSansJP-Bold.ttf",
                 "NotoSansKR-Bold.ttf"
             },
-            .PointSize          = 32,
+            .PointSize          = 40,
             .KerningScale       = 1.0f,
             .EnableAntialiasing = true
         },

@@ -214,7 +214,6 @@ namespace Silent::Renderer
         void InitializeDoubleBuffer();
 
         // @todo Process these into 2D primitives.
-        void ProcessText2d();
         void ProcessSprites2d();
         void ProcessShapes2d();
 

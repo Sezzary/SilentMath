@@ -99,6 +99,6 @@ namespace Silent::Renderer
          */
         void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
-        SdlGpuTexture& operator[](const std::string& name);
+        SdlGpuTexture* operator[](const std::string& name);
     };
 }

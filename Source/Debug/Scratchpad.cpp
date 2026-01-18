@@ -58,6 +58,10 @@ namespace Silent::Debug
                                              Vector2(10.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
                                              TextStyle::Flat, false, 1);
             renderer.SubmitText2d(text);
+            auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
+                                             Vector2(10.0f, 20.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
+                                             TextStyle::Flat, false, 1);
+            renderer.SubmitText2d(text2);
 
             return;
 

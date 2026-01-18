@@ -68,7 +68,7 @@ namespace Silent::Utils
         std::vector<std::vector<byte>>            _textureAtlases = {};
         int                                       _activeAtlasIdx = 0;
 
-        bool _isAtlasUpdated = false;
+        std::set<int> _dirtyGpuAtlasIdxs = {};
 
     public:
         // =============
@@ -106,6 +106,12 @@ namespace Silent::Utils
          */
         const std::vector<std::vector<byte>>& GetTextureAtlases() const;
 
+        /** @brief Gets the indices of glyph atlas textures which require updating on the GPU.
+         *
+         * @return Dirty glyph texture atlas indices.
+         */
+        const std::set<int>& GetDirtyGpuAtlasIdxs() const;
+
         /** @brief Gets the shaped text for a message.
          *
          * @param msg Message to parse.
@@ -113,23 +119,16 @@ namespace Silent::Utils
          */
         ShapedText GetShapedText(const std::string& msg);
 
-        // ========
-        // Setters
-        // ========
+        // ==========
+        // Utilities
+        // ==========
 
-        /** @brief Set by renderer after a GPU texture update. @todo name this properly. ClearAtlasUpdatedFlag? */
-        void SetAtlasUnupdated();
+        /** @brief Clears all indices of glyph texture atlases marked for updating on the GPU. */
+        void ClearDirtyGpuAtlasIdxs();
 
         // ==========
         // Inquirers
         // ==========
-
-        /** @brief Checks if an atlas has been updated with new glyphs.
-         * Used by the renderer to update the GPU texture.
-         *
-         * @return `true` if an atlas has been updated, `false` otherwise.
-         */
-        bool IsAtlasUpdated() const;
 
     private:
         // ========
