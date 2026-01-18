@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "Renderer/Backends/SdlGpu/PipelineConfig.h"
 
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 
 namespace Silent::Renderer
@@ -107,7 +107,7 @@ namespace Silent::Renderer
             {
                 {
                     .slot               = 0,
-                    .pitch              = sizeof(Vertex2dBuffer),
+                    .pitch              = sizeof(BufferVertex2d),
                     .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     .instance_step_rate = 0
                 }

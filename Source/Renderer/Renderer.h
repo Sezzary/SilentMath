@@ -24,9 +24,9 @@ namespace Silent::Renderer
         {
             int DrawCallCount = 0;
 
-            std::vector<Shape2d>                Shapes2d          = {};
-            std::vector<Sprite2d>               Sprites2d         = {};
-            std::vector<Text2d>                 Texts2d           = {};
+            std::vector<Shape2d>                Shapes2d          = {}; // } @todo Not really renderer objects. Should be external.
+            std::vector<Sprite2d>               Sprites2d         = {}; // }
+            std::vector<Text2d>                 Texts2d           = {}; // }
             std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
 
             std::vector<Primitive3d>            Primitives3d      = {};

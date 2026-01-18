@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief 2D screen space vertex. */
+    /** @brief 2D screen vertex. */
     struct Vertex2d
     {
         Vector2 Position = Vector2::Zero;

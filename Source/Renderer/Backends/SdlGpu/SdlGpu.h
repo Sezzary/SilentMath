@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Triangle2dUniform.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformTriangle2d.h"
 #include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
@@ -12,7 +12,13 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Renderer draw batch. */
+    /** @brief Submitted data groups for sorting. @todo Use this. Might need a better name. */
+    struct SortableGroups
+    {
+
+    };
+
+    /** @brief GPU buffer draw raw batch. */
     struct DrawBatch
     {
         std::string TextureName  = {};
@@ -21,13 +27,7 @@ namespace Silent::Renderer
         int         BufferStride = 0;
     };
 
-    // @todo Better name for this. Adds an extra step to prepare renderable data.
-    struct Sortable
-    {
-
-    };
-
-    /** @brief Sorted draw batches. */
+    /** @brief Sorted GPU buffer draw batches. */
     struct DrawBatches
     {
         std::vector<DrawBatch> Triangles2d = {};
@@ -36,12 +36,12 @@ namespace Silent::Renderer
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        VertexBuffer<Vertex2dBuffer> Triangle2dVertices = {};
+        VertexBuffer<BufferVertex2d> Triangle2dVertices = {};
 
-        Triangle2dUni Triangle2dUni = {};
+        UniformTriangle2d UniformTriangle2d = {};
     };
 
-    /** SDL_gpu renderer backend. */
+    /** @brief SDL_gpu renderer backend. */
     class SdlGpuRenderer : public RendererBase
     {
     public:
@@ -62,6 +62,7 @@ namespace Silent::Renderer
         
         SDL_GPUTexture*       _swapchainTexture = nullptr;
         SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
+        SortableGroups        _sortableGroups   = {};
         DrawBatches           _drawBatches      = {};
         GpuBuffers            _gpuBuffers       = {};
 
@@ -102,6 +103,10 @@ namespace Silent::Renderer
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
+
+        void ProcessText2d();
+        void ProcessSprites2d();
+        void ProcessShapes2d();
 
         void UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass);
 

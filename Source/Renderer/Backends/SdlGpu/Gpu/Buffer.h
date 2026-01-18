@@ -39,7 +39,7 @@ namespace Silent::Renderer
          */
         const std::string& GetName() const;
 
-        /** @brief Gets the number of elements currently in the GPU buffer.
+        /** @brief Gets the number of elements in the GPU buffer.
          *
          * @return Element count.
          */

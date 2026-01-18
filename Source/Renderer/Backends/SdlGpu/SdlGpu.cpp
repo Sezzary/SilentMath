@@ -3,8 +3,8 @@
 
 #include "Application.h"
 #include "Assets/Fonts.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Triangle2dUniform.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/Vertex2dBuffer.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformTriangle2d.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Texture.h"
@@ -290,18 +290,18 @@ namespace Silent::Renderer
         {
             if (batch.TextureName.empty())
             {
-                _gpuBuffers.Triangle2dUni.UseTexture = false;
+                _gpuBuffers.UniformTriangle2d.UseTexture = false;
             }
             else
             {
                 auto& tex = GetTextures()[batch.TextureName];
                 tex.Bind(renderPass, GetActiveSampler());
 
-                _gpuBuffers.Triangle2dUni.UseTexture = true;
+                _gpuBuffers.UniformTriangle2d.UseTexture = true;
             }
 
-            _gpuBuffers.Triangle2dUni.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
-            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.Triangle2dUni, sizeof(_gpuBuffers.Triangle2dUni));
+            _gpuBuffers.UniformTriangle2d.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
+            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.UniformTriangle2d, sizeof(_gpuBuffers.UniformTriangle2d));
 
             _pipelines.Bind(renderPass, RenderStage::Triangle2d, batch.BlendMd);
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
@@ -468,7 +468,7 @@ namespace Silent::Renderer
         int shape2dIdxCount   = (_doubleBuffer.Render.Shapes2d.size() * 2) * TRI_IDX_COUNT;
 
         // Create GPU buffer data.
-        auto bufferVerts = std::vector<Vertex2dBuffer>{};
+        auto bufferVerts = std::vector<BufferVertex2d>{};
         auto bufferIdxs  = std::vector<uint16>{};
 
         bufferVerts.reserve(sprite2dVertCount + shape2dVertCount);
@@ -548,10 +548,10 @@ namespace Silent::Renderer
             auto uv3 = Vector2(sprite.UvMin.x, sprite.UvMax.y);
 
             // Add vertices.
-            bufferVerts.push_back(Vertex2dBuffer{ pos0, uv0, sprite.Col });
-            bufferVerts.push_back(Vertex2dBuffer{ pos1, uv1, sprite.Col });
-            bufferVerts.push_back(Vertex2dBuffer{ pos2, uv2, sprite.Col });
-            bufferVerts.push_back(Vertex2dBuffer{ pos3, uv3, sprite.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos0, uv0, sprite.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos1, uv1, sprite.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos2, uv2, sprite.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos3, uv3, sprite.Col });
 
             // Add indices.
             bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 0);
@@ -587,7 +587,7 @@ namespace Silent::Renderer
                 {
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
-                    bufferVerts.push_back(Vertex2dBuffer{ Vector3(ndc.x, ndc.y, depthZ), Vector2::Zero, vert.Col });
+                    bufferVerts.push_back(BufferVertex2d{ Vector3(ndc.x, ndc.y, depthZ), Vector2::Zero, vert.Col });
                 }
 
                 // Add indices.
@@ -606,7 +606,7 @@ namespace Silent::Renderer
                 {
                     //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), prim.ScaleM);
                     auto ndc = ConvertScreenPercentToNdc(Vector2(vert.Position.x, vert.Position.y));
-                    bufferVerts.push_back(Vertex2dBuffer{ Vector3(ndc.x, ndc.y, depthZ), Vector2::Zero, vert.Col });
+                    bufferVerts.push_back(BufferVertex2d{ Vector3(ndc.x, ndc.y, depthZ), Vector2::Zero, vert.Col });
                 }
 
                 // Add indices.
