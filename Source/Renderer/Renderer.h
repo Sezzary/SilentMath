@@ -18,7 +18,7 @@ namespace Silent::Renderer
         SdlGpu
     };
 
-    /** @brief Double-buffered renderer data. */
+    /** @brief Double-buffered scene data. */
     struct DoubleBuffer
     {
         struct Data
@@ -116,26 +116,26 @@ namespace Silent::Renderer
         /** @brief Signals a viewport resize. */
         void SignalResize();
 
-        /** @brief Submits a 2D screen shape for drawing.
+        /** @brief Submits an immediate-mode 2D screen shape for drawing.
          *
          * @param prim 2D screen shape to draw.
          * @return `true` if the 2D screen shape was successfully submitted, `false` otherwise.
          */
         bool SubmitShape2d(const Shape2d& shape);
 
-        /** @brief Submits a 2D screen sprite for drawing.
+        /** @brief Submits an immediate-mode 2D screen sprite for drawing.
          *
          * @param sprite 2D screen sprite to draw.
          * @return `true` if the 2D screen sprite was successfully submitted, `false` otherwise.
          */
         bool SubmitSprite2d(const Sprite2d& sprite);
 
-        /** @brief Submits a glyph for drawing.
+        /** @brief Submits immediate-mode 2D screen text for drawing.
          *
-         * @param glyph Glyph to draw.
-         * @return `true` if the glyph was successfully submitted, `false` otherwise.
+         * @param sprite 2D screen text to draw.
+         * @return `true` if the 2D screen text was successfully submitted, `false` otherwise.
          */
-        //bool SubmitGlyph(const Glyph& glyph);
+        bool SubmitText2d(const Text2d& text);
 
         /** @brief Initializes the renderer and its subsystems.
          *

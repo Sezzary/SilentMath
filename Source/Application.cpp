@@ -229,10 +229,6 @@ namespace Silent
             {
                 Debug::Log(Fmt("Failed to show cursor: {}", SDL_GetError()), Debug::LogLevel::Warning);
             }
-
-            // Move cursor to window center.
-            auto pos = GetWindowResolution().ToVector2() / 2.0f;
-            SDL_WarpMouseInWindow(_window, pos.x, pos.y);
         }
         // Hide.
         else if (_work.Options->EnableFullscreen && SDL_CursorVisible())

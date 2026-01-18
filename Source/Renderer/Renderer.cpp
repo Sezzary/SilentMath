@@ -68,6 +68,7 @@ namespace Silent::Renderer
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.Shapes2d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
+        _doubleBuffer.Active.Texts2d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
 
         _doubleBuffer.Active.Primitives3d.clear();
@@ -111,6 +112,18 @@ namespace Silent::Renderer
         //}
 
         _doubleBuffer.Active.Sprites2d.push_back(sprite);
+        return true;
+    }
+
+    bool RendererBase::SubmitText2d(const Text2d& text)
+    {
+        if (_doubleBuffer.Active.Texts2d.size() >= TEXT_2D_COUNT_MAX)
+        {
+            Debug::Log("Attampted to add 2D text to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            return false;
+        }
+
+        _doubleBuffer.Active.Texts2d.push_back(text);
         return true;
     }
 

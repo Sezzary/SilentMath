@@ -53,7 +53,8 @@ namespace Silent::Debug
             renderer.SubmitSprite2d(sprite0);
 
             auto* font = fonts.GetFont("RetroSerif");
-            if (font != nullptr)
+            if (false)
+            //if (font != nullptr)
             {
                 float msgScale     = 1.0f / 14.0f;
                 auto  shadowOffset = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
