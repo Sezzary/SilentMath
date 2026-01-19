@@ -94,4 +94,14 @@ namespace Silent::Math
     {
         return (float)((int)x + ((x > 0.0f) && x != (int)x));
     }
+
+    /** @brief Converts degrees to radians
+     *
+     * @param deg Angle in degrees to covnert.
+     * @return Angle converted from degrees to radians.
+     */
+    constexpr float DEG_TO_RAD(float deg)
+    {
+        return (deg * PI) / 180.0f;
+    }
 }

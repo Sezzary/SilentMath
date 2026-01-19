@@ -63,6 +63,9 @@ namespace Silent::Renderer
 
     void RendererBase::SwapDoubleBuffer()
     {
+        // @todo Need to call `UpdateFontAtlasTextures` here. Backends need their own
+        // pre-render data prep method.
+
         std::swap(_doubleBuffer.Render, _doubleBuffer.Active);
 
         _doubleBuffer.Active.DrawCallCount = 0;
@@ -130,38 +133,45 @@ namespace Silent::Renderer
             return false;
         }
 
+        // Compute text scale factor.
         auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
-        auto glyphOffset =  Vector2::Zero;
 
-        // Run through shaped glyphs in text.
+        // Get shaped glyphs.
         auto shapedText = font->GetShapedText(text.Message);
+
+        // @todo Align mode.
+        float textWidth = (shapedText.Width * scaleFactor.x) * text.Scale; // @todo `scaleFactor` axis might be affected by scale mode.
+
+        // Run through shaped glyphs.
+        auto rotMat           = Matrix::CreateRotationZ(text.Rotation);
+        auto glyphPixelOffset = Vector2::Zero;
         for (const auto& glyph : shapedText.Glyphs)
         {
-            // Compute UVs.
-            auto uvMin = glyph.Metadata.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-            auto uvMax = uvMin + (glyph.Metadata.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
+            // Compute glyph texture atlas UVs.
+            auto glyphUvMin = glyph.Metadata.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+            auto glyphUvMax = glyphUvMin + (glyph.Metadata.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
 
-            // Compute rotated offset.
-            // @todo Not used yet. Check if this is correct.
-            auto rotMat    = Matrix::CreateRotationZ(text.Rotation);
-            auto rotOffset = Vector2::Transform(glyphOffset, rotMat);
+            // Rotate glyph offset.
+            auto adjGlyphPixelOffset  = Vector2::Transform(glyphPixelOffset, rotMat);
+            auto adjGlyphPixelBearing = Vector2::Transform(Vector2(glyph.Metadata.Bearing.x, glyph.Metadata.AtlasSize.y - glyph.Metadata.Bearing.y),
+                                                           rotMat);
 
-            // @todo Align mode.
-
-            // Compute glyph position.
-            auto relPixelPos = glyphOffset + Vector2(glyph.Metadata.Bearing.x, glyph.Metadata.AtlasSize.y - glyph.Metadata.Bearing.y);
-            auto relGlyphPos = (relPixelPos * scaleFactor) * text.Scale;
+            // Compute glyph screen position from pixel position.
+            auto relGlyphPixelPos = adjGlyphPixelOffset + adjGlyphPixelBearing;
+            auto relGlyphPos      = (relGlyphPixelPos * scaleFactor) * text.Scale;
 
             // Compute glyph scale.
             auto glyphScale = Vector2((float)glyph.Metadata.AtlasSize.x / (float)glyph.Metadata.AtlasSize.y, 1.0f) *
                               Vector2((float)glyph.Metadata.AtlasSize.y / (float)font->GetPointSize());
 
             // Concatenate name for texture atlas containing glyph.
-            auto atlasName = text.FontName + std::to_string(glyph.Metadata.AtlasIdx);
+            auto glyphAtlasName = text.FontName + std::to_string(glyph.Metadata.AtlasIdx);
+
+            // @todo Derive colour from markup.
 
             // Submit 2D glyph sprite.
             auto glyphPos    = text.Position + relGlyphPos;
-            auto glyphSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
+            auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
                                                         glyphPos, text.Rotation, glyphScale * text.Scale, Color(1.0f, 1.0f, 1.0f, text.Opacity),
                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
             if (!SubmitSprite2d(glyphSprite))
@@ -169,13 +179,13 @@ namespace Silent::Renderer
                 return false;
             }
 
-            // Submit 2D drop shadow sprite. @todo Needs special rotated offset.
+            // Submit 2D glyph drop shadow sprite. @todo Needs special rotated offset.
             if (text.HasShadow)
             {
-                auto shadowPos    = glyphPos + SHADOW_OFFSET;
-                auto shadowSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
-                                                             shadowPos, text.Rotation, glyphScale * text.Scale, SHADOW_COLOR,
-                                                             text.Depth + 1, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
+                auto adjShadowOffset = Vector2::Transform(SHADOW_OFFSET, rotMat);
+                auto shadowSprite    = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
+                                                                glyphPos + adjShadowOffset, text.Rotation, glyphScale * text.Scale, SHADOW_COLOR,
+                                                                text.Depth + 1, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
                 if (!SubmitSprite2d(shadowSprite))
                 {
                     return false;
@@ -183,7 +193,7 @@ namespace Silent::Renderer
             }
 
             // Update horizontal offset.
-            glyphOffset.x += glyph.Kerning;
+            glyphPixelOffset.x += glyph.Kerning;
         }
 
         return true;
