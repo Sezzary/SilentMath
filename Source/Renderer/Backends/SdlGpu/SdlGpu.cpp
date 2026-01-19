@@ -524,12 +524,19 @@ namespace Silent::Renderer
                 }
             }
 
+            // Compute relative vertex positions.
+            auto rotMat  = Matrix::CreateRotationZ(-sprite.Rotation);
+            auto relPos0 = Vector2::Transform(Vector2(-sprite.Scale.x, sprite.Scale.y) + offset, rotMat);
+            auto relPos1 = Vector2::Transform(sprite.Scale                             + offset, rotMat);
+            auto relPos2 = Vector2::Transform(Vector2(sprite.Scale.x, -sprite.Scale.y) + offset, rotMat);
+            auto relPos3 = Vector2::Transform(-sprite.Scale                            + offset, rotMat);
+
             // Compute vertex positions.
             float depthZ = std::clamp((float)sprite.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
-            auto  pos0   = Vector3((ndc.x - sprite.Scale.x) + offset.x, (ndc.y + sprite.Scale.y) + offset.y, depthZ);
-            auto  pos1   = Vector3((ndc.x + sprite.Scale.x) + offset.x, (ndc.y + sprite.Scale.y) + offset.y, depthZ);
-            auto  pos2   = Vector3((ndc.x + sprite.Scale.x) + offset.x, (ndc.y - sprite.Scale.y) + offset.y, depthZ);
-            auto  pos3   = Vector3((ndc.x - sprite.Scale.x) + offset.x, (ndc.y - sprite.Scale.y) + offset.y, depthZ);
+            auto  pos0   = Vector3(ndc.x + relPos0.x, ndc.y + relPos0.y, depthZ);
+            auto  pos1   = Vector3(ndc.x + relPos1.x, ndc.y + relPos1.y, depthZ);
+            auto  pos2   = Vector3(ndc.x + relPos2.x, ndc.y + relPos2.y, depthZ);
+            auto  pos3   = Vector3(ndc.x + relPos3.x, ndc.y + relPos3.y, depthZ);
 
             // Compute vertex UVs.
             auto uv0 = sprite.UvMin;

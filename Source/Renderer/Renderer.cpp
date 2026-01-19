@@ -140,6 +140,7 @@ namespace Silent::Renderer
         auto shapedText = font->GetShapedText(text.Message);
 
         // @todo Align mode.
+        auto  textPos   = text.Position;
         float textWidth = (shapedText.Width * scaleFactor.x) * text.Scale; // @todo `scaleFactor` axis might be affected by scale mode.
 
         // Run through shaped glyphs.
@@ -170,7 +171,7 @@ namespace Silent::Renderer
             // @todo Derive colour from markup.
 
             // Submit 2D glyph sprite.
-            auto glyphPos    = text.Position + relGlyphPos;
+            auto glyphPos    = textPos + relGlyphPos;
             auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
                                                         glyphPos, text.Rotation, glyphScale * text.Scale, Color(1.0f, 1.0f, 1.0f, text.Opacity),
                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
