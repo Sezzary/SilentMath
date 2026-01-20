@@ -133,18 +133,61 @@ namespace Silent::Renderer
             return false;
         }
 
-        // Compute text scale factor.
-        auto scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
-
-        // Get shaped glyphs.
+        // Get shaped text glyphs.
         auto shapedText = font->GetShapedText(text.Message);
 
-        // @todo Align mode.
-        auto  textPos   = text.Position;
-        float textWidth = (shapedText.Width * scaleFactor.x) * text.Scale; // @todo `scaleFactor` axis might be affected by scale mode.
+        // Compute trasformation parameters.
+        auto  rotMat      = Matrix::CreateRotationZ(text.Rotation);
+        auto  scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
+        float textWidth   = (shapedText.Width * scaleFactor.x) * text.Scale; // @todo `scaleFactor` axis might be affected by scale mode.
+
+        // Compute text position. @todo Alignment should be in markup.
+        auto textOffset = Vector2::One;
+        switch (text.AlignMd)
+        {
+            default:
+            case AlignMode::Center:
+            {
+                break;
+            }
+            case AlignMode::CenterTop:
+            {
+                break;
+            }
+            case AlignMode::CenterBottom:
+            {
+                textOffset = Vector2(-textWidth * 0.5f, 0.0f);
+                break;
+            }
+            case AlignMode::CenterLeft:
+            {
+                break;
+            }
+            case AlignMode::CenterRight:
+            {
+                break;
+            }
+            case AlignMode::TopLeft:
+            {
+                break;
+            }
+            case AlignMode::TopRight:
+            {
+                break;
+            }
+            case AlignMode::BottomLeft:
+            {
+                break;
+            }
+            case AlignMode::BottomRight:
+            {
+                textOffset = Vector2(-textWidth, 0.0f);
+                break;
+            }
+        }
+        auto adjTextPos = text.Position + Vector2::Transform(textOffset, rotMat);
 
         // Run through shaped glyphs.
-        auto rotMat           = Matrix::CreateRotationZ(text.Rotation);
         auto glyphPixelOffset = Vector2::Zero;
         for (const auto& glyph : shapedText.Glyphs)
         {
@@ -171,22 +214,22 @@ namespace Silent::Renderer
             // @todo Derive colour from markup.
 
             // Submit 2D glyph sprite.
-            auto glyphPos    = textPos + relGlyphPos;
+            auto glyphPos    = adjTextPos + relGlyphPos;
             auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
                                                         glyphPos, text.Rotation, glyphScale * text.Scale, Color(1.0f, 1.0f, 1.0f, text.Opacity),
-                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
+                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::FastAlpha);
             if (!SubmitSprite2d(glyphSprite))
             {
                 return false;
             }
 
-            // Submit 2D glyph drop shadow sprite. @todo Needs special rotated offset.
+            // Submit 2D glyph drop shadow sprite.
             if (text.HasShadow)
             {
                 auto adjShadowOffset = Vector2::Transform(SHADOW_OFFSET, rotMat);
                 auto shadowSprite    = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
                                                                 glyphPos + adjShadowOffset, text.Rotation, glyphScale * text.Scale, SHADOW_COLOR,
-                                                                text.Depth + 1, AlignMode::BottomLeft, ScaleMode::LongEdge, BlendMode::FastAlpha);
+                                                                text.Depth + 1, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::FastAlpha);
                 if (!SubmitSprite2d(shadowSprite))
                 {
                     return false;

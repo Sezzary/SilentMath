@@ -45,22 +45,22 @@ namespace Silent::Debug
             // Cursor.
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
                                                          input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::Clear, 0,
-                                                         AlignMode::TopLeft, ScaleMode::LongEdge, BlendMode::Subtract);
+                                                         AlignMode::TopLeft, ScaleMode::ShortEdge, BlendMode::Subtract);
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                     Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::Clear, 2,
-                                                    AlignMode::Center, ScaleMode::LongEdge, BlendMode::Add);
+                                                    AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
 
             // Text.
             auto text = Text2d::CreateText2d("Have you seen a little girl?", "RetroSerif",
                                              Vector2(10.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
-                                             TextStyle::Flat, false, 1);
+                                             TextStyle::Flat, false, 1, AlignMode::BottomLeft);
             renderer.SubmitText2d(text);
             auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
-                                             Vector2(10.0f, 20.0f), DEG_TO_RAD(45.0f), 1.0f / 14.0f, 1.0f, 0.0f, 
-                                             TextStyle::Flat, false, 1);
+                                              Vector2(10.0f, 20.0f), DEG_TO_RAD(45.0f), 1.0f / 14.0f, 1.0f, 0.0f, 
+                                              TextStyle::Flat, false, 1, AlignMode::BottomRight);
             renderer.SubmitText2d(text2);
 
             return;

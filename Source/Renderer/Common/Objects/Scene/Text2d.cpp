@@ -8,7 +8,8 @@ namespace Silent::Renderer
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
                                 const Vector2& pos, float rot, float scale, float kernScale, float opacity,
                                 TextStyle style, bool hasDropShadow,
-                                int depth, ScaleMode scaleMode, BlendMode blendMode)
+                                int depth, AlignMode alignMode, ScaleMode scaleMode,
+                                BlendMode blendMode)
     {
         return Text2d
         {
@@ -22,6 +23,7 @@ namespace Silent::Renderer
             .Style        = style,
             .HasShadow    = hasDropShadow,
             .Depth        = depth,
+            .AlignMd      = alignMode,
             .ScaleMd      = scaleMode,
             .BlendMd      = blendMode
         };

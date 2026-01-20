@@ -23,6 +23,7 @@ namespace Silent::Renderer
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                        const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                       int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                       int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
+                                       BlendMode blendMode = BlendMode::Alpha);
     };
 }
