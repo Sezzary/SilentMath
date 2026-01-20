@@ -49,6 +49,7 @@
 // FreeType
 #include <ft2build.h>
 #include <freetype/freetype.h>
+#include <freetype/ftglyph.h>
 
 // GLM
 #define GLM_ENABLE_EXPERIMENTAL

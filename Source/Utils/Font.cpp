@@ -28,7 +28,7 @@ namespace Silent::Utils
         _ftFonts.reserve(metadata.Filenames.size());
         for (const auto& filename : metadata.Filenames)
         {
-            FT_Face ftFont = nullptr;
+            auto ftFont = FT_Face{};
             if (FT_New_Face(fontLib, (path / filename).string().c_str(), 0, &ftFont))
             {
                 throw std::runtime_error("Failed to initialize font.");
@@ -80,7 +80,7 @@ namespace Silent::Utils
         }
     }
 
-    int Font::GetPointSize() const
+    float Font::GetPointSize() const
     {
         return _pointSize;
     }
@@ -187,6 +187,22 @@ namespace Silent::Utils
         _dirtyGpuAtlasIdxs.clear();
     }
 
+    smol_atlas_item_t& Font::InsertGlyphRect(const Vector2i& size, char32 codePoint)
+    {
+        // Add glyph rectangle.
+        auto* rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
+        if (rect == nullptr)
+        {
+            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name), Debug::LogLevel::Info);
+
+            AddAtlas();
+            rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
+        }
+        Debug::Assert(rect != nullptr, Fmt("Failed to insert glyph U+{:X} rectangle for font chain `{}`.", (int)codePoint, _name));
+
+        return *rect;
+    }
+
     void Font::CacheGlyph(char32 codePoint)
     {
         // Load valid glyph from font chain.
@@ -214,33 +230,34 @@ namespace Silent::Utils
         }
         Debug::Assert(ftFont != nullptr, Fmt("Failed to cache glyph U+{:X} for font chain `{}`.", (int)codePoint, _name));
 
+        // Get glyph metrics.
         const auto& metrics = ftFont->glyph->metrics;
         auto        size    = Vector2i(FP_FROM(metrics.width, Q6_SHIFT), FP_FROM(metrics.height, Q6_SHIFT)) + Vector2i(GLYPH_PADDING * 2);
 
-        // Add glyph rectangle.
-        const auto* rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
-        if (rect == nullptr)
-        {
-            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name), Debug::LogLevel::Info);
+        // Insert glyph rectangle.
+        const auto& rect = InsertGlyphRect(size, codePoint);
 
-            // Start new atlas.
-            AddAtlas();
-            _activeAtlasIdx++;
-            rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
-        }
-        Debug::Assert(rect != nullptr, Fmt("Failed to add glyph rectangle U+{:X} for font chain `{}`.", (int)codePoint, _name));
+        // Get FT glyph.
+        auto ftGlyph = FT_Glyph{};
+        FT_Get_Glyph(ftFont->glyph, &ftGlyph);
+
+        // Get FT box.
+        auto ftBox = FT_BBox{};
+        FT_Glyph_Get_CBox(ftGlyph, FT_GLYPH_BBOX_SUBPIXELS, &ftBox);
 
         // Register new glyph.
         _glyphs[codePoint] = GlyphMetadata
         {
             .CodePoint     = codePoint,
             .AtlasIdx      = _activeAtlasIdx,
-            .AtlasPosition = Vector2i(sma_item_x(rect), sma_item_y(rect)) + Vector2i(GLYPH_PADDING),
+            .AtlasPosition = Vector2i(sma_item_x(&rect), sma_item_y(&rect)) + Vector2i(GLYPH_PADDING),
             .AtlasSize     = size - Vector2i(GLYPH_PADDING * 2),
             .Bearing       = Vector2(FP_FLOAT(metrics.horiBearingX, Q6_SHIFT), FP_FLOAT(metrics.horiBearingY, Q6_SHIFT)),
             .Advance       = FP_FLOAT(metrics.horiAdvance, Q6_SHIFT) * _kerningScale,
             .Ascender      = FP_FLOAT(ftFont->ascender, Q6_SHIFT),
-            .Descender     = FP_FLOAT(ftFont->descender, Q6_SHIFT)
+            .Descender     = FP_FLOAT(ftFont->descender, Q6_SHIFT),
+            .MinY          = FP_FLOAT(ftBox.yMin, Q6_SHIFT),
+            .MaxY          = FP_FLOAT(ftBox.yMax, Q6_SHIFT)
         };
         const auto& glyph = _glyphs[codePoint];
 
@@ -274,6 +291,7 @@ namespace Silent::Utils
     {
         _rectAtlases.push_back(sma_atlas_create(ATLAS_SIZE, ATLAS_SIZE));
         _textureAtlases.emplace_back(std::vector<byte>((ATLAS_SIZE * ATLAS_SIZE) * RGBA_COMP_COUNT));
+        _activeAtlasIdx = _rectAtlases.size() - 1;
     }
 
     FontManager::FontManager()

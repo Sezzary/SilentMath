@@ -7,7 +7,7 @@ namespace Silent::Utils
     {
         std::string              Name               = {};
         std::vector<std::string> Filenames          = {};
-        int                      PointSize          = 0;
+        float                    PointSize          = 0.0f;
         float                    KerningScale       = 1.0f;
         bool                     EnableAntialiasing = false;
     };
@@ -24,6 +24,8 @@ namespace Silent::Utils
         float   Advance   = 0.0f;
         float   Ascender  = 0.0f;
         float   Descender = 0.0f;
+        float   MinY      = 0.0f;
+        float   MaxY      = 0.0f;
     };
 
     /** @brief Shaped glyph data. */
@@ -58,7 +60,7 @@ namespace Silent::Utils
         // =======
 
         std::string _name               = {};
-        int         _pointSize          = 0;
+        float       _pointSize          = 0.0f;
         float       _kerningScale       = 1.0f;
         bool        _enableAntialiasing = false;
         
@@ -98,7 +100,7 @@ namespace Silent::Utils
          *
          * @return Point size.
          */
-        int GetPointSize() const;
+        float GetPointSize() const;
 
         /** @brief Gets the monochrome texture atlases containing cached font glyphs.
          *
@@ -141,6 +143,8 @@ namespace Silent::Utils
          * @return Code points for each glyph.
          */
         std::vector<char32> GetCodePoints(const std::string& msg) const;
+
+        smol_atlas_item_t& InsertGlyphRect(const Vector2i& size, char32 codePoint);
 
         /** @brief Caches a new glyph in the texture atlas.
          *

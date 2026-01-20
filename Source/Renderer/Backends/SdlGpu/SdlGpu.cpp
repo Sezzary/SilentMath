@@ -545,10 +545,10 @@ namespace Silent::Renderer
             auto uv3 = Vector2(sprite.UvMin.x, sprite.UvMax.y);
 
             // Add vertices.
-            bufferVerts.push_back(BufferVertex2d{ pos0, uv0, sprite.Col });
-            bufferVerts.push_back(BufferVertex2d{ pos1, uv1, sprite.Col });
-            bufferVerts.push_back(BufferVertex2d{ pos2, uv2, sprite.Col });
-            bufferVerts.push_back(BufferVertex2d{ pos3, uv3, sprite.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos0, uv0, sprite.Col0 });
+            bufferVerts.push_back(BufferVertex2d{ pos1, uv1, sprite.Col1 });
+            bufferVerts.push_back(BufferVertex2d{ pos2, uv2, sprite.Col2 });
+            bufferVerts.push_back(BufferVertex2d{ pos3, uv3, sprite.Col3 });
 
             // Add indices.
             bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 0);

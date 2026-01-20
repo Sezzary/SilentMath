@@ -18,7 +18,7 @@ float4 main(Input input) : SV_Target
     // @todo Temporary. Untextured primitives are invisible, probably wrong math below.
     if (UseTexture)
     {
-        return Texture.Sample(Sampler, input.TextureCoord);
+        return Texture.Sample(Sampler, input.TextureCoord) * input.Color;
     }
     else
     {
