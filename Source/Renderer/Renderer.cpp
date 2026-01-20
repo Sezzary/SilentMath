@@ -121,7 +121,7 @@ namespace Silent::Renderer
     {
         // @todo Improve `constexpr` compatibility of math classes.
         static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
-        constexpr auto SHADOW_COLOR = Color(0.0f, 0.0f, 1.0f); // @todo Actual colour is off-black.
+        constexpr auto SHADOW_COLOR  = Color(0.0f, 0.0f, 1.0f); // @todo Actual colour is off-black.
 
         auto& fonts = g_App.GetFonts();
 
@@ -137,51 +137,57 @@ namespace Silent::Renderer
         auto shapedText = font->GetShapedText(text.Message);
 
         // Compute trasformation parameters.
-        auto  rotMat      = Matrix::CreateRotationZ(text.Rotation);
-        auto  scaleFactor = SCREEN_SPACE_RES / font->GetPointSize();
-        float textWidth   = (shapedText.Width * scaleFactor.x) * text.Scale; // @todo `scaleFactor` axis might be affected by scale mode.
+        auto rotMat      = Matrix::CreateRotationZ(text.Rotation);
+        auto scaleFactor = SCREEN_SPACE_RES / (float)font->GetPointSize();
+        auto size        = (Vector2(shapedText.Width, (float)font->GetPointSize()) * scaleFactor) * text.Scale;
 
         // Compute text position. @todo Alignment should be in markup.
         auto textOffset = Vector2::One;
         switch (text.AlignMd)
         {
-            default:
             case AlignMode::Center:
             {
+                textOffset = Vector2(-size.x, size.y) * 0.5f;
                 break;
             }
             case AlignMode::CenterTop:
             {
+                textOffset = Vector2(-size.x * 0.5f, size.y);
                 break;
             }
             case AlignMode::CenterBottom:
             {
-                textOffset = Vector2(-textWidth * 0.5f, 0.0f);
+                textOffset = Vector2(-size.x * 0.5f, 0.0f);
                 break;
             }
             case AlignMode::CenterLeft:
             {
+                textOffset = Vector2(0.0f, size.y * 0.5f);
                 break;
             }
             case AlignMode::CenterRight:
             {
+                textOffset = Vector2(-size.x, size.y * 0.5f);
                 break;
             }
             case AlignMode::TopLeft:
             {
+                textOffset = Vector2(0.0f, size.y);
                 break;
             }
             case AlignMode::TopRight:
             {
+                textOffset = Vector2(-size.x, size.y);
                 break;
             }
+            default:
             case AlignMode::BottomLeft:
             {
                 break;
             }
             case AlignMode::BottomRight:
             {
-                textOffset = Vector2(-textWidth, 0.0f);
+                textOffset = Vector2(-size.x, 0.0f);
                 break;
             }
         }
