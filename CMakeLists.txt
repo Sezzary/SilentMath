@@ -100,8 +100,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 add_subdirectory(Libraries/freetype)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/json)
-add_subdirectory(Libraries/psyz/psyz)
-#add_subdirectory(Libraries/SDL) # @todo PSY-Z also uses SDL and this causes a conflict. Clean solution?
+#add_subdirectory(Libraries/psyz/psyz)
+add_subdirectory(Libraries/SDL) # @todo PSY-Z also uses SDL and keeping this line causes a conflict.
 add_subdirectory(Libraries/sol2)
 add_subdirectory(Libraries/spdlog)
 add_subdirectory(Libraries/utfcpp)
@@ -117,7 +117,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/json/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/LuaJIT/src
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/psyz//psyz/include
+    #${CMAKE_CURRENT_LIST_DIR}/Libraries/psyz//psyz/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/SDL/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/smol-atlas/src
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/sol2/include
@@ -133,7 +133,7 @@ add_library(luajit STATIC IMPORTED)
 set_target_properties(luajit PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_LIST_DIR}/Libraries/LuaJIT/src/libluajit.a")
 
 # Set PSY-Z compile definition.
-target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE __psyz)
+#target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE __psyz)
 
 # Add libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
@@ -141,7 +141,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     freetype
     glm
     luajit
-    psyz
+    #psyz
     sol2
     SDL3::SDL3-static
     spdlog
