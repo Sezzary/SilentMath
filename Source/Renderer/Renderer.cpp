@@ -239,7 +239,7 @@ namespace Silent::Renderer
                     }
                     break;
                 }
-                case TextStyle::CenterGradient:
+                case TextStyle::Gradient:
                 {
                     // Compute glyph split offsets.
                     auto glyphTopOffset  = Vector2(0.0f, -(glyphScale.y * 0.5f) * SCREEN_SPACE_RES.y);

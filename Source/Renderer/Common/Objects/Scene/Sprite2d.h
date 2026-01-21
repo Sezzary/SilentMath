@@ -4,9 +4,9 @@
 
 namespace Silent::Renderer
 {
-    constexpr int SPRITE_2D_COUNT_MAX = 512;
+    constexpr int SPRITE_2D_COUNT_MAX = 1024;
 
-    /** @brief 2D screen sprite. */
+    /** @brief 2D screen sprite with texture and color tint. */
     struct Sprite2d
     {
         std::string TextureName = {};
@@ -25,12 +25,13 @@ namespace Silent::Renderer
         BlendMode   BlendMd     = BlendMode::Opaque;
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
-                                       const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                       int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
-                                       BlendMode blendMode = BlendMode::Alpha);
-        static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                        const Vector2& pos, float rot, const Vector2& scale,
                                        const Color& color0, const Color& color1, const Color& color2, const Color& color3,
+                                       int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
+                                       BlendMode blendMode = BlendMode::Alpha);
+
+        static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
+                                       const Vector2& pos, float rot, const Vector2& scale, const Color& color,
                                        int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                        BlendMode blendMode = BlendMode::Alpha);
     };

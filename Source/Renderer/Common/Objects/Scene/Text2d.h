@@ -9,7 +9,7 @@ namespace Silent::Renderer
     enum class TextStyle
     {
         Flat,
-        CenterGradient
+        Gradient
     };
 
     /** @brief 2D screen text with markup. */
@@ -28,7 +28,6 @@ namespace Silent::Renderer
         AlignMode   AlignMd      = AlignMode::Center;
         ScaleMode   ScaleMd      = ScaleMode::ShortEdge;
         BlendMode   BlendMd      = BlendMode::Alpha;
-        // @todo Align mode.
 
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
                                    const Vector2& pos, float rot, float scale, float kernScale, float opacity,
