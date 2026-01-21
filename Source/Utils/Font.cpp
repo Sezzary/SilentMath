@@ -80,7 +80,7 @@ namespace Silent::Utils
         }
     }
 
-    float Font::GetPointSize() const
+    int Font::GetPointSize() const
     {
         return _pointSize;
     }
@@ -117,24 +117,23 @@ namespace Silent::Utils
             {
                 auto* curFtFont = _ftFonts[j];
 
-                // @todo Unpredicatable segmentation fault occurs here. Why?
                 // Check if glyph is valid.
                 int charIdx = FT_Get_Char_Index(curFtFont, curCodePoint);
-                //if (charIdx == 0)
-                //{
-                //    // If no valid glyphs exist, use first font's invalid glyph.
-                //    if (j < (_ftFonts.size() - 1))
-                //    {
-                //        continue;
-                //    }
-                //    else
-                //    {
-                //        j = 0;
-                //    }
-                //}
+                if (charIdx == 0)
+                {
+                    // If no valid glyphs exist, use first font's invalid glyph.
+                    if (j < (_ftFonts.size() - 1))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        j = 0;
+                    }
+                }
 
                 // Compute kerning.
-                float kerning = 0.0f;
+                float kerning = _glyphs[curCodePoint].Advance;
                 if (FT_HAS_KERNING(curFtFont) && i < (codePoints.size() - 1))
                 {
                     char32 nextCodePoint = codePoints[i + 1];
@@ -145,11 +144,7 @@ namespace Silent::Utils
                     // @todo Check if this needs conversion from FP or not.
                     auto kerningDelta = FT_Vector{};
                     FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
-                    kerning = FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale;
-                }
-                else
-                {
-                    kerning = _glyphs[curCodePoint].Advance;
+                    kerning += (FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale);
                 }
 
                 // Add shaped glyph.

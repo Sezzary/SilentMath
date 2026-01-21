@@ -48,8 +48,8 @@ namespace Silent::Assets
                 "NotoSerifJP-Medium.ttf",
                 "NotoSerifKR-Medium.ttf"
             },
-            .PointSize          = 64.0f,
-            .KerningScale       = 1.15f,
+            .PointSize          = 64,
+            .KerningScale       = 1.0f,
             .EnableAntialiasing = true
         },
         FontMetadata
@@ -61,7 +61,7 @@ namespace Silent::Assets
                 "PsxBios.ttf",
                 "UnifontExMono.ttf"
             },
-            .PointSize          = 16.0f,
+            .PointSize          = 16,
             .KerningScale       = 1.0f,
             .EnableAntialiasing = false
         },
@@ -74,7 +74,7 @@ namespace Silent::Assets
                 "NotoSansJP-Bold.ttf",
                 "NotoSansKR-Bold.ttf"
             },
-            .PointSize          = 40.0f,
+            .PointSize          = 40,
             .KerningScale       = 1.0f,
             .EnableAntialiasing = true
         },
@@ -87,7 +87,7 @@ namespace Silent::Assets
                 "PixelMplus10-Regular.ttf",
                 "dalmoori10.ttf"
             },
-            .PointSize          = 10.0f,
+            .PointSize          = 10,
             .KerningScale       = 1.0f,
             .EnableAntialiasing = false
         }

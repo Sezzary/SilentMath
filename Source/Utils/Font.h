@@ -7,8 +7,8 @@ namespace Silent::Utils
     {
         std::string              Name               = {};
         std::vector<std::string> Filenames          = {};
-        float                    PointSize          = 0.0f;
-        float                    KerningScale       = 1.0f;
+        int                      PointSize          = 0;
+        float                    KerningScale       = 1.0f; // @todo Unnecessary? Keeps kerning similar between retro and HD variants. 
         bool                     EnableAntialiasing = false;
     };
 
@@ -60,7 +60,7 @@ namespace Silent::Utils
         // =======
 
         std::string _name               = {};
-        float       _pointSize          = 0.0f;
+        int         _pointSize          = 0;
         float       _kerningScale       = 1.0f;
         bool        _enableAntialiasing = false;
         
@@ -100,7 +100,7 @@ namespace Silent::Utils
          *
          * @return Point size.
          */
-        float GetPointSize() const;
+        int GetPointSize() const;
 
         /** @brief Gets the monochrome texture atlases containing cached font glyphs.
          *
