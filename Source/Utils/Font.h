@@ -144,13 +144,27 @@ namespace Silent::Utils
          */
         std::vector<char32> GetCodePoints(const std::string& msg) const;
 
-        smol_atlas_item_t& InsertGlyphRect(const Vector2i& size, char32 codePoint);
-
         /** @brief Caches a new glyph in the texture atlas.
          *
          * @param codePoint Code point of the glyph to cache.
          */
         void CacheGlyph(char32 codePoint);
+
+        /** @brief Inserts a glyph rectangle into the active rectangle atlas.
+         *
+         * @param size Glyph size in pixels.
+         * @param codePoint Code point of the glyph.
+         * @return Inserted glyph rectangle.
+         * @throws `std::runtime_error` if rect insertion fails.
+         */
+        smol_atlas_item_t& InsertGlyphRect(const Vector2i& size, char32 codePoint);
+
+        /** @brief Rasterizes a glyph and inserts the pixels into the active texture atlas.
+         *
+         * @param ftFont FreeType font.
+         * @param glyph Glyph to rasterize.
+         */
+        void RasterizeGlyph(const FT_Face& ftFont, const GlyphMetadata& glyph);
 
         /** @brief Adds a new glyph texture atlas to use for caching. */
         void AddAtlas();

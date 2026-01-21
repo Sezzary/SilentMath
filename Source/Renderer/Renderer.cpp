@@ -225,66 +225,69 @@ namespace Silent::Renderer
 
             // @todo Derive colour from markup.
 
-            // Compute glyph split offsets.
-            auto glyphTopOffset  = Vector2(0.0f, -(glyphScale.y * 0.5f) * SCREEN_SPACE_RES.y);
-            auto glyphAscOffset  = 0;
-            auto glyphDescOffset = 0;
-
+            // Submit 2D glyph sprite.
+            auto glyphPos = adjTextPos + relGlyphPos;
             switch (text.Style)
             {
                 default:
                 case TextStyle::Flat:
                 {
+                    auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
+                                                                glyphPos, text.Rotation, glyphScale * text.Scale, Color(1.0f, 1.0f, 1.0f, text.Opacity),
+                                                                text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::FastAlpha);
+                    if (!SubmitSprite2d(glyphSprite))
+                    {
+                        return false;
+                    }
                     break;
                 }
                 case TextStyle::CenterGradient:
                 {
+                    // Compute glyph split offsets.
+                    auto glyphTopOffset  = Vector2(0.0f, -(glyphScale.y * 0.5f) * SCREEN_SPACE_RES.y);
+                    auto glyphAscOffset  = 0;
+                    auto glyphDescOffset = 0;
+
+                    // Submit 2D glyph sprite.
+                    auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, Vector2(glyphUvMax.x, glyphUvMin.y + (glyphUvSize.y * 0.5f)),
+                                                                glyphPos + glyphTopOffset, text.Rotation, glyphScale * Vector2(1.0f, 0.5f),
+                                                                COLOR_LOWLIGHT, COLOR_LOWLIGHT, COLOR_HIGHLIGHT, COLOR_HIGHLIGHT,
+                                                                text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                    auto glyphSprite1 = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin + Vector2(0, glyphUvSize.y * 0.5f), glyphUvMax,
+                                                                glyphPos, text.Rotation, glyphScale * Vector2(1.0f, 0.5f),
+                                                                COLOR_HIGHLIGHT, COLOR_HIGHLIGHT, COLOR_LOWLIGHT, COLOR_LOWLIGHT,
+                                                                text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                    if (!SubmitSprite2d(glyphSprite))
+                    {
+                        return false;
+                    }
+                    SubmitSprite2d(glyphSprite1);
+
+                    // Submit 2D glyp overshoot sprite segment.
+                    if (glyph.Metadata.MaxY > glyph.Metadata.Ascender)
+                    {
+                        //auto glyphAscSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
+                        //                                                , text.Rotation, , COLOR_LOWLIGHT,
+                        //                                                text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                        //if (!SubmitSprite2d(glyphAscSprite))
+                        //{
+                        //    return false;
+                        //}
+                    }
+
+                    // Submit 2D glyph descender sprite segment.
+                    if (glyph.Metadata.Descender < 0.0f)
+                    {
+                        //auto glyphDescSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
+                        //                                                 , text.Rotation, , COLOR_LOWLIGHT,
+                        //                                                 text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                        //if (!SubmitSprite2d(glyphDescSprite))
+                        //{
+                        //    return false;
+                        //}
+                    }
                     break;
                 }
-            }
-
-            //auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, glyphUvMax,
-            //                                            glyphPos, text.Rotation, glyphScale * text.Scale, Color(1.0f, 1.0f, 1.0f, text.Opacity),
-            //                                            text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::FastAlpha);
-
-            // Submit 2D glyph sprite.
-            auto glyphPos    = adjTextPos + relGlyphPos;
-            auto glyphSprite = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin, Vector2(glyphUvMax.x, glyphUvMin.y + (glyphUvSize.y * 0.5f)),
-                                                        glyphPos + glyphTopOffset, text.Rotation, glyphScale * Vector2(1.0f, 0.5f),
-                                                        COLOR_LOWLIGHT, COLOR_LOWLIGHT, COLOR_HIGHLIGHT, COLOR_HIGHLIGHT,
-                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-            auto glyphSprite1 = Sprite2d::CreateSprite2d(glyphAtlasName, glyphUvMin + Vector2(0, glyphUvSize.y * 0.5f), glyphUvMax,
-                                                         glyphPos, text.Rotation, glyphScale * Vector2(1.0f, 0.5f),
-                                                         COLOR_HIGHLIGHT, COLOR_HIGHLIGHT, COLOR_LOWLIGHT, COLOR_LOWLIGHT,
-                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-            if (!SubmitSprite2d(glyphSprite))
-            {
-                return false;
-            }
-            SubmitSprite2d(glyphSprite1);
-
-            // Submit 2D glyp overshoot sprite segment.
-            if (glyph.Metadata.MaxY > glyph.Metadata.Ascender)
-            {
-                //auto glyphAscSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
-                //                                                , text.Rotation, , COLOR_LOWLIGHT,
-                //                                                text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                //if (!SubmitSprite2d(glyphAscSprite))
-                //{
-                //    return false;
-                //}
-            }
-
-            // Submit 2D glyph descender sprite segment.
-            if (glyph.Metadata.Descender < 0.0f)
-            {
-                //auto glyphDescSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
-                //                                                 , text.Rotation, , COLOR_LOWLIGHT,
-                //                                                 text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                //if (!SubmitSprite2d(glyphDescSprite))
-                //{
-                //    return false;
-                //}
             }
 
             // Submit 2D glyph drop shadow sprite.

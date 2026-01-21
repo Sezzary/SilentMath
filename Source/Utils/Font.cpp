@@ -120,18 +120,18 @@ namespace Silent::Utils
                 // @todo Unpredicatable segmentation fault occurs here. Why?
                 // Check if glyph is valid.
                 int charIdx = FT_Get_Char_Index(curFtFont, curCodePoint);
-                /*if (charIdx == 0)
-                {
-                    // If no valid glyphs exist, use first font's invalid glyph.
-                    if (j < (_ftFonts.size() - 1))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        j = 0;
-                    }
-                }*/
+                //if (charIdx == 0)
+                //{
+                //    // If no valid glyphs exist, use first font's invalid glyph.
+                //    if (j < (_ftFonts.size() - 1))
+                //    {
+                //        continue;
+                //    }
+                //    else
+                //    {
+                //        j = 0;
+                //    }
+                //}
 
                 // Compute kerning.
                 float kerning = 0.0f;
@@ -187,22 +187,6 @@ namespace Silent::Utils
         _dirtyGpuAtlasIdxs.clear();
     }
 
-    smol_atlas_item_t& Font::InsertGlyphRect(const Vector2i& size, char32 codePoint)
-    {
-        // Add glyph rectangle.
-        auto* rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
-        if (rect == nullptr)
-        {
-            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name), Debug::LogLevel::Info);
-
-            AddAtlas();
-            rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
-        }
-        Debug::Assert(rect != nullptr, Fmt("Failed to insert glyph U+{:X} rectangle for font chain `{}`.", (int)codePoint, _name));
-
-        return *rect;
-    }
-
     void Font::CacheGlyph(char32 codePoint)
     {
         // Load valid glyph from font chain.
@@ -230,18 +214,18 @@ namespace Silent::Utils
         }
         Debug::Assert(ftFont != nullptr, Fmt("Failed to cache glyph U+{:X} for font chain `{}`.", (int)codePoint, _name));
 
-        // Get glyph metrics.
+        // Get metrics.
         const auto& metrics = ftFont->glyph->metrics;
         auto        size    = Vector2i(FP_FROM(metrics.width, Q6_SHIFT), FP_FROM(metrics.height, Q6_SHIFT)) + Vector2i(GLYPH_PADDING * 2);
 
-        // Insert glyph rectangle.
+        // Insert new rectangle.
         const auto& rect = InsertGlyphRect(size, codePoint);
 
         // Get FT glyph.
         auto ftGlyph = FT_Glyph{};
         FT_Get_Glyph(ftFont->glyph, &ftGlyph);
 
-        // Get FT box.
+        // Get FT glyph box.
         auto ftBox = FT_BBox{};
         FT_Glyph_Get_CBox(ftGlyph, FT_GLYPH_BBOX_SUBPIXELS, &ftBox);
 
@@ -261,7 +245,32 @@ namespace Silent::Utils
         };
         const auto& glyph = _glyphs[codePoint];
 
-        // Rasterize.
+        // Rasterize in texture atlas.
+        RasterizeGlyph(ftFont, glyph);
+    }
+
+    smol_atlas_item_t& Font::InsertGlyphRect(const Vector2i& size, char32 codePoint)
+    {
+        // Attempt insertion into current active atlas.
+        auto* rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
+        if (rect == nullptr)
+        {
+            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name), Debug::LogLevel::Info);
+            AddAtlas();
+
+            // Attempt insertion into new active atlas.
+            rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
+            if (rect == nullptr)
+            {
+                throw std::runtime_error(Fmt("Failed to insert glyph U+{:X} rectangle for font chain `{}`.", (int)codePoint, _name));
+            }
+        }
+        
+        return *rect;
+    }
+
+    void Font::RasterizeGlyph(const FT_Face& ftFont, const GlyphMetadata& glyph)
+    {
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
