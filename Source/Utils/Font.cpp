@@ -346,7 +346,7 @@ namespace Silent::Utils
         // Handle load.
         try
         {
-            _fonts.emplace(metadata.Name, Font(_library, metadata, path, glyphPrecache));
+            _fonts.try_emplace(metadata.Name, _library, metadata, path, glyphPrecache);
 
             Debug::Log(Fmt("Loaded font chain `{}` at point size {}.", metadata.Name, metadata.PointSize));
         }
