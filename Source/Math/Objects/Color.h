@@ -245,8 +245,14 @@ namespace Silent::Math
         // Operators
         // ==========
 
-        bool   operator ==(const Color& color) const;
-        bool   operator !=(const Color& color) const;
-        Color& operator =(const Color& color) = default;
+        bool   operator==(const Color& color) const;
+        bool   operator!=(const Color& color) const;
+        Color& operator=(const Color& color) = default;
+        Color& operator+=(const Color& color);
+        Color& operator*=(const Color& color);
+        Color& operator*=(float scalar);
+        Color  operator+(const Color& color) const;
+        Color  operator*(const Color& color) const;
+        Color  operator*(float scalar) const;
     };
 }

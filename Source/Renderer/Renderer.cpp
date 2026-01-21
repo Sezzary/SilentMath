@@ -242,12 +242,12 @@ namespace Silent::Renderer
                 }
                 case TextStyle::Gradient:
                 {
-                    auto colorHighlight = Color(COLOR_HIGHLIGHT.R() * 1, 0, 0, 1.0f);
-                    auto colorLowlight  = Color(COLOR_LOWLIGHT.R() * 1, 0, 0, 1.0f);
+                    auto colorHighlight = color * COLOR_HIGHLIGHT;
+                    auto colorLowlight  = color * COLOR_LOWLIGHT;
 
                     float height          = glyph.Metadata.MaxY + -glyph.Metadata.MinY;
                     float ascHalfHeight   = glyph.Metadata.Ascender * 0.5f;
-                    float descHeight     = -glyph.Metadata.MinY;
+                    float descHeight      = -glyph.Metadata.MinY;
                     float overshootHeight = glyph.Metadata.MaxY - glyph.Metadata.Ascender;
 
                     // Compute glyph split offsets.
@@ -258,7 +258,7 @@ namespace Silent::Renderer
                     // Submit 2D glyph top half ascender sprite.
                     auto glyphTopHalfSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, Vector2(uvMax.x, uvMin.y + (uvSize.y * 0.5f)),
                                                                        pos + topOffset, text.Rotation, scale * Vector2(1.0f, 0.5f),
-                                                                       colorHighlight, colorHighlight, colorHighlight, colorHighlight,
+                                                                       colorLowlight, colorLowlight, colorHighlight, colorHighlight,
                                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
                     if (!SubmitSprite2d(glyphTopHalfSprite))
                     {
@@ -268,7 +268,7 @@ namespace Silent::Renderer
                     // Submit 2D glyph bottom half ascender sprite.
                     auto bottomHalfSprite = Sprite2d::CreateSprite2d(atlasName, uvMin + Vector2(0, uvSize.y * 0.5f), uvMax,
                                                                      pos, text.Rotation, scale * Vector2(1.0f, 0.5f),
-                                                                     colorHighlight, colorHighlight, colorHighlight, colorHighlight,
+                                                                     colorHighlight, colorHighlight, colorLowlight, colorLowlight,
                                                                      text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
                     if (!SubmitSprite2d(bottomHalfSprite))
                     {

@@ -161,13 +161,57 @@ namespace Silent::Math
         return *(glm::vec4*)this;
     }
 
-    bool Color::operator ==(const Color& color) const
+    bool Color::operator==(const Color& color) const
     {
         return R() == color.R() && G() == color.G() && B() == color.B() && A() == color.A();
     }
 
-    bool Color::operator !=(const Color& color) const
+    bool Color::operator!=(const Color& color) const
     {
         return !(*this == color);
+    }
+
+    Color& Color::operator+=(const Color& color)
+    {
+        ToGlmVec4() += color.ToGlmVec4();
+        R() = std::clamp(R(), 0.0f, 1.0f);
+        G() = std::clamp(G(), 0.0f, 1.0f);
+        B() = std::clamp(B(), 0.0f, 1.0f);
+        A() = std::clamp(A(), 0.0f, 1.0f);
+        return *this;
+    }
+
+    Color& Color::operator*=(const Color& color)
+    {
+        ToGlmVec4() *= color.ToGlmVec4();
+        return *this;
+    }
+
+    Color& Color::operator*=(float scalar)
+    {
+        ToGlmVec4() *= scalar;
+        return *this;
+    }
+
+    Color Color::operator+(const Color& color) const
+    {
+        auto newColor = ToGlmVec4() + color.ToGlmVec4();
+        newColor.x    = std::clamp(x, 0.0f, 1.0f);
+        newColor.y    = std::clamp(y, 0.0f, 1.0f);
+        newColor.z    = std::clamp(z, 0.0f, 1.0f);
+        newColor.w    = std::clamp(w, 0.0f, 1.0f);
+        return Color(newColor.x, newColor.y, newColor.z, newColor.w);
+    }
+
+    Color Color::operator*(const Color& color) const
+    {
+        auto newColor = ToGlmVec4() * color.ToGlmVec4();
+        return Color(newColor.x, newColor.y, newColor.z, newColor.w);
+    }
+
+    Color Color::operator*(float scalar) const
+    {
+        auto newColor = ToGlmVec4() * scalar;
+        return Color(newColor.x, newColor.y, newColor.z, newColor.w);
     }
 }
