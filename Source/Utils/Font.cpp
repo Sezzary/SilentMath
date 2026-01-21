@@ -141,7 +141,6 @@ namespace Silent::Utils
                     int charIdx0 = FT_Get_Char_Index(curFtFont, curCodePoint);
                     int charIdx1 = FT_Get_Char_Index(curFtFont, nextCodePoint);
 
-                    // @todo Check if this needs conversion from FP or not.
                     auto kerningDelta = FT_Vector{};
                     FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
                     kerning += (FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale);
