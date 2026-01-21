@@ -15,7 +15,7 @@ int main()
     }
     catch (const std::exception& ex)
     {
-        CriticalErrorHandler(ex.what());
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Critical Error", ex.what(), nullptr);
         return EXIT_FAILURE;
     }
 

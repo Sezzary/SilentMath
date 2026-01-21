@@ -404,7 +404,7 @@ namespace Silent::Utils
         for (auto& key : keys)
         {
             // Get existing cell or insert new cell.
-            auto [it, isInserted] = _cells.try_emplace(key, Cell(AxisAlignedBoundingBox(key.ToVector3(), _cellAabbExtents)));
+            auto [it, isInserted] = _cells.try_emplace(key, AxisAlignedBoundingBox(key.ToVector3(), _cellAabbExtents));
 
             // Insert object ID into cell.
             auto& [keyPos, cell] = *it;

@@ -279,7 +279,7 @@ namespace Silent::Renderer
                     if (glyph.Metadata.MaxY > glyph.Metadata.Ascender)
                     {
                         //auto glyphOvershootSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
-                        //                                                      , text.Rotation, , COLOR_LOWLIGHT,
+                        //                                                      , text.Rotation, , colorLowlight,
                         //                                                      text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
                         //if (!SubmitSprite2d(glyphOvershootSprite))
                         //{
@@ -291,7 +291,7 @@ namespace Silent::Renderer
                     if (glyph.Metadata.Descender < 0.0f)
                     {
                         //auto glyphDescSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
-                        //                                                 , text.Rotation, , COLOR_LOWLIGHT,
+                        //                                                 , text.Rotation, , colorLowlight,
                         //                                                 text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
                         //if (!SubmitSprite2d(glyphDescSprite))
                         //{

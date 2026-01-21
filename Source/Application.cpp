@@ -103,8 +103,6 @@ namespace Silent
         _isPaused = false;
         _quit     = false;
 
-        InitializeSignals();
-
         // Filesystem.
         _work.Filesystem.Initialize();
 

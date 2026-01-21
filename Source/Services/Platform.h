@@ -33,13 +33,4 @@ namespace Silent::Services
      * @return Home directory.
      */
     std::filesystem::path GetHomeDirectory();
-
-    /** @brief Initializes low-level termination and signal handling. */
-    void InitializeSignals();
-
-    /** @brief Handles a critical error.
-     *
-     * @param msg Error message.
-     */
-    void CriticalErrorHandler(const std::string& msg);
 }
