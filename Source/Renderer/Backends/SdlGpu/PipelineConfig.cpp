@@ -114,24 +114,27 @@ namespace Silent::Renderer
             },
             .VertBufferAttribs =
             {
+                // `BufferVertex2d::Position`
                 {
                     .location    = 0,
                     .buffer_slot = 0,
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
                     .offset      = 0
                 },
+                // `BufferVertex2d::Uv`
                 {
                     .location    = 1,
                     .buffer_slot = 0,
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                    .offset      = sizeof(float) * Vector3::AXIS_COUNT
+                    .offset      = sizeof(Vector3)
                 },
+                // `BufferVertex2d::Col`
                 {
                     .location    = 2,
                     .buffer_slot = 0,
                     .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                    .offset      = (sizeof(float) * Vector3::AXIS_COUNT) +
-                                   (sizeof(float) * Vector2::AXIS_COUNT)
+                    .offset      = sizeof(Vector3) +
+                                   sizeof(Vector2)
                 }
             },
             .BlendModes =

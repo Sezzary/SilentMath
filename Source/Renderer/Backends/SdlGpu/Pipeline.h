@@ -73,6 +73,8 @@ namespace Silent::Renderer
 
         /** @brief Computes a pipeline hash from a render stage and blend mode.
          *
+         * @note This produces perfect hashing.
+         *
          * @param renderStage Render stage.
          * @param blendMode Blend mode.
          * @return Pipeline hash.
