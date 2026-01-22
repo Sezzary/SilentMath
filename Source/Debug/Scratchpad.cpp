@@ -65,7 +65,7 @@ namespace Silent::Debug
                                               1, AlignMode::CenterLeft);
             renderer.SubmitText2d(text2);
 
-            return;
+            //return;
 
             // GUI button test.
             static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::ShortEdge,

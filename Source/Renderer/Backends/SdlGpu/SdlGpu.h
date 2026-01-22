@@ -22,8 +22,8 @@ namespace Silent::Renderer
     {
         std::string TextureName  = {};
         RenderStage RenderStg    = RenderStage::Sprite2d;
-        UniformType Uniform      = {};
         BlendMode   BlendMd      = BlendMode::Opaque;
+        UniformType Uniform      = {};
         int         BufferOffset = 0;
         int         BufferStride = 0;
     };
@@ -38,8 +38,6 @@ namespace Silent::Renderer
     struct GpuBuffers
     {
         VertexBuffer<BufferVertex2d> Vertices2d = {};
-
-        UniformSprite2d UniformSprite2d = {};
     };
 
     /** @brief SDL_gpu renderer backend. */

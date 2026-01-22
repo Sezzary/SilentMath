@@ -288,25 +288,18 @@ namespace Silent::Renderer
         _gpuBuffers.Vertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Triangles2d)
         {
-            if (batch.TextureName.empty())
-            {
-                _gpuBuffers.UniformSprite2d.UseTexture = false;
-            }
-            else
+            if (!batch.TextureName.empty())
             {
                 auto* tex = GetTextures()[batch.TextureName];
                 if (tex != nullptr)
                 {
                     tex->Bind(renderPass, GetActiveSampler());
                 }
-
-                _gpuBuffers.UniformSprite2d.UseTexture = true;
             }
 
-            _gpuBuffers.UniformSprite2d.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
-            PushUniformBuffer(_gpuBuffers.UniformSprite2d, 0);
+            _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
+            PushUniformBuffer(batch.Uniform, 0);
 
-            _pipelines.Bind(renderPass, RenderStage::Sprite2d, batch.BlendMd);
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
 
             _doubleBuffer.Active.DrawCallCount++;
@@ -557,7 +550,13 @@ namespace Silent::Renderer
             _drawBatches.Triangles2d.push_back(DrawBatch
             {
                 .TextureName  = sprite.TextureName,
+                .RenderStg    = RenderStage::Sprite2d,
                 .BlendMd      = sprite.BlendMd,
+                .Uniform      = UniformSprite2d
+                {
+                    .UseTexture  = true, 
+                    .IsFastAlpha = sprite.BlendMd == BlendMode::FastAlpha
+                },
                 .BufferOffset = i * QUAD_VERTEX_COUNT,
                 .BufferStride = QUAD_IDX_COUNT
             });
@@ -617,7 +616,13 @@ namespace Silent::Renderer
             _drawBatches.Triangles2d.push_back(DrawBatch
             {
                 .TextureName  = {},
+                .RenderStg    = RenderStage::Sprite2d,
                 .BlendMd      = shape.BlendMd,
+                .Uniform      = UniformSprite2d
+                {
+                    .UseTexture  = false, 
+                    .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
+                },
                 .BufferOffset = shape2dVertOffset,
                 .BufferStride = curIdxCount
             });
