@@ -304,7 +304,7 @@ namespace Silent::Renderer
             }
 
             _gpuBuffers.UniformSprite2d.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
-            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.UniformSprite2d, sizeof(_gpuBuffers.UniformSprite2d));
+            PushUniformBuffer(_gpuBuffers.UniformSprite2d, 0);
 
             _pipelines.Bind(renderPass, RenderStage::Sprite2d, batch.BlendMd);
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
@@ -408,11 +408,6 @@ namespace Silent::Renderer
 
         // Initialize GPU buffers.
         _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
-    }
-
-    void SdlGpuRenderer::ClearDrawBatches()
-    {
-        _drawBatches.Triangles2d.clear();
     }
 
     void SdlGpuRenderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
@@ -638,5 +633,18 @@ namespace Silent::Renderer
             _gpuBuffers.Vertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
             _gpuBuffers.Vertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
         }
+    }
+
+    void SdlGpuRenderer::PushUniformBuffer(const UniformType& uni, int slotIdx)
+    {
+        std::visit([&](auto&& arg)
+        {
+            SDL_PushGPUFragmentUniformData(_commandBuffer, slotIdx, &arg, sizeof(arg));
+        }, uni);
+    }
+
+    void SdlGpuRenderer::ClearDrawBatches()
+    {
+        _drawBatches.Triangles2d.clear();
     }
 }

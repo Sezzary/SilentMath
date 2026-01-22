@@ -27,15 +27,11 @@ namespace Silent::Renderer
         int         BufferOffset = 0;
         int         BufferStride = 0;
     };
-    //std::visit([&](auto&& arg)
-    //{
-    //    SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &arg, sizeof(arg));
-    //}, batch.Uniform);
 
     /** @brief Sorted GPU buffer draw batches. */
     struct DrawBatches
     {
-        std::vector<DrawBatch> Triangles2d = {};
+        std::vector<DrawBatch> Triangles2d = {}; // @todo Should be "Primitives2d".
     };
 
     /** @brief GPU buffers. */
@@ -103,9 +99,6 @@ namespace Silent::Renderer
         /** @brief Allocates memory pools for for draw batches and GPU buffers. */
         void InitializeMemory();
 
-        /** @brief Clears draw batches for reuse. */
-        void ClearDrawBatches();
-
         /** @brief Adds new glyph texture atlases and updates old ones if new glyphs have been added.
          *
          * @todo Race condition! Should run this before render thread.
@@ -121,5 +114,15 @@ namespace Silent::Renderer
          * @param copyPass Copy pass.
          */
         void CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass);
+
+        /** @brief Pushes uniform data to the GPU for the fragment shader.
+         *
+         * @param uni Uniform buffer to push.
+         * @param slotIdx Index of the fragment uniform slot to push data to.
+         */
+        void PushUniformBuffer(const UniformType& uni, int slotIdx);
+
+        /** @brief Clears draw batches for reuse. */
+        void ClearDrawBatches();
     };
 }
