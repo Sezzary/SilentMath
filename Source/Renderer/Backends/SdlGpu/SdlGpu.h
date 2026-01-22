@@ -2,7 +2,8 @@
 
 #include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformTriangle2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformGlyph2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformSprite2d.h"
 #include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
@@ -12,14 +13,24 @@
 
 namespace Silent::Renderer
 {
+    using UniformType = std::variant<std::monostate,
+                                     UniformGlyph2d,
+                                     UniformSprite2d>;
+
     /** @brief GPU buffer draw raw batch. */
     struct DrawBatch
     {
         std::string TextureName  = {};
+        RenderStage RenderStg    = RenderStage::Sprite2d;
+        UniformType Uniform      = {};
         BlendMode   BlendMd      = BlendMode::Opaque;
         int         BufferOffset = 0;
         int         BufferStride = 0;
     };
+    //std::visit([&](auto&& arg)
+    //{
+    //    SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &arg, sizeof(arg));
+    //}, batch.Uniform);
 
     /** @brief Sorted GPU buffer draw batches. */
     struct DrawBatches
@@ -30,9 +41,9 @@ namespace Silent::Renderer
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        VertexBuffer<BufferVertex2d> Triangle2dVertices = {};
+        VertexBuffer<BufferVertex2d> Vertices2d = {};
 
-        UniformTriangle2d UniformTriangle2d = {};
+        UniformSprite2d UniformSprite2d = {};
     };
 
     /** @brief SDL_gpu renderer backend. */

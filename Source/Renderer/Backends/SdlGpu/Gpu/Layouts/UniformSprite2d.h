@@ -2,8 +2,8 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU uniform buffer for 2D triangle shader. */
-    struct UniformTriangle2d
+    /** @brief GPU uniform buffer for 2D sprite shader. */
+    struct UniformSprite2d
     {
         uint UseTexture  = false; /** `bool` */
         uint IsFastAlpha = false; /** `bool` */

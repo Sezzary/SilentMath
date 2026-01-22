@@ -29,6 +29,7 @@ namespace Silent::Renderer
 
             std::vector<Shape2d>                Shapes2d          = {}; // } @todo Not really renderer objects. Should be external.
             std::vector<Sprite2d>               Sprites2d         = {}; // }
+            std::vector<Text2d>                 Texts2d           = {};
             std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
 
             std::vector<Primitive3d>            Primitives3d      = {};
@@ -214,8 +215,9 @@ namespace Silent::Renderer
         void InitializeDoubleBuffer();
 
         // @todo Process these into 2D primitives.
-        void ProcessSprites2d();
         void ProcessShapes2d();
+        void ProcessSprites2d();
+        void ProcessTexts2d();
 
         /** @brief Sorts render data in the double buffer, preparing it for batching and parsing to GPU buffer data.
          * Called at the start of `Update`.

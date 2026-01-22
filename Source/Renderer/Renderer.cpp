@@ -71,6 +71,7 @@ namespace Silent::Renderer
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.Shapes2d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
+        _doubleBuffer.Active.Texts2d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
 
         _doubleBuffer.Active.Primitives3d.clear();
@@ -418,6 +419,7 @@ namespace Silent::Renderer
     {
         _doubleBuffer.Active.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
         _doubleBuffer.Active.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
+        _doubleBuffer.Active.Texts2d.reserve(TEXT_2D_COUNT_MAX);
 
         _doubleBuffer.Render = _doubleBuffer.Active; 
     }

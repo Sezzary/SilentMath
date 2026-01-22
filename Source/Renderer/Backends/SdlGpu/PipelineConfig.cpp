@@ -89,16 +89,16 @@ namespace Silent::Renderer
 
     const std::vector<PipelineConfig> PIPELINE_CONFIGS =
     {
-        // 2D triangle.
+        // 2D sprite.
         PipelineConfig
         {
-            .Stage                        = RenderStage::Triangle2d,
-            .VertexShaderName             = "Triangle2d.vert",
+            .Stage                        = RenderStage::Sprite2d,
+            .VertexShaderName             = "Sprite2d.vert",
             .VertShaderSamplerCount       = 0,
             .VertShaderUniBufferCount     = 0,
             .VertShaderStorageBufferCount = 0,
             .VertShaderStorageTexCount    = 0,
-            .FragmentShaderName           = "Triangle2d.frag",
+            .FragmentShaderName           = "Sprite2d.frag",
             .FragShaderSamplerCount       = 1,
             .FragShaderUniBufferCount     = 1,
             .FragShaderStorageBufferCount = 0,
@@ -145,5 +145,6 @@ namespace Silent::Renderer
                 BlendMode::Wireframe
             }
         }
+        // @todo 2D glyph.
     };
 }

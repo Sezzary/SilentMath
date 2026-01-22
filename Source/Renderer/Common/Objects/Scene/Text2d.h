@@ -5,6 +5,8 @@
 
 namespace Silent::Renderer
 {
+    constexpr int TEXT_2D_COUNT_MAX = 256;
+
     /** @brief Text embellishment styles. */
     enum class TextStyle
     {

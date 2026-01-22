@@ -4,7 +4,7 @@
 #include "Application.h"
 #include "Assets/Fonts.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformTriangle2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformSprite2d.h"
 #include "Renderer/Backends/SdlGpu/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Texture.h"
 #include "Renderer/Common/Texture.h"
@@ -285,12 +285,12 @@ namespace Silent::Renderer
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // 2D triangles.
-        _gpuBuffers.Triangle2dVertices.Bind(renderPass, 0, 0);
+        _gpuBuffers.Vertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Triangles2d)
         {
             if (batch.TextureName.empty())
             {
-                _gpuBuffers.UniformTriangle2d.UseTexture = false;
+                _gpuBuffers.UniformSprite2d.UseTexture = false;
             }
             else
             {
@@ -300,13 +300,13 @@ namespace Silent::Renderer
                     tex->Bind(renderPass, GetActiveSampler());
                 }
 
-                _gpuBuffers.UniformTriangle2d.UseTexture = true;
+                _gpuBuffers.UniformSprite2d.UseTexture = true;
             }
 
-            _gpuBuffers.UniformTriangle2d.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
-            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.UniformTriangle2d, sizeof(_gpuBuffers.UniformTriangle2d));
+            _gpuBuffers.UniformSprite2d.IsFastAlpha = batch.BlendMd == BlendMode::FastAlpha;
+            SDL_PushGPUFragmentUniformData(_commandBuffer, 0, &_gpuBuffers.UniformSprite2d, sizeof(_gpuBuffers.UniformSprite2d));
 
-            _pipelines.Bind(renderPass, RenderStage::Triangle2d, batch.BlendMd);
+            _pipelines.Bind(renderPass, RenderStage::Sprite2d, batch.BlendMd);
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
 
             _doubleBuffer.Active.DrawCallCount++;
@@ -407,7 +407,7 @@ namespace Silent::Renderer
         _drawBatches.Triangles2d.reserve(TRI_BATCH_COUNT_MAX);
 
         // Initialize GPU buffers.
-        _gpuBuffers.Triangle2dVertices.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
+        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
     }
 
     void SdlGpuRenderer::ClearDrawBatches()
@@ -451,7 +451,7 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass)
     {
-        // Compute sizes.
+        // Compute sizes. @todo Also text.
         int sprite2dVertCount = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT;
         int sprite2dIdxCount  = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_IDX_COUNT;
         int shape2dVertCount  = (_doubleBuffer.Render.Shapes2d.size() * 2) * TRI_VERTEX_COUNT;
@@ -635,8 +635,8 @@ namespace Silent::Renderer
         {
             auto lock = ParallelLock(_gpuMutex);
     
-            _gpuBuffers.Triangle2dVertices.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-            _gpuBuffers.Triangle2dVertices.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+            _gpuBuffers.Vertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+            _gpuBuffers.Vertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
         }
     }
 }

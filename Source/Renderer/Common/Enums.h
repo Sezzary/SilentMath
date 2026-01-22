@@ -9,8 +9,8 @@ namespace Silent::Renderer
         // Material
         // =========
 
-        Triangle2d,
-        //GlyphGradient, // @todo
+        Sprite2d,
+        Glyph2d,
 
         // =============
         // Post-process
