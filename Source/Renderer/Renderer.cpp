@@ -145,7 +145,7 @@ namespace Silent::Renderer
 
         // @todo Derive colour from markup.
         auto color = Color::White;
-        color.A()  = text.Opacity;
+        //color.A()  = text.Opacity;
 
         // Compute text position. @todo Alignment should be in markup.
         auto textOffset = Vector2::One;
@@ -234,6 +234,7 @@ namespace Silent::Renderer
                 default:
                 case TextStyle::Flat:
                 {
+                    // Submit full glyph sprite.
                     auto fullSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
                                                                pos, text.Rotation, scale, color,
                                                                text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
@@ -248,58 +249,84 @@ namespace Silent::Renderer
                     auto colorHighlight = color * COLOR_HIGHLIGHT;
                     auto colorLowlight  = color * COLOR_LOWLIGHT;
 
+                    // Compute segment heights.
                     float height          = glyph.Attribs.MaxY - glyph.Attribs.MinY;
-                    float ascHalfHeight   = glyph.Attribs.Ascender * 0.5f;
+                    float ascHalfHeight   = glyph.Attribs.Ascender * 0.5f; // @todo Accuracy.
                     float descHeight      = -glyph.Attribs.MinY;
                     float overshootHeight = glyph.Attribs.MaxY - glyph.Attribs.Ascender;
 
-                    // Compute glyph split offsets.
-                    auto topOffset  = Vector2(0.0f, -(scale.y * 0.5f) * SCREEN_SPACE_RES.y);
-                    auto ascOffset  = 0;
-                    auto descOffset = 0;
+                    // Compute segment height alphas.
+                    float ascHalfHeightAlpha   = (ascHalfHeightAlpha == 0.0f) ? 0.0f : (ascHalfHeight   / height);
+                    float descHeightAlpha      = (descHeight         == 0.0f) ? 0.0f : (descHeight      / height);
+                    float overshootHeightAlpha = (overshootHeight    == 0.0f) ? 0.0f : (overshootHeight / height);
 
-                    // Submit 2D glyph top half ascender sprite.
-                    auto glyphTopHalfSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, Vector2(uvMax.x, uvMin.y + (uvSize.y * 0.5f)),
-                                                                       pos + topOffset, text.Rotation, scale * Vector2(1.0f, 0.5f),
-                                                                       colorLowlight, colorLowlight, colorHighlight, colorHighlight,
-                                                                       text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                    if (!SubmitSprite2d(glyphTopHalfSprite))
+                    // Submit bottom ascender segment sprite.
+                    if (glyph.Attribs.MaxY > 0.0f)
                     {
-                        return false;
+                        auto segUvMin     = uvMin + Vector2(0.0f, uvSize.y * (overshootHeightAlpha + ascHalfHeightAlpha));
+                        auto segUvMax     = uvMax - Vector2(0.0f, uvSize.y * descHeightAlpha);
+                        auto segOffset    = (height * descHeightAlpha) * (fontScaleFactor * text.Scale);
+                        auto adjSegOffset = Vector2::Transform(segOffset, rotMat);
+                        adjSegOffset.x = 0;
+                        auto segSprite = Sprite2d::CreateSprite2d(atlasName, segUvMin, segUvMax,
+                                                                  pos - adjSegOffset, text.Rotation, scale * Vector2(1.0f, ascHalfHeightAlpha),
+                                                                  colorHighlight, colorHighlight, colorLowlight, colorLowlight,
+                                                                  text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                        if (!SubmitSprite2d(segSprite))
+                        {
+                            return false;
+                        }
                     }
 
-                    // Submit 2D glyph bottom half ascender sprite.
-                    auto bottomHalfSprite = Sprite2d::CreateSprite2d(atlasName, uvMin + Vector2(0, uvSize.y * 0.5f), uvMax,
-                                                                     pos, text.Rotation, scale * Vector2(1.0f, 0.5f),
-                                                                     colorHighlight, colorHighlight, colorLowlight, colorLowlight,
-                                                                     text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                    if (!SubmitSprite2d(bottomHalfSprite))
+                    // Submit top ascender segment sprite.
+                    if (glyph.Attribs.MaxY > (glyph.Attribs.Ascender * 0.5f))
                     {
-                        return false;
+                        auto segUvMin     = uvMin + Vector2(0.0f, uvSize.y * overshootHeightAlpha);
+                        auto segUvMax     = uvMax - Vector2(0.0f, uvSize.y * (descHeightAlpha + ascHalfHeightAlpha));
+                        auto segOffset    = (height * (descHeightAlpha + ascHalfHeightAlpha)) * (fontScaleFactor * text.Scale);
+                        auto adjSegOffset = Vector2::Transform(segOffset, rotMat);
+                        adjSegOffset.x    = 0.0f;
+                        auto ascTopHalfSprite = Sprite2d::CreateSprite2d(atlasName, segUvMin, segUvMax,
+                                                                         pos - adjSegOffset, text.Rotation, scale * Vector2(1.0f, ascHalfHeightAlpha),
+                                                                         colorLowlight, colorLowlight, colorHighlight, colorHighlight,
+                                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                        if (!SubmitSprite2d(ascTopHalfSprite))
+                        {
+                            return false;
+                        }
                     }
 
                     // Submit 2D glyph overshoot sprite segment.
                     if (glyph.Attribs.MaxY > glyph.Attribs.Ascender)
                     {
-                        //auto glyphOvershootSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
-                        //                                                      , text.Rotation, , colorLowlight,
-                        //                                                      text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                        //if (!SubmitSprite2d(glyphOvershootSprite))
+                        auto topUvMin     = uvMin;
+                        auto topUvMax     = uvMax - Vector2(0.0f, uvSize.y * (descHeightAlpha + (ascHalfHeightAlpha * 2.0f)));
+                        auto topOffset    = (height * (descHeightAlpha + (ascHalfHeightAlpha * 2.0f))) * (fontScaleFactor * text.Scale);
+                        auto adjTopOffset = Vector2::Transform(topOffset, rotMat);
+                        adjTopOffset.x = 0;
+                        auto ascTopHalfSprite = Sprite2d::CreateSprite2d(atlasName, topUvMin, topUvMax,
+                                                                         pos - adjTopOffset, text.Rotation, scale * Vector2(1.0f, ascHalfHeightAlpha),
+                                                                         colorLowlight, colorLowlight, colorHighlight, colorHighlight,
+                                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                        //if (!SubmitSprite2d(ascTopHalfSprite))
                         //{
                         //    return false;
                         //}
                     }
 
                     // Submit 2D glyph descender sprite segment.
-                    if (glyph.Attribs.Descender < 0.0f)
+                    if (glyph.Attribs.MinY < 0.0f)
                     {
-                        //auto glyphDescSprite =  Sprite2d::CreateSprite2d(glyphAtlasName, , ,
-                        //                                                 , text.Rotation, , colorLowlight,
-                        //                                                 text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                        //if (!SubmitSprite2d(glyphDescSprite))
-                        //{
-                        //    return false;
-                        //}
+                        auto descUvMin  = uvMin + Vector2(0.0f, uvSize.y * (overshootHeightAlpha + ascHalfHeightAlpha * 2));
+                        auto descUvMax  = uvMax;
+                        auto descSprite = Sprite2d::CreateSprite2d(atlasName, descUvMin, descUvMax,
+                                                                   pos, text.Rotation, scale * Vector2(1.0f, descHeightAlpha),
+                                                                   colorLowlight, colorLowlight, colorLowlight, colorLowlight,
+                                                                   text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                        if (!SubmitSprite2d(descSprite))
+                        {
+                            return false;
+                        }
                     }
                     break;
                 }
@@ -312,10 +339,10 @@ namespace Silent::Renderer
                 auto shadowSprite    = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
                                                                 pos + adjShadowOffset, text.Rotation, scale, COLOR_SHADOW,
                                                                 text.Depth + 1, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                if (!SubmitSprite2d(shadowSprite))
-                {
-                    return false;
-                }
+                //if (!SubmitSprite2d(shadowSprite))
+                //{
+                //    return false;
+                //}
             }
 
             // Update horizontal offset.
