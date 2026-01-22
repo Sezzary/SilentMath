@@ -6,7 +6,7 @@
 namespace Silent::Renderer
 {
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
-                                const Vector2& pos, float rot, float scale, float kernScale, float opacity,
+                                const Vector2& pos, float rot, float scale, float kerningScale, float opacity,
                                 TextStyle style, bool hasDropShadow,
                                 int depth, AlignMode alignMode, ScaleMode scaleMode,
                                 BlendMode blendMode)
@@ -18,7 +18,7 @@ namespace Silent::Renderer
             .Position     = pos,
             .Rotation     = rot,
             .Scale        = scale,
-            .KerningScale = kernScale,
+            .KerningScale = kerningScale,
             .Opacity      = opacity,
             .Style        = style,
             .HasShadow    = hasDropShadow,

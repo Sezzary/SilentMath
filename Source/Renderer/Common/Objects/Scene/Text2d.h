@@ -30,7 +30,7 @@ namespace Silent::Renderer
         BlendMode   BlendMd      = BlendMode::Alpha;
 
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
-                                   const Vector2& pos, float rot, float scale, float kernScale, float opacity,
+                                   const Vector2& pos, float rot, float scale, float kerningScale, float opacity,
                                    TextStyle style, bool hasDropShadow,
                                    int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                    BlendMode blendMode = BlendMode::Alpha);

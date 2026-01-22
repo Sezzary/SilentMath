@@ -12,8 +12,8 @@ namespace Silent::Utils
         bool                     EnableAntialiasing = false;
     };
 
-    /** @brief Rasterized glyph metadata. */
-    struct GlyphMetadata
+    /** @brief Rasterized glyph attributes. */
+    struct GlyphAttribs
     {
         char32   CodePoint     = 0;
         int      AtlasIdx      = 0;
@@ -31,8 +31,8 @@ namespace Silent::Utils
     /** @brief Shaped glyph data. */
     struct ShapedGlyph
     {
-        const GlyphMetadata& Metadata;
-        float                Kerning = 0.0f;
+        const GlyphAttribs& Attribs;
+        float               Kerning = 0.0f;
     };
 
     /** @brief Shaped text data. */
@@ -64,11 +64,11 @@ namespace Silent::Utils
         float       _kerningScale       = 1.0f;
         bool        _enableAntialiasing = false;
         
-        std::vector<FT_Face>                      _ftFonts        = {};
-        std::unordered_map<char32, GlyphMetadata> _glyphs         = {}; /** Key = code point, value = rasterized glyph metadata. */
-        std::vector<smol_atlas_t*>                _rectAtlases    = {};
-        std::vector<std::vector<byte>>            _textureAtlases = {};
-        int                                       _activeAtlasIdx = 0;
+        std::vector<FT_Face>                     _ftFonts        = {};
+        std::unordered_map<char32, GlyphAttribs> _glyphs         = {}; /** Key = code point, value = rasterized glyph attributes. */
+        std::vector<smol_atlas_t*>               _rectAtlases    = {};
+        std::vector<std::vector<byte>>           _textureAtlases = {};
+        int                                      _activeAtlasIdx = 0;
 
         std::set<int> _dirtyGpuAtlasIdxs = {};
 
@@ -162,9 +162,9 @@ namespace Silent::Utils
         /** @brief Rasterizes a glyph and inserts the pixels into the active texture atlas.
          *
          * @param ftFont FreeType font.
-         * @param glyph Glyph to rasterize.
+         * @param attribs Attributes of the glyph to rasterize.
          */
-        void RasterizeGlyph(const FT_Face& ftFont, const GlyphMetadata& glyph);
+        void RasterizeGlyph(const FT_Face& ftFont, const GlyphAttribs& attribs);
 
         /** @brief Adds a new glyph texture atlas to use for caching. */
         void AddAtlas();

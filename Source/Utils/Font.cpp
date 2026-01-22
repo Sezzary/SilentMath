@@ -31,7 +31,7 @@ namespace Silent::Utils
             auto ftFont = FT_Face{};
             if (FT_New_Face(fontLib, (path / filename).string().c_str(), 0, &ftFont))
             {
-                throw std::runtime_error("Failed to initialize font.");
+                throw std::runtime_error("Failed to initialize FreeType font.");
             }
             _ftFonts.push_back(ftFont);
 
@@ -110,15 +110,15 @@ namespace Silent::Utils
         // Build shaped text.
         for (int i = 0; i < codePoints.size(); i++)
         {
-            char32 curCodePoint = codePoints[i];
+            char32 codePoint = codePoints[i];
 
             // Run through font chain.
             for (int j = 0; j < _ftFonts.size(); j++)
             {
-                auto* curFtFont = _ftFonts[j];
+                auto* ftFont = _ftFonts[j];
 
                 // Check if glyph is valid.
-                int charIdx = FT_Get_Char_Index(curFtFont, curCodePoint);
+                int charIdx = FT_Get_Char_Index(ftFont, codePoint);
                 if (charIdx == 0)
                 {
                     // If no valid glyphs exist, use first font's invalid glyph.
@@ -133,24 +133,24 @@ namespace Silent::Utils
                 }
 
                 // Compute kerning.
-                float kerning = _glyphs[curCodePoint].Advance;
-                if (FT_HAS_KERNING(curFtFont) && i < (codePoints.size() - 1))
+                float kerning = _glyphs[codePoint].Advance;
+                if (FT_HAS_KERNING(ftFont) && i < (codePoints.size() - 1))
                 {
                     char32 nextCodePoint = codePoints[i + 1];
 
-                    int charIdx0 = FT_Get_Char_Index(curFtFont, curCodePoint);
-                    int charIdx1 = FT_Get_Char_Index(curFtFont, nextCodePoint);
+                    int charIdx0 = FT_Get_Char_Index(ftFont, codePoint);
+                    int charIdx1 = FT_Get_Char_Index(ftFont, nextCodePoint);
 
                     auto kerningDelta = FT_Vector{};
-                    FT_Get_Kerning(curFtFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
-                    kerning += (FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale);
+                    FT_Get_Kerning(ftFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
+                    kerning += FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale;
                 }
 
                 // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
-                    .Metadata = _glyphs[curCodePoint],
-                    .Kerning  = kerning
+                    .Attribs = _glyphs[codePoint],
+                    .Kerning = kerning
                 });
                 shapedText.Width += kerning;
                 break;
@@ -223,8 +223,8 @@ namespace Silent::Utils
         auto ftBox = FT_BBox{};
         FT_Glyph_Get_CBox(ftGlyph, FT_GLYPH_BBOX_SUBPIXELS, &ftBox);
 
-        // Register new glyph.
-        _glyphs[codePoint] = GlyphMetadata
+        // Register new glyph attributes.
+        _glyphs[codePoint] = GlyphAttribs
         {
             .CodePoint     = codePoint,
             .AtlasIdx      = _activeAtlasIdx,
@@ -263,12 +263,12 @@ namespace Silent::Utils
         return *rect;
     }
 
-    void Font::RasterizeGlyph(const FT_Face& ftFont, const GlyphMetadata& glyph)
+    void Font::RasterizeGlyph(const FT_Face& ftFont, const GlyphAttribs& attribs)
     {
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
-        byte*       pixelsTo   = &_textureAtlases.back()[(((glyph.AtlasPosition.y) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((glyph.AtlasPosition.x) * RGBA_COMP_COUNT)];
+        byte*       pixelsTo   = &_textureAtlases.back()[(((attribs.AtlasPosition.y) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((attribs.AtlasPosition.x) * RGBA_COMP_COUNT)];
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)
@@ -328,12 +328,6 @@ namespace Silent::Utils
         if (metadata.Filenames.empty())
         {
             Debug::Log(Fmt("Attempted to load font chain `{}` without font files.", metadata.Name), Debug::LogLevel::Warning);
-            return;
-        }
-
-        // Check if font is already loaded.
-        if (Find(_fonts, metadata.Name) != nullptr)
-        {
             return;
         }
 
