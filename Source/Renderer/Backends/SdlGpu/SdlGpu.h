@@ -13,8 +13,7 @@
 
 namespace Silent::Renderer
 {
-    using UniformType = std::variant<std::monostate,
-                                     UniformGlyph2d,
+    using UniformType = std::variant<UniformGlyph2d,
                                      UniformSprite2d>;
 
     /** @brief GPU buffer draw raw batch. */
@@ -31,7 +30,7 @@ namespace Silent::Renderer
     /** @brief Sorted GPU buffer draw batches. */
     struct DrawBatches
     {
-        std::vector<DrawBatch> Triangles2d = {}; // @todo Should be "Primitives2d".
+        std::vector<DrawBatch> Primitives2d = {}; // @todo Should be "Primitives2d".
     };
 
     /** @brief GPU buffers. */
@@ -111,7 +110,7 @@ namespace Silent::Renderer
          *
          * @param copyPass Copy pass.
          */
-        void CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass);
+        void CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass);
 
         /** @brief Pushes uniform data to the GPU for the fragment shader.
          *

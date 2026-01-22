@@ -265,7 +265,7 @@ namespace Silent::Utils
 
     void Font::RasterizeGlyph(const FT_Face& ftFont, const GlyphAttribs& attribs)
     {
-        FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL);
+        FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL); // @tod Try SDF generator.
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
         byte*       pixelsTo   = &_textureAtlases.back()[(((attribs.AtlasPosition.y) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((attribs.AtlasPosition.x) * RGBA_COMP_COUNT)];

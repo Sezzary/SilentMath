@@ -269,7 +269,7 @@ namespace Silent::Renderer
         // Copy prepared GPU data.
         auto copyTasks = ParallelTasks
         {
-            TASK(CopyGpuTriangles2d(*copyPass))
+            TASK(CopyGpuPrimitives2d(*copyPass))
         };
         executor.AddTasks(copyTasks).wait();
 
@@ -286,7 +286,7 @@ namespace Silent::Renderer
 
         // 2D triangles.
         _gpuBuffers.Vertices2d.Bind(renderPass, 0, 0);
-        for (const auto& batch : _drawBatches.Triangles2d)
+        for (const auto& batch : _drawBatches.Primitives2d)
         {
             if (!batch.TextureName.empty())
             {
@@ -397,10 +397,10 @@ namespace Silent::Renderer
         constexpr int TRI_IDX_COUNT_MAX        = SPRITE_2D_IDX_COUNT_MAX;
 
         // Reserve draw batches.
-        _drawBatches.Triangles2d.reserve(TRI_BATCH_COUNT_MAX);
+        _drawBatches.Primitives2d.reserve(TRI_BATCH_COUNT_MAX);
 
         // Initialize GPU buffers.
-        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D triangle vertices");
+        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D vertices");
     }
 
     void SdlGpuRenderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
@@ -437,7 +437,7 @@ namespace Silent::Renderer
         }
     }
 
-    void SdlGpuRenderer::CopyGpuTriangles2d(SDL_GPUCopyPass& copyPass)
+    void SdlGpuRenderer::CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass)
     {
         // Compute sizes. @todo Also text.
         int sprite2dVertCount = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT;
@@ -547,7 +547,7 @@ namespace Silent::Renderer
             bufferIdxs.push_back((i * (QUAD_IDX_COUNT)) + 3);
 
             // @todo Batching. For now, collect each as its own batch of 2 triangles.
-            _drawBatches.Triangles2d.push_back(DrawBatch
+            _drawBatches.Primitives2d.push_back(DrawBatch
             {
                 .TextureName  = sprite.TextureName,
                 .RenderStg    = RenderStage::Sprite2d,
@@ -613,7 +613,7 @@ namespace Silent::Renderer
             }
 
             // @todo Batching. For now, collect each as its own batch.
-            _drawBatches.Triangles2d.push_back(DrawBatch
+            _drawBatches.Primitives2d.push_back(DrawBatch
             {
                 .TextureName  = {},
                 .RenderStg    = RenderStage::Sprite2d,
@@ -650,6 +650,6 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::ClearDrawBatches()
     {
-        _drawBatches.Triangles2d.clear();
+        _drawBatches.Primitives2d.clear();
     }
 }

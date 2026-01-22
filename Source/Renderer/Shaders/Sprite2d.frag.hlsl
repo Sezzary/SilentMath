@@ -9,8 +9,8 @@ struct Input
 
 cbuffer UniformBlock : register(b0, space3)
 {
-    uint UseTexture;  // `bool`
-    uint IsFastAlpha; // `bool`
+    uint UseTexture;
+    uint IsFastAlpha;
 };
 
 float4 main(Input input) : SV_Target

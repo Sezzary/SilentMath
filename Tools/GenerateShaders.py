@@ -75,7 +75,7 @@ def generate_shaders():
 
                 # Run generation command.
                 if run_new_build:
-                    command = [shadercross_exe, shader_source, "-o", temp_shader_output]
+                    command = [shadercross_exe, shader_source, "-I", SOURCES_PATH, "-o", temp_shader_output]
 
                     result = subprocess.run(command, capture_output=True)
                     if result.returncode == 0:
