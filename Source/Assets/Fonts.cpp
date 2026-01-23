@@ -36,10 +36,8 @@ namespace Silent::Assets
     };
 
     // @todo Could be defined in a Lua script instead.
-    // @todo Add handwritten italic font for map notes?
     const std::vector<FontMetadata> FONTS_METADATA
     {
-        FontMetadata
         {
             .Name      = "SmoothSerif",
             .Filenames =
@@ -49,10 +47,9 @@ namespace Silent::Assets
                 "NotoSerifKR-Medium.ttf"
             },
             .PointSize          = 64,
-            .KerningScale       = 1.0f,
+            .KerningScale       = 1.19f, // @todo Use this scale only for first font chain.
             .EnableAntialiasing = true
         },
-        FontMetadata
         {
             .Name      = "RetroSerif",
             .Filenames =
@@ -65,7 +62,6 @@ namespace Silent::Assets
             .KerningScale       = 1.0f,
             .EnableAntialiasing = false
         },
-        FontMetadata
         {
             .Name      = "SmoothSans",
             .Filenames =
@@ -78,7 +74,6 @@ namespace Silent::Assets
             .KerningScale       = 1.0f,
             .EnableAntialiasing = true
         },
-        FontMetadata
         {
             .Name      = "RetroSans",
             .Filenames =
@@ -90,6 +85,17 @@ namespace Silent::Assets
             .PointSize          = 10,
             .KerningScale       = 1.0f,
             .EnableAntialiasing = false
+        },
+        {
+            .Name      = "Handwriting",
+            .Filenames = 
+            {
+                "FreeSansItalic.ttf"
+                // @todo Need others for Japanese and Korean.
+            },
+            .PointSize          = 64,
+            .KerningScale       = 1.0f,
+            .EnableAntialiasing = true
         }
     };
 }
