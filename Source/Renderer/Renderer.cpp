@@ -71,7 +71,7 @@ namespace Silent::Renderer
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.Shapes2d.clear();
         _doubleBuffer.Active.Sprites2d.clear();
-        _doubleBuffer.Active.Texts2d.clear();
+        _doubleBuffer.Active.Glyphs2d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
 
         _doubleBuffer.Active.Primitives3d.clear();
@@ -120,8 +120,6 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
-        constexpr auto COLOR_HIGHLIGHT = Color::From8Bit(247, 247, 247);
-        constexpr auto COLOR_LOWLIGHT  = Color::From8Bit(167, 167, 167);
         constexpr auto COLOR_SHADOW    = Color::From8Bit(16,  16,  16);
         // @todo Improve `constexpr` compatibility of math classes.
         static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
@@ -202,57 +200,68 @@ namespace Silent::Renderer
 
         // Run through shaped glyphs.
         auto pixelOffset = Vector2::Zero;
-        for (const auto& glyph : shapedText.Glyphs)
+        for (const auto& shapedGlyph : shapedText.Glyphs)
         {
             // Compute texture atlas UVs.
-            auto uvMin  = glyph.Attribs.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-            auto uvMax  = uvMin + (glyph.Attribs.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
+            auto uvMin  = shapedGlyph.Attribs.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+            auto uvMax  = uvMin + (shapedGlyph.Attribs.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
             auto uvSize = uvMax - uvMin;
 
             // Compute rotated offset.
             auto adjPixelOffset = Vector2::Transform(pixelOffset, rotMat);
 
             // Compute rotated bearing.
-            auto pixelBearing    = Vector2(glyph.Attribs.Bearing.x, glyph.Attribs.AtlasSize.y - glyph.Attribs.Bearing.y);
+            auto pixelBearing    = Vector2(shapedGlyph.Attribs.Bearing.x, shapedGlyph.Attribs.AtlasSize.y - shapedGlyph.Attribs.Bearing.y);
             auto adjPixelBearing = Vector2::Transform(pixelBearing, rotMat);
 
             // Compute screen position.
             auto relPixelPos = adjPixelOffset + adjPixelBearing;
             auto relPos      = (relPixelPos * fontScaleFactor) * text.Scale;
+            auto pos         = adjTextPos + relPos;
 
             // Compute scale.
-            auto relScale = Vector2((float)glyph.Attribs.AtlasSize.x / (float)glyph.Attribs.AtlasSize.y, 1.0f) *
-                            Vector2((float)glyph.Attribs.AtlasSize.y / (float)font->GetPointSize());
+            auto relScale = Vector2((float)shapedGlyph.Attribs.AtlasSize.x / (float)shapedGlyph.Attribs.AtlasSize.y, 1.0f) *
+                            Vector2((float)shapedGlyph.Attribs.AtlasSize.y / (float)font->GetPointSize());
             auto scale    = relScale * text.Scale;
 
             // Concatenate name for texture atlas containing glyph.
-            auto atlasName = text.FontName + std::to_string(glyph.Attribs.AtlasIdx);
+            auto atlasName = text.FontName + std::to_string(shapedGlyph.Attribs.AtlasIdx);
 
-            // Submit 2D glyph sprite.
-            auto pos        = adjTextPos + relPos;
-            auto fullSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
-                                                        pos, text.Rotation, scale, color,
-                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-            if (!SubmitSprite2d(fullSprite))
+            auto AddGlyph = [&](const Vector2& offset, bool hasGradient)
+            {
+                if (_doubleBuffer.Active.Glyphs2d.size() >= GLYPH_2D_COUNT_MAX)
+                {
+                    Debug::Log("Attempted to submit 2D glyph to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+                    return false;
+                }
+
+                auto glyph = Glyph2d::CreateGlyph2d(shapedGlyph, text.Style == TextStyle::Gradient,
+                                                    atlasName, uvMin, uvMax,
+                                                    pos + offset, text.Rotation, scale, color,
+                                                    text.Depth, ScaleMode::ShortEdge);
+                _doubleBuffer.Active.Glyphs2d.push_back(glyph);
+
+                return true;
+            };
+
+            // Submit 2D glyph.
+            if (!AddGlyph(Vector2::Zero, text.Style == TextStyle::Gradient))
             {
                 return false;
             }
 
-            // Submit 2D drop shadow sprite.
+            // Submit 2D drop shadow glyph.
             if (text.HasShadow)
             {
                 auto adjShadowOffset = Vector2::Transform(SHADOW_OFFSET, rotMat);
-                auto shadowSprite    = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
-                                                                pos + adjShadowOffset, text.Rotation, scale, COLOR_SHADOW,
-                                                                text.Depth + 1, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                //if (!SubmitSprite2d(shadowSprite))
-                //{
-                //    return false;
-                //}
+                if (!AddGlyph(adjShadowOffset, false))
+                {
+                    return false;
+                }
             }
 
             // Update horizontal offset.
-            pixelOffset.x += glyph.Kerning;
+            pixelOffset.x += shapedGlyph.Kerning;
         }
 
         return true;
@@ -324,7 +333,7 @@ namespace Silent::Renderer
     {
         _doubleBuffer.Active.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
         _doubleBuffer.Active.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
-        _doubleBuffer.Active.Texts2d.reserve(TEXT_2D_COUNT_MAX);
+        _doubleBuffer.Active.Glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
 
         _doubleBuffer.Render = _doubleBuffer.Active; 
     }
@@ -335,6 +344,14 @@ namespace Silent::Renderer
 
         auto sortTasks = ParallelTasks
         {
+            // Sort 2D glyphs.
+            [&]()
+            {
+                Sort(_doubleBuffer.Render.Glyphs2d, [](const Glyph2d& glyph0, const Glyph2d& glyph1)
+                {
+                    return glyph0.Depth > glyph1.Depth;
+                });
+            },
             // Sort 2D shapes.
             [&]()
             {

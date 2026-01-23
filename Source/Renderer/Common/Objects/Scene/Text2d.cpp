@@ -2,9 +2,39 @@
 #include "Renderer/Common/Objects/Scene/Text2d.h"
 
 #include "Renderer/Common/Enums.h"
+#include "Utils/Font.h"
+
+using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
+
+    Glyph2d Glyph2d::CreateGlyph2d(const ShapedGlyph& shapedGlyph, bool hasGradient,
+                                   const std::string& atlasName, const Vector2& uvMin, const Vector2& uvMax,
+                                   const Vector2& pos, float rot, const Vector2& scale, const Color& color,
+                                   int depth, ScaleMode scaleMode)
+    {
+        
+        
+        return Glyph2d
+        {
+            .AtlasName   = atlasName,
+            .UvMin       = uvMin,
+            .UvMax       = uvMax,
+            .Position    = pos,
+            .Rotation    = rot,
+            .Scale       = scale,
+            .Col         = color,
+            .Depth       = depth,
+            .ScaleMd     = scaleMode,
+            .HasGradient = hasGradient,
+            .Top         = uvMin.y, // @todo
+            .Bottom      = uvMax.y,
+            .Center      = 0.5f,
+            .Steps       = 0
+        };
+    }
+
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
                                 const Vector2& pos, float rot, float scale, float kerningScale, float opacity,
                                 TextStyle style, bool hasDropShadow,

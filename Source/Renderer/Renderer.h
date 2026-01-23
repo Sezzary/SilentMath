@@ -27,14 +27,14 @@ namespace Silent::Renderer
 
             std::vector<Primitive2d> Primitives2d = {}; // @todo Sprites, shapes, and texts processed into this.
 
-            std::vector<Shape2d>                Shapes2d          = {}; // } @todo Not really renderer objects. Should be external.
-            std::vector<Sprite2d>               Sprites2d         = {}; // }
-            std::vector<Text2d>                 Texts2d           = {};
-            std::vector<std::function<void()>>  DebugGuiDrawCalls = {};
+            std::vector<Shape2d>               Shapes2d          = {}; // } @todo Not really renderer objects. Should be external.
+            std::vector<Sprite2d>              Sprites2d         = {}; // }
+            std::vector<Glyph2d>               Glyphs2d          = {};
+            std::vector<std::function<void()>> DebugGuiDrawCalls = {};
 
-            std::vector<Primitive3d>            Primitives3d      = {};
-            std::vector<Shape2d>                DebugShapes2d     = {};
-            std::vector<Primitive3d>            DebugPrimitives3d = {};
+            std::vector<Primitive3d>           Primitives3d      = {};
+            std::vector<Shape2d>               DebugShapes2d     = {};
+            std::vector<Primitive3d>           DebugPrimitives3d = {};
         };
 
         Data Active = {};
@@ -130,10 +130,10 @@ namespace Silent::Renderer
          */
         bool SubmitSprite2d(const Sprite2d& sprite);
 
-        /** @brief Submits immediate-mode 2D screen text for drawing.
+        /** @brief Submits immediate-mode 2D screen text glyphs for drawing.
          *
-         * @param sprite 2D screen text to draw.
-         * @return `true` if the 2D screen text was successfully submitted, `false` otherwise.
+         * @param text 2D screen text to draw.
+         * @return `true` if the 2D screen text glyphs were successfully submitted, `false` otherwise.
          */
         bool SubmitText2d(const Text2d& text);
 

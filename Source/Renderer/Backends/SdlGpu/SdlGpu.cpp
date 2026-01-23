@@ -439,7 +439,7 @@ namespace Silent::Renderer
 
     void SdlGpuRenderer::CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass)
     {
-        // Compute sizes. @todo Also text.
+        // Compute sizes.
         int sprite2dVertCount = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT;
         int sprite2dIdxCount  = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_IDX_COUNT;
         int shape2dVertCount  = (_doubleBuffer.Render.Shapes2d.size() * 2) * TRI_VERTEX_COUNT;
@@ -550,16 +550,8 @@ namespace Silent::Renderer
             _drawBatches.Primitives2d.push_back(DrawBatch
             {
                 .TextureName  = sprite.TextureName,
-                .RenderStg    = RenderStage::Glyph2d,
-                .BlendMd      = BlendMode::Alpha,
-                //.Uniform      = UniformGlyph2d // @todo Glyph test.
-                //{
-                //    .UvMinY         = sprite.UvMin.y,
-                //    .UvMaxY         = sprite.UvMax.y,
-                //    .GradientCenter = 0.5f,
-                //    .GradientSteps  = 0,
-                //    .HasGradient    = true,
-                //},
+                .RenderStg    = RenderStage::Sprite2d,
+                .BlendMd      = sprite.BlendMd,
                 .Uniform      = UniformSprite2d
                 {
                     .UseTexture  = true, 
@@ -623,10 +615,10 @@ namespace Silent::Renderer
             // @todo Batching. For now, collect each as its own batch.
             _drawBatches.Primitives2d.push_back(DrawBatch
             {
-                .TextureName  = {},
-                .RenderStg    = RenderStage::Sprite2d,
-                .BlendMd      = shape.BlendMd,
-                .Uniform      = UniformSprite2d
+                .TextureName = {},
+                .RenderStg   = RenderStage::Sprite2d,
+                .BlendMd     = shape.BlendMd,
+                .Uniform     = UniformSprite2d
                 {
                     .UseTexture  = false, 
                     .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
@@ -636,6 +628,72 @@ namespace Silent::Renderer
             });
 
             shape2dVertOffset += curVertCount;
+        }
+
+        // Process 2D glyphs.
+        int glyph2dVertOffset = bufferVerts.size();
+        for (const auto& glyph : _doubleBuffer.Render.Glyphs2d)
+        {
+            // @todo Apply scale mode later.
+            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
+            auto ndc = ConvertScreenPercentToNdc(glyph.Position);
+
+            // Set alignment offset.
+            auto offset = Vector2(glyph.Scale.x, glyph.Scale.y);
+
+            // Compute relative vertex positions.
+            auto rotMat  = Matrix::CreateRotationZ(-glyph.Rotation);
+            auto relPos0 = Vector2::Transform(Vector2(-glyph.Scale.x, glyph.Scale.y) + offset, rotMat);
+            auto relPos1 = Vector2::Transform(glyph.Scale                            + offset, rotMat);
+            auto relPos2 = Vector2::Transform(Vector2(glyph.Scale.x, -glyph.Scale.y) + offset, rotMat);
+            auto relPos3 = Vector2::Transform(-glyph.Scale                           + offset, rotMat);
+
+            // Compute vertex positions.
+            float depthZ = std::clamp((float)glyph.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
+            auto  pos0   = Vector3(ndc.x + relPos0.x, ndc.y + relPos0.y, depthZ);
+            auto  pos1   = Vector3(ndc.x + relPos1.x, ndc.y + relPos1.y, depthZ);
+            auto  pos2   = Vector3(ndc.x + relPos2.x, ndc.y + relPos2.y, depthZ);
+            auto  pos3   = Vector3(ndc.x + relPos3.x, ndc.y + relPos3.y, depthZ);
+
+            // Compute vertex UVs.
+            auto uv0 = glyph.UvMin;
+            auto uv1 = Vector2(glyph.UvMax.x, glyph.UvMin.y);
+            auto uv2 = glyph.UvMax;
+            auto uv3 = Vector2(glyph.UvMin.x, glyph.UvMax.y);
+
+            // Add vertices.
+            bufferVerts.push_back(BufferVertex2d{ pos0, uv0, glyph.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos1, uv1, glyph.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos2, uv2, glyph.Col });
+            bufferVerts.push_back(BufferVertex2d{ pos3, uv3, glyph.Col });
+
+            // Add indices.
+            bufferIdxs.push_back(glyph2dVertOffset + 0);
+            bufferIdxs.push_back(glyph2dVertOffset + 1);
+            bufferIdxs.push_back(glyph2dVertOffset + 2);
+            bufferIdxs.push_back(glyph2dVertOffset + 0);
+            bufferIdxs.push_back(glyph2dVertOffset + 2);
+            bufferIdxs.push_back(glyph2dVertOffset + 3);
+
+            // @todo Batching. For now, collect each as its own batch of 2 triangles.
+            _drawBatches.Primitives2d.push_back(DrawBatch
+            {
+                .TextureName = glyph.AtlasName,
+                .RenderStg   = RenderStage::Glyph2d,
+                .BlendMd     = BlendMode::Alpha,
+                .Uniform     = UniformGlyph2d
+                {
+                    .UvMinY         = glyph.Top,
+                    .UvMaxY         = glyph.Bottom,
+                    .GradientCenter = glyph.Center,
+                    .GradientSteps  = (uint)glyph.Steps,
+                    .HasGradient    = glyph.HasGradient
+                },
+                .BufferOffset = glyph2dVertOffset,
+                .BufferStride = QUAD_IDX_COUNT
+            });
+
+            glyph2dVertOffset += QUAD_VERTEX_COUNT;
         }
 
         // Update GPU buffer.

@@ -56,12 +56,12 @@ namespace Silent::Debug
             // Text.
             auto text = Text2d::CreateText2d("Have you seen a little girl?", "RetroSerif",
                                              Vector2(10.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
-                                             TextStyle::Gradient, true,
+                                             TextStyle::Gradient, false,
                                              1, AlignMode::CenterLeft);
             renderer.SubmitText2d(text);
             auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
                                               Vector2(10.0f, 20.0f), DEG_TO_RAD(45.0f), 1.0f / 14.0f, 1.0f, 0.0f, 
-                                              TextStyle::Gradient, true,
+                                              TextStyle::Gradient, false,
                                               1, AlignMode::CenterLeft);
             renderer.SubmitText2d(text2);
 
