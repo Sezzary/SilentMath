@@ -120,7 +120,7 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
-        constexpr auto COLOR_SHADOW    = Color::From8Bit(16,  16,  16);
+        constexpr auto SHADOW_COLOR    = Color::From8Bit(16,  16,  16);
         // @todo Improve `constexpr` compatibility of math classes.
         static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
 
@@ -227,7 +227,7 @@ namespace Silent::Renderer
             // Concatenate name for texture atlas containing glyph.
             auto atlasName = text.FontName + std::to_string(shapedGlyph.Attribs.AtlasIdx);
 
-            auto AddGlyph = [&](const Vector2& offset, bool hasGradient)
+            auto AddGlyph = [&](const Vector2& offset, const Color& color, int depth, bool hasGradient)
             {
                 if (_doubleBuffer.Active.Glyphs2d.size() >= GLYPH_2D_COUNT_MAX)
                 {
@@ -235,17 +235,17 @@ namespace Silent::Renderer
                     return false;
                 }
 
-                auto glyph = Glyph2d::CreateGlyph2d(shapedGlyph, text.Style == TextStyle::Gradient,
+                auto glyph = Glyph2d::CreateGlyph2d(shapedGlyph, hasGradient,
                                                     atlasName, uvMin, uvMax,
                                                     pos + offset, text.Rotation, scale, color,
-                                                    text.Depth, ScaleMode::ShortEdge);
+                                                    depth, ScaleMode::ShortEdge);
                 _doubleBuffer.Active.Glyphs2d.push_back(glyph);
 
                 return true;
             };
 
             // Submit 2D glyph.
-            if (!AddGlyph(Vector2::Zero, text.Style == TextStyle::Gradient))
+            if (!AddGlyph(Vector2::Zero, color, text.Depth, text.Style == TextStyle::Gradient))
             {
                 return false;
             }
@@ -254,7 +254,7 @@ namespace Silent::Renderer
             if (text.HasShadow)
             {
                 auto adjShadowOffset = Vector2::Transform(SHADOW_OFFSET, rotMat);
-                if (!AddGlyph(adjShadowOffset, false))
+                if (!AddGlyph(adjShadowOffset, SHADOW_COLOR, text.Depth + 1, false))
                 {
                     return false;
                 }
