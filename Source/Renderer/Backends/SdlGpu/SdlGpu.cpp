@@ -298,7 +298,7 @@ namespace Silent::Renderer
             }
 
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
-            PushUniformBuffer(batch.Uniform, 0);
+            PushFragmentUniform(batch.Uniform, 0);
 
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
 
@@ -550,8 +550,16 @@ namespace Silent::Renderer
             _drawBatches.Primitives2d.push_back(DrawBatch
             {
                 .TextureName  = sprite.TextureName,
-                .RenderStg    = RenderStage::Sprite2d,
-                .BlendMd      = sprite.BlendMd,
+                .RenderStg    = RenderStage::Glyph2d,
+                .BlendMd      = BlendMode::Alpha,
+                //.Uniform      = UniformGlyph2d // @todo Glyph test.
+                //{
+                //    .UvMinY         = sprite.UvMin.y,
+                //    .UvMaxY         = sprite.UvMax.y,
+                //    .GradientCenter = 0.5f,
+                //    .GradientSteps  = 0,
+                //    .HasGradient    = true,
+                //},
                 .Uniform      = UniformSprite2d
                 {
                     .UseTexture  = true, 
@@ -640,7 +648,15 @@ namespace Silent::Renderer
         }
     }
 
-    void SdlGpuRenderer::PushUniformBuffer(const UniformType& uni, int slotIdx)
+    void SdlGpuRenderer::PushVertexUniform(const UniformType& uni, int slotIdx)
+    {
+        std::visit([&](auto&& arg)
+        {
+            SDL_PushGPUVertexUniformData(_commandBuffer, slotIdx, &arg, sizeof(arg));
+        }, uni);
+    }
+
+    void SdlGpuRenderer::PushFragmentUniform(const UniformType& uni, int slotIdx)
     {
         std::visit([&](auto&& arg)
         {

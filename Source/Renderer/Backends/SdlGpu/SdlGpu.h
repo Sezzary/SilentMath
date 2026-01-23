@@ -112,12 +112,19 @@ namespace Silent::Renderer
          */
         void CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass);
 
+        /** @brief Pushes uniform data to the GPU for the vertex shader.
+         *
+         * @param uni Uniform buffer to push.
+         * @param slotIdx Index of the vertex uniform slot to push data to.
+         */
+        void PushVertexUniform(const UniformType& uni, int slotIdx);
+
         /** @brief Pushes uniform data to the GPU for the fragment shader.
          *
          * @param uni Uniform buffer to push.
          * @param slotIdx Index of the fragment uniform slot to push data to.
          */
-        void PushUniformBuffer(const UniformType& uni, int slotIdx);
+        void PushFragmentUniform(const UniformType& uni, int slotIdx);
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();

@@ -8,7 +8,7 @@ namespace Silent::Renderer
         float UvMinY         = 0.0f;
         float UvMaxY         = 0.0f;
         float GradientCenter = 0.0f;
-        uint  GradientSteps  = false;
+        uint  GradientSteps  = 0;
         //--
         uint  HasGradient    = false;
     };

@@ -229,108 +229,13 @@ namespace Silent::Renderer
             auto atlasName = text.FontName + std::to_string(glyph.Attribs.AtlasIdx);
 
             // Submit 2D glyph sprite.
-            auto pos = adjTextPos + relPos;
-            switch (text.Style)
+            auto pos        = adjTextPos + relPos;
+            auto fullSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
+                                                        pos, text.Rotation, scale, color,
+                                                        text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+            if (!SubmitSprite2d(fullSprite))
             {
-                default:
-                case TextStyle::Flat:
-                {
-                    // Submit full glyph sprite.
-                    auto fullSprite = Sprite2d::CreateSprite2d(atlasName, uvMin, uvMax,
-                                                               pos, text.Rotation, scale, color,
-                                                               text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                    if (!SubmitSprite2d(fullSprite))
-                    {
-                        return false;
-                    }
-                    break;
-                }
-                case TextStyle::Gradient:
-                {
-                    auto colorHighlight = color * COLOR_HIGHLIGHT;
-                    auto colorLowlight  = color * COLOR_LOWLIGHT;
-
-                    // Compute segment heights.
-                    float height          = glyph.Attribs.MaxY - glyph.Attribs.MinY;
-                    float ascHalfHeight   = glyph.Attribs.Ascender * 0.5f; // @todo Accuracy.
-                    float descHeight      = -glyph.Attribs.MinY;
-                    float overshootHeight = glyph.Attribs.MaxY - glyph.Attribs.Ascender;
-
-                    // Compute segment height alphas.
-                    float ascHalfHeightAlpha   = (ascHalfHeightAlpha == 0.0f) ? 0.0f : (ascHalfHeight   / height);
-                    float descHeightAlpha      = (descHeight         == 0.0f) ? 0.0f : (descHeight      / height);
-                    float overshootHeightAlpha = (overshootHeight    == 0.0f) ? 0.0f : (overshootHeight / height);
-
-                    // Submit bottom ascender segment sprite.
-                    if (glyph.Attribs.MaxY > 0.0f)
-                    {
-                        auto segUvMin     = uvMin + Vector2(0.0f, uvSize.y * (overshootHeightAlpha + ascHalfHeightAlpha));
-                        auto segUvMax     = uvMax - Vector2(0.0f, uvSize.y * descHeightAlpha);
-                        auto segOffset    = (height * descHeightAlpha) * (fontScaleFactor * text.Scale);
-                        auto adjSegOffset = Vector2::Transform(segOffset, rotMat);
-                        adjSegOffset.x = 0;
-                        auto segSprite = Sprite2d::CreateSprite2d(atlasName, segUvMin, segUvMax,
-                                                                  pos - adjSegOffset, text.Rotation, scale * Vector2(1.0f, ascHalfHeightAlpha),
-                                                                  colorHighlight, colorHighlight, colorLowlight, colorLowlight,
-                                                                  text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                        if (!SubmitSprite2d(segSprite))
-                        {
-                            return false;
-                        }
-                    }
-
-                    // Submit top ascender segment sprite.
-                    if (glyph.Attribs.MaxY > (glyph.Attribs.Ascender * 0.5f))
-                    {
-                        auto segUvMin     = uvMin + Vector2(0.0f, uvSize.y * overshootHeightAlpha);
-                        auto segUvMax     = uvMax - Vector2(0.0f, uvSize.y * (descHeightAlpha + ascHalfHeightAlpha));
-                        auto segOffset    = (height * (descHeightAlpha + ascHalfHeightAlpha)) * (fontScaleFactor * text.Scale);
-                        auto adjSegOffset = Vector2::Transform(segOffset, rotMat);
-                        adjSegOffset.x    = 0.0f;
-                        auto ascTopHalfSprite = Sprite2d::CreateSprite2d(atlasName, segUvMin, segUvMax,
-                                                                         pos - adjSegOffset, text.Rotation, scale * Vector2(1.0f, ascHalfHeightAlpha),
-                                                                         colorLowlight, colorLowlight, colorHighlight, colorHighlight,
-                                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                        if (!SubmitSprite2d(ascTopHalfSprite))
-                        {
-                            return false;
-                        }
-                    }
-
-                    // Submit 2D glyph overshoot sprite segment.
-                    if (glyph.Attribs.MaxY > glyph.Attribs.Ascender)
-                    {
-                        auto topUvMin     = uvMin;
-                        auto topUvMax     = uvMax - Vector2(0.0f, uvSize.y * (descHeightAlpha + (ascHalfHeightAlpha * 2.0f)));
-                        auto topOffset    = (height * (descHeightAlpha + (ascHalfHeightAlpha * 2.0f))) * (fontScaleFactor * text.Scale);
-                        auto adjTopOffset = Vector2::Transform(topOffset, rotMat);
-                        adjTopOffset.x = 0;
-                        auto ascTopHalfSprite = Sprite2d::CreateSprite2d(atlasName, topUvMin, topUvMax,
-                                                                         pos - adjTopOffset, text.Rotation, scale * Vector2(1.0f, ascHalfHeightAlpha),
-                                                                         colorLowlight, colorLowlight, colorHighlight, colorHighlight,
-                                                                         text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                        //if (!SubmitSprite2d(ascTopHalfSprite))
-                        //{
-                        //    return false;
-                        //}
-                    }
-
-                    // Submit 2D glyph descender sprite segment.
-                    if (glyph.Attribs.MinY < 0.0f)
-                    {
-                        auto descUvMin  = uvMin + Vector2(0.0f, uvSize.y * (overshootHeightAlpha + ascHalfHeightAlpha * 2));
-                        auto descUvMax  = uvMax;
-                        auto descSprite = Sprite2d::CreateSprite2d(atlasName, descUvMin, descUvMax,
-                                                                   pos, text.Rotation, scale * Vector2(1.0f, descHeightAlpha),
-                                                                   colorLowlight, colorLowlight, colorLowlight, colorLowlight,
-                                                                   text.Depth, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
-                        if (!SubmitSprite2d(descSprite))
-                        {
-                            return false;
-                        }
-                    }
-                    break;
-                }
+                return false;
             }
 
             // Submit 2D drop shadow sprite.
