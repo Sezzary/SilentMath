@@ -13,7 +13,7 @@ cbuffer UniformBlock : register(b0, space3)
 {
     float UvMinY;
     float UvMaxY;
-    float Center;
+    float GradientCenter;
     uint  GradientSteps;
     //--
     uint  HasGradient;
@@ -29,7 +29,7 @@ float4 main(Input input) : SV_Target
 
     // Compute local values.
     float localY = Utils::Remap(input.TextureCoord.y, UvMinY, UvMaxY, 0.0f, 1.0f);
-    float dist   = abs(localY - Center) * 2.0f;
+    float dist   = abs(localY - GradientCenter) * 2.0f;
 
     // Compute gradient factor.
     float smooth      = saturate(1.0f - dist);
@@ -38,9 +38,9 @@ float4 main(Input input) : SV_Target
     float factor      = lerp(LOWLIGHT, HIGHLIGHT, factorAlpha);
 
     // Combine color and apply gradient if active.
-    float3 finalColor = input.Color.rgb * texColor.rgb;
-    finalColor       *= lerp(1.0f, factor, float(HasGradient));
+    float3 color = input.Color.rgb * texColor.rgb;
+    color       *= lerp(1.0f, factor, float(HasGradient));
 
     float alpha = input.Color.a * texColor.a;
-    return float4(finalColor, alpha);
+    return float4(color, alpha);
 }
