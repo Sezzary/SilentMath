@@ -8,30 +8,30 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-
     Glyph2d Glyph2d::CreateGlyph2d(const ShapedGlyph& shapedGlyph, bool hasGradient,
                                    const std::string& atlasName, const Vector2& uvMin, const Vector2& uvMax,
                                    const Vector2& pos, float rot, const Vector2& scale, const Color& color,
                                    int depth, ScaleMode scaleMode)
     {
-        
-        
         return Glyph2d
         {
-            .AtlasName   = atlasName,
-            .UvMin       = uvMin,
-            .UvMax       = uvMax,
-            .Position    = pos,
-            .Rotation    = rot,
-            .Scale       = scale,
-            .Col         = color,
-            .Depth       = depth,
-            .ScaleMd     = scaleMode,
-            .HasGradient = hasGradient,
-            .Top         = uvMin.y, // @todo
-            .Bottom      = uvMax.y,
-            .Center      = 0.5f,
-            .Steps       = 0
+            .AtlasName      = atlasName,
+            .UvMin          = uvMin,
+            .UvMax          = uvMax,
+            .Position       = pos,
+            .Rotation       = rot,
+            .Scale          = scale,
+            .Col            = color,
+            .Depth          = depth,
+            .ScaleMd        = scaleMode,
+            .HasGradient    = hasGradient,
+            .GradientSteps  = 0,
+            .GradientUvMinY = Remap(shapedGlyph.Attribs.Ascender,
+                                    shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
+                                    uvMax.y, uvMin.y),
+            .GradientUvMaxY = Remap(0.0f,
+                                    shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
+                                    uvMax.y, uvMin.y)
         };
     }
 

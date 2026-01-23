@@ -36,11 +36,10 @@ namespace Silent::Renderer
         int         Depth     = 0;
         ScaleMode   ScaleMd   = ScaleMode::ShortEdge;
 
-        bool  HasGradient = false;
-        float Top         = 0.0f;
-        float Bottom      = 0.0f;
-        float Center      = 0.0f;
-        int   Steps       = 0;
+        bool  HasGradient    = false;
+        int   GradientSteps  = 0;
+        float GradientUvMinY = 0.0f;
+        float GradientUvMaxY = 0.0f;
 
         static Glyph2d CreateGlyph2d(const ShapedGlyph& shapedGlyph, bool hasGradient,
                                      const std::string& atlasName, const Vector2& uvMin, const Vector2& uvMax,

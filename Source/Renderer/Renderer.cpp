@@ -261,7 +261,7 @@ namespace Silent::Renderer
             }
 
             // Update horizontal offset.
-            pixelOffset.x += shapedGlyph.Kerning;
+            pixelOffset.x += shapedGlyph.Kerning * text.KerningScale;
         }
 
         return true;

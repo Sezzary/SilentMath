@@ -683,11 +683,10 @@ namespace Silent::Renderer
                 .BlendMd     = BlendMode::Alpha,
                 .Uniform     = UniformGlyph2d
                 {
-                    .UvMinY         = glyph.Top,
-                    .UvMaxY         = glyph.Bottom,
-                    .GradientCenter = glyph.Center,
-                    .GradientSteps  = (uint)glyph.Steps,
-                    .HasGradient    = glyph.HasGradient
+                    .HasGradient    = glyph.HasGradient,
+                    .GradientSteps  = (uint)glyph.GradientSteps,
+                    .GradientUvMinY = glyph.GradientUvMinY,
+                    .GradientUvMaxY = glyph.GradientUvMaxY
                 },
                 .BufferOffset = glyph2dVertOffset,
                 .BufferStride = QUAD_IDX_COUNT

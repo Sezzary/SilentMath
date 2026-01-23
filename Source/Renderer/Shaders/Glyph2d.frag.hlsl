@@ -11,12 +11,10 @@ struct Input
 
 cbuffer UniformBlock : register(b0, space3)
 {
-    float UvMinY;
-    float UvMaxY;
-    float GradientCenter;
-    uint  GradientSteps;
-    //--
     uint  HasGradient;
+    uint  GradientSteps;
+    float GradientUvMinY;
+    float GradientUvMaxY;
 };
 
 float4 main(Input input) : SV_Target
@@ -28,8 +26,8 @@ float4 main(Input input) : SV_Target
     float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
 
     // Compute local values.
-    float localY = Utils::Remap(input.TextureCoord.y, UvMinY, UvMaxY, 0.0f, 1.0f);
-    float dist   = abs(localY - GradientCenter) * 2.0f;
+    float localY = Utils::Remap(input.TextureCoord.y, GradientUvMinY, GradientUvMaxY, 0.0f, 1.0f);
+    float dist   = abs(localY - 0.5f) * 2.0f;
 
     // Compute gradient factor.
     float smooth      = saturate(1.0f - dist);
