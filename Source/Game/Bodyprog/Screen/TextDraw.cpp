@@ -64,8 +64,8 @@ namespace Silent::Game
 
     bool Gfx_StringDraw(const std::string& str, int strLength)
     {
-        // @todo Document this somewhere.
-        constexpr float SCALE = ((1.0f / 240.0f) * 14.0f) * (1.0f + (1.0f - (14.0f / 16.0f)));
+        // @todo Document this somewhere. 14 = pixel ascender size, 16 = inherent pixel point size.
+        constexpr float SCALE = ((1.0f / 240.0f) * 16.0f);// * (1.0f + (1.0f - (14.0f / 16.0f)));
 
         auto& renderer = g_App.GetRenderer();
 
