@@ -49,9 +49,9 @@ namespace Silent::Debug
             // Sprite test.
 
             // Cursor.
-            auto cursorSprite = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
-                                                         input.GetCursorPosition(), 0.0f, Vector2(0.1f, 0.1f), Color::White,
-                                                         0, AlignMode::TopLeft, ScaleMode::ShortEdge, BlendMode::Subtract);
+            auto cursorSprite = Sprite2d::CreateSprite2d("TIM/BG_ETC.TIM", Vector2(0.0f, 64.0f / 256.0f), Vector2(32.0f / 128.0f, 96.0f / 256.0f),
+                                                         input.GetCursorPosition(), 0.0f, 16.0f / RETRO_SCREEN_SPACE_RES, Color::White,
+                                                         0, AlignMode::TopLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,

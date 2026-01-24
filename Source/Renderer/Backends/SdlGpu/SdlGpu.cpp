@@ -122,6 +122,7 @@ namespace Silent::Renderer
         // Load temp. textures.
         GetTextures().Load(*copyPass, "TIM/HERO_PIC.TIM");
         GetTextures().Load(*copyPass, "1ST/2ZANKO_E.TIM");
+        GetTextures().Load(*copyPass, "TIM/BG_ETC.TIM");
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);

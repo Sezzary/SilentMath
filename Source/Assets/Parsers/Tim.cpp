@@ -151,6 +151,7 @@ namespace Silent::Assets
             out[1]    = ((color >> 5) & 0x1F) << 3;                 // G.
             out[2]    = ((color >> 10) & 0x1F) << 3;                // R.
             out[3]    = (color & TRANSPARENT_COLOR_FLAG) ? 255 : 0; // A.
+            // @todo (0, 248, 0) is treated as pure black? Some textures have these bright-green areas.
         };
 
         // Read pixels.

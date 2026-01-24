@@ -253,6 +253,7 @@ namespace Silent::Renderer
             // Submit 2D drop shadow glyph.
             if (text.HasShadow)
             {
+                // @todo Scale offset.
                 auto adjShadowOffset = Vector2::Transform(SHADOW_OFFSET, rotMat);
                 if (!AddGlyph(adjShadowOffset, SHADOW_COLOR, text.Depth + 1, false))
                 {
