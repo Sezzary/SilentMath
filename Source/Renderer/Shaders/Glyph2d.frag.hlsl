@@ -1,4 +1,4 @@
-#include "Common/Utils.hlsli"
+#include "Common/Math.hlsli"
 
 Texture2D<float4> Texture : register(t0, space2);
 SamplerState      Sampler : register(s0, space2);
@@ -26,7 +26,7 @@ float4 main(Input input) : SV_Target
     float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
 
     // Compute local values.
-    float localY = Utils::Remap(input.TextureCoord.y, GradientUvMinY, GradientUvMaxY, 0.0f, 1.0f);
+    float localY = Math::Remap(input.TextureCoord.y, GradientUvMinY, GradientUvMaxY, 0.0f, 1.0f);
     float dist   = abs(localY - 0.5f) * 2.0f;
 
     // Compute gradient factor.

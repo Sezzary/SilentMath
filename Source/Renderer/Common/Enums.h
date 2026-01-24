@@ -16,6 +16,7 @@ namespace Silent::Renderer
         // Post-process
         // =============
 
+        Fade,
         Vignette,
 
         Count
