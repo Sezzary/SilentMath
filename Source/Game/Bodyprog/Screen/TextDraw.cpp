@@ -64,11 +64,11 @@ namespace Silent::Game
 
     bool Gfx_StringDraw(const std::string& str, int strLength)
     {
-        constexpr float SCALE = (1.0f / 240.0f) * 14.0f; // @todo Not the right scale?
+        constexpr float SCALE = (1.0f / 240.0f) * 14.0f;//1.0f / 14.0f; // @todo Not the right scale?
 
         auto& renderer = g_App.GetRenderer();
 
-        auto offset = Vector2((1.0f / 240.0f) / 2.0f) * 100;
+        auto offset = Vector2((1.0f / 240.0f) * 0.5f) * 100;
         auto text = Text2d::CreateText2d(str, "RetroSerif",
                                          ConvertRetroScreenPixelsToPercent(g_StringPosition) + offset, 0.0f, SCALE, 1.0f,
                                          1.0f, TextStyle::Gradient, true,
