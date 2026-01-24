@@ -40,8 +40,8 @@ namespace Silent::Game
 
     void Gfx_StringSetPosition(int posX, int posY)
     {
-        #define OFFSET_X 0//SCREEN_POSITION_X(50.0f)
-        #define OFFSET_Y 0//SCREEN_POSITION_Y(47.0f)
+        #define OFFSET_X SCREEN_POSITION_X(2.0f)//SCREEN_POSITION_X(50.0f)
+        #define OFFSET_Y -(SCREEN_POSITION_Y(9.0f))
 
         if (posX != NO_VALUE)
         {
@@ -64,7 +64,7 @@ namespace Silent::Game
 
     bool Gfx_StringDraw(const std::string& str, int strLength)
     {
-        constexpr float SCALE = (1.0f / 240.0f) * 14.0f;//1.0f / 14.0f; // @todo Not the right scale?
+        constexpr float SCALE = (1.0f / 240.0f) * 17.0f;//1.0f / 14.0f; // @todo Not the right scale?
 
         auto& renderer = g_App.GetRenderer();
 

@@ -2,6 +2,7 @@
 
 #include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformFade.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformGlyph2d.h"
 #include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformSprite2d.h"
 #include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
@@ -13,8 +14,9 @@
 
 namespace Silent::Renderer
 {
-    using UniformType = std::variant<UniformGlyph2d,
-                                     UniformSprite2d>;
+    using UniformType = std::variant<UniformSprite2d,
+                                     UniformGlyph2d,
+                                     UniformFade>;
 
     /** @brief GPU buffer draw raw batch. */
     struct DrawBatch

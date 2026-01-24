@@ -9,7 +9,6 @@ namespace Silent::Renderer
     const std::vector<SDL_GPUColorTargetBlendState> PIPELINE_BLEND_MODE_COLOR_TARGETS = 
     {
         // Opaque.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ZERO,
@@ -20,7 +19,6 @@ namespace Silent::Renderer
             .enable_blend          = true
         },
         // Alpha.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
@@ -31,7 +29,6 @@ namespace Silent::Renderer
             .enable_blend          = true
         },
         // Fast alpha. Requires `IsFastAlpha` shader uniform set to `true`.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
@@ -42,7 +39,6 @@ namespace Silent::Renderer
             .enable_blend          = true
         },
         // Multiply.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_COLOR,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
@@ -53,7 +49,6 @@ namespace Silent::Renderer
             .enable_blend          = true
         },
         // Add.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
@@ -64,7 +59,6 @@ namespace Silent::Renderer
             .enable_blend          = true
         },
         // Subtract.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
@@ -75,7 +69,6 @@ namespace Silent::Renderer
             .enable_blend          = true
         },
         // Wireframe.
-        SDL_GPUColorTargetBlendState
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ZERO,
@@ -89,8 +82,11 @@ namespace Silent::Renderer
 
     const std::vector<PipelineConfig> PIPELINE_CONFIGS =
     {
+        // =========
+        // Material
+        // =========
+
         // 2D sprite.
-        PipelineConfig
         {
             .Stage                        = RenderStage::Sprite2d,
             .VertexShaderName             = "Primitive2d.vert",
@@ -149,7 +145,6 @@ namespace Silent::Renderer
             }
         },
         // 2D glyph.
-        PipelineConfig
         {
             .Stage                        = RenderStage::Glyph2d,
             .VertexShaderName             = "Primitive2d.vert",
@@ -199,6 +194,64 @@ namespace Silent::Renderer
             .BlendModes =
             {
                 BlendMode::Alpha,
+                BlendMode::Wireframe
+            }
+        },
+
+        // =============
+        // Post-process
+        // =============
+
+        // Fade.
+        {
+            .Stage                        = RenderStage::Fade,
+            .VertexShaderName             = "Primitive2d.vert",
+            .VertShaderSamplerCount       = 0,
+            .VertShaderUniBufferCount     = 0,
+            .VertShaderStorageBufferCount = 0,
+            .VertShaderStorageTexCount    = 0,
+            .FragmentShaderName           = "Fade.frag",
+            .FragShaderSamplerCount       = 1,
+            .FragShaderUniBufferCount     = 1,
+            .FragShaderStorageBufferCount = 0,
+            .FragShaderStorageTexCount    = 0,
+            .VertBufferDescs              =
+            {
+                {
+                    .slot               = 0,
+                    .pitch              = sizeof(BufferVertex2d),
+                    .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+                    .instance_step_rate = 0
+                }
+            },
+            .VertBufferAttribs =
+            {
+                // `BufferVertex2d::Position`
+                {
+                    .location    = 0,
+                    .buffer_slot = 0,
+                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+                    .offset      = 0
+                },
+                // `BufferVertex2d::Uv`
+                {
+                    .location    = 1,
+                    .buffer_slot = 0,
+                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+                    .offset      = sizeof(Vector3)
+                },
+                // `BufferVertex2d::Col`
+                {
+                    .location    = 2,
+                    .buffer_slot = 0,
+                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+                    .offset      = sizeof(Vector3) +
+                                   sizeof(Vector2)
+                }
+            },
+            .BlendModes =
+            {
+                BlendMode::Opaque,
                 BlendMode::Wireframe
             }
         }

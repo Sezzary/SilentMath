@@ -194,11 +194,16 @@ namespace Silent::Debug
             // Bullets
             for (int i = 0; i < 9; i++)
             {
-                auto line3 = Shape2d::CreateLine(Vector2i(39,  82 + (i * 16)),
-                                                     Vector2i(200, 82 + (i * 16)),
-                                                     Color::From8Bit(176, 176, 176),
-                                                     Color::From8Bit(160, 128, 64),
-                                                     0);
+                if (i == 0)
+                {
+                    auto line3 = Shape2d::CreateLine(Vector2i(39,  82 + (i * 16)),
+                                                         Vector2i(200, 82 + (i * 16)),
+                                                         Color::From8Bit(176, 176, 176),
+                                                         Color::From8Bit(160, 128, 64),
+                                                         0);
+                    renderer.SubmitShape2d(line3);
+                }
+
                 auto quadB0 = Shape2d::CreateQuad(
                                                     Vector2i(52, 69 + (i * 16)),
                                                     Vector2i(52, 81 + (i * 16)),
@@ -219,7 +224,6 @@ namespace Silent::Debug
                                                     Color::From8Bit(160, 128, 64),
                                                     Color::From8Bit(64,  64,  64),
                                                     1);
-                renderer.SubmitShape2d(line3);
                 renderer.SubmitShape2d(quadB1);
                 renderer.SubmitShape2d(quadB0);
             }
