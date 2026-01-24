@@ -38,17 +38,17 @@ namespace Silent::Game
     /** @brief Main options menu entries. */
     enum e_MainOptionsMenuEntry
     {
-        MainOptionsMenuEntry_Exit           = 0,
-        MainOptionsMenuEntry_Brightness     = 1,
-        MainOptionsMenuEntry_Controller     = 2,
-        MainOptionsMenuEntry_ScreenPosition = 3,
-        MainOptionsMenuEntry_Vibration      = 4,
-        MainOptionsMenuEntry_AutoLoad       = 5,
-        MainOptionsMenuEntry_Sound          = 6,
-        MainOptionsMenuEntry_BgmVolume      = 7,
-        MainOptionsMenuEntry_SfxVolume      = 8,
+        MainOptionsMenuEntry_Exit,
+        MainOptionsMenuEntry_Brightness,
+        MainOptionsMenuEntry_Controller,
+        MainOptionsMenuEntry_ScreenPosition,
+        MainOptionsMenuEntry_Vibration,
+        MainOptionsMenuEntry_AutoLoad,
+        MainOptionsMenuEntry_Sound,
+        MainOptionsMenuEntry_BgmVolume,
+        MainOptionsMenuEntry_SfxVolume,
 
-        MainOptionsMenuEntry_Count          = 9
+        MainOptionsMenuEntry_Count
     };
 
     /** @brief Extra options menu entries. */

@@ -155,8 +155,8 @@ namespace Silent::Game
 
         // Submit quad primitive for bullet point element.
         auto elementPrim = Shape2d::CreateQuad(quad.vertex0, quad.vertex1, quad.vertex2, quad.vertex3,
-                                                   color0, color1, color2, color3,
-                                                   DEPTH_24, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                               color0, color1, color2, color3,
+                                               DEPTH_24, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitShape2d(elementPrim);
     }
 }

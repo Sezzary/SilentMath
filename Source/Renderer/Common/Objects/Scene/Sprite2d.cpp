@@ -60,4 +60,27 @@ namespace Silent::Renderer
             .BlendMd     = blendMode
         };
     }
+
+    Sprite2d CreateSprite2d(const std::string& texName, const Vector2i& pixelMin, const Vector2i& pixelMax,
+                            const Vector2i& pos, float rot,
+                            int depth, AlignMode alignMode, ScaleMode scaleMode,
+                            BlendMode blendMode)
+    {
+        return Sprite2d
+        {
+            .TextureName = texName,
+            .UvMin       = ConvertRetroScreenPixelsToPercent(pixelMin) / SCREEN_SPACE_RES,
+            .UvMax       = ConvertRetroScreenPixelsToPercent(pixelMax) / SCREEN_SPACE_RES,
+            .Position    = ConvertRetroScreenPixelsToPercent(pos),
+            .Rotation    = rot,
+            .Col0        = Color::White,
+            .Col1        = Color::White,
+            .Col2        = Color::White,
+            .Col3        = Color::White,
+            .Depth       = depth,
+            .AlignMd     = alignMode,
+            .ScaleMd     = scaleMode,
+            .BlendMd     = blendMode
+        };
+    }
 }

@@ -3,11 +3,11 @@
 
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
+#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Dummy.h"
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
 #include "Utils/Translator.h"
-
-#include "Game/Dummy.h"
 
 namespace Silent::Game
 {
@@ -76,12 +76,12 @@ namespace Silent::Game
         constexpr int  LINE_OFFSET_X   = 16;
         constexpr int  LINE_OFFSET_Y   = 16;
         constexpr auto HEADING_STR_POS = Vector2i(121, 20);
-        constexpr auto ENTRY_STR_KEYS  = std::array<const char*, 8>
+        constexpr auto ENTRY_STR_KEYS  = std::array<const char*, MainOptionsMenuEntry_Count>
         {
             KEY_OPTIONS_MENU_EXIT,
             KEY_OPTIONS_MENU_BRIGHT_LEVEL,
             KEY_OPTIONS_MENU_CONT_CONFIG,
-            //KEY_OPTIONS_MENU_SCREEN_POS,
+            "Screen Position",//KEY_OPTIONS_MENU_SCREEN_POS,
             KEY_OPTIONS_MENU_VIBRATION,
             KEY_OPTIONS_MENU_AUTO_LOAD,
             KEY_OPTIONS_MENU_SOUND,
@@ -92,16 +92,16 @@ namespace Silent::Game
         const auto& translator = g_App.GetTranslator();
 
         // Submit heading string.
-        //Gfx_StringSetColor(StringColorId_White);
-        //Gfx_StringSetPosition(HEADING_STR_POS.vx, HEADING_STR_POS.vy);
-        //Gfx_StringDraw(translator(KEY_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
+        Gfx_StringSetColor(e_StringColorId::White);
+        Gfx_StringSetPosition(HEADING_STR_POS.x, HEADING_STR_POS.y);
+        Gfx_StringDraw(translator(KEY_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
 
         // Submit entry strings.
-        //for (i = 0; i < MainOptionsMenuEntry_Count; i++)
-        //{
-        //    Gfx_StringSetPosition(LINE_BASE_X, LINE_BASE_Y + (i * LINE_OFFSET_Y));
-        //    Gfx_StringDraw(ENTRY_STR_KEYS[i], DEFAULT_MAP_MESSAGE_LENGTH);
-        //}
+        for (int i = 0; i < MainOptionsMenuEntry_Count; i++)
+        {
+            Gfx_StringSetPosition(LINE_BASE_X, LINE_BASE_Y + (i * LINE_OFFSET_Y));
+            Gfx_StringDraw(translator(ENTRY_STR_KEYS[i]), DEFAULT_MAP_MESSAGE_LENGTH);
+        }
     }
 
     void Options_ExtraOptionsMenu_EntryStringsDraw()

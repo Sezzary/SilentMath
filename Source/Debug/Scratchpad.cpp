@@ -10,6 +10,10 @@
 #include "Services/Options.h"
 #include "Utils/Parallel.h"
 
+#include "Game/Screens/Options/MenuGraphics.h"
+
+using namespace Silent::Game;
+
 using namespace Silent::Input;
 using namespace Silent::Services;
 
@@ -40,6 +44,8 @@ namespace Silent::Debug
 
             // ====================================
 
+            Options_MainOptionsMenu_EntryStringsDraw();
+
             // Sprite test.
 
             // Cursor.
@@ -48,27 +54,27 @@ namespace Silent::Debug
                                                          0, AlignMode::TopLeft, ScaleMode::ShortEdge, BlendMode::Subtract);
             renderer.SubmitSprite2d(cursorSprite);
 
-            auto sprite0 = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
-                                                    Vector2(25.0f, 50.0f), 0.0f, Vector2(0.5f, 0.25f), Color::White,
+            auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
+                                                    Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White,
                                                     2, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Add);
             renderer.SubmitSprite2d(sprite0);
 
             // Text.
-            auto text = Text2d::CreateText2d("ÈĘÍÌÎÏŁŃŚÚŸŹŻáàâąäoua", "RetroSerif",
-                                             Vector2(10.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
-                                             TextStyle::Gradient, true,
-                                             1, AlignMode::CenterLeft);
-            renderer.SubmitText2d(text);
-            auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
-                                              Vector2(10.0f, 20.0f), 0/*DEG_TO_RAD(45.0f)*/, 1.0f / 14.0f, 1.0f, 0.0f, 
-                                              TextStyle::Gradient, true,
-                                              1, AlignMode::CenterLeft);
-            renderer.SubmitText2d(text2);
+            //auto text = Text2d::CreateText2d("ÈĘÍÌÎÏŁŃŚÚŸŹŻáàâąäoua", "RetroSerif",
+            //                                 Vector2(10.0f), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
+            //                                 TextStyle::Gradient, true,
+            //                                 1, AlignMode::CenterLeft);
+            //renderer.SubmitText2d(text);
+            //auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
+            //                                  Vector2(10.0f, 20.0f), 0/*DEG_TO_RAD(45.0f)*/, 1.0f / 14.0f, 1.0f, 0.0f, 
+            //                                  TextStyle::Gradient, true,
+            //                                  1, AlignMode::CenterLeft);
+            //renderer.SubmitText2d(text2);
 
-            return;
+            //return;
 
             // GUI button test.
-            static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::ShortEdge,
+            /*static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::ShortEdge,
                                      []() { Debug::Log("Entering!"); },
                                      [&]()
                                      {
@@ -131,10 +137,10 @@ namespace Silent::Debug
             if (!Debug::g_Work.EnablePowerMenu)
             {
                 but.Update(input.GetCursorPosition());
-            }
+            }*/
 
             // @temp
-            auto tri0 = Shape2d::CreateTriangle(Vector2(0.0f + 0.2f, 0.5f + 0.2f),
+            /*auto tri0 = Shape2d::CreateTriangle(Vector2(0.0f + 0.2f, 0.5f + 0.2f),
                                                     Vector2(-0.5f + 0.2f, -0.5f + 0.2f),
                                                     Vector2(0.5f + 0.2f, -0.5f + 0.2f),
                                                     Color(1.0f, 0.0f, 1.0f, 0.5f),
@@ -183,9 +189,10 @@ namespace Silent::Debug
             renderer.SubmitShape2d(line0);
             renderer.SubmitShape2d(line1);
             //renderer.SubmitShape2d(line2);
-            renderer.SubmitShape2d(line3);
+            renderer.SubmitShape2d(line3);*/
 
-            for (int i = 0; i < 11; i++)
+            // Bullets
+            for (int i = 0; i < 9; i++)
             {
                 auto line3 = Shape2d::CreateLine(Vector2i(39,  82 + (i * 16)),
                                                      Vector2i(200, 82 + (i * 16)),
@@ -217,15 +224,15 @@ namespace Silent::Debug
                 renderer.SubmitShape2d(quadB0);
             }
 
-            auto tri = Shape2d::CreateTriangle(
-                                                   Vector2i(8, 84),
-                                                   Vector2i(16, 76),
-                                                   Vector2i(16, 92),
-                                                   Color::From8Bit(48, 255, 255),
-                                                   Color::From8Bit(48, 255, 128),
-                                                   Color::From8Bit(48, 255, 128),
-                                                   0);
-            renderer.SubmitShape2d(tri);
+            //auto tri = Shape2d::CreateTriangle(
+            //                                       Vector2i(8, 84),
+            //                                       Vector2i(16, 76),
+            //                                       Vector2i(16, 92),
+            //                                       Color::From8Bit(48, 255, 255),
+            //                                       Color::From8Bit(48, 255, 128),
+            //                                       Color::From8Bit(48, 255, 128),
+            //                                       0);
+            //renderer.SubmitShape2d(tri);
         }
     }
 }
