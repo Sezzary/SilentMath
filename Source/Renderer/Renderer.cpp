@@ -264,7 +264,7 @@ namespace Silent::Renderer
             }
 
             // Update horizontal offset.
-            pixelOffset.x += shapedGlyph.Kerning * text.KerningScale;
+            pixelOffset.x += shapedGlyph.Spacing + text.Tracking;
         }
 
         return true;

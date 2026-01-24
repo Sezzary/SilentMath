@@ -8,7 +8,7 @@ namespace Silent::Utils
         std::string              Name               = {};
         std::vector<std::string> Filenames          = {};
         int                      PointSize          = 0;
-        float                    KerningScale       = 1.0f; // @todo Unnecessary? Keeps kerning similar between retro and HD variants. 
+        std::vector<float>       Trackings          = {};
         bool                     EnableAntialiasing = false;
     };
 
@@ -21,7 +21,7 @@ namespace Silent::Utils
         Vector2i AtlasSize     = Vector2i::Zero;
 
         Vector2 Bearing   = Vector2::Zero;
-        float   Advance   = 0.0f;
+        float   Spacing   = 0.0f;
         float   Ascender  = 0.0f;
         float   Descender = 0.0f;
         float   MinY      = 0.0f;
@@ -32,7 +32,7 @@ namespace Silent::Utils
     struct ShapedGlyph
     {
         const GlyphAttribs& Attribs;
-        float               Kerning = 0.0f;
+        float               Spacing = 0.0f;
     };
 
     /** @brief Shaped text data. */
@@ -61,7 +61,7 @@ namespace Silent::Utils
 
         std::string _name               = {};
         int         _pointSize          = 0;
-        float       _kerningScale       = 1.0f;
+        float       _tracking           = 0.0f;
         bool        _enableAntialiasing = false;
         
         std::vector<FT_Face>                     _ftFonts        = {};

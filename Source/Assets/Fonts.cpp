@@ -18,8 +18,13 @@ namespace Silent::Assets
                 "NotoSerifJP-Medium.ttf",
                 "NotoSerifKR-Medium.ttf"
             },
-            .PointSize          = 64,
-            .KerningScale       = 1.19f, // @todo Use this scale only for first font chain.
+            .PointSize = 64,
+            .Trackings =
+            {
+                0.1f,
+                0.0f,
+                0.0f
+            },
             .EnableAntialiasing = true
         },
         {
@@ -30,8 +35,13 @@ namespace Silent::Assets
                 "PsxBios.ttf",
                 "UnifontExMono.ttf"
             },
-            .PointSize          = 16,
-            .KerningScale       = 1.0f,
+            .PointSize = 16,
+            .Trackings =
+            {
+                0.0f,
+                0.0f,
+                0.0f
+            },
             .EnableAntialiasing = false
         },
         {
@@ -42,8 +52,13 @@ namespace Silent::Assets
                 "NotoSansJP-Bold.ttf",
                 "NotoSansKR-Bold.ttf"
             },
-            .PointSize          = 40,
-            .KerningScale       = 1.0f,
+            .PointSize = 40,
+            .Trackings =
+            {
+                0.0f,
+                0.0f,
+                0.0f
+            },
             .EnableAntialiasing = true
         },
         {
@@ -54,8 +69,13 @@ namespace Silent::Assets
                 "PixelMplus10-Regular.ttf",
                 "dalmoori10.ttf"
             },
-            .PointSize          = 10,
-            .KerningScale       = 1.0f,
+            .PointSize = 10,
+            .Trackings =
+            {
+                0.0f,
+                0.0f,
+                0.0f
+            },
             .EnableAntialiasing = false
         },
         {
@@ -65,8 +85,13 @@ namespace Silent::Assets
                 "FreeSansItalic.ttf"
                 // @todo Need others for Japanese and Korean.
             },
-            .PointSize          = 64,
-            .KerningScale       = 1.0f,
+            .PointSize = 64,
+            .Trackings =
+            {
+                0.0f,
+                0.0f,
+                0.0f
+            },
             .EnableAntialiasing = true
         }
     };

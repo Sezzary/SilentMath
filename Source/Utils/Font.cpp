@@ -10,8 +10,10 @@ namespace Silent::Utils
     {
         constexpr int POINT_SIZE_MAX = ATLAS_SIZE / 8;
 
+        // @todo check if counts are equal for fonts and trackings.
+
         _name               = metadata.Name;
-        _kerningScale       = metadata.KerningScale;
+        _tracking           = metadata.Trackings[0]; // @todo Unique tracking for each font.
         _enableAntialiasing = metadata.EnableAntialiasing;
 
         // Clamp point size.
@@ -132,8 +134,8 @@ namespace Silent::Utils
                     }
                 }
 
-                // Compute kerning.
-                float kerning = _glyphs[codePoint].Advance;
+                // Compute spacing.
+                float spacing = _glyphs[codePoint].Spacing;
                 if (FT_HAS_KERNING(ftFont) && i < (codePoints.size() - 1))
                 {
                     char32 nextCodePoint = codePoints[i + 1];
@@ -143,16 +145,16 @@ namespace Silent::Utils
 
                     auto kerningDelta = FT_Vector{};
                     FT_Get_Kerning(ftFont, charIdx0, charIdx1, FT_KERNING_DEFAULT, &kerningDelta);
-                    kerning += FP_FLOAT(kerningDelta.x, Q6_SHIFT) * _kerningScale;
+                    spacing += FP_FLOAT(kerningDelta.x, Q6_SHIFT) + (_pointSize * _tracking);
                 }
 
                 // Add shaped glyph.
                 shapedText.Glyphs.push_back(ShapedGlyph
                 {
                     .Attribs = _glyphs[codePoint],
-                    .Kerning = kerning
+                    .Spacing = spacing
                 });
-                shapedText.Width += kerning;
+                shapedText.Width += spacing;
                 break;
             }
         }
@@ -231,7 +233,7 @@ namespace Silent::Utils
             .AtlasPosition = Vector2i(sma_item_x(&rect), sma_item_y(&rect)) + Vector2i(GLYPH_PADDING),
             .AtlasSize     = size - Vector2i(GLYPH_PADDING * 2),
             .Bearing       = Vector2(FP_FLOAT(metrics.horiBearingX, Q6_SHIFT), FP_FLOAT(metrics.horiBearingY, Q6_SHIFT)),
-            .Advance       = FP_FLOAT(metrics.horiAdvance, Q6_SHIFT) * _kerningScale,
+            .Spacing       = FP_FLOAT(metrics.horiAdvance, Q6_SHIFT) + (_pointSize * _tracking),
             .Ascender      = FP_FLOAT(ftFont->ascender, Q6_SHIFT),
             .Descender     = FP_FLOAT(ftFont->descender, Q6_SHIFT),
             .MinY          = FP_FLOAT(ftBox.yMin, Q6_SHIFT),
