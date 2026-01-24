@@ -16,8 +16,10 @@ namespace Silent::Renderer
         // Post-process
         // =============
 
+        Dithering,
         Fade,
         Vignette,
+        Crt,
 
         Count
     };

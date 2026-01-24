@@ -222,8 +222,8 @@ namespace Silent::Renderer
             // Compute scale.
             // @todo `-1`s seem to produce more accurate alignment. Should have any effect.
             // Scaling is sclightly off somewhere.
-            auto relScale = Vector2((float)(shapedGlyph.Attribs.AtlasSize.x-1) / (float)(shapedGlyph.Attribs.AtlasSize.y-1), 1.0f) *
-                            Vector2((float)(shapedGlyph.Attribs.AtlasSize.y-1) / (float)font->GetPointSize());
+            auto relScale = Vector2((float)(shapedGlyph.Attribs.AtlasSize.x) / (float)(shapedGlyph.Attribs.AtlasSize.y), 1.0f) *
+                            Vector2((float)(shapedGlyph.Attribs.AtlasSize.y) / (float)font->GetPointSize());
             auto scale    = relScale * text.Scale;
 
             // Concatenate name for texture atlas containing glyph.

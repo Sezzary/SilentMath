@@ -64,7 +64,8 @@ namespace Silent::Game
 
     bool Gfx_StringDraw(const std::string& str, int strLength)
     {
-        constexpr float SCALE = (1.0f / 240.0f) * 17.0f;//1.0f / 14.0f; // @todo Not the right scale?
+        // @todo Document this somewhere.
+        constexpr float SCALE = ((1.0f / 240.0f) * 14.0f) * (1.0f + (1.0f - (14.0f / 16.0f)));
 
         auto& renderer = g_App.GetRenderer();
 

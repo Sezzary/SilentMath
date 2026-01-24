@@ -251,8 +251,7 @@ namespace Silent::Renderer
             },
             .BlendModes =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Alpha
             }
         }
     };
