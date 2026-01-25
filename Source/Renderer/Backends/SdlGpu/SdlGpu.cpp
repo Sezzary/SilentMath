@@ -94,7 +94,7 @@ namespace Silent::Renderer
         };
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
 
-        InitializeMemory();
+        InitializeBuffers();
 
         // Create ImGui context.
         ImGui::CreateContext();
@@ -385,7 +385,7 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(renderPass);
     }
 
-    void SdlGpuRenderer::InitializeMemory()
+    void SdlGpuRenderer::InitializeBuffers()
     {
         constexpr int SPRITE_2D_VERT_COUNT_MAX = SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT;
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
@@ -441,17 +441,21 @@ namespace Silent::Renderer
     void SdlGpuRenderer::CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass)
     {
         // Compute sizes.
-        int sprite2dVertCount = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_VERTEX_COUNT;
-        int sprite2dIdxCount  = (_doubleBuffer.Render.Sprites2d.size() * 2) * TRI_IDX_COUNT;
-        int shape2dVertCount  = (_doubleBuffer.Render.Shapes2d.size() * 2) * TRI_VERTEX_COUNT;
-        int shape2dIdxCount   = (_doubleBuffer.Render.Shapes2d.size() * 2) * TRI_IDX_COUNT;
+        int sprite2dVertCount = _doubleBuffer.Render.Sprites2d.size() * QUAD_VERTEX_COUNT;
+        int sprite2dIdxCount  = _doubleBuffer.Render.Sprites2d.size() * (TRI_IDX_COUNT * 2);
+        int shape2dVertCount  = _doubleBuffer.Render.Shapes2d.size() * QUAD_VERTEX_COUNT;
+        int shape2dIdxCount   = _doubleBuffer.Render.Shapes2d.size() * (TRI_IDX_COUNT * 2);
+        int glyph2dVertCount  = _doubleBuffer.Render.Glyphs2d.size() * QUAD_VERTEX_COUNT;
+        int glyph2dIdxCount   = _doubleBuffer.Render.Glyphs2d.size() * (TRI_IDX_COUNT * 2);
+
+        // @todo Before processing into batched GPU data, combine these into an intermediate collection.
 
         // Create GPU buffer data.
         auto bufferVerts = std::vector<BufferVertex2d>{};
         auto bufferIdxs  = std::vector<uint16>{};
 
-        bufferVerts.reserve(sprite2dVertCount + shape2dVertCount);
-        bufferIdxs.reserve(sprite2dIdxCount + shape2dIdxCount);
+        bufferVerts.reserve(sprite2dVertCount + shape2dVertCount + glyph2dVertCount);
+        bufferIdxs.reserve(sprite2dIdxCount + shape2dIdxCount + glyph2dIdxCount);
 
         // Process 2D sprites.
         for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)

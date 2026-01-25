@@ -18,8 +18,8 @@ namespace Silent::Renderer
 
         Dithering,
         Fade,
-        Vignette,
         Crt,
+        Vignette,
 
         Count
     };
