@@ -1,10 +1,11 @@
 #pragma once
 
-namespace Silent::Renderer
+namespace Silent::Renderer{ enum class BlendMode;   }
+namespace Silent::Renderer{ enum class RenderStage; }
+
+namespace Silent::Renderer::SdlGpu
 {
-    enum class BlendMode;
-    enum class RenderStage;
-    struct     PipelineConfig;
+    struct PipelineConfig;
 
     /** @brief GPU pipeline manager. */
     class PipelineManager

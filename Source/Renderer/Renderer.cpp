@@ -382,7 +382,7 @@ namespace Silent::Renderer
         {
             case RendererType::SdlGpu:
             {
-                return std::make_unique<SdlGpuRenderer>();
+                return std::make_unique<SdlGpu::Renderer>();
             }
         }
 

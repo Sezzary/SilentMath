@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     /** @brief GPU vertex, index, or indirect buffer. */
     template <typename T>

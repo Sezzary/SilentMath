@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Texture.h"
+#include "Renderer/Backends/SdlGpu/Objects/Texture.h"
 
 #include "Application.h"
 #include "Assets/Assets.h"
@@ -9,9 +9,9 @@
 using namespace Silent::Assets;
 using namespace Silent::Utils;
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
-    SdlGpuTexture::SdlGpuTexture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
+    Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
         _device = &device;
 
@@ -60,12 +60,12 @@ namespace Silent::Renderer
         SDL_ReleaseGPUTransferBuffer(_device, transferBuffer);
     }
 
-    SdlGpuTexture::~SdlGpuTexture()
+    Texture::~Texture()
     {
         SDL_ReleaseGPUTexture(_device, _texture);
     }
 
-    void SdlGpuTexture::Update(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i& region, const Vector2i& size)
+    void Texture::Update(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i& region, const Vector2i& size)
     {
         // Create transfer buffer.
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
@@ -100,7 +100,7 @@ namespace Silent::Renderer
         SDL_ReleaseGPUTransferBuffer(_device, transferBuffer);
     }
 
-    void SdlGpuTexture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler)
+    void Texture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler)
     {
         auto texSamplerBinding = SDL_GPUTextureSamplerBinding
         {
@@ -110,17 +110,17 @@ namespace Silent::Renderer
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &texSamplerBinding, 1);
     }
 
-    SdlGpuTextureManager::SdlGpuTextureManager(SDL_GPUDevice& device)
+    TextureManager::TextureManager(SDL_GPUDevice& device)
     {
         _device = &device;
     }
 
-    void SdlGpuTextureManager::Load(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
+    void TextureManager::Load(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
-        _textures[name] = std::make_unique<SdlGpuTexture>(*_device, copyPass, pixels, res, name);
+        _textures[name] = std::make_unique<Texture>(*_device, copyPass, pixels, res, name);
     }
 
-    void SdlGpuTextureManager::Load(SDL_GPUCopyPass& copyPass, const std::string& assetName)
+    void TextureManager::Load(SDL_GPUCopyPass& copyPass, const std::string& assetName)
     {
         auto& assets = g_App.GetAssets();
 
@@ -142,7 +142,7 @@ namespace Silent::Renderer
         Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
     }
 
-    SdlGpuTexture* SdlGpuTextureManager::operator[](const std::string& name)
+    Texture* TextureManager::operator[](const std::string& name)
     {
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
@@ -151,6 +151,6 @@ namespace Silent::Renderer
             return nullptr;
         }
 
-        return (SdlGpuTexture*)tex->get();
+        return (Texture*)tex->get();
     }
 }

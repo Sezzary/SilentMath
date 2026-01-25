@@ -2,7 +2,7 @@
 
 #include "Renderer/Common/Enums.h"
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     /** @brief Pipeline configuration data. */
     struct PipelineConfig

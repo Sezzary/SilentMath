@@ -1,12 +1,12 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Gpu/IndirectBuffer.h"
+#include "Renderer/Backends/SdlGpu/Objects/IndirectBuffer.h"
 
-#include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Objects/Buffer.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     IndirectBuffer::IndirectBuffer(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, const std::vector<SDL_GPUIndexedIndirectDrawCommand>& commands,
                                    const std::string& name)

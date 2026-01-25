@@ -5,7 +5,7 @@
 #include "Renderer/Common/Objects/Buffers.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     const std::vector<SDL_GPUColorTargetBlendState> PIPELINE_BLEND_MODE_COLOR_TARGETS = 
     {

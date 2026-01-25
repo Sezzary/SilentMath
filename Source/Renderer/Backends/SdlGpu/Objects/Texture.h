@@ -2,10 +2,10 @@
 
 #include "Renderer/Common/Texture.h"
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     /** @brief GPU texture. */
-    class SdlGpuTexture : public ITexture
+    class Texture : public ITexture
     {
     private:
         // =======
@@ -22,7 +22,7 @@ namespace Silent::Renderer
 
         // @todo Deprecated.
         /** @brief Constructs an uninitialized default `Texture`. */
-        SdlGpuTexture() = default;
+        Texture() = default;
 
         /** @brief Constructs a `Texture` and uploads data to the GPU.
          *
@@ -32,10 +32,10 @@ namespace Silent::Renderer
          * @param res Texture image resolution.
          * @param name Texture image name.
          */
-        SdlGpuTexture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name);
+        Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name);
 
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
-        ~SdlGpuTexture();
+        ~Texture();
 
         // ==========
         // Utilities
@@ -59,7 +59,7 @@ namespace Silent::Renderer
     };
 
     /** @brief GPU texture cache manager. */
-    class SdlGpuTextureManager : public TextureManagerBase
+    class TextureManager : public TextureManagerBase
     {
     private:
         // =======
@@ -73,11 +73,11 @@ namespace Silent::Renderer
         // Constructors
         // =============
 
-        /** @brief Constructs an `SdlGpuTextureManager` with a device reference.
+        /** @brief Constructs an `TextureManager` with a device reference.
          *
          * @param device GPU device.
          */
-        SdlGpuTextureManager(SDL_GPUDevice& device);
+        TextureManager(SDL_GPUDevice& device);
 
         // ==========
         // Utilities
@@ -99,6 +99,6 @@ namespace Silent::Renderer
          */
         void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
-        SdlGpuTexture* operator[](const std::string& name);
+        Texture* operator[](const std::string& name);
     };
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Texture.h"
-#include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
+#include "Renderer/Backends/SdlGpu/Objects/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Objects/Texture.h"
+#include "Renderer/Backends/SdlGpu/Objects/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Common/Objects/Buffers.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
@@ -10,8 +10,7 @@
 #include "Renderer/Common/Objects/Uniforms.h"
 #include "Renderer/Renderer.h"
 
-// @todo `::SdlGpu` namespace.
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     /** @brief GPU buffer draw raw batch. */
     struct DrawBatch
@@ -37,7 +36,7 @@ namespace Silent::Renderer
     };
 
     /** @brief SDL_gpu renderer backend. */
-    class SdlGpuRenderer : public RendererBase
+    class Renderer : public RendererBase
     {
     public:
         // ==========
@@ -65,8 +64,8 @@ namespace Silent::Renderer
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `SdlGpuRenderer`. */
-        SdlGpuRenderer() = default;
+        /** @brief Constructs an uninitialized default `Renderer`. */
+        Renderer() = default;
 
         // ==========
         // Utilities
@@ -82,7 +81,7 @@ namespace Silent::Renderer
         // Helpers
         // ========
 
-        SdlGpuTextureManager& GetTextures();
+        TextureManager& GetTextures();
         SDL_GPUSampler&       GetActiveSampler();
 
         void Draw3dScene() override;

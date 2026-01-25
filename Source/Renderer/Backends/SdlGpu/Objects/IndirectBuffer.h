@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Objects/Buffer.h"
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     /** @brief GPU indirect buffer. */
     class IndirectBuffer

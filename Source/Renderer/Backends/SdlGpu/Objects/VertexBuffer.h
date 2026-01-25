@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Objects/Buffer.h"
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     /** @brief Indexed GPU vertex buffer with 16-bit indices. */
     template <typename T>

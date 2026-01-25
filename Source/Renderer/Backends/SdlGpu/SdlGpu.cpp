@@ -3,7 +3,7 @@
 
 #include "Application.h"
 #include "Assets/Fonts.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Texture.h"
+#include "Renderer/Backends/SdlGpu/Objects/Texture.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Common/Objects/Buffers.h"
 #include "Renderer/Common/Objects/Uniforms.h"
@@ -20,9 +20,9 @@ using namespace Silent::Assets;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
-    void SdlGpuRenderer::Initialize(SDL_Window& window)
+    void Renderer::Initialize(SDL_Window& window)
     {
         _type   = RendererType::SdlGpu;
         _window = &window;
@@ -65,7 +65,7 @@ namespace Silent::Renderer
         InitializeDoubleBuffer();
 
         // Initialize texture manager.
-        _textures = std::make_unique<SdlGpuTextureManager>(*_device);
+        _textures = std::make_unique<TextureManager>(*_device);
 
         // Initialize pipelines.
         _pipelines.Initialize(*_window, *_device);
@@ -128,7 +128,7 @@ namespace Silent::Renderer
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
     }
 
-    void SdlGpuRenderer::Deinitialize()
+    void Renderer::Deinitialize()
     {
         // @todo Errors.
 
@@ -138,7 +138,7 @@ namespace Silent::Renderer
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        //_textures TestTexture.~SdlGpuTexture();
+        //_textures TestTexture.~Texture();
         _gpuBuffers = {};
         _pipelines.Deinitialize();
 
@@ -146,7 +146,7 @@ namespace Silent::Renderer
         SDL_DestroyGPUDevice(_device);
     }
 
-    void SdlGpuRenderer::Update()
+    void Renderer::Update()
     {
         // Frame setup.
         SortRenderBufferData();
@@ -187,9 +187,11 @@ namespace Silent::Renderer
         SDL_SubmitGPUCommandBuffer(_commandBuffer);
     }
 
-    void SdlGpuRenderer::SaveScreenshot() const
+    void Renderer::SaveScreenshot() const
     {
         constexpr int COLOR_CHANNEL_COUNT = 3; // RGB.
+
+        // @todo Doesn't work.
 
         const auto& fs = g_App.GetFilesystem();
 
@@ -230,7 +232,7 @@ namespace Silent::Renderer
         SDL_UnlockSurface(surface);
     }
 
-    void SdlGpuRenderer::Draw3dScene()
+    void Renderer::Draw3dScene()
     {
         // Begin render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
@@ -248,19 +250,19 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(&renderPass);
     }
 
-    SdlGpuTextureManager& SdlGpuRenderer::GetTextures()
+    TextureManager& Renderer::GetTextures()
     {
-        return *(SdlGpuTextureManager*)_textures.get();
+        return *(TextureManager*)_textures.get();
     }
 
-    SDL_GPUSampler& SdlGpuRenderer::GetActiveSampler()
+    SDL_GPUSampler& Renderer::GetActiveSampler()
     {
         const auto& options = g_App.GetOptions();
 
         return *_samplers[(int)options->TextureFilter];
     }
 
-    void SdlGpuRenderer::Draw2dScene()
+    void Renderer::Draw2dScene()
     {
         auto& executor = g_App.GetExecutor();
 
@@ -310,7 +312,7 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(&renderPass);
     }
 
-    void SdlGpuRenderer::DrawPostProcess()
+    void Renderer::DrawPostProcess()
     {
         const auto& options = g_App.GetOptions();
 
@@ -346,7 +348,7 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(&renderPass);
     }
 
-    void SdlGpuRenderer::DrawDebugGui()
+    void Renderer::DrawDebugGui()
     {
         // If power menu is disabled, return early.
         if (!Debug::g_Work.EnablePowerMenu)
@@ -385,7 +387,7 @@ namespace Silent::Renderer
         SDL_EndGPURenderPass(renderPass);
     }
 
-    void SdlGpuRenderer::InitializeBuffers()
+    void Renderer::InitializeBuffers()
     {
         constexpr int SPRITE_2D_VERT_COUNT_MAX = SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT;
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
@@ -404,7 +406,7 @@ namespace Silent::Renderer
         _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D vertices");
     }
 
-    void SdlGpuRenderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
+    void Renderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
     {
         auto& fonts = g_App.GetFonts();
 
@@ -438,7 +440,7 @@ namespace Silent::Renderer
         }
     }
 
-    void SdlGpuRenderer::CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass)
+    void Renderer::CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass)
     {
         // Compute sizes.
         int sprite2dVertCount = _doubleBuffer.Render.Sprites2d.size() * QUAD_VERTEX_COUNT;
@@ -710,7 +712,7 @@ namespace Silent::Renderer
         }
     }
 
-    void SdlGpuRenderer::PushVertexUniform(const UniformType& uni, int slotIdx)
+    void Renderer::PushVertexUniform(const UniformType& uni, int slotIdx)
     {
         std::visit([&](auto&& arg)
         {
@@ -718,7 +720,7 @@ namespace Silent::Renderer
         }, uni);
     }
 
-    void SdlGpuRenderer::PushFragmentUniform(const UniformType& uni, int slotIdx)
+    void Renderer::PushFragmentUniform(const UniformType& uni, int slotIdx)
     {
         std::visit([&](auto&& arg)
         {
@@ -726,7 +728,7 @@ namespace Silent::Renderer
         }, uni);
     }
 
-    void SdlGpuRenderer::ClearDrawBatches()
+    void Renderer::ClearDrawBatches()
     {
         _drawBatches.Primitives2d.clear();
     }

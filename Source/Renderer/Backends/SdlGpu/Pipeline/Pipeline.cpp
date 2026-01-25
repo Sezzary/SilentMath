@@ -10,7 +10,7 @@
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
     void PipelineManager::Initialize(SDL_Window& window, SDL_GPUDevice& device)
     {
