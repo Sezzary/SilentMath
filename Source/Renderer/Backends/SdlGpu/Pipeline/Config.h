@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Pipeline.h"
+#include "Renderer/Common/Enums.h"
 
 namespace Silent::Renderer
 {
-    enum class BlendMode;
-
     /** @brief Pipeline configuration data. */
     struct PipelineConfig
     {

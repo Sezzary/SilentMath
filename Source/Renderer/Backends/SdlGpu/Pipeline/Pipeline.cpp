@@ -1,8 +1,8 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Pipeline.h"
+#include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 
 #include "Application.h"
-#include "Renderer/Backends/SdlGpu/PipelineConfig.h"
+#include "Renderer/Backends/SdlGpu/Pipeline/Config.h"
 #include "Renderer/Common/Enums.h"
 #include "Services/Filesystem.h"
 #include "Utils/Utils.h"

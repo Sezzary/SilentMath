@@ -1,23 +1,18 @@
 #pragma once
 
 #include "Renderer/Backends/SdlGpu/Gpu/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/BufferVertex2d.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformFade.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformGlyph2d.h"
-#include "Renderer/Backends/SdlGpu/Gpu/Layouts/UniformSprite2d.h"
+#include "Renderer/Backends/SdlGpu/Gpu/Texture.h"
 #include "Renderer/Backends/SdlGpu/Gpu/VertexBuffer.h"
-#include "Renderer/Backends/SdlGpu/Pipeline.h"
-#include "Renderer/Backends/SdlGpu/Texture.h"
+#include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
+#include "Renderer/Common/Objects/Buffers.h"
 #include "Renderer/Common/Objects/Primitive/Vertex2d.h"
 #include "Renderer/Common/Objects/Primitive/Vertex3d.h"
+#include "Renderer/Common/Objects/Uniforms.h"
 #include "Renderer/Renderer.h"
 
+// @todo `::SdlGpu` namespace.
 namespace Silent::Renderer
 {
-    using UniformType = std::variant<UniformSprite2d,
-                                     UniformGlyph2d,
-                                     UniformFade>;
-
     /** @brief GPU buffer draw raw batch. */
     struct DrawBatch
     {

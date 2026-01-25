@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Renderer/Common/Enums.h"
-
 namespace Silent::Renderer
 {
     enum class BlendMode;
+    enum class RenderStage;
     struct     PipelineConfig;
 
     /** @brief GPU pipeline manager. */
