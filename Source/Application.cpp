@@ -280,7 +280,7 @@ namespace Silent
         }
 
         // Render frame asynchronously.
-        _work.Renderer->SwapDoubleBuffer();
+        _work.Renderer->PrepareRenderBuffer();
         if (_work.Options->EnableParallelism)
         {
             _prevFrameFuture = std::async(std::launch::async, TASK(_work.Renderer->Update()));

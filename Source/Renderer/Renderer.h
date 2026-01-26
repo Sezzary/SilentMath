@@ -25,16 +25,15 @@ namespace Silent::Renderer
         {
             int DrawCallCount = 0;
 
-            std::vector<Primitive2d> Primitives2d = {}; // @todo Sprites, shapes, and texts processed into this.
-
-            std::vector<Shape2d>               Shapes2d          = {}; // } @todo Not really renderer objects. Should be external.
-            std::vector<Sprite2d>              Sprites2d         = {}; // }
-            std::vector<Glyph2d>               Glyphs2d          = {};
-            std::vector<std::function<void()>> DebugGuiDrawCalls = {};
-
+            std::vector<Primitive2d>           Primitives2d      = {};
             std::vector<Primitive3d>           Primitives3d      = {};
             std::vector<Shape2d>               DebugShapes2d     = {};
             std::vector<Primitive3d>           DebugPrimitives3d = {};
+            std::vector<std::function<void()>> DebugGuiDrawCalls = {};
+
+            std::vector<Shape2d>  Shapes2d  = {}; // } @todo Not really renderer objects. Should be part of an external system.
+            std::vector<Sprite2d> Sprites2d = {}; // }
+            std::vector<Glyph2d>  Glyphs2d  = {}; // }
         };
 
         Data Active = {};
@@ -57,6 +56,8 @@ namespace Silent::Renderer
 
         DoubleBuffer                        _doubleBuffer = {};
         std::unique_ptr<TextureManagerBase> _textures     = nullptr;
+
+        std::mutex _primitives2dMutex = {};
 
     public:
         // =============
@@ -108,8 +109,8 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Swaps the double buffer and clears active data for new updates on the next tick. */
-        void SwapDoubleBuffer();
+        /** @brief Processes high-level object data and swaps the double buffer.. */
+        void PrepareRenderBuffer();
 
         /** @brief Signals a viewport resize. */
         void SignalResize();
@@ -212,14 +213,16 @@ namespace Silent::Renderer
         /** @brief Initializes the double buffer. */
         void InitializeDoubleBuffer();
 
-        // @todo Process these into 2D primitives.
-        void ProcessShapes2d();
+        /** @brief Processes 2D sprites into 2d primitives. */
         void ProcessSprites2d();
-        void ProcessTexts2d();
 
-        /** @brief Sorts render data in the double buffer, preparing it for batching and parsing to GPU buffer data.
-         * Called at the start of `Update`.
-         */
+        /** @brief Processes 2D shapes into 2d primitives. */
+        void ProcessShapes2d();
+
+        /** @brief Processes 2D glyphs into 2d primitives. */
+        void ProcessGlyphs2d();
+
+        /** @brief Sorts render buffer data in the double buffer. Called at the start of `Update`. */
         void SortRenderBufferData();
 
         /** @brief Draws a 3D scene. Called before `Draw2dScene`. */
