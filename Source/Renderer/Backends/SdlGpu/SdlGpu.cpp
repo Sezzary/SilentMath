@@ -451,9 +451,8 @@ namespace Silent::Renderer::SdlGpu
         int glyph2dIdxCount   = _doubleBuffer.Render.Glyphs2d.size() * (TRI_IDX_COUNT * 2);
 
         // @todo Before processing into batched GPU data, combine these into an intermediate collection.
-
-        auto primitives2d = std::vector<Primitive2d>{};
-        primitives2d.reserve(_doubleBuffer.Render.Sprites2d.size() + _doubleBuffer.Render.Shapes2d.size() + _doubleBuffer.Render.Glyphs2d.size());
+        _doubleBuffer.Render.Primitives2d.clear(); // @todo
+        _doubleBuffer.Render.Primitives2d.reserve(_doubleBuffer.Render.Sprites2d.size() + _doubleBuffer.Render.Shapes2d.size() + _doubleBuffer.Render.Glyphs2d.size());
 
         // Process 2D sprites.
         for (int i = 0; i < _doubleBuffer.Render.Sprites2d.size(); i++)
@@ -535,7 +534,7 @@ namespace Silent::Renderer::SdlGpu
             auto uv3 = Vector2(sprite.UvMin.x, sprite.UvMax.y);
 
             // Add 2D primitive.
-            primitives2d.push_back(Primitive2d
+            _doubleBuffer.Render.Primitives2d.push_back(Primitive2d
             {
                 .Vertices =
                 {
@@ -568,7 +567,7 @@ namespace Silent::Renderer::SdlGpu
                 auto pos2 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y));
 
                 // Add 2D primitive.
-                primitives2d.push_back(Primitive2d
+                _doubleBuffer.Render.Primitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -597,7 +596,7 @@ namespace Silent::Renderer::SdlGpu
                 auto pos3 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[3].Position.x, shape.Vertices[3].Position.y));
 
                 // Add 2D primitive.
-                primitives2d.push_back(Primitive2d
+                _doubleBuffer.Render.Primitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -649,7 +648,7 @@ namespace Silent::Renderer::SdlGpu
             auto uv3 = Vector2(glyph.UvMin.x, glyph.UvMax.y);
 
             // Add 2D primitive.
-            primitives2d.push_back(Primitive2d
+            _doubleBuffer.Render.Primitives2d.push_back(Primitive2d
             {
                 .Vertices =
                 {
@@ -673,7 +672,7 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Sort 2D primitives.
-        Sort(primitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
+        Sort(_doubleBuffer.Render.Primitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
         {
             return prim0.Depth > prim1.Depth;
         });
@@ -686,24 +685,23 @@ namespace Silent::Renderer::SdlGpu
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
-        for (const auto& prim : primitives2d)
+        for (const auto& prim : _doubleBuffer.Render.Primitives2d)
         {
-            // @todo Z depth oesn't seem to have any effect and primitives still need manual depth sorting.
-            float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
-
+            // Add vertices.
+            for (int i = 0; i < prim.Vertices.size(); i++)
+            {
+                // @todo Z depth oesn't seem to have any effect and primitives still need manual depth sorting.
+                float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
+                auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
+                bufferVerts.push_back(BufferVertex2d{ pos, prim.Vertices[i].Uv, prim.Vertices[i].Col });
+            }
+    
             int curVertCount = 0;
             int curIdxCount  = 0;
 
             // Triangle.
             if (prim.Vertices.size() == TRI_VERTEX_COUNT)
             {
-                // Add vertices.
-                for (int i = 0; i < prim.Vertices.size(); i++)
-                {
-                    auto pos = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
-                    bufferVerts.push_back(BufferVertex2d{ pos, prim.Vertices[i].Uv, prim.Vertices[i].Col });
-                }
-    
                 // Add indices.
                 for (int i = 0; i < TRI_IDX_COUNT; i++)
                 {
@@ -716,13 +714,6 @@ namespace Silent::Renderer::SdlGpu
             // Quad.
             else if (prim.Vertices.size() == QUAD_VERTEX_COUNT)
             {
-                // Add vertices.
-                for (int i = 0; i < prim.Vertices.size(); i++)
-                {
-                    auto pos = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
-                    bufferVerts.push_back(BufferVertex2d{ pos, prim.Vertices[i].Uv, prim.Vertices[i].Col });
-                }
-    
                 // Add indices.
                 for (int quadTriIdx : QUAD_TRI_IDXS)
                 {
@@ -734,7 +725,7 @@ namespace Silent::Renderer::SdlGpu
             }
     
             // Add batch.
-            // @todo Smarter way that strings together primitives with the same render stage, blend mode, and texture.
+            // @todo Smarter way that strings together primitives with the same render stage, blend mode, and texture. Uniform?
             // For now, collect each as its own batch of 2 triangles.
             _drawBatches.Primitives2d.push_back(DrawBatch
             {
