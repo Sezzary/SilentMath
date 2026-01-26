@@ -58,8 +58,6 @@ namespace Silent::Renderer
         DoubleBuffer                        _doubleBuffer = {};
         std::unique_ptr<TextureManagerBase> _textures     = nullptr;
 
-        std::mutex _gpuMutex = {};
-
     public:
         // =============
         // Constructors

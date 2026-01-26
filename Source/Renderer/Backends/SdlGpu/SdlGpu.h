@@ -12,7 +12,7 @@
 
 namespace Silent::Renderer::SdlGpu
 {
-    /** @brief GPU buffer draw raw batch. */
+    /** @brief GPU buffer draw batch. */
     struct DrawBatch
     {
         std::string TextureName  = {};
@@ -26,7 +26,7 @@ namespace Silent::Renderer::SdlGpu
     /** @brief Sorted GPU buffer draw batches. */
     struct DrawBatches
     {
-        std::vector<DrawBatch> Primitives2d = {}; // @todo Should be "Primitives2d".
+        std::vector<DrawBatch> Primitives2d = {};
     };
 
     /** @brief GPU buffers. */

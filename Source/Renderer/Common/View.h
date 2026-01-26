@@ -2,8 +2,6 @@
 
 namespace Silent::Renderer
 {
-    class ShaderProgram;
-
     class View
     {
     public:
@@ -34,7 +32,7 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Gets the combined view and projection matrix.
+        /** @brief Computes the combined view and projection matrix.
          *
          * @param fov Field of view in radians.
          * @param aspect Aspect ratio.
