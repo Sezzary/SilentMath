@@ -41,7 +41,7 @@ namespace Silent::Game
     void Gfx_StringSetPosition(int posX, int posY)
     {
         #define OFFSET_X SCREEN_POSITION_X(2.0f)//SCREEN_POSITION_X(50.0f)
-        #define OFFSET_Y -(SCREEN_POSITION_Y(9.0f))
+        #define OFFSET_Y -(SCREEN_POSITION_Y(9.0f)) + 3
 
         if (posX != NO_VALUE)
         {

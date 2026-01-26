@@ -359,7 +359,6 @@ namespace Silent::Renderer
                                       GLYPH_2D_COUNT_MAX);
         };
 
-        // Reserve memory for double buffer.
         ReserveMemory(_doubleBuffer.Active);
         ReserveMemory(_doubleBuffer.Render);
 
