@@ -2,11 +2,19 @@
 
 namespace Silent::Renderer
 {
+    enum class AlignMode;
     enum class ScaleMode;
+
+    /** @brief Gets the normalized alignment pivot for a given alignment mode.
+     *
+     * @param alignMode Alignment mode.
+     * @return Normalized alignment pivot.
+     */
+    Vector2 GetAlignmentPivot(AlignMode alignMode);
 
     /** @brief Computes the screen aspect ratio correction scale according to a provided scale mode.
      *
-     * @param scaleMode Renderer scale mode.
+     * @param scaleMode Scale mode.
      * @return Screen aspect correction.
      */
     Vector2 GetScreenAspectCorrection(ScaleMode scaleMode);

@@ -92,9 +92,9 @@ namespace Silent::Renderer
         _doubleBuffer.Active.DebugPrimitives3d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
 
-        _doubleBuffer.Active.Shapes2d.clear();
-        _doubleBuffer.Active.Sprites2d.clear();
-        _doubleBuffer.Active.Glyphs2d.clear();
+        _shapes2d.clear();
+        _sprites2d.clear();
+        _glyphs2d.clear();
     }
 
     void RendererBase::SignalResize()
@@ -104,13 +104,13 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitShape2d(const Shape2d& shape)
     {
-        if (_doubleBuffer.Active.Shapes2d.size() >= SHAPE_2D_COUNT_MAX)
+        if (_shapes2d.size() >= SHAPE_2D_COUNT_MAX)
         {
             Debug::Log("Attempted to submit 2D shape to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
-        _doubleBuffer.Active.Shapes2d.push_back(shape);
+        _shapes2d.push_back(shape);
         return true;
     }
 
@@ -118,7 +118,7 @@ namespace Silent::Renderer
     {
         auto& assets = g_App.GetAssets();
 
-        if (_doubleBuffer.Active.Sprites2d.size() >= SPRITE_2D_COUNT_MAX)
+        if (_sprites2d.size() >= SPRITE_2D_COUNT_MAX)
         {
             Debug::Log("Attempted to submit 2D sprite to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
@@ -133,7 +133,7 @@ namespace Silent::Renderer
         //    return false;
         //}
 
-        _doubleBuffer.Active.Sprites2d.push_back(sprite);
+        _sprites2d.push_back(sprite);
         return true;
     }
 
@@ -166,7 +166,8 @@ namespace Silent::Renderer
         //color.A()  = text.Opacity;
 
         // Compute text position. @todo Alignment should be in markup.
-        auto textOffset = Vector2::One;
+        // @todo Use common function for alignment pivots.
+        auto textOffset = Vector2::Zero;
         switch (text.AlignMd)
         {
             case AlignMode::Center:
@@ -239,8 +240,6 @@ namespace Silent::Renderer
             auto pos         = adjTextPos + relPos;
 
             // Compute scale.
-            // @todo `-1`s seem to produce more accurate alignment. Should have any effect.
-            // Scaling is sclightly off somewhere.
             auto relScale = Vector2((float)(shapedGlyph.Attribs.AtlasSize.x) / (float)(shapedGlyph.Attribs.AtlasSize.y), 1.0f) *
                             Vector2((float)(shapedGlyph.Attribs.AtlasSize.y) / (float)font->GetPointSize());
             auto scale    = relScale * text.Scale;
@@ -250,7 +249,7 @@ namespace Silent::Renderer
 
             auto AddGlyph = [&](const Vector2& offset, const Color& color, int depth, bool hasGradient)
             {
-                if (_doubleBuffer.Active.Glyphs2d.size() >= GLYPH_2D_COUNT_MAX)
+                if (_glyphs2d.size() >= GLYPH_2D_COUNT_MAX)
                 {
                     Debug::Log("Attempted to submit 2D glyph to full container.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
                     return false;
@@ -260,7 +259,7 @@ namespace Silent::Renderer
                                                     atlasName, uvMin, uvMax,
                                                     pos + offset, text.Rotation, scale, color,
                                                     depth, ScaleMode::ShortEdge);
-                _doubleBuffer.Active.Glyphs2d.push_back(glyph);
+                _glyphs2d.push_back(glyph);
 
                 return true;
             };
@@ -355,9 +354,6 @@ namespace Silent::Renderer
     {
         auto ReserveMemory = [](DoubleBuffer::Data& data)
         {
-            data.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
-            data.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
-            data.Glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
             data.Primitives2d.reserve(SHAPE_2D_COUNT_MAX + 
                                       SPRITE_2D_COUNT_MAX + 
                                       GLYPH_2D_COUNT_MAX);
@@ -366,11 +362,15 @@ namespace Silent::Renderer
         // Reserve memory for double buffer.
         ReserveMemory(_doubleBuffer.Active);
         ReserveMemory(_doubleBuffer.Render);
+
+        _shapes2d.reserve(SHAPE_2D_COUNT_MAX);
+        _sprites2d.reserve(SPRITE_2D_COUNT_MAX);
+        _glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
     }
 
     void RendererBase::ProcessSprites2d()
     {
-        for (const auto& sprite : _doubleBuffer.Render.Sprites2d)
+        for (const auto& sprite : _sprites2d)
         {
             // @todo Apply scale mode later.
             //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
@@ -476,7 +476,7 @@ namespace Silent::Renderer
 
     void RendererBase::ProcessShapes2d()
     {
-        for (const auto& shape : _doubleBuffer.Render.Shapes2d)
+        for (const auto& shape : _shapes2d)
         {
             // Triangle.
             if (shape.Vertices.size() == TRI_VERTEX_COUNT)
@@ -551,7 +551,7 @@ namespace Silent::Renderer
 
     void RendererBase::ProcessGlyphs2d()
     {
-        for (const auto& glyph : _doubleBuffer.Render.Glyphs2d)
+        for (const auto& glyph : _glyphs2d)
         {
             // @todo Apply scale mode later.
             //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
@@ -615,7 +615,7 @@ namespace Silent::Renderer
 
         auto sortTasks = ParallelTasks
         {
-            // Sort 2D primitives.
+            // Sort 2D primitives. @todo Use sort keys?
             [&]()
             {
                 Sort(_doubleBuffer.Render.Primitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)

@@ -64,15 +64,12 @@ namespace Silent::Game
 
     bool Gfx_StringDraw(const std::string& str, int strLength)
     {
-        constexpr float SCALE                   = RETRO_PIXEL_SCALE.y * 16.0f;
-        constexpr auto  HALF_RETRO_PIXEL_OFFSET = Vector2((RETRO_PIXEL_SCALE.y * 0.5f) * SCREEN_SPACE_RES.y);
-        // @todo Offset might have to go in the opposite direction, unsure.
+        constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
 
         auto& renderer = g_App.GetRenderer();
 
-        auto pos  = ConvertRetroScreenPixelsToPercent(g_StringPosition) + HALF_RETRO_PIXEL_OFFSET;
         auto text = Text2d::CreateText2d(str, "RetroSerif",
-                                         pos, 0.0f, SCALE, 1.0f,
+                                         ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
                                          1.0f, TextStyle::Gradient, true,
                                          0, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
         renderer.SubmitText2d(text);

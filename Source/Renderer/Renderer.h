@@ -30,10 +30,6 @@ namespace Silent::Renderer
             std::vector<Shape2d>               DebugShapes2d     = {};
             std::vector<Primitive3d>           DebugPrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls = {};
-
-            std::vector<Shape2d>  Shapes2d  = {}; // } @todo Not really renderer objects. Should be part of an external system.
-            std::vector<Sprite2d> Sprites2d = {}; // }
-            std::vector<Glyph2d>  Glyphs2d  = {}; // }
         };
 
         Data Active = {};
@@ -58,6 +54,10 @@ namespace Silent::Renderer
         std::unique_ptr<TextureManagerBase> _textures     = nullptr;
 
         std::mutex _primitives2dMutex = {};
+
+        std::vector<Shape2d>  _shapes2d  = {}; // } @todo Not really renderer objects. Should be part of an external system.
+        std::vector<Sprite2d> _sprites2d = {}; // }
+        std::vector<Glyph2d>  _glyphs2d  = {}; // }
 
     public:
         // =============

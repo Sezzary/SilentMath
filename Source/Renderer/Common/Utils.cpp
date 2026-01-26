@@ -8,6 +8,52 @@
 
 namespace Silent::Renderer
 {
+    Vector2 GetAlignmentPivot(AlignMode alignMode)
+    {
+        switch (alignMode)
+        {
+            default:
+            case AlignMode::Center:
+            {
+                return Vector2(0.5f, 0.5f);
+            }
+            case AlignMode::CenterTop:
+            {
+                return Vector2(0.5f, 0.0f);
+            }
+            case AlignMode::CenterBottom:
+            {
+                return Vector2(0.5f, 1.0f);
+            }
+            case AlignMode::CenterLeft:
+            {
+                return Vector2(0.0f, 0.5f);
+            }
+            case AlignMode::CenterRight:
+            {
+                return Vector2(1.0f, 0.5f);
+            }
+            case AlignMode::TopLeft:
+            {
+                return Vector2(0.0f, 0.0f);
+            }
+            case AlignMode::TopRight:
+            {
+                return Vector2(0.0f, 1.0f);
+            }
+            case AlignMode::BottomLeft:
+            {
+                return Vector2(1.0f, 0.0f);
+            }
+            case AlignMode::BottomRight:
+            {
+                return Vector2(1.0f, 1.0f);
+            }
+        }
+
+        return Vector2::Zero;
+    }
+
     Vector2 GetScreenAspectCorrection(ScaleMode scaleMode)
     {
         const auto& renderer = g_App.GetRenderer();
