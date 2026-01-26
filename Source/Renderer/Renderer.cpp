@@ -353,16 +353,19 @@ namespace Silent::Renderer
 
     void RendererBase::InitializeDoubleBuffer()
     {
-        // Reserve memory for active buffer.
-        _doubleBuffer.Active.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
-        _doubleBuffer.Active.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
-        _doubleBuffer.Active.Glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
-        _doubleBuffer.Active.Primitives2d.reserve(_doubleBuffer.Active.Shapes2d.capacity() +
-                                                  _doubleBuffer.Active.Sprites2d.capacity() +
-                                                  _doubleBuffer.Active.Glyphs2d.capacity());
+        auto ReserveMemory = [](DoubleBuffer::Data& data)
+        {
+            data.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
+            data.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
+            data.Glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
+            data.Primitives2d.reserve(SHAPE_2D_COUNT_MAX + 
+                                      SPRITE_2D_COUNT_MAX + 
+                                      GLYPH_2D_COUNT_MAX);
+        };
 
-        // Reserve identical memory for render buffer.
-        _doubleBuffer.Render = _doubleBuffer.Active; 
+        // Reserve memory for double buffer.
+        ReserveMemory(_doubleBuffer.Active);
+        ReserveMemory(_doubleBuffer.Render);
     }
 
     void RendererBase::ProcessSprites2d()
@@ -619,7 +622,6 @@ namespace Silent::Renderer
                 {
                     return prim0.Depth > prim1.Depth;
                 });
-
             }
         };
         executor.AddTasks(sortTasks).wait();

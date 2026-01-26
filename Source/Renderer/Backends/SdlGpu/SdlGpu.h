@@ -90,7 +90,7 @@ namespace Silent::Renderer::SdlGpu
         void DrawDebugGui() override;
 
         /** @brief Allocates memory pools for for draw batches and GPU buffers. */
-        void InitializeBuffers();
+        void InitializeGpuBuffers();
 
         /** @brief Adds new glyph texture atlases and updates old ones if new glyphs have been added.
          *

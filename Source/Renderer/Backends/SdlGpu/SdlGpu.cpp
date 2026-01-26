@@ -24,6 +24,8 @@ namespace Silent::Renderer::SdlGpu
 {
     void Renderer::Initialize(SDL_Window& window)
     {
+        // @todo Make function for common init stuff to call at the start of every backend-specific init function.
+
         _type   = RendererType::SdlGpu;
         _window = &window;
 
@@ -62,7 +64,9 @@ namespace Silent::Renderer::SdlGpu
             throw std::runtime_error(Fmt("Failed to claim window for GPU device: {}", SDL_GetError()));
         }
 
+        // Initialize buffers.
         InitializeDoubleBuffer();
+        InitializeGpuBuffers();
 
         // Initialize texture manager.
         _textures = std::make_unique<TextureManager>(*_device);
@@ -93,8 +97,6 @@ namespace Silent::Renderer::SdlGpu
             .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT
         };
         _samplers.push_back(SDL_CreateGPUSampler(_device, &linearSamplerInfo));
-
-        InitializeBuffers();
 
         // Create ImGui context.
         ImGui::CreateContext();
@@ -387,7 +389,7 @@ namespace Silent::Renderer::SdlGpu
         SDL_EndGPURenderPass(renderPass);
     }
 
-    void Renderer::InitializeBuffers()
+    void Renderer::InitializeGpuBuffers()
     {
         constexpr int SPRITE_2D_VERT_COUNT_MAX = SPRITE_2D_COUNT_MAX * QUAD_VERTEX_COUNT;
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
