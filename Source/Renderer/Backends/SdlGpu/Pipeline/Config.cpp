@@ -7,6 +7,85 @@
 
 namespace Silent::Renderer::SdlGpu
 {
+    static const auto BUFFER_VERTEX_2D_DESCS = std::vector<SDL_GPUVertexBufferDescription>
+    {
+        {
+            .slot               = 0,
+            .pitch              = sizeof(BufferVertex2d),
+            .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+            .instance_step_rate = 0
+        }
+    };
+    static const auto BUFFER_VERTEX_2D_ATTRIBS = std::vector<SDL_GPUVertexAttribute>
+    {
+        // `BufferVertex2d::Position`
+        {
+            .location    = 0,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+            .offset      = 0
+        },
+        // `BufferVertex2d::Uv`
+        {
+            .location    = 1,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+            .offset      = sizeof(Vector3)
+        },
+        // `BufferVertex2d::Col`
+        {
+            .location    = 2,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector2)
+        }
+    };
+
+    static const auto BUFFER_VERTEX_3D_DESCS = std::vector<SDL_GPUVertexBufferDescription>
+    {
+        {
+            .slot               = 0,
+            .pitch              = sizeof(BufferVertex3d),
+            .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+            .instance_step_rate = 0
+        }
+    };
+    static const auto BUFFER_VERTEX_3D_ATTRIBS = std::vector<SDL_GPUVertexAttribute>
+    {
+        // `BufferVertex3d::Position`
+        {
+            .location    = 0,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+            .offset      = 0
+        },
+        // `BufferVertex3d::Normal`
+        {
+            .location    = 1,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+            .offset      = sizeof(Vector3)
+        },
+        // `BufferVertex3d::Uv`
+        {
+            .location    = 2,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector3)
+        },
+        // `BufferVertex3d::Col`
+        {
+            .location    = 3,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector3) +
+                           sizeof(Vector2)
+        }
+    };
+
     const std::vector<SDL_GPUColorTargetBlendState> PIPELINE_BLEND_MODE_COLOR_TARGETS = 
     {
         // Opaque.
@@ -100,41 +179,9 @@ namespace Silent::Renderer::SdlGpu
             .FragShaderUniBufferCount     = 1,
             .FragShaderStorageBufferCount = 0,
             .FragShaderStorageTexCount    = 0,
-            .VertBufferDescs              =
-            {
-                {
-                    .slot               = 0,
-                    .pitch              = sizeof(BufferVertex2d),
-                    .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
-                    .instance_step_rate = 0
-                }
-            },
-            .VertBufferAttribs =
-            {
-                // `BufferVertex2d::Position`
-                {
-                    .location    = 0,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-                    .offset      = 0
-                },
-                // `BufferVertex2d::Uv`
-                {
-                    .location    = 1,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                    .offset      = sizeof(Vector3)
-                },
-                // `BufferVertex2d::Col`
-                {
-                    .location    = 2,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                    .offset      = sizeof(Vector3) +
-                                   sizeof(Vector2)
-                }
-            },
-            .BlendModes =
+            .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes                   =
             {
                 BlendMode::Opaque,
                 BlendMode::Alpha,
@@ -158,41 +205,9 @@ namespace Silent::Renderer::SdlGpu
             .FragShaderUniBufferCount     = 1,
             .FragShaderStorageBufferCount = 0,
             .FragShaderStorageTexCount    = 0,
-            .VertBufferDescs              =
-            {
-                {
-                    .slot               = 0,
-                    .pitch              = sizeof(BufferVertex2d),
-                    .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
-                    .instance_step_rate = 0
-                }
-            },
-            .VertBufferAttribs =
-            {
-                // `BufferVertex2d::Position`
-                {
-                    .location    = 0,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-                    .offset      = 0
-                },
-                // `BufferVertex2d::Uv`
-                {
-                    .location    = 1,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                    .offset      = sizeof(Vector3)
-                },
-                // `BufferVertex2d::Col`
-                {
-                    .location    = 2,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                    .offset      = sizeof(Vector3) +
-                                   sizeof(Vector2)
-                }
-            },
-            .BlendModes =
+            .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes                   =
             {
                 BlendMode::Alpha,
                 BlendMode::Wireframe
@@ -216,43 +231,31 @@ namespace Silent::Renderer::SdlGpu
             .FragShaderUniBufferCount     = 1,
             .FragShaderStorageBufferCount = 0,
             .FragShaderStorageTexCount    = 0,
-            .VertBufferDescs              =
-            {
-                {
-                    .slot               = 0,
-                    .pitch              = sizeof(BufferVertex2d),
-                    .input_rate         = SDL_GPU_VERTEXINPUTRATE_VERTEX,
-                    .instance_step_rate = 0
-                }
-            },
-            .VertBufferAttribs =
-            {
-                // `BufferVertex2d::Position`
-                {
-                    .location    = 0,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-                    .offset      = 0
-                },
-                // `BufferVertex2d::Uv`
-                {
-                    .location    = 1,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                    .offset      = sizeof(Vector3)
-                },
-                // `BufferVertex2d::Col`
-                {
-                    .location    = 2,
-                    .buffer_slot = 0,
-                    .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                    .offset      = sizeof(Vector3) +
-                                   sizeof(Vector2)
-                }
-            },
-            .BlendModes =
+            .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes                   =
             {
                 BlendMode::Alpha
+            }
+        },
+        // BLIT.
+        {
+            .Stage                        = RenderStage::Blit,
+            .VertexShaderName             = "Primitive2d.vert",
+            .VertShaderSamplerCount       = 0,
+            .VertShaderUniBufferCount     = 0,
+            .VertShaderStorageBufferCount = 0,
+            .VertShaderStorageTexCount    = 0,
+            .FragmentShaderName           = "Blit.frag",
+            .FragShaderSamplerCount       = 1,
+            .FragShaderUniBufferCount     = 1,
+            .FragShaderStorageBufferCount = 0,
+            .FragShaderStorageTexCount    = 0,
+            .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes                   =
+            {
+                BlendMode::Opaque
             }
         }
     };

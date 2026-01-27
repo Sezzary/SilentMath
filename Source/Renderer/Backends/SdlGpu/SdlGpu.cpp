@@ -428,9 +428,9 @@ namespace Silent::Renderer::SdlGpu
 
         // Process render pass.
 
-        _pipelines.Bind(renderPass, RenderStage::Sprite2d, BlendMode::Opaque);
+        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque);
         _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
-        PushFragmentUniform(UniformSprite2d{ .UseTexture = true, .IsFastAlpha = false, }, 0);
+        PushFragmentUniform(UniformBlit{ .Brightness = 0.0f, .Contrast = 0.0f }, 0);
 
         // Bind render texture.
         auto binding = SDL_GPUTextureSamplerBinding
