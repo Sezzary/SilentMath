@@ -1,5 +1,3 @@
-#include "Common/Math.hlsli"
-
 Texture2D<float4> Texture : register(t0, space2);
 SamplerState      Sampler : register(s0, space2);
 
@@ -12,14 +10,22 @@ struct Input
 
 cbuffer UniformBlock : register(b0, space3)
 {
-    float FadeAlpha;
-};
+    float2 Resolution;
+    float  Time;
+}
 
 float4 main(Input input) : SV_Target
 {
+    // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
-    float  luma     = dot(texColor.rgb, Math::LUMA_BT601);
 
-    float4 color = texColor * Math::Remap(FadeAlpha, 1.0f - luma, 1.0f, 0.0f, 1.0f);
-    return color;
+    // Compute UV coordinate.
+    float2 uv = input.Position.xy / Resolution.xy;
+
+    // Compute vignette effect.
+    float vignette = (((16.0f * uv.x) * uv.y) * (1.0f - uv.x)) * (1.0f - uv.y);
+
+    // Compute final fragment color.
+    float3 color = texColor.rgb * pow(vignette, 0.3f);
+    return float4(color, 1.0f);
 }

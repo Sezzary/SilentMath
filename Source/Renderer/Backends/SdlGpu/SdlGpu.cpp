@@ -162,6 +162,13 @@ namespace Silent::Renderer::SdlGpu
             return;
         }
 
+        // Acquire render texture.
+        _renderTexture = GetRenderTexture();
+        if (_renderTexture == nullptr)
+        {
+            return;
+        }
+
         // Acquire swapchain texture.
         _swapchainTexture = nullptr;
         if (!SDL_WaitAndAcquireGPUSwapchainTexture(_commandBuffer, _window, &_swapchainTexture, nullptr, nullptr))
@@ -187,6 +194,9 @@ namespace Silent::Renderer::SdlGpu
 
         // Submit command buffer to GPU.
         SDL_SubmitGPUCommandBuffer(_commandBuffer);
+
+        // Reset resized signal.
+        _isResized = false;
     }
 
     void Renderer::SaveScreenshot() const
@@ -234,22 +244,30 @@ namespace Silent::Renderer::SdlGpu
         SDL_UnlockSurface(surface);
     }
 
-    void Renderer::Draw3dScene()
+    SDL_GPUTexture* Renderer::GetRenderTexture()
     {
-        // Begin render pass.
-        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        // @todo Entering fullscreen mode doesn't signal a resize?
+        if (_renderTexture == nullptr || _isResized)
         {
-            .texture     = _swapchainTexture,
-            .clear_color = SDL_FColor{ _clearColor.R(), _clearColor.G(), _clearColor.B(), _clearColor.A() },
-            .load_op     = SDL_GPU_LOADOP_CLEAR,
-            .store_op    = SDL_GPU_STOREOP_STORE
-        };
-        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+            SDL_ReleaseGPUTexture(_device, _renderTexture);
 
-        // @todo
+            // @todo Size should depend on aspect ratio: 4:3, 16:9, or native.
 
-        // Process render pass.
-        SDL_EndGPURenderPass(&renderPass);
+            auto screenRes     = GetScreenResolution();
+            auto renderTexInfo = SDL_GPUTextureCreateInfo
+            {
+                .type                 = SDL_GPU_TEXTURETYPE_2D,
+                .format               = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+                .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
+                .width                = screenRes.x,
+                .height               = screenRes.y,
+                .layer_count_or_depth = 1,
+                .num_levels           = 1
+            };
+            _renderTexture = SDL_CreateGPUTexture(_device, &renderTexInfo);
+        }
+
+        return _renderTexture;
     }
 
     TextureManager& Renderer::GetTextures()
@@ -262,6 +280,24 @@ namespace Silent::Renderer::SdlGpu
         const auto& options = g_App.GetOptions();
 
         return *_samplers[(int)options->TextureFilter];
+    }
+
+    void Renderer::Draw3dScene()
+    {
+        // Begin render pass.
+        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        {
+            .texture     = _renderTexture,
+            .clear_color = SDL_FColor{ _clearColor.R(), _clearColor.G(), _clearColor.B(), _clearColor.A() },
+            .load_op     = SDL_GPU_LOADOP_CLEAR,
+            .store_op    = SDL_GPU_STOREOP_STORE
+        };
+        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+
+        // @todo
+
+        // Process render pass.
+        SDL_EndGPURenderPass(&renderPass);
     }
 
     void Renderer::Draw2dScene()
@@ -283,7 +319,7 @@ namespace Silent::Renderer::SdlGpu
         // Begin render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _swapchainTexture,
+            .texture  = _renderTexture,
             .load_op  = SDL_GPU_LOADOP_LOAD,
             .store_op = SDL_GPU_STOREOP_STORE
         };
@@ -316,18 +352,44 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawPostProcess()
     {
-        const auto& options = g_App.GetOptions();
+        auto&       executor = g_App.GetExecutor();
+        const auto& options  = g_App.GetOptions();
+
+        // Process copy pass.
+        auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
+
+        // Copy prepared GPU data.
+        auto copyTasks = ParallelTasks
+        {
+            TASK(CopyGpuRenderQuad(*copyPass))
+        };
+        executor.AddTasks(copyTasks).wait();
+
+        SDL_EndGPUCopyPass(copyPass);
 
         // Begin render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _swapchainTexture,
-            .load_op  = SDL_GPU_LOADOP_LOAD,
-            .store_op = SDL_GPU_STOREOP_STORE
+            .texture     = _swapchainTexture,
+            .clear_color = SDL_FColor{ 0.0f, 0.0f, 0.0f, 1.0f },
+            .load_op     = SDL_GPU_LOADOP_CLEAR,
+            .store_op    = SDL_GPU_STOREOP_STORE
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // Process render pass.
+
+        _pipelines.Bind(renderPass, RenderStage::Sprite2d, BlendMode::Opaque);
+        _gpuBuffers.ScreenVertices2d.Bind(renderPass, 0, 0);
+        PushFragmentUniform(UniformSprite2d{ .UseTexture = true, .IsFastAlpha = false, }, 0);
+
+        auto binding = SDL_GPUTextureSamplerBinding
+        {
+            .texture = _renderTexture,
+            .sampler = _samplers[(int)TextureFilterType::Nearest]
+        };
+        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+        SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
 
         // Dithering.
         if (options->EnableDithering)
@@ -405,6 +467,7 @@ namespace Silent::Renderer::SdlGpu
         _drawBatches.Primitives2d.reserve(TRI_BATCH_COUNT_MAX);
 
         // Initialize GPU buffers.
+        _gpuBuffers.ScreenVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D screen vertices");
         _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D vertices");
     }
 
@@ -511,6 +574,44 @@ namespace Silent::Renderer::SdlGpu
         // Update GPU buffer.
         _gpuBuffers.Vertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
         _gpuBuffers.Vertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+    }
+
+    void Renderer::CopyGpuRenderQuad(SDL_GPUCopyPass& copyPass)
+    {
+        // @todo Compute aspect-correct vertex positions.
+
+auto bufferVerts = std::vector<BufferVertex2d>
+{
+    BufferVertex2d
+    {
+        Vector3(-1.0f, 1.0f, 0.0f),
+        Vector2(0.0f, 0.0f),
+        Color::White
+    },
+    BufferVertex2d
+    {
+        Vector3(1.0f, 1.0f, 0.0f),
+        Vector2(1.0f, 0.0f),
+        Color::White
+    },
+    BufferVertex2d
+    {
+        Vector3(-1.0f, -1.0f, 0.0f),
+        Vector2(0.0f, 1.0f),
+        Color::White
+    },
+    BufferVertex2d
+    {
+        Vector3(1.0f, -1.0f, 0.0f),
+        Vector2(1.0f, 1.0f),
+        Color::White
+    }
+};
+auto bufferIdxs = std::vector<uint16>{ 0, 2, 1, 1, 2, 3 };
+
+        // Update GPU buffer.
+        _gpuBuffers.ScreenVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        _gpuBuffers.ScreenVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 
     void Renderer::PushVertexUniform(const UniformType& uni, int slotIdx)

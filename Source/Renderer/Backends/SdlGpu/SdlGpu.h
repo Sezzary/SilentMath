@@ -32,6 +32,8 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
+        VertexBuffer<BufferVertex2d> ScreenVertices2d = {};
+
         VertexBuffer<BufferVertex2d> Vertices2d = {};
     };
 
@@ -54,6 +56,7 @@ namespace Silent::Renderer::SdlGpu
         std::vector<SDL_GPUSampler*> _samplers  = {};
         PipelineManager              _pipelines = PipelineManager();
         
+        SDL_GPUTexture*       _renderTexture    = nullptr;
         SDL_GPUTexture*       _swapchainTexture = nullptr;
         SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
         DrawBatches           _drawBatches      = {};
@@ -81,8 +84,9 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
+        SDL_GPUTexture* GetRenderTexture();
         TextureManager& GetTextures();
-        SDL_GPUSampler&       GetActiveSampler();
+        SDL_GPUSampler& GetActiveSampler();
 
         void Draw3dScene() override;
         void Draw2dScene() override;
@@ -107,6 +111,8 @@ namespace Silent::Renderer::SdlGpu
          * @param copyPass Copy pass.
          */
         void CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass);
+
+        void CopyGpuRenderQuad(SDL_GPUCopyPass& copyPass);
 
         /** @brief Pushes uniform data to the GPU for the vertex shader.
          *

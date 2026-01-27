@@ -1,18 +1,25 @@
 // References:
 // https://www.shadertoy.com/view/Ms23DR
 
+Texture2D<float4> Texture : register(t0, space2);
+SamplerState      Sampler : register(s0, space2);
+
+struct Input
+{
+    float4 Position     : SV_Position;
+    float2 TextureCoord : TEXCOORD0;
+    float4 Color        : COLOR0;
+};
+
 cbuffer UniformBlock : register(b0, space3)
 {
     float2 Resolution;
     float  Time;
 }
 
-Texture2D<float4> Texture : register(t0, space2);
-SamplerState      Sampler : register(s0, space2);
-
-float4 main(float2 FragCoord : SV_Position) : SV_Target
+float4 main(Input input) : SV_Target
 {
-    float2 uv = FragCoord.xy / Resolution.xy;
+    float2 uv = input.Position.xy / Resolution.xy;
     
     // Add color variation.
     float3 color;
@@ -42,7 +49,8 @@ float4 main(float2 FragCoord : SV_Position) : SV_Target
     }
 
     // Add vertical line effect.
-    color *= 1.0f - (0.5f * (float3(clamp((fmod(FragCoord.x, 2.0f) - 1.0f) * 2.0f, 0.0f, 1.0f))));
+    float lineShade = clamp((fmod(input.Position.x, 2.0f) - 1.0f) * 2.0f, 0.0f, 1.0f);
+    color *= 1.0f - (0.5f * float3(lineShade, lineShade, lineShade));
 
     return float4(color, 1.0f);
 }

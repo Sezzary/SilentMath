@@ -5,6 +5,7 @@ SamplerState      Sampler : register(s0, space2);
 
 struct Input
 {
+    float4 Position     : SV_Position;
     float2 TextureCoord : TEXCOORD0;
     float4 Color        : COLOR0;
 };
