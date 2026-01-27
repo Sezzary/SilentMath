@@ -329,6 +329,9 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.Vertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Primitives2d)
         {
+            _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
+            PushFragmentUniform(batch.Uniform, 0);
+
             if (!batch.TextureName.empty())
             {
                 auto* tex = GetTextures()[batch.TextureName];
@@ -337,9 +340,6 @@ namespace Silent::Renderer::SdlGpu
                     tex->Bind(renderPass, GetActiveSampler());
                 }
             }
-
-            _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
-            PushFragmentUniform(batch.Uniform, 0);
 
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
 
@@ -383,12 +383,14 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.ScreenVertices2d.Bind(renderPass, 0, 0);
         PushFragmentUniform(UniformSprite2d{ .UseTexture = true, .IsFastAlpha = false, }, 0);
 
+        // Bind render texture.
         auto binding = SDL_GPUTextureSamplerBinding
         {
             .texture = _renderTexture,
             .sampler = _samplers[(int)TextureFilterType::Nearest]
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
         SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
 
         // Dithering.

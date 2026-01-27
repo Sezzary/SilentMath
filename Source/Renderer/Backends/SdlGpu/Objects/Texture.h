@@ -32,14 +32,11 @@ namespace Silent::Renderer::SdlGpu
          * @param res Texture image resolution.
          * @param name Texture image name.
          */
-        Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name);
+        Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
+                SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i res, const std::string& name);
 
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
         ~Texture();
-
-        // ==========
-        // Utilities
-        // ==========
 
         /** @brief Updates a specified region of pixels in the texture.
          *

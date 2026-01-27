@@ -11,7 +11,8 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer::SdlGpu
 {
-    Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
+    Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
+                     SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
         _device = &device;
 
@@ -20,7 +21,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .type                 = SDL_GPU_TEXTURETYPE_2D,
             .format               = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-            .usage                = SDL_GPU_TEXTUREUSAGE_SAMPLER,
+            .usage                = usageFlags,
             .width                = (uint)res.x,
             .height               = (uint)res.y,
             .layer_count_or_depth = 1,
@@ -117,7 +118,7 @@ namespace Silent::Renderer::SdlGpu
 
     void TextureManager::Load(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
-        _textures[name] = std::make_unique<Texture>(*_device, copyPass, pixels, res, name);
+        _textures[name] = std::make_unique<Texture>(*_device, copyPass, SDL_GPU_TEXTUREUSAGE_SAMPLER, pixels, res, name);
     }
 
     void TextureManager::Load(SDL_GPUCopyPass& copyPass, const std::string& assetName)
