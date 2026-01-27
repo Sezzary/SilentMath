@@ -222,20 +222,35 @@ namespace Silent::Renderer
         /** @brief Processes 2D glyphs into 2d primitives. */
         void ProcessGlyphs2d();
 
-        /** @brief Sorts render buffer data in the double buffer. Called at the start of `Update`. */
+        /** @brief Sorts render buffer data in the double buffer.
+         * Called at the start of `Update`.
+         */
         void SortRenderBufferData();
 
-        /** @brief Draws a 3D scene. Called before `Draw2dScene`. */
+        /** @brief Draws a 3D scene to a cleared off-screen render texture.
+         * Called before `Draw2dScene`.
+         */
         virtual void Draw3dScene() = 0;
 
-        /** @brief Draws a 2D scene on top of the 3D scene. Called after `Draw3dScene` and before `DrawPostProcess`. */
+        /** @brief Draws a 2D scene on top of the 3D scene to an off-screen render texture.
+         * Called after `Draw3dScene` and before `DrawPostProcess`.
+         */
         virtual void Draw2dScene() = 0;
 
-        /** @brief Draws post-process effects on top of the 3D and 2D scene. Called after `Draw2dScene` and before `DrawDebugGui`. */
+        /** @brief Draws post-process effects on top of the combined 3D and 2D scenes to an off-screen render texture.
+         * Called after `Draw2dScene` and before `DrawViewport`.
+         */
         virtual void DrawPostProcess() = 0;
 
-        /** @brief Draws a power menu on top of the post-processed 3D and 2D scenes. Called after `DrawPostProcess`. */
-        virtual void DrawDebugGui() = 0;
+        /** @brief Draws the viewport containing post-procesed, combined 3D and 2D scenes to the swapchain.
+         * Called after `DrawPostProcess` and before `DrawPowerMenu`.
+         */
+        virtual void DrawViewport() = 0 ;
+
+        /** @brief Draws a power menu on top of the viewport to the swapchain.
+         * Called after `DrawViewport`.
+         */
+        virtual void DrawPowerMenu() = 0;
     };
 
     /** @brief Creates a renderer of a specified backend type.

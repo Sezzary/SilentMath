@@ -189,7 +189,8 @@ namespace Silent::Renderer::SdlGpu
             Draw3dScene();
             Draw2dScene();
             DrawPostProcess();
-            DrawDebugGui();
+            DrawViewport();
+            DrawPowerMenu();
         }
 
         // Submit command buffer to GPU.
@@ -361,7 +362,7 @@ namespace Silent::Renderer::SdlGpu
         // Copy prepared GPU data.
         auto copyTasks = ParallelTasks
         {
-            TASK(CopyGpuRenderQuad(*copyPass))
+            TASK(CopyGpuViewportQuad(*copyPass))
         };
         executor.AddTasks(copyTasks).wait();
 
@@ -370,17 +371,16 @@ namespace Silent::Renderer::SdlGpu
         // Begin render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture     = _swapchainTexture,
-            .clear_color = SDL_FColor{ 0.0f, 0.0f, 0.0f, 1.0f },
-            .load_op     = SDL_GPU_LOADOP_CLEAR,
-            .store_op    = SDL_GPU_STOREOP_STORE
+            .texture  = _renderTexture,
+            .load_op  = SDL_GPU_LOADOP_LOAD,
+            .store_op = SDL_GPU_STOREOP_STORE
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // Process render pass.
 
         _pipelines.Bind(renderPass, RenderStage::Sprite2d, BlendMode::Opaque);
-        _gpuBuffers.ScreenVertices2d.Bind(renderPass, 0, 0);
+        _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
         PushFragmentUniform(UniformSprite2d{ .UseTexture = true, .IsFastAlpha = false, }, 0);
 
         // Bind render texture.
@@ -414,7 +414,39 @@ namespace Silent::Renderer::SdlGpu
         SDL_EndGPURenderPass(&renderPass);
     }
 
-    void Renderer::DrawDebugGui()
+    void Renderer::DrawViewport()
+    {
+        // Begin render pass.
+        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        {
+            .texture     = _swapchainTexture,
+            .clear_color = SDL_FColor{ 0.0f, 0.0f, 0.0f, 1.0f },
+            .load_op     = SDL_GPU_LOADOP_CLEAR,
+            .store_op    = SDL_GPU_STOREOP_STORE
+        };
+        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+
+        // Process render pass.
+
+        _pipelines.Bind(renderPass, RenderStage::Sprite2d, BlendMode::Opaque);
+        _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
+        PushFragmentUniform(UniformSprite2d{ .UseTexture = true, .IsFastAlpha = false, }, 0);
+
+        // Bind render texture.
+        auto binding = SDL_GPUTextureSamplerBinding
+        {
+            .texture = _renderTexture,
+            .sampler = _samplers[(int)TextureFilterType::Nearest]
+        };
+        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+        // Draw screen quad.
+        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+
+        SDL_EndGPURenderPass(&renderPass);
+    }
+
+    void Renderer::DrawPowerMenu()
     {
         // If power menu is disabled, return early.
         if (!Debug::g_Work.EnablePowerMenu)
@@ -469,7 +501,7 @@ namespace Silent::Renderer::SdlGpu
         _drawBatches.Primitives2d.reserve(TRI_BATCH_COUNT_MAX);
 
         // Initialize GPU buffers.
-        _gpuBuffers.ScreenVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D screen vertices");
+        _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D screen vertices");
         _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D vertices");
     }
 
@@ -578,42 +610,42 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.Vertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 
-    void Renderer::CopyGpuRenderQuad(SDL_GPUCopyPass& copyPass)
+    void Renderer::CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass)
     {
         // @todo Compute aspect-correct vertex positions.
 
-auto bufferVerts = std::vector<BufferVertex2d>
-{
-    BufferVertex2d
-    {
-        Vector3(-1.0f, 1.0f, 0.0f),
-        Vector2(0.0f, 0.0f),
-        Color::White
-    },
-    BufferVertex2d
-    {
-        Vector3(1.0f, 1.0f, 0.0f),
-        Vector2(1.0f, 0.0f),
-        Color::White
-    },
-    BufferVertex2d
-    {
-        Vector3(-1.0f, -1.0f, 0.0f),
-        Vector2(0.0f, 1.0f),
-        Color::White
-    },
-    BufferVertex2d
-    {
-        Vector3(1.0f, -1.0f, 0.0f),
-        Vector2(1.0f, 1.0f),
-        Color::White
-    }
-};
-auto bufferIdxs = std::vector<uint16>{ 0, 2, 1, 1, 2, 3 };
+        auto bufferVerts = std::vector<BufferVertex2d>
+        {
+            BufferVertex2d
+            {
+                Vector3(-1.0f, 1.0f, 0.0f),
+                Vector2(0.0f, 0.0f),
+                Color::White
+            },
+            BufferVertex2d
+            {
+                Vector3(1.0f, 1.0f, 0.0f),
+                Vector2(1.0f, 0.0f),
+                Color::White
+            },
+            BufferVertex2d
+            {
+                Vector3(-1.0f, -1.0f, 0.0f),
+                Vector2(0.0f, 1.0f),
+                Color::White
+            },
+            BufferVertex2d
+            {
+                Vector3(1.0f, -1.0f, 0.0f),
+                Vector2(1.0f, 1.0f),
+                Color::White
+            }
+        };
+        auto bufferIdxs = std::vector<uint16>{ 0, 2, 1, 1, 2, 3 };
 
         // Update GPU buffer.
-        _gpuBuffers.ScreenVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.ScreenVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        _gpuBuffers.ViewportVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        _gpuBuffers.ViewportVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 
     void Renderer::PushVertexUniform(const UniformType& uni, int slotIdx)

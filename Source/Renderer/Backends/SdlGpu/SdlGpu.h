@@ -32,7 +32,7 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        VertexBuffer<BufferVertex2d> ScreenVertices2d = {};
+        VertexBuffer<BufferVertex2d> ViewportVertices2d = {};
 
         VertexBuffer<BufferVertex2d> Vertices2d = {};
     };
@@ -91,7 +91,8 @@ namespace Silent::Renderer::SdlGpu
         void Draw3dScene() override;
         void Draw2dScene() override;
         void DrawPostProcess() override;
-        void DrawDebugGui() override;
+        void DrawViewport() override;
+        void DrawPowerMenu() override;
 
         /** @brief Allocates memory pools for for draw batches and GPU buffers. */
         void InitializeGpuBuffers();
@@ -112,7 +113,7 @@ namespace Silent::Renderer::SdlGpu
          */
         void CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass);
 
-        void CopyGpuRenderQuad(SDL_GPUCopyPass& copyPass);
+        void CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass);
 
         /** @brief Pushes uniform data to the GPU for the vertex shader.
          *

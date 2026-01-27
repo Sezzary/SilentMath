@@ -28,6 +28,7 @@ namespace Silent::Renderer::SdlGpu
          *
          * @param device GPU device.
          * @param copyPass Copy pass.
+         * @param usageFlags Texture usage flags.
          * @param pixels Texture image pixels.
          * @param res Texture image resolution.
          * @param name Texture image name.
