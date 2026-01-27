@@ -238,6 +238,11 @@ namespace Silent::Renderer::SdlGpu
                 BlendMode::Alpha
             }
         },
+
+        // ======
+        // Final
+        // ======
+
         // BLIT.
         {
             .Stage                        = RenderStage::Blit,

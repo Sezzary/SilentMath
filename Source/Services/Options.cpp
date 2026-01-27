@@ -63,7 +63,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i((int)RETRO_SCREEN_SPACE_RES.x * 3, (int)RETRO_SCREEN_SPACE_RES.y * 3);
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
-    constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = 3;
+    constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = BRIGHTNESS_LEVEL_MAX / 2;
     constexpr auto DEFAULT_FRAME_RATE                               = FrameRateType::Fps60;
     constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO                             = AspectRatioType::Native;

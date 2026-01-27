@@ -11,19 +11,14 @@ struct Input
 cbuffer UniformBlock : register(b0, space3)
 {
     float Brightness;
-    float Contrast;
 }
 
 float4 main(Input input) : SV_Target
 {
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
-    return texColor;
-
-    // @todo Do this later.
 
     // Compute final fragment color.
     float3 color = texColor.rgb + Brightness;
-    color.rgb = (color.rgb - 0.5f) * Contrast + 0.5f;
     return float4(color, 1.0f);
 }

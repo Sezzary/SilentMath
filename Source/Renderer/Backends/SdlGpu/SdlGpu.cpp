@@ -416,6 +416,10 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawViewport()
     {
+        constexpr float BRIGHTNESS_STEP = 0.25f / BRIGHTNESS_LEVEL_MAX;
+
+        const auto& options = g_App.GetOptions();
+
         // Begin render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
@@ -430,7 +434,14 @@ namespace Silent::Renderer::SdlGpu
 
         _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque);
         _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
-        PushFragmentUniform(UniformBlit{ .Brightness = 0.0f, .Contrast = 0.0f }, 0);
+
+        // Push uniform.
+        float brightness = (BRIGHTNESS_STEP * options->BrightnessLevel) - (BRIGHTNESS_STEP * (BRIGHTNESS_LEVEL_MAX / 2));
+        auto  uni        = UniformBlit
+        {
+            .Brightness = brightness
+        };
+        PushFragmentUniform(uni, 0);
 
         // Bind render texture.
         auto binding = SDL_GPUTextureSamplerBinding

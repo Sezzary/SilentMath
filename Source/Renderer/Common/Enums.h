@@ -20,6 +20,11 @@ namespace Silent::Renderer
         Fade,
         Crt,
         Vignette,
+
+        // ======
+        // Final
+        // ======
+
         Blit,
 
         Count

@@ -6,6 +6,5 @@ namespace Silent::Renderer
     struct UniformBlit
     {
         float Brightness = 0.0f;
-        float Contrast   = 0.0f;
     };
 }
