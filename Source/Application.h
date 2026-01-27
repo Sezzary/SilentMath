@@ -144,9 +144,15 @@ namespace Silent
 
         /** @brief Gets the window resolution.
          *
-         * @return Window resolution
+         * @return Window resolution.
          */
         Vector2i GetWindowResolution() const;
+
+        /** @brief Gets the DPI-aware window content scale.
+         *
+         * @return Window scale.
+         */
+        float GetDpiScale() const;
 
         // ==========
         // Utilities

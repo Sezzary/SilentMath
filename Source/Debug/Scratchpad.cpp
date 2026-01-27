@@ -32,15 +32,7 @@ namespace Silent::Debug
             auto& renderer = g_App.GetRenderer();
             auto& fonts = g_App.GetFonts();
 
-            bool isInit = true;
-            if (isInit)
-            {
-                input.InsertText("Test");
-                isInit = false;
-            }
-
-            input.UpdateText("Test");
-            Message(input.GetText("Test").c_str());
+            Message("Does this work?");
 
             // ====================================
 

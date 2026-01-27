@@ -35,10 +35,7 @@ namespace Silent::Debug
             auto&       renderer   = g_App.GetRenderer();
             auto&       translator = g_App.GetTranslator();
 
-            /*CreateGui([]()
-            {
-                ImGui::ShowDemoWindow();
-            });*/
+            ImGui::Begin("Power Menu");
 
             // Main tabs.
             if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll))
@@ -579,16 +576,12 @@ namespace Silent::Debug
                         ImGui::Bullet();
                         ImGui::TextWrapped(msg.c_str());
                     }
-
-                    // TEMP
-                    ImGui::Bullet();
-                    ImGui::TextWrapped(g_App.GetInput().GetText("Test").c_str());
-                    ImGui::Bullet();
-                    ImGui::TextWrapped(std::to_string(g_App.GetInput().GetTextCursorPosition("Test")).c_str());
                 }
                 ImGui::PopStyleColor();
                 ImGui::EndChild();
             }
+
+            ImGui::End();
         });
     }
 }

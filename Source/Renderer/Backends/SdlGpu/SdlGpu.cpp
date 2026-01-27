@@ -343,7 +343,6 @@ namespace Silent::Renderer::SdlGpu
             }
 
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
-
             _doubleBuffer.Active.DrawCallCount++;
         }
 
@@ -392,6 +391,7 @@ namespace Silent::Renderer::SdlGpu
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
 
         SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
+        _doubleBuffer.Active.DrawCallCount++;
 
         // Dithering.
         if (options->EnableDithering)
@@ -416,7 +416,8 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawViewport()
     {
-        constexpr float BRIGHTNESS_STEP = 0.25f / BRIGHTNESS_LEVEL_MAX;
+        constexpr float BRIGHTNESS_STEP   = 0.25f / BRIGHTNESS_LEVEL_MAX;
+        constexpr float BRIGHTNESS_MIDDLE = BRIGHTNESS_STEP * (BRIGHTNESS_LEVEL_MAX / 2);
 
         const auto& options = g_App.GetOptions();
 
@@ -424,7 +425,7 @@ namespace Silent::Renderer::SdlGpu
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
             .texture     = _swapchainTexture,
-            .clear_color = SDL_FColor{ 0.0f, 0.0f, 0.0f, 1.0f },
+            .clear_color = SDL_FColor{ Color::Black.R(), Color::Black.G(), Color::Black.B(), Color::Black.A() },
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
         };
@@ -436,7 +437,7 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
 
         // Push uniform.
-        float brightness = (BRIGHTNESS_STEP * options->BrightnessLevel) - (BRIGHTNESS_STEP * (BRIGHTNESS_LEVEL_MAX / 2));
+        float brightness = (BRIGHTNESS_STEP * options->BrightnessLevel) - BRIGHTNESS_MIDDLE;
         auto  uni        = UniformBlit
         {
             .Brightness = brightness
@@ -453,6 +454,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw screen quad.
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+        _doubleBuffer.Active.DrawCallCount++;
 
         SDL_EndGPURenderPass(&renderPass);
     }

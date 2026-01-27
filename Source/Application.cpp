@@ -98,8 +98,15 @@ namespace Silent
         return res;
     }
 
+    float ApplicationManager::GetDpiScale() const
+    {
+        return SDL_GetWindowDisplayScale(_window);
+    }
+
     void ApplicationManager::Initialize()
     {
+        constexpr float IMGUI_FONT_POINT_SIZE = 13.0f;
+
         _isPaused = false;
         _quit     = false;
 
@@ -118,16 +125,16 @@ namespace Silent
         _work.Options.Initialize();
         _work.Options.Load();
 
+        // Collect window flags.
+        int fullscreenFlag = _work.Options->EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
+        int maximizedFlag  = _work.Options->EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
+        int windowFlags    = SDL_WINDOW_RESIZABLE | fullscreenFlag | maximizedFlag;
+
         // SDL.
         if (!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO))
         {
             throw std::runtime_error(Fmt("Failed to initialize SDL: {}", SDL_GetError()));
         }
-
-        // Collect window flags.
-        int fullscreenFlag = _work.Options->EnableFullscreen ? SDL_WINDOW_FULLSCREEN : 0;
-        int maximizedFlag  = _work.Options->EnableMaximized  ? SDL_WINDOW_MAXIMIZED  : 0;
-        int windowFlags    = SDL_WINDOW_RESIZABLE | fullscreenFlag | maximizedFlag;
 
         // Create window.
         _window = SDL_CreateWindow(APP_NAME, _work.Options->WindowedSize.x, _work.Options->WindowedSize.y, windowFlags);
@@ -142,6 +149,22 @@ namespace Silent
         for (const auto& fontMetadata : FONTS_METADATA)
         {
             _work.Fonts.LoadFont(fontMetadata, _work.Filesystem.GetAssetsDirectory() / ASSETS_FONTS_DIR_NAME, GLYPH_PRECACHE);
+        }
+
+        // Set ImGui DPI scale.
+        float dpiScale                         = GetDpiScale();
+        ImGui::GetIO().FontGlobalScale         = dpiScale;
+        ImGui::GetIO().DisplayFramebufferScale = ImVec2{ dpiScale, dpiScale };
+
+        // Set ImGui font.
+        auto fontDir = _work.Filesystem.GetAssetsDirectory() / "Fonts/NotoSansMono.ttf";
+        try
+        {
+            ImGui::GetIO().Fonts->AddFontFromFileTTF(fontDir.string().c_str(), IMGUI_FONT_POINT_SIZE * dpiScale);
+        }
+        catch(const std::exception& e)
+        {
+            Debug::Log(Fmt("Failed to set ImGui to font `{}`.", fontDir.string()));
         }
 
         // Renderer.
