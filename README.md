@@ -1,6 +1,23 @@
 # <img src="https://github.com/Sezzary/SilentEngine/blob/master/Resources/Icon.png" alt="Icon" width="64" height="64"/> Silent Engine
 
-Track decompilation progress here: https://github.com/Vatuu/silent-hill-decomp
+*Silent Engine* is a cross-platform, in-progress engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, future-proof foundation with modern quality-of-life features, while enabling long-term goals such as modding and translation support. Written from the ground-up with a high-quality, no-compromise codebase.
+
+*Q: WHEN CAN I PLAY THIS?*
+Not yet! There's still significant work to be done. Very little game logic resides in this repository so far, as the focus is on building a solid engine foundation before integrating gameplay and graphics. All considerations are being made to avoid technical debt and the decompilation must be farther along before most of the porting work can begin; while basics like game menus are slowly underway, it's best to wait on the rest while the decompilation remains in constunt flux and much of the engine code is yet to be deobfuscated.
+
+Decompilation progress can be tracked here:
+https://github.com/Vatuu/silent-hill-decomp
+
+## Prospects
+
+- Windows/macOS/Linux support out of the box, with potential support for other platforms later.
+- Modern *SDL_gpu* renderer supporting Vulkan, DX12, and Metal. The backend is swappable and others can be written in the future if needed.
+- Retro and HD font options. .TTF fonts matching the originas have been found or meticulously recreated.
+- Easy internationalization.
+- Easy modding.
+- Clean, well-documented codebase.
+- Lua scripting.
+- Many others.
 
 ## Current foundations
 
@@ -21,12 +38,9 @@ Track decompilation progress here: https://github.com/Vatuu/silent-hill-decomp
 - "Power" menu for deubgging
 - Various utilities pulled from other projects
 
-All considerations are being made to establish a flexible, readable, and accessible foundation. Portability is in mind as a top priority for cross-platform support from inception.
-
 ### TODOs
 
-- The decomp must be farther along before the bulk of the porting work can begin. More basic things like the boot screen and game menus could be ported already, but it's best to wait for the rest while the decomp is in constunt flux and much of the engine code remains to be deobfuscated.
-- Switch to GCC as the compiler. Works on Linux, Windows build has problems and relies on MSVC for now.
+- Switch to GCC as the compiler. Works on Linux, Windows build has problems and relies on MSVC for now. Need MinGW?
 - Forward renderer. Basic system abstraction is done, now it needs expansion.
 - Sound system. Need to write a `KDC`+`VAB` -> `XM` converter?
 - Parsers for all proprietary game file types.
