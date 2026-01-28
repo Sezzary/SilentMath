@@ -71,7 +71,7 @@ namespace Silent::Game
         auto text = Text2d::CreateText2d(str, "RetroSerif",
                                          ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
                                          1.0f, TextStyle::Gradient, true,
-                                         0, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                         6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
         renderer.SubmitText2d(text);
 
         return true;

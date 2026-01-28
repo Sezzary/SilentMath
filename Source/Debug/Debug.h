@@ -79,7 +79,7 @@ namespace Silent::Debug
      *
      * @param msg Message to display.
      */
-    void Message(const char* msg, ...);
+    void Msg(const char* msg, ...);
 
     /** @brief Logs a message to the terminal and log file.
      *

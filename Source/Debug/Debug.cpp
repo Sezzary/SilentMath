@@ -89,8 +89,7 @@ namespace Silent::Debug
         g_Work.Messages.clear();
     }
 
-    // @todo Not working.
-    void Message(const char* msg, ...)
+    void Msg(const char* msg, ...)
     {
         constexpr int BUFFER_SIZE = 255;
 
@@ -103,7 +102,7 @@ namespace Silent::Debug
         // Check if `g_Work.Messages` is full.
         if (g_Work.Messages.size() >= MESSAGE_COUNT_MAX)
         {
-            Log("Attempted to create too many debug messages.", LogLevel::Warning, LogMode::Debug);
+            Log("Attempted to add message to full container.", LogLevel::Warning, LogMode::Debug);
             return;
         }
 
@@ -211,7 +210,7 @@ namespace Silent::Debug
         {
             uint64 endTime  = SDL_GetPerformanceCounter();
             uint64 duration = endTime - g_Work.StartTime;
-            Message("Execution (μs): %d", duration);
+            Msg("Execution (μs): %d", duration);
         }
     }
 

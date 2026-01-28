@@ -625,8 +625,9 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass)
     {
-        // @todo Compute aspect-correct vertex positions.
+        constexpr auto BUFFER_IDXS = std::array<uint16, QUAD_IDX_COUNT>{ 0, 2, 1, 1, 2, 3 };
 
+        // @todo Compute aspect-correct vertex positions.
         auto bufferVerts = std::vector<BufferVertex2d>
         {
             BufferVertex2d
@@ -654,11 +655,10 @@ namespace Silent::Renderer::SdlGpu
                 Color::White
             }
         };
-        auto bufferIdxs = std::vector<uint16>{ 0, 2, 1, 1, 2, 3 };
 
         // Update GPU buffer.
         _gpuBuffers.ViewportVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.ViewportVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        _gpuBuffers.ViewportVertices2d.UpdateIdxs(copyPass, ToSpan(BUFFER_IDXS), 0);
     }
 
     void Renderer::PushVertexUniform(const UniformType& uni, int slotIdx)

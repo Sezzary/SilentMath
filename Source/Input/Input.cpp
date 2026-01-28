@@ -126,6 +126,7 @@ namespace Silent::Input
         };
         executor.AddTasks(tasks).wait();
 
+        // @todo Should also differentiate mouse to show/hide cursor.
         // Update "using gamepad" state.
         if (_deviceStates.HasKeyboardInput || _deviceStates.HasMouseInput)
         {

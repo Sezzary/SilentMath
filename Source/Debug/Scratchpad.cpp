@@ -30,9 +30,9 @@ namespace Silent::Debug
         {
             auto& input    = g_App.GetInput();
             auto& renderer = g_App.GetRenderer();
-            auto& fonts = g_App.GetFonts();
+            auto& fonts    = g_App.GetFonts();
 
-            Message("Does this work?");
+            Msg("Does this work?");
 
             // ====================================
 
@@ -41,14 +41,16 @@ namespace Silent::Debug
             // Sprite test.
 
             // Cursor.
+            auto cursorPos    = Vector2(RoundToStep(input.GetCursorPosition().x, 100.0f / 320.0f),
+                                        RoundToStep(input.GetCursorPosition().y, 100.0f / 240.0f));
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/BG_ETC.TIM", Vector2(0.0f, 64.0f / 256.0f), Vector2(32.0f / 128.0f, 96.0f / 256.0f),
-                                                         input.GetCursorPosition(), 0.0f, 16.0f / RETRO_SCREEN_SPACE_RES, Color::White,
+                                                         cursorPos, 0.0f, 16.0f / RETRO_SCREEN_SPACE_RES, Color::White,
                                                          0, AlignMode::TopLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
             renderer.SubmitSprite2d(cursorSprite);
 
             auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
                                                     Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White,
-                                                    2, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Add);
+                                                    10, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
             renderer.SubmitSprite2d(sprite0);
 
             // Text.
