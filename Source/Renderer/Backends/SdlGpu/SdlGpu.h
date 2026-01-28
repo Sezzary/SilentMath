@@ -40,13 +40,6 @@ namespace Silent::Renderer::SdlGpu
     /** @brief SDL_gpu renderer backend. */
     class Renderer : public RendererBase
     {
-    public:
-        // ==========
-        // Constants
-        // ==========
-
-        static constexpr char NAME[] = "SDL_gpu";
-
     private:
         // =======
         // Fields

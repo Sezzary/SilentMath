@@ -8,7 +8,7 @@
 
 namespace Silent::Math
 {
-    BoundingSphere::BoundingSphere(const std::span<const Vector3>& points)
+    BoundingSphere::BoundingSphere(std::span<const Vector3> points)
     {
         // Check if points exist.
         if (points.empty())

@@ -47,7 +47,7 @@ namespace Silent::Debug
         logger->flush_on(spdlog::level::info);
         logger->set_pattern(LOG_FORMAT_PATTERN);
 
-        // Initialize `ImGui`.
+        // Initialize ImGui.
         ImGui::CreateContext();
         auto imguiPath             = (fs.GetWorkDirectory() / IMGUI_FILENAME).string();
         ImGui::GetIO().IniFilename = CopyString(imguiPath.c_str(), imguiPath.size());

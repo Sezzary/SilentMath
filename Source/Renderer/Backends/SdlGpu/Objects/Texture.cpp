@@ -14,7 +14,8 @@ namespace Silent::Renderer::SdlGpu
     Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
                      SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
-        _device = &device;
+        _device     = &device;
+        _resolution = res;
 
         // Create texture.
         auto texInfo = SDL_GPUTextureCreateInfo
@@ -64,6 +65,16 @@ namespace Silent::Renderer::SdlGpu
     Texture::~Texture()
     {
         SDL_ReleaseGPUTexture(_device, _texture);
+    }
+
+    SDL_GPUTexture* Texture::GetHandle()
+    {
+        return _texture;
+    }
+
+    const Vector2i& Texture::GetResolution() const
+    {
+        return _resolution;
     }
 
     void Texture::Update(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i& region, const Vector2i& size)

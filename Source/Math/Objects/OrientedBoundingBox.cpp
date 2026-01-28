@@ -101,7 +101,7 @@ namespace Silent::Math
                 auto axis = glm::normalize(glm::cross(rotMat0[i], rotMat1[j]));
 
                 // Project all vertices of both OBBs onto axis.
-                float proj0 = -FLT_MAX;
+                float proj0 = FLT_MIN;
                 float proj1 = FLT_MAX;
                 
                 // Project OBB 0 vertices.
@@ -113,7 +113,7 @@ namespace Silent::Math
                 }
 
                 // Project OBB 1 vertices.
-                float proj3 = -FLT_MAX;
+                float proj3 = FLT_MIN;
                 float proj4 = FLT_MAX;
                 for (const auto& corner : obb.GetCorners())
                 {

@@ -24,6 +24,8 @@ namespace Silent::Renderer::SdlGpu
 {
     void Renderer::Initialize(SDL_Window& window)
     {
+        static constexpr char NAME[] = "SDL_gpu";
+
         // @todo Make function for common init stuff to call at the start of every backend-specific init function.
 
         _type   = RendererType::SdlGpu;
@@ -140,7 +142,6 @@ namespace Silent::Renderer::SdlGpu
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        //_textures TestTexture.~Texture();
         _gpuBuffers = {};
         _pipelines.Deinitialize();
 
@@ -390,7 +391,7 @@ namespace Silent::Renderer::SdlGpu
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
 
-        SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, 0, 0, 0);
+        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
         _doubleBuffer.Active.DrawCallCount++;
 
         // Dithering.

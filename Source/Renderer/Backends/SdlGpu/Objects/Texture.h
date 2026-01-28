@@ -12,8 +12,9 @@ namespace Silent::Renderer::SdlGpu
         // Fields
         // =======
 
-        SDL_GPUDevice*  _device  = nullptr;
-        SDL_GPUTexture* _texture = nullptr;
+        SDL_GPUDevice*  _device     = nullptr;
+        SDL_GPUTexture* _texture    = nullptr;
+        Vector2i        _resolution = Vector2i::Zero;
 
     public:
         // =============
@@ -38,6 +39,26 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
         ~Texture();
+
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the handle to the underlying texture.
+         *
+         * @return Underlying texture handle.
+         */
+        SDL_GPUTexture* GetHandle();
+
+        /** @brief Gets the texture's pixel resolution.
+         *
+         * @return Texture pixel resolution.
+         */
+        const Vector2i& GetResolution() const;
+
+        // ==========
+        // Utilities
+        // ==========
 
         /** @brief Updates a specified region of pixels in the texture.
          *

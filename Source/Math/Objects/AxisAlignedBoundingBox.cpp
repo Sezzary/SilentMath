@@ -12,10 +12,10 @@ using namespace Silent::Utils;
 
 namespace Silent::Math
 {
-    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const std::span<const Vector3>& points)
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox(std::span<const Vector3> points)
     {
         auto pointMin = Vector3(FLT_MAX);
-        auto pointMax = Vector3(-FLT_MAX);
+        auto pointMax = Vector3(FLT_MIN);
 
         // Compute min and max AABB points.
         for (const auto& point : points)

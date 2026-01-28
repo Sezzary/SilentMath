@@ -37,7 +37,7 @@ namespace Silent::Math
          *
          * @param points Points to encompass with the sphere.
          */
-        BoundingSphere(const std::span<const Vector3>& points);
+        BoundingSphere(std::span<const Vector3> points);
 
         // ========
         // Getters

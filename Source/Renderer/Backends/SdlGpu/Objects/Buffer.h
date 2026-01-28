@@ -63,7 +63,7 @@ namespace Silent::Renderer::SdlGpu
          * @param data New data to transfer to the buffer.
          * @param startIdx Start index in the buffer at which to insert the new data.
          */
-        void Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, int startIdx);
+        void Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, int startIdx);
 
         /** @brief Binds the GPU buffer for drawing.
          *
@@ -161,7 +161,7 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, const std::span<const T>& data, int startIdx)
+    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, int startIdx)
     {
         if (!IsValid())
         {

@@ -1,6 +1,6 @@
 # <img src="https://github.com/Sezzary/SilentEngine/blob/master/Resources/Icon.png" alt="Icon" width="64" height="64"/> Silent Engine
 
-*Silent Engine* is an in-progress cross-platform engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, future-proof foundation with modern features, while enabling long-term goals such as modding and translation support. Written from the ground-up with a high-quality, no-compromise codebase.
+*Silent Engine* is an in-progress cross-platform engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, and future-proof foundation with modern features that will additionally enable long-term goals such as modding and translation support. Written from the ground-up with a high-quality, no-compromise codebase.
 
 *Q: CAN I PLAY THIS?*
 A: Not yet! There's still significant work to be done. Very little game logic resides in this repository so far, as the focus is on building a solid engine foundation before integrating gameplay and graphics. All considerations are being made to avoid technical debt and the decompilation must be farther along before most of the porting work can begin. While basics like game menus are slowly underway, it's best to wait on the rest while the decompilation remains in constunt flux and much of the engine code is yet to be deobfuscated.
