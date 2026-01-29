@@ -353,14 +353,14 @@ namespace Silent::Debug
                             isOptChanged = true;
                         }
 
-                        // `Enable vignette` checkbox.
-                        if (ImGui::Checkbox("Enable vignette", &options->EnableVignette))
+                        // `Enable CRT filter` checkbox.
+                        if (ImGui::Checkbox("Enable CRT filter", &options->EnableCrtFilter))
                         {
                             isOptChanged = true;
                         }
 
-                        // `Enable CRT filter` checkbox.
-                        if (ImGui::Checkbox("Enable CRT filter", &options->EnableCrtFilter))
+                        // `Enable vignette` checkbox.
+                        if (ImGui::Checkbox("Enable vignette", &options->EnableVignette))
                         {
                             isOptChanged = true;
                         }

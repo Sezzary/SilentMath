@@ -378,11 +378,11 @@ namespace Silent::Renderer::SdlGpu
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // Process render pass.
+        _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
 
         // Luma-based fade.
         {
             _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
-            _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
             PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, 0);
 
             // Bind render texture.
@@ -397,10 +397,23 @@ namespace Silent::Renderer::SdlGpu
             _doubleBuffer.Active.DrawCallCount++;
         }
 
-        // Dithering.
+        // @todo Only apply to 3D scene.
+        // @todo Severe visual artefacts.
+        // Dither.
         if (options->EnableDithering)
         {
-            // @todo
+            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
+
+            // Bind render texture.
+            auto binding = SDL_GPUTextureSamplerBinding
+            {
+                .texture = _renderTexture,
+                .sampler = _samplers[(int)TextureFilterType::Nearest]
+            };
+            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            _doubleBuffer.Active.DrawCallCount++;
         }
 
         // @todo Severe visual artefacts.
@@ -408,7 +421,6 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableCrtFilter)
         {
             _pipelines.Bind(renderPass, RenderStage::Crt, BlendMode::Opaque);
-            _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
             PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, 0);
 
             // Bind render texture.
@@ -428,7 +440,6 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableVignette)
         {
             _pipelines.Bind(renderPass, RenderStage::Vignette, BlendMode::Opaque);
-            _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
             PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, 0);
 
             // Bind render texture.
