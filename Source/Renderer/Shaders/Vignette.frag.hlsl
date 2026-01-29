@@ -16,6 +16,8 @@ cbuffer UniformBlock : register(b0, space3)
 
 float4 main(Input input) : SV_Target
 {
+    static const float STRENGTH = 0.2f;
+
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
 
@@ -26,6 +28,6 @@ float4 main(Input input) : SV_Target
     float vignette = (((16.0f * uv.x) * uv.y) * (1.0f - uv.x)) * (1.0f - uv.y);
 
     // Compute final fragment color.
-    float3 color = texColor.rgb * pow(vignette, 0.3f);
+    float3 color = texColor.rgb * pow(vignette, STRENGTH);
     return float4(color, 1.0f);
 }

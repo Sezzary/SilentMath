@@ -12,7 +12,7 @@ https://github.com/Vatuu/silent-hill-decomp
 
 - Windows/macOS/Linux support out of the box, with potential support for other platforms later.
 - Modern *SDL_gpu* renderer supporting Vulkan, DX12, and Metal. The backend is swappable and others can be written in the future if needed.
-- Retro and HD font options. .TTF fonts matching the originas have been found or meticulously recreated.
+- Retro and HD font options. .TTF fonts matching the originals have been found or meticulously recreated.
 - Easy internationalization.
 - Easy modding.
 - Clean, well-documented codebase.

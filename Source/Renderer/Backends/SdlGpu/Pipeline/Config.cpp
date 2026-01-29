@@ -218,6 +218,7 @@ namespace Silent::Renderer::SdlGpu
         // Post-process
         // =============
 
+        // Dithering.
         // Fade.
         {
             .Stage                        = RenderStage::Fade,
@@ -226,7 +227,7 @@ namespace Silent::Renderer::SdlGpu
             .VertShaderUniBufferCount     = 0,
             .VertShaderStorageBufferCount = 0,
             .VertShaderStorageTexCount    = 0,
-            .FragmentShaderName           = "Fade.frag",
+            .FragmentShaderName           = "LumaFade.frag",
             .FragShaderSamplerCount       = 1,
             .FragShaderUniBufferCount     = 1,
             .FragShaderStorageBufferCount = 0,
@@ -235,7 +236,50 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes                   =
             {
-                BlendMode::Alpha
+                BlendMode::Opaque,
+                BlendMode::Wireframe
+            }
+        },
+        // CRT.
+        {
+            .Stage                        = RenderStage::Crt,
+            .VertexShaderName             = "Primitive2d.vert",
+            .VertShaderSamplerCount       = 0,
+            .VertShaderUniBufferCount     = 0,
+            .VertShaderStorageBufferCount = 0,
+            .VertShaderStorageTexCount    = 0,
+            .FragmentShaderName           = "Crt.frag",
+            .FragShaderSamplerCount       = 1,
+            .FragShaderUniBufferCount     = 1,
+            .FragShaderStorageBufferCount = 0,
+            .FragShaderStorageTexCount    = 0,
+            .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes                   =
+            {
+                BlendMode::Opaque,
+                BlendMode::Wireframe
+            }
+        },
+        // Vignette.
+        {
+            .Stage                        = RenderStage::Vignette,
+            .VertexShaderName             = "Primitive2d.vert",
+            .VertShaderSamplerCount       = 0,
+            .VertShaderUniBufferCount     = 0,
+            .VertShaderStorageBufferCount = 0,
+            .VertShaderStorageTexCount    = 0,
+            .FragmentShaderName           = "Vignette.frag",
+            .FragShaderSamplerCount       = 1,
+            .FragShaderUniBufferCount     = 1,
+            .FragShaderStorageBufferCount = 0,
+            .FragShaderStorageTexCount    = 0,
+            .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes                   =
+            {
+                BlendMode::Opaque,
+                BlendMode::Wireframe
             }
         },
 
@@ -260,7 +304,8 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs            = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes                   =
             {
-                BlendMode::Opaque
+                BlendMode::Opaque,
+                BlendMode::Wireframe
             }
         }
     };

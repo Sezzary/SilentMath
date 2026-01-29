@@ -379,20 +379,23 @@ namespace Silent::Renderer::SdlGpu
 
         // Process render pass.
 
-        _pipelines.Bind(renderPass, RenderStage::Sprite2d, BlendMode::Opaque);
-        _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
-        PushFragmentUniform(UniformSprite2d{ .UseTexture = true, .IsFastAlpha = false, }, 0);
-
-        // Bind render texture.
-        auto binding = SDL_GPUTextureSamplerBinding
+        // Luma-based fade.
         {
-            .texture = _renderTexture,
-            .sampler = _samplers[(int)TextureFilterType::Nearest]
-        };
-        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+            _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
+            _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
+            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, 0);
 
-        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;
+            // Bind render texture.
+            auto binding = SDL_GPUTextureSamplerBinding
+            {
+                .texture = _renderTexture,
+                .sampler = _samplers[(int)TextureFilterType::Nearest]
+            };
+            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            _doubleBuffer.Active.DrawCallCount++;
+        }
 
         // Dithering.
         if (options->EnableDithering)
@@ -400,16 +403,44 @@ namespace Silent::Renderer::SdlGpu
             // @todo
         }
 
-        // Vignette.
-        if (options->EnableVignette)
-        {
-            // @todo
-        }
-
+        // @todo Severe visual artefacts.
         // CRT filter.
         if (options->EnableCrtFilter)
         {
-            // @todo
+            _pipelines.Bind(renderPass, RenderStage::Crt, BlendMode::Opaque);
+            _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
+            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, 0);
+
+            // Bind render texture.
+            auto binding = SDL_GPUTextureSamplerBinding
+            {
+                .texture = _renderTexture,
+                .sampler = _samplers[(int)TextureFilterType::Nearest]
+            };
+            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            _doubleBuffer.Active.DrawCallCount++;
+        }
+
+        // @todo Severe visual artefacts.
+        // Vignette.
+        if (options->EnableVignette)
+        {
+            _pipelines.Bind(renderPass, RenderStage::Vignette, BlendMode::Opaque);
+            _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
+            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, 0);
+
+            // Bind render texture.
+            auto binding = SDL_GPUTextureSamplerBinding
+            {
+                .texture = _renderTexture,
+                .sampler = _samplers[(int)TextureFilterType::Nearest]
+            };
+            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            _doubleBuffer.Active.DrawCallCount++;
         }
 
         SDL_EndGPURenderPass(&renderPass);
