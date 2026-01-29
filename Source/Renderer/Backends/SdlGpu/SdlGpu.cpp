@@ -187,11 +187,7 @@ namespace Silent::Renderer::SdlGpu
         // Draw frame.
         if (_swapchainTexture != nullptr)
         {
-            Draw3dScene();
-            Draw2dScene();
-            DrawPostProcess();
-            DrawViewport();
-            DrawPowerMenu();
+            DrawFrame();
         }
 
         // Submit command buffer to GPU.
@@ -302,6 +298,54 @@ namespace Silent::Renderer::SdlGpu
         SDL_EndGPURenderPass(&renderPass);
     }
 
+    void Renderer::DrawDither()
+    {
+        auto& executor = g_App.GetExecutor();
+        auto& options  = g_App.GetOptions();
+        
+        // Process copy pass.
+        auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
+
+        // Copy prepared GPU data.
+        auto copyTasks = ParallelTasks
+        {
+            TASK(CopyGpuViewportQuad(*copyPass))
+        };
+        executor.AddTasks(copyTasks).wait();
+
+        SDL_EndGPUCopyPass(copyPass);
+
+        // Begin render pass.
+        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        {
+            .texture  = _renderTexture,
+            .load_op  = SDL_GPU_LOADOP_LOAD,
+            .store_op = SDL_GPU_STOREOP_STORE
+        };
+        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+
+        // @todo Severe visual artefacts.
+        // Dither.
+        if (options->EnableDithering)
+        {
+            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
+
+            // Bind render texture.
+            auto binding = SDL_GPUTextureSamplerBinding
+            {
+                .texture = _renderTexture,
+                .sampler = _samplers[(int)TextureFilterType::Nearest]
+            };
+            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            _doubleBuffer.Active.DrawCallCount++;
+        }
+
+        // End render pass.
+        SDL_EndGPURenderPass(&renderPass);
+    }
+
     void Renderer::Draw2dScene()
     {
         auto& executor = g_App.GetExecutor();
@@ -380,10 +424,11 @@ namespace Silent::Renderer::SdlGpu
         // Process render pass.
         _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
 
-        // Luma-based fade.
+        // @todo Severe visual artefacts.
+        // Temp. test dither.
+        /*if (options->EnableDithering)
         {
-            _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
-            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, 0);
+            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -395,14 +440,12 @@ namespace Silent::Renderer::SdlGpu
 
             SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
             _doubleBuffer.Active.DrawCallCount++;
-        }
+        }*/
 
-        // @todo Only apply to 3D scene.
-        // @todo Severe visual artefacts.
-        // Dither.
-        if (options->EnableDithering)
+        // Luma-based fade.
         {
-            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
+            _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
+            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, 0);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding

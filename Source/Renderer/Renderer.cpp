@@ -626,6 +626,16 @@ namespace Silent::Renderer
         executor.AddTasks(sortTasks).wait();
     }
 
+    void RendererBase::DrawFrame()
+    {
+        Draw3dScene();
+        DrawDither();
+        Draw2dScene();
+        DrawPostProcess();
+        DrawViewport();
+        DrawPowerMenu();
+    }
+
     std::unique_ptr<RendererBase> CreateRenderer(RendererType type)
     {
         switch (type)

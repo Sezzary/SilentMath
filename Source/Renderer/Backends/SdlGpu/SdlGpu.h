@@ -82,12 +82,13 @@ namespace Silent::Renderer::SdlGpu
         SDL_GPUSampler& GetActiveSampler();
 
         void Draw3dScene() override;
+        void DrawDither() override;
         void Draw2dScene() override;
         void DrawPostProcess() override;
         void DrawViewport() override;
         void DrawPowerMenu() override;
 
-        /** @brief Allocates memory pools for for draw batches and GPU buffers. */
+        /** @brief Allocates memory pools for draw batches and GPU buffers. */
         void InitializeGpuBuffers();
 
         /** @brief Adds new glyph texture atlases and updates old ones if new glyphs have been added.
