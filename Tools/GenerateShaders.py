@@ -13,6 +13,7 @@ Arguments:
                    `"Linux"`   : Generates .SPV shaders.
 """
 
+import glob
 import os
 import platform
 import shutil
@@ -46,10 +47,7 @@ def generate_shaders():
         os.makedirs(TEMP_OUTPUT_PATH, exist_ok=True)
 
         # Collect all shader sources.
-        shader_sources = [
-            os.path.join(SOURCES_PATH, file)
-            for file in os.listdir(SOURCES_PATH) if file.endswith(".hlsl")
-        ]
+        shader_sources = glob.glob(os.path.join(SOURCES_PATH, "**/*.hlsl"), recursive=True)
 
         # Build shaders to temporary output folder.
         build_count = 0
@@ -79,6 +77,7 @@ def generate_shaders():
 
                     result = subprocess.run(command, capture_output=True)
                     if result.returncode == 0:
+                        print(f"`{output_name}`")
                         build_count += 1
                     else:
                         print(f"Command error for `{output_name}`: {result.stderr.decode()}")
@@ -101,7 +100,7 @@ def generate_shaders():
         else:
             print(f"{build_count} shader{"" if build_count == 1 else "s"} built successfully." + (f" {len(fail_names)} failed:" if len(fail_names) > 0 else ""))
             for fail_name in fail_names:
-                print(fail_name)
+                print(f"`{fail_name}`")
     except Exception as ex:
         # Ensure temporary output folder is deleted.
         if os.path.isfile(TEMP_OUTPUT_PATH):

@@ -5,9 +5,9 @@ SamplerState      Sampler : register(s0, space2);
 
 struct Input
 {
-    float4 Position     : SV_Position;
-    float2 TextureCoord : TEXCOORD0;
-    float4 Color        : COLOR0;
+    float4 Position : SV_Position;
+    float2 TexCoord : TEXCOORD0;
+    float4 Color    : COLOR0;
 };
 
 cbuffer UniformBlock : register(b0, space3)
@@ -17,7 +17,7 @@ cbuffer UniformBlock : register(b0, space3)
 
 float4 main(Input input) : SV_Target
 {
-    float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
+    float4 texColor = Texture.Sample(Sampler, input.TexCoord);
     float  luma     = 1.0f - dot(texColor.rgb, Math::LUMA_BT601);
 
     float4 color = texColor * Math::Remap(1.0f - FadeAlpha, luma, 1.0f, 0.0f, 1.0f);

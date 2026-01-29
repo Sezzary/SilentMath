@@ -47,21 +47,21 @@ namespace Silent::Renderer::SdlGpu
     void PipelineManager::InitializeGraphicsPipeline(SDL_Window& window, const PipelineConfig& config)
     {
         // Load vertex shader.
-        auto* vertShader = LoadShader(config.VertexShaderName,
+        auto* vertShader = LoadShader(config.VertShaderName,
                                       config.VertShaderSamplerCount, config.VertShaderStorageTexCount,
                                       config.VertShaderStorageBufferCount, config.VertShaderUniBufferCount);
         if (vertShader == nullptr)
         {
-            throw std::runtime_error(Fmt("Failed to create vertex shader `{}`.", config.VertexShaderName));
+            throw std::runtime_error(Fmt("Failed to create vertex shader `{}`.", config.VertShaderName));
         }
 
         // Load fragment shader.
-        auto* fragShader = LoadShader(config.FragmentShaderName,
+        auto* fragShader = LoadShader(config.FragShaderName,
                                       config.FragShaderSamplerCount, config.FragShaderStorageTexCount,
                                       config.FragShaderStorageBufferCount, config.FragShaderUniBufferCount);
         if (fragShader == nullptr)
         {
-            throw std::runtime_error(Fmt("Failed to create fragment shader `{}`.", config.FragmentShaderName));
+            throw std::runtime_error(Fmt("Failed to create fragment shader `{}`.", config.FragShaderName));
         }
 
         // Create pipelines with blend mode variants.

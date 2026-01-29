@@ -5,9 +5,9 @@ SamplerState      Sampler : register(s0, space2);
 
 struct Input
 {
-    float4 Position     : SV_Position;
-    float2 TextureCoord : TEXCOORD0;
-    float4 Color        : COLOR0;
+    float4 Position : SV_Position;
+    float2 TexCoord : TEXCOORD0;
+    float4 Color    : COLOR0;
 };
 
 cbuffer UniformBlock : register(b0, space3)
@@ -24,10 +24,10 @@ float4 main(Input input) : SV_Target
     static const float LOWLIGHT  = 0.65f;
 
     // Sample texture.
-    float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
+    float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
     // Compute local values.
-    float localY = Math::Remap(input.TextureCoord.y, GradientUvMinY, GradientUvMaxY, 0.0f, 1.0f);
+    float localY = Math::Remap(input.TexCoord.y, GradientUvMinY, GradientUvMaxY, 0.0f, 1.0f);
     float dist   = abs(localY - 0.5f) * 2.0f;
 
     // Compute gradient factor.

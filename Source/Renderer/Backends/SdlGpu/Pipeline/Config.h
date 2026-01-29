@@ -9,13 +9,13 @@ namespace Silent::Renderer::SdlGpu
     {
         RenderStage Stage = RenderStage::Sprite2d;
 
-        std::string VertexShaderName             = {};
+        std::string VertShaderName               = {};
         int         VertShaderSamplerCount       = 0;
         int         VertShaderUniBufferCount     = 0;
         int         VertShaderStorageBufferCount = 0;
         int         VertShaderStorageTexCount    = 0;
 
-        std::string FragmentShaderName           = {};
+        std::string FragShaderName               = {};
         int         FragShaderSamplerCount       = 0;
         int         FragShaderUniBufferCount     = 0;
         int         FragShaderStorageBufferCount = 0;

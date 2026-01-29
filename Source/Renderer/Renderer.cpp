@@ -139,9 +139,8 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
-        constexpr auto SHADOW_COLOR    = Color::From8Bit(16,  16,  16);
-        // @todo Improve `constexpr` compatibility of math classes.
-        static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
+        constexpr auto SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
+        constexpr auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
 
         auto& fonts = g_App.GetFonts();
 
@@ -223,9 +222,8 @@ namespace Silent::Renderer
         for (const auto& shapedGlyph : shapedText.Glyphs)
         {
             // Compute texture atlas UVs.
-            auto uvMin  = shapedGlyph.Attribs.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
-            auto uvMax  = uvMin + (shapedGlyph.Attribs.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
-            auto uvSize = uvMax - uvMin;
+            auto uvMin = shapedGlyph.Attribs.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
+            auto uvMax = uvMin + (shapedGlyph.Attribs.AtlasSize.ToVector2() / Vector2(Font::ATLAS_SIZE));
 
             // Compute rotated offset.
             auto adjPixelOffset = Vector2::Transform(pixelOffset, rotMat);
@@ -628,6 +626,7 @@ namespace Silent::Renderer
 
     void RendererBase::DrawFrame()
     {
+        // @todo Refactor into a render graph?
         Draw3dScene();
         DrawDither();
         Draw2dScene();

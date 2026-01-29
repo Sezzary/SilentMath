@@ -8,12 +8,13 @@ SamplerState      Sampler : register(s0, space2);
 
 struct Input
 {
-    float4 Position     : SV_Position;
-    float2 TextureCoord : TEXCOORD0;
-    float4 Color        : COLOR0;
+    float4 Position : SV_Position;
+    float2 TexCoord : TEXCOORD0;
+    float4 Color    : COLOR0;
 };
 
-static const int4x4 PSX_DITHER_TABLE = int4x4
+static const int    DITHER_SIZE  = 4;
+static const int4x4 DITHER_TABLE = int4x4
 (
     0,  8,  2,  10,
     12, 4,  14, 6,
@@ -23,22 +24,21 @@ static const int4x4 PSX_DITHER_TABLE = int4x4
 
 float4 main(Input input) : SV_Target
 {
-    static const int  DITHER_SIZE = 4;
-    static const uint DITHER_CEIL = 0xF8;
+    static const uint COLOR_MASK = 0xF8;
 
     // Sample texture.
-    float4 texColor = Texture.Sample(Sampler, input.TextureCoord);
+    float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
     // Compute pixel position.
     int2 pixelPos = int2(floor(input.Position.xy));
 
     // Compute 8-bit dithered color.
-    int    dither    = PSX_DITHER_TABLE[pixelPos.x % DITHER_SIZE][pixelPos.y % DITHER_SIZE];
+    int    dither    = DITHER_TABLE[pixelPos.x % DITHER_SIZE][pixelPos.y % DITHER_SIZE];
     float3 color8Bit = texColor.rgb * float(Math::UINT8_MAX);
     color8Bit       += (dither / 2.0f) - 4.0f;
 
     // 5-bit color truncation.
-    color8Bit = lerp((uint3(color8Bit) & DITHER_CEIL), DITHER_CEIL, step(DITHER_CEIL, color8Bit));
+    color8Bit = lerp((uint3(color8Bit) & COLOR_MASK), COLOR_MASK, step(COLOR_MASK, color8Bit));
 
     // Compute final color.
     return float4(color8Bit / float(Math::UINT8_MAX), 1.0f);

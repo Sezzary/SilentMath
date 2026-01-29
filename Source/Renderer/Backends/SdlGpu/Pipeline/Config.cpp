@@ -164,15 +164,15 @@ namespace Silent::Renderer::SdlGpu
 
     const std::vector<PipelineConfig> PIPELINE_CONFIGS =
     {
-        // =========
-        // Material
-        // =========
+        // ==========
+        // Materials
+        // ==========
 
         // 2D sprite.
         {
             .Stage                        = RenderStage::Sprite2d,
-            .VertexShaderName             = "Primitive2d.vert",
-            .FragmentShaderName           = "Sprite2d.frag",
+            .VertShaderName               = "Primitive2d.vert",
+            .FragShaderName               = "Sprite2d.frag",
             .FragShaderSamplerCount       = 1,
             .FragShaderUniBufferCount     = 1,
             .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
@@ -191,8 +191,8 @@ namespace Silent::Renderer::SdlGpu
         // 2D glyph.
         {
             .Stage                        = RenderStage::Glyph2d,
-            .VertexShaderName             = "Primitive2d.vert",
-            .FragmentShaderName           = "Glyph2d.frag",
+            .VertShaderName               = "Primitive2d.vert",
+            .FragShaderName               = "Glyph2d.frag",
             .FragShaderSamplerCount       = 1,
             .FragShaderUniBufferCount     = 1,
             .VertBufferDescs              = BUFFER_VERTEX_2D_DESCS,
@@ -204,15 +204,15 @@ namespace Silent::Renderer::SdlGpu
             }
         },
 
-        // =============
-        // Post-process
-        // =============
+        // ========
+        // Effects
+        // ========
 
         // Dither.
         {
             .Stage                    = RenderStage::Dither,
-            .VertexShaderName         = "Primitive2d.vert",
-            .FragmentShaderName       = "Dither.frag",
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Dither.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -226,8 +226,8 @@ namespace Silent::Renderer::SdlGpu
         // Fade.
         {
             .Stage                    = RenderStage::Fade,
-            .VertexShaderName         = "Primitive2d.vert",
-            .FragmentShaderName       = "LumaFade.frag",
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "LumaFade.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -241,8 +241,8 @@ namespace Silent::Renderer::SdlGpu
         // CRT.
         {
             .Stage                    = RenderStage::Crt,
-            .VertexShaderName         = "Primitive2d.vert",
-            .FragmentShaderName       = "Crt.frag",
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Crt.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -256,8 +256,8 @@ namespace Silent::Renderer::SdlGpu
         // Vignette.
         {
             .Stage                    = RenderStage::Vignette,
-            .VertexShaderName         = "Primitive2d.vert",
-            .FragmentShaderName       = "Vignette.frag",
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Vignette.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -276,8 +276,8 @@ namespace Silent::Renderer::SdlGpu
         // BLIT.
         {
             .Stage                    = RenderStage::Blit,
-            .VertexShaderName         = "Primitive2d.vert",
-            .FragmentShaderName       = "Blit.frag",
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Blit.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,

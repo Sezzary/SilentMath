@@ -5,16 +5,16 @@ namespace Silent::Renderer
     /** @brief Render stages representing pipelines or shader programs, depending on the backend. */
     enum class RenderStage
     {
-        // =========
-        // Material
-        // =========
+        // ==========
+        // Materials
+        // ==========
 
         Sprite2d,
         Glyph2d,
 
-        // =============
-        // Post-process
-        // =============
+        // ========
+        // Effects
+        // ========
 
         Dither,
         Fade,
