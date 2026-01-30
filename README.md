@@ -1,17 +1,17 @@
 # <img src="https://github.com/Sezzary/SilentEngine/blob/master/Resources/Icon.png" alt="Icon" width="64" height="64"/> Silent Engine
 
-*Silent Engine* is an cross-platform in-progress engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, and future-proof foundation with modern features that will enable long-term goals such as translation support and modding and. Written from the ground-up with a high-quality, no-compromise codebase.
+*Silent Engine* is an in-progress cross-platform engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, and future-proof foundation with modern standards that will enable long-term goals such as translation support and modding. Written from the ground-up with a high-quality, no-compromise codebase.
 
 *Q: CAN I PLAY THIS?*
-A: Not yet! There's still significant work to be done. Very little game logic resides in this repository so far, as the focus is on building a solid engine foundation before integrating gameplay and graphics. All considerations are being made to avoid technical debt. Additionally, the decompilation must be farther along before most of the porting work can begin. While basics like game menus are slowly underway, it's best to wait on the rest while the decompilation remains in constunt flux and much of the original engine code is yet to be deobfuscated.
+A: Not yet! There's still significant work to be done. Very little game logic resides in this repository so far, as the focus is on building a solid engine foundation before integrating gameplay and graphics. All considerations are being made to avoid technical debt. Additionally, the decompilation must be farther along before most of the porting work can begin. While basics like game menus are slowly underway, it's best to wait on the rest while the decompilation remains in constunt flux. Much of the original engine code is yet to be deobfuscated and documented.
 
 Decompilation progress can be tracked here:
 https://github.com/Vatuu/silent-hill-decomp
 
 ## Prospects
 
-- Windows/macOS/Linux support out of the box, with potential support for other platforms later.
-- Modern renderer supporting Vulkan, DX12, and Metal (other backends can be added in the future if needed).
+- Windows/macOS/Linux support out of the box, with the potential for other platforms later.
+- Modern renderer supporting Vulkan, DX12, and Metal, with the potential for other backends in the future if needed.
 - Various graphics toggles for a retro or modern look.
 - Retro and HD font options. .TTF fonts matching the originals have been found or meticulously recreated.
 - Clean, well-documented codebase.
@@ -120,7 +120,7 @@ source .venv/bin/activate
 Copy the `Assets` folder from the repository to `Build/Debug`/`Build/Release`.
 You must source your own ROM of the 1.1 US release of the game. Extract all folders from the .SILENT archive to `Assets/Stream/Psx`.
 
-This is yet to be streamlined. Automation will be provided in the future.
+This is yet to be streamlined. Automation of this step will be provided in the future.
 
 ### Build the code (Debug/Release)
 
