@@ -49,7 +49,7 @@ https://github.com/Vatuu/silent-hill-decomp
 
 ## Building (Windows/macOS/Linux)
 
-This section is incomplete! Ideally, the project will be able to cross-compile between all main development platforms.
+This section is incomplete. Ideally, the project will be able to cross-compile between all main development platforms.
 
 ### Install dependencies
 
@@ -80,22 +80,7 @@ sudo apt install build-essential git ninja-build python3 python3-pip
 
 ### Clone the repository
 
-Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will ensure the following submodules are included in the process:
-- assimp
-- FreeType
-- GLM
-- ImGui
-- ImGuizmo
-- json
-- LuaJIT
-- SDL3
-- smol-atlas
-- sol2
-- spdlog + {fmt}
-- stb
-- UTF8-CPP
-- VLC
-- yalantinglibs
+Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will ensure the submodules are included in the process.
 ```
 git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive
@@ -129,6 +114,13 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 </details>
+
+### Transfer assets
+
+Copy the `Assets` folder from the repository to `Build/Debug`/`Build/Release`.
+You must source your own ROM of the 1.1 US release of the game. Extract all folders from the .SILENT archive to `Assets/Stream/Psx`.
+
+This is yet to be streamlined. Automation will be provided in the future.
 
 ### Build the code (Debug/Release)
 
