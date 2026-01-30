@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU buffer for vertex. */
+    /** @brief GPU buffer for 2D vertex. */
     struct BufferVertex2d
     {
         Vector3 Position = Vector3::Zero;

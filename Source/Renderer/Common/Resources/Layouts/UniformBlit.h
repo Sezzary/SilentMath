@@ -3,7 +3,7 @@
 namespace Silent::Renderer
 {
     /** @brief GPU uniform buffer for BLIT shader. */
-    struct UniformBlit
+    struct alignas(16) UniformBlit
     {
         float Brightness = 0.0f;
     };

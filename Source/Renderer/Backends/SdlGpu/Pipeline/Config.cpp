@@ -2,7 +2,7 @@
 #include "Renderer/Backends/SdlGpu/Pipeline/Config.h"
 
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Buffers.h"
+#include "Renderer/Common/Resources/Buffers.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 
 namespace Silent::Renderer::SdlGpu

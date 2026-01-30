@@ -1,9 +1,9 @@
 #include "Framework.h"
-#include "Renderer/Common/Objects/Scene/Shape2d.h"
+#include "Renderer/Common/Resources/Scene/Shape2d.h"
 
 #include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Primitive/Vertex2d.h"
+#include "Renderer/Common/Resources/Primitive/Vertex2d.h"
 #include "Renderer/Common/Utils.h"
 
 namespace Silent::Renderer

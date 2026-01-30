@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Renderer/Backends/SdlGpu/Objects/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Objects/Texture.h"
-#include "Renderer/Backends/SdlGpu/Objects/VertexBuffer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
-#include "Renderer/Common/Objects/Buffers.h"
-#include "Renderer/Common/Objects/Primitive/Vertex2d.h"
-#include "Renderer/Common/Objects/Primitive/Vertex3d.h"
-#include "Renderer/Common/Objects/Uniforms.h"
+#include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Resources/Texture.h"
+#include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
+#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Primitive/Vertex2d.h"
+#include "Renderer/Common/Resources/Primitive/Vertex3d.h"
+#include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Renderer.h"
 
 namespace Silent::Renderer::SdlGpu

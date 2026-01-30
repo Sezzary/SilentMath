@@ -1,7 +1,7 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Objects/IndirectBuffer.h"
+#include "Renderer/Backends/SdlGpu/Resources/IndirectBuffer.h"
 
-#include "Renderer/Backends/SdlGpu/Objects/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Utils;

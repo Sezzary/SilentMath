@@ -1,11 +1,11 @@
 #include "Framework.h"
-#include "Renderer/Common/Objects/Scene/Sprite2d.h"
+#include "Renderer/Common/Resources/Scene/Sprite2d.h"
 
 #include "Application.h"
 #include "Assets/Assets.h"
 #include "Renderer/Common/Constants.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Scene/Shape2d.h"
+#include "Renderer/Common/Resources/Scene/Shape2d.h"
 #include "Renderer/Common/Utils.h"
 
 using namespace Silent::Assets;

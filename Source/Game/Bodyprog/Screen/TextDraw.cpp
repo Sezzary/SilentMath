@@ -4,7 +4,7 @@
 #include "Application.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Scene/Text2d.h"
+#include "Renderer/Common/Resources/Scene/Text2d.h"
 #include "Renderer/Common/Utils.h"
 
 using namespace Silent::Renderer;

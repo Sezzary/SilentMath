@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Renderer/Common/Objects/Scene/Text2d.h"
+#include "Renderer/Common/Resources/Scene/Text2d.h"
 
 #include "Renderer/Common/Enums.h"
 #include "Utils/Font.h"

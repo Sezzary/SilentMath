@@ -3,10 +3,10 @@
 
 #include "Application.h"
 #include "Assets/Fonts.h"
-#include "Renderer/Backends/SdlGpu/Objects/Texture.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
-#include "Renderer/Common/Objects/Buffers.h"
-#include "Renderer/Common/Objects/Uniforms.h"
+#include "Renderer/Backends/SdlGpu/Resources/Texture.h"
+#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Common/Texture.h"
 #include "Renderer/Common/Utils.h"
 #include "Renderer/Common/View.h" // @todo Not used yet.

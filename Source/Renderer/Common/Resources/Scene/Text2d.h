@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer/Common/Objects/Scene/Sprite2d.h"
+#include "Renderer/Common/Resources/Scene/Sprite2d.h"
 #include "Renderer/Common/Enums.h"
 
 namespace Silent::Utils{ struct ShapedGlyph; }

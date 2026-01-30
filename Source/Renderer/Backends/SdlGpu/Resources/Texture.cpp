@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Objects/Texture.h"
+#include "Renderer/Backends/SdlGpu/Resources/Texture.h"
 
 #include "Application.h"
 #include "Assets/Assets.h"

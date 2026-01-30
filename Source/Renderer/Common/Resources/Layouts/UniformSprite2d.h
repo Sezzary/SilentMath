@@ -3,7 +3,7 @@
 namespace Silent::Renderer
 {
     /** @brief GPU uniform buffer for 2D sprite shader. */
-    struct UniformSprite2d
+    struct alignas(16) UniformSprite2d
     {
         uint UseTexture  = false;
         uint IsFastAlpha = false;

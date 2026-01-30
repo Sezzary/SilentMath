@@ -5,7 +5,7 @@
 #include "Debug/Debug.h"
 #include "Input/Input.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Scene/Text2d.h"
+#include "Renderer/Common/Resources/Scene/Text2d.h"
 #include "Renderer/Renderer.h"
 #include "Services/Options.h"
 #include "Utils/Parallel.h"

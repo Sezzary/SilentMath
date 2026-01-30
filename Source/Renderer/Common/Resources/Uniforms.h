@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Renderer/Common/Objects/Layouts/UniformBlit.h"
-#include "Renderer/Common/Objects/Layouts/UniformCrt.h"
-#include "Renderer/Common/Objects/Layouts/UniformGlyph2d.h"
-#include "Renderer/Common/Objects/Layouts/UniformLumaFade.h"
-#include "Renderer/Common/Objects/Layouts/UniformSprite2d.h"
+#include "Renderer/Common/Resources/Layouts/UniformBlit.h"
+#include "Renderer/Common/Resources/Layouts/UniformCrt.h"
+#include "Renderer/Common/Resources/Layouts/UniformGlyph2d.h"
+#include "Renderer/Common/Resources/Layouts/UniformLumaFade.h"
+#include "Renderer/Common/Resources/Layouts/UniformSprite2d.h"
 
 namespace Silent::Renderer
 {

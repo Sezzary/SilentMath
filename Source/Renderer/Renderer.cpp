@@ -3,12 +3,12 @@
 
 #include "Application.h"
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
-#include "Renderer/Common/Objects/Primitive/Vertex2d.h"
-#include "Renderer/Common/Objects/Primitive/Vertex3d.h"
-#include "Renderer/Common/Objects/Primitive3d.h"
-#include "Renderer/Common/Objects/Scene/Shape2d.h"
-#include "Renderer/Common/Objects/Scene/Sprite2d.h"
-#include "Renderer/Common/Objects/Scene/Text2d.h"
+#include "Renderer/Common/Resources/Primitive/Primitive3d.h"
+#include "Renderer/Common/Resources/Primitive/Vertex2d.h"
+#include "Renderer/Common/Resources/Primitive/Vertex3d.h"
+#include "Renderer/Common/Resources/Scene/Shape2d.h"
+#include "Renderer/Common/Resources/Scene/Sprite2d.h"
+#include "Renderer/Common/Resources/Scene/Text2d.h"
 #include "Renderer/Common/Utils.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
@@ -140,7 +140,7 @@ namespace Silent::Renderer
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
         constexpr auto SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
-        constexpr auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y);
+        static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y); // @todo Make `constexpr`.
 
         auto& fonts = g_App.GetFonts();
 

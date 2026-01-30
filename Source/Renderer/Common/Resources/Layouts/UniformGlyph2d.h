@@ -3,7 +3,7 @@
 namespace Silent::Renderer
 {
     /** @brief GPU uniform buffer for 2D glyph shader. */
-    struct UniformGlyph2d
+    struct alignas(16) UniformGlyph2d
     {
         uint  HasGradient    = false;
         uint  GradientSteps  = 0;

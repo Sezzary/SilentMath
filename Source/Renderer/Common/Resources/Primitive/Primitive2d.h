@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Objects/Primitive/Vertex2d.h"
-#include "Renderer/Common/Objects/Uniforms.h"
+#include "Renderer/Common/Resources/Primitive/Vertex2d.h"
+#include "Renderer/Common/Resources/Uniforms.h"
 
 namespace Silent::Renderer
 {
