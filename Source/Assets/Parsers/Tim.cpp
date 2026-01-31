@@ -2,13 +2,14 @@
 #include "Assets/Parsers/Tim.h"
 
 #include "Renderer/Common/Constants.h"
+#include "Utils/Stream.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    constexpr int TRANSPARENT_COLOR_FLAG = 1 << 15;
-
     /** @brief Bits per pixel types. */
     enum class BitsPerPixel
     {
@@ -28,69 +29,58 @@ namespace Silent::Assets
 
     std::shared_ptr<void> ParseTim(const std::filesystem::path& filename)
     {
-        constexpr int HEADER_MAGIC  = 0x10;
-        constexpr int BPP_MASK      = 0x7;
+        constexpr int HEADER_MAGIC           = 0x10;
+        constexpr int BPP_MASK               = 0x7;
+        constexpr int TRANSPARENT_COLOR_FLAG = 1 << 15;
 
         // Read file.
-        auto file = std::ifstream(filename, std::ios::binary);
-        if (!file.is_open())
+        auto stream = Stream(filename, true, false);
+        if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Couldn't open TIM `{}`.", filename.string()));
         }
 
         // Confirm TIM format magic.
-        uint32 magic = 0;
-        file.read((byte*)&magic, 4);
+        uint32 magic = stream.ReadUint32();
         if (magic != HEADER_MAGIC)
         {
             throw std::runtime_error(Fmt("Invalid TIM `{}`.", filename.string()));
         }
 
         // Read CLUT and BPP flags.
-        uint32 flags = 0;
-        file.read((byte*)&flags, 4);
+        uint32 flags = stream.ReadUint32();
 
         // Read CLUT.
         auto clut = std::vector<uint16>{};
         if (flags & (int)TimFlags::HasClut)
         {
             // Read size.
-            uint32 clutSize = 0;
-            file.read((byte*)&clutSize, 4);
+            uint32 clutSize = stream.ReadUint32();
 
             // Read frame buffer coordinates (unused).
-            uint16 clutX = 0;
-            uint16 clutY = 0;
-            file.read((byte*)&clutX, 2);
-            file.read((byte*)&clutY, 2);
+            uint16 clutX = stream.ReadUint16();
+            uint16 clutY = stream.ReadUint16();
 
             // Read dimensions.
-            uint16 clutW = 0;
-            uint16 clutH = 0;
-            file.read((byte*)&clutW, 2);
-            file.read((byte*)&clutH, 2);
+            uint16 clutW = stream.ReadUint16();
+            uint16 clutH = stream.ReadUint16();
 
             // Read color values.
             uint clutCount = clutW * clutH;
             clut.resize(clutCount);
-            file.read((byte*)clut.data(), clutCount * 2);
+            stream.ReadArray(ToSpan(clut));
         }
 
         // Read image data header (unused).
-        uint32 imageSize = 0;
-        file.read((byte*)&imageSize, 4);
+        uint32 imageSize = stream.ReadUint32();;
 
         // Read frame buffer coordinates (unused).
-        uint16 imageX = 0;
-        uint16 imageY = 0;
-        file.read((byte*)&imageX, 2);
-        file.read((byte*)&imageY, 2);
+        uint16 imageX = stream.ReadUint16();
+        uint16 imageY = stream.ReadUint16();
 
         // Read image dimensions.
-        uint16 imageW = 0;
-        uint16 imageH = 0;
-        file.read((byte*)&imageW, 2);
-        file.read((byte*)&imageH, 2);
+        uint16 imageW = stream.ReadUint16();
+        uint16 imageH = stream.ReadUint16();
 
         // Define BPP.
         auto bpp = BitsPerPixel::Bpp4;
@@ -176,8 +166,8 @@ namespace Silent::Assets
                     default:
                     case BitsPerPixel::Bpp4:
                     {
-                        uint16 colors = 0;
-                        file.read((byte*)&colors, 2);
+                        // Read colors.
+                        uint16 colors = stream.ReadUint16();
 
                         for (int i = 0; i < 4 && x < res.x; i++, x++)
                         {
@@ -197,9 +187,8 @@ namespace Silent::Assets
                     }
                     case BitsPerPixel::Bpp8:
                     {
-                        // Read color data.
-                        uint idx = 0;
-                        file.read((byte*)&idx, 1);
+                        // Read color index.
+                        uint8 idx = stream.ReadUint8();
                         
                         // Set pixel.
                         if (clut.empty())
@@ -221,8 +210,7 @@ namespace Silent::Assets
                     case BitsPerPixel::Bpp16:
                     {
                         // Read color.
-                        uint16 color = 0;
-                        file.read((byte*)&color, 2);
+                        uint16 color = stream.ReadUint16();
 
                         // Set pixel.
                         SetPixelColor(x, y, color);

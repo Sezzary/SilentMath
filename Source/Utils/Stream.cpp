@@ -87,6 +87,13 @@ namespace Silent::Utils
         return val;
     }
 
+    int8 Stream::ReadInt8()
+    {
+        int8 val = 0;
+        Read((int8*)&val, sizeof(int8));
+        return val;
+    }
+
     int16 Stream::ReadInt16()
     {
         int16 val = 0;
@@ -106,6 +113,11 @@ namespace Silent::Utils
         int64 val = 0;
         Read((byte*)&val, sizeof(int64));
         return val;
+    }
+
+    uint8 Stream::ReadUint8()
+    {
+        return (uint8)ReadInt8();
     }
 
     uint16 Stream::ReadUint16()

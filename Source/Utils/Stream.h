@@ -83,6 +83,12 @@ namespace Silent::Utils
          */
         byte ReadByte();
 
+        /** @brief Reads an 8-bit integer from the data stream and increments the file pointer.
+         *
+         * @return `int8` data.
+         */
+        int8 ReadInt8();
+
         /** @brief Reads a 16-bit integer from the data stream and increments the file pointer.
          *
          * @return `int16` data.
@@ -100,6 +106,12 @@ namespace Silent::Utils
          * @return `int64` data.
          */
         int64 ReadInt64();
+
+        /** @brief Reads an 8-bit unsigned integer from the data stream and increments the file pointer.
+         *
+         * @return `uint8` data.
+         */
+        uint8 ReadUint8();
 
         /** @brief Reads a 16-bit unsigned integer from the data stream and increments the file pointer.
          *
