@@ -17,6 +17,7 @@ namespace Silent::Assets
         Bpp16
     };
 
+    /** @brief TIM color flags. */
     enum class TimFlags
     {
         Bpp4    = 0,
@@ -147,7 +148,7 @@ namespace Silent::Assets
             .Pixels     = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT)
         };
 
-        auto setPixelColor = [&](int x, int y, uint16 color)
+        auto SetPixelColor = [&](int x, int y, uint16 color)
         {
             // Collect extracted RGBA components.
             byte* out = &asset.Pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
@@ -155,7 +156,14 @@ namespace Silent::Assets
             out[1]    = ((color >> 5) & 0x1F) << 3;                 // G.
             out[2]    = ((color >> 10) & 0x1F) << 3;                // R.
             out[3]    = (color & TRANSPARENT_COLOR_FLAG) ? 255 : 0; // A.
-            // @todo (0, 248, 0) is treated as pure black? Some textures have these bright-green areas.
+
+            // Interpret R0, G248, B0 as black. @todo Check if this is really required for some textures.
+            if (out[0] == 0   && // B.
+                out[1] == 248 && // G.
+                out[2] == 0)     // R.
+            {
+                out[1] = 0;
+            }
         };
 
         // Read pixels.
@@ -177,12 +185,12 @@ namespace Silent::Assets
                             if (clut.empty())
                             {
                                 uint16 color = idx * (0xFFFF / 0xF);
-                                setPixelColor(x, y, color);
+                                SetPixelColor(x, y, color);
                             }
                             else
                             {
                                 uint16 color = clut[idx];
-                                setPixelColor(x, y, color);
+                                SetPixelColor(x, y, color);
                             }
                         }
                         break;
@@ -198,13 +206,13 @@ namespace Silent::Assets
                         {
                             // Grayscale color `[0, 255]`.
                             uint16 color = idx * (0xFFFF / 0xFF);
-                            setPixelColor(x, y, color);
+                            SetPixelColor(x, y, color);
                         }
                         else
                         {
                             // CLUT color.
                             uint16 color = clut[idx];
-                            setPixelColor(x, y, color);
+                            SetPixelColor(x, y, color);
                         }
 
                         x++;
@@ -217,7 +225,7 @@ namespace Silent::Assets
                         file.read((byte*)&color, 2);
 
                         // Set pixel.
-                        setPixelColor(x, y, color);
+                        SetPixelColor(x, y, color);
 
                         x++;
                         break;
