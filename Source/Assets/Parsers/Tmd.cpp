@@ -1,8 +1,14 @@
 #include "Framework.h"
 #include "Assets/Parsers/Tmd.h"
 
+#include "Utils/Stream.h"
+#include "Utils/Utils.h"
+
+using namespace Silent::Utils;
+
 namespace Silent::Assets
 {
+    /** @brief TMD mesh metadata. */
     struct MeshMetadata
     {
         uint32 VertexOffset    = 0;
@@ -19,42 +25,39 @@ namespace Silent::Assets
         constexpr int FIXP_FLAG = 1 << 0;
 
         // Read file.
-        auto file = std::ifstream(filename, std::ios::binary);
-        if (!file.is_open())
+        auto stream = Stream(filename, true, false);
+        if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open TMD `{}`.", filename.string()));
         }
 
         // Read version (unused).
-        uint32 ver = 0;
-        file.read((byte*)&ver, 4);
+        uint32 ver = stream.ReadUint32();
 
         // Read flags.
-        uint32 flags = 0;
-        file.read((byte*)&flags, 4);
+        uint32 flags = stream.ReadUint32();
 
         // Read mesh count.
-        uint16 meshCount = 0;
-        file.read((byte*)&meshCount, 2);
+        uint16 meshCount = stream.ReadUint16();
 
         // Read mesh metadatas.
         auto metadatas = std::vector<MeshMetadata>(meshCount);
         for (auto& metadata : metadatas)
         {
             // Read vertex data.
-            file.read((byte*)&metadata.VertexOffset, 4);
-            file.read((byte*)&metadata.VertexCount, 4);
+            metadata.VertexOffset = stream.ReadUint32();
+            metadata.VertexCount  = stream.ReadUint32();
 
             // Read normal data.
-            file.read((byte*)&metadata.NormalOffset, 4);
-            file.read((byte*)&metadata.NormalCount, 4);
+            metadata.NormalOffset = stream.ReadUint32();
+            metadata.NormalCount  = stream.ReadUint32();
 
             // Read primitive data.
-            file.read((byte*)&metadata.PrimitiveOffset, 4);
-            file.read((byte*)&metadata.PrimitiveCount, 4);
+            metadata.PrimitiveOffset = stream.ReadUint32();
+            metadata.PrimitiveCount  = stream.ReadUint32();
 
             // Read scale.
-            file.read((byte*)&metadata.Scale, 4);
+            metadata.Scale = stream.ReadUint32();
 
             if (!(flags & FIXP_FLAG))
             {
@@ -79,14 +82,10 @@ namespace Silent::Assets
             for (int j = 0; j < metadata.VertexCount; j++)
             {
                 // Read components.
-                int16 x   = 0;
-                int16 y   = 0;
-                int16 z   = 0;
-                int16 pad = 0;
-                file.read((byte*)&x, 2);
-                file.read((byte*)&y, 2);
-                file.read((byte*)&z, 2);
-                file.read((byte*)&pad, 2);
+                int16 x   = stream.ReadInt16();
+                int16 y   = stream.ReadInt16();
+                int16 z   = stream.ReadInt16();
+                int16 pad = stream.ReadInt16();
 
                 // Collect vertex.
                 mesh.Vertices.push_back(Vector3(x, y, z));
@@ -97,14 +96,10 @@ namespace Silent::Assets
             for (int j = 0; j < metadata.NormalCount; j++)
             {
                 // Read components.
-                int16 x   = 0;
-                int16 y   = 0;
-                int16 z   = 0;
-                int16 pad = 0;
-                file.read((byte*)&x, 2);
-                file.read((byte*)&y, 2);
-                file.read((byte*)&z, 2);
-                file.read((byte*)&pad, 2);
+                int16 x   = stream.ReadInt16();
+                int16 y   = stream.ReadInt16();
+                int16 z   = stream.ReadInt16();
+                int16 pad = stream.ReadInt16();
 
                 // Collect normal.
                 auto normal = Vector3::Normalize((Vector3(x, y, z) / 4096.0f));
@@ -116,33 +111,22 @@ namespace Silent::Assets
             for (int j = 0; j < metadata.PrimitiveCount; j++)
             {
                 // Read attributes.
-                int8 olen  = 0;
-                int8 ilen  = 0;
-                int8 flags = 0;
-                int8 mode  = 0;
-                file.read((byte*)&olen, 1);
-                file.read((byte*)&ilen, 1);
-                file.read((byte*)&flags, 1);
-                file.read((byte*)&mode, 1);
+                int8 olen  = stream.ReadInt8();
+                int8 ilen  = stream.ReadInt8();
+                int8 flags = stream.ReadInt8();
+                int8 mode  = stream.ReadInt8();
 
                 //????
 
-
                 // Read vertex indices.
-                /*uint16 vertIdx0 = 0;
-                uint16 vertIdx1 = 0;
-                uint16 vertIdx2 = 0;
-                file.read((byte*)&vertIdx0, 2);
-                file.read((byte*)&vertIdx1, 2);
-                file.read((byte*)&vertIdx2, 2);
+                /*uint16 vertIdx0 = stream.ReadUnt16();
+                uint16 vertIdx1 = stream.ReadUnt16();
+                uint16 vertIdx2 = stream.ReadUnt16();
 
                 // Read normal indices.
-                uint16 normalIdx0 = 0;
-                uint16 normalIdx1 = 0;
-                uint16 normalIdx2 = 0;
-                file.read((byte*)&normalIdx0, 2);
-                file.read((byte*)&normalIdx1, 2);
-                file.read((byte*)&normalIdx2, 2);
+                uint16 normalIdx0 = stream.ReadUnt16();
+                uint16 normalIdx1 = stream.ReadUnt16();
+                uint16 normalIdx2 = stream.ReadUnt16();
 
                 // Collect triangle;
                 mesh.Triangles.push_back(TmdAsset::Triangle

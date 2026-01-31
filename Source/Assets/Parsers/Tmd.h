@@ -34,6 +34,7 @@ namespace Silent::Assets
         std::vector<TmdPrimitive> Primitives = {};
     };
 
+    /** @brief TMD asset data. */
     struct TmdAsset
     {
         struct Triangle

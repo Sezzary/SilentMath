@@ -37,14 +37,14 @@ namespace Silent::Assets
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Couldn't open TIM `{}`.", filename.string()));
+            throw std::runtime_error(Fmt("Failed to open TIM `{}`.", filename.string()));
         }
 
         // Confirm TIM format magic.
         uint32 magic = stream.ReadUint32();
         if (magic != HEADER_MAGIC)
         {
-            throw std::runtime_error(Fmt("Invalid TIM `{}`.", filename.string()));
+            throw std::runtime_error(Fmt("Failed to parse invalid TIM `{}`.", filename.string()));
         }
 
         // Read CLUT and BPP flags.
