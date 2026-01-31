@@ -47,6 +47,16 @@ namespace Silent::Utils
         return size;
     }
 
+    int Stream::GetPosition()
+    {
+        if (!IsOpen())
+        {
+            return NO_VALUE;
+        }
+
+        return (int)_stream.tellg();
+    }
+
     bool Stream::IsOpen() const
     {
         return _stream.is_open();
@@ -55,6 +65,16 @@ namespace Silent::Utils
     bool Stream::IsEndOfFile() const
     {
         return _stream.eof();
+    }
+
+    void Stream::Seek(int pos)
+    {
+        if (!IsOpen())
+        {
+            return;
+        }
+
+        _stream.seekg(pos, std::fstream::beg);
     }
 
     void Stream::Close()

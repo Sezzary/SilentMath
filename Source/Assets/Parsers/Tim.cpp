@@ -103,7 +103,7 @@ namespace Silent::Assets
             }
             default:
             {
-                std::runtime_error("TIM has no BPP flags.");
+                std::runtime_error("Failed to read TIM with no BPP flags.");
             }
         }
 

@@ -2,30 +2,26 @@
 
 namespace Silent::Assets
 {
-    struct TmdQuad
-    {
-
-    };
-
+    /** @brief TMD triangle primitive. */
     struct TmdTriangle
     {
+        std::array<int, 3> VertexIdxs = {};
+        std::array<int, 3> NormalIdxs = {};
 
+        std::string TextureName = {};
     };
 
-    struct TmdLine
+    /** @brief TMD quad primitive. */
+    struct TmdQuad
     {
+        std::array<int, 4> VertexIdxs = {};
+        std::array<int, 4> NormalIdxs = {};
 
+        std::string TextureName = {};
     };
 
-    struct TmdSprite
-    {
-
-    };
-
-    using TmdPrimitive = std::variant<TmdQuad,
-                                      TmdTriangle,
-                                      TmdLine,
-                                      TmdSprite>;
+    using TmdPrimitive = std::variant<TmdTriangle,
+                                      TmdQuad>;
 
     struct TmdMesh
     {
@@ -37,22 +33,7 @@ namespace Silent::Assets
     /** @brief TMD asset data. */
     struct TmdAsset
     {
-        struct Triangle
-        {
-            static constexpr int TRI_VERTEX_COUNT = 3;
-
-            std::array<int, TRI_VERTEX_COUNT> Vertices = {};
-            std::array<int, TRI_VERTEX_COUNT> Normals  = {};
-        };
-
-        struct Mesh
-        {
-            std::vector<Vector3>  Vertices  = {};
-            std::vector<Vector3>  Normals   = {};
-            std::vector<Triangle> Triangles = {};
-        };
-
-        std::vector<Mesh> Meshes = {};
+        std::vector<TmdMesh> Meshes = {};
     };
 
     /** @brief Parses a TMD file to a usable asset.

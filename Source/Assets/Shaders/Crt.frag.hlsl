@@ -20,12 +20,15 @@ cbuffer UniformBlock : register(b0, space3)
 float4 main(Input input) : SV_Target
 {
     float2 uv = input.Position.xy / Resolution.xy;
-    
+
     // Add color variation.
     float3 color;
-    color.r = Texture.Sample(Sampler, float2(uv.x + 0.001f, uv.y + 0.001f)).x + 0.05f;
-    color.g = Texture.Sample(Sampler, float2(uv.x,          uv.y - 0.002f)).y + 0.05f;
-    color.b = Texture.Sample(Sampler, float2(uv.x - 0.002f, uv.y)).z          + 0.05f;
+    color.r = Texture.Sample(Sampler, float2(uv.x, uv.y)).x;
+    color.g = Texture.Sample(Sampler, float2(uv.x, uv.y)).y;
+    color.b = Texture.Sample(Sampler, float2(uv.x, uv.y)).z;
+    //color.r = Texture.Sample(Sampler, float2(uv.x + 0.001f, uv.y + 0.001f)).x + 0.05f;
+    //color.g = Texture.Sample(Sampler, float2(uv.x,          uv.y - 0.002f)).y + 0.05f;
+    //color.b = Texture.Sample(Sampler, float2(uv.x - 0.002f, uv.y)).z          + 0.05f;
 
     // Add color variation.
     color.r += 0.08f * Texture.Sample(Sampler, (0.75f * float2(0.025f,  -0.027f)) + float2(uv.x + 0.001f, uv.y + 0.001f)).x;
