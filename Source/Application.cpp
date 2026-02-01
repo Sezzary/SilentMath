@@ -192,6 +192,14 @@ namespace Silent
         _work.Toaster.Add(_work.Translator((PLATFORM_TYPE == PlatformType::MacOs) ? KEY_SYS_FULLSCREEN_HINT_MAC : KEY_SYS_FULLSCREEN_HINT_GENERIC));
 
         Debug::Log("Startup complete.");
+
+        const auto& asset = _work.Assets.GetAsset("ITEM/UNQE1.TMD");
+        const auto data = asset->GetData<TmdAsset>();
+        Debug::Log(Fmt("Name: {}", data->TextureName));
+        Debug::Log(Fmt("Meshes: {}", data->Meshes.size()));
+        Debug::Log(Fmt("Positions: {}", data->Meshes[0].Positions.size()));
+        Debug::Log(Fmt("Normals: {}", data->Meshes[0].Normals.size()));
+        Debug::Log(Fmt("Prims: {}", data->Meshes[0].Primitives.size()));
     }
 
     void ApplicationManager::Deinitialize()

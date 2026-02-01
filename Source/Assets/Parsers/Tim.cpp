@@ -10,8 +10,8 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    /** @brief Bits per pixel types. */
-    enum class BitsPerPixel
+    /** @brief TIM bits per pixel types. */
+    enum class TimBppType
     {
         Bpp4,
         Bpp8,
@@ -83,22 +83,22 @@ namespace Silent::Assets
         uint16 imageH = stream.ReadUint16();
 
         // Define BPP.
-        auto bpp = BitsPerPixel::Bpp4;
+        auto bpp = TimBppType::Bpp4;
         switch ((TimFlags)(flags & BPP_MASK))
         {
             case TimFlags::Bpp4:
             {
-                bpp = BitsPerPixel::Bpp4;
+                bpp = TimBppType::Bpp4;
                 break;
             }
             case TimFlags::Bpp8:
             {
-                bpp = BitsPerPixel::Bpp8;
+                bpp = TimBppType::Bpp8;
                 break;
             }
             case TimFlags::Bpp16:
             {
-                bpp = BitsPerPixel::Bpp16;
+                bpp = TimBppType::Bpp16;
                 break;
             }
             default:
@@ -111,17 +111,17 @@ namespace Silent::Assets
         int widthCoeff = 1;
         switch (bpp)
         {
-            case BitsPerPixel::Bpp4:
+            case TimBppType::Bpp4:
             {
                 widthCoeff = 4;
                 break;
             }
-            case BitsPerPixel::Bpp8:
+            case TimBppType::Bpp8:
             {
                 widthCoeff = 2;
                 break;
             }
-            case BitsPerPixel::Bpp16:
+            case TimBppType::Bpp16:
             {
                 widthCoeff = 1;
                 break;
@@ -164,7 +164,7 @@ namespace Silent::Assets
                 switch (bpp)
                 {
                     default:
-                    case BitsPerPixel::Bpp4:
+                    case TimBppType::Bpp4:
                     {
                         // Read colors.
                         uint16 colors = stream.ReadUint16();
@@ -185,7 +185,7 @@ namespace Silent::Assets
                         }
                         break;
                     }
-                    case BitsPerPixel::Bpp8:
+                    case TimBppType::Bpp8:
                     {
                         // Read color index.
                         uint8 idx = stream.ReadUint8();
@@ -207,7 +207,7 @@ namespace Silent::Assets
                         x++;
                         break;
                     }
-                    case BitsPerPixel::Bpp16:
+                    case TimBppType::Bpp16:
                     {
                         // Read color.
                         uint16 color = stream.ReadUint16();

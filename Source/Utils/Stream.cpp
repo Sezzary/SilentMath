@@ -54,6 +54,7 @@ namespace Silent::Utils
             return NO_VALUE;
         }
 
+        Debug::Log(Fmt("tellg {}", (int)_stream.tellg()));
         return (int)_stream.tellg();
     }
 
@@ -75,6 +76,10 @@ namespace Silent::Utils
         }
 
         _stream.seekg(pos, std::fstream::beg);
+        if (_stream.fail())
+        {
+            Debug::Log(Fmt("Failed to seek binary file data stream to position {}.", pos), Debug::LogLevel::Error);
+        }
     }
 
     void Stream::Close()

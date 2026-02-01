@@ -22,7 +22,7 @@ namespace Silent::Assets
         Gradation   = 1 << 2
     };
 
-    /** @brief TMD primitive mode flags. */
+    /** @brief TMD packed primitive modes. */
     enum class TmdPrimitiveModes
     {
         Brightness      = 1 << 0,
@@ -52,6 +52,19 @@ namespace Silent::Assets
         uint32 PrimitiveCount  = 0;
         uint32 Scale           = 0;
     };
+
+    /** @brief Interprets a packed TMD vertex color.
+     *
+     * @param color Packed color.
+     * @return Color.
+     */
+    static Color GetTmdVertexColor(uint32 color)
+    {
+        return Color::From8Bit(color & UCHAR_MAX,
+                               (color >> 8) & UCHAR_MAX,
+                               (color >> 16) & UCHAR_MAX,
+                               ((color >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f));
+    }
 
     std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename)
     {
@@ -242,22 +255,10 @@ namespace Silent::Assets
                                 // Compute normalized colors.
                                 colors =
                                 {
-                                    Color::From8Bit(color0 & UCHAR_MAX,
-                                                    (color0 >> 8) & UCHAR_MAX,
-                                                    (color0 >> 16) & UCHAR_MAX,
-                                                    ((color0 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
-                                    Color::From8Bit(color1 & UCHAR_MAX,
-                                                    (color1 >> 8) & UCHAR_MAX,
-                                                    (color1 >> 16) & UCHAR_MAX,
-                                                    ((color1 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
-                                    Color::From8Bit(color2 & UCHAR_MAX,
-                                                    (color2 >> 8) & UCHAR_MAX,
-                                                    (color2 >> 16) & UCHAR_MAX,
-                                                    ((color2 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
-                                    Color::From8Bit(color3 & UCHAR_MAX,
-                                                    (color3 >> 8) & UCHAR_MAX,
-                                                    (color3 >> 16) & UCHAR_MAX,
-                                                    ((color3 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                    GetTmdVertexColor(color0),
+                                    GetTmdVertexColor(color1),
+                                    GetTmdVertexColor(color2),
+                                    GetTmdVertexColor(color3)
                                 };
                             }
 
@@ -289,7 +290,7 @@ namespace Silent::Assets
                             }
 
                             // Collect quad.
-                            mesh.Primitives.push_back(TmdQuad
+                            mesh.Primitives.push_back(TmdPrimitive
                             {
                                 .Vertices =
                                 {
@@ -359,18 +360,9 @@ namespace Silent::Assets
                                 // Compute normalized colors.
                                 colors =
                                 {
-                                    Color::From8Bit(color0 & UCHAR_MAX,
-                                                    (color0 >> 8) & UCHAR_MAX,
-                                                    (color0 >> 16) & UCHAR_MAX,
-                                                    ((color0 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
-                                    Color::From8Bit(color1 & UCHAR_MAX,
-                                                    (color1 >> 8) & UCHAR_MAX,
-                                                    (color1 >> 16) & UCHAR_MAX,
-                                                    ((color1 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
-                                    Color::From8Bit(color2 & UCHAR_MAX,
-                                                    (color2 >> 8) & UCHAR_MAX,
-                                                    (color2 >> 16) & UCHAR_MAX,
-                                                    ((color2 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f))
+                                    GetTmdVertexColor(color0),
+                                    GetTmdVertexColor(color1),
+                                    GetTmdVertexColor(color2)
                                 };
                             }
 
@@ -400,7 +392,7 @@ namespace Silent::Assets
                             }
 
                             // Collect triangle.
-                            mesh.Primitives.push_back(TmdTriangle
+                            mesh.Primitives.push_back(TmdPrimitive
                             {
                                 .Vertices =
                                 {

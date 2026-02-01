@@ -2,7 +2,7 @@
 
 namespace Silent::Assets
 {
-    /** @brief TMD vertex. */
+    /** @brief TMD indexed vertex. */
     struct TmdVertex
     {
         int     PositionIdx = 0;
@@ -11,34 +11,28 @@ namespace Silent::Assets
         Color   Col         = Color::Clear;
     };
 
-    /** @brief TMD triangle primitive. */
-    struct TmdTriangle
+    /** @brief TMD triangle or quad primitive. */
+    struct TmdPrimitive
     {
-        std::array<TmdVertex, TRI_VERTEX_COUNT> Vertices = {};
+        std::vector<TmdVertex> Vertices = {};
     };
-
-    /** @brief TMD quad primitive. */
-    struct TmdQuad
-    {
-        std::array<TmdVertex, QUAD_VERTEX_COUNT> Vertices = {};
-    };
-
-    using TmdPrimitive = std::variant<TmdTriangle,
-                                      TmdQuad>;
 
     /** @brief TMD mesh. */
     struct TmdMesh
     {
-        std::vector<Vector3>      Positions  = {};
-        std::vector<Vector3>      Normals    = {};
-        std::vector<TmdPrimitive> Primitives = {};
+        std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
+        std::vector<Vector3>      Positions   = {};
+        std::vector<Vector3>      Normals     = {};
+        // @todo Indexed UVs and colours?
+        //std::vector<Vector2>      Uvs         = {};
+        //std::vector<Color>        Colors      = {};
+        std::vector<TmdPrimitive> Primitives  = {};
     };
 
     /** @brief TMD asset data. */
     struct TmdAsset
     {
-        std::vector<TmdMesh> Meshes      = {};
-        std::string          TextureName = {};
+        std::vector<TmdMesh> Meshes = {};
     };
 
     /** @brief Parses a TMD asset file.
