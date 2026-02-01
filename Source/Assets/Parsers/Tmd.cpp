@@ -8,21 +8,29 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    enum class TmdMeshFlags
+    /** @brief TMD flags. */
+    enum class TmdFlags
+    {
+        Fixp = 1 << 0
+    };
+
+    /** @brief TMD primitive flags. */
+    enum class TmdPrimitiveFlags
     {
         LightSource = 1 << 0,
         TwoSided    = 1 << 1,
         Gradation   = 1 << 2
     };
 
-    enum class TmdModes
+    /** @brief TMD primitive mode flags. */
+    enum class TmdPrimitiveModes
     {
         Brightness      = 1 << 0,
         SemiTransparent = 1 << 1,
         Textured        = 1 << 2,
-        Quad            = 1 << 3,                         /** 0: triangle, 1: quad. */
-        Gouraud         = 1 << 4,                         /** 0: flat, 1: gouraud. */
-        Primitive       = (1 << 5) | (1 << 6) | (1 << 7)  /** Spans 3 bits. 1: polygon (triangle/quad), 2: line, 3: sprite. */
+        Quad            = 1 << 3,                         /** 0: Triangle, 1: Quad. */
+        Gouraud         = 1 << 4,                         /** 0: Flat, 1: Gouraud. */
+        Primitive       = (1 << 5) | (1 << 6) | (1 << 7)  /** Spans 3 bits. 1: Polygon (triangle/quad), 2: Line, 3: Sprite. */
     };
 
     /** TMD primitive types. */
@@ -49,7 +57,6 @@ namespace Silent::Assets
     {
         constexpr int HDR_SIZE      = sizeof(uint32) * 3;
         constexpr int MESH_HDR_SIZE = sizeof(TmdMesh);
-        constexpr int FIXP_FLAG     = 1 << 0;
 
         // Read file.
         auto stream = Stream(filename, true, false);
@@ -66,30 +73,31 @@ namespace Silent::Assets
         // Compute base data address.
         int baseAddr = HDR_SIZE + (meshCount * MESH_HDR_SIZE);
 
-        // Read meshes.
+        // Read meshe descriptions.
         auto meshDescs = std::vector<TmdMeshDesc>(meshCount);
-        for (auto& mDescesh : meshDescs)
+        for (auto& meshDesc : meshDescs)
         {
             // Read vertex data.
-            mDescesh.VertexOffset = stream.ReadUint32();
-            mDescesh.VertexCount  = stream.ReadUint32();
+            meshDesc.VertexOffset = stream.ReadUint32();
+            meshDesc.VertexCount  = stream.ReadUint32();
 
             // Read normal data.
-            mDescesh.NormalOffset = stream.ReadUint32();
-            mDescesh.NormalCount  = stream.ReadUint32();
+            meshDesc.NormalOffset = stream.ReadUint32();
+            meshDesc.NormalCount  = stream.ReadUint32();
 
             // Read primitive data.
-            mDescesh.PrimitiveOffset = stream.ReadUint32();
-            mDescesh.PrimitiveCount  = stream.ReadUint32();
+            meshDesc.PrimitiveOffset = stream.ReadUint32();
+            meshDesc.PrimitiveCount  = stream.ReadUint32();
 
             // Read scale (unused).
-            mDescesh.Scale = stream.ReadUint32();
+            meshDesc.Scale = stream.ReadUint32();
 
-            if (flags & FIXP_FLAG)
+            // Adjust offsets.
+            if (flags & (int)TmdFlags::Fixp)
             {
-                mDescesh.VertexOffset    -= baseAddr;
-                mDescesh.NormalOffset    -= baseAddr;
-                mDescesh.PrimitiveOffset -= baseAddr;
+                meshDesc.VertexOffset    -= baseAddr;
+                meshDesc.NormalOffset    -= baseAddr;
+                meshDesc.PrimitiveOffset -= baseAddr;
             }
         }
 
@@ -105,9 +113,9 @@ namespace Silent::Assets
             const auto& meshDesc = meshDescs[i];
             auto&       mesh     = asset.Meshes[i];
 
-            // Read vertices.
+            // Read vertex positions.
             stream.Seek(baseAddr + meshDesc.VertexOffset);
-            mesh.Vertices.reserve(meshDesc.VertexCount);
+            mesh.Positions.reserve(meshDesc.VertexCount);
             for (int j = 0; j < meshDesc.VertexCount; j++)
             {
                 // Read components.
@@ -116,11 +124,11 @@ namespace Silent::Assets
                 int16 z = stream.ReadInt16();
                 stream.ReadInt16(); // Padding.
 
-                // Collect vertex.
-                mesh.Vertices.push_back(Vector3(x, y, z));
+                // Collect position.
+                mesh.Positions.push_back(Vector3(x, y, z));
             }
 
-            // Read normals.
+            // Read vertex normals.
             stream.Seek(baseAddr + meshDesc.NormalOffset);
             mesh.Normals.reserve(meshDesc.NormalCount);
             for (int j = 0; j < meshDesc.NormalCount; j++)
@@ -131,7 +139,7 @@ namespace Silent::Assets
                 int16 z = stream.ReadInt16();
                 stream.ReadInt16(); // Padding.
 
-                // Collect normal.
+                // Collect normalized normal.
                 auto normal = Vector3::Normalize(Vector3(x, y, z));
                 mesh.Normals.push_back(normal);
             }
@@ -142,7 +150,7 @@ namespace Silent::Assets
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
-                int8 olen  = stream.ReadInt8();
+                int8 olen  = stream.ReadInt8(); // Unused.
                 int8 ilen  = stream.ReadInt8();
                 int8 flags = stream.ReadInt8();
                 int8 mode  = stream.ReadInt8();
@@ -151,63 +159,120 @@ namespace Silent::Assets
                 int nextPrimPos = stream.GetPosition() + (ilen * 4);
 
                 // Read polygon.
-                auto primType = (TmdPrimitiveType)((mode & (int)TmdModes::Primitive) >> 5);
+                auto primType = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
                 switch (primType)
                 {
                     case TmdPrimitiveType::Polygon:
                     {
-                        // @todo
-                        if (mode & (int)TmdModes::Textured)
+                        // Read quad/triangle attributes.
+                        if (mode & (int)TmdPrimitiveModes::Quad)
                         {
-                            uint8  u0  = stream.ReadUint8();
-                            uint8  v0  = stream.ReadUint8();
-                            uint16 cba = stream.ReadUint16(); // CLUT attribute.
-
-                            uint8  u1  = stream.ReadUint8();
-                            uint8  v1  = stream.ReadUint8();
-                            uint16 tsb = stream.ReadUint16(); // Texture Page attribute.
-
-                            uint8 u2 = stream.ReadUint8();
-                            uint8 v2 = stream.ReadUint8();
-                            stream.ReadUint16(); // Padding.
-
-                            if (mode & (int)TmdModes::Quad)
+                            // Read vertex UVs and colors.
+                            auto uvs    = std::array<Vector2, QUAD_VERTEX_COUNT>{};
+                            auto colors = std::array<Color,   QUAD_VERTEX_COUNT>{};
+                            if (mode & (int)TmdPrimitiveModes::Textured)
                             {
+                                // Read UV0.
+                                uint8 u0 = stream.ReadUint8();
+                                uint8 v0 = stream.ReadUint8();
+
+                                // @todo
+                                // Read CLUT attribute.
+                                uint16 cba = stream.ReadUint16();
+
+                                // Read UV1.
+                                uint8 u1 = stream.ReadUint8();
+                                uint8 v1 = stream.ReadUint8();
+
+                                // @todo How to assign a texture then?
+                                // Read texture page attribute. Unused.
+                                uint16 tsb = stream.ReadUint16();
+
+                                // Read UV2.
+                                uint8 u2 = stream.ReadUint8();
+                                uint8 v2 = stream.ReadUint8();
+                                stream.ReadUint16(); // Padding.
+
+                                // Read UV3.
                                 uint8 u3 = stream.ReadUint8();
                                 uint8 v3 = stream.ReadUint8();
                                 stream.ReadUint16(); // Padding.
-                            }
-                        }
-                        else
-                        {
-                            // Read first color.
-                            uint32 color0 = stream.ReadUint32(); 
 
-                            if (mode & (int)TmdModes::Gouraud)
-                            {
-                                uint32 color1 = stream.ReadUint32();
-                                uint32 color2 = stream.ReadUint32();
-                                if (mode & (int)TmdModes::Quad)
+                                // Compute normalized UVs.
+                                uvs =
                                 {
-                                    uint32 color3 = stream.ReadUint32();
-                                }
+                                    Vector2(u0, v0) / UCHAR_MAX,
+                                    Vector2(u1, v1) / UCHAR_MAX,
+                                    Vector2(u2, v2) / UCHAR_MAX,
+                                    Vector2(u3, v3) / UCHAR_MAX
+                                };
+
+                                // Set plain colors.
+                                colors =
+                                {
+                                    Color::White,
+                                    Color::White,
+                                    Color::White,
+                                    Color::White
+                                };
                             }
-                        }
+                            else
+                            {
+                                // Read colors.
+                                uint32 color0 = 0;
+                                uint32 color1 = 0;
+                                uint32 color2 = 0;
+                                uint32 color3 = 0;
+                                if (mode & (int)TmdPrimitiveModes::Gouraud)
+                                {
+                                    color0 = stream.ReadUint32();
+                                    color1 = stream.ReadUint32();
+                                    color2 = stream.ReadUint32();
+                                    color3 = stream.ReadUint32();
+                                }
+                                else
+                                {
+                                    color0 =
+                                    color1 =
+                                    color2 =
+                                    color3 = stream.ReadUint32();
+                                }
 
-                        if (mode & (int)TmdModes::Quad)
-                        {
-                            // Read vertex indices.
-                            uint16 vertIdx0 = stream.ReadUint16();
-                            uint16 vertIdx1 = stream.ReadUint16();
-                            uint16 vertIdx2 = stream.ReadUint16();
-                            uint16 vertIdx3 = stream.ReadUint16();
+                                // @todo Check what alpha component is supposed to be.
+                                // Compute normalized colors.
+                                colors =
+                                {
+                                    Color::From8Bit(color0 & UCHAR_MAX,
+                                                    (color0 >> 8) & UCHAR_MAX,
+                                                    (color0 >> 16) & UCHAR_MAX,
+                                                    ((color0 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                    Color::From8Bit(color1 & UCHAR_MAX,
+                                                    (color1 >> 8) & UCHAR_MAX,
+                                                    (color1 >> 16) & UCHAR_MAX,
+                                                    ((color1 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                    Color::From8Bit(color2 & UCHAR_MAX,
+                                                    (color2 >> 8) & UCHAR_MAX,
+                                                    (color2 >> 16) & UCHAR_MAX,
+                                                    ((color2 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                    Color::From8Bit(color3 & UCHAR_MAX,
+                                                    (color3 >> 8) & UCHAR_MAX,
+                                                    (color3 >> 16) & UCHAR_MAX,
+                                                    ((color3 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                };
+                            }
 
-                            // Read normal indices.
+                            // Read vertex position indices.
+                            uint16 posIdx0 = stream.ReadUint16();
+                            uint16 posIdx1 = stream.ReadUint16();
+                            uint16 posIdx2 = stream.ReadUint16();
+                            uint16 posIdx3 = stream.ReadUint16();
+
+                            // Read vertex normal indices.
                             uint16 normalIdx0 = 0;
                             uint16 normalIdx1 = 0;
                             uint16 normalIdx2 = 0;
                             uint16 normalIdx3 = 0;
-                            if (mode & (int)TmdModes::Gouraud)
+                            if (mode & (int)TmdPrimitiveModes::Gouraud)
                             {
                                 normalIdx0 = stream.ReadUint16();
                                 normalIdx1 = stream.ReadUint16();
@@ -220,44 +285,129 @@ namespace Silent::Assets
                                 normalIdx1 =
                                 normalIdx2 =
                                 normalIdx3 = stream.ReadUint16();
+                                stream.ReadUint16(); // Padding.
                             }
 
                             // Collect quad.
                             mesh.Primitives.push_back(TmdQuad
                             {
-                                .VertexIdxs = { vertIdx0,vertIdx1, vertIdx2, vertIdx3 },
-                                .NormalIdxs = { normalIdx0, normalIdx1, normalIdx2, normalIdx3 }
+                                .Vertices =
+                                {
+                                    TmdVertex{ posIdx0, normalIdx0, uvs[0], colors[0] },
+                                    TmdVertex{ posIdx1, normalIdx1, uvs[1], colors[1] },
+                                    TmdVertex{ posIdx2, normalIdx2, uvs[2], colors[2] },
+                                    TmdVertex{ posIdx3, normalIdx3, uvs[3], colors[3] }
+                                }
                             });
                         }
                         else
                         {
-                            // Read vertex indices.
-                            uint16 vertIdx0 = stream.ReadUint16();
-                            uint16 vertIdx1 = stream.ReadUint16();
-                            uint16 vertIdx2 = stream.ReadUint16();
+                            // Read vertex UVs and colors.
+                            auto uvs    = std::array<Vector2, TRI_VERTEX_COUNT>{};
+                            auto colors = std::array<Color,   TRI_VERTEX_COUNT>{};
+                            if (mode & (int)TmdPrimitiveModes::Textured)
+                            {
+                                // Read UV0.
+                                uint8 u0 = stream.ReadUint8();
+                                uint8 v0 = stream.ReadUint8();
 
-                            // Read normal indices.
+                                // @todo
+                                // Read CLUT attribute.
+                                uint16 cba = stream.ReadUint16();
+
+                                // Read UV1.
+                                uint8 u1 = stream.ReadUint8();
+                                uint8 v1 = stream.ReadUint8();
+
+                                // @todo How to assign a texture then?
+                                // Read texture page attribute. Unused.
+                                uint16 tsb = stream.ReadUint16();
+
+                                // Read UV2.
+                                uint8 u2 = stream.ReadUint8();
+                                uint8 v2 = stream.ReadUint8();
+                                stream.ReadUint16(); // Padding.
+
+                                // Compute normalized UVs.
+                                uvs =
+                                {
+                                    Vector2(u0, v0) / UCHAR_MAX,
+                                    Vector2(u1, v1) / UCHAR_MAX,
+                                    Vector2(u2, v2) / UCHAR_MAX
+                                };
+                            }
+                            else
+                            {
+                                // Read colors.
+                                uint32 color0 = 0;
+                                uint32 color1 = 0;
+                                uint32 color2 = 0;
+                                if (mode & (int)TmdPrimitiveModes::Gouraud)
+                                {
+                                    color0 = stream.ReadUint32();
+                                    color1 = stream.ReadUint32();
+                                    color2 = stream.ReadUint32();
+                                }
+                                else
+                                {
+                                    color0 =
+                                    color1 =
+                                    color2 = stream.ReadUint32();
+                                }
+
+                                // @todo Check what alpha component is supposed to be.
+                                // Compute normalized colors.
+                                colors =
+                                {
+                                    Color::From8Bit(color0 & UCHAR_MAX,
+                                                    (color0 >> 8) & UCHAR_MAX,
+                                                    (color0 >> 16) & UCHAR_MAX,
+                                                    ((color0 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                    Color::From8Bit(color1 & UCHAR_MAX,
+                                                    (color1 >> 8) & UCHAR_MAX,
+                                                    (color1 >> 16) & UCHAR_MAX,
+                                                    ((color1 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f)),
+                                    Color::From8Bit(color2 & UCHAR_MAX,
+                                                    (color2 >> 8) & UCHAR_MAX,
+                                                    (color2 >> 16) & UCHAR_MAX,
+                                                    ((color2 >> 24) & UCHAR_MAX) ? FP_COLOR(0.5f) : FP_COLOR(1.0f))
+                                };
+                            }
+
+                            // Read vertex position indices.
+                            uint16 posIdx0 = stream.ReadUint16();
+                            uint16 posIdx1 = stream.ReadUint16();
+                            uint16 posIdx2 = stream.ReadUint16();
+                            stream.ReadUint16(); // Padding.
+
+                            // Read vertex normal indices.
                             uint16 normalIdx0 = 0;
                             uint16 normalIdx1 = 0;
                             uint16 normalIdx2 = 0;
-                            if (mode & (int)TmdModes::Gouraud)
+                            if (mode & (int)TmdPrimitiveModes::Gouraud)
                             {
                                 normalIdx0 = stream.ReadUint16();
                                 normalIdx1 = stream.ReadUint16();
                                 normalIdx2 = stream.ReadUint16();
+                                stream.ReadUint16(); // Padding.
                             }
                             else
                             {
                                 normalIdx0 =
                                 normalIdx1 =
                                 normalIdx2 = stream.ReadUint16();
+                                stream.ReadUint16(); // Padding.
                             }
 
                             // Collect triangle.
                             mesh.Primitives.push_back(TmdTriangle
                             {
-                                .VertexIdxs = { vertIdx0, vertIdx1, vertIdx2 },
-                                .NormalIdxs = { normalIdx0, normalIdx1, normalIdx2 }
+                                .Vertices =
+                                {
+                                    TmdVertex{ posIdx0, normalIdx0, uvs[0], colors[0] },
+                                    TmdVertex{ posIdx1, normalIdx1, uvs[1], colors[1] },
+                                    TmdVertex{ posIdx2, normalIdx2, uvs[2], colors[2] }
+                                }
                             });
                         }
                         break;
@@ -273,6 +423,8 @@ namespace Silent::Assets
                 stream.Seek(nextPrimPos);
             }
         }
+
+        // @todo Sort primitives by CLUT for efficient batching when rendering. CLUT can be interpreted in a shader.
 
         return std::make_shared<TmdAsset>(std::move(asset));
     }
