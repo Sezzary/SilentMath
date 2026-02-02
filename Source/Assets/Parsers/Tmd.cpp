@@ -307,7 +307,7 @@ namespace Silent::Assets
 
                             // Get blend mode and color alpha.
                             float colorAlpha = 1.0f;
-                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, 
+                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha,
                                                          attribs.Mode & (int)TmdPrimitiveModes::Transparency,
                                                          (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
 
@@ -321,20 +321,23 @@ namespace Silent::Assets
                         else
                         {
                             // Get blend mode and color alpha.
-                            float alpha = 1.0f;
+                            float colorAlpha = 1.0f;
                             if (attribs.Mode & (int)TmdPrimitiveModes::Transparency)
                             {
-                                GetTmdBlendModeAndColorAlpha(blendMode, alpha, true, TmdBlendMode::AlphaHalf);
+                                GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, true, TmdBlendMode::AlphaHalf);
                             }
 
                             // Read colors.
-                            uint32 color = stream.ReadUint32();
                             for (int i = 0; i < vertCount; i++)
                             {
-                                colors[i] = ConvertTmdVertexColor(color, alpha);
-                                if (isGouraud && i < (vertCount - 1))
+                                if (isGouraud)
                                 {
-                                    color = stream.ReadUint32();
+                                    colors[i] = ConvertTmdVertexColor(stream.ReadUint32(), colorAlpha);
+                                }
+                                else
+                                {
+                                    colors[i] = (i == 0) ? ConvertTmdVertexColor(stream.ReadUint32(), colorAlpha) :
+                                                           colors.front();
                                 }
                             }
                         }
@@ -345,24 +348,25 @@ namespace Silent::Assets
                         {
                             idx = stream.ReadUint16();
                         }
-
                         if (vertCount == TRI_VERTEX_COUNT)
                         {
                             stream.ReadUint16(); // Padding.
                         }
 
                         // Read normal indices.
-                        auto   normalIdxs = std::vector<uint16>(vertCount);
-                        uint16 normalIdx  = stream.ReadUint16();
+                        auto normalIdxs = std::vector<uint16>(vertCount);
                         for (int i = 0; i < vertCount; i++)
                         {
-                            normalIdxs[i] = normalIdx;
-                            if (isGouraud && i < (vertCount - 1))
+                            if (isGouraud)
                             {
-                                normalIdx = stream.ReadUint16();
+                                normalIdxs[i] = stream.ReadUint16();
+                            }
+                            else
+                            {
+                                normalIdxs[i] = (i == 0) ? stream.ReadUint16() :
+                                                           normalIdxs.front();
                             }
                         }
-
                         if (!isGouraud || vertCount == TRI_VERTEX_COUNT)
                         {
                             stream.ReadUint16(); // Padding.
@@ -378,7 +382,7 @@ namespace Silent::Assets
                             prim.Vertices.push_back(TmdVertex
                             {
                                 .PositionIdx = posIdxs[i],
-                                .NormalIdx   = normalIdxs[i], 
+                                .NormalIdx   = normalIdxs[i],
                                 .UvIdx       = GetLookupIdx(uvLookup, uvs[i]),
                                 .ColorIdx    = GetLookupIdx(colorLookup, colors[i])
                             });
