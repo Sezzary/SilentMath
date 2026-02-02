@@ -11,23 +11,23 @@ namespace Silent::Assets
     /** @brief TMD flags. */
     enum class TmdFlags
     {
-        Fixp = 1 << 0
+        Fixp = 1 << 0 /** 0: Relative offset from mesh data block start, 1: Absolute offset from file start. */
     };
 
     /** @brief TMD primitive flags. */
     enum class TmdPrimitiveFlags
     {
-        LightSource = 1 << 0,
-        TwoSided    = 1 << 1,
-        Gradation   = 1 << 2
+        Lgt = 1 << 0, /** 0: Use light, 1: Use raw color. */
+        Fce = 1 << 1, /** 0: Single-sided, 1: Double-sided. */
+        Grd = 1 << 2  /** 0: Fixed color, 1: Gradient. */
     };
 
     /** @brief TMD packed primitive modes. */
     enum class TmdPrimitiveModes
     {
         Brightness      = 1 << 0,
-        SemiTransparent = 1 << 1,
-        Textured        = 1 << 2,
+        SemiTransparent = 1 << 1,                         /** 0: Solid, 1: Semi-transparent. */
+        Textured        = 1 << 2,                         /** 0: Untextured, 1: Textured. */
         Quad            = 1 << 3,                         /** 0: Triangle, 1: Quad. */
         Gouraud         = 1 << 4,                         /** 0: Flat, 1: Gouraud. */
         Primitive       = (1 << 5) | (1 << 6) | (1 << 7)  /** Spans 3 bits. 1: Polygon (triangle/quad), 2: Line, 3: Sprite. */
@@ -44,7 +44,7 @@ namespace Silent::Assets
     /** @brief TMD header. */
     struct TmdHeader
     {
-        uint32 Version   = 0;
+        uint32 Version   = 0; /** Unused. */
         uint32 Flags     = 0;
         uint32 MeshCount = 0;
     };
@@ -58,7 +58,16 @@ namespace Silent::Assets
         uint32 NormalCount     = 0;
         uint32 PrimitiveOffset = 0;
         uint32 PrimitiveCount  = 0;
-        uint32 Scale           = 0;
+        uint32 Scale           = 0; /** Unused. */
+    };
+
+    /** @brief TMD primitive attributes. */
+    struct TmdPrimitiveAttribs
+    {
+        int8 Olen  = 0; /** Unused. */
+        int8 Ilen  = 0; /** Packet size in words. */
+        int8 Flags = 0; /** `TmdPrimitiveFlags` */
+        int8 Mode  = 0; /** `TmdPrimitiveModes` */
     };
 
     /** @brief Converts a packed TMD RGB+code vertex color to a renderer color.
@@ -173,27 +182,30 @@ namespace Silent::Assets
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
-                int8 olen  = stream.ReadInt8(); // Unused.
-                int8 ilen  = stream.ReadInt8();
-                int8 flags = stream.ReadInt8();
-                int8 mode  = stream.ReadInt8();
+                auto attribs = TmdPrimitiveAttribs
+                {
+                    .Olen  = stream.ReadInt8(),
+                    .Ilen  = stream.ReadInt8(),
+                    .Flags = stream.ReadInt8(),
+                    .Mode  = stream.ReadInt8()
+                };
 
                 // Compute next primitive position.
-                int nextPrimPos = stream.GetPosition() + (ilen * 4);
+                int nextPrimPos = stream.GetPosition() + (attribs.Ilen * sizeof(int32));
 
-                // Read polygon.
-                auto primType = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
+                // Read primitive.
+                auto primType = (TmdPrimitiveType)((attribs.Mode & (int)TmdPrimitiveModes::Primitive) >> 5);
                 switch (primType)
                 {
                     case TmdPrimitiveType::Polygon:
                     {
                         // Read quad/triangle attributes.
-                        if (mode & (int)TmdPrimitiveModes::Quad)
+                        if (attribs.Mode & (int)TmdPrimitiveModes::Quad)
                         {
                             // Read vertex UVs and colors.
                             auto uvs    = std::array<Vector2, QUAD_VERTEX_COUNT>{};
                             auto colors = std::array<Color,   QUAD_VERTEX_COUNT>{};
-                            if (mode & (int)TmdPrimitiveModes::Textured)
+                            if (attribs.Mode & (int)TmdPrimitiveModes::Textured)
                             {
                                 // Read UV0.
                                 uint8 u0 = stream.ReadUint8();
@@ -246,7 +258,7 @@ namespace Silent::Assets
                                 uint32 color1 = 0;
                                 uint32 color2 = 0;
                                 uint32 color3 = 0;
-                                if (mode & (int)TmdPrimitiveModes::Gouraud)
+                                if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
                                 {
                                     color0 = stream.ReadUint32();
                                     color1 = stream.ReadUint32();
@@ -283,7 +295,7 @@ namespace Silent::Assets
                             uint16 normalIdx1 = 0;
                             uint16 normalIdx2 = 0;
                             uint16 normalIdx3 = 0;
-                            if (mode & (int)TmdPrimitiveModes::Gouraud)
+                            if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
                             {
                                 normalIdx0 = stream.ReadUint16();
                                 normalIdx1 = stream.ReadUint16();
@@ -316,7 +328,7 @@ namespace Silent::Assets
                             // Read vertex UVs and colors.
                             auto uvs    = std::array<Vector2, TRI_VERTEX_COUNT>{};
                             auto colors = std::array<Color,   TRI_VERTEX_COUNT>{};
-                            if (mode & (int)TmdPrimitiveModes::Textured)
+                            if (attribs.Mode & (int)TmdPrimitiveModes::Textured)
                             {
                                 // Read UV0.
                                 uint8 u0 = stream.ReadUint8();
@@ -353,7 +365,7 @@ namespace Silent::Assets
                                 uint32 color0 = 0;
                                 uint32 color1 = 0;
                                 uint32 color2 = 0;
-                                if (mode & (int)TmdPrimitiveModes::Gouraud)
+                                if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
                                 {
                                     color0 = stream.ReadUint32();
                                     color1 = stream.ReadUint32();
@@ -386,7 +398,7 @@ namespace Silent::Assets
                             uint16 normalIdx0 = 0;
                             uint16 normalIdx1 = 0;
                             uint16 normalIdx2 = 0;
-                            if (mode & (int)TmdPrimitiveModes::Gouraud)
+                            if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
                             {
                                 normalIdx0 = stream.ReadUint16();
                                 normalIdx1 = stream.ReadUint16();
