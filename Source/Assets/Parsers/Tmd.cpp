@@ -30,7 +30,7 @@ namespace Silent::Assets
         Textured        = 1 << 2,                         /** 0: Untextured, 1: Textured. */
         Quad            = 1 << 3,                         /** 0: Triangle, 1: Quad. */
         Gouraud         = 1 << 4,                         /** 0: Flat, 1: Gouraud. */
-        Primitive       = (1 << 5) | (1 << 6) | (1 << 7)  /** Spans 3 bits. 1: Polygon (triangle/quad), 2: Line, 3: Sprite. */
+        Primitive       = (1 << 5) | (1 << 6) | (1 << 7)  /** 1: Polygon (triangle/quad), 2: Line, 3: Sprite. */
     };
 
     /** TMD primitive types. */
@@ -121,7 +121,7 @@ namespace Silent::Assets
             meshDesc.PrimitiveOffset = stream.ReadUint32();
             meshDesc.PrimitiveCount  = stream.ReadUint32();
 
-            // Read scale (unused).
+            // Read scale.
             meshDesc.Scale = stream.ReadUint32();
 
             // Adjust offsets.
@@ -144,6 +144,10 @@ namespace Silent::Assets
         {
             const auto& meshDesc = meshDescs[i];
             auto&       mesh     = asset.Meshes[i];
+
+            // Create UV and color lookups.
+            auto uvLookup    = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
+            auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.
 
             // Read vertex positions.
             stream.Seek(baseAddr + meshDesc.VertexOffset);
@@ -316,10 +320,10 @@ namespace Silent::Assets
                             {
                                 .Vertices =
                                 {
-                                    TmdVertex{ posIdx0, normalIdx0, uvs[0], colors[0] },
-                                    TmdVertex{ posIdx1, normalIdx1, uvs[1], colors[1] },
-                                    TmdVertex{ posIdx2, normalIdx2, uvs[2], colors[2] },
-                                    TmdVertex{ posIdx3, normalIdx3, uvs[3], colors[3] }
+                                    TmdVertex{ posIdx0, normalIdx0, GetLookupIdx(uvLookup, uvs[0]), GetLookupIdx(colorLookup, colors[0]) },
+                                    TmdVertex{ posIdx1, normalIdx1, GetLookupIdx(uvLookup, uvs[1]), GetLookupIdx(colorLookup, colors[1]) },
+                                    TmdVertex{ posIdx2, normalIdx2, GetLookupIdx(uvLookup, uvs[2]), GetLookupIdx(colorLookup, colors[2]) },
+                                    TmdVertex{ posIdx3, normalIdx3, GetLookupIdx(uvLookup, uvs[3]), GetLookupIdx(colorLookup, colors[3]) }
                                 }
                             });
                         }
@@ -418,9 +422,9 @@ namespace Silent::Assets
                             {
                                 .Vertices =
                                 {
-                                    TmdVertex{ posIdx0, normalIdx0, uvs[0], colors[0] },
-                                    TmdVertex{ posIdx1, normalIdx1, uvs[1], colors[1] },
-                                    TmdVertex{ posIdx2, normalIdx2, uvs[2], colors[2] }
+                                    TmdVertex{ posIdx0, normalIdx0, GetLookupIdx(uvLookup, uvs[0]), GetLookupIdx(colorLookup, colors[0]) },
+                                    TmdVertex{ posIdx1, normalIdx1, GetLookupIdx(uvLookup, uvs[1]), GetLookupIdx(colorLookup, colors[1]) },
+                                    TmdVertex{ posIdx2, normalIdx2, GetLookupIdx(uvLookup, uvs[2]), GetLookupIdx(colorLookup, colors[2]) }
                                 }
                             });
                         }
@@ -435,6 +439,20 @@ namespace Silent::Assets
                 }
 
                 stream.Seek(nextPrimPos);
+            }
+
+            // Copy indexed UVs.
+            mesh.Uvs.resize(uvLookup.size());
+            for (const auto& [keyUv, uvIdx] : uvLookup)
+            {
+                mesh.Uvs[uvIdx] = keyUv;
+            }
+
+            // Copy indexed colors.
+            mesh.Colors.resize(colorLookup.size());
+            for (const auto& [keycolor, colorIdx] : colorLookup)
+            {
+                mesh.Colors[colorIdx] = keycolor;
             }
         }
 

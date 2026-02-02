@@ -5,10 +5,10 @@ namespace Silent::Assets
     /** @brief TMD indexed vertex. */
     struct TmdVertex
     {
-        int     PositionIdx = 0;
-        int     NormalIdx   = 0;
-        Vector2 Uv          = Vector2::Zero;
-        Color   Col         = Color::Clear;
+        int PositionIdx = 0;
+        int NormalIdx   = 0;
+        int UvIdx       = 0;
+        int ColorIdx    = 0;
     };
 
     /** @brief TMD triangle or quad primitive. */
@@ -23,9 +23,8 @@ namespace Silent::Assets
         std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
         std::vector<Vector3>      Positions   = {};
         std::vector<Vector3>      Normals     = {};
-        // @todo Indexed UVs and colours?
-        //std::vector<Vector2>      Uvs         = {};
-        //std::vector<Color>        Colors      = {};
+        std::vector<Vector2>      Uvs         = {};
+        std::vector<Color>        Colors      = {};
         std::vector<TmdPrimitive> Primitives  = {};
     };
 

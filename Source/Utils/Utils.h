@@ -140,6 +140,27 @@ namespace Silent::Utils
         std::reverse(cont.begin(), cont.end());
     }
 
+    /** @brief Finds the index for an entry in a given lookup map.
+     * If the entry doesn't exist, it is inserted and a new index is created.
+     *
+     * @param lookup Lookup map.
+     * @param newEntry Entry to insert or find.
+     * @return Index for the entry.
+     */
+    template <typename T>
+    int GetLookupIdx(std::unordered_map<T, int>& lookup, const T& entry)
+    {
+        const int* idx = Find(lookup, entry);
+        if (idx == nullptr)
+        {
+            int newIdx = lookup.size();
+            lookup[entry] = newIdx;
+            return newIdx;
+        }
+
+        return *idx;
+    }
+
     /** @brief Converts a raw array to a read-only span.
      *
      * @tparam T Element type.

@@ -256,3 +256,20 @@ namespace Silent::Math
         Color  operator*(float scalar) const;
     };
 }
+
+namespace std
+{
+    template <>
+    struct hash<Silent::Math::Color>
+    {
+        size_t operator()(const Silent::Math::Color& color) const
+        {
+            size_t seed = 0;
+            seed       ^= ((hash<float>()(color.R()) + Silent::Math::GOLDEN_RATIO) + (seed << 6)) + (seed >> 2);
+            seed       ^= ((hash<float>()(color.G()) + Silent::Math::GOLDEN_RATIO) + (seed << 6)) + (seed >> 2);
+            seed       ^= ((hash<float>()(color.B()) + Silent::Math::GOLDEN_RATIO) + (seed << 6)) + (seed >> 2);
+            seed       ^= ((hash<float>()(color.A()) + Silent::Math::GOLDEN_RATIO) + (seed << 6)) + (seed >> 2);
+            return seed;
+        }
+    };
+}
