@@ -258,6 +258,8 @@ namespace Silent::Assets
                     .Mode  = stream.ReadInt8()
                 };
 
+                bool isGouraud = attribs.Mode & (int)TmdPrimitiveModes::Gouraud;
+
                 // Compute next primitive position.
                 int nextPrimPos = stream.GetPosition() + (attribs.Ilen * sizeof(int32));
 
@@ -268,282 +270,121 @@ namespace Silent::Assets
                     case TmdPrimitiveType::Polygon:
                     {
                         // Read quad/triangle attributes.
-                        if (attribs.Mode & (int)TmdPrimitiveModes::Quad)
+                        int  vertCount = (attribs.Mode & (int)TmdPrimitiveModes::Quad) ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
+                        auto uvs       = std::vector<Vector2>(vertCount, Vector2::Zero);
+                        auto colors    = std::vector<Color>(vertCount, Color::White);
+                        auto blendMode = BlendMode::Opaque;
+
+                        // Read textured polygon vertices.
+                        if (attribs.Mode & (int)TmdPrimitiveModes::Textured)
                         {
-                            // Read vertex UVs, colors, and blend mode.
-                            auto uvs       = std::array<Vector2, QUAD_VERTEX_COUNT>{};
-                            auto colors    = std::array<Color,   QUAD_VERTEX_COUNT>{};
-                            auto blendMode = BlendMode::Opaque;
-                            if (attribs.Mode & (int)TmdPrimitiveModes::Textured)
+                            // Read UVs and TSB.
+                            uint16 tsb = 0;
+                            for (int i = 0; i < vertCount; i++)
                             {
-                                // Read UV0.
-                                uint8 u0 = stream.ReadUint8();
-                                uint8 v0 = stream.ReadUint8();
+                                // Read UVs
+                                uint8 u = stream.ReadUint8();
+                                uint8 v = stream.ReadUint8();
 
-                                // Read CLUT position attributes (unused).
-                                uint16 cba = stream.ReadUint16();
+                                // Set UV.
+                                uvs[i] = Vector2(u, v) / (float)UCHAR_MAX;
 
-                                // Read UV1.
-                                uint8 u1 = stream.ReadUint8();
-                                uint8 v1 = stream.ReadUint8();
-
-                                // Read texture page attributes.
-                                uint16 tsb = stream.ReadUint16();
-
-                                // Read UV2.
-                                uint8 u2 = stream.ReadUint8();
-                                uint8 v2 = stream.ReadUint8();
-                                stream.ReadUint16(); // Padding.
-
-                                // Read UV3.
-                                uint8 u3 = stream.ReadUint8();
-                                uint8 v3 = stream.ReadUint8();
-                                stream.ReadUint16(); // Padding.
-
-                                // Set normalized UVs.
-                                uvs =
+                                // Read CBA (unused).
+                                if (i == 0)
                                 {
-                                    Vector2(u0, v0) / UCHAR_MAX,
-                                    Vector2(u1, v1) / UCHAR_MAX,
-                                    Vector2(u2, v2) / UCHAR_MAX,
-                                    Vector2(u3, v3) / UCHAR_MAX
-                                };
-
-                                // Get blend mode and color alpha.
-                                float colorAlpha = 0.0f;
-                                GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha,
-                                                             attribs.Mode & (int)TmdPrimitiveModes::Transparency,
-                                                             (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
-
-                                // Set colors.
-                                colors =
+                                    stream.ReadUint16();
+                                }
+                                // Read TSB.
+                                else if (i == 1)
                                 {
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha),
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha),
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha),
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha)
-                                };
-                            }
-                            else
-                            {
-                                // Read colors.
-                                uint32 color0 = 0;
-                                uint32 color1 = 0;
-                                uint32 color2 = 0;
-                                uint32 color3 = 0;
-                                if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
-                                {
-                                    color0 = stream.ReadUint32();
-                                    color1 = stream.ReadUint32();
-                                    color2 = stream.ReadUint32();
-                                    color3 = stream.ReadUint32();
+                                    tsb = stream.ReadUint16();
                                 }
                                 else
                                 {
-                                    color0 =
-                                    color1 =
-                                    color2 =
-                                    color3 = stream.ReadUint32();
-                                }
-
-                                // Set blend mode and colors.
-                                if (attribs.Mode & (int)TmdPrimitiveModes::Transparency)
-                                {
-                                    float colorAlpha = 0.0f;
-                                    GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, true, TmdBlendMode::AlphaHalf);
-
-                                    colors =
-                                    {
-                                        ConvertTmdVertexColor(color0, colorAlpha),
-                                        ConvertTmdVertexColor(color1, colorAlpha),
-                                        ConvertTmdVertexColor(color2, colorAlpha),
-                                        ConvertTmdVertexColor(color3, colorAlpha)
-                                    };
-                                }
-                                else
-                                {
-                                    blendMode = BlendMode::Opaque;
-                                    colors    = 
-                                    {
-                                        ConvertTmdVertexColor(color0, 1.0f),
-                                        ConvertTmdVertexColor(color1, 1.0f),
-                                        ConvertTmdVertexColor(color2, 1.0f),
-                                        ConvertTmdVertexColor(color2, 1.0f)
-                                    };
+                                    stream.ReadUint16(); // Padding.
                                 }
                             }
 
-                            // Read vertex position indices.
-                            uint16 posIdx0 = stream.ReadUint16();
-                            uint16 posIdx1 = stream.ReadUint16();
-                            uint16 posIdx2 = stream.ReadUint16();
-                            uint16 posIdx3 = stream.ReadUint16();
+                            // Get blend mode and color alpha.
+                            float colorAlpha = 1.0f;
+                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, 
+                                                         attribs.Mode & (int)TmdPrimitiveModes::Transparency,
+                                                         (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
 
-                            // Read vertex normal indices.
-                            uint16 normalIdx0 = 0;
-                            uint16 normalIdx1 = 0;
-                            uint16 normalIdx2 = 0;
-                            uint16 normalIdx3 = 0;
-                            if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
+                            // Set colors.
+                            for (auto& color : colors)
                             {
-                                normalIdx0 = stream.ReadUint16();
-                                normalIdx1 = stream.ReadUint16();
-                                normalIdx2 = stream.ReadUint16();
-                                normalIdx3 = stream.ReadUint16();
+                                color = Color(1.0f, 1.0f, 1.0f, colorAlpha);
                             }
-                            else
-                            {
-                                normalIdx0 =
-                                normalIdx1 =
-                                normalIdx2 =
-                                normalIdx3 = stream.ReadUint16();
-                                stream.ReadUint16(); // Padding.
-                            }
-
-                            // Collect quad.
-                            mesh.Primitives.push_back(TmdPrimitive
-                            {
-                                .Vertices =
-                                {
-                                    TmdVertex{ posIdx0, normalIdx0, GetLookupIdx(uvLookup, uvs[0]), GetLookupIdx(colorLookup, colors[0]) },
-                                    TmdVertex{ posIdx1, normalIdx1, GetLookupIdx(uvLookup, uvs[1]), GetLookupIdx(colorLookup, colors[1]) },
-                                    TmdVertex{ posIdx2, normalIdx2, GetLookupIdx(uvLookup, uvs[2]), GetLookupIdx(colorLookup, colors[2]) },
-                                    TmdVertex{ posIdx3, normalIdx3, GetLookupIdx(uvLookup, uvs[3]), GetLookupIdx(colorLookup, colors[3]) }
-                                },
-                                .BlendMd = blendMode
-                            });
                         }
+                        // Read untextured polygon.
                         else
                         {
-                            // Read vertex UVs, colors, and blend mode.
-                            auto uvs       = std::array<Vector2, TRI_VERTEX_COUNT>{};
-                            auto colors    = std::array<Color,   TRI_VERTEX_COUNT>{};
-                            auto blendMode = BlendMode::Opaque;
-                            if (attribs.Mode & (int)TmdPrimitiveModes::Textured)
+                            // Get blend mode and color alpha.
+                            float alpha = 1.0f;
+                            if (attribs.Mode & (int)TmdPrimitiveModes::Transparency)
                             {
-                                // Read UV0.
-                                uint8 u0 = stream.ReadUint8();
-                                uint8 v0 = stream.ReadUint8();
-
-                                // Read CLUT position attributes (unused).
-                                uint16 cba = stream.ReadUint16();
-
-                                // Read UV1.
-                                uint8 u1 = stream.ReadUint8();
-                                uint8 v1 = stream.ReadUint8();
-
-                                // Read texture page attributes.
-                                uint16 tsb = stream.ReadUint16();
-
-                                // Read UV2.
-                                uint8 u2 = stream.ReadUint8();
-                                uint8 v2 = stream.ReadUint8();
-                                stream.ReadUint16(); // Padding.
-
-                                // Set normalized UVs.
-                                uvs =
-                                {
-                                    Vector2(u0, v0) / UCHAR_MAX,
-                                    Vector2(u1, v1) / UCHAR_MAX,
-                                    Vector2(u2, v2) / UCHAR_MAX
-                                };
-
-                                // Get blend mode and color alpha.
-                                float colorAlpha = 0.0f;
-                                GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha,
-                                                             attribs.Mode & (int)TmdPrimitiveModes::Transparency,
-                                                             (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
-
-                                // Set colors.
-                                colors =
-                                {
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha),
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha),
-                                    Color(1.0f, 1.0f, 1.0f, colorAlpha)
-                                };
-                            }
-                            else
-                            {
-                                // Read colors.
-                                uint32 color0 = 0;
-                                uint32 color1 = 0;
-                                uint32 color2 = 0;
-                                if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
-                                {
-                                    color0 = stream.ReadUint32();
-                                    color1 = stream.ReadUint32();
-                                    color2 = stream.ReadUint32();
-                                }
-                                else
-                                {
-                                    color0 =
-                                    color1 =
-                                    color2 = stream.ReadUint32();
-                                }
-
-                                // Set blend mode and colors.
-                                if (attribs.Mode & (int)TmdPrimitiveModes::Transparency)
-                                {
-                                    float colorAlpha = 0.0f;
-                                    GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, true, TmdBlendMode::AlphaHalf);
-
-                                    // Set normalized colors.
-                                    colors =
-                                    {
-                                        ConvertTmdVertexColor(color0, colorAlpha),
-                                        ConvertTmdVertexColor(color1, colorAlpha),
-                                        ConvertTmdVertexColor(color2, colorAlpha)
-                                    };
-                                }
-                                else
-                                {
-                                    blendMode = BlendMode::Opaque;
-                                    colors    = 
-                                    {
-                                        ConvertTmdVertexColor(color0, 1.0f),
-                                        ConvertTmdVertexColor(color1, 1.0f),
-                                        ConvertTmdVertexColor(color2, 1.0f)
-                                    };
-                                }
+                                GetTmdBlendModeAndColorAlpha(blendMode, alpha, true, TmdBlendMode::AlphaHalf);
                             }
 
-                            // Read vertex position indices.
-                            uint16 posIdx0 = stream.ReadUint16();
-                            uint16 posIdx1 = stream.ReadUint16();
-                            uint16 posIdx2 = stream.ReadUint16();
+                            // Read colors.
+                            uint32 color = stream.ReadUint32();
+                            for (int i = 0; i < vertCount; i++)
+                            {
+                                colors[i] = ConvertTmdVertexColor(color, alpha);
+                                if (isGouraud && i < (vertCount - 1))
+                                {
+                                    color = stream.ReadUint32();
+                                }
+                            }
+                        }
+
+                        // Read position indices.
+                        auto posIdxs = std::vector<uint16>(vertCount);
+                        for (auto& idx : posIdxs)
+                        {
+                            idx = stream.ReadUint16();
+                        }
+
+                        if (vertCount == TRI_VERTEX_COUNT)
+                        {
                             stream.ReadUint16(); // Padding.
+                        }
 
-                            // Read vertex normal indices.
-                            uint16 normalIdx0 = 0;
-                            uint16 normalIdx1 = 0;
-                            uint16 normalIdx2 = 0;
-                            if (attribs.Mode & (int)TmdPrimitiveModes::Gouraud)
+                        // Read normal indices.
+                        auto   normalIdxs = std::vector<uint16>(vertCount);
+                        uint16 normalIdx  = stream.ReadUint16();
+                        for (int i = 0; i < vertCount; i++)
+                        {
+                            normalIdxs[i] = normalIdx;
+                            if (isGouraud && i < (vertCount - 1))
                             {
-                                normalIdx0 = stream.ReadUint16();
-                                normalIdx1 = stream.ReadUint16();
-                                normalIdx2 = stream.ReadUint16();
-                                stream.ReadUint16(); // Padding.
+                                normalIdx = stream.ReadUint16();
                             }
-                            else
-                            {
-                                normalIdx0 =
-                                normalIdx1 =
-                                normalIdx2 = stream.ReadUint16();
-                                stream.ReadUint16(); // Padding.
-                            }
+                        }
 
-                            // Collect triangle.
-                            mesh.Primitives.push_back(TmdPrimitive
+                        if (!isGouraud || vertCount == TRI_VERTEX_COUNT)
+                        {
+                            stream.ReadUint16(); // Padding.
+                        }
+
+                        // Collect primitive.
+                        auto prim = TmdPrimitive
+                        {
+                            .BlendMd = blendMode
+                        };
+                        for (int i = 0; i < vertCount; i++)
+                        {
+                            prim.Vertices.push_back(TmdVertex
                             {
-                                .Vertices =
-                                {
-                                    TmdVertex{ posIdx0, normalIdx0, GetLookupIdx(uvLookup, uvs[0]), GetLookupIdx(colorLookup, colors[0]) },
-                                    TmdVertex{ posIdx1, normalIdx1, GetLookupIdx(uvLookup, uvs[1]), GetLookupIdx(colorLookup, colors[1]) },
-                                    TmdVertex{ posIdx2, normalIdx2, GetLookupIdx(uvLookup, uvs[2]), GetLookupIdx(colorLookup, colors[2]) }
-                                },
-                                .BlendMd = blendMode
+                                .PositionIdx = posIdxs[i],
+                                .NormalIdx   = normalIdxs[i], 
+                                .UvIdx       = GetLookupIdx(uvLookup, uvs[i]),
+                                .ColorIdx    = GetLookupIdx(colorLookup, colors[i])
                             });
                         }
+                        mesh.Primitives.push_back(prim);
+
                         break;
                     }
                     case TmdPrimitiveType::Line:
