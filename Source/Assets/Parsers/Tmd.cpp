@@ -328,17 +328,15 @@ namespace Silent::Assets
                             }
 
                             // Read colors.
+                            uint32 color = stream.ReadUint32();
                             for (int i = 0; i < vertCount; i++)
                             {
-                                if (isGouraud)
+                                if (isGouraud && i > 0)
                                 {
-                                    colors[i] = ConvertTmdVertexColor(stream.ReadUint32(), colorAlpha);
+                                    color = stream.ReadUint32();
                                 }
-                                else
-                                {
-                                    colors[i] = (i == 0) ? ConvertTmdVertexColor(stream.ReadUint32(), colorAlpha) :
-                                                           colors.front();
-                                }
+
+                                colors[i] = ConvertTmdVertexColor(color, colorAlpha);
                             }
                         }
 
@@ -354,18 +352,16 @@ namespace Silent::Assets
                         }
 
                         // Read normal indices.
-                        auto normalIdxs = std::vector<uint16>(vertCount);
+                        auto   normalIdxs = std::vector<uint16>(vertCount);
+                        uint16 normalIdx  = stream.ReadUint16();
                         for (int i = 0; i < vertCount; i++)
                         {
-                            if (isGouraud)
+                            if (isGouraud && i > 0) 
                             {
-                                normalIdxs[i] = stream.ReadUint16();
+                                normalIdx = stream.ReadUint16();
                             }
-                            else
-                            {
-                                normalIdxs[i] = (i == 0) ? stream.ReadUint16() :
-                                                           normalIdxs.front();
-                            }
+
+                            normalIdxs[i] = normalIdx;
                         }
                         if (!isGouraud || vertCount == TRI_VERTEX_COUNT)
                         {
