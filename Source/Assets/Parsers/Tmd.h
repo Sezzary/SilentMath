@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Renderer/Common/Enums.h"
+
+using namespace Silent::Renderer;
+
 namespace Silent::Assets
 {
     /** @brief TMD indexed vertex. */
@@ -15,6 +19,7 @@ namespace Silent::Assets
     struct TmdPrimitive
     {
         std::vector<TmdVertex> Vertices = {};
+        BlendMode              BlendMd  = BlendMode::Opaque;
     };
 
     /** @brief TMD mesh. */
