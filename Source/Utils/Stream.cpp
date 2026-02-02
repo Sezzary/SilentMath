@@ -54,7 +54,6 @@ namespace Silent::Utils
             return NO_VALUE;
         }
 
-        Debug::Log(Fmt("tellg {}", (int)_stream.tellg()));
         return (int)_stream.tellg();
     }
 

@@ -41,6 +41,14 @@ namespace Silent::Assets
         Sprite  = 3
     };
 
+    /** @brief TMD header. */
+    struct TmdHeader
+    {
+        uint32 Version   = 0;
+        uint32 Flags     = 0;
+        uint32 MeshCount = 0;
+    };
+
     /** @brief TMD mesh description. */
     struct TmdMeshDesc
     {
@@ -53,12 +61,14 @@ namespace Silent::Assets
         uint32 Scale           = 0;
     };
 
-    /** @brief Interprets a packed TMD vertex color.
+    /** @brief Converts a packed TMD RGB+code vertex color to a renderer color.
      *
-     * @param color Packed color.
-     * @return Color.
+     * @todo Check semitransaprency conventions.
+     *
+     * @param color Packed TMD RGB+code color.
+     * @return Converted renderer color.
      */
-    static Color GetTmdVertexColor(uint32 color)
+    static Color ConvertTmdVertexColor(uint32 color)
     {
         return Color::From8Bit(color & UCHAR_MAX,
                                (color >> 8) & UCHAR_MAX,
@@ -68,9 +78,6 @@ namespace Silent::Assets
 
     std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename)
     {
-        constexpr int HDR_SIZE      = sizeof(uint32) * 3;
-        constexpr int MESH_HDR_SIZE = sizeof(TmdMesh);
-
         // Read file.
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
@@ -79,15 +86,18 @@ namespace Silent::Assets
         }
 
         // Read header.
-        uint32 version   = stream.ReadUint32(); // Unused.
-        uint32 flags     = stream.ReadUint32();
-        uint32 meshCount = stream.ReadUint32();
+        auto header = TmdHeader
+        {
+            .Version   = stream.ReadUint32(),
+            .Flags     = stream.ReadUint32(),
+            .MeshCount = stream.ReadUint32()
+        };
 
         // Compute base data address.
-        int baseAddr = HDR_SIZE + (meshCount * MESH_HDR_SIZE);
+        int baseAddr = sizeof(TmdHeader) + (header.MeshCount * sizeof(TmdMeshDesc));
 
-        // Read meshe descriptions.
-        auto meshDescs = std::vector<TmdMeshDesc>(meshCount);
+        // Read mesh descriptions.
+        auto meshDescs = std::vector<TmdMeshDesc>(header.MeshCount);
         for (auto& meshDesc : meshDescs)
         {
             // Read vertex data.
@@ -106,7 +116,7 @@ namespace Silent::Assets
             meshDesc.Scale = stream.ReadUint32();
 
             // Adjust offsets.
-            if (flags & (int)TmdFlags::Fixp)
+            if (header.Flags & (int)TmdFlags::Fixp)
             {
                 meshDesc.VertexOffset    -= baseAddr;
                 meshDesc.NormalOffset    -= baseAddr;
@@ -117,11 +127,11 @@ namespace Silent::Assets
         // Create asset.
         auto asset = TmdAsset
         {
-            .Meshes = std::vector<TmdMesh>(meshCount)
+            .Meshes = std::vector<TmdMesh>(header.MeshCount)
         };
 
         // Read meshes.
-        for (int i = 0; i < meshCount; i++)
+        for (int i = 0; i < header.MeshCount; i++)
         {
             const auto& meshDesc = meshDescs[i];
             auto&       mesh     = asset.Meshes[i];
@@ -255,10 +265,10 @@ namespace Silent::Assets
                                 // Compute normalized colors.
                                 colors =
                                 {
-                                    GetTmdVertexColor(color0),
-                                    GetTmdVertexColor(color1),
-                                    GetTmdVertexColor(color2),
-                                    GetTmdVertexColor(color3)
+                                    ConvertTmdVertexColor(color0),
+                                    ConvertTmdVertexColor(color1),
+                                    ConvertTmdVertexColor(color2),
+                                    ConvertTmdVertexColor(color3)
                                 };
                             }
 
@@ -360,9 +370,9 @@ namespace Silent::Assets
                                 // Compute normalized colors.
                                 colors =
                                 {
-                                    GetTmdVertexColor(color0),
-                                    GetTmdVertexColor(color1),
-                                    GetTmdVertexColor(color2)
+                                    ConvertTmdVertexColor(color0),
+                                    ConvertTmdVertexColor(color1),
+                                    ConvertTmdVertexColor(color2)
                                 };
                             }
 

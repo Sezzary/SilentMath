@@ -195,7 +195,6 @@ namespace Silent
 
         const auto& asset = _work.Assets.GetAsset("ITEM/UNQE1.TMD");
         const auto data = asset->GetData<TmdAsset>();
-        Debug::Log(Fmt("Name: {}", data->TextureName));
         Debug::Log(Fmt("Meshes: {}", data->Meshes.size()));
         Debug::Log(Fmt("Positions: {}", data->Meshes[0].Positions.size()));
         Debug::Log(Fmt("Normals: {}", data->Meshes[0].Normals.size()));
