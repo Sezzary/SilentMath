@@ -60,16 +60,16 @@ namespace Silent::Assets
         AddQuarter = 3
     };
 
-    /** @brief TMD header. */
-    struct TmdHeader
+    /** @brief TMD header layout. */
+    struct TmdHeaderLayout
     {
         uint32 Version   = 0; /** Unused. */
         uint32 Flags     = 0;
         uint32 MeshCount = 0;
     };
 
-    /** @brief TMD mesh description. */
-    struct TmdMeshDesc
+    /** @brief TMD mesh description layout. */
+    struct TmdMeshDescLayout
     {
         uint32 VertexOffset    = 0;
         uint32 VertexCount     = 0;
@@ -80,8 +80,8 @@ namespace Silent::Assets
         uint32 Scale           = 0; /** Unused. */
     };
 
-    /** @brief TMD primitive attributes. */
-    struct TmdPrimitiveAttribs
+    /** @brief TMD primitive attributes layout. */
+    struct TmdPrimitiveAttribsLayout
     {
         int8 Olen  = 0; /** Unused. */
         int8 Ilen  = 0; /** Packet size in words. */
@@ -159,7 +159,7 @@ namespace Silent::Assets
         }
 
         // Read header.
-        auto header = TmdHeader
+        auto header = TmdHeaderLayout
         {
             .Version   = stream.ReadUint32(),
             .Flags     = stream.ReadUint32(),
@@ -167,10 +167,10 @@ namespace Silent::Assets
         };
 
         // Compute base data address.
-        int baseAddr = sizeof(TmdHeader) + (header.MeshCount * sizeof(TmdMeshDesc));
+        int baseAddr = sizeof(TmdHeaderLayout) + (header.MeshCount * sizeof(TmdMeshDescLayout));
 
         // Read mesh descriptions.
-        auto meshDescs = std::vector<TmdMeshDesc>(header.MeshCount);
+        auto meshDescs = std::vector<TmdMeshDescLayout>(header.MeshCount);
         for (auto& meshDesc : meshDescs)
         {
             // Read vertex data.
@@ -214,7 +214,7 @@ namespace Silent::Assets
             auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.
 
             // Read vertex positions.
-            stream.Seek(baseAddr + meshDesc.VertexOffset);
+            stream.SetPosition(baseAddr + meshDesc.VertexOffset);
             mesh.Positions.reserve(meshDesc.VertexCount);
             for (int j = 0; j < meshDesc.VertexCount; j++)
             {
@@ -229,7 +229,7 @@ namespace Silent::Assets
             }
 
             // Read vertex normals.
-            stream.Seek(baseAddr + meshDesc.NormalOffset);
+            stream.SetPosition(baseAddr + meshDesc.NormalOffset);
             mesh.Normals.reserve(meshDesc.NormalCount);
             for (int j = 0; j < meshDesc.NormalCount; j++)
             {
@@ -245,12 +245,12 @@ namespace Silent::Assets
             }
 
             // Read primitives.
-            stream.Seek(baseAddr + meshDesc.PrimitiveOffset);
+            stream.SetPosition(baseAddr + meshDesc.PrimitiveOffset);
             mesh.Primitives.reserve(meshDesc.PrimitiveCount);
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
-                auto attribs = TmdPrimitiveAttribs
+                auto attribs = TmdPrimitiveAttribsLayout
                 {
                     .Olen  = stream.ReadInt8(),
                     .Ilen  = stream.ReadInt8(),
@@ -384,7 +384,6 @@ namespace Silent::Assets
                             });
                         }
                         mesh.Primitives.push_back(prim);
-
                         break;
                     }
                     case TmdPrimitiveType::Line:
@@ -395,7 +394,7 @@ namespace Silent::Assets
                     }
                 }
 
-                stream.Seek(nextPrimPos);
+                stream.SetPosition(nextPrimPos);
             }
 
             // Copy indexed UVs.

@@ -57,17 +57,7 @@ namespace Silent::Utils
         return (int)_stream.tellg();
     }
 
-    bool Stream::IsOpen() const
-    {
-        return _stream.is_open();
-    }
-
-    bool Stream::IsEndOfFile() const
-    {
-        return _stream.eof();
-    }
-
-    void Stream::Seek(int pos)
+    void Stream::SetPosition(int pos)
     {
         if (!IsOpen())
         {
@@ -77,8 +67,18 @@ namespace Silent::Utils
         _stream.seekg(pos, std::fstream::beg);
         if (_stream.fail())
         {
-            Debug::Log(Fmt("Failed to seek binary file data stream to position {}.", pos), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to SetPosition binary file data stream to position {}.", pos), Debug::LogLevel::Error);
         }
+    }
+
+    bool Stream::IsOpen() const
+    {
+        return _stream.is_open();
+    }
+
+    bool Stream::IsEndOfFile() const
+    {
+        return _stream.eof();
     }
 
     void Stream::Close()

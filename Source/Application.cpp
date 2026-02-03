@@ -193,12 +193,19 @@ namespace Silent
 
         Debug::Log("Startup complete.");
 
-        const auto& asset = _work.Assets.GetAsset("ITEM/UNQE1.TMD");
-        const auto data = asset->GetData<TmdAsset>();
-        Debug::Log(Fmt("Meshes: {}", data->Meshes.size()));
-        Debug::Log(Fmt("Positions: {}", data->Meshes[0].Positions.size()));
-        Debug::Log(Fmt("Normals: {}", data->Meshes[0].Normals.size()));
-        Debug::Log(Fmt("Prims: {}", data->Meshes[0].Primitives.size()));
+        //const auto& asset = _work.Assets.GetAsset("ITEM/UNQE1.TMD");
+        //const auto data = asset->GetData<TmdAsset>();
+        //Debug::Log(Fmt("Meshes: {}", data->Meshes.size()));
+        //Debug::Log(Fmt("Positions: {}", data->Meshes[0].Positions.size()));
+        //Debug::Log(Fmt("Normals: {}", data->Meshes[0].Normals.size()));
+        //Debug::Log(Fmt("Prims: {}", data->Meshes[0].Primitives.size()));
+
+        const auto& asset = _work.Assets.GetAsset("ANIM/CAT.ANM");
+        const auto data = asset->GetData<AnmAsset>();
+        //Debug::Log(Fmt("Meshes: {}", data->Meshes.size()));
+        //Debug::Log(Fmt("Positions: {}", data->Meshes[0].Positions.size()));
+        //Debug::Log(Fmt("Normals: {}", data->Meshes[0].Normals.size()));
+        //Debug::Log(Fmt("Prims: {}", data->Meshes[0].Primitives.size()));
     }
 
     void ApplicationManager::Deinitialize()

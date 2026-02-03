@@ -47,6 +47,16 @@ namespace Silent::Utils
          */
         int GetPosition();
 
+        // ========
+        // Setters
+        // ========
+
+        /** @brief Seeks to a given position in the file.
+         *
+         * @param pos Position in bytes from the start of the file.
+         */
+        void SetPosition(int pos);
+
         // ==========
         // Inquirers
         // ==========
@@ -66,12 +76,6 @@ namespace Silent::Utils
         // ==========
         // Utilities
         // ==========
-
-        /** @brief Seeks to a given position in the file.
-         *
-         * @param pos Position in bytes from the start of the file.
-         */
-        void Seek(int pos);
 
         /** @brief Closes the file. */
         void Close();
