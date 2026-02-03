@@ -7,7 +7,7 @@ namespace Silent::Assets
     /** @brief ANM bone. */
     struct AnmBone
     {
-        int     ParentIdx       = 0;
+        int     ParentBoneIdx   = 0;
         int     RotationIdx     = 0;
         int     TranslationIdx  = 0;
         Vector3 BindTranslation = Vector3::Zero;
@@ -17,7 +17,7 @@ namespace Silent::Assets
     struct AnmKeyframe
     {
         std::vector<Vector3> BoneTranslations = {};
-        std::vector<Matrix>  BoneRotations    = {};
+        std::vector<Matrix>  BoneRotationMats = {};
     };
 
     /** @brief ANM asset data. */
@@ -25,6 +25,7 @@ namespace Silent::Assets
     {
         std::vector<AnmBone>     Bones     = {};
         std::vector<AnmKeyframe> Keyframes = {};
+        int                      Flags     = 0;
     };
 
     /** @brief Parses an ANM asset file.
