@@ -377,7 +377,7 @@ namespace Silent::Assets
                     case TmdPrimitiveType::Line:
                     case TmdPrimitiveType::Sprite:
                     {
-                        // Unsupported.
+                        Debug::Log(Fmt("Attempted to read unsupported primitive type while parsing TMD `{}`.", filename), Debug::LogLevel::Warning);
                         break;
                     }
                 }
