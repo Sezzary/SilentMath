@@ -193,7 +193,7 @@ namespace Silent
 
         Debug::Log("Startup complete.");
 
-        //const auto& asset = _work.Assets.GetAsset("ITEM/UNQE1.TMD");
+        const auto& asset1 = _work.Assets.GetAsset("ITEM/UNQE1.TMD");
         //const auto data = asset->GetData<TmdAsset>();
         //Debug::Log(Fmt("Meshes: {}", data->Meshes.size()));
         //Debug::Log(Fmt("Positions: {}", data->Meshes[0].Positions.size()));

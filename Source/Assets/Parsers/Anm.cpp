@@ -46,7 +46,7 @@ namespace Silent::Assets
             .FrameCount       = stream.ReadUint16(),
             .ScaleShift       = stream.ReadUint8()
         };
-        stream.ReadUint8(); // Padding.
+        stream.Skip(1);
 
         int translationsSize = header.TranslationCount * Vector3i::AXIS_COUNT;
         int rotsSize         = header.RotationCount * ROT_MAT_COMP_COUNT;

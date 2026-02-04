@@ -213,7 +213,7 @@ namespace Silent::Assets
                 int16 x = stream.ReadInt16();
                 int16 y = stream.ReadInt16();
                 int16 z = stream.ReadInt16();
-                stream.ReadInt16(); // Padding.
+                stream.Skip(2);
 
                 // Collect position.
                 mesh.Positions.push_back(Vector3(x, y, z));
@@ -228,7 +228,7 @@ namespace Silent::Assets
                 int16 x = stream.ReadInt16();
                 int16 y = stream.ReadInt16();
                 int16 z = stream.ReadInt16();
-                stream.ReadInt16(); // Padding.
+                stream.Skip(2);
 
                 // Collect normalized normal.
                 auto normal = Vector3::Normalize(Vector3(x, y, z));
@@ -289,7 +289,7 @@ namespace Silent::Assets
                                 }
                                 else
                                 {
-                                    stream.ReadUint16(); // Padding.
+                                    stream.Skip(2);
                                 }
                             }
 
@@ -336,7 +336,7 @@ namespace Silent::Assets
                         }
                         if (vertCount == TRI_VERTEX_COUNT)
                         {
-                            stream.ReadUint16(); // Padding.
+                            stream.Skip(2);
                         }
 
                         // Read normal indices.
@@ -353,7 +353,7 @@ namespace Silent::Assets
                         }
                         if (!isGouraud || vertCount == TRI_VERTEX_COUNT)
                         {
-                            stream.ReadUint16(); // Padding.
+                            stream.Skip(2);
                         }
 
                         // Collect primitive.
