@@ -107,11 +107,13 @@ namespace Silent::Assets
             keyframe.BoneRotationMats.reserve(header.RotationCount);
             for (int j = 0; j < header.RotationCount; j++)
             {
-                auto rotMat = std::array<int8, ROT_MAT_COMP_COUNT>{};
-                stream.ReadArray(ToSpan(rotMat));
+                int8 rotMat[3][3];
+                stream.ReadArray(ToSpan(rotMat, ROT_MAT_COMP_COUNT));
 
-                // Collect bone rotation matrix. @todo Convert to non-PSX matrix.
-                keyframe.BoneRotationMats.emplace_back();
+                // Collect normalized bone rotation matrix.
+                keyframe.BoneRotationMats.push_back(Matrix(rotMat[0][0] / 128.0f, rotMat[1][0] / 128.0f, rotMat[2][0] / 128.0f,
+                                                           rotMat[0][1] / 128.0f, rotMat[1][1] / 128.0f, rotMat[2][1] / 128.0f,
+                                                           rotMat[0][2] / 128.0f, rotMat[1][2] / 128.0f, rotMat[2][2] / 128.0f));
             }
 
             // Collect keyframe.

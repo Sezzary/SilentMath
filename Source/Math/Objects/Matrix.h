@@ -21,12 +21,19 @@ namespace Silent::Math
         // Constructors
         // =============
 
+        /** @brief Constructs a default identity `Matrix`. */
         constexpr Matrix() : glm::mat4(1.0f, 0.0f, 0.0f, 0.0f,
                                        0.0f, 1.0f, 0.0f, 0.0f,
                                        0.0f, 0.0f, 1.0f, 0.0f,
                                        0.0f, 0.0f, 0.0f, 1.0f) {}
+
+        /** @brief Constructs a `Matrix` from a `glm::mat4`. */
         constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
-        constexpr Matrix(float m)              : glm::mat4(m) {}
+
+        /** @brief Constructs a `Matrix` with all components set to the same value. */
+        constexpr Matrix(float m) : glm::mat4(m) {}
+
+        /** @brief Constructs a 4x4 `Matrix`. */
         constexpr Matrix(float m00, float m01, float m02, float m03,
                          float m10, float m11, float m12, float m13,
                          float m20, float m21, float m22, float m23,
@@ -34,6 +41,14 @@ namespace Silent::Math
                                                                                  m10, m11, m12, m13,
                                                                                  m20, m21, m22, m23,
                                                                                  m30, m31, m32, m33) {}
+
+        /** @brief Constructs a 3x3 `Matrix`. */
+        constexpr Matrix(float m00, float m01, float m02,
+                         float m10, float m11, float m12,
+                         float m20, float m21, float m22) : glm::mat4(m00,  m01,  m02,  0.0f,
+                                                                      m10,  m11,  m12,  0.0f,
+                                                                      m20,  m21,  m22,  0.0f,
+                                                                      0.0f, 0.0f, 0.0f, 1.0f) {}
 
         /** @brief Constructs a translation `Matrix`.
          *
