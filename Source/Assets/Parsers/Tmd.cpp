@@ -80,15 +80,6 @@ namespace Silent::Assets
         uint32 Scale           = 0; /** Unused. */
     };
 
-    /** @brief TMD primitive attributes layout. */
-    struct TmdPrimitiveAttribsLayout
-    {
-        int8 Olen  = 0; /** Unused. */
-        int8 Ilen  = 0; /** Packet size in words. */
-        int8 Flags = 0; /** `TmdPrimitiveFlags` */
-        int8 Mode  = 0; /** `TmdPrimitiveModes` */
-    };
-
     /** @brief Converts a packed TMD RGB vertex color to a renderer color.
      *
      * @param color Packed TMD RGB color.
@@ -250,33 +241,30 @@ namespace Silent::Assets
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
-                auto attribs = TmdPrimitiveAttribsLayout
-                {
-                    .Olen  = stream.ReadInt8(),
-                    .Ilen  = stream.ReadInt8(),
-                    .Flags = stream.ReadInt8(),
-                    .Mode  = stream.ReadInt8()
-                };
+                int8 olen  = stream.ReadInt8(); // Unused.
+                int8 ilen  = stream.ReadInt8(); // Packet size in words.
+                int8 flags = stream.ReadInt8(); // `TmdPrimitiveFlags`
+                int8 mode  = stream.ReadInt8(); // `TmdPrimitiveModes`
 
-                bool isGouraud = attribs.Mode & (int)TmdPrimitiveModes::Gouraud;
+                bool isGouraud = mode & (int)TmdPrimitiveModes::Gouraud;
 
                 // Compute next primitive position.
-                int nextPrimPos = stream.GetPosition() + (attribs.Ilen * sizeof(int32));
+                int nextPrimPos = stream.GetPosition() + (ilen * sizeof(int32));
 
                 // Read primitive.
-                auto primType = (TmdPrimitiveType)((attribs.Mode & (int)TmdPrimitiveModes::Primitive) >> 5);
+                auto primType = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
                 switch (primType)
                 {
                     case TmdPrimitiveType::Polygon:
                     {
                         // Read quad/triangle attributes.
-                        int  vertCount = (attribs.Mode & (int)TmdPrimitiveModes::Quad) ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
+                        int  vertCount = (mode & (int)TmdPrimitiveModes::Quad) ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
                         auto uvs       = std::vector<Vector2>(vertCount, Vector2::Zero);
                         auto colors    = std::vector<Color>(vertCount, Color::White);
                         auto blendMode = BlendMode::Opaque;
 
                         // Read textured polygon vertices.
-                        if (attribs.Mode & (int)TmdPrimitiveModes::Textured)
+                        if (mode & (int)TmdPrimitiveModes::Textured)
                         {
                             // Read UVs and TSB.
                             uint16 tsb = 0;
@@ -308,7 +296,7 @@ namespace Silent::Assets
                             // Get blend mode and color alpha.
                             float colorAlpha = 1.0f;
                             GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha,
-                                                         attribs.Mode & (int)TmdPrimitiveModes::Transparency,
+                                                         mode & (int)TmdPrimitiveModes::Transparency,
                                                          (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
 
                             // Set colors.
@@ -322,7 +310,7 @@ namespace Silent::Assets
                         {
                             // Get blend mode and color alpha.
                             float colorAlpha = 1.0f;
-                            if (attribs.Mode & (int)TmdPrimitiveModes::Transparency)
+                            if (mode & (int)TmdPrimitiveModes::Transparency)
                             {
                                 GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, true, TmdBlendMode::AlphaHalf);
                             }

@@ -41,7 +41,7 @@ namespace Silent::Assets
 
     /** @brief Parses a TMD asset file.
      *
-     * @param filename Absolute asset file path on the system.
+     * @param filename Absolute asset file path.
      * @return Parsed TMD asset data as a `void` pointer.
      */
     std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename);

@@ -2,14 +2,12 @@
 
 namespace Silent::Assets
 {
-    // @todo A revised .ANM2 format should also pack the hardcoded anim infos into each file.
-
     /** @brief ANM bone. */
     struct AnmBone
     {
         int     ParentBoneIdx   = 0;
-        int     RotationIdx     = 0;
         int     TranslationIdx  = 0;
+        int     RotationIdx     = 0;
         Vector3 BindTranslation = Vector3::Zero;
     };
 
@@ -30,7 +28,7 @@ namespace Silent::Assets
 
     /** @brief Parses an ANM asset file.
      *
-     * @param filename Absolute asset file path on the system.
+     * @param filename Absolute asset file path.
      * @return Parsed ANM asset data as a `void` pointer.
      */
     std::shared_ptr<void> ParseAnm(const std::filesystem::path& filename);

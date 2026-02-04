@@ -12,7 +12,7 @@ namespace Silent::Assets
 
     /** @brief Parses a TIM asset file.
      *
-     * @param filename Absolute asset file path on the system.
+     * @param filename Absolute asset file path.
      * @return Parsed TIM asset data as a `void` pointer.
      */
     std::shared_ptr<void> ParseTim(const std::filesystem::path& filename);

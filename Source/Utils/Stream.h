@@ -80,6 +80,12 @@ namespace Silent::Utils
         /** @brief Closes the file. */
         void Close();
 
+        /** @brief Skips the file pointer of the data stream ahead a given number of bytes.
+         *
+         * @param size Size in bytes to skip.
+         */
+        void Skip(int size);
+
         /** @brief Reads buffer data from the data stream and increments the file pointer.
          *
          * @param[out] buffer Output buffer.
