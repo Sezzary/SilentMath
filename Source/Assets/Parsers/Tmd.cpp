@@ -257,16 +257,18 @@ namespace Silent::Assets
                 {
                     case TmdPrimitiveType::Polygon:
                     {
-                        // Read quad/triangle attributes.
+                        // Read attributes.
                         int  vertCount = (mode & (int)TmdPrimitiveModes::Quad) ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
                         auto uvs       = std::vector<Vector2>(vertCount, Vector2::Zero);
                         auto colors    = std::vector<Color>(vertCount, Color::White);
                         auto blendMode = BlendMode::Opaque;
+                        bool isTri     = vertCount == TRI_VERTEX_COUNT;
 
-                        // Read textured polygon vertices.
+                        // Read textured polygon.
                         if (mode & (int)TmdPrimitiveModes::Textured)
                         {
-                            // Read UVs and TSB.
+                            // Read UVs, CBA, and TSB.
+                            uint16 cba = 0; // Unused.
                             uint16 tsb = 0;
                             for (int i = 0; i < vertCount; i++)
                             {
@@ -274,13 +276,13 @@ namespace Silent::Assets
                                 uint8 u = stream.ReadUint8();
                                 uint8 v = stream.ReadUint8();
 
-                                // Set UV.
+                                // Set normalized UV.
                                 uvs[i] = Vector2(u, v) / (float)UCHAR_MAX;
 
-                                // Read CBA (unused).
+                                // Read CBA.
                                 if (i == 0)
                                 {
-                                    stream.ReadUint16();
+                                    cba = stream.ReadUint16();
                                 }
                                 // Read TSB.
                                 else if (i == 1)
@@ -334,7 +336,7 @@ namespace Silent::Assets
                         {
                             idx = stream.ReadUint16();
                         }
-                        if (vertCount == TRI_VERTEX_COUNT)
+                        if (isTri)
                         {
                             stream.Skip(2);
                         }
@@ -351,7 +353,7 @@ namespace Silent::Assets
 
                             normalIdxs[i] = normalIdx;
                         }
-                        if (!isGouraud || vertCount == TRI_VERTEX_COUNT)
+                        if (!isGouraud || isTri)
                         {
                             stream.Skip(2);
                         }
