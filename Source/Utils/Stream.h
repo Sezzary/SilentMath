@@ -159,11 +159,17 @@ namespace Silent::Utils
          */
         float ReadFloat();
 
-        /** @brief Reads a string from the data stream and increments the file pointer.
+        /** @brief Reads a length-prefixed string from the data stream and increments the file pointer.
          *
          * @return `std::string` data.
          */
         std::string ReadString();
+
+        /** @brief Reads a null-terminated string from the data stream and increments the file pointer.
+         *
+         * @return `std::string` data.
+         */
+        std::string ReadNullString();
 
         /** @brief Reads a bitfield from the data stream and increments the file pointer.
          *

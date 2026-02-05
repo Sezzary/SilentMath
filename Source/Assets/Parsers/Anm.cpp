@@ -11,14 +11,14 @@ namespace Silent::Assets
     /** @brief ANM header layout. */
     struct AnmHeaderLayout
     {
-        int16 FramesOffset     = 0;
+        int16 KeyframesOffset  = 0;
         uint8 RotationCount    = 0;
         uint8 TranslationCount = 0;
-        int16 FrameSize        = 0;
+        int16 KeyframeSize     = 0;
         int16 BoneCount        = 0;
         int32 Flags            = 0;
         int32 EndOffset        = 0;
-        int16 FrameCount       = 0;
+        int16 KeyframeCount    = 0;
         int8  ScaleShift       = 0;  /** Unused. */
     };
 
@@ -36,22 +36,22 @@ namespace Silent::Assets
         // Read header.
         auto header = AnmHeaderLayout
         {
-            .FramesOffset     = stream.ReadInt16(),
+            .KeyframesOffset  = stream.ReadInt16(),
             .RotationCount    = stream.ReadUint8(),
             .TranslationCount = stream.ReadUint8(),
-            .FrameSize        = stream.ReadInt16(),
+            .KeyframeSize     = stream.ReadInt16(),
             .BoneCount        = stream.ReadInt16(),
             .Flags            = stream.ReadInt32(),
             .EndOffset        = stream.ReadInt32(),
-            .FrameCount       = stream.ReadUint16(),
+            .KeyframeCount    = stream.ReadUint16(),
             .ScaleShift       = stream.ReadUint8()
         };
         stream.Skip(1);
 
         int translationsSize = header.TranslationCount * Vector3i::AXIS_COUNT;
         int rotsSize         = header.RotationCount * ROT_MAT_COMP_COUNT;
-        Debug::Assert((translationsSize + rotsSize) == header.FrameSize,
-                      "Attempted to parse ANM with incongruent number of translations and rotations.");
+        Debug::Assert((translationsSize + rotsSize) == header.KeyframeSize,
+                      Fmt("Attempted to parse ANM `{}` with incongruent number of translations and rotations.", filename.string()));
 
         // Create asset.
         auto asset = AnmAsset
@@ -83,9 +83,9 @@ namespace Silent::Assets
         }
 
         // Read keyframes.
-        stream.SetPosition(header.FramesOffset);
-        asset.Keyframes.reserve(header.FrameCount);
-        for (int i = 0; i < header.FrameCount; i++)
+        stream.SetPosition(header.KeyframesOffset);
+        asset.Keyframes.reserve(header.KeyframeCount);
+        for (int i = 0; i < header.KeyframeCount; i++)
         {
             auto keyframe = AnmKeyframe{};
 

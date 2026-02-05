@@ -183,6 +183,27 @@ namespace Silent::Utils
         return str;
     }
 
+    std::string Stream::ReadNullString()
+    {
+        constexpr int BUFFER_SIZE = 32;
+
+        auto str = std::string();
+        str.reserve(BUFFER_SIZE);
+
+        while (GetPosition() < GetSize())
+        {
+            char c = ReadByte();
+            if (c == '\0')
+            {
+                break;
+            }
+
+            str += c;
+        }
+
+        return str;
+    }
+
     Bitfield Stream::ReadBitfield()
     {
         int  size   = ReadInt32();
