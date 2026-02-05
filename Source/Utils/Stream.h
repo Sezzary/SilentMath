@@ -51,7 +51,7 @@ namespace Silent::Utils
         // Setters
         // ========
 
-        /** @brief Seeks to a given position in the file.
+        /** @brief Sets the file pointer to a given position in the file.
          *
          * @param pos Position in bytes from the start of the file.
          */
@@ -167,9 +167,10 @@ namespace Silent::Utils
 
         /** @brief Reads a null-terminated string from the data stream and increments the file pointer.
          *
+         * @param size Optional fixed string size in bytes. If `NO_VALUE`, reads until a null character is encountered.
          * @return `std::string` data.
          */
-        std::string ReadNullString();
+        std::string ReadNullString(int size = NO_VALUE);
 
         /** @brief Reads a bitfield from the data stream and increments the file pointer.
          *

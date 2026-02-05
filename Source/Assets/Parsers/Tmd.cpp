@@ -71,8 +71,8 @@ namespace Silent::Assets
     /** @brief TMD mesh description layout. */
     struct TmdMeshDescLayout
     {
-        uint32 VertexOffset    = 0;
-        uint32 VertexCount     = 0;
+        uint32 PositionOffset  = 0;
+        uint32 PositionCount   = 0;
         uint32 NormalOffset    = 0;
         uint32 NormalCount     = 0;
         uint32 PrimitiveOffset = 0;
@@ -165,8 +165,8 @@ namespace Silent::Assets
         for (auto& meshDesc : meshDescs)
         {
             // Read vertex data.
-            meshDesc.VertexOffset = stream.ReadUint32();
-            meshDesc.VertexCount  = stream.ReadUint32();
+            meshDesc.PositionOffset = stream.ReadUint32();
+            meshDesc.PositionCount  = stream.ReadUint32();
 
             // Read normal data.
             meshDesc.NormalOffset = stream.ReadUint32();
@@ -182,7 +182,7 @@ namespace Silent::Assets
             // Adjust offsets.
             if (header.Flags & (int)TmdFlags::Fixp)
             {
-                meshDesc.VertexOffset    -= baseAddr;
+                meshDesc.PositionOffset    -= baseAddr;
                 meshDesc.NormalOffset    -= baseAddr;
                 meshDesc.PrimitiveOffset -= baseAddr;
             }
@@ -205,9 +205,9 @@ namespace Silent::Assets
             auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.
 
             // Read vertex positions.
-            stream.SetPosition(baseAddr + meshDesc.VertexOffset);
-            mesh.Positions.reserve(meshDesc.VertexCount);
-            for (int j = 0; j < meshDesc.VertexCount; j++)
+            stream.SetPosition(baseAddr + meshDesc.PositionOffset);
+            mesh.Positions.reserve(meshDesc.PositionCount);
+            for (int j = 0; j < meshDesc.PositionCount; j++)
             {
                 // Read components.
                 int16 x = stream.ReadInt16();
@@ -230,7 +230,7 @@ namespace Silent::Assets
                 int16 z = stream.ReadInt16();
                 stream.Skip(2);
 
-                // Collect normalized normal.
+                // Collect normal.
                 auto normal = Vector3::Normalize(Vector3(x, y, z));
                 mesh.Normals.push_back(normal);
             }

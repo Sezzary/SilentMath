@@ -183,22 +183,32 @@ namespace Silent::Utils
         return str;
     }
 
-    std::string Stream::ReadNullString()
+    std::string Stream::ReadNullString(int size)
     {
         constexpr int BUFFER_SIZE = 32;
 
         auto str = std::string();
         str.reserve(BUFFER_SIZE);
 
-        while (GetPosition() < GetSize())
+        int startPos = GetPosition();
+
+        bool isNullHit = false;
+        int  limit     = (size != NO_VALUE) ? size : (GetSize() - startPos);
+        for (int i = 0; i < limit; ++i)
         {
             char c = ReadByte();
-            if (c == '\0')
+            if (c == '\0') 
             {
+                isNullHit = true;
                 break;
             }
 
             str += c;
+        }
+
+        if (size != NO_VALUE)
+        {
+            SetPosition(startPos + size);
         }
 
         return str;
