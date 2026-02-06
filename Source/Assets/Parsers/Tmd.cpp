@@ -388,14 +388,14 @@ namespace Silent::Assets
                 stream.SetPosition(nextPrimPos);
             }
 
-            // Copy indexed UVs.
+            // Collect indexed UVs.
             mesh.Uvs.resize(uvLookup.size());
             for (const auto& [keyUv, uvIdx] : uvLookup)
             {
                 mesh.Uvs[uvIdx] = keyUv;
             }
 
-            // Copy indexed colors.
+            // Collect indexed colors.
             mesh.Colors.resize(colorLookup.size());
             for (const auto& [keycolor, colorIdx] : colorLookup)
             {

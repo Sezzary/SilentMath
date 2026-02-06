@@ -11,7 +11,7 @@ namespace Silent::Assets
 {
     std::shared_ptr<void> ParseIlm(const std::filesystem::path& filename)
     {
-        constexpr int HEADER_MAGIC       = 0x3006;
+        constexpr int HEADER_MAGIC       = 0x630;
         constexpr int HEADER_NAME_OFFSET = 0x14;
         constexpr int BONE_IDX_STR_SIZE  = 2;
         constexpr int BONE_NAME_STR_SIZE = 6;
@@ -22,25 +22,27 @@ namespace Silent::Assets
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open ILM `{}`.", std::filesystem::relative(fs.GetAssetsDirectory(), filename)));
+            throw std::runtime_error(Fmt("Failed to open ILM `{}`.",
+                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         // Read header magic.
         int16 magic = stream.ReadInt16();
         if (magic != HEADER_MAGIC)
         {
-            throw std::runtime_error(Fmt("Failed to parse invalid ILM `{}`.", std::filesystem::relative(fs.GetAssetsDirectory(), filename)));
+            throw std::runtime_error(Fmt("Failed to parse invalid ILM `{}`.",
+                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         uint8 isInitialized = stream.ReadUint8();
         stream.Skip(1);
 
-        // Read name offset. @todo Unused?
+        // Read name offset. Unused.
         uint32 nameOffset = stream.ReadUint32();
         if (nameOffset != HEADER_NAME_OFFSET)
         {
             throw std::runtime_error(Fmt("Attempted to parse ILM `{}` with incongruent name offset.",
-                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename)));
+                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         // Read header attributes.
@@ -90,11 +92,11 @@ namespace Silent::Assets
             stream.Skip(1);
 
             // Read mesh component offsets.
-            uint32 primsOffset   = stream.ReadUint32();
-            uint32 posXyOffset   = stream.ReadUint32();
-            uint32 posZOffset    = stream.ReadUint32();
-            uint32 normalsOffset = stream.ReadUint32();
-            uint32 nextOffset    = stream.ReadUint32(); // @todo What to do with this?
+            uint32 primsOffset    = stream.ReadUint32();
+            uint32 posXyOffset    = stream.ReadUint32();
+            uint32 posZOffset     = stream.ReadUint32();
+            uint32 normalsOffset  = stream.ReadUint32();
+            uint32 nextMeshOffset = stream.ReadUint32(); // `meshOffset` of next mesh. Unused.
 
             // Read primitives.
             stream.SetPosition(primsOffset);
@@ -139,9 +141,9 @@ namespace Silent::Assets
                 int  vertCount = isTri ? TRI_VERTEX_COUNT : QUAD_VERTEX_COUNT;
 
                 // @todo Simplify.
-                auto posIdxs    = std::array<int, vertCount>{};
-                auto normalIdxs = std::array<int, vertCount>{};
-                auto uvIdxs     = std::array<int, vertCount>{};
+                auto posIdxs    = std::vector<int>{};
+                auto normalIdxs = std::vector<int>{};
+                auto uvIdxs     = std::vector<int>{};
                 if (isTri)
                 {
                     posIdxs =
@@ -211,7 +213,6 @@ namespace Silent::Assets
             stream.SetPosition(posXyOffset);
             for (int j = 0; j < posCount; j++)
             {
-                // @todo Are they interleaved like this?
                 int16 x = stream.ReadInt16();
                 int16 y = stream.ReadInt16();
 
@@ -243,7 +244,7 @@ namespace Silent::Assets
                 mesh.Normals.push_back(Vector3::Normalize(Vector3(x, y, z)));
             }
 
-            // Copy indexed UVs.
+            // Collect indexed UVs.
             mesh.Uvs.resize(uvLookup.size());
             for (const auto& [keyUv, uvIdx] : uvLookup)
             {
