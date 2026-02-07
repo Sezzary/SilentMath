@@ -11,10 +11,10 @@ namespace Silent::Assets
 {
     std::shared_ptr<void> ParseIlm(const std::filesystem::path& filename)
     {
-        constexpr int HEADER_MAGIC       = 0x630;
-        constexpr int HEADER_NAME_OFFSET = 0x14;
-        constexpr int BONE_IDX_STR_SIZE  = 2;
-        constexpr int BONE_NAME_STR_SIZE = 6;
+        constexpr int16  HEADER_MAGIC       = 0x630;
+        constexpr uint32 HEADER_NAME_OFFSET = 0x14;
+        constexpr int    BONE_IDX_STR_SIZE  = 2;
+        constexpr int    BONE_NAME_STR_SIZE = 6;
 
         const auto& fs = g_App.GetFilesystem();
 
@@ -37,7 +37,7 @@ namespace Silent::Assets
         uint8 isInitialized = stream.ReadUint8();
         stream.Skip(1);
 
-        // Read name offset. Unused.
+        // Read name offset.
         uint32 nameOffset = stream.ReadUint32();
         if (nameOffset != HEADER_NAME_OFFSET)
         {
@@ -52,19 +52,16 @@ namespace Silent::Assets
         auto   name         = stream.ReadNullString();
 
         // Create asset.
-        auto asset = IlmAsset
-        {
-            .Meshes = std::vector<IlmMesh>(meshCount)
-        };
+        auto asset = IlmAsset{};
 
         // Read meshes.
         stream.SetPosition(meshesOffset);
         asset.Meshes.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
-            auto& mesh = asset.Meshes[i];
+            auto mesh = IlmMesh{};
 
-            // Create UV lookup.
+            // Create UV index lookup.
             auto uvLookup = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
 
             // Read bone info.
@@ -140,54 +137,30 @@ namespace Silent::Assets
                 bool isTri     = posIdx3 == UINT_MAX;
                 int  vertCount = isTri ? TRI_VERTEX_COUNT : QUAD_VERTEX_COUNT;
 
-                // @todo Simplify.
-                auto posIdxs    = std::vector<int>{};
-                auto normalIdxs = std::vector<int>{};
-                auto uvIdxs     = std::vector<int>{};
-                if (isTri)
+                // Collect vertex indices.
+                auto posIdxs = std::vector<int>
                 {
-                    posIdxs =
-                    {
-                        posBaseIdx + posIdx0,
-                        posBaseIdx + posIdx1,
-                        posBaseIdx + posIdx2
-                    };
-                    normalIdxs =
-                    {
-                        normalBaseIdx + normalIdx0,
-                        normalBaseIdx + normalIdx1,
-                        normalBaseIdx + normalIdx2
-                    };
-                    uvIdxs =
-                    {
-                        GetLookupIdx(uvLookup, Vector2(uvX0, uvY0) / (float)UCHAR_MAX),
-                        GetLookupIdx(uvLookup, Vector2(uvX1, uvY1) / (float)UCHAR_MAX),
-                        GetLookupIdx(uvLookup, Vector2(uvX2, uvY2) / (float)UCHAR_MAX)
-                    };
-                }
-                else
+                    posBaseIdx + posIdx0,
+                    posBaseIdx + posIdx1,
+                    posBaseIdx + posIdx2
+                };
+                auto normalIdxs = std::vector<int>
                 {
-                    posIdxs =
-                    {
-                        posBaseIdx + posIdx0,
-                        posBaseIdx + posIdx1,
-                        posBaseIdx + posIdx2,
-                        posBaseIdx + posIdx3
-                    };
-                    normalIdxs =
-                    {
-                        normalBaseIdx + normalIdx0,
-                        normalBaseIdx + normalIdx1,
-                        normalBaseIdx + normalIdx2,
-                        normalBaseIdx + normalIdx3
-                    };
-                    uvIdxs =
-                    {
-                        GetLookupIdx(uvLookup, Vector2(uvX0, uvY0) / (float)UCHAR_MAX),
-                        GetLookupIdx(uvLookup, Vector2(uvX1, uvY1) / (float)UCHAR_MAX),
-                        GetLookupIdx(uvLookup, Vector2(uvX2, uvY2) / (float)UCHAR_MAX),
-                        GetLookupIdx(uvLookup, Vector2(uvX3, uvY3) / (float)UCHAR_MAX)
-                    };
+                    normalBaseIdx + normalIdx0,
+                    normalBaseIdx + normalIdx1,
+                    normalBaseIdx + normalIdx2
+                };
+                auto uvIdxs = std::vector<int>
+                {
+                    GetLookupIdx(uvLookup, Vector2(uvX0, uvY0) / (float)UCHAR_MAX),
+                    GetLookupIdx(uvLookup, Vector2(uvX1, uvY1) / (float)UCHAR_MAX),
+                    GetLookupIdx(uvLookup, Vector2(uvX2, uvY2) / (float)UCHAR_MAX)
+                };
+                if (!isTri)
+                {
+                    posIdxs.push_back(posBaseIdx + posIdx3);
+                    normalIdxs.push_back(normalBaseIdx + normalIdx3);
+                    uvIdxs.push_back(GetLookupIdx(uvLookup, Vector2(uvX3, uvY3) / (float)UCHAR_MAX));
                 }
 
                 // Create primitive.
@@ -250,6 +223,9 @@ namespace Silent::Assets
             {
                 mesh.Uvs[uvIdx] = keyUv;
             }
+
+            // Collect mesh.
+            asset.Meshes.push_back(std::move(mesh));
 
             // Reset stream position.
             stream.SetPosition(returnPos);

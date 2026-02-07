@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Assets/Parsers/Tim.h"
 
+#include "Application.h"
 #include "Renderer/Common/Constants.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
@@ -33,18 +34,22 @@ namespace Silent::Assets
         constexpr int BPP_MASK               = 0x7;
         constexpr int TRANSPARENT_COLOR_FLAG = 1 << 15;
 
+        const auto& fs = g_App.GetFilesystem();
+
         // Read file.
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open TIM `{}`.", filename.string()));
+            throw std::runtime_error(Fmt("Failed to open TIM `{}`.",
+                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         // Confirm TIM format magic.
         uint32 magic = stream.ReadUint32();
         if (magic != HEADER_MAGIC)
         {
-            throw std::runtime_error(Fmt("Failed to parse invalid TIM `{}`.", filename.string()));
+            throw std::runtime_error(Fmt("Failed to parse invalid TIM `{}`.",
+                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         // Read CLUT and BPP flags.

@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Assets/Parsers/Anm.h"
 
+#include "Application.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
@@ -26,11 +27,13 @@ namespace Silent::Assets
     {
         constexpr int ROT_MAT_COMP_COUNT = 9;
 
+        const auto& fs = g_App.GetFilesystem();
+
         // Read file.
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open ANM `{}`.", filename.string()));
+            throw std::runtime_error(Fmt("Failed to open ANM `{}`.", std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         // Read header.
@@ -51,7 +54,8 @@ namespace Silent::Assets
         int translationsSize = header.TranslationCount * Vector3i::AXIS_COUNT;
         int rotsSize         = header.RotationCount * ROT_MAT_COMP_COUNT;
         Debug::Assert((translationsSize + rotsSize) == header.KeyframeSize,
-                      Fmt("Attempted to parse ANM `{}` with incongruent number of translations and rotations.", filename.string()));
+                      Fmt("Attempted to parse ANM `{}` with incongruent number of translations and rotations.",
+                          std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
 
         // Create asset.
         auto asset = AnmAsset

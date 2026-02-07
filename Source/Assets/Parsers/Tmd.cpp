@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Assets/Parsers/Tmd.h"
 
+#include "Application.h"
 #include "Renderer/Common/Enums.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
@@ -96,10 +97,10 @@ namespace Silent::Assets
 
     /** @brief Gets the blend mode and color alpha of a TMD primitive.
      *
-     * @param hasTransparency Primitive is transparent.
-     * @param tmdBlendMode TMD blend mode.
      * @param blendMode Output blend mode.
      * @param colorAlpha Output color alpha.
+     * @param hasTransparency Primitive is transparent.
+     * @param tmdBlendMode TMD blend mode.
      */
     static void GetTmdBlendModeAndColorAlpha(BlendMode& blendMode, float& colorAlpha, bool hasTransparency, TmdBlendMode tmdBlendMode)
     {
@@ -142,11 +143,13 @@ namespace Silent::Assets
 
     std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename)
     {
+        const auto& fs = g_App.GetFilesystem();
+
         // Read file.
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open TMD `{}`.", filename.string()));
+            throw std::runtime_error(Fmt("Failed to open TMD `{}`.", std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
         }
 
         // Read header.
@@ -161,9 +164,12 @@ namespace Silent::Assets
         int baseAddr = sizeof(TmdHeaderLayout) + (header.MeshCount * sizeof(TmdMeshDescLayout));
 
         // Read mesh descriptions.
-        auto meshDescs = std::vector<TmdMeshDescLayout>(header.MeshCount);
-        for (auto& meshDesc : meshDescs)
+        auto meshDescs = std::vector<TmdMeshDescLayout>{};
+        meshDescs.reserve(header.MeshCount);
+        for (int i = 0; i < header.MeshCount; i++)
         {
+            auto meshDesc = TmdMeshDescLayout{};
+
             // Read vertex data.
             meshDesc.PositionOffset = stream.ReadUint32();
             meshDesc.PositionCount  = stream.ReadUint32();
@@ -186,6 +192,9 @@ namespace Silent::Assets
                 meshDesc.NormalOffset    -= baseAddr;
                 meshDesc.PrimitiveOffset -= baseAddr;
             }
+
+            // Collect mesh description.
+            meshDescs.push_back(std::move(meshDesc));
         }
 
         // Create asset.
@@ -198,9 +207,10 @@ namespace Silent::Assets
         for (int i = 0; i < header.MeshCount; i++)
         {
             const auto& meshDesc = meshDescs[i];
-            auto&       mesh     = asset.Meshes[i];
 
-            // Create UV and color lookups.
+            auto mesh = TmdMesh{};
+
+            // Create UV and color index lookups.
             auto uvLookup    = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
             auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.
 
@@ -272,7 +282,7 @@ namespace Silent::Assets
                             uint16 tsb = 0;
                             for (int i = 0; i < vertCount; i++)
                             {
-                                // Read UVs
+                                // Read UV.
                                 uint8 u = stream.ReadUint8();
                                 uint8 v = stream.ReadUint8();
 
@@ -401,6 +411,9 @@ namespace Silent::Assets
             {
                 mesh.Colors[colorIdx] = keycolor;
             }
+
+            // Collect mesh.
+            asset.Meshes.push_back(std::move(mesh));
         }
 
         // @todo Sort primitives by CLUT for efficient batching when rendering. CLUT can be interpreted in a shader.
