@@ -1,6 +1,7 @@
 struct Input
 {
-    float3 Position : TEXCOORD0;
+    float3 Position : POSITION0;
+    float3 Normal   : NORMAL0;
     float2 TexCoord : TEXCOORD1;
     float4 Color    : COLOR0;
 };
