@@ -25,6 +25,7 @@ namespace Silent::Renderer::SdlGpu
         std::vector<SDL_GPUVertexAttribute>         VertBufferAttribs = {};
         std::vector<SDL_GPUColorTargetDescription>  ColorTargetDescs  = {}; // @todo Maybe not needed except for special cases. Filled automatically.
         std::vector<BlendMode>                      BlendModes        = {};
+        bool                                        EnableDepthTest   = false;
     };
 
     extern const std::vector<SDL_GPUColorTargetBlendState> PIPELINE_BLEND_MODE_COLOR_TARGETS;

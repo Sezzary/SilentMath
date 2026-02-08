@@ -90,6 +90,14 @@ namespace Silent::Renderer::SdlGpu
                 {
                     .fill_mode = (blendMode == BlendMode::Wireframe) ? SDL_GPU_FILLMODE_LINE : SDL_GPU_FILLMODE_FILL
                 },
+                .depth_stencil_state = !config.EnableDepthTest ?
+                SDL_GPUDepthStencilState{} :
+                SDL_GPUDepthStencilState
+                {
+                    .compare_op         = SDL_GPU_COMPAREOP_LESS,
+                    .enable_depth_test  = true,
+                    .enable_depth_write = true
+                },
                 .target_info = SDL_GPUGraphicsPipelineTargetInfo
                 {
                     .color_target_descriptions = colorTargetDescs.data(),
