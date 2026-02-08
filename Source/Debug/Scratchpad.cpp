@@ -48,10 +48,10 @@ namespace Silent::Debug
                                                          0, AlignMode::TopLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
             renderer.SubmitSprite2d(cursorSprite);
 
-            auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
-                                                    Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White,
-                                                    10, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
-            renderer.SubmitSprite2d(sprite0);
+            //auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
+            //                                        Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White,
+            //                                        10, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+            //renderer.SubmitSprite2d(sprite0);
 
             // Text.
             auto text = Text2d::CreateText2d("Śliwka", "RetroSerif",

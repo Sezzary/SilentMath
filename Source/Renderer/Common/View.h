@@ -2,6 +2,7 @@
 
 namespace Silent::Renderer
 {
+    /** @brief 3D render view. */
     class View
     {
     public:
@@ -10,7 +11,7 @@ namespace Silent::Renderer
         // =======
 
         Vector3 Position  = Vector3::Zero;
-        Vector3 Direction = -Vector3::UnitZ;
+        Vector3 Direction = Vector3::UnitZ;
         Vector3 Up        = Vector3::UnitY;
 
         Vector2i Size = Vector2i::Zero;  

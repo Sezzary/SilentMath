@@ -630,7 +630,7 @@ namespace Silent::Renderer
         // @todo Refactor into a render graph?
         Draw3dScene();
         DrawDither();
-        //Draw2dScene();
+        Draw2dScene();
         DrawPostProcess();
         DrawViewport();
         DrawPowerMenu();

@@ -22,16 +22,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer::SdlGpu
 {
-    auto Buffer3dTest = VertexBuffer<BufferVertex3d>{};
-    static auto bufferVertsTest = std::vector<BufferVertex3d>
-    {
-        { Vector3(-1.0f, -1.0f, 10.0f), Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
-        { Vector3( 1.0f, -1.0f, 10.0f), Vector3::One, Vector2(1.0f, 1.0f), Color::White }, // 1: Bottom-Right
-        { Vector3( 1.0f,  1.0f, 10.0f), Vector3::One, Vector2(1.0f, 0.0f), Color::White }, // 2: Top-Right
-        { Vector3(-1.0f,  1.0f, 10.0f), Vector3::One, Vector2(0.0f, 0.0f), Color::White }  // 3: Top-Left
-    };
-    static auto bufferIdxsTest = std::vector<uint16>{ 0, 1, 2, 2, 3, 0 };
-
     void Renderer::Initialize(SDL_Window& window)
     {
         static constexpr char NAME[] = "SDL_gpu";
@@ -325,11 +315,20 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw3dScene()
     {
+        static auto bufferVertsTest = std::vector<BufferVertex3d>
+        {
+            { Vector3(-1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
+            { Vector3( 1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 1.0f), Color::White }, // 1: Bottom-Right
+            { Vector3( 1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 0.0f), Color::White }, // 2: Top-Right
+            { Vector3(-1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 0.0f), Color::White }  // 3: Top-Left
+        };
+        static auto bufferIdxsTest = std::vector<uint16>{ 0, 1, 2, 2, 3, 0 };
+
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        Buffer3dTest.UpdateVertices(*copyPass, ToSpan(bufferVertsTest), 0);
-        Buffer3dTest.UpdateIdxs(*copyPass, ToSpan(bufferIdxsTest), 0);
+        _gpuBuffers.Vertices3d.UpdateVertices(*copyPass, ToSpan(bufferVertsTest), 0);
+        _gpuBuffers.Vertices3d.UpdateIdxs(*copyPass, ToSpan(bufferIdxsTest), 0);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -350,7 +349,7 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
-        Buffer3dTest.Bind(renderPass, 0, 0);
+        _gpuBuffers.Vertices3d.Bind(renderPass, 0, 0);
         _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
 
         auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
@@ -361,14 +360,14 @@ namespace Silent::Renderer::SdlGpu
 
         _view.Move();
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(5.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        auto viewProj = _view.GetMatrix(glm::radians(45.0f), 1, 0.1f, 100.0f);
+        auto model = Matrix::Identity;
+        model.Rotate(DEG_TO_RAD(45.0f), Vector3::UnitX);
+    
+        auto viewProj = _view.GetMatrix(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
 
-        //auto uni = UniformPrimitive3d{ .ModelMat = viewProj, .ViewProjMat = Matrix::Identity };
         auto uni = UniformPrimitive3d{};
         memcpy(&uni.ModelMat, &model[0][0], 64);
-        memcpy(&uni.ViewProjMat, &Matrix::Identity[0][0], 64);
+        memcpy(&uni.ViewProjMat, &viewProj[0][0], 64);
         PushVertexUniform(uni, 0);
         PushFragmentUniform(UniformModel{ true, false }, 0);
 
@@ -671,20 +670,21 @@ namespace Silent::Renderer::SdlGpu
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
         constexpr int SHAPE_2D_VERT_COUNT_MAX  = (SHAPE_2D_COUNT_MAX * 2) * TRI_VERTEX_COUNT;
         constexpr int SHAPE_2D_IDX_COUNT_MAX   = SHAPE_2D_VERT_COUNT_MAX;
-        constexpr int TRI_BATCH_COUNT_MAX      = SPRITE_2D_COUNT_MAX +
+        constexpr int TRI_2D_BATCH_COUNT_MAX   = SPRITE_2D_COUNT_MAX +
                                                  SHAPE_2D_COUNT_MAX;
-        constexpr int TRI_VERT_COUNT_MAX       = SPRITE_2D_VERT_COUNT_MAX +
+        constexpr int TRI_2D_VERT_COUNT_MAX    = SPRITE_2D_VERT_COUNT_MAX +
                                                  SHAPE_2D_VERT_COUNT_MAX;
-        constexpr int TRI_IDX_COUNT_MAX        = SPRITE_2D_IDX_COUNT_MAX;
+        constexpr int TRI_2D_IDX_COUNT_MAX     = SPRITE_2D_IDX_COUNT_MAX;
+        constexpr int TRI_3D_VERT_COUNT_MAX    = 20; // @todo
+        constexpr int TRI_3D_IDX_COUNT_MAX     = 20;
 
         // Reserve draw batches.
-        _drawBatches.Primitives2d.reserve(TRI_BATCH_COUNT_MAX);
+        _drawBatches.Primitives2d.reserve(TRI_2D_BATCH_COUNT_MAX);
 
         // Initialize GPU buffers.
         _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D screen vertices");
-        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D vertices");
-
-        Buffer3dTest.Initialize(*_device, 20, 20, "test");
+        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_2D_VERT_COUNT_MAX, TRI_2D_IDX_COUNT_MAX, "2D vertices");
+        _gpuBuffers.Vertices3d.Initialize(*_device, TRI_3D_VERT_COUNT_MAX, TRI_3D_IDX_COUNT_MAX, "3D vertices");
     }
 
     void Renderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
