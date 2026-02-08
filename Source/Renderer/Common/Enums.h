@@ -11,6 +11,7 @@ namespace Silent::Renderer
 
         Sprite2d,
         Glyph2d,
+        Model,
 
         // ========
         // Effects

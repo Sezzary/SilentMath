@@ -203,6 +203,27 @@ namespace Silent::Renderer::SdlGpu
                 BlendMode::Wireframe
             }
         },
+        // 3D model.
+        {
+            .Stage                        = RenderStage::Model,
+            .VertShaderName               = "Primitive3d.vert",
+            .VertShaderUniBufferCount     = 1,
+            .FragShaderName               = "Model.frag",
+            .FragShaderSamplerCount       = 1,
+            .FragShaderUniBufferCount     = 1,
+            .VertBufferDescs              = BUFFER_VERTEX_3D_DESCS,
+            .VertBufferAttribs            = BUFFER_VERTEX_3D_ATTRIBS,
+            .BlendModes                   =
+            {
+                BlendMode::Opaque,
+                BlendMode::Alpha,
+                BlendMode::FastAlpha,
+                BlendMode::Multiply,
+                BlendMode::Add,
+                BlendMode::Subtract,
+                BlendMode::Wireframe
+            }
+        },
 
         // ========
         // Effects

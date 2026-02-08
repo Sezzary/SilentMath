@@ -134,7 +134,7 @@ namespace Silent::Assets
                 uint8 normalIdx2 = stream.ReadUint8();
                 uint8 normalIdx3 = stream.ReadUint8();
 
-                bool isTri     = posIdx3 == UINT_MAX;
+                bool isTri     = posIdx3 == UCHAR_MAX;
                 int  vertCount = isTri ? TRI_VERTEX_COUNT : QUAD_VERTEX_COUNT;
 
                 // Collect vertex indices.

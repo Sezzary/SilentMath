@@ -50,7 +50,7 @@ namespace Silent::Renderer
         Color        _clearColor = Color::Clear;
         bool         _isResized  = false;
 
-        DoubleBuffer                        _doubleBuffer = {};
+        DoubleBuffer                      _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
 
         std::mutex _primitives2dMutex = {};
@@ -227,6 +227,7 @@ namespace Silent::Renderer
          */
         void SortRenderBufferData();
 
+        /** @brief Draws the current frame according to a hardcoded render graph. */
         void DrawFrame();
 
         /** @brief Draws a 3D scene to a cleared off-screen render texture.

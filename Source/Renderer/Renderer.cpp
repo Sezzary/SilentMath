@@ -10,6 +10,7 @@
 #include "Renderer/Common/Resources/Scene/Sprite2d.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
 #include "Renderer/Common/Utils.h"
+#include "Renderer/Common/View.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
 
@@ -629,7 +630,7 @@ namespace Silent::Renderer
         // @todo Refactor into a render graph?
         Draw3dScene();
         DrawDither();
-        Draw2dScene();
+        //Draw2dScene();
         DrawPostProcess();
         DrawViewport();
         DrawPowerMenu();

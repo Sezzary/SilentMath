@@ -9,7 +9,7 @@
 #include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Common/Texture.h"
 #include "Renderer/Common/Utils.h"
-#include "Renderer/Common/View.h" // @todo Not used yet.
+#include "Renderer/Common/View.h"
 #include "Renderer/Renderer.h"
 #include "Services/Filesystem.h"
 #include "Services/Options.h"
@@ -22,6 +22,16 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer::SdlGpu
 {
+    auto Buffer3dTest = VertexBuffer<BufferVertex3d>{};
+    static auto bufferVertsTest = std::vector<BufferVertex3d>
+    {
+        { Vector3(-1.0f, -1.0f, 10.0f), Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
+        { Vector3( 1.0f, -1.0f, 10.0f), Vector3::One, Vector2(1.0f, 1.0f), Color::White }, // 1: Bottom-Right
+        { Vector3( 1.0f,  1.0f, 10.0f), Vector3::One, Vector2(1.0f, 0.0f), Color::White }, // 2: Top-Right
+        { Vector3(-1.0f,  1.0f, 10.0f), Vector3::One, Vector2(0.0f, 0.0f), Color::White }  // 3: Top-Left
+    };
+    static auto bufferIdxsTest = std::vector<uint16>{ 0, 1, 2, 2, 3, 0 };
+
     void Renderer::Initialize(SDL_Window& window)
     {
         static constexpr char NAME[] = "SDL_gpu";
@@ -282,6 +292,14 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw3dScene()
     {
+        // Process copy pass.
+        auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
+
+        Buffer3dTest.UpdateVertices(*copyPass, ToSpan(bufferVertsTest), 0);
+        Buffer3dTest.UpdateIdxs(*copyPass, ToSpan(bufferIdxsTest), 0);
+
+        SDL_EndGPUCopyPass(copyPass);
+
         // Begin render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
@@ -292,7 +310,21 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // @todo
+        Buffer3dTest.Bind(renderPass, 0, 0);
+        _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
+
+        auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
+        if (tex != nullptr)
+        {
+            tex->Bind(renderPass, GetActiveSampler());
+        }
+
+        auto uni = UniformPrimitive3d{ .ModelMat = Matrix::Identity, .ViewProjMat = _view.GetMatrix(1.0f, (45.0f), 0.1f, 100.0f) };
+        PushVertexUniform(uni, 0);
+        PushFragmentUniform(UniformModel{ true, false }, 0);
+
+        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+        _doubleBuffer.Active.DrawCallCount++;
 
         // Process render pass.
         SDL_EndGPURenderPass(&renderPass);
@@ -602,6 +634,8 @@ namespace Silent::Renderer::SdlGpu
         // Initialize GPU buffers.
         _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D screen vertices");
         _gpuBuffers.Vertices2d.Initialize(*_device, TRI_VERT_COUNT_MAX, TRI_IDX_COUNT_MAX, "2D vertices");
+
+        Buffer3dTest.Initialize(*_device, 20, 20, "test");
     }
 
     void Renderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
@@ -654,7 +688,7 @@ namespace Silent::Renderer::SdlGpu
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
             {
-                // @todo Z depth oesn't seem to have any effect and primitives still need manual depth sorting.
+                // @todo Z depth doesn't seem to have any effect and primitives still need manual depth sorting.
                 float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
                 auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
                 bufferVerts.push_back(BufferVertex2d{ pos, prim.Vertices[i].Uv, prim.Vertices[i].Col });

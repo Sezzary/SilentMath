@@ -270,7 +270,8 @@ namespace Silent::Utils
         FT_Render_Glyph(ftFont->glyph, FT_RENDER_MODE_NORMAL); // @todo Try SDF generator.
         const auto& bitmap     = ftFont->glyph->bitmap;
         byte*       pixelsFrom = (byte*)bitmap.buffer;
-        byte*       pixelsTo   = &_textureAtlases.back()[(((attribs.AtlasPosition.y) * ATLAS_SIZE) * RGBA_COMP_COUNT) + ((attribs.AtlasPosition.x) * RGBA_COMP_COUNT)];
+        byte*       pixelsTo   = &_textureAtlases.back()[(((attribs.AtlasPosition.y) * ATLAS_SIZE) * RGBA_COMP_COUNT) +
+                                                         ((attribs.AtlasPosition.x) * RGBA_COMP_COUNT)];
 
         // Copy pixels to atlas.
         for (int y = 0; y < bitmap.rows; y++)

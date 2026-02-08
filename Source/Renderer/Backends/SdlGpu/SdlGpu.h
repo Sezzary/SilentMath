@@ -27,6 +27,7 @@ namespace Silent::Renderer::SdlGpu
     struct DrawBatches
     {
         std::vector<DrawBatch> Primitives2d = {};
+        std::vector<DrawBatch> Primitives3d = {};
     };
 
     /** @brief GPU buffers. */
@@ -35,6 +36,7 @@ namespace Silent::Renderer::SdlGpu
         VertexBuffer<BufferVertex2d> ViewportVertices2d = {};
 
         VertexBuffer<BufferVertex2d> Vertices2d = {};
+        VertexBuffer<BufferVertex3d> Vertices3d = {};
     };
 
     /** @brief SDL_gpu renderer backend. */
