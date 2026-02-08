@@ -52,6 +52,7 @@ namespace Silent::Renderer::SdlGpu
         PipelineManager              _pipelines = PipelineManager();
         
         SDL_GPUTexture*       _renderTexture    = nullptr;
+        SDL_GPUTexture*       _depthTexture     = nullptr;
         SDL_GPUTexture*       _swapchainTexture = nullptr;
         SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
         DrawBatches           _drawBatches      = {};
@@ -79,17 +80,23 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
+        /** @brief Gets the texture cache.
+         *
+         * @return Texture cache.
+         */
+        TextureCache& GetTextures();
+
         /** @brief Gets the offscreen render texture.
          *
          * @return Offscreen render texture.
          */
         SDL_GPUTexture* GetRenderTexture();
 
-        /** @brief Gets the texture cache.
+        /** @brief Gets the offscreen depth stencil texture.
          *
-         * @return Texture cache.
+         * @return Offscreen depth stencil texture.
          */
-        TextureCache& GetTextures();
+        SDL_GPUTexture* GetDepthTexture();
 
         /** @brief Gets the active texture sampler according to user options.
          *

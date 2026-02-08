@@ -180,6 +180,13 @@ namespace Silent::Renderer::SdlGpu
             return;
         }
 
+        // Acquire depth stencil texture.
+        _depthTexture = GetDepthTexture();
+        if (_depthTexture == nullptr)
+        {
+            return;
+        }
+
         // Acquire swapchain texture.
         _swapchainTexture = nullptr;
         if (!SDL_WaitAndAcquireGPUSwapchainTexture(_commandBuffer, _window, &_swapchainTexture, nullptr, nullptr))
@@ -252,35 +259,61 @@ namespace Silent::Renderer::SdlGpu
         SDL_UnlockSurface(surface);
     }
 
-    SDL_GPUTexture* Renderer::GetRenderTexture()
-    {
-        // @todo Entering fullscreen mode doesn't signal a resize?
-        if (_renderTexture == nullptr || _isResized)
-        {
-            SDL_ReleaseGPUTexture(_device, _renderTexture);
-
-            // @todo Size should depend on aspect ratio: 4:3, 16:9, or native.
-
-            auto screenRes     = GetScreenResolution();
-            auto renderTexInfo = SDL_GPUTextureCreateInfo
-            {
-                .type                 = SDL_GPU_TEXTURETYPE_2D,
-                .format               = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-                .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
-                .width                = screenRes.x,
-                .height               = screenRes.y,
-                .layer_count_or_depth = 1,
-                .num_levels           = 1
-            };
-            _renderTexture = SDL_CreateGPUTexture(_device, &renderTexInfo);
-        }
-
-        return _renderTexture;
-    }
-
     TextureCache& Renderer::GetTextures()
     {
         return *(TextureCache*)_textures.get();
+    }
+
+    SDL_GPUTexture* Renderer::GetRenderTexture()
+    {
+        // @todo Entering fullscreen mode doesn't signal a resize?
+        if (_depthTexture != nullptr && !_isResized)
+        {
+            return _renderTexture;
+        }
+
+        SDL_ReleaseGPUTexture(_device, _renderTexture);
+
+        // @todo Size should depend on aspect ratio: 4:3, 16:9, or native.
+
+        auto screenRes     = GetScreenResolution();
+        auto renderTexInfo = SDL_GPUTextureCreateInfo
+        {
+            .type                 = SDL_GPU_TEXTURETYPE_2D,
+            .format               = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+            .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
+            .width                = screenRes.x,
+            .height               = screenRes.y,
+            .layer_count_or_depth = 1,
+            .num_levels           = 1
+        };
+        return SDL_CreateGPUTexture(_device, &renderTexInfo);
+    }
+
+    SDL_GPUTexture* Renderer::GetDepthTexture()
+    {
+        if (_depthTexture != nullptr && !_isResized)
+        {
+            return _depthTexture;
+        }
+
+        if (_depthTexture)
+        {
+            SDL_ReleaseGPUTexture(_device, _depthTexture);
+        }
+
+        auto screenRes    = GetScreenResolution();
+        auto depthTexInfo = SDL_GPUTextureCreateInfo
+        {
+            .type                 = SDL_GPU_TEXTURETYPE_2D,
+            .format               = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
+            .usage                = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
+            .width                = screenRes.x,
+            .height               = screenRes.y,
+            .layer_count_or_depth = 1,
+            .num_levels           = 1
+        };
+        return SDL_CreateGPUTexture(_device, &depthTexInfo);
     }
 
     SDL_GPUSampler& Renderer::GetActiveSampler()
@@ -308,11 +341,14 @@ namespace Silent::Renderer::SdlGpu
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
         };
-        /*auto depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo
+        auto depthTargetInfo = SDL_GPUDepthStencilTargetInfo
         {
-
-        };*/
-        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+            .texture     = _depthTexture,
+            .clear_depth = 1.0f,
+            .load_op     = SDL_GPU_LOADOP_CLEAR,
+            .store_op    = SDL_GPU_STOREOP_DONT_CARE
+        };
+        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
         Buffer3dTest.Bind(renderPass, 0, 0);
         _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
@@ -323,14 +359,16 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler());
         }
 
+        _view.Move();
+
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        auto viewProj = _view.GetMatrix(0, 1, 0.1f, 100.0f);
+        model = glm::rotate(model, glm::radians(5.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        auto viewProj = _view.GetMatrix(glm::radians(45.0f), 1, 0.1f, 100.0f);
 
         //auto uni = UniformPrimitive3d{ .ModelMat = viewProj, .ViewProjMat = Matrix::Identity };
         auto uni = UniformPrimitive3d{};
-        memcpy(&uni.ModelMat, &Matrix::Identity[0][0], 64);
-        memcpy(&uni.ViewProjMat, &viewProj[0][0], 64);
+        memcpy(&uni.ModelMat, &model[0][0], 64);
+        memcpy(&uni.ViewProjMat, &Matrix::Identity[0][0], 64);
         PushVertexUniform(uni, 0);
         PushFragmentUniform(UniformModel{ true, false }, 0);
 
