@@ -308,6 +308,10 @@ namespace Silent::Renderer::SdlGpu
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
         };
+        /*auto depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo
+        {
+
+        };*/
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         Buffer3dTest.Bind(renderPass, 0, 0);
@@ -319,7 +323,14 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler());
         }
 
-        auto uni = UniformPrimitive3d{ .ModelMat = Matrix::Identity, .ViewProjMat = _view.GetMatrix(1.0f, (45.0f), 0.1f, 100.0f) };
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        auto viewProj = _view.GetMatrix(0, 1, 0.1f, 100.0f);
+
+        //auto uni = UniformPrimitive3d{ .ModelMat = viewProj, .ViewProjMat = Matrix::Identity };
+        auto uni = UniformPrimitive3d{};
+        memcpy(&uni.ModelMat, &Matrix::Identity[0][0], 64);
+        memcpy(&uni.ViewProjMat, &viewProj[0][0], 64);
         PushVertexUniform(uni, 0);
         PushFragmentUniform(UniformModel{ true, false }, 0);
 
