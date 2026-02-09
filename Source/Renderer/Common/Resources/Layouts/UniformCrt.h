@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU uniform buffer for post-process CRT shader. */
+    /** @brief Per-frame GPU uniform data for post-process CRT data. */
     struct alignas(16) UniformCrt
     {
         Vector2 Resolution = 0.0f;

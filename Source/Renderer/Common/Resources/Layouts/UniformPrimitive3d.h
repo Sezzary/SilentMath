@@ -2,12 +2,9 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU uniform buffer for 3D primitive vertex shader. */
+    /** @brief Per-object GPU uniform data for 3D primitive. */
     struct alignas(16) UniformPrimitive3d
     {
         float ModelMat[4][4];
-        float ViewProjMat[4][4];
-        //Matrix ModelMat    = Matrix::Identity;
-        //Matrix ViewProjMat = Matrix::Identity;
     };
 }

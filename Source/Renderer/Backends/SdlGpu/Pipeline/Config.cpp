@@ -174,7 +174,7 @@ namespace Silent::Renderer::SdlGpu
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Sprite2d.frag",
             .FragShaderSamplerCount   = 1,
-            .FragShaderUniBufferCount = 1,
+            .FragShaderUniBufferCount = 2,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
@@ -194,7 +194,7 @@ namespace Silent::Renderer::SdlGpu
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Glyph2d.frag",
             .FragShaderSamplerCount   = 1,
-            .FragShaderUniBufferCount = 1,
+            .FragShaderUniBufferCount = 2,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
@@ -207,10 +207,10 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Model,
             .VertShaderName           = "Primitive3d.vert",
-            .VertShaderUniBufferCount = 1,
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Model.frag",
             .FragShaderSamplerCount   = 1,
-            .FragShaderUniBufferCount = 1,
+            .FragShaderUniBufferCount = 2,
             .VertBufferDescs          = BUFFER_VERTEX_3D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_3D_ATTRIBS,
             .BlendModes               =

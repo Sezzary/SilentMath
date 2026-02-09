@@ -112,14 +112,14 @@ namespace Silent::Renderer::SdlGpu
         SDL_ReleaseGPUTransferBuffer(_device, transferBuffer);
     }
 
-    void Texture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler)
+    void Texture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler, int slotIdx)
     {
         auto texSamplerBinding = SDL_GPUTextureSamplerBinding
         {
             .texture = _texture,
             .sampler = &sampler
         };
-        SDL_BindGPUFragmentSamplers(&renderPass, 0, &texSamplerBinding, 1);
+        SDL_BindGPUFragmentSamplers(&renderPass, slotIdx, &texSamplerBinding, 1);
     }
 
     TextureCache::TextureCache(SDL_GPUDevice& device)

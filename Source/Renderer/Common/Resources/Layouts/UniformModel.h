@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU uniform buffer for 3D model fragment shader. */
+    /** @brief Per-object GPU uniform data for 3D model. */
     struct alignas(16) UniformModel
     {
         uint UseTexture  = false;

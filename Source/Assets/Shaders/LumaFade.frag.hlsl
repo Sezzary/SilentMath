@@ -10,7 +10,7 @@ struct Input
     float4 Color    : COLOR0;
 };
 
-cbuffer UniformBlock : register(b0, space3)
+cbuffer PerFrame : register(b0, space3)
 {
     float FadeAlpha;
 };

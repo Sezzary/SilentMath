@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU uniform buffer for 2D glyph fragment shader. */
+    /** @brief Per-object GPU uniform data for 2D glyph. */
     struct alignas(16) UniformGlyph2d
     {
         uint  HasGradient    = false;

@@ -31,7 +31,7 @@ namespace Silent::Utils
 
         /** @brief Constructs a `BlockAllocator` with a fixed size.
          *
-         * @param size Memory size in bytes.
+         * @param size Memory size.
          */
         BlockAllocator(uint32 size);
 
@@ -41,7 +41,7 @@ namespace Silent::Utils
 
         /** @brief Gets the available size of the memory pool.
          *
-         * @return Size in bytes.
+         * @return Size.
          */
         uint32 GetSize() const;
 
@@ -51,9 +51,9 @@ namespace Silent::Utils
 
         /** @brief Allocates a block of memory.
          *
-         * @param size Block size in bytes.
-         * @param alignment Block alignment in bytes.
-         * @return Start offset of the allocated block in bytes. `NO_VALUE` if failed.
+         * @param size Block size.
+         * @param alignment Block alignment.
+         * @return Start offset of the allocated block. `NO_VALUE` if failed.
          */
         uint32 Allocate(uint32 size, uint32 alignment);
 

@@ -13,10 +13,14 @@ struct Output
     float4 Color    : COLOR0;
 };
 
-cbuffer UniformBlock : register(b0, space1)
+cbuffer PerFrame : register(b0, space1)
+{
+    column_major float4x4 ViewProjMat;
+};
+
+cbuffer PerObject : register(b1, space1)
 {
     column_major float4x4 ModelMat;
-    column_major float4x4 ViewProjMat;
 };
 
 Output main(Input input)

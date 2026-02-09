@@ -4,9 +4,11 @@
 #include "Renderer/Common/Resources/Layouts/UniformCrt.h"
 #include "Renderer/Common/Resources/Layouts/UniformGlyph2d.h"
 #include "Renderer/Common/Resources/Layouts/UniformLumaFade.h"
+#include "Renderer/Common/Resources/Layouts/UniformMaterial.h"
 #include "Renderer/Common/Resources/Layouts/UniformModel.h"
 #include "Renderer/Common/Resources/Layouts/UniformPrimitive3d.h"
 #include "Renderer/Common/Resources/Layouts/UniformSprite2d.h"
+#include "Renderer/Common/Resources/Layouts/UniformView.h"
 
 namespace Silent::Renderer
 {
@@ -14,14 +16,17 @@ namespace Silent::Renderer
                                      UniformCrt,
                                      UniformGlyph2d,
                                      UniformLumaFade,
+                                     UniformMaterial,
                                      UniformModel,
                                      UniformPrimitive3d,
-                                     UniformSprite2d>;
+                                     UniformSprite2d,
+                                     UniformView>;
 
-    /** @brief Uniform slot indices. @todo Generic names for all use cases. */
+    /** @brief GPU uniform buffer slots. */
     enum class UniformSlot
     {
-        ModelMatrix = 0,
-        SceneData   = 1
+        PerFrame    = 0,
+        PerObject   = 1,
+        PerMaterial = 2
     };
 }

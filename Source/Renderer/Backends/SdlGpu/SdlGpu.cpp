@@ -315,6 +315,7 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw3dScene()
     {
+        // @temp
         static auto bufferVertsTest = std::vector<BufferVertex3d>
         {
             { Vector3(-1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
@@ -365,11 +366,14 @@ namespace Silent::Renderer::SdlGpu
     
         auto viewProj = _view.GetMatrix(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
 
-        auto uni = UniformPrimitive3d{};
-        memcpy(&uni.ModelMat, &model[0][0], 64);
-        memcpy(&uni.ViewProjMat, &viewProj[0][0], 64);
-        PushVertexUniform(uni, 0);
-        PushFragmentUniform(UniformModel{ true, false }, 0);
+        auto uni0 = UniformView{};
+        auto uni1 = UniformPrimitive3d{};
+        memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
+        memcpy(&uni1.ModelMat, &model[0][0], 64);
+        PushVertexUniform(uni0, UniformSlot::PerFrame);
+        PushVertexUniform(uni1, UniformSlot::PerObject);
+
+        PushFragmentUniform(UniformModel{ true, false }, UniformSlot::PerObject);
 
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
         _doubleBuffer.Active.DrawCallCount++;
@@ -451,12 +455,12 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // 2D primitives.
+        // Draw 2D primitives.
         _gpuBuffers.Vertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Primitives2d)
         {
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
-            PushFragmentUniform(batch.Uniform, 0);
+            PushFragmentUniform(batch.Uniform, UniformSlot::PerObject);
 
             if (!batch.TextureName.empty())
             {
@@ -525,7 +529,7 @@ namespace Silent::Renderer::SdlGpu
         // Luma-based fade.
         {
             _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
-            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, 0);
+            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, UniformSlot::PerFrame);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -544,7 +548,7 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableCrtFilter)
         {
             _pipelines.Bind(renderPass, RenderStage::Crt, BlendMode::Opaque);
-            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, 0);
+            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, UniformSlot::PerFrame);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -563,7 +567,7 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableVignette)
         {
             _pipelines.Bind(renderPass, RenderStage::Vignette, BlendMode::Opaque);
-            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, 0);
+            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, UniformSlot::PerFrame);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -608,7 +612,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Brightness = brightness
         };
-        PushFragmentUniform(uni, 0);
+        PushFragmentUniform(uni, UniformSlot::PerFrame);
 
         // Bind render texture.
         auto binding = SDL_GPUTextureSamplerBinding
@@ -843,19 +847,19 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.ViewportVertices2d.UpdateIdxs(copyPass, ToSpan(BUFFER_IDXS), 0);
     }
 
-    void Renderer::PushVertexUniform(const UniformType& uni, int slotIdx)
+    void Renderer::PushVertexUniform(const UniformType& uni, UniformSlot slot)
     {
         std::visit([&](auto&& arg)
         {
-            SDL_PushGPUVertexUniformData(_commandBuffer, slotIdx, &arg, sizeof(arg));
+            SDL_PushGPUVertexUniformData(_commandBuffer, (int)slot, &arg, sizeof(arg));
         }, uni);
     }
 
-    void Renderer::PushFragmentUniform(const UniformType& uni, int slotIdx)
+    void Renderer::PushFragmentUniform(const UniformType& uni, UniformSlot slot)
     {
         std::visit([&](auto&& arg)
         {
-            SDL_PushGPUFragmentUniformData(_commandBuffer, slotIdx, &arg, sizeof(arg));
+            SDL_PushGPUFragmentUniformData(_commandBuffer, (int)slot, &arg, sizeof(arg));
         }, uni);
     }
 

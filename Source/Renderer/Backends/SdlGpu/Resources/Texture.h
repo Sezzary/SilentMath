@@ -72,8 +72,9 @@ namespace Silent::Renderer::SdlGpu
          *
          * @param renderPass Render pass.
          * @param sampler Texture sampler.
+         * @param slotIdx Shader sampler slot index.
          */
-        void Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler);
+        void Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler, int slotIdx = 0);
     };
 
     /** @brief GPU texture cache. */
