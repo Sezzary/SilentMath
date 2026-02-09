@@ -109,6 +109,9 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
+        /** @brief Updates the render view. */
+        void UpdateView();
+
         /** @brief Processes high-level object data and swaps the double buffer.. */
         void PrepareRenderBuffer();
 

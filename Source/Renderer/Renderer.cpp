@@ -63,6 +63,11 @@ namespace Silent::Renderer
         return res.x / res.y;
     }
 
+    void RendererBase::UpdateView()
+    {
+        // @todo
+    }
+
     void RendererBase::PrepareRenderBuffer()
     {
         auto& executor = g_App.GetExecutor();
@@ -141,7 +146,8 @@ namespace Silent::Renderer
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
         constexpr auto SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
-        static const auto SHADOW_OFFSET = SCREEN_SPACE_RES * (1.0f / RETRO_SCREEN_SPACE_RES.y); // @todo Make `constexpr`.
+        constexpr auto SHADOW_OFFSET = Vector2(SCREEN_SPACE_RES.x * (1.0f / RETRO_SCREEN_SPACE_RES.y),
+                                               SCREEN_SPACE_RES.y * (1.0f / RETRO_SCREEN_SPACE_RES.y));
 
         auto& fonts = g_App.GetFonts();
 

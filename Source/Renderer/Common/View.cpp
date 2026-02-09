@@ -16,7 +16,9 @@ namespace Silent::Renderer
 
     Matrix View::GetMatrix(float fov, float aspect, float nearPlane, float farPlane)
     {
-        auto viewMat = Matrix::CreateLookAt(Position, Position + (Direction * 3), Up);
+        constexpr float TARGET_DIST = 3.0f;
+
+        auto viewMat = Matrix::CreateLookAt(Position, Position + (Direction * TARGET_DIST), Up);
         auto projMat = Matrix::CreatePerspective(Fov, aspect, nearPlane, farPlane);
         return projMat * viewMat;
     }
@@ -26,41 +28,42 @@ namespace Silent::Renderer
         const auto& input = g_App.GetInput();
 
         // Modulate speed.
+        static float speed = 0.02f;
         if (input.GetAction(In::Shift).IsHeld())
         {
-            Speed = 0.1f;
+            speed = 0.1f;
         }
         else
         {
-            Speed = 0.05f;
+            speed = 0.05f;
         }
 
         // Move on 2D plane.
         if (input.GetAction(In::W).IsHeld())
         {
-            Position.Translate(Direction, Speed);
+            Position.Translate(Direction, speed);
         }
         if (input.GetAction(In::A).IsHeld())
         {
-            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), -Speed);
+            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), -speed);
         }
         if (input.GetAction(In::S).IsHeld())
         {
-            Position.Translate(Direction, -Speed);
+            Position.Translate(Direction, -speed);
         }
         if (input.GetAction(In::D).IsHeld())
         {
-            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), Speed);
+            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), speed);
         }
 
         // Move vertically.
         if (input.GetAction(In::Space).IsHeld())
         {
-            Position.Translate(Up, Speed);
+            Position.Translate(Up, speed);
         }
         if (input.GetAction(In::Ctrl).IsHeld())
         {
-            Position.Translate(Up, -Speed);
+            Position.Translate(Up, -speed);
         }
 
         // Pan.

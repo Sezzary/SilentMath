@@ -670,21 +670,23 @@ namespace Silent::Renderer::SdlGpu
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
         constexpr int SHAPE_2D_VERT_COUNT_MAX  = (SHAPE_2D_COUNT_MAX * 2) * TRI_VERTEX_COUNT;
         constexpr int SHAPE_2D_IDX_COUNT_MAX   = SHAPE_2D_VERT_COUNT_MAX;
-        constexpr int TRI_2D_BATCH_COUNT_MAX   = SPRITE_2D_COUNT_MAX +
-                                                 SHAPE_2D_COUNT_MAX;
         constexpr int TRI_2D_VERT_COUNT_MAX    = SPRITE_2D_VERT_COUNT_MAX +
                                                  SHAPE_2D_VERT_COUNT_MAX;
         constexpr int TRI_2D_IDX_COUNT_MAX     = SPRITE_2D_IDX_COUNT_MAX;
-        constexpr int TRI_3D_VERT_COUNT_MAX    = 20; // @todo
-        constexpr int TRI_3D_IDX_COUNT_MAX     = 20;
+        constexpr int TRI_2D_BATCH_COUNT_MAX   = SPRITE_2D_COUNT_MAX +
+                                                 SHAPE_2D_COUNT_MAX;
+        constexpr int TRI_3D_VERT_COUNT_MAX    = SHRT_MAX;
+        constexpr int TRI_3D_IDX_COUNT_MAX     = TRI_3D_VERT_COUNT_MAX;
+        constexpr int TRI_3D_BATCH_COUNT_MAX   = TRI_3D_IDX_COUNT_MAX / 3;
+
+        // Initialize GPU buffers.
+        _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
+        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_2D_VERT_COUNT_MAX, TRI_2D_IDX_COUNT_MAX, "2D vertices");
+        _gpuBuffers.Vertices3d.Initialize(*_device, TRI_3D_VERT_COUNT_MAX, TRI_3D_IDX_COUNT_MAX, "3D vertices");
 
         // Reserve draw batches.
         _drawBatches.Primitives2d.reserve(TRI_2D_BATCH_COUNT_MAX);
-
-        // Initialize GPU buffers.
-        _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D screen vertices");
-        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_2D_VERT_COUNT_MAX, TRI_2D_IDX_COUNT_MAX, "2D vertices");
-        _gpuBuffers.Vertices3d.Initialize(*_device, TRI_3D_VERT_COUNT_MAX, TRI_3D_IDX_COUNT_MAX, "3D vertices");
+        _drawBatches.Primitives3d.reserve(TRI_3D_BATCH_COUNT_MAX);
     }
 
     void Renderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)

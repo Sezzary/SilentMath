@@ -17,4 +17,11 @@ namespace Silent::Renderer
                                      UniformModel,
                                      UniformPrimitive3d,
                                      UniformSprite2d>;
+
+    /** @brief Uniform slot indices. @todo Generic names for all use cases. */
+    enum class UniformSlot
+    {
+        ModelMatrix = 0,
+        SceneData   = 1
+    };
 }
