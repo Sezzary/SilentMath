@@ -5,7 +5,7 @@
 
 namespace Silent::Renderer
 {
-    constexpr int SHAPE_2D_COUNT_MAX = 64;
+    constexpr int SHAPE_2D_COUNT_MAX = 128;
 
     /** @brief 2D screen shape representing a line, triangle, or quad. */
     struct Shape2d

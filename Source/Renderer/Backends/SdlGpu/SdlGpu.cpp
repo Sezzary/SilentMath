@@ -467,7 +467,7 @@ namespace Silent::Renderer::SdlGpu
                 }
             }
 
-            SDL_DrawGPUIndexedPrimitives(&renderPass, batch.BufferStride, 1, 0, batch.BufferOffset, 0);
+            SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
             _doubleBuffer.Active.DrawCallCount++;
         }
 
@@ -670,23 +670,31 @@ namespace Silent::Renderer::SdlGpu
         constexpr int SPRITE_2D_IDX_COUNT_MAX  = SPRITE_2D_COUNT_MAX * QUAD_IDX_COUNT;
         constexpr int SHAPE_2D_VERT_COUNT_MAX  = (SHAPE_2D_COUNT_MAX * 2) * TRI_VERTEX_COUNT;
         constexpr int SHAPE_2D_IDX_COUNT_MAX   = SHAPE_2D_VERT_COUNT_MAX;
-        constexpr int TRI_2D_VERT_COUNT_MAX    = SPRITE_2D_VERT_COUNT_MAX +
-                                                 SHAPE_2D_VERT_COUNT_MAX;
-        constexpr int TRI_2D_IDX_COUNT_MAX     = SPRITE_2D_IDX_COUNT_MAX;
-        constexpr int TRI_2D_BATCH_COUNT_MAX   = SPRITE_2D_COUNT_MAX +
-                                                 SHAPE_2D_COUNT_MAX;
-        constexpr int TRI_3D_VERT_COUNT_MAX    = SHRT_MAX;
-        constexpr int TRI_3D_IDX_COUNT_MAX     = TRI_3D_VERT_COUNT_MAX;
-        constexpr int TRI_3D_BATCH_COUNT_MAX   = TRI_3D_IDX_COUNT_MAX / 3;
+        constexpr int GLYPH_2D_VERT_COUNT_MAX  = GLYPH_2D_COUNT_MAX * QUAD_VERTEX_COUNT;
+        constexpr int GLYPH_2D_IDX_COUNT_MAX   = GLYPH_2D_COUNT_MAX * QUAD_IDX_COUNT;
+
+        constexpr int VERT_2D_COUNT_MAX       = SPRITE_2D_VERT_COUNT_MAX +
+                                                SHAPE_2D_VERT_COUNT_MAX +
+                                                GLYPH_2D_VERT_COUNT_MAX;
+        constexpr int VERT_2D_IDX_COUNT_MAX   = SPRITE_2D_IDX_COUNT_MAX +
+                                                SHAPE_2D_IDX_COUNT_MAX +
+                                                GLYPH_2D_IDX_COUNT_MAX;
+        constexpr int PRIM_2D_BATCH_COUNT_MAX = SPRITE_2D_COUNT_MAX +
+                                                SHAPE_2D_COUNT_MAX +
+                                                GLYPH_2D_COUNT_MAX;
+
+        constexpr int VERT_3D_COUNT_MAX       = SHRT_MAX - 1;
+        constexpr int VERT_3D_IDX_COUNT_MAX   = VERT_3D_COUNT_MAX;
+        constexpr int PRIM_3D_BATCH_COUNT_MAX = VERT_3D_IDX_COUNT_MAX / 3;
 
         // Initialize GPU buffers.
         _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
-        _gpuBuffers.Vertices2d.Initialize(*_device, TRI_2D_VERT_COUNT_MAX, TRI_2D_IDX_COUNT_MAX, "2D vertices");
-        _gpuBuffers.Vertices3d.Initialize(*_device, TRI_3D_VERT_COUNT_MAX, TRI_3D_IDX_COUNT_MAX, "3D vertices");
+        _gpuBuffers.Vertices2d.Initialize(*_device, VERT_2D_COUNT_MAX, VERT_2D_IDX_COUNT_MAX, "2D vertices");
+        _gpuBuffers.Vertices3d.Initialize(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "3D vertices");
 
         // Reserve draw batches.
-        _drawBatches.Primitives2d.reserve(TRI_2D_BATCH_COUNT_MAX);
-        _drawBatches.Primitives3d.reserve(TRI_3D_BATCH_COUNT_MAX);
+        _drawBatches.Primitives2d.reserve(PRIM_2D_BATCH_COUNT_MAX);
+        _drawBatches.Primitives3d.reserve(PRIM_3D_BATCH_COUNT_MAX);
     }
 
     void Renderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
@@ -734,6 +742,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
+        int idxOffset  = 0;
         for (const auto& prim : _doubleBuffer.Render.Primitives2d)
         {
             // Add vertices.
@@ -754,7 +763,7 @@ namespace Silent::Renderer::SdlGpu
                 // Add indices.
                 for (int i = 0; i < TRI_IDX_COUNT; i++)
                 {
-                    bufferIdxs.push_back(vertOffset + i);
+                    bufferIdxs.push_back(i);
                 }
 
                 curVertCount = TRI_VERTEX_COUNT;
@@ -764,15 +773,15 @@ namespace Silent::Renderer::SdlGpu
             else if (prim.Vertices.size() == QUAD_VERTEX_COUNT)
             {
                 // Add indices.
-                for (int quadTriIdx : QUAD_TRI_IDXS)
+                for (int i : QUAD_TRI_IDXS)
                 {
-                    bufferIdxs.push_back(vertOffset + quadTriIdx);
+                    bufferIdxs.push_back(i);
                 }
 
                 curVertCount = QUAD_VERTEX_COUNT;
                 curIdxCount  = QUAD_IDX_COUNT;
             }
-    
+
             // Add batch.
             // @todo Smarter way that strings together primitives with the same render stage, blend mode, and texture. What to do with uniforms?
             // For now, collect each as its own batch of 2 triangles.
@@ -782,11 +791,13 @@ namespace Silent::Renderer::SdlGpu
                 .RenderStg    = prim.RenderStg,
                 .BlendMd      = prim.BlendMd,
                 .Uniform      = prim.Uniform,
-                .BufferOffset = vertOffset,
-                .BufferStride = curIdxCount
+                .VertexCount  = curIdxCount,
+                .VertexOffset = vertOffset,
+                .IdxOffset    = idxOffset
             });
 
             vertOffset += curVertCount;
+            idxOffset  += curIdxCount;
         }
 
         // Update GPU buffer.

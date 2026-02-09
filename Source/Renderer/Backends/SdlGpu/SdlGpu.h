@@ -19,8 +19,9 @@ namespace Silent::Renderer::SdlGpu
         RenderStage RenderStg    = RenderStage::Sprite2d;
         BlendMode   BlendMd      = BlendMode::Opaque;
         UniformType Uniform      = {};
-        int         BufferOffset = 0;
-        int         BufferStride = 0;
+        int         VertexCount  = 0;
+        int         VertexOffset = 0;
+        int         IdxOffset    = 0;
     };
 
     /** @brief Sorted GPU buffer draw batches. */
