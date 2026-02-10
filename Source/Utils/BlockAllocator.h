@@ -10,7 +10,7 @@ namespace Silent::Utils
         bool   IsFree = false;
     };
 
-    /** @brief Dynamic memory block allocator for fixed-size buffer. */
+    /** @brief Dynamic memory block allocator. Used to track allocations to a fixed-size mega-buffer. */
     class BlockAllocator
     {
     private:

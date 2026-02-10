@@ -73,7 +73,7 @@ namespace Silent::Debug
                                      [&]()
                                      {
                                         auto& renderer2 = g_App.GetRenderer();
-                                        auto  res    = renderer.GetScreenResolution().ToVector2();
+                                        auto  res    = renderer.GetViewportResolution().ToVector2();
                                         float aspect = res.x / res.y;
                                         auto aspectCorrection = Vector2::One;
                                         if (aspect >= 1.0f)
@@ -100,7 +100,7 @@ namespace Silent::Debug
                                      [&]()
                                      {
                                         auto& renderer2 = g_App.GetRenderer();
-                                        auto  res    = renderer.GetScreenResolution().ToVector2();
+                                        auto  res    = renderer.GetViewportResolution().ToVector2();
                                         float aspect = res.x / res.y;
                                         auto aspectCorrection = Vector2::One;
                                         if (aspect >= 1.0f)

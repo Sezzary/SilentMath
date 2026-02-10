@@ -15,20 +15,20 @@ namespace Silent::Debug
     {
         CreateGui([]()
         {
-            constexpr const char* FRAME_RATE_ITEMS[]        = { "30", "60", "120", "Unlimited" };
-            constexpr const char* RENDER_SCALE_ITEMS[]      = { "Native", "Retro" };
-            constexpr const char* ASPECT_RATIO_ITEMS[]      = { "Native", "Widescreen", "Retro" };
+            constexpr const char* FRAME_RATE_ITEMS[]        = { "30 FPS", "60 FPS" };
+            constexpr const char* RENDER_SCALE_ITEMS[]      = { "Original", "DoubleOriginal", "Native" };
+            constexpr const char* ASPECT_RATIO_ITEMS[]      = { "4:3", "16:9", "Native"  };
             constexpr const char* TEX_FILTER_ITEMS[]        = { "Nearest", "Linear" };
-            constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Smooth", "Retro" };
+            constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Original", "Smooth" };
             constexpr const char* LIGHTING_ITEMS[]          = { "Per vertex", "Per pixel" };
-            constexpr const char* LANG_ITEMS[]              = { "English (Revised)", "English (Original US)", "English (Original EU)" };
+            constexpr const char* LANG_ITEMS[]              = { "English (Revised)", "English (US)", "English (EU)" };
             constexpr const char* SOUND_ITEMS[]             = { "Stereo", "Monaural" };
             constexpr const char* BLOOD_COLOR_ITEMS[]       = { "Normal", "Green", "Violet", "Black" };
             constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
             constexpr const char* WEAPON_CONTROL_ITEMS[]    = { "Switch", "Press" };
             constexpr const char* VIEW_MODE_ITEMS[]         = { "Normal", "Self view" };
-            constexpr const char* PAPER_MAP_ITEMS[]         = { "High", "Retro" };
-            constexpr const char* DIALOG_PAUSE_ITEMS[]      = { "Condensed", "Retro" };
+            constexpr const char* PAPER_MAP_ITEMS[]         = { "Original", "Scalable" };
+            constexpr const char* DIALOG_PAUSE_ITEMS[]      = { "Original", "Condensed" };
 
             const auto& assets     = g_App.GetAssets();
             auto&       options    = g_App.GetOptions();

@@ -58,7 +58,7 @@ namespace Silent::Renderer
     {
         const auto& renderer = g_App.GetRenderer();
 
-        float aspect = renderer.GetScreenAspectRatio();
+        float aspect = renderer.GetViewportAspectRatio();
 
         auto aspectCorrection = Vector2::One;
         switch(scaleMode)
@@ -116,8 +116,7 @@ namespace Silent::Renderer
 
         const auto& renderer = g_App.GetRenderer();
 
-        auto  screenRes       = renderer.GetScreenResolution().ToVector2();
-        float screenResAspect = screenRes.x / screenRes.y;
+        float aspect = renderer.GetViewportAspectRatio();
         
         // @todo Needs another adjustment.
         return pos * GetScreenAspectCorrection(scaleMode);

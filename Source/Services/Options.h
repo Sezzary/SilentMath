@@ -12,25 +12,33 @@ namespace Silent::Services
     constexpr int BULLET_ADJUST_MAX     = 6;
     constexpr int MOUSE_SENSITIVITY_MAX = 20;
 
+    enum class GraphicsPresetType
+    {
+        None,
+        Original,
+        OriginalPlus,
+        Recommended,
+        Max
+    };
+
     enum class FrameRateType
     {
         Fps30,
-        Fps60,
-        Fps120,
-        Unlimited
+        Fps60
     };
 
     enum class RenderScaleType
     {
-        Native,
-        Retro
+        Original,
+        DoubleOriginal,
+        Native
     };
 
     enum class AspectRatioType
     {
-        Native,
-        Widescreen,
-        Retro
+        Ratio4to3,
+        Ratio16to9,
+        Native
     };
 
     enum class TextureFilterType
@@ -41,8 +49,8 @@ namespace Silent::Services
 
     enum class TextQualityType
     {
-        Smooth,
-        Retro
+        Original,
+        Smooth
     };
 
     enum class LightingType
@@ -54,8 +62,8 @@ namespace Silent::Services
     enum class LanguageType
     {
         EnglishRevised,
-        EnglishOriginalUs,
-        EnglishOriginalEu
+        EnglishUs,
+        EnglishEu
     };
 
     enum class SoundType
@@ -92,14 +100,14 @@ namespace Silent::Services
 
     enum class PaperMapQuality
     {
-        High,
-        Retro
+        Original,
+        Scalable,
     };
 
     enum class DialogPauseType
     {
-        Condensed,
-        Retro
+        Original,
+        Condensed
     };
 
     /** @brief User options configuration data. */
@@ -116,18 +124,19 @@ namespace Silent::Services
         // Graphics (user)
         // ================
 
-        bool              EnableFullscreen   = false;
-        int               BrightnessLevel    = 0;
-        FrameRateType     FrameRate          = FrameRateType::Fps30;
-        RenderScaleType   RenderScale        = RenderScaleType::Native;
-        AspectRatioType   AspectRatio        = AspectRatioType::Native;
-        TextureFilterType TextureFilter      = TextureFilterType::Nearest;
-        TextQualityType   TextQuality        = TextQualityType::Smooth;
-        LightingType      Lighting           = LightingType::PerVertex;
-        bool              EnableVertexJitter = false;
-        bool              EnableDithering    = false;
-        bool              EnableVignette     = false;
-        bool              EnableCrtFilter    = false;
+        GraphicsPresetType PresetType         = GraphicsPresetType::None;
+        bool               EnableFullscreen   = false;
+        int                BrightnessLevel    = 0;
+        FrameRateType      FrameRate          = FrameRateType::Fps30;
+        RenderScaleType    RenderScale        = RenderScaleType::Native;
+        AspectRatioType    AspectRatio        = AspectRatioType::Native;
+        TextureFilterType  TextureFilter      = TextureFilterType::Nearest;
+        TextQualityType    TextQuality        = TextQualityType::Smooth;
+        LightingType       Lighting           = LightingType::PerVertex;
+        bool               EnableVertexJitter = false;
+        bool               EnableDithering    = false;
+        bool               EnableVignette     = false;
+        bool               EnableCrtFilter    = false;
 
         // =========
         // Gameplay
@@ -135,7 +144,7 @@ namespace Silent::Services
 
         bool           EnableAutoLoad  = false;
         bool           EnableSubtitles = false;
-        LanguageType   Language        = LanguageType::EnglishOriginalUs;
+        LanguageType   Language        = LanguageType::EnglishUs;
         SoundType      Sound           = SoundType::Stereo;
         int            BgmVolume       = 0;
         int            SeVolume        = 0;

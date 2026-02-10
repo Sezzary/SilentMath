@@ -213,7 +213,7 @@ namespace Silent::Renderer::SdlGpu
         const auto& fs = g_App.GetFilesystem();
 
         // Get window size.
-        auto res = GetScreenResolution();
+        auto res = GetViewportResolution();
 
         // Ensure directory exists.
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
@@ -266,14 +266,14 @@ namespace Silent::Renderer::SdlGpu
 
         // @todo Size should depend on aspect ratio: 4:3, 16:9, or native.
 
-        auto screenRes     = GetScreenResolution();
+        auto viewportRes   = GetViewportResolution();
         auto renderTexInfo = SDL_GPUTextureCreateInfo
         {
             .type                 = SDL_GPU_TEXTURETYPE_2D,
             .format               = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
             .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
-            .width                = screenRes.x,
-            .height               = screenRes.y,
+            .width                = viewportRes.x,
+            .height               = viewportRes.y,
             .layer_count_or_depth = 1,
             .num_levels           = 1
         };
@@ -287,19 +287,19 @@ namespace Silent::Renderer::SdlGpu
             return _depthTexture;
         }
 
-        if (_depthTexture)
+        if (_depthTexture != nullptr)
         {
             SDL_ReleaseGPUTexture(_device, _depthTexture);
         }
 
-        auto screenRes    = GetScreenResolution();
+        auto viewportRes  = GetViewportResolution();
         auto depthTexInfo = SDL_GPUTextureCreateInfo
         {
             .type                 = SDL_GPU_TEXTURETYPE_2D,
             .format               = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
             .usage                = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
-            .width                = screenRes.x,
-            .height               = screenRes.y,
+            .width                = viewportRes.x,
+            .height               = viewportRes.y,
             .layer_count_or_depth = 1,
             .num_levels           = 1
         };
@@ -364,7 +364,7 @@ namespace Silent::Renderer::SdlGpu
         auto model = Matrix::Identity;
         model.Rotate(DEG_TO_RAD(45.0f), Vector3::UnitX);
 
-        auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetScreenAspectRatio(), 0.1f, 100.0f);
+        auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
         auto uni0 = UniformView{};
         auto uni1 = UniformPrimitive3d{};
@@ -548,7 +548,7 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableCrtFilter)
         {
             _pipelines.Bind(renderPass, RenderStage::Crt, BlendMode::Opaque);
-            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, UniformSlot::PerFrame);
+            PushFragmentUniform(UniformCrt{ .Resolution = GetViewportResolution().ToVector2(), .Time = 0.0f }, UniformSlot::PerFrame);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -567,7 +567,7 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableVignette)
         {
             _pipelines.Bind(renderPass, RenderStage::Vignette, BlendMode::Opaque);
-            PushFragmentUniform(UniformCrt{ .Resolution = GetScreenResolution().ToVector2(), .Time = 0.0f }, UniformSlot::PerFrame);
+            PushFragmentUniform(UniformCrt{ .Resolution = GetViewportResolution().ToVector2(), .Time = 0.0f }, UniformSlot::PerFrame);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding

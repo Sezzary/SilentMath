@@ -81,13 +81,13 @@ namespace Silent::Renderer
          *
          * @return Render resolution.
          */
-        Vector2i GetScreenResolution() const;
+        Vector2i GetViewportResolution() const;
 
         /** @brief Gets the screen aspect ratio.
          *
          * @return Screen aspect ratio.
          */
-        float GetScreenAspectRatio() const;
+        float GetViewportAspectRatio() const;
 
         /** @brief Gets the draw call count for the previous render tick.
          *

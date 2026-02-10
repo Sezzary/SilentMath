@@ -477,7 +477,7 @@ namespace Silent::Input
         // Compute cursor position.
         auto pos      = Vector2::Zero;
         auto butState = SDL_GetMouseState(&pos.x, &pos.y);
-        pos           = (pos / renderer.GetScreenResolution().ToVector2()) * SCREEN_SPACE_RES;
+        pos           = (pos / renderer.GetViewportResolution().ToVector2()) * SCREEN_SPACE_RES;
 
         // Set mouse button event states.
         for (int butCode : VALID_MOUSE_BUTTON_CODES)

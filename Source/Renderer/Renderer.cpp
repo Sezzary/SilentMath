@@ -33,7 +33,7 @@ namespace Silent::Renderer
         _clearColor = color;
     }
 
-    Vector2i RendererBase::GetScreenResolution() const
+    Vector2i RendererBase::GetViewportResolution() const
     {
         const auto& options = g_App.GetOptions();
 
@@ -57,9 +57,9 @@ namespace Silent::Renderer
         return res;
     }
 
-    float RendererBase::GetScreenAspectRatio() const
+    float RendererBase::GetViewportAspectRatio() const
     {
-        auto res = GetScreenResolution().ToVector2();
+        auto res = GetViewportResolution().ToVector2();
         return res.x / res.y;
     }
 
