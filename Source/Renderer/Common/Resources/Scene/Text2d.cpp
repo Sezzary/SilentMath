@@ -54,7 +54,7 @@ namespace Silent::Renderer
             .HasShadow    = hasDropShadow,
             .Depth        = depth,
             .AlignMd      = alignMode,
-            .ScaleMd      = scaleMode,
+            .ScaleMd      = ScaleMode::HorizontalEdge, // @todo
             .BlendMd      = blendMode
         };
     }

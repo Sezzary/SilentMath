@@ -381,71 +381,58 @@ namespace Silent::Renderer
 
         for (const auto& shape : _shapes2d)
         {
+            auto posArr = std::vector<Vector2>{};
+            posArr.reserve(shape.Vertices.size());
+
             // Triangle.
             if (shape.Vertices.size() == TRI_VERTEX_COUNT)
             {
                 // Compute vertex positions.
-                auto pos0 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[0].Position.x, shape.Vertices[0].Position.y));
-                auto pos1 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[1].Position.x, shape.Vertices[1].Position.y));
-                auto pos2 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y));
-
-                // Add 2D primitive.
-                // @lock Restrict 2D primitives access.
+                posArr =
                 {
-                    auto lock = ParallelLock(_primitives2dMutex);
-
-                    _doubleBuffer.Active.Primitives2d.push_back(Primitive2d
-                    {
-                        .Vertices =
-                        {
-                            Vertex2d{ pos0, shape.Vertices[0].Col, Vector2::Zero },
-                            Vertex2d{ pos1, shape.Vertices[1].Col, Vector2::Zero },
-                            Vertex2d{ pos2, shape.Vertices[2].Col, Vector2::Zero },
-                        },
-                        .Depth       = shape.Depth,
-                        .TextureName = {},
-                        .RenderStg   = RenderStage::Shape2d,
-                        .BlendMd     = shape.BlendMd,
-                        .Uniform     = UniformSprite2d
-                        {
-                            .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
-                        }
-                    });
-                }
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[0].Position.x, shape.Vertices[0].Position.y)),
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[1].Position.x, shape.Vertices[1].Position.y)),
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y))
+                };
             }
             // Line or quad.
             else if (shape.Vertices.size() == QUAD_VERTEX_COUNT)
             {
                 // Compute vertex positions.
-                auto pos0 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[0].Position.x, shape.Vertices[0].Position.y));
-                auto pos1 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[1].Position.x, shape.Vertices[1].Position.y));
-                auto pos2 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y));
-                auto pos3 = ConvertScreenPercentToNdc(Vector2(shape.Vertices[3].Position.x, shape.Vertices[3].Position.y));
-
-                // Add 2D primitive.
-                // @lock Restrict 2D primitives access.
+                posArr =
                 {
-                    auto lock = ParallelLock(_primitives2dMutex);
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[0].Position.x, shape.Vertices[0].Position.y)),
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[1].Position.x, shape.Vertices[1].Position.y)),
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y)),
+                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[3].Position.x, shape.Vertices[3].Position.y))
+                };
+            }
 
-                    _doubleBuffer.Active.Primitives2d.push_back(Primitive2d
+            // Create vertices.
+            auto verts = std::vector<Vertex2d>{};
+            verts.reserve(shape.Vertices.size());
+            for (int i = 0; i < shape.Vertices.size(); i++)
+            {
+                verts.push_back(Vertex2d{ posArr[i], shape.Vertices[i].Col, Vector2::Zero });
+            }
+
+            // Add 2D primitive.
+            // @lock Restrict 2D primitives access.
+            {
+                auto lock = ParallelLock(_primitives2dMutex);
+
+                _doubleBuffer.Active.Primitives2d.push_back(Primitive2d
+                {
+                    .Vertices    = std::move(verts),
+                    .Depth       = shape.Depth,
+                    .TextureName = {},
+                    .RenderStg   = RenderStage::Shape2d,
+                    .BlendMd     = shape.BlendMd,
+                    .Uniform     = UniformSprite2d
                     {
-                        .Vertices =
-                        {
-                            Vertex2d{ pos0, shape.Vertices[0].Col, Vector2::Zero },
-                            Vertex2d{ pos1, shape.Vertices[1].Col, Vector2::Zero },
-                            Vertex2d{ pos2, shape.Vertices[2].Col, Vector2::Zero },
-                            Vertex2d{ pos3, shape.Vertices[3].Col, Vector2::Zero }
-                        },
-                        .Depth       = shape.Depth,
-                        .TextureName = {},
-                        .RenderStg   = RenderStage::Shape2d,
-                        .BlendMd     = shape.BlendMd,
-                        .Uniform     = UniformSprite2d
-                        {
-                            .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
-                        }
-                    });
-                }
+                        .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
+                    }
+                });
             }
         }
     }
@@ -540,10 +527,10 @@ namespace Silent::Renderer
                 {
                     .Vertices =
                     {
-                        { pos0, sprite.Col0, uv0 },
-                        { pos1, sprite.Col1, uv1 },
-                        { pos2, sprite.Col2, uv2 },
-                        { pos3, sprite.Col3, uv3 }
+                        Vertex2d{ pos0, sprite.Col0, uv0 },
+                        Vertex2d{ pos1, sprite.Col1, uv1 },
+                        Vertex2d{ pos2, sprite.Col2, uv2 },
+                        Vertex2d{ pos3, sprite.Col3, uv3 }
                     },
                     .Depth       = sprite.Depth,
                     .TextureName = sprite.TextureName,

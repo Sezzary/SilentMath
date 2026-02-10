@@ -363,8 +363,8 @@ namespace Silent::Renderer::SdlGpu
 
         auto model = Matrix::Identity;
         model.Rotate(DEG_TO_RAD(45.0f), Vector3::UnitX);
-    
-        auto viewProj = _view.GetMatrix(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+
+        auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetScreenAspectRatio(), 0.1f, 100.0f);
 
         auto uni0 = UniformView{};
         auto uni1 = UniformPrimitive3d{};
