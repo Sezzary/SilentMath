@@ -9,6 +9,7 @@ namespace Silent::Renderer
         // Materials
         // ==========
 
+        Shape2d,
         Sprite2d,
         Glyph2d,
         Model,

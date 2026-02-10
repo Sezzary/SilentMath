@@ -470,7 +470,6 @@ namespace Silent::Renderer
                     .BlendMd     = sprite.BlendMd,
                     .Uniform     = UniformSprite2d
                     {
-                        .UseTexture  = true, 
                         .IsFastAlpha = sprite.BlendMd == BlendMode::FastAlpha
                     }
                 });
@@ -505,11 +504,10 @@ namespace Silent::Renderer
                         },
                         .Depth       = shape.Depth,
                         .TextureName = {},
-                        .RenderStg   = RenderStage::Sprite2d,
+                        .RenderStg   = RenderStage::Shape2d,
                         .BlendMd     = shape.BlendMd,
                         .Uniform     = UniformSprite2d
                         {
-                            .UseTexture  = false, 
                             .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
                         }
                     });
@@ -540,11 +538,10 @@ namespace Silent::Renderer
                         },
                         .Depth       = shape.Depth,
                         .TextureName = {},
-                        .RenderStg   = RenderStage::Sprite2d,
+                        .RenderStg   = RenderStage::Shape2d,
                         .BlendMd     = shape.BlendMd,
                         .Uniform     = UniformSprite2d
                         {
-                            .UseTexture  = false, 
                             .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
                         }
                     });

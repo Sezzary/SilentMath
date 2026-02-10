@@ -373,7 +373,7 @@ namespace Silent::Renderer::SdlGpu
         PushVertexUniform(uni0, UniformSlot::PerFrame);
         PushVertexUniform(uni1, UniformSlot::PerObject);
 
-        PushFragmentUniform(UniformModel{ true, false }, UniformSlot::PerObject);
+        PushFragmentUniform(UniformModel{ false }, UniformSlot::PerObject);
 
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
         _doubleBuffer.Active.DrawCallCount++;

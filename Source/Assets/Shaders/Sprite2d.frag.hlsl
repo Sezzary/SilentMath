@@ -10,7 +10,6 @@ struct Input
 
 cbuffer PerObject : register(b1, space3)
 {
-    uint UseTexture;
     uint IsFastAlpha;
 };
 
@@ -20,10 +19,10 @@ float4 main(Input input) : SV_Target
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
     // Compute vertex and texture alpha combination.
-    float alpha = lerp(input.Color.a, input.Color.a * texColor.a, float(UseTexture));
+    float alpha = input.Color.a * texColor.a;
     alpha       = lerp(alpha, step(0.5f, alpha), float(IsFastAlpha));
 
     // Compute final fragment color.
-    float3 color = lerp(input.Color.rgb, input.Color.rgb * texColor.rgb, float(UseTexture));
+    float3 color = input.Color.rgb * texColor.rgb;
     return float4(color, alpha);
 }
