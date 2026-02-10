@@ -87,6 +87,16 @@ namespace Silent::Renderer
                 }
                 break;
             }
+            case ScaleMode::HorizontalEdge:
+            {
+                aspectCorrection.x = 1.0f / aspect;
+                break;
+            }
+            case ScaleMode::VerticalEdge:
+            {
+                aspectCorrection.y = 1.0f / (1.0f / aspect);
+                break;
+            }
             default:
             case ScaleMode::Stretch:
             {

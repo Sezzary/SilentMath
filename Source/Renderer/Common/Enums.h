@@ -65,8 +65,8 @@ namespace Silent::Renderer
     {
         ShortEdge,
         LongEdge,
-        HorizontalEdge, // } Might implement this, not sure.
-        VerticalEdge,   // }
+        HorizontalEdge,
+        VerticalEdge,
         Stretch
     };
 }
