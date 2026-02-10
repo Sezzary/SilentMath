@@ -752,7 +752,7 @@ namespace Silent::Renderer::SdlGpu
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
             {
-                // @todo Z depth doesn't seem to have any effect and primitives still need manual depth sorting.
+                // @todo Need depth texture.
                 float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
                 auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
                 bufferVerts.push_back(BufferVertex2d{ pos, prim.Vertices[i].Uv, prim.Vertices[i].Col });
@@ -816,29 +816,25 @@ namespace Silent::Renderer::SdlGpu
         // @todo Compute aspect-correct vertex positions.
         auto bufferVerts = std::vector<BufferVertex2d>
         {
-            BufferVertex2d
             {
-                Vector3(-1.0f, 1.0f, 0.0f),
-                Vector2(0.0f, 0.0f),
-                Color::White
+                .Position = Vector3(-1.0f, 1.0f, 0.0f),
+                .Uv       = Vector2(0.0f, 0.0f),
+                .Col      = Color::White
             },
-            BufferVertex2d
             {
-                Vector3(1.0f, 1.0f, 0.0f),
-                Vector2(1.0f, 0.0f),
-                Color::White
+                .Position = Vector3(1.0f, 1.0f, 0.0f),
+                .Uv       = Vector2(1.0f, 0.0f),
+                .Col      = Color::White
             },
-            BufferVertex2d
             {
-                Vector3(-1.0f, -1.0f, 0.0f),
-                Vector2(0.0f, 1.0f),
-                Color::White
+                .Position = Vector3(-1.0f, -1.0f, 0.0f),
+                .Uv       = Vector2(0.0f, 1.0f),
+                .Col      = Color::White
             },
-            BufferVertex2d
             {
-                Vector3(1.0f, -1.0f, 0.0f),
-                Vector2(1.0f, 1.0f),
-                Color::White
+                .Position = Vector3(1.0f, -1.0f, 0.0f),
+                .Uv       = Vector2(1.0f, 1.0f),
+                .Col      = Color::White
             }
         };
 
