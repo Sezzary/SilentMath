@@ -2,6 +2,7 @@
 
 #include "Assets/Parsers/Anm.h"
 #include "Assets/Parsers/Ilm.h"
+#include "Assets/Parsers/Png.h"
 #include "Assets/Parsers/Tim.h"
 #include "Assets/Parsers/Tmd.h"
 
@@ -22,7 +23,9 @@ namespace Silent::Assets
         Dat, /** "Demo dATa"?                   | Demo playback data. */
         Kdt, /** "Key Data Tracker"?            | Konami MIDI tracker data. */
         Cmp, /** "CoMPressed" or "CoMPiled"?    | Unknown. */
-        Xa   /** "eXtended Audio"               | PSX XA audio stream. */
+        Xa,  /** "eXtended Audio"               | PSX XA audio stream. */
+
+        Png
     };
 
     /** @brief Streamable asset states. Used in `Asset`. */

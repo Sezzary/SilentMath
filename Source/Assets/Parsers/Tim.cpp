@@ -41,7 +41,7 @@ namespace Silent::Assets
         if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open TIM `{}`.",
-                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
+                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Confirm TIM format magic.
@@ -49,7 +49,7 @@ namespace Silent::Assets
         if (magic != HEADER_MAGIC)
         {
             throw std::runtime_error(Fmt("Failed to parse invalid TIM `{}`.",
-                                         std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
+                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read CLUT and BPP flags.

@@ -149,7 +149,7 @@ namespace Silent::Assets
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open TMD `{}`.", std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
+            throw std::runtime_error(Fmt("Failed to open TMD `{}`.", std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header.

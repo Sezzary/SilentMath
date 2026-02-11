@@ -33,7 +33,7 @@ namespace Silent::Assets
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open ANM `{}`.", std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
+            throw std::runtime_error(Fmt("Failed to open ANM `{}`.", std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header.
@@ -55,7 +55,7 @@ namespace Silent::Assets
         int rotsSize         = header.RotationCount * ROT_MAT_COMP_COUNT;
         Debug::Assert((translationsSize + rotsSize) == header.KeyframeSize,
                       Fmt("Attempted to parse ANM `{}` with incongruent number of translations and rotations.",
-                          std::filesystem::relative(fs.GetAssetsDirectory(), filename).string()));
+                          std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
 
         // Create asset.
         auto asset = AnmAsset

@@ -5,9 +5,9 @@ namespace Silent::Utils
     /** @brief Memory block metadata. */
     struct BlockMetadata
     {
-        uint32 Offset = 0;
-        uint32 Size   = 0;
-        bool   IsFree = false;
+        int  Offset = 0;
+        int  Size   = 0;
+        bool IsFree = false;
     };
 
     /** @brief Dynamic memory block allocator. Used to track allocations to a fixed-size mega-buffer. */
@@ -18,7 +18,7 @@ namespace Silent::Utils
         // Fields
         // =======
 
-        uint32                     _size   = 0;
+        int                        _size   = 0;
         std::vector<BlockMetadata> _blocks = {};
 
     public:
@@ -33,7 +33,7 @@ namespace Silent::Utils
          *
          * @param size Memory size.
          */
-        BlockAllocator(uint32 size);
+        BlockAllocator(int size);
 
         // ========
         // Getters
@@ -43,7 +43,7 @@ namespace Silent::Utils
          *
          * @return Size.
          */
-        uint32 GetSize() const;
+        int GetSize() const;
 
         // ==========
         // Utilities
@@ -55,13 +55,13 @@ namespace Silent::Utils
          * @param alignment Block alignment.
          * @return Start offset of the allocated block. `NO_VALUE` if failed.
          */
-        uint32 Allocate(uint32 size, uint32 alignment = 1);
+        int Allocate(int size, int alignment = 1);
 
         /** @brief Deallocates a memory block at a given offset.
          *
          * @param offset Start offset of the memory block to deallocate.
          */
-        void Deallocate(uint32 offset);
+        void Deallocate(int offset);
 
         /** @brief Deallocates all memory blocks. */
         void Clear();

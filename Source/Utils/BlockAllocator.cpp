@@ -3,7 +3,7 @@
 
 namespace Silent::Utils
 {
-    BlockAllocator::BlockAllocator(uint32 size)
+    BlockAllocator::BlockAllocator(int size)
     {
         _size = size;
         _blocks.push_back(BlockMetadata
@@ -14,12 +14,12 @@ namespace Silent::Utils
         });
     }
 
-    uint32 BlockAllocator::GetSize() const
+    int BlockAllocator::GetSize() const
     {
         return _size;
     }
 
-    uint32 BlockAllocator::Allocate(uint32 size, uint32 alignment)
+    int BlockAllocator::Allocate(int size, int alignment)
     {
         constexpr int SPLIT_SIZE_MIN = 1;
 
@@ -27,8 +27,8 @@ namespace Silent::Utils
         {
             auto& block = _blocks[i];
 
-            uint32 alignedOffset = ((block.Offset + alignment) - 1) & ~(alignment - 1);
-            uint32 padding       = alignedOffset - block.Offset;
+            int alignedOffset = ((block.Offset + alignment) - 1) & ~(alignment - 1);
+            int padding       = alignedOffset - block.Offset;
 
             if (block.IsFree && block.Size >= (size + padding))
             {
@@ -55,7 +55,7 @@ namespace Silent::Utils
         return NO_VALUE;
     }
 
-    void BlockAllocator::Deallocate(uint32 offset)
+    void BlockAllocator::Deallocate(int offset)
     {
         for (int i = 0; i < _blocks.size(); i++)
         {

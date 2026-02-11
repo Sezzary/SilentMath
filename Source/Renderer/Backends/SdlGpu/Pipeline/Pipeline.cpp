@@ -188,10 +188,10 @@ namespace Silent::Renderer::SdlGpu
             .entrypoint           = entryPoint,
             .format               = activeFormatFlag,
             .stage                = stage,
-            .num_samplers         = (uint)samplerCount,
-            .num_storage_textures = (uint)storageTexCount,
-            .num_storage_buffers  = (uint)storageBufferCount,
-            .num_uniform_buffers  = (uint)uniBufferCount
+            .num_samplers         = (uint32)samplerCount,
+            .num_storage_textures = (uint32)storageTexCount,
+            .num_storage_buffers  = (uint32)storageBufferCount,
+            .num_uniform_buffers  = (uint32)uniBufferCount
         };
         auto* shader = SDL_CreateGPUShader(_device, &shaderInfo);
         if (shader == nullptr)
