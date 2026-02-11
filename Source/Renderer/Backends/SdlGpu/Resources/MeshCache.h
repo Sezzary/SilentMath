@@ -32,13 +32,18 @@ namespace Silent::Renderer::SdlGpu
          */
         MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
 
+        /** @brief Loads a mesh from collections of vertices and indices.
+         *
+         * @param copyPass Copy pass.
+         * @param verts 3D vertices.
+         * @param idxs 3D vertex indices.
+         * @param name Mesh name.
+         */
         void Load(SDL_GPUCopyPass& copyPass,
                   const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
                   const std::string& name);
 
         /** @brief Loads a mesh from a streamable asset.
-         *
-         * @todo Find best way handle loading multiple meshes from a model.
          *
          * @param copyPass Copy pass.
          * @param assetName Streamable asset name.
