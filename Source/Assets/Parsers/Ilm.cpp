@@ -2,9 +2,11 @@
 #include "Assets/Parsers/Ilm.h"
 
 #include "Application.h"
+#include "Renderer/Common/Resources/Buffers.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
+using namespace Silent::Renderer;
 using namespace Silent::Utils;
 
 namespace Silent::Assets
@@ -240,6 +242,60 @@ namespace Silent::Assets
 
             // Collect ID.
             asset.Ids.push_back(id);
+        }
+
+        // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
+        for (const auto& mesh : asset.Meshes)
+        {
+            auto linearMesh = IlmLinearMesh
+            {
+                .TextureName = mesh.TextureName
+            };
+
+            // Run through primitives.
+            auto vertLookup = std::unordered_map<IlmVertex, int>{};
+            for (const auto& prim : mesh.Primitives)
+            {
+                // Collect primitive vertex indices.
+                auto primIdxs = std::vector<uint16>{};
+                for (const auto& vert : prim.Vertices)
+                {
+                    uint16 newIdx = GetLookupIdx(vertLookup, vert);
+                    primIdxs.push_back(newIdx);
+                }
+
+                // Collect linear vertex indices.
+                if (primIdxs.size() == TRI_IDX_COUNT)
+                {
+                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    {
+                        primIdxs[0], primIdxs[1], primIdxs[2]
+                    });
+                }
+                else if (primIdxs.size() == QUAD_IDX_COUNT)
+                {
+                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    {
+                        primIdxs[0], primIdxs[1], primIdxs[2], 
+                        primIdxs[0], primIdxs[2], primIdxs[3]
+                    });
+                }
+            }
+
+            // Collect linear indexed vertices.
+            linearMesh.Vertices.resize(vertLookup.size());
+            for (const auto& [keyVert, vertIdx] : vertLookup)
+            {
+                linearMesh.Vertices[vertIdx] = BufferVertex3d
+                {
+                    .Position = mesh.Positions[keyVert.PositionIdx],
+                    .Normal   = mesh.Normals[keyVert.NormalIdx],
+                    .Uv       = mesh.Uvs[keyVert.UvIdx],
+                    .Col      = Color::White
+                };
+            }
+
+            asset.LinearMeshes.push_back(std::move(linearMesh));
         }
 
         return std::make_shared<IlmAsset>(std::move(asset));

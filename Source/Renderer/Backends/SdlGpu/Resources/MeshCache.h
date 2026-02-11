@@ -32,6 +32,10 @@ namespace Silent::Renderer::SdlGpu
          */
         MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
 
+        void Load(SDL_GPUCopyPass& copyPass,
+                  const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                  const std::string& name);
+
         /** @brief Loads a mesh from a streamable asset.
          *
          * @todo Find best way handle loading multiple meshes from a model.

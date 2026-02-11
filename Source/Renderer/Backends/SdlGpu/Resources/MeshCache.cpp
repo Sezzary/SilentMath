@@ -21,6 +21,24 @@ namespace Silent::Renderer::SdlGpu
         _idxAllocator    = BlockAllocator(vertBuffer.GetIdxCapacity());
     }
 
+    void MeshCache::Load(SDL_GPUCopyPass& copyPass,
+                         const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                         const std::string& name)
+    {
+        int vertOffset = _vertexAllocator.Allocate(verts.size());
+        int idxOffset  = _idxAllocator.Allocate(idxs.size());
+
+        _meshes.try_emplace(name, Mesh
+        {
+            .VertexOffset = (uint32)vertOffset,
+            .IdxOffset    = (uint32)idxOffset,
+            .IdxCount     = (uint32)idxs.size()
+        });
+
+        _vertexBuffer->UpdateVertices(copyPass, ToSpan(verts), vertOffset);
+        _vertexBuffer->UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
+    }
+
     void MeshCache::Load(SDL_GPUCopyPass& copyPass, const std::string& assetName)
     {
         auto& assets = g_App.GetAssets();
@@ -47,7 +65,8 @@ namespace Silent::Renderer::SdlGpu
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU mesh.", asset->Name), Debug::LogLevel::Error);
+                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU mesh.", asset->Name),
+                           Debug::LogLevel::Error);
                 break;
             }
         }
@@ -55,7 +74,13 @@ namespace Silent::Renderer::SdlGpu
 
     void MeshCache::LoadIlm(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset)
     {
-        // @todo
+        const auto data = asset->GetData<IlmAsset>();
+
+        for (int i = 0; i < data->LinearMeshes.size(); i++)
+        {
+            const auto& mesh = data->LinearMeshes[i];
+            Load(copyPass, mesh.Vertices, mesh.Idxs, asset->Name + std::to_string(i));
+        }
     }
 
     void MeshCache::LoadTmd(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset)
@@ -65,19 +90,7 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->LinearMeshes.size(); i++)
         {
             const auto& mesh = data->LinearMeshes[i];
-
-            int vertOffset = _vertexAllocator.Allocate(mesh.Vertices.size());
-            int idxOffset  = _idxAllocator.Allocate(mesh.Idxs.size());
-
-            _meshes.try_emplace(asset->Name + std::to_string(i), Mesh
-            {
-                .VertexOffset = (uint32)vertOffset,
-                .IdxOffset    = (uint32)idxOffset,
-                .IdxCount     = (uint32)mesh.Idxs.size()
-            });
-
-            _vertexBuffer->UpdateVertices(copyPass, ToSpan(mesh.Vertices), vertOffset);
-            _vertexBuffer->UpdateIdxs(copyPass, ToSpan(mesh.Idxs), idxOffset);
+            Load(copyPass, mesh.Vertices, mesh.Idxs, asset->Name + std::to_string(i));
         }
     }
 }
