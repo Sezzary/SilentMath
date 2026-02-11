@@ -408,9 +408,9 @@ namespace Silent::Assets
 
             // Collect indexed colors.
             mesh.Colors.resize(colorLookup.size());
-            for (const auto& [keycolor, colorIdx] : colorLookup)
+            for (const auto& [keyColor, colorIdx] : colorLookup)
             {
-                mesh.Colors[colorIdx] = keycolor;
+                mesh.Colors[colorIdx] = keyColor;
             }
 
             // Collect mesh.
@@ -420,27 +420,24 @@ namespace Silent::Assets
         // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
         for (const auto& mesh : asset.Meshes)
         {
-            auto linearMesh = TmdLinearMesh{};
+            auto linearMesh = TmdLinearMesh
+            {
+                .TextureName = mesh.TextureName
+            };
 
+            // Run through primitives.
+            auto vertLookup = std::unordered_map<TmdVertex, int>{};
             for (const auto& prim : mesh.Primitives)
             {
+                // Collect primitive vertex indices.
                 auto primIdxs = std::vector<uint16>{};
-
-                // Collect vertices. @todo Deduplicate.
                 for (const auto& vert : prim.Vertices)
                 {
-                    uint16 newIdx = linearMesh.Idxs.size();
-                    linearMesh.Vertices.push_back(BufferVertex3d
-                    {
-                        .Position = mesh.Positions[vert.PositionIdx],
-                        .Normal   = mesh.Normals[vert.NormalIdx],
-                        .Uv       = mesh.Uvs[vert.UvIdx],
-                        .Col      = mesh.Colors[vert.ColorIdx]
-                    });
+                    uint16 newIdx = GetLookupIdx(vertLookup, vert);
                     primIdxs.push_back(newIdx);
                 }
 
-                // Collect indices.
+                // Collect linear vertex indices.
                 if (primIdxs.size() == TRI_IDX_COUNT)
                 {
                     linearMesh.Idxs.insert(linearMesh.Idxs.end(),
@@ -456,6 +453,19 @@ namespace Silent::Assets
                         primIdxs[0], primIdxs[2], primIdxs[3]
                     });
                 }
+            }
+
+            // Collect linear indexed vertices.
+            linearMesh.Vertices.resize(vertLookup.size());
+            for (const auto& [keyVert, vertIdx] : vertLookup)
+            {
+                linearMesh.Vertices[vertIdx] = BufferVertex3d
+                {
+                    .Position = mesh.Positions[keyVert.PositionIdx],
+                    .Normal   = mesh.Normals[keyVert.NormalIdx],
+                    .Uv       = mesh.Uvs[keyVert.UvIdx],
+                    .Col      = mesh.Colors[keyVert.ColorIdx]
+                };
             }
 
             asset.LinearMeshes.push_back(std::move(linearMesh));

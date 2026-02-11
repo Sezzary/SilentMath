@@ -62,12 +62,14 @@ namespace Silent::Renderer::SdlGpu
     {
         const auto data = asset->GetData<TmdAsset>();
 
-        for (const auto& mesh : data->LinearMeshes)
+        for (int i = 0; i < data->LinearMeshes.size(); i++)
         {
+            const auto& mesh = data->LinearMeshes[i];
+
             int vertOffset = _vertexAllocator.Allocate(mesh.Vertices.size());
             int idxOffset  = _idxAllocator.Allocate(mesh.Idxs.size());
 
-            _meshes.try_emplace(asset->Name/* + std::to_string(i)*/, Mesh
+            _meshes.try_emplace(asset->Name + std::to_string(i), Mesh
             {
                 .VertexOffset = (uint32)vertOffset,
                 .IdxOffset    = (uint32)idxOffset,
@@ -76,9 +78,6 @@ namespace Silent::Renderer::SdlGpu
 
             _vertexBuffer->UpdateVertices(copyPass, ToSpan(mesh.Vertices), vertOffset);
             _vertexBuffer->UpdateIdxs(copyPass, ToSpan(mesh.Idxs), idxOffset);
-
-            // @todo Just one for now.
-            break;
         }
     }
 }

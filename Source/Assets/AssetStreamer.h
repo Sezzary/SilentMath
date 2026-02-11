@@ -44,7 +44,6 @@ namespace Silent::Assets
         AssetType               Type = AssetType::Tim;        /** File type. */
         std::filesystem::path   File = {};                    /** Absolute system file path. */
         uint64                  Size = 0;                     /** Raw file size in bytes. */
-
         std::atomic<AssetState> State = AssetState::Unloaded; /** Thread-safe load state. */
         std::shared_ptr<void>   Data  = nullptr;              /** Parsed data. */
 
