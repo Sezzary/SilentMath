@@ -33,7 +33,7 @@ namespace Silent::Renderer
 
     const Mesh* MeshCacheBase::operator[](const std::string& name) const
     {
-        auto* mesh = Find(_meshes, name);
+        const auto* mesh = Find(_meshes, name);
         if (mesh == nullptr)
         {
             Debug::Log(Fmt("Attempted to get missing GPU mesh `{}`.", name), Debug::LogLevel::Warning);

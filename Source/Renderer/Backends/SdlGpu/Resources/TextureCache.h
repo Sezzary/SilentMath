@@ -117,7 +117,7 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Loads a texture from a streamable asset.
          *
          * @param copyPass Copy pass.
-         * @param assetIdx Streamable asset name.
+         * @param assetName Streamable asset name.
          */
         void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 

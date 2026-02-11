@@ -45,14 +45,5 @@ namespace Silent::Renderer
         // ==========
 
         const Mesh* operator[](const std::string& name) const;
-
-    private:
-        // ========
-        // Helpers
-        // ========
-
-        void LoadIlm();
-
-        void LoadTmd();
     };
 }

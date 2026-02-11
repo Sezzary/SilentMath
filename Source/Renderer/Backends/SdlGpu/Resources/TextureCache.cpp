@@ -190,13 +190,14 @@ namespace Silent::Renderer::SdlGpu
 
     void TextureCache::LoadPng(SDL_GPUCopyPass& copyPass, std::shared_ptr<Silent::Assets::Asset> asset)
     {
-        //auto data = asset->GetData<PngAsset>();
+        // @todo
+        //const auto data = asset->GetData<PngAsset>();
         //Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
     }
 
     void TextureCache::LoadTim(SDL_GPUCopyPass& copyPass, std::shared_ptr<Silent::Assets::Asset> asset)
     {
-        auto data = asset->GetData<TimAsset>();
+        const auto data = asset->GetData<TimAsset>();
         Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
     }
 }
