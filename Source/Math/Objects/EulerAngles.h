@@ -39,10 +39,10 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `EulerAngles`. */
+        /** @brief Creates a default instance. */
         constexpr EulerAngles() = default;
 
-        /** @brief Constructs an `EulerAngles` from XYZ angle components.
+        /** @brief Creates an instance from XYZ angle components.
          *
          * @param x X angle component.
          * @param y Y angle component.
@@ -50,7 +50,7 @@ namespace Silent::Math
          */
         constexpr EulerAngles(short x, short y, short z) : x(x), y(y), z(z) {}
 
-        /** @brief Constructs an `EulerAngles` from a direction vector.
+        /** @brief Creates an instance from a direction vector.
          *
          * @param dir Direction vector.
          */

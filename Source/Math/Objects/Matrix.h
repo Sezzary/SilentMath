@@ -21,19 +21,19 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default identity `Matrix`. */
+        /** @brief Creates a default identity instance. */
         constexpr Matrix() : glm::mat4(1.0f, 0.0f, 0.0f, 0.0f,
                                        0.0f, 1.0f, 0.0f, 0.0f,
                                        0.0f, 0.0f, 1.0f, 0.0f,
                                        0.0f, 0.0f, 0.0f, 1.0f) {}
 
-        /** @brief Constructs a `Matrix` from a `glm::mat4`. */
+        /** @brief Creates an instance from a `glm::mat4`. */
         constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
 
-        /** @brief Constructs a `Matrix` with all components set to the same value. */
+        /** @brief Creates an instance with all components set to the same value. */
         constexpr Matrix(float m) : glm::mat4(m) {}
 
-        /** @brief Constructs a 4x4 `Matrix`. */
+        /** @brief Creates a 4x4 instance. */
         constexpr Matrix(float m00, float m01, float m02, float m03,
                          float m10, float m11, float m12, float m13,
                          float m20, float m21, float m22, float m23,
@@ -42,7 +42,7 @@ namespace Silent::Math
                                                                                  m20, m21, m22, m23,
                                                                                  m30, m31, m32, m33) {}
 
-        /** @brief Constructs a 3x3 `Matrix`. */
+        /** @brief Creates a 3x3 instance. */
         constexpr Matrix(float m00, float m01, float m02,
                          float m10, float m11, float m12,
                          float m20, float m21, float m22) : glm::mat4(m00,  m01,  m02,  0.0f,
@@ -50,37 +50,37 @@ namespace Silent::Math
                                                                       m20,  m21,  m22,  0.0f,
                                                                       0.0f, 0.0f, 0.0f, 1.0f) {}
 
-        /** @brief Constructs a translation `Matrix`.
+        /** @brief Creates a translation instance.
          *
          * @param translation Translation offset.
          */
         static Matrix CreateTranslation(const Vector3& translation);
 
-        /** @brief Constructs an X-axis rotation `Matrix`.
+        /** @brief Creates an X-axis rotation instance.
          *
          * @param rad Rotation in radians.
          */
         static Matrix CreateRotationX(float rad);
 
-        /** @brief Constructs a Y-axis rotation `Matrix`.
+        /** @brief Creates a Y-axis rotation instance.
          *
          * @param rad Y rotation in radians.
          */
         static Matrix CreateRotationY(float rad);
 
-        /** @brief Constructs a Z-axis rotation `Matrix`.
+        /** @brief Creates a Z-axis rotation instance.
          *
          * @param rad Z rotation in radians.
          */
         static Matrix CreateRotationZ(float rad);
 
-        /** @brief Constructs a scale `Matrix`.
+        /** @brief Creates a scale instance.
          *
          * @param scale Scale.
          */
         static Matrix CreateScale(const Vector3& scale);
 
-        /** @brief Constructs an orthographic projection `Matrix`.
+        /** @brief Creates an orthographic projection instance.
          *
          * @param left Minimum X coordinate of the view volume.
          * @param right Maximum X coordinate of the view volume.
@@ -89,7 +89,7 @@ namespace Silent::Math
          */
         static Matrix CreateOrthographic(float left, float right, float bottom, float top);
 
-        /** @brief Constructs an orthographic projection `Matrix`.
+        /** @brief Creates an orthographic projection instance.
          *
          * @param left Minimum X coordinate of the view volume.
          * @param right Maximum X coordinate of the view volume.
@@ -100,7 +100,7 @@ namespace Silent::Math
          */
         static Matrix CreateOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane);
 
-        /** @brief Constructs a perspective projection `Matrix`.
+        /** @brief Creates a perspective projection instance.
          *
          * @param fov Field-of-view angle in radians.
          * @param aspect 
@@ -109,7 +109,7 @@ namespace Silent::Math
          */
         static Matrix CreatePerspective(float fov, float aspect, float nearPlane, float farPlane);
 
-        /** @brief Constructs a view look-at `Matrix`.
+        /** @brief Creates a view look-at instance.
          *
          * @param pos View position.
          * @param target Look-at position.

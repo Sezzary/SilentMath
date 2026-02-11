@@ -31,17 +31,19 @@ namespace Silent::Math
         // Constructors
         // =============
     
-        /** @brief Constructs a default `AxisAlignedBoundingBox`. */
+        /** @brief Creates a default instance. */
         constexpr AxisAlignedBoundingBox() = default;
 
-        /** @brief Constructs an `AxisAlignedBoundingBox` from a center and extents.
+        /** @brief Creates an instance from a center and extents.
          *
          * @param center Box center.
          * @param extents Box extents.
          */
-        constexpr AxisAlignedBoundingBox(const Vector3& center, const Vector3& extents) : Center(center), Extents(extents) {}
+        constexpr AxisAlignedBoundingBox(const Vector3& center, const Vector3& extents) :
+            Center(center),
+            Extents(extents) {}
 
-        /** @brief Constructs an `AxisAlignedBoundingBox` from a collection of points.
+        /** @brief Creates an instance from a collection of points.
          *
          * @param points Points to encompass with the AABB.
          */

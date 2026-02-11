@@ -48,7 +48,7 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `BoundingVolumeHierarchy`. */
+        /** @brief Creates a default uninitialized instance. */
         BoundingVolumeHierarchy() = default;
 
         /** @brief Statically constructs a `BoundingVolumeHierarchy` with tight bounds.

@@ -35,10 +35,10 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default uninitialised `BezierCurve2`. */
+        /** @brief Creates a default uninitialized instance. */
         BezierCurve2() = default;
 
-        /** @brief Constructs a defined `BezierCurve2`.
+        /** @brief Creates an instance from Bezier curve components.
          *
          * @param start Start point.
          * @param end End point.

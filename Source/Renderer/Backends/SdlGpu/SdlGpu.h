@@ -65,7 +65,7 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `Renderer`. */
+        /** @brief Creates a default uninitialized instance. */
         Renderer() = default;
 
         // ==========

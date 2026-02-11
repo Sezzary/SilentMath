@@ -23,10 +23,10 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Ray`. */
+        /** @brief Creates a default instance. */
         constexpr Ray() = default;
 
-        /** @brief Constructs a `Ray` from an origin and a normalized direction vector.
+        /** @brief Creates an instance from an origin and a normalized direction vector.
          *
          * @param origin Origin.
          * @param dir Normalized direction vector.

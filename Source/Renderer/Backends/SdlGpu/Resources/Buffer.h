@@ -23,10 +23,10 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `Buffer`. */
+        /** @brief Creates a default uninitialized instance. */
         Buffer() = default;
 
-        /** @brief Gracefully destroys the `Buffer` and releases GPU resources. */
+        /** @brief Gracefully destroys the instance and releases GPU resources. */
         ~Buffer();
 
         // ========

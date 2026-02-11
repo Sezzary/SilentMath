@@ -26,7 +26,7 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Constructs a `MeshCache` for a reverence GPU 3D vertex buffer.
+        /** @brief Creates an instance for a reverence GPU 3D vertex buffer.
          *
          * @param vertBuffer GPU vertex buffer.
          */

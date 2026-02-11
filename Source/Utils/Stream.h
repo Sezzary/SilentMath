@@ -20,7 +20,7 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a binary file data `Stream` which can be read from or written to.
+        /** @brief Creates an instance from binary file data which can be read from or written to.
          *
          * @param filename Full file path.
          * @param read Allow reading from the file.
@@ -28,7 +28,7 @@ namespace Silent::Utils
          */
         Stream(const std::filesystem::path& filename, bool read, bool write);
 
-        /** @brief Gracefully destroys the `Stream` and closes the file. */
+        /** @brief Gracefully destroys the instance and closes the file. */
         ~Stream();
 
         // ========

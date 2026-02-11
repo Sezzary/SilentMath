@@ -20,10 +20,10 @@ namespace Silent::Renderer
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `View`. */
+        /** @brief Creates a default uninitialized instance. */
         View() = default;
 
-        /** @brief Constructs a `View` from a position and size.
+        /** @brief Creates an instance from a position and size.
          *
          * @param pos World position.
          * @param size Screen size.

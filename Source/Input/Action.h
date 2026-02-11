@@ -120,10 +120,10 @@ namespace Silent::Input
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `Action`. */
+        /** @brief Creates a default uninitialized instance. */
         Action() = default;
 
-        /** @brief Constructs an `Action` with a given ID.
+        /** @brief Creates an instance with a given ID.
          *
          * @param actionId Action ID to set.
          */

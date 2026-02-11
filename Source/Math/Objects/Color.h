@@ -23,10 +23,10 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Color`. */
+        /** @brief Creates a default instance. */
         constexpr Color() : Vector4(0.0f, 0.0f, 0.0f, 1.0f) {}
 
-        /** @brief Constructs a `Color` from normalized RGBA components.
+        /** @brief Creates an instance from normalized RGBA components.
          *
          * @param r Red component.
          * @param g Green component.
@@ -35,7 +35,7 @@ namespace Silent::Math
          */
         constexpr Color(float r, float g, float b, float a = 1.0f) : Vector4(r, g, b, a) {}
 
-        /** @brief Constructs a `Color` from 8-bit RGBA components.
+        /** @brief Creates an instance from 8-bit RGBA components.
          *
          * @param r Red component.
          * @param g Green component.
@@ -47,7 +47,7 @@ namespace Silent::Math
             return Color(FP_COLOR_FROM(r), FP_COLOR_FROM(g), FP_COLOR_FROM(b), FP_COLOR_FROM(a));
         }
 
-        /** @brief Constructs a `Color` from packed 8-bit RGBA components.
+        /** @brief Creates an instance from packed 8-bit RGBA components.
          *
          * @param rgba Packed RGBA.
          */

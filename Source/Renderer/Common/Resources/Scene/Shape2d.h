@@ -15,7 +15,7 @@ namespace Silent::Renderer
         ScaleMode             ScaleMd  = ScaleMode::ShortEdge;
         BlendMode             BlendMd  = BlendMode::Alpha;
 
-        /** @brief Constructs a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in percent.
+        /** @brief Creates a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in percent.
          *
          * @param from Start position in screen percent.
          * @param to End position in screen percent.
@@ -28,7 +28,7 @@ namespace Silent::Renderer
                                   const Color& colorFrom, const Color& colorTo,
                                   int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
+        /** @brief Creates a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
          *
          * @param from Start position in retro pixels (320x240 resolution).
          * @param to End position in retro pixels (320x240 resolution).
@@ -41,7 +41,7 @@ namespace Silent::Renderer
                                   const Color& colorFrom, const Color& colorTo,
                                   int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D triangle shape using screen positions in percent.
+        /** @brief Creates a 2D triangle shape using screen positions in percent.
          *
          * @param vert0 First vertex position in screen percent.
          * @param vert1 Second vertex position in screen percent.
@@ -56,7 +56,7 @@ namespace Silent::Renderer
                                       const Color& color0, const Color& color1, const Color& color2,
                                       int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D triangle shape using retro pixels.
+        /** @brief Creates a 2D triangle shape using retro pixels.
          *
          * @param vert0 First vertex position in retro pixels (320x240 resolution).
          * @param vert1 Second vertex position in retro pixels (320x240 resolution).
@@ -71,7 +71,7 @@ namespace Silent::Renderer
                                       const Color& color0, const Color& color1, const Color& color2,
                                       int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D quad shape.
+        /** @brief Creates a 2D quad shape.
          *
          * @param vert0 First vertex position in screen percent.
          * @param vert1 Second vertex position in screen percent.
@@ -88,7 +88,7 @@ namespace Silent::Renderer
                                   const Color& color0, const Color& color1, const Color& color2, const Color& color3,
                                   int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
 
-        /** @brief Constructs a 2D quad shape using retro pixels.
+        /** @brief Creates a 2D quad shape using retro pixels.
          *
          * @note Vertex order: top-left, bottom-left, top-right, bottom-right.
          *

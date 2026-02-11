@@ -23,7 +23,7 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `PipelineManager`. */
+        /** @brief Creates a default uninitialized instance. */
         PipelineManager() = default;
 
         // ==========

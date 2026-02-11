@@ -29,10 +29,10 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Vector3`. */
+        /** @brief Creates a default instance. */
         constexpr Vector3() = default;
 
-        /** @brief Constructs a `Vector3` from XYZ componets.
+        /** @brief Creates an instance from XYZ componets.
          *
          * @param x X component.
          * @param y Y component.
@@ -40,13 +40,13 @@ namespace Silent::Math
          */
         constexpr Vector3(float x) : glm::vec3(x) {}
 
-        /** @brief Constructs a `Vector3` from a `glm::vec3`.
+        /** @brief Creates an instance from a `glm::vec3`.
          *
          * @param vec `float`-based GLM XYZ vector.
          */
         constexpr Vector3(float x, float y, float z) : glm::vec3(x, y, z) {}
 
-        /** @brief Constructs a `Vector3` with all components set to the same value.
+        /** @brief Creates an instance with all components set to the same value.
          *
          * @param x Value to set for all components.
          */

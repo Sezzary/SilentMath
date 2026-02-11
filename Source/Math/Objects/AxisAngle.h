@@ -29,17 +29,17 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `AxisAngle`. */
+        /** @brief Creates a default instance. */
         constexpr AxisAngle() = default;
 
-        /** @brief Constructs an `AxisAngle` from axis and angle in radians.
+        /** @brief Creates an instance from axis and angle in radians.
          *
          * @param axis Normalized axis.
          * @param angle Angle in radians.
          */
         constexpr AxisAngle(const Vector3& axis, float rad) : Axis(axis), Angle(rad) {};
 
-        /** @brief Constructs an `AxisAngle` from a direction vector.
+        /** @brief Creates an instance from a direction vector.
          *
          * @param dir Direction vector. Normalized internally.
          */

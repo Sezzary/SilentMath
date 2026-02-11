@@ -77,10 +77,10 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `Font`. */
+        /** @brief Creates a default uninitialized instance. */
         Font() = default;
 
-        /** @brief Constructs a `Font` from a chain of font files and adds it to a library and precaches a set of glyphs in the texture atlas.
+        /** @brief Creates an instance from a chain of font files and adds it to a library and precaches a set of glyphs in the texture atlas.
          *
          * @param fontLib Library to load the font into.
          * @param metadata Font chain metadata.
@@ -89,7 +89,7 @@ namespace Silent::Utils
          */
         Font(FT_Library& fontLib, const FontMetadata& metadata, const std::filesystem::path& path, const std::string& precacheGlyphs);
 
-        /** @brief Gracefully destroys the `Font` and frees resources. */
+        /** @brief Gracefully destroys the instance and frees resources. */
         ~Font();
 
         // ========
@@ -186,10 +186,10 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a default `FontManager`. */
+        /** @brief Creates a default instance. */
         FontManager();
 
-        /** @brief Gracefully destroys the `FontManager` and frees resources. */
+        /** @brief Gracefully destroys the instance and frees resources. */
         ~FontManager();
 
         // ========

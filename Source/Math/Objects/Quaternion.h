@@ -23,10 +23,10 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default identity `Quaternion`. */
+        /** @brief Creates a default identity instance. */
         constexpr Quaternion() : glm::quat(1.0f, 0.0f, 0.0f, 0.0f) {}
 
-        /** @brief Constructs a `Quaternion` from XYZW components.
+        /** @brief Creates an instance from XYZW components.
          *
          * @param x X component.
          * @param y Y component.
@@ -35,26 +35,26 @@ namespace Silent::Math
          */
         constexpr Quaternion(float x, float y, float z, float w) : glm::quat(w, x, y, z) {}
 
-        /** @brief Constructs a `Quaternion` from a `glm::quat`.
+        /** @brief Creates an instance from a `glm::quat`.
          *
          * @param quat GLM quaternion.
          */
         constexpr Quaternion(const glm::quat& quat) : glm::quat(quat) {}
 
-        /** @brief Constructs a `Quaternion` from a `Vector4`.
+        /** @brief Creates an instance from a `Vector4`.
          *
          * @param vec XYZW vector.
          */
         constexpr Quaternion(const Vector4& vec) : glm::quat(vec.ToGlmVec4()) {}
 
-        /** @brief Constructs a `Quaternion` from a `Vector3` and a scalar.
+        /** @brief Creates an instance from a `Vector3` and a scalar.
          *
          * @param vec XYZ vector.
          * @param scalar W scalar.
          */
         constexpr Quaternion(const Vector3& vec, float scalar) : glm::quat(scalar, vec.ToGlmVec3()) {}
 
-        /** @brief Constructs a quaternion from a direction vector.
+        /** @brief Creates an instance from a direction vector.
          *
          * @param dir Direction vector.
          */

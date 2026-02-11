@@ -11,7 +11,7 @@ namespace Silent::Renderer
         std::vector<Vertex3d> Vertices = {};
         BlendMode             BlendM   = BlendMode::Alpha;
 
-        /** @brief Constructs a 3D debug line primitive with additive blending.
+        /** @brief Creates a 3D debug line primitive with additive blending.
          *
          * @param from Start vertex.
          * @param to End vertex.
@@ -20,7 +20,7 @@ namespace Silent::Renderer
          */
         static Primitive3d CreateDebugLine(const Vector3& from, const Vector3& to, const Color& color);
 
-        /** @brief Constructs a 3D debug triangle primitive with additive blending.
+        /** @brief Creates a 3D debug triangle primitive with additive blending.
          *
          * @param vert0 First vertex.
          * @param vert1 Second vertex.

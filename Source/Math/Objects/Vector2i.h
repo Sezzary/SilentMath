@@ -27,23 +27,23 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Vector2i`. */
+        /** @brief Creates a default instance. */
         constexpr Vector2i() = default;
 
-        /** @brief Constructs a `Vector2i` with all components set to the same value.
+        /** @brief Creates an instance with all components set to the same value.
          *
          * @param x Value to set for all components.
          */
         constexpr Vector2i(int x) : glm::ivec2(x) {}
 
-        /** @brief Constructs a `Vector2i` from XY componets.
+        /** @brief Creates an instance from XY componets.
          *
          * @param x X component.
          * @param y Y component.
          */
         constexpr Vector2i(int x, int y) : glm::ivec2(x, y) {}
 
-        /** @brief Constructs a `Vector2i` from a `glm::ivec2`.
+        /** @brief Creates an instance from a `glm::ivec2`.
          *
          * @param vec `int`-based GLM XY vector.
          */

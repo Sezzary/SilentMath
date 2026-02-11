@@ -23,17 +23,19 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `BoundingSphere`. */
+        /** @brief Creates a default instance. */
         constexpr BoundingSphere() = default;
 
-        /** @brief Constructs a `BoundingSphere` from a center and radius.
+        /** @brief Creates a instance from sphere components.
          *
          * @param center Sphere center.
          * @param radius Sphere radius.
          */
-        constexpr BoundingSphere(const Vector3& center, float radius) : Center(center), Radius(radius) {}
+        constexpr BoundingSphere(const Vector3& center, float radius) :
+            Center(center),
+            Radius(radius) {}
 
-        /** @brief Constructs a `BoundingSphere` from a collection of points.
+        /** @brief Creates an instance from a collection of points.
          *
          * @param points Points to encompass with the sphere.
          */

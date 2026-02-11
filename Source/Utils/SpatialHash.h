@@ -28,7 +28,7 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a `SpatialHash` with cells of a specified size.
+        /** @brief Creates an instance with cells of a specified size.
          *
          * @param cellSize Cell width, height, and depth.
          */

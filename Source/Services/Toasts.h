@@ -33,7 +33,7 @@ namespace Silent::Services
         // Constructors
         // =============
 
-        /** @brief Constructs a default `ToastManager`. */
+        /** @brief Creates a default instance. */
         ToastManager() = default;
 
         // ==========

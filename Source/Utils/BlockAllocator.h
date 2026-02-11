@@ -26,10 +26,10 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a default uninitialized `BlockAllocator`. */
+        /** @brief Creates a default uninitialized instance. */
         BlockAllocator() = default;
 
-        /** @brief Constructs a `BlockAllocator` with a fixed size.
+        /** @brief Creates an instance with a fixed size.
          *
          * @param size Memory size.
          */

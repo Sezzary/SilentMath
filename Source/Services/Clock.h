@@ -26,7 +26,7 @@ namespace Silent::Services
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `ClockManager`. */
+        /** @brief Creates a default uninitialized instance. */
         ClockManager() = default;
 
         // ========

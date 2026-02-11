@@ -22,7 +22,7 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `Translator`. */
+        /** @brief Creates a default uninitialized instance. */
         TranslationManager() = default;
 
         /** @brief Initializes the `Translator` with locales from a path.

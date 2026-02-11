@@ -27,23 +27,23 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Vector2`. */
+        /** @brief Creates a default instance. */
         constexpr Vector2() = default;
 
-        /** @brief Constructs a `Vector2` with all components set to the same value.
+        /** @brief Creates an instance with all components set to the same value.
          *
          * @param x Value to set for all components.
          */
         constexpr Vector2(float x) : glm::vec2(x) {}
 
-        /** @brief Constructs a `Vector2` from XY componets.
+        /** @brief Creates an instance from XY componets.
          *
          * @param x X component.
          * @param y Y component.
          */
         constexpr Vector2(float x, float y) : glm::vec2(x, y) {}
 
-        /** @brief Constructs a `Vector2` from a `glm::vec2`.
+        /** @brief Creates an instance from a `glm::vec2`.
          *
          * @param vec `float`-based GLM XY vector.
          */

@@ -63,7 +63,7 @@ namespace Silent
         // Constructors
         // =============
 
-        /** Constructs a default uninitialized `ApplicationManager`. */
+        /** Creates a default uninitialized instance. */
         ApplicationManager() = default;
 
         // ========

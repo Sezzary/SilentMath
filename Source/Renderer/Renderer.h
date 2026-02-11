@@ -66,7 +66,7 @@ namespace Silent::Renderer
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `RendererBase`. @todo Not needed? */
+        /** @brief Creates a default uninitialized instance. @todo Not needed? */
         RendererBase() = default;
 
         // ========

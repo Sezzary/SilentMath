@@ -32,10 +32,10 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a default `ParallelExecutor`. */
+        /** @brief Creates a default instance. */
         ParallelExecutor();
 
-        /** @brief Gracefully destroys the `ParallelExecutor`, notifying threads to shut down. */
+        /** @brief Gracefully destroys the instance, notifying threads to shut down. */
         ~ParallelExecutor();
 
         // ========
@@ -113,13 +113,13 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a `ParallelLock` and locks a mutex if parallelism is enabled.
+        /** @brief Creates an instance and locks a mutex if parallelism is enabled.
          *
          * @param mutex Mutex to lock.
          */
         ParallelLock(std::mutex& mutex);
 
-        /** @brief Gracefully destroys the `ParallelLock` and unlocks the mutex. */
+        /** @brief Gracefully destroys the instance and unlocks the mutex. */
         ~ParallelLock();
     };
 

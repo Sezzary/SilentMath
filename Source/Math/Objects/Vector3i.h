@@ -30,16 +30,16 @@ namespace Silent::Math
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Vector3i`. */
+        /** @brief Creates a default instance. */
         constexpr Vector3i() = default;
 
-        /** @brief Constructs a `Vector3i` with all components set to the same value.
+        /** @brief Creates an instance with all components set to the same value.
          *
          * @param x Value to set for all components.
          */
         constexpr Vector3i(int x) : glm::ivec3(x) {}
 
-        /** @brief Constructs a `Vector3i` from XYZ componets.
+        /** @brief Creates an instance from XYZ componets.
          *
          * @param x X component.
          * @param y Y component.
@@ -47,7 +47,7 @@ namespace Silent::Math
          */
         constexpr Vector3i(int x, int y, int z) : glm::ivec3(x, y, z) {}
 
-        /** @brief Constructs a `Vector3i` from a `glm::ivec3`.
+        /** @brief Creates an instance from a `glm::ivec3`.
          *
          * @param vec `int`-based GLM XYZ vector.
          */

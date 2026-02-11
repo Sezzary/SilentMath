@@ -41,7 +41,7 @@ namespace Silent::Gui
         // Constructors
         // =============
 
-        /** @brief Constructs a `Button` from a center and extents in screen percent with callbacks.
+        /** @brief Creates an instance from a center and extents in screen percent with callbacks.
          *
          * @param center Center in screen percent.
          * @param extents Extents in screen percent.
@@ -63,7 +63,7 @@ namespace Silent::Gui
                const std::optional<Callback>& onHold,
                const std::optional<Callback>& onRelease);
 
-        /** @brief Constructs a `Button` from a center and extents in retro screen coordinates with callbacks.
+        /** @brief Creates an instance from a center and extents in retro screen coordinates with callbacks.
          *
          * @param center Screen space center in retro screen coordinates (320x240).
          * @param extents Screen space extents in retro screen coordinates (320x240).

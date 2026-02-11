@@ -39,29 +39,29 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Constructs a default `Bitfield` with a size of 32. */
+        /** @brief Creates a default instance with a size of 32. */
         Bitfield();
 
-        /** @brief Constructs a `Bitfield` of the specified size.
+        /** @brief Creates an instance of the specified size.
          *
          * @param size Number of bits.
          */
         Bitfield(int size);
 
-        /** @brief Constructs a `Bitfield` with the specified bits.
+        /** @brief Creates an instance with the specified bits.
          *
          * @param bits Consecutive bit states.
          */
         Bitfield(const std::initializer_list<bool>& bits);
 
-        /** @brief Constructs a `Bitfield` from specified chunks with a size.
+        /** @brief Creates an instance from specified chunks with a size.
          *
          * @param bitChunks Chunks containing bits.
          * @param size Number of bits.
          */
         Bitfield(const std::vector<ChunkType>& bitChunks, int size);
 
-        /** @brief Constructs a `Bitfield` from a string of `1`s (`true`) and `0`s (`false`).
+        /** @brief Creates an instance from a string of `1`s (`true`) and `0`s (`false`).
          *
          * @param bitStr Bits encoded in a string.
          */

@@ -50,7 +50,7 @@ namespace Silent::Input
         // Constructors
         // =============
 
-        /** @brief Constructs a default `TextManager`. */
+        /** @brief Creates a default instance. */
         TextManager() = default;
 
         // ========

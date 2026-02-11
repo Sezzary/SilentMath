@@ -209,7 +209,7 @@ namespace Silent::Services
         // Constructors
         // =============
 
-        /** @brief Constructs an uninitialized default `OptionsManager`. */
+        /** @brief Creates a default uninitialized instance. */
         OptionsManager() = default;
 
         // ========

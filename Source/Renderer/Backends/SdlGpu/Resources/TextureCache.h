@@ -24,10 +24,10 @@ namespace Silent::Renderer::SdlGpu
         // =============
 
         // @todo Deprecated.
-        /** @brief Constructs an uninitialized default `Texture`. */
+        /** @brief Creates a default uninitialized instance. */
         Texture() = default;
 
-        /** @brief Constructs a `Texture` and uploads data to the GPU.
+        /** @brief Creates an instance and uploads data to the GPU.
          *
          * @param device GPU device.
          * @param copyPass Copy pass.
@@ -39,7 +39,7 @@ namespace Silent::Renderer::SdlGpu
         Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
                 SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res, const std::string& name);
 
-        /** @brief Gracefully destroys the `Texture` and frees GPU resources. */
+        /** @brief Gracefully destroys the instance and frees GPU resources. */
         ~Texture();
 
         // ========
@@ -95,7 +95,7 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Constructs an `TextureCache` with a device reference.
+        /** @brief Creates an instance with a device reference.
          *
          * @param device GPU device.
          */
