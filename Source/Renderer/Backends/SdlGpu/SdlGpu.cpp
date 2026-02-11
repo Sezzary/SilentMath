@@ -7,7 +7,6 @@
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Common/Resources/Buffers.h"
-#include "Renderer/Common/Resources/TextureCache.h"
 #include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Common/Utils.h"
 #include "Renderer/Common/View.h"
@@ -253,6 +252,11 @@ namespace Silent::Renderer::SdlGpu
     TextureCache& Renderer::GetTextures()
     {
         return *(TextureCache*)_textures.get();
+    }
+
+    MeshCache& Renderer::GetMeshes()
+    {
+        return *(MeshCache*)_meshes.get();
     }
 
     SDL_GPUTexture* Renderer::GetRenderTexture()
@@ -697,7 +701,7 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.Vertices2d.Initialize(*_device, VERT_2D_COUNT_MAX, VERT_2D_IDX_COUNT_MAX, "2D vertices");
         _gpuBuffers.Vertices3d.Initialize(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "3D vertices");
 
-        //_meshes = std::make_unique<MeshCache>(VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX);
+        _meshes = std::make_unique<MeshCache>(_gpuBuffers.Vertices3d);
 
         // Reserve draw batches.
         _drawBatches.Primitives2d.reserve(PRIM_2D_BATCH_COUNT_MAX);

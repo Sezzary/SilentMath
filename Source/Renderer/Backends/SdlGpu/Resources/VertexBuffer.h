@@ -33,11 +33,17 @@ namespace Silent::Renderer::SdlGpu
          */
         const std::string& GetName() const;
 
-        /** @brief Gets the number of vertices currently in the GPU vertex buffer.
+        /** @brief Gets the vertex capacity in the GPU vertex buffer.
          *
-         * @return vertices count.
+         * @return Vertex capacity.
          */
-        int GetSize() const;
+        int GetVertexCapacity() const;
+
+        /** @brief Gets the vertex index capacity in the GPU vertex buffer.
+         *
+         * @return Vertex index capacity.
+         */
+        int GetIdxCapacity() const;
 
         // ==========
         // Utilities
@@ -69,10 +75,10 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Binds the indexed GPU vertex buffer for drawing.
          *
          * @param renderPass Render pass.
-         * @param vertsStartIdx Vertices start index.
-         * @param idxsStartIdx Indices start index.
+         * @param vertOffset Vertices start index.
+         * @param idxOffset Indices start index.
          */
-        void Bind(SDL_GPURenderPass& renderPass, int vertsStartIdx, int idxsStartIdx);
+        void Bind(SDL_GPURenderPass& renderPass, int vertOffset, int idxOffset);
     };
 
     template <typename T>
@@ -82,9 +88,15 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    int VertexBuffer<T>::GetSize() const
+    int VertexBuffer<T>::GetVertexCapacity() const
     {
-        return _vertexBuffer.GetSize();
+        return _vertexBuffer.GetCapacity();
+    }
+
+    template <typename T>
+    int VertexBuffer<T>::GetIdxCapacity() const
+    {
+        return _idxBuffer.GetCapacity();
     }
 
     template <typename T>
@@ -107,9 +119,9 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    void VertexBuffer<T>::Bind(SDL_GPURenderPass& renderPass, int vertsStartIdx, int idxsStartIdx)
+    void VertexBuffer<T>::Bind(SDL_GPURenderPass& renderPass, int vertOffset, int idxOffset)
     {
-        _vertexBuffer.Bind(renderPass, vertsStartIdx);
-        _idxBuffer.Bind(renderPass, idxsStartIdx);
+        _vertexBuffer.Bind(renderPass, vertOffset);
+        _idxBuffer.Bind(renderPass, idxOffset);
     }
 }

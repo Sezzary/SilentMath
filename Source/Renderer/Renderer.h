@@ -53,7 +53,7 @@ namespace Silent::Renderer
 
         DoubleBuffer                      _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
-        //std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
+        std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
 
         std::mutex _primitives2dMutex = {};
 

@@ -3,16 +3,19 @@
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
+#include "Renderer/Common/Resources/Buffers.h"
 #include "Renderer/Common/Resources/MeshCache.h"
+#include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
 
 using namespace Silent::Assets;
 
-namespace Silent::Renderer
+namespace Silent::Renderer::SdlGpu
 {
-    MeshCache::MeshCache(int vertCount, int idxCount)
+    MeshCache::MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer)
     {
-        _vertexAllocator = BlockAllocator(vertCount);
-        _idxAllocator    = BlockAllocator(idxCount);
+        _vertexBuffer    = &vertBuffer;
+        _vertexAllocator = BlockAllocator(vertBuffer.GetVertexCapacity());
+        _idxAllocator    = BlockAllocator(vertBuffer.GetIdxCapacity());
     }
 
     void MeshCache::Load(const std::string& assetName)

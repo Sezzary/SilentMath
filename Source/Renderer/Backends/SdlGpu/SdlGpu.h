@@ -2,6 +2,7 @@
 
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
+#include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
 #include "Renderer/Common/Resources/Buffers.h"
@@ -81,11 +82,17 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        /** @brief Gets the texture cache.
+        /** @brief Gets the GPU texture cache.
          *
-         * @return Texture cache.
+         * @return GPU texture cache.
          */
         TextureCache& GetTextures();
+
+        /** @brief Gets the GPU mesh cache.
+         *
+         * @return GPU mesh cache.
+         */
+        MeshCache& GetMeshes();
 
         /** @brief Gets the offscreen render texture.
          *
