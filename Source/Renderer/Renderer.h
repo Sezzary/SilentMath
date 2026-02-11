@@ -7,7 +7,8 @@
 #include "Renderer/Common/Resources/Scene/Shape2d.h"
 #include "Renderer/Common/Resources/Scene/Sprite2d.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
-#include "Renderer/Common/Texture.h"
+#include "Renderer/Common/Resources/MeshCache.h"
+#include "Renderer/Common/Resources/TextureCache.h"
 #include "Renderer/Common/View.h"
 
 namespace Silent::Renderer
@@ -52,6 +53,7 @@ namespace Silent::Renderer
 
         DoubleBuffer                      _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
+        //std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
 
         std::mutex _primitives2dMutex = {};
 

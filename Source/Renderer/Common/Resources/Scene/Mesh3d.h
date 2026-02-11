@@ -6,7 +6,7 @@
 namespace Silent::Renderer
 {
     /** @brief 3D world mesh. @todo Should refactor this to use buckets later. */
-    struct Mesh
+    struct Mesh3d
     {
         std::vector<Triangle3d> Triangles = {};
         std::vector<Vertex3d>   Vertices  = {};

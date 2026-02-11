@@ -19,12 +19,14 @@ namespace Silent::Utils
         return _size;
     }
 
-    uint32 BlockAllocator::Allocate(uint32 offset, uint32 alignment)
+    uint32 BlockAllocator::Allocate(uint32 size, uint32 alignment)
     {
-        constexpr int SPLIT_SIZE_MIN = 64;
+        constexpr int SPLIT_SIZE_MIN = 1;
 
-        for (auto& block : _blocks)
+        for (int i = 0; i < _blocks.size(); i++)
         {
+            auto& block = _blocks[i];
+
             uint32 alignedOffset = ((block.Offset + alignment) - 1) & ~(alignment - 1);
             uint32 padding       = alignedOffset - block.Offset;
 
@@ -66,6 +68,17 @@ namespace Silent::Utils
                 break;
             }
         }
+    }
+
+    void BlockAllocator::Clear()
+    {
+        _blocks.clear();
+        _blocks.push_back(BlockMetadata
+        {
+            .Offset = 0,
+            .Size   = _size,
+            .IsFree = true
+        });
     }
 
     void BlockAllocator::MergeNeighbors(int idx)

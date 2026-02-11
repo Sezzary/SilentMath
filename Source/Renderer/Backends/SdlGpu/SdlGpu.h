@@ -2,7 +2,7 @@
 
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
-#include "Renderer/Backends/SdlGpu/Resources/Texture.h"
+#include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
 #include "Renderer/Common/Resources/Buffers.h"
 #include "Renderer/Common/Resources/Primitive/Vertex2d.h"

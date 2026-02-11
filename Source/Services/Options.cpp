@@ -76,7 +76,7 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr bool DEFAULT_ENABLE_SUBTITLES                         = true;
-    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishOriginalUs;
+    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishRevised;
     constexpr auto DEFAULT_SOUND                                    = SoundType::Stereo;
     constexpr int  DEFAULT_BGM_VOLUME                               = 16;
     constexpr int  DEFAULT_SE_VOLUME                                = 16;
@@ -91,8 +91,8 @@ namespace Silent::Services
     constexpr auto DEFAULT_RETREAT_TURN_CONTROL                     = ControlInversionType::Normal;
     constexpr auto DEFAULT_WALK_RUN_CONTROL                         = ControlInversionType::Normal;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
-    constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Retro;
-    constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Retro;
+    constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Original;
+    constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Original;
     constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Renderer/Common/Texture.h"
+#include "Assets/AssetStreamer.h"
+#include "Renderer/Common/Resources/TextureCache.h"
+
+using namespace Silent::Assets;
 
 namespace Silent::Renderer::SdlGpu
 {
@@ -111,13 +114,29 @@ namespace Silent::Renderer::SdlGpu
          */
         void Load(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name);
 
-        /** @brief Loads a texture from a TIM asset.
+        /** @brief Loads a texture from a streamable asset.
          *
          * @param copyPass Copy pass.
-         * @param assetIdx TIM asset name.
+         * @param assetIdx Streamable asset name.
          */
         void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
+        /** @brief Unloads */
+        void Unload(const std::string& name);
+
+        /** @brief Clears all textures in the cache. */
+        void Clear();
+
         Texture* operator[](const std::string& name);
+
+    private:
+        // ========
+        // Helpers
+        // ========
+
+        // @todo
+        void LoadPng(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
+
+        void LoadTim(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
     };
 }

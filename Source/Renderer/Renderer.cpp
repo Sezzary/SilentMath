@@ -43,13 +43,18 @@ namespace Silent::Renderer
         // @todo Render scale should be a post-process instead?
         switch (options->RenderScale)
         {
-            case RenderScaleType::Native:
-            {
-                break;
-            }
-            case RenderScaleType::Retro:
+            case RenderScaleType::Original:
             {
                 res = RETRO_SCREEN_SPACE_RES.ToVector2i();
+                break;
+            }
+            case RenderScaleType::DoubleOriginal:
+            {
+                res = RETRO_SCREEN_SPACE_RES.ToVector2i() * 2.0f;
+                break;
+            }
+            case RenderScaleType::Native:
+            {
                 break;
             }
         }

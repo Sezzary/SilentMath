@@ -4,10 +4,11 @@
 #include "Application.h"
 #include "Assets/Fonts.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
-#include "Renderer/Backends/SdlGpu/Resources/Texture.h"
+#include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
+#include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/TextureCache.h"
 #include "Renderer/Common/Resources/Uniforms.h"
-#include "Renderer/Common/Texture.h"
 #include "Renderer/Common/Utils.h"
 #include "Renderer/Common/View.h"
 #include "Renderer/Renderer.h"
@@ -70,7 +71,7 @@ namespace Silent::Renderer::SdlGpu
         InitializeDoubleBuffer();
         InitializeGpuBuffers();
 
-        // Initialize texture manager.
+        // Initialize GPU texture cache.
         _textures = std::make_unique<TextureCache>(*_device);
 
         // Initialize pipelines.
@@ -695,6 +696,8 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
         _gpuBuffers.Vertices2d.Initialize(*_device, VERT_2D_COUNT_MAX, VERT_2D_IDX_COUNT_MAX, "2D vertices");
         _gpuBuffers.Vertices3d.Initialize(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "3D vertices");
+
+        //_meshes = std::make_unique<MeshCache>(VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX);
 
         // Reserve draw batches.
         _drawBatches.Primitives2d.reserve(PRIM_2D_BATCH_COUNT_MAX);

@@ -55,16 +55,16 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Uploads vertices to the internal GPU vertex buffer.
          *
          * @param verts New vertices to transfer to the vertex buffer.
-         * @param startIdx Start index in the vertex buffer at which to insert the new vertices.
+         * @param offset Start index in the vertex buffer at which to insert the new vertices.
          */
-        void UpdateVertices(SDL_GPUCopyPass& copyPass, std::span<const T> verts, int startIdx);
+        void UpdateVertices(SDL_GPUCopyPass& copyPass, std::span<const T> verts, int offset);
 
         /** @brief Uploads indices to the internal GPU index buffer.
          *
          * @param idxs New indices to transfer to the index buffer.
-         * @param startIdx Start index in the index buffer at which to insert the new indices.
+         * @param offset Start index in the index buffer at which to insert the new indices.
          */
-        void UpdateIdxs(SDL_GPUCopyPass& copyPass, std::span<const uint16> idxs, int startIdx);
+        void UpdateIdxs(SDL_GPUCopyPass& copyPass, std::span<const uint16> idxs, int offset);
 
         /** @brief Binds the indexed GPU vertex buffer for drawing.
          *
@@ -95,15 +95,15 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    void VertexBuffer<T>::UpdateVertices(SDL_GPUCopyPass& copyPass, std::span<const T> verts, int startIdx)
+    void VertexBuffer<T>::UpdateVertices(SDL_GPUCopyPass& copyPass, std::span<const T> verts, int offset)
     {
-        _vertexBuffer.Update(copyPass, verts, startIdx);
+        _vertexBuffer.Update(copyPass, verts, offset);
     }
 
     template <typename T>
-    void VertexBuffer<T>::UpdateIdxs(SDL_GPUCopyPass& copyPass, std::span<const uint16> idxs, int startIdx)
+    void VertexBuffer<T>::UpdateIdxs(SDL_GPUCopyPass& copyPass, std::span<const uint16> idxs, int offset)
     {
-        _idxBuffer.Update(copyPass, idxs, startIdx);
+        _idxBuffer.Update(copyPass, idxs, offset);
     }
 
     template <typename T>

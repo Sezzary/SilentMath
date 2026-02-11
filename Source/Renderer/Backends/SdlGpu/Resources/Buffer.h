@@ -61,16 +61,16 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Uploads data to the GPU buffer.
          *
          * @param data New data to transfer to the buffer.
-         * @param startIdx Start index in the buffer at which to insert the new data.
+         * @param offset Start index in the buffer at which to insert the new data.
          */
-        void Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, int startIdx);
+        void Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, int offset);
 
         /** @brief Binds the GPU buffer for drawing.
          *
          * @param renderPass Render pass.
-         * @param startIdx Data start index.
+         * @param offset Data start index.
          */
-        void Bind(SDL_GPURenderPass& renderPass, int startIdx);
+        void Bind(SDL_GPURenderPass& renderPass, int offset);
 
     private:
         // ========
@@ -161,7 +161,7 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, int startIdx)
+    void Buffer<T>::Update(SDL_GPUCopyPass& copyPass, std::span<const T> data, int offset)
     {
         if (!IsValid())
         {
@@ -184,14 +184,14 @@ namespace Silent::Renderer::SdlGpu
         auto bufferRegion = SDL_GPUBufferRegion
         {
             .buffer = _resourceBuffer,
-            .offset = startIdx * sizeof(T),
+            .offset = offset * sizeof(T),
             .size   = (uint)data.size_bytes()
         };
         SDL_UploadToGPUBuffer(&copyPass, &transferBufferLoc, &bufferRegion, true);
     }
 
     template <typename T>
-    void Buffer<T>::Bind(SDL_GPURenderPass& renderPass, int startIdx)
+    void Buffer<T>::Bind(SDL_GPURenderPass& renderPass, int offset)
     {
         if (!IsValid())
         {
@@ -202,7 +202,7 @@ namespace Silent::Renderer::SdlGpu
         auto bufferBindings = SDL_GPUBufferBinding
         {
             .buffer = _resourceBuffer,
-            .offset = startIdx * sizeof(T)
+            .offset = offset * sizeof(T)
         };
 
         if (_usageFlags & SDL_GPU_BUFFERUSAGE_VERTEX)

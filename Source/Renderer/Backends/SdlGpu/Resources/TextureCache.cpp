@@ -1,9 +1,10 @@
 #include "Framework.h"
-#include "Renderer/Backends/SdlGpu/Resources/Texture.h"
+#include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
 #include "Renderer/Common/Constants.h"
+#include "Renderer/Common/Resources/TextureCache.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Assets;
@@ -140,18 +141,39 @@ namespace Silent::Renderer::SdlGpu
         const auto asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            throw std::runtime_error(Fmt("Attempted to load invalid asset `{}` as GPU texture.", assetName));
+            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU texture.", asset->Name), Debug::LogLevel::Error);
         }
 
-        // Check if asset is TIM image.
-        if (asset->Type != AssetType::Tim)
+        // Load image asset.
+        switch (asset->Type)
         {
-            throw std::runtime_error(Fmt("Attempted to load non-image asset `{}` as GPU texture.", asset->Name));
+            // @todo
+            /*case AssetType::Png:
+            {
+                LoadPng(copyPass, asset);
+                break;
+            }*/
+            case AssetType::Tim:
+            {
+                LoadTim(copyPass, asset);
+                break;
+            }
+            default:
+            {
+                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU texture.", asset->Name), Debug::LogLevel::Error);
+                break;
+            }
         }
+    }
 
-        // Initialize TIM image texture.
-        auto data = asset->GetData<TimAsset>();
-        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
+    void TextureCache::Unload(const std::string& name)
+    {
+        _textures.erase(name);
+    }
+
+    void TextureCache::Clear()
+    {
+        _textures.clear();
     }
 
     Texture* TextureCache::operator[](const std::string& name)
@@ -159,10 +181,22 @@ namespace Silent::Renderer::SdlGpu
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
         {
-            Debug::Log(Fmt("Texture manager attempted to get missing GPU texture `{}`.", name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get missing GPU texture `{}`.", name), Debug::LogLevel::Warning);
             return nullptr;
         }
 
         return (Texture*)tex->get();
+    }
+
+    void TextureCache::LoadPng(SDL_GPUCopyPass& copyPass, std::shared_ptr<Silent::Assets::Asset> asset)
+    {
+        //auto data = asset->GetData<PngAsset>();
+        //Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
+    }
+
+    void TextureCache::LoadTim(SDL_GPUCopyPass& copyPass, std::shared_ptr<Silent::Assets::Asset> asset)
+    {
+        auto data = asset->GetData<TimAsset>();
+        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
     }
 }

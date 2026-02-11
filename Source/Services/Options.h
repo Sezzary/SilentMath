@@ -177,8 +177,8 @@ namespace Silent::Services
         // Enhancements
         // =============
 
-        PaperMapQuality PaperMap    = PaperMapQuality::Retro;
-        DialogPauseType DialogPause = DialogPauseType::Retro;
+        PaperMapQuality PaperMap    = PaperMapQuality::Original;
+        DialogPauseType DialogPause = DialogPauseType::Original;
 
         // ==================
         // System (internal)

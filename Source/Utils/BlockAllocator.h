@@ -27,7 +27,7 @@ namespace Silent::Utils
         // =============
 
         /** @brief Constructs a default uninitialized `BlockAllocator`. */
-        BlockAllocator();
+        BlockAllocator() = default;
 
         /** @brief Constructs a `BlockAllocator` with a fixed size.
          *
@@ -49,19 +49,22 @@ namespace Silent::Utils
         // Utilities
         // ==========
 
-        /** @brief Allocates a block of memory.
+        /** @brief Allocates a memory block.
          *
          * @param size Block size.
          * @param alignment Block alignment.
          * @return Start offset of the allocated block. `NO_VALUE` if failed.
          */
-        uint32 Allocate(uint32 size, uint32 alignment);
+        uint32 Allocate(uint32 size, uint32 alignment = 1);
 
-        /** @brief Deallocates a block of memory at a given offset.
+        /** @brief Deallocates a memory block at a given offset.
          *
-         * @param offset Start offset of the block of memory to deallocate.
+         * @param offset Start offset of the memory block to deallocate.
          */
         void Deallocate(uint32 offset);
+
+        /** @brief Deallocates all memory blocks. */
+        void Clear();
 
     private:
         // ========

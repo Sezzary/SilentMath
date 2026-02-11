@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Renderer/Common/Texture.h"
+#include "Renderer/Common/Resources/TextureCache.h"
 
 #include "Utils/Utils.h"
 
