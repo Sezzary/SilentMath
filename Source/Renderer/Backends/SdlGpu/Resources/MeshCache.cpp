@@ -62,65 +62,22 @@ namespace Silent::Renderer::SdlGpu
     {
         const auto data = asset->GetData<TmdAsset>();
 
-        // Run through meshes.
-        for (int i = 0; i < data->Meshes.size(); i++)
+        for (const auto& mesh : data->LinearMeshes)
         {
-            const auto& mesh = data->Meshes[i];
-
-            // Build vertices and indices.
-            auto verts = std::vector<BufferVertex3d>{};
-            auto idxs  = std::vector<uint16>{};
-            for (const auto& prim : mesh.Primitives)
-            {
-                auto primIdxs = std::vector<uint16>{};
-
-                // @todo Deduplicate. Later, TMDs and other model formats should be parsed to GPU-ready data.
-                // Collect vertices.
-                for (const auto& tmdVert : prim.Vertices)
-                {
-                    uint16 newIdx = (uint16)verts.size();
-                    verts.push_back(BufferVertex3d
-                    {
-                        .Position = mesh.Positions[tmdVert.PositionIdx],
-                        .Normal   = mesh.Normals[tmdVert.NormalIdx],
-                        .Uv       = mesh.Uvs[tmdVert.UvIdx],
-                        .Col      = mesh.Colors[tmdVert.ColorIdx]
-                    });
-                    primIdxs.push_back(newIdx);
-                }
-
-                // Collect indices.
-                if (primIdxs.size() == TRI_IDX_COUNT)
-                {
-                    idxs.insert(idxs.end(),
-                    {
-                        primIdxs[0], primIdxs[1], primIdxs[2]
-                    });
-                }
-                else if (primIdxs.size() == QUAD_IDX_COUNT)
-                {
-                    idxs.insert(idxs.end(),
-                    {
-                        primIdxs[0], primIdxs[1], primIdxs[2], 
-                        primIdxs[0], primIdxs[2], primIdxs[3]
-                    });
-                }
-            }
-
-            int vertOffset = _vertexAllocator.Allocate(verts.size());
-            int idxOffset  = _idxAllocator.Allocate(idxs.size());
+            int vertOffset = _vertexAllocator.Allocate(mesh.Vertices.size());
+            int idxOffset  = _idxAllocator.Allocate(mesh.Idxs.size());
 
             _meshes.try_emplace(asset->Name/* + std::to_string(i)*/, Mesh
             {
                 .VertexOffset = (uint32)vertOffset,
                 .IdxOffset    = (uint32)idxOffset,
-                .IdxCount     = (uint32)idxs.size()
+                .IdxCount     = (uint32)mesh.Idxs.size()
             });
 
-            _vertexBuffer->UpdateVertices(copyPass, ToSpan(verts), vertOffset);
-            _vertexBuffer->UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
+            _vertexBuffer->UpdateVertices(copyPass, ToSpan(mesh.Vertices), vertOffset);
+            _vertexBuffer->UpdateIdxs(copyPass, ToSpan(mesh.Idxs), idxOffset);
 
-            // @todo Just the first mesh for now.
+            // @todo Just one for now.
             break;
         }
     }

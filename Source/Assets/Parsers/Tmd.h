@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/Common/Enums.h"
+#include "Renderer/Common/Resources/Buffers.h"
 
 using namespace Silent::Renderer;
 
@@ -33,10 +34,19 @@ namespace Silent::Assets
         std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
     };
 
+    /** @brief TMD GPU-compatible linear mesh. */
+    struct TmdLinearMesh
+    {
+        std::vector<BufferVertex3d> Vertices    = {};
+        std::vector<uint16>         Idxs        = {};
+        std::string                 TextureName = {};
+    };
+
     /** @brief TMD asset data. */
     struct TmdAsset
     {
-        std::vector<TmdMesh> Meshes = {};
+        std::vector<TmdMesh>       Meshes       = {};
+        std::vector<TmdLinearMesh> LinearMeshes = {};
     };
 
     /** @brief Parses a TMD asset file.

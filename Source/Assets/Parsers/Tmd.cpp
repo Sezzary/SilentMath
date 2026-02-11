@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Renderer/Common/Enums.h"
+#include "Renderer/Common/Resources/Buffers.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
@@ -416,7 +417,49 @@ namespace Silent::Assets
             asset.Meshes.push_back(std::move(mesh));
         }
 
-        // @todo Sort primitives by CLUT for efficient batching when rendering. CLUT can be interpreted in a shader.
+        // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
+        for (const auto& mesh : asset.Meshes)
+        {
+            auto linearMesh = TmdLinearMesh{};
+
+            for (const auto& prim : mesh.Primitives)
+            {
+                auto primIdxs = std::vector<uint16>{};
+
+                // Collect vertices. @todo Deduplicate.
+                for (const auto& vert : prim.Vertices)
+                {
+                    uint16 newIdx = linearMesh.Idxs.size();
+                    linearMesh.Vertices.push_back(BufferVertex3d
+                    {
+                        .Position = mesh.Positions[vert.PositionIdx],
+                        .Normal   = mesh.Normals[vert.NormalIdx],
+                        .Uv       = mesh.Uvs[vert.UvIdx],
+                        .Col      = mesh.Colors[vert.ColorIdx]
+                    });
+                    primIdxs.push_back(newIdx);
+                }
+
+                // Collect indices.
+                if (primIdxs.size() == TRI_IDX_COUNT)
+                {
+                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    {
+                        primIdxs[0], primIdxs[1], primIdxs[2]
+                    });
+                }
+                else if (primIdxs.size() == QUAD_IDX_COUNT)
+                {
+                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    {
+                        primIdxs[0], primIdxs[1], primIdxs[2], 
+                        primIdxs[0], primIdxs[2], primIdxs[3]
+                    });
+                }
+            }
+
+            asset.LinearMeshes.push_back(std::move(linearMesh));
+        }
 
         return std::make_shared<TmdAsset>(std::move(asset));
     }
