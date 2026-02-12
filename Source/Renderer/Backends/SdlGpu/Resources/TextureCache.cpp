@@ -147,15 +147,14 @@ namespace Silent::Renderer::SdlGpu
         // Load image asset.
         switch (asset->Type)
         {
-            // @todo
-            /*case AssetType::Png:
+            case AssetType::Png:
             {
-                LoadPng(copyPass, asset);
+                LoadPng(copyPass, *asset);
                 break;
-            }*/
+            }
             case AssetType::Tim:
             {
-                LoadTim(copyPass, asset);
+                LoadTim(copyPass, *asset);
                 break;
             }
             default:
@@ -188,16 +187,15 @@ namespace Silent::Renderer::SdlGpu
         return (Texture*)tex->get();
     }
 
-    void TextureCache::LoadPng(SDL_GPUCopyPass& copyPass, std::shared_ptr<Silent::Assets::Asset> asset)
+    void TextureCache::LoadPng(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        // @todo
-        //const auto data = asset->GetData<PngAsset>();
-        //Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
+        const auto data = asset.GetData<PngAsset>();
+        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
     }
 
-    void TextureCache::LoadTim(SDL_GPUCopyPass& copyPass, std::shared_ptr<Silent::Assets::Asset> asset)
+    void TextureCache::LoadTim(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset->GetData<TimAsset>();
-        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset->Name);
+        const auto data = asset.GetData<TimAsset>();
+        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
     }
 }

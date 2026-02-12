@@ -69,7 +69,7 @@ namespace Silent::Assets
         return names;
     }
 
-    const std::shared_ptr<Asset> AssetStreamer::GetAsset(int assetIdx)
+    std::shared_ptr<const Asset> AssetStreamer::GetAsset(int assetIdx)
     {
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
@@ -97,7 +97,7 @@ namespace Silent::Assets
         return asset;
     }
 
-    const std::shared_ptr<Asset> AssetStreamer::GetAsset(const std::string& assetName)
+    std::shared_ptr<const Asset> AssetStreamer::GetAsset(const std::string& assetName)
     {
         // Check if asset exists.
         const int* assetIdx = Find(_idxs, assetName);

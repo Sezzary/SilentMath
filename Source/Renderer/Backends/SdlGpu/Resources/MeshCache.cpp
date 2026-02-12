@@ -55,12 +55,12 @@ namespace Silent::Renderer::SdlGpu
         {
             case AssetType::Ilm:
             {
-                LoadIlm(copyPass, asset);
+                LoadIlm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
             {
-                LoadTmd(copyPass, asset);
+                LoadTmd(copyPass, *asset);
                 break;
             }
             default:
@@ -72,25 +72,25 @@ namespace Silent::Renderer::SdlGpu
         }
     }
 
-    void MeshCache::LoadIlm(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset)
+    void MeshCache::LoadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset->GetData<IlmAsset>();
+        const auto data = asset.GetData<IlmAsset>();
 
         for (int i = 0; i < data->LinearMeshes.size(); i++)
         {
             const auto& mesh = data->LinearMeshes[i];
-            Load(copyPass, mesh.Vertices, mesh.Idxs, asset->Name + std::to_string(i));
+            Load(copyPass, mesh.Vertices, mesh.Idxs, asset.Name + std::to_string(i));
         }
     }
 
-    void MeshCache::LoadTmd(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset)
+    void MeshCache::LoadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset->GetData<TmdAsset>();
+        const auto data = asset.GetData<TmdAsset>();
 
         for (int i = 0; i < data->LinearMeshes.size(); i++)
         {
             const auto& mesh = data->LinearMeshes[i];
-            Load(copyPass, mesh.Vertices, mesh.Idxs, asset->Name + std::to_string(i));
+            Load(copyPass, mesh.Vertices, mesh.Idxs, asset.Name + std::to_string(i));
         }
     }
 }

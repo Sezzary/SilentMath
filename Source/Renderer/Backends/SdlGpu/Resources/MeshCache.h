@@ -60,13 +60,13 @@ namespace Silent::Renderer::SdlGpu
          * @param copyPass Copy pass.
          * @param asset ILM asset.
          */
-        void LoadIlm(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
+        void LoadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
         /** @brief Loads a mesh from a TMD asset.
          *
          * @param copyPass Copy pass.
          * @param asset TMD asset.
          */
-        void LoadTmd(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
+        void LoadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset);
     };
 }

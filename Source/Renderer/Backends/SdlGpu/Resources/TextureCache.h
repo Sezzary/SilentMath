@@ -139,13 +139,13 @@ namespace Silent::Renderer::SdlGpu
          * @param copyPass Copy pass.
          * @param asset PNG asset.
          */
-        void LoadPng(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
+        void LoadPng(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
         /** @brief Loads a texture from a TIM asset.
          *
          * @param copyPass Copy pass.
          * @param asset TIM asset.
          */
-        void LoadTim(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
+        void LoadTim(SDL_GPUCopyPass& copyPass, const Asset& asset);
     };
 }

@@ -54,7 +54,7 @@ namespace Silent::Assets
          * @throws `std::runtime_error` if `data` is `nullptr`.
          */
         template <typename T>
-        std::shared_ptr<T> GetData() const
+        std::shared_ptr<const T> GetData() const
         {
             if (Data == nullptr)
             {
@@ -108,14 +108,14 @@ namespace Silent::Assets
          * @param assetIdx Asset file index.
          * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
          */
-        const std::shared_ptr<Asset> GetAsset(int assetIdx);
+        std::shared_ptr<const Asset> GetAsset(int assetIdx);
 
         /** @brief Gets a loaded asset via a filename.
          *
          * @param assetName Asset filename.
          * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
          */
-        const std::shared_ptr<Asset> GetAsset(const std::string& assetName);
+        std::shared_ptr<const Asset> GetAsset(const std::string& assetName);
 
         // ==========
         // Inquirers
