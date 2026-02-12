@@ -189,7 +189,7 @@ namespace Silent::Assets
             // Adjust offsets.
             if (header.Flags & (int)TmdFlags::Fixp)
             {
-                meshDesc.PositionOffset    -= baseAddr;
+                meshDesc.PositionOffset  -= baseAddr;
                 meshDesc.NormalOffset    -= baseAddr;
                 meshDesc.PrimitiveOffset -= baseAddr;
             }

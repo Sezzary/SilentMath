@@ -45,7 +45,7 @@ namespace Silent::Assets
         std::filesystem::path   File = {};                    /** Absolute system file path. */
         uint64                  Size = 0;                     /** Raw file size in bytes. */
         std::atomic<AssetState> State = AssetState::Unloaded; /** Thread-safe load state. */
-        std::shared_ptr<void>   Data  = nullptr;              /** Parsed data. */
+        std::shared_ptr<void>   Data  = nullptr;              /** Thread-safe parsed data. */
 
         /** @brief Gets the typed asset data. The asset must be loaded before calling.
          *
@@ -73,7 +73,7 @@ namespace Silent::Assets
         // Fields
         // =======
 
-        std::vector<std::shared_ptr<Asset>>        _assets       = {}; /** Registered assets. */
+        std::vector<std::unique_ptr<Asset>>        _assets       = {}; /** Registered assets. */
         std::unordered_map<int, std::string>       _names        = {}; /** Key = asset index, value = asset name. */
         std::unordered_map<std::string, int>       _idxs         = {}; /** Key = asset name, value = asset index. */
         std::unordered_map<int, std::future<void>> _loadFutures  = {}; /** Key = asset index, value = load future. */
@@ -108,14 +108,14 @@ namespace Silent::Assets
          * @param assetIdx Asset file index.
          * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
          */
-        std::shared_ptr<const Asset> GetAsset(int assetIdx);
+        const Asset* GetAsset(int assetIdx);
 
         /** @brief Gets a loaded asset via a filename.
          *
          * @param assetName Asset filename.
          * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
          */
-        std::shared_ptr<const Asset> GetAsset(const std::string& assetName);
+        const Asset* GetAsset(const std::string& assetName);
 
         // ==========
         // Inquirers

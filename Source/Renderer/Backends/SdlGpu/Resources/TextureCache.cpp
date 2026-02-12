@@ -138,7 +138,7 @@ namespace Silent::Renderer::SdlGpu
         auto& assets = g_App.GetAssets();
 
         // Get asset.
-        const auto asset = assets.GetAsset(assetName);
+        const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
             Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU texture.", asset->Name), Debug::LogLevel::Error);

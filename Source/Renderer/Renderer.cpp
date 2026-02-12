@@ -137,7 +137,7 @@ namespace Silent::Renderer
 
         // @todo Handle this somehow somewhere, but not here. Sprite textures don't
         // have to come from streamable assets, e.g. font atlases.
-        //const auto asset = assets.GetAsset(sprite.TextureName);
+        //const auto* asset = assets.GetAsset(sprite.TextureName);
         //if (asset->Type != AssetType::Tim)
         //{
         //    Debug::Log("Attempted to submit non-image asset as screen sprite.", Debug::LogLevel::Warning, Debug::LogMode::Debug);

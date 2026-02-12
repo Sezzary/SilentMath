@@ -13,6 +13,8 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
+    using ParserFunc = std::function<std::shared_ptr<void>(const std::filesystem::path& file)>;
+
     static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
     {
         { ".TIM", AssetType::Tim },
@@ -32,7 +34,7 @@ namespace Silent::Assets
         { ".PNG", AssetType::Png }
     };
 
-    static const auto PARSER_FUNCS = std::unordered_map<AssetType, std::function<std::shared_ptr<void>(const std::filesystem::path& file)>>
+    static const auto PARSER_FUNCS = std::unordered_map<AssetType, ParserFunc>
     {
         { AssetType::Anm, ParseAnm },
         { AssetType::Ilm, ParseIlm },
@@ -46,12 +48,13 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to get name of missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to get name of missing streamable asset {}.", assetIdx),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return EMPTY_STRING;
         }
-        const auto asset = _assets[assetIdx];
+        const auto& asset = *_assets[assetIdx];
 
-        return asset->Name;
+        return asset.Name;
     }
 
     std::vector<std::string> AssetStreamer::GetLoadedNames() const
@@ -69,18 +72,19 @@ namespace Silent::Assets
         return names;
     }
 
-    std::shared_ptr<const Asset> AssetStreamer::GetAsset(int assetIdx)
+    const Asset* AssetStreamer::GetAsset(int assetIdx)
     {
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to get missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to get missing streamable asset {}.", assetIdx),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return nullptr;
         }
-        const auto asset = _assets[assetIdx];
+        const auto& asset = *_assets[assetIdx];
 
         // Load if not preloaded.
-        if (asset->State != AssetState::Loaded)
+        if (asset.State != AssetState::Loaded)
         {
             Debug::Log(Fmt("Getting non-preloaded streamable asset `{}`. Loading in place.", GetName(assetIdx)),
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
@@ -89,21 +93,23 @@ namespace Silent::Assets
         }
 
         // Check if loading failed.
-        if (asset->State == AssetState::Error)
+        if (asset.State == AssetState::Error)
         {
-            Debug::Log(Fmt("Failed to get streamable asset `{}`.", GetName(assetIdx)), Debug::LogLevel::Error, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Failed to get streamable asset `{}`.", GetName(assetIdx)),
+                       Debug::LogLevel::Error, Debug::LogMode::Debug);
             return nullptr;
         }
-        return asset;
+        return &asset;
     }
 
-    std::shared_ptr<const Asset> AssetStreamer::GetAsset(const std::string& assetName)
+    const Asset* AssetStreamer::GetAsset(const std::string& assetName)
     {
         // Check if asset exists.
         const int* assetIdx = Find(_idxs, assetName);
         if (assetIdx == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get missing streamable asset `{}`.", assetName), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to get missing streamable asset `{}`.", assetName),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return nullptr;
         }
 
@@ -139,31 +145,33 @@ namespace Silent::Assets
             auto ext = ToUpper(file.extension().string());
             if (Find(ASSET_TYPES, ext) == nullptr)
             {
-                //Debug::Log(Fmt("Attempted to register non-stremable asset for file `{}`.", file.string()), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+                //Debug::Log(Fmt("Attempted to register non-stremable asset for file `{}`.", file.string()),
+                //           Debug::LogLevel::Warning, Debug::LogMode::Debug);
                 continue;
             }
 
             // @heapalloc Create asset entry.
-            _assets.emplace_back(std::make_shared<Asset>());
+            _assets.emplace_back(std::make_unique<Asset>());
 
             // Define asset entry.
-            auto asset   = _assets.back();
-            asset->Name  = std::filesystem::relative(file, assetsPath).generic_string();
-            asset->Type  = ASSET_TYPES.at(ext);
-            asset->File  = file;
-            asset->Size  = std::filesystem::file_size(file);
-            asset->State = AssetState::Unloaded;
-            asset->Data  = nullptr;
+            auto& asset  = *_assets.back();
+            asset.Name  = std::filesystem::relative(file, assetsPath).generic_string();
+            asset.Type  = ASSET_TYPES.at(ext);
+            asset.File  = file;
+            asset.Size  = std::filesystem::file_size(file);
+            asset.State = AssetState::Unloaded;
+            asset.Data  = nullptr;
 
             // Add asset index and name to maps.
-            _idxs[asset->Name] = i;
-            _names[i]          = asset->Name;
+            _idxs[asset.Name] = i;
+            _names[i]          = asset.Name;
         }
 
         // Create fallback ready future.
         _loadFutures[NO_VALUE] = GenerateReadyFuture();
 
-        Debug::Log(Fmt("Registered {} streamable assets.", _assets.size()), Debug::LogLevel::Info, Debug::LogMode::Debug);
+        Debug::Log(Fmt("Registered {} streamable assets.", _assets.size()),
+                   Debug::LogLevel::Info, Debug::LogMode::Debug);
     }
 
     const std::future<void>& AssetStreamer::Load(int assetIdx)
@@ -173,42 +181,45 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to load missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to load missing streamable asset {}.", assetIdx),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return _loadFutures[NO_VALUE];
         }
-        auto& asset = _assets[assetIdx];
+        auto& asset = *_assets[assetIdx];
 
         // Check if loading or loaded.
-        if (asset->State == AssetState::Loading || asset->State == AssetState::Loaded)
+        if (asset.State == AssetState::Loading || asset.State == AssetState::Loaded)
         {
             return _loadFutures[assetIdx];
         }
 
         // Check if file is valid.
-        if (!std::filesystem::exists(asset->File))
+        if (!std::filesystem::exists(asset.File))
         {
-            Debug::Log(Fmt("Attempted to load streamable asset `{}` from missing file `{}`.", asset->Name, asset->File.string()),
+            Debug::Log(Fmt("Attempted to load streamable asset `{}` from missing file `{}`.",
+                           asset.Name, asset.File.string()),
                        Debug::LogLevel::Error, Debug::LogMode::Debug);
 
-            asset->State = AssetState::Error;
+            asset.State = AssetState::Error;
             return _loadFutures[assetIdx];
         }
 
         // Set loading state.
-        asset->State = AssetState::Loading;
+        asset.State = AssetState::Loading;
         _loadingCount++;
 
         // Load asynchronously.
         _loadFutures[assetIdx] = executor.AddTask([&]()
         {
             // Get parser function.
-            const auto* parserFunc = Find(PARSER_FUNCS, asset->Type);
+            const auto* parserFunc = Find(PARSER_FUNCS, asset.Type);
             if (parserFunc == nullptr)
             {
-                Debug::Log(Fmt("Attempted to load streamable asset `{}` with no parser function for asset type {}.", asset->Name, (int)asset->Type),
+                Debug::Log(Fmt("Attempted to load streamable asset `{}` with no parser function for asset type {}.",
+                               asset.Name, (int)asset.Type),
                            Debug::LogLevel::Error);
 
-                asset->State = AssetState::Unloaded;
+                asset.State = AssetState::Unloaded;
                 _loadingCount--;
                 return;
             }
@@ -216,17 +227,19 @@ namespace Silent::Assets
             // Parse asset data from file.
             try
             {
-                asset->Data  = (*parserFunc)(asset->File);
-                asset->State = AssetState::Loaded;
+                asset.Data  = (*parserFunc)(asset.File);
+                asset.State = AssetState::Loaded;
 
-                Debug::Log(Fmt("Loaded streamable asset `{}`.", asset->Name), Debug::LogLevel::Info, Debug::LogMode::Debug);
+                Debug::Log(Fmt("Loaded streamable asset `{}`.", asset.Name),
+                           Debug::LogLevel::Info, Debug::LogMode::Debug);
             }
             catch (const std::exception& ex)
             {
-                asset->Data  = nullptr;
-                asset->State = AssetState::Error;
+                asset.Data  = nullptr;
+                asset.State = AssetState::Error;
 
-                Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()), Debug::LogLevel::Error);
+                Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset.Name, ex.what()),
+                           Debug::LogLevel::Error);
             }
             _loadingCount--;
         });
@@ -240,7 +253,8 @@ namespace Silent::Assets
         const int* assetIdx = Find(_idxs, assetName);
         if (assetIdx == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load unregistered streamable asset `{}`.", assetName), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to load unregistered streamable asset `{}`.", assetName),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return _loadFutures[NO_VALUE];
         }
 
@@ -253,25 +267,27 @@ namespace Silent::Assets
         // Get asset.
         if (assetIdx < 0 || assetIdx >= _assets.size())
         {
-            Debug::Log(Fmt("Attempted to unload missing streamable asset {}.", assetIdx), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to unload missing streamable asset {}.", assetIdx),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return;
         }
-        auto& asset = _assets[assetIdx];
+        auto& asset = *_assets[assetIdx];
 
         // Check if already unloaded.
-        if (asset->State == AssetState::Unloaded)
+        if (asset.State == AssetState::Unloaded)
         {
             return;
         }
 
         // Unload.
-        asset->State = AssetState::Unloaded;
-        asset->Data  = nullptr;
+        asset.State = AssetState::Unloaded;
+        asset.Data  = nullptr;
 
         // Remove load future.
         _loadFutures.erase(assetIdx);
 
-        Debug::Log(Fmt("Unloaded streamable asset `{}`.", GetName(assetIdx)), Debug::LogLevel::Info, Debug::LogMode::Debug);
+        Debug::Log(Fmt("Unloaded streamable asset `{}`.", GetName(assetIdx)),
+                   Debug::LogLevel::Info, Debug::LogMode::Debug);
     }
 
     void AssetStreamer::Unload(const std::string& assetName)
@@ -280,7 +296,8 @@ namespace Silent::Assets
         const int* assetIdx = Find(_idxs, assetName);
         if (assetIdx == nullptr)
         {
-            Debug::Log(Fmt("Attempted to unload unregistered streamable asset `{}`.", assetName), Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log(Fmt("Attempted to unload unregistered streamable asset `{}`.", assetName),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return;
         }
 
