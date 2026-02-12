@@ -23,7 +23,7 @@ namespace Silent::Assets
                                          std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
-        // Read 
+        // Read header.
         int16  keyframesOffset  = stream.ReadInt16();
         uint8  rotCount         = stream.ReadUint8();
         uint8  translationCount = stream.ReadUint8();

@@ -79,7 +79,7 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->LinearMeshes.size(); i++)
         {
             const auto& mesh = data->LinearMeshes[i];
-            Load(copyPass, mesh.Vertices, mesh.Idxs, asset.Name + std::to_string(i));
+            Load(copyPass, mesh.Vertices, mesh.Idxs, mesh.BoneName);
         }
     }
 

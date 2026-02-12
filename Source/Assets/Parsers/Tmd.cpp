@@ -211,6 +211,8 @@ namespace Silent::Assets
 
             auto mesh = TmdMesh{};
 
+            // @todo Texture name?
+
             // Create UV and color index lookups.
             auto uvLookup    = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
             auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.

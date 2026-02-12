@@ -54,15 +54,16 @@ namespace Silent::Assets
         auto   name         = stream.ReadNullString();
 
         // Create asset.
-        auto asset = IlmAsset{};
+        auto asset = IlmAsset
+        {
+            .Name = name
+        };
 
         // Read meshes.
         stream.SetPosition(meshesOffset);
         asset.Meshes.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
-            auto mesh = IlmMesh{};
-
             // Create UV index lookup.
             auto uvLookup = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
 
@@ -71,6 +72,13 @@ namespace Silent::Assets
             int  boneIdx    = std::stoi(boneIdxStr);
             auto boneName   = stream.ReadNullString(BONE_NAME_STR_SIZE);
             stream.Skip(1);
+
+            // Create bone mesh.
+            auto mesh = IlmMesh
+            {
+                .BoneIdx  = boneIdx,
+                .BoneName = boneName
+            };
 
             // Read base vertex indices.
             uint8 posBaseIdx    = stream.ReadUint8();
@@ -249,6 +257,8 @@ namespace Silent::Assets
         {
             auto linearMesh = IlmLinearMesh
             {
+                .BoneIdx     = mesh.BoneIdx,
+                .BoneName    = mesh.BoneName,
                 .TextureName = mesh.TextureName
             };
 

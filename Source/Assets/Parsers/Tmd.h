@@ -34,20 +34,20 @@ namespace Silent::Assets
     /** @brief TMD mesh. */
     struct TmdMesh
     {
+        std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
         std::vector<TmdPrimitive> Primitives  = {};
         std::vector<Vector3>      Positions   = {};
         std::vector<Vector3>      Normals     = {};
         std::vector<Vector2>      Uvs         = {};
         std::vector<Color>        Colors      = {};
-        std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
     };
 
     /** @brief TMD GPU-compatible linear mesh. */
     struct TmdLinearMesh
     {
+        std::string                 TextureName = {};
         std::vector<BufferVertex3d> Vertices    = {};
         std::vector<uint16>         Idxs        = {};
-        std::string                 TextureName = {};
     };
 
     /** @brief TMD asset data. */
