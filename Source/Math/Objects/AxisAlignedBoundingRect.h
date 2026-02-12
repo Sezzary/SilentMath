@@ -20,14 +20,16 @@ namespace Silent::Math
         // =============
 
         /** @brief Creates a default instance. */
-        AxisAlignedBoundingRect() = default;
+        constexpr AxisAlignedBoundingRect() = default;
 
         /** @brief Creates an instance from a center and extents.
          *
          * @param center Rectangle center.
          * @param extents Rectangle extents.
          */
-        AxisAlignedBoundingRect(const Vector2& center, const Vector2& extents);
+        constexpr AxisAlignedBoundingRect(const Vector2& center, const Vector2& extents) :
+            Center(center),
+            Extents(extents) {}
 
         // ==========
         // Inquirers

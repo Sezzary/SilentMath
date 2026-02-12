@@ -7,7 +7,7 @@ namespace Silent::Math
     class Quaternion;
     class Vector3;
 
-    /** @brief 4-component matrix. */
+    /** @brief 4x4 matrix. */
     class Matrix : public glm::mat4
     {
     public:
@@ -27,13 +27,37 @@ namespace Silent::Math
                                        0.0f, 0.0f, 1.0f, 0.0f,
                                        0.0f, 0.0f, 0.0f, 1.0f) {}
 
-        /** @brief Creates an instance from a `glm::mat4`. */
+        /** @brief Creates an instance from a `glm::mat4`.
+         *
+         * @param mat GLM 4x4 matrix.
+         */
         constexpr Matrix(const glm::mat4& mat) : glm::mat4(mat) {}
 
-        /** @brief Creates an instance with all components set to the same value. */
+        /** @brief Creates an instance with all components set to the same value.
+         *
+         * @param m Value to set for all components.
+         */
         constexpr Matrix(float m) : glm::mat4(m) {}
 
-        /** @brief Creates a 4x4 instance. */
+        /** @brief Creates a 4x4 instance.
+         *
+         * @param m00 First row, first column component.
+         * @param m01 First row, second column component.
+         * @param m02 First row, third column component.
+         * @param m03 First row, fourth column component.
+         * @param m10 Second row, first column component.
+         * @param m11 Second row, second column component.
+         * @param m12 Second row, third column component.
+         * @param m13 Second row, fourth column component.
+         * @param m20 Third row, first column component.
+         * @param m21 Third row, second column component.
+         * @param m22 Third row, third column component.
+         * @param m23 Third row, fourth column component.
+         * @param m30 Fourth row, first column component.
+         * @param m31 Fourth row, second column component.
+         * @param m32 Fourth row, third column component.
+         * @param m33 Fourth row, fourth column component.
+         */
         constexpr Matrix(float m00, float m01, float m02, float m03,
                          float m10, float m11, float m12, float m13,
                          float m20, float m21, float m22, float m23,
@@ -42,7 +66,18 @@ namespace Silent::Math
                                                                                  m20, m21, m22, m23,
                                                                                  m30, m31, m32, m33) {}
 
-        /** @brief Creates a 3x3 instance. */
+        /** @brief Creates a 3x3 instance.
+         *
+         * @param m00 First row, first column component.
+         * @param m01 First row, second column component.
+         * @param m02 First row, third column component.
+         * @param m10 Second row, first column component.
+         * @param m11 Second row, second column component.
+         * @param m12 Second row, third column component.
+         * @param m20 Third row, first column component.
+         * @param m21 Third row, second column component.
+         * @param m22 Third row, third column component.
+         */
         constexpr Matrix(float m00, float m01, float m02,
                          float m10, float m11, float m12,
                          float m20, float m21, float m22) : glm::mat4(m00,  m01,  m02,  0.0f,

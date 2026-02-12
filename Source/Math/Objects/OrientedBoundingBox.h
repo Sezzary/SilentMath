@@ -43,7 +43,10 @@ namespace Silent::Math
          * @param extents Extents.
          * @param rot Rotation.
          */
-        constexpr OrientedBoundingBox(const Vector3& center, const Vector3& extents, const Quaternion rot) : Center(center), Extents(extents), Rotation(rot) {}
+        constexpr OrientedBoundingBox(const Vector3& center, const Vector3& extents, const Quaternion rot) :
+            Center(center),
+            Extents(extents),
+            Rotation(rot) {}
 
         // ========
         // Getters

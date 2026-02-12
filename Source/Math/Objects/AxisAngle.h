@@ -37,7 +37,9 @@ namespace Silent::Math
          * @param axis Normalized axis.
          * @param angle Angle in radians.
          */
-        constexpr AxisAngle(const Vector3& axis, float rad) : Axis(axis), Angle(rad) {};
+        constexpr AxisAngle(const Vector3& axis, float rad) :
+            Axis(axis),
+            Angle(rad) {};
 
         /** @brief Creates an instance from a direction vector.
          *

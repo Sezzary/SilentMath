@@ -134,9 +134,18 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        // @todo
+        /** @brief Loads a texture from a PNG asset.
+         *
+         * @param copyPass Copy pass.
+         * @param asset PNG asset.
+         */
         void LoadPng(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
 
+        /** @brief Loads a texture from a TIM asset.
+         *
+         * @param copyPass Copy pass.
+         * @param asset TIM asset.
+         */
         void LoadTim(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
     };
 }

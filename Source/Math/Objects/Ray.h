@@ -31,7 +31,9 @@ namespace Silent::Math
          * @param origin Origin.
          * @param dir Normalized direction vector.
          */
-        constexpr Ray(const Vector3& origin, const Vector3& dir) : Origin(origin), Direction(dir) {}
+        constexpr Ray(const Vector3& origin, const Vector3& dir) :
+            Origin(origin),
+            Direction(dir) {}
 
         // ==========
         // Inquirers

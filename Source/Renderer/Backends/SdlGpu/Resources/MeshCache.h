@@ -26,9 +26,9 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Creates an instance for a reverence GPU 3D vertex buffer.
+        /** @brief Creates an instance from a reverence 3D GPU vertex buffer.
          *
-         * @param vertBuffer GPU vertex buffer.
+         * @param vertBuffer 3D GPU vertex buffer.
          */
         MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
 
@@ -55,8 +55,18 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
+        /** @brief Loads a mesh from an ILM asset.
+         *
+         * @param copyPass Copy pass.
+         * @param asset ILM asset.
+         */
         void LoadIlm(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
 
+        /** @brief Loads a mesh from a TMD asset.
+         *
+         * @param copyPass Copy pass.
+         * @param asset TMD asset.
+         */
         void LoadTmd(SDL_GPUCopyPass& copyPass, std::shared_ptr<Asset> asset);
     };
 }

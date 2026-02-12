@@ -48,7 +48,10 @@ namespace Silent::Math
          * @param y Y angle component.
          * @param z Z angle component.
          */
-        constexpr EulerAngles(short x, short y, short z) : x(x), y(y), z(z) {}
+        constexpr EulerAngles(short x, short y, short z) :
+            x(x),
+            y(y),
+            z(z) {}
 
         /** @brief Creates an instance from a direction vector.
          *
