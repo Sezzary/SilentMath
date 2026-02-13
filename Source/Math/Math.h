@@ -7,6 +7,7 @@
 #include "Math/Objects/AxisAlignedBoundingRect.h"
 #include "Math/Objects/AxisAngle.h"
 #include "Math/Objects/BezierCurve2.h"
+#include "Math/Objects/BoundingFrustum.h"
 #include "Math/Objects/BoundingSphere.h"
 #include "Math/Objects/Color.h"
 #include "Math/Objects/EulerAngles.h"

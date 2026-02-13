@@ -79,6 +79,12 @@ namespace Silent::Renderer
          */
         RendererType GetType() const;
 
+        /** @brief Gets the draw call count for the previous render tick.
+         *
+         * @return Draw call count.
+         */
+        int GetDrawCallCount() const;
+
         /** @brief Gets the screen render resolution in pixels.
          *
          * @return Render resolution.
@@ -91,11 +97,8 @@ namespace Silent::Renderer
          */
         float GetViewportAspectRatio() const;
 
-        /** @brief Gets the draw call count for the previous render tick.
-         *
-         * @return Draw call count.
-         */
-        int GetDrawCallCount() const;
+        // @todo Shouldn't use outside the renderer?
+        const BoundingFrustum& GetViewFrustum() const;
 
         // ========
         // Setters

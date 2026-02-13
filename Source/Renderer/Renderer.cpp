@@ -68,6 +68,11 @@ namespace Silent::Renderer
         return res.x / res.y;
     }
 
+    const BoundingFrustum& RendererBase::GetViewFrustum() const
+    {
+        return _view.Frustum;
+    }
+
     void RendererBase::UpdateView()
     {
         // @todo

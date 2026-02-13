@@ -50,12 +50,17 @@ namespace Silent::Renderer::SdlGpu
             Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU mesh.", asset->Name), Debug::LogLevel::Error);
         }
 
-        // Load mesh asset.
+        // Load model asset meshes.
         switch (asset->Type)
         {
             case AssetType::Ilm:
             {
                 LoadIlm(copyPass, *asset);
+                break;
+            }
+            case AssetType::Ipd:
+            {
+                LoadIpd(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
@@ -65,7 +70,7 @@ namespace Silent::Renderer::SdlGpu
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU mesh.", asset->Name),
+                Debug::Log(Fmt("Attempted to load non-mesh asset `{}` as GPU mesh.", asset->Name),
                            Debug::LogLevel::Error);
                 break;
             }
@@ -81,6 +86,13 @@ namespace Silent::Renderer::SdlGpu
             const auto& mesh = data->LinearMeshes[i];
             Load(copyPass, mesh.Vertices, mesh.Idxs, mesh.BoneName);
         }
+    }
+
+    void MeshCache::LoadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    {
+        const auto data = asset.GetData<IpdAsset>();
+
+        // @todo
     }
 
     void MeshCache::LoadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)

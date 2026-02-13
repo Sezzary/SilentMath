@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Assets/AssetStreamer.h"
 #include "Utils/BlockAllocator.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Utils;
 
 namespace Silent::Renderer
@@ -37,6 +39,12 @@ namespace Silent::Renderer
          */
         void Unload(const std::string& name);
 
+        /** @brief Unloads model meshes of a streamable model asset.
+         *
+         * @param assetName Streamable model asset.
+         */
+        void UnloadAssetModel(const std::string& assetName);
+
         /** @brief Clears all cached meshes. */
         void Clear();
 
@@ -45,5 +53,12 @@ namespace Silent::Renderer
         // ==========
 
         const Mesh* operator[](const std::string& name) const;
+
+    private:
+        void UnloadIlm(const Asset& asset);
+
+        void UnloadIpd(const Asset& asset);
+
+        void UnloadTmd(const Asset& asset);
     };
 }

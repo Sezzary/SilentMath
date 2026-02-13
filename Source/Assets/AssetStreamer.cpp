@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Assets/Parsers/Anm.h"
 #include "Assets/Parsers/Ilm.h"
+#include "Assets/Parsers/Ipd.h"
 #include "Assets/Parsers/Tim.h"
 #include "Assets/Parsers/Tmd.h"
 #include "Utils/Parallel.h"

@@ -26,13 +26,13 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        /** @brief Creates an instance from a reverence 3D GPU vertex buffer.
+        /** @brief Creates an instance from a reference GPU 3D vertex buffer.
          *
-         * @param vertBuffer 3D GPU vertex buffer.
+         * @param vertBuffer GPU 3D vertex buffer.
          */
         MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
 
-        /** @brief Loads a mesh from collections of vertices and indices.
+        /** @brief Loads a mesh from vertices and indices.
          *
          * @param copyPass Copy pass.
          * @param verts 3D vertices.
@@ -43,10 +43,10 @@ namespace Silent::Renderer::SdlGpu
                   const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
                   const std::string& name);
 
-        /** @brief Loads a mesh from a streamable asset.
+        /** @brief Loads model meshes from a streamable model asset.
          *
          * @param copyPass Copy pass.
-         * @param assetName Streamable asset name.
+         * @param assetName Streamable model asset name.
          */
         void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
@@ -55,14 +55,21 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        /** @brief Loads a mesh from an ILM asset.
+        /** @brief Loads model meshes from an ILM asset.
          *
          * @param copyPass Copy pass.
          * @param asset ILM asset.
          */
         void LoadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
-        /** @brief Loads a mesh from a TMD asset.
+        /** @brief Loads model meshes from an IPD asset.
+         *
+         * @param copyPass Copy pass.
+         * @param asset IPD asset.
+         */
+        void LoadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset);
+
+        /** @brief Loads model meshes from a TMD asset.
          *
          * @param copyPass Copy pass.
          * @param asset TMD asset.

@@ -10,11 +10,12 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        Vector3  Position  = Vector3::Zero;
-        Vector3  Direction = Vector3::UnitZ;
-        Vector3  Up        = Vector3::UnitY;
-        Vector2i Size      = Vector2i::Zero;  
-        float    Fov       = DEG_TO_RAD(45.0f);
+        Vector3         Position  = Vector3::Zero;
+        Vector3         Direction = Vector3::UnitZ;
+        Vector3         Up        = Vector3::UnitY;
+        Vector2i        Size      = Vector2i::Zero;  
+        float           Fov       = DEG_TO_RAD(45.0f);
+        BoundingFrustum Frustum   = BoundingFrustum{};
 
         // =============
         // Constructors
