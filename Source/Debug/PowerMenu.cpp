@@ -571,7 +571,7 @@ namespace Silent::Debug
                                       ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8),
                                       ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
                 {
-                    for (const auto& msg : g_Work.Messages)
+                    for (const auto& msg : g_Work.PrevMessages)
                     {
                         ImGui::Bullet();
                         ImGui::TextWrapped(msg.c_str());

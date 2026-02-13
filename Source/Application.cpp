@@ -314,6 +314,9 @@ namespace Silent
             _prevFrameFuture.wait();
         }
 
+        Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
+        Debug::g_Work.Messages.clear();
+
         // Render frame asynchronously.
         _work.Renderer->PrepareRenderBuffer();
         if (_work.Options->EnableParallelism)

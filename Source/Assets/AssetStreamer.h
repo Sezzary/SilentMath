@@ -17,8 +17,8 @@ namespace Silent::Assets
         Dms, /** "Demo Motion Sequence"?        | Cutscene keyframe data. */
         Anm, /** "ANiMation"                    | Animation data. */
         Plm, /** "Polygon List Model"?          | Global static model data. */
-        Ipd, /** "Instance Polygon Data"?       | Local static model data. */
-        Ilm, /** "Indexed List Model"?          | Linked model data. */
+        Ipd, /** "Instance Polygon Data"?       | Local static model data with collision. */
+        Ilm, /** "Indexed List Model"?          | Skeletal model data. */
         Tmd, /** "Three-dimensional Model Data" | PsyQ SDK 3D model data. Only used for inventory items. */
         Dat, /** "Demo dATa"?                   | Demo playback data. */
         Kdt, /** "Key Data Tracker"?            | Konami MIDI tracker data. */
