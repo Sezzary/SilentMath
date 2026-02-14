@@ -5,6 +5,8 @@ namespace Silent::Utils
 {
     BlockAllocator::BlockAllocator(int size)
     {
+        size = std::max(size, 0);
+
         _size = size;
         _blocks.push_back(BlockMetadata
         {
@@ -21,7 +23,10 @@ namespace Silent::Utils
 
     int BlockAllocator::Allocate(int size, int alignment)
     {
-        constexpr int SPLIT_SIZE_MIN = 1;
+        constexpr int SPLIT_SIZE_MIN = 3;
+
+        size      = std::max(size, 0);
+        alignment = std::max(alignment, 0);
 
         for (int i = 0; i < _blocks.size(); i++)
         {
@@ -57,10 +62,13 @@ namespace Silent::Utils
 
     void BlockAllocator::Deallocate(int offset)
     {
+        offset = std::max(offset, 0);
+
         for (int i = 0; i < _blocks.size(); i++)
         {
             auto& block = _blocks[i];
 
+            // Set as free and merge free neighbors.
             if (block.Offset == offset)
             {
                 block.IsFree = true;

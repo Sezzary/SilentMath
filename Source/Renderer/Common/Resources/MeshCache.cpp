@@ -11,16 +11,25 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
+    bool Mesh::IsValid() const
+    {
+        return VertexOffset != NO_VALUE && IdxOffset != NO_VALUE;
+    }
+
     void MeshCacheBase::Unload(const std::string& name)
     {
+        // Check if mesh name exists.
         const auto* mesh = Find(_meshes, name);
         if (mesh == nullptr)
         {
             return;
         }
 
+        // Dellocate memory blocks for vertices and indices.
         _vertexAllocator.Deallocate(mesh->VertexOffset);
         _idxAllocator.Deallocate(mesh->IdxOffset);
+
+        // Remove mesh.
         _meshes.erase(name);
     }
 
@@ -71,6 +80,7 @@ namespace Silent::Renderer
 
     const Mesh* MeshCacheBase::operator[](const std::string& name) const
     {
+        // Check if mesh exists.
         const auto* mesh = Find(_meshes, name);
         if (mesh == nullptr)
         {

@@ -11,9 +11,11 @@ namespace Silent::Renderer
     /** @brief GPU mesh. */
     struct Mesh
     {
-        uint32 VertexOffset = 0;
-        uint32 IdxOffset    = 0;
-        uint32 IdxCount     = 0;
+        int VertexOffset = 0;
+        int IdxOffset    = 0;
+        int IdxCount     = 0;
+
+        bool IsValid() const;
     };
 
     /** @brief GPU mesh cache base. */

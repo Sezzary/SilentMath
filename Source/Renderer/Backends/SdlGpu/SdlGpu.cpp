@@ -118,6 +118,18 @@ namespace Silent::Renderer::SdlGpu
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
+
+        // @temp
+        static auto bufferVertsTest = std::vector<BufferVertex3d>
+        {
+            { Vector3(-1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
+            { Vector3( 1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 1.0f), Color::White }, // 1: Bottom-Right
+            { Vector3( 1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 0.0f), Color::White }, // 2: Top-Right
+            { Vector3(-1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 0.0f), Color::White }  // 3: Top-Left
+        };
+        static auto bufferIdxsTest = std::vector<uint16>{ 0, 1, 2, 2, 3, 0 };
+        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test");
+
         // @todo If this isn't called and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
         // handled as written?
@@ -320,21 +332,8 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw3dScene()
     {
-        // @temp
-        static auto bufferVertsTest = std::vector<BufferVertex3d>
-        {
-            { Vector3(-1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
-            { Vector3( 1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 1.0f), Color::White }, // 1: Bottom-Right
-            { Vector3( 1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 0.0f), Color::White }, // 2: Top-Right
-            { Vector3(-1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 0.0f), Color::White }  // 3: Top-Left
-        };
-        static auto bufferIdxsTest = std::vector<uint16>{ 0, 1, 2, 2, 3, 0 };
-
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
-
-        _gpuBuffers.Vertices3d.UpdateVertices(*copyPass, ToSpan(bufferVertsTest), 0);
-        _gpuBuffers.Vertices3d.UpdateIdxs(*copyPass, ToSpan(bufferIdxsTest), 0);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -358,6 +357,9 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.Vertices3d.Bind(renderPass, 0, 0);
         _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
 
+        // @temp
+        //---------------------------
+
         auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
         if (tex != nullptr)
         {
@@ -380,8 +382,14 @@ namespace Silent::Renderer::SdlGpu
 
         PushFragmentUniform(UniformModel{ false }, UniformSlot::PerObject);
 
-        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;
+        const auto* mesh = GetMeshes()["Test"];
+        if (mesh != nullptr && mesh->IsValid())
+        {
+            SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+            _doubleBuffer.Active.DrawCallCount++;
+        }
+
+        //---------------------------
 
         // Process render pass.
         SDL_EndGPURenderPass(&renderPass);

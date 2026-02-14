@@ -25,16 +25,26 @@ namespace Silent::Renderer::SdlGpu
                          const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
                          const std::string& name)
     {
+        // Check if mesh name already exists.
+        if (Find(_meshes, name) != nullptr)
+        {
+            Debug::Log(Fmt("Attempted to overwrite existing GPU mesh `{}`.", name), Debug::LogLevel::Warning);
+            return;
+        }
+
+        // Allocate memory blocks for vertices and indices.
         int vertOffset = _vertexAllocator.Allocate(verts.size());
         int idxOffset  = _idxAllocator.Allocate(idxs.size());
 
-        _meshes.try_emplace(name, Mesh
+        // Insert mesh
+        _meshes.emplace(name, Mesh
         {
-            .VertexOffset = (uint32)vertOffset,
-            .IdxOffset    = (uint32)idxOffset,
-            .IdxCount     = (uint32)idxs.size()
+            .VertexOffset = vertOffset,
+            .IdxOffset    = idxOffset,
+            .IdxCount     = (int)idxs.size()
         });
 
+        // Update GPU vertex buffer.
         _vertexBuffer->UpdateVertices(copyPass, ToSpan(verts), vertOffset);
         _vertexBuffer->UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
     }
@@ -47,7 +57,7 @@ namespace Silent::Renderer::SdlGpu
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU mesh.", asset->Name), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU meshes.", asset->Name), Debug::LogLevel::Error);
         }
 
         // Load model asset meshes.
@@ -70,7 +80,7 @@ namespace Silent::Renderer::SdlGpu
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load non-mesh asset `{}` as GPU mesh.", asset->Name),
+                Debug::Log(Fmt("Attempted to load non-model asset `{}` as GPU meshes.", asset->Name),
                            Debug::LogLevel::Error);
                 break;
             }
