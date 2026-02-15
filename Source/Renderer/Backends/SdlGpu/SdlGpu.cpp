@@ -118,17 +118,31 @@ namespace Silent::Renderer::SdlGpu
         auto* uploadCmdBuffer = SDL_AcquireGPUCommandBuffer(_device);
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
-
         // @temp
-        static auto bufferVertsTest = std::vector<BufferVertex3d>
+        auto bufferVertsTest = std::vector<BufferVertex3d>
         {
-            { Vector3(-1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 1.0f), Color::White }, // 0: Bottom-Left
-            { Vector3( 1.0f, -1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 1.0f), Color::White }, // 1: Bottom-Right
-            { Vector3( 1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(1.0f, 0.0f), Color::White }, // 2: Top-Right
-            { Vector3(-1.0f,  1.0f, 10.0f)/2, Vector3::One, Vector2(0.0f, 0.0f), Color::White }  // 3: Top-Left
+            // Front Face (Z = 5.0)
+            { Vector3(-1.0f, -1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(0, 1), Color::White }, // 0
+            { Vector3( 1.0f, -1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(1, 1), Color::White }, // 1
+            { Vector3( 1.0f,  1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(1, 0), Color::White }, // 2
+            { Vector3(-1.0f,  1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(0, 0), Color::White }, // 3
+            // Back Face (Z = -5.0)
+            { Vector3(-1.0f, -1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(1, 1), Color::White }, // 4
+            { Vector3( 1.0f, -1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(0, 1), Color::White }, // 5
+            { Vector3( 1.0f,  1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(0, 0), Color::White }, // 6
+            { Vector3(-1.0f,  1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(1, 0), Color::White }  // 7
         };
-        static auto bufferIdxsTest = std::vector<uint16>{ 0, 1, 2, 2, 3, 0 };
+        auto bufferIdxsTest = std::vector<uint16>
+        {
+            0, 1, 2, 2, 3, 0, // Front
+            1, 5, 6, 6, 2, 1, // Right
+            5, 4, 7, 7, 6, 5, // Back
+            4, 0, 3, 3, 7, 4, // Left
+            3, 2, 6, 6, 7, 3, // Top
+            4, 5, 1, 1, 0, 4  // Bottom
+        };
         GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test");
+        //GetMeshes().Load(*copyPass, "ITEM/UNQE1.TMD");
 
         // @todo If this isn't called and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
@@ -383,6 +397,7 @@ namespace Silent::Renderer::SdlGpu
         PushFragmentUniform(UniformModel{ false }, UniformSlot::PerObject);
 
         const auto* mesh = GetMeshes()["Test"];
+        //const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_0"];
         if (mesh != nullptr && mesh->IsValid())
         {
             SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);

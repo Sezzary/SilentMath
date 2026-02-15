@@ -100,7 +100,10 @@ namespace Silent::Renderer::SdlGpu
                 .target_info = SDL_GPUGraphicsPipelineTargetInfo
                 {
                     .color_target_descriptions = colorTargetDescs.data(),
-                    .num_color_targets         = (uint)colorTargetDescs.size()
+                    .num_color_targets         = (uint)colorTargetDescs.size(),
+                    .depth_stencil_format      = config.EnableDepthTest ? SDL_GPU_TEXTUREFORMAT_D32_FLOAT :
+                                                                          SDL_GPU_TEXTUREFORMAT_INVALID,
+                    .has_depth_stencil_target  = config.EnableDepthTest
                 }
             };
 
