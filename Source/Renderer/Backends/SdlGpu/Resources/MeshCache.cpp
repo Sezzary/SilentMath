@@ -25,7 +25,7 @@ namespace Silent::Renderer::SdlGpu
                          const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
                          const std::string& name)
     {
-        // Check if mesh name already exists.
+        // Check if mesh with same name already exists.
         if (Find(_meshes, name) != nullptr)
         {
             Debug::Log(Fmt("Attempted to overwrite existing GPU mesh `{}`.", name), Debug::LogLevel::Warning);
@@ -91,10 +91,10 @@ namespace Silent::Renderer::SdlGpu
     {
         const auto data = asset.GetData<IlmAsset>();
 
-        for (int i = 0; i < data->LinearMeshes.size(); i++)
+        for (int i = 0; i < data->Meshes.size(); i++)
         {
-            const auto& mesh = data->LinearMeshes[i];
-            Load(copyPass, mesh.Vertices, mesh.Idxs, mesh.BoneName);
+            const auto& mesh = data->Meshes[i];
+            Load(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
         }
     }
 
@@ -109,10 +109,10 @@ namespace Silent::Renderer::SdlGpu
     {
         const auto data = asset.GetData<TmdAsset>();
 
-        for (int i = 0; i < data->LinearMeshes.size(); i++)
+        for (int i = 0; i < data->Meshes.size(); i++)
         {
-            const auto& mesh = data->LinearMeshes[i];
-            Load(copyPass, mesh.Vertices, mesh.Idxs, asset.Name + std::to_string(i));
+            const auto& mesh = data->Meshes[i];
+            Load(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + std::to_string(i));
         }
     }
 }

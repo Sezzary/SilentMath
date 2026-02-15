@@ -25,39 +25,35 @@ namespace Silent::Assets
     struct IlmPrimitive
     {
         std::vector<IlmVertex> Vertices = {};
-    };
-
-    /** @brief ILM mesh. */
-    struct IlmMesh
-    {
-        int         BoneIdx  = 0;
-        std::string BoneName = {};
-
-        std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
-        std::vector<IlmPrimitive> Primitives  = {};
-        std::vector<Vector3>      Positions   = {};
-        std::vector<Vector3>      Normals     = {};
-        std::vector<Vector2>      Uvs         = {};
+        int                    TPage    = 0;
     };
 
     /** @brief ILM GPU-compatible linear mesh. */
     struct IlmLinearMesh
     {
-        int         BoneIdx  = 0;
-        std::string BoneName = {};
+        std::vector<BufferVertex3d> Vertices = {};
+        std::vector<uint16>         Idxs     = {};
+    };
 
-        std::string                 TextureName = {};
-        std::vector<BufferVertex3d> Vertices    = {};
-        std::vector<uint16>         Idxs        = {};
+    /** @brief ILM mesh. */
+    struct IlmMesh
+    {
+        int                       BoneIdx    = 0;
+        std::string               BoneName   = {};
+        std::vector<IlmPrimitive> Primitives = {};
+        std::vector<Vector3>      Positions  = {};
+        std::vector<Vector3>      Normals    = {};
+        std::vector<Vector2>      Uvs        = {};
+
+        IlmLinearMesh Linear = {};
     };
 
     /** @brief ILM asset data. */
     struct IlmAsset
     {
-        std::string                Name         = {};
-        std::vector<IlmMesh>       Meshes       = {};
-        std::vector<IlmLinearMesh> LinearMeshes = {};
-        std::vector<int>           Ids          = {};
+        std::string          Name   = {};
+        std::vector<IlmMesh> Meshes = {};
+        std::vector<int>     Ids    = {};
     };
 
     /** @brief Parses an ILM asset file.

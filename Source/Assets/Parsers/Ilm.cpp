@@ -36,7 +36,7 @@ namespace Silent::Assets
                                          std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
-        uint8 isInitialized = stream.ReadUint8();
+        uint8 isInitialized = stream.ReadUint8(); // Unused.
         stream.Skip(1);
 
         // Read name offset.
@@ -121,8 +121,8 @@ namespace Silent::Assets
                 uint8 uvX1 = stream.ReadInt8();
                 uint8 uvY1 = stream.ReadInt8();
 
-                // Read tpage info. @todo
-                int16 tpageInfo = stream.ReadInt16();
+                // Read tpage.
+                int16 tpage = stream.ReadInt16();
 
                 // Read UV 2.
                 uint8 uvX2 = stream.ReadInt8();
@@ -174,7 +174,12 @@ namespace Silent::Assets
                 }
 
                 // Create primitive.
-                auto prim = IlmPrimitive{};
+                auto prim = IlmPrimitive
+                {
+                    .TPage = tpage
+                };
+
+                // Collect vertices.
                 prim.Vertices.reserve(vertCount);
                 for (int k = 0; k < vertCount; k++)
                 {
@@ -253,15 +258,8 @@ namespace Silent::Assets
         }
 
         // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
-        for (const auto& mesh : asset.Meshes)
+        for (auto& mesh : asset.Meshes)
         {
-            auto linearMesh = IlmLinearMesh
-            {
-                .BoneIdx     = mesh.BoneIdx,
-                .BoneName    = mesh.BoneName,
-                .TextureName = mesh.TextureName
-            };
-
             // Run through primitives.
             auto vertLookup = std::unordered_map<IlmVertex, int>{};
             for (const auto& prim : mesh.Primitives)
@@ -277,14 +275,14 @@ namespace Silent::Assets
                 // Collect linear vertex indices.
                 if (primIdxs.size() == TRI_IDX_COUNT)
                 {
-                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         primIdxs[0], primIdxs[1], primIdxs[2]
                     });
                 }
                 else if (primIdxs.size() == QUAD_IDX_COUNT)
                 {
-                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         primIdxs[0], primIdxs[1], primIdxs[2], 
                         primIdxs[0], primIdxs[2], primIdxs[3]
@@ -293,10 +291,10 @@ namespace Silent::Assets
             }
 
             // Collect linear indexed vertices.
-            linearMesh.Vertices.resize(vertLookup.size());
+            mesh.Linear.Vertices.resize(vertLookup.size());
             for (const auto& [keyVert, vertIdx] : vertLookup)
             {
-                linearMesh.Vertices[vertIdx] = BufferVertex3d
+                mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
                     .Position = mesh.Positions[keyVert.PositionIdx],
                     .Normal   = mesh.Normals[keyVert.NormalIdx],
@@ -304,8 +302,6 @@ namespace Silent::Assets
                     .Col      = Color::White
                 };
             }
-
-            asset.LinearMeshes.push_back(std::move(linearMesh));
         }
 
         return std::make_shared<IlmAsset>(std::move(asset));

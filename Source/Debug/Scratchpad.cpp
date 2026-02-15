@@ -54,7 +54,7 @@ namespace Silent::Debug
             //renderer.SubmitSprite2d(sprite0);
 
             // Text.
-            auto text = Text2d::CreateText2d("Śliwka", "RetroSerif",
+            auto text = Text2d::CreateText2d("Śliwka", "SmoothSerif",
                                              input.GetCursorPosition(), 0.0f, 1.0f / 14.0f, 1.0f, 0.0f, 
                                              TextStyle::Gradient, true,
                                              1, AlignMode::BottomLeft);

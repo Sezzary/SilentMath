@@ -29,32 +29,32 @@ namespace Silent::Assets
     {
         std::vector<TmdVertex> Vertices = {};
         BlendMode              BlendMd  = BlendMode::Opaque;
-    };
-
-    /** @brief TMD mesh. */
-    struct TmdMesh
-    {
-        std::string               TextureName = {}; // @todo Unsure how to attach a texture. Maybe write a hardcoded table?
-        std::vector<TmdPrimitive> Primitives  = {};
-        std::vector<Vector3>      Positions   = {};
-        std::vector<Vector3>      Normals     = {};
-        std::vector<Vector2>      Uvs         = {};
-        std::vector<Color>        Colors      = {};
+        int                    TPage    = 0;
     };
 
     /** @brief TMD GPU-compatible linear mesh. */
     struct TmdLinearMesh
     {
-        std::string                 TextureName = {};
         std::vector<BufferVertex3d> Vertices    = {};
         std::vector<uint16>         Idxs        = {};
+    };
+
+    /** @brief TMD mesh. */
+    struct TmdMesh
+    {
+        std::vector<TmdPrimitive> Primitives  = {};
+        std::vector<Vector3>      Positions   = {};
+        std::vector<Vector3>      Normals     = {};
+        std::vector<Vector2>      Uvs         = {};
+        std::vector<Color>        Colors      = {};
+
+        TmdLinearMesh Linear = {};
     };
 
     /** @brief TMD asset data. */
     struct TmdAsset
     {
-        std::vector<TmdMesh>       Meshes       = {};
-        std::vector<TmdLinearMesh> LinearMeshes = {};
+        std::vector<TmdMesh> Meshes = {};
     };
 
     /** @brief Parses a TMD asset file.

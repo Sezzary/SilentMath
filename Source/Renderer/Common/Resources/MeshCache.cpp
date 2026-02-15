@@ -95,10 +95,10 @@ namespace Silent::Renderer
     {
         const auto data = asset.GetData<IlmAsset>();
 
-        for (int i = 0; i < data->LinearMeshes.size(); i++)
+        for (int i = 0; i < data->Meshes.size(); i++)
         {
-            const auto& mesh = data->LinearMeshes[i];
-            Unload(mesh.BoneName);
+            const auto& mesh = data->Meshes[i];
+            Unload(asset.Name + "_" + mesh.BoneName);
         }
     }
 
@@ -113,10 +113,10 @@ namespace Silent::Renderer
     {
         const auto data = asset.GetData<TmdAsset>();
 
-        for (int i = 0; i < data->LinearMeshes.size(); i++)
+        for (int i = 0; i < data->Meshes.size(); i++)
         {
-            const auto& mesh = data->LinearMeshes[i];
-            Unload(asset.Name + std::to_string(i));
+            const auto& mesh = data->Meshes[i];
+            Unload(asset.Name + "_" + std::to_string(i));
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Silent::Assets
     /** @brief TMD packed texture attributes. */
     enum class TmdTextureAttribs
     {
-        Tpage        = (1 << 0) | (1 << 2) | (1 << 3) | (1 << 4), /** Unused. */
+        TPage        = (1 << 0) | (1 << 2) | (1 << 3) | (1 << 4), /** PSX texture page. */
         BlendMode    = (1 << 5) | (1 << 6),                       /** `TmdBlendMode` */
         TextureDepth = (1 << 7) | (1 << 8)                        /** Unused. */
     };
@@ -150,7 +150,8 @@ namespace Silent::Assets
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
         {
-            throw std::runtime_error(Fmt("Failed to open TMD `{}`.", std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+            throw std::runtime_error(Fmt("Failed to open TMD `{}`.",
+                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header.
@@ -275,6 +276,7 @@ namespace Silent::Assets
                         auto uvs       = std::vector<Vector2>(vertCount, Vector2::Zero);
                         auto colors    = std::vector<Color>(vertCount, Color::White);
                         auto blendMode = BlendMode::Opaque;
+                        int  tpage     = 0;
                         bool isTri     = vertCount == TRI_VERTEX_COUNT;
 
                         // Read textured polygon.
@@ -319,6 +321,9 @@ namespace Silent::Assets
                             {
                                 color = Color(1.0f, 1.0f, 1.0f, colorAlpha);
                             }
+
+                            // Set tpage.
+                            tpage = tsb & (int)TmdTextureAttribs::TPage;
                         }
                         // Read untextured polygon.
                         else
@@ -374,7 +379,8 @@ namespace Silent::Assets
                         // Collect primitive.
                         auto prim = TmdPrimitive
                         {
-                            .BlendMd = blendMode
+                            .BlendMd = blendMode,
+                            .TPage   = tpage
                         };
                         for (int i = 0; i < vertCount; i++)
                         {
@@ -392,8 +398,9 @@ namespace Silent::Assets
                     case TmdPrimitiveType::Line:
                     case TmdPrimitiveType::Sprite:
                     {
-                        Debug::Log(Fmt("Attempted to read unsupported primitive type while parsing TMD `{}`.", filename.string()),
-                                       Debug::LogLevel::Warning);
+                        Debug::Log(Fmt("Attempted to read unsupported primitive type while parsing TMD `{}`.",
+                                       filename.string()),
+                                   Debug::LogLevel::Warning);
                         break;
                     }
                 }
@@ -420,13 +427,8 @@ namespace Silent::Assets
         }
 
         // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
-        for (const auto& mesh : asset.Meshes)
+        for (auto& mesh : asset.Meshes)
         {
-            auto linearMesh = TmdLinearMesh
-            {
-                .TextureName = mesh.TextureName
-            };
-
             // Run through primitives.
             auto vertLookup = std::unordered_map<TmdVertex, int>{};
             for (const auto& prim : mesh.Primitives)
@@ -442,14 +444,14 @@ namespace Silent::Assets
                 // Collect linear vertex indices.
                 if (primIdxs.size() == TRI_IDX_COUNT)
                 {
-                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         primIdxs[0], primIdxs[1], primIdxs[2]
                     });
                 }
                 else if (primIdxs.size() == QUAD_IDX_COUNT)
                 {
-                    linearMesh.Idxs.insert(linearMesh.Idxs.end(),
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         primIdxs[0], primIdxs[1], primIdxs[2], 
                         primIdxs[0], primIdxs[2], primIdxs[3]
@@ -458,10 +460,10 @@ namespace Silent::Assets
             }
 
             // Collect linear indexed vertices.
-            linearMesh.Vertices.resize(vertLookup.size());
+            mesh.Linear.Vertices.resize(vertLookup.size());
             for (const auto& [keyVert, vertIdx] : vertLookup)
             {
-                linearMesh.Vertices[vertIdx] = BufferVertex3d
+                mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
                     .Position = mesh.Positions[keyVert.PositionIdx],
                     .Normal   = mesh.Normals[keyVert.NormalIdx],
@@ -469,8 +471,6 @@ namespace Silent::Assets
                     .Col      = mesh.Colors[keyVert.ColorIdx]
                 };
             }
-
-            asset.LinearMeshes.push_back(std::move(linearMesh));
         }
 
         return std::make_shared<TmdAsset>(std::move(asset));
