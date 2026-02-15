@@ -93,6 +93,7 @@ namespace Silent::Renderer::SdlGpu
 
         for (int i = 0; i < data->Meshes.size(); i++)
         {
+            // @todo Also append bone mesh variant index to name.
             const auto& mesh = data->Meshes[i];
             Load(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
         }

@@ -34,11 +34,13 @@ namespace Silent::Renderer::SdlGpu
     {
         Debug::Assert(_device != nullptr, "Attempted to bind uninitialized GPU pipeline manager.");
 
-        int   pipelineHash = GetPipelineHash(renderStage, Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe : blendMode);
+        int   pipelineHash = GetPipelineHash(renderStage, Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe :
+                                                                                              blendMode);
         auto* pipeline     = Find(_pipelines, pipelineHash);
         if (pipeline == nullptr)
         {
-            throw std::runtime_error(Fmt("Attempted to bind invalid pipeline for render stage {}, blend mode {}.", (int)renderStage, (int)blendMode));
+            throw std::runtime_error(Fmt("Attempted to bind invalid pipeline for render stage {}, blend mode {}.",
+                                         (int)renderStage, (int)blendMode));
         }
 
         SDL_BindGPUGraphicsPipeline(&renderPass, *pipeline);
