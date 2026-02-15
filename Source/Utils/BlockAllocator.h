@@ -52,10 +52,9 @@ namespace Silent::Utils
         /** @brief Allocates a memory block.
          *
          * @param size Block size.
-         * @param alignment Block alignment.
          * @return Start offset of the allocated block. `NO_VALUE` if failed.
          */
-        int Allocate(int size, int alignment = 1);
+        int Allocate(int size);
 
         /** @brief Deallocates a memory block at a given offset.
          *

@@ -21,38 +21,38 @@ namespace Silent::Utils
         return _size;
     }
 
-    int BlockAllocator::Allocate(int size, int alignment)
+    int BlockAllocator::Allocate(int size)
     {
-        constexpr int SPLIT_SIZE_MIN = 3;
+        constexpr int SPLIT_SIZE_MIN = 4;
 
-        size      = std::max(size, 0);
-        alignment = std::max(alignment, 0);
+        size = std::max(size, 0);
 
+        // Find first fit.
         for (int i = 0; i < _blocks.size(); i++)
         {
             auto& block = _blocks[i];
 
-            int alignedOffset = ((block.Offset + alignment) - 1) & ~(alignment - 1);
-            int padding       = alignedOffset - block.Offset;
-
-            if (block.IsFree && block.Size >= (size + padding))
+            // Allocate.
+            if (block.IsFree && block.Size >= size)
             {
+                int allocOffset = block.Offset;
+                block.IsFree    = false;
+
                 // Split block if significant space is left over.
-                if (block.Size > ((size + padding) + SPLIT_SIZE_MIN))
+                if (block.Size > (size + SPLIT_SIZE_MIN))
                 {
-                    auto nextBlock = BlockMetadata
+                    auto newBlock = BlockMetadata
                     {
-                        .Offset = alignedOffset + size,
-                        .Size   = block.Size - (size + padding),
+                        .Offset = block.Offset + size,
+                        .Size   = block.Size - size,
                         .IsFree = true
                     };
 
-                    _blocks.insert((_blocks.begin() + i) + 1, nextBlock);
-                    block.Size = size + padding;
+                    block.Size = size;
+                    _blocks.insert((_blocks.begin() + i) + 1, newBlock);
                 }
-                
-                block.IsFree = false;
-                return alignedOffset;
+
+                return allocOffset;
             }
         }
 

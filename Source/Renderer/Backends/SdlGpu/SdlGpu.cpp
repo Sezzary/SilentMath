@@ -141,8 +141,9 @@ namespace Silent::Renderer::SdlGpu
             3, 2, 6, 6, 7, 3, // Top
             4, 5, 1, 1, 0, 4  // Bottom
         };
-        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test");
         //GetMeshes().Load(*copyPass, "ITEM/UNQE1.TMD");
+        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test2");
+        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test");
 
         // @todo If this isn't called and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
