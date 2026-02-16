@@ -35,19 +35,19 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Unloads a cached mesh.
+        /** @brief Unloads a cached GPU mesh.
          *
-         * @param name Name of the mesh to unload.
+         * @param name Name of the GPU mesh to unload.
          */
         void Unload(const std::string& name);
 
-        /** @brief Unloads model meshes of a streamable model asset.
+        /** @brief Unloads GPU meshes from a streamable model asset.
          *
-         * @param assetName Streamable model asset.
+         * @param assetName Streamable model asset name.
          */
-        void UnloadAssetModel(const std::string& assetName);
+        void UnloadModel(const std::string& assetName);
 
-        /** @brief Clears all cached meshes. */
+        /** @brief Clears all cached GPU meshes. */
         void Clear();
 
         // ==========
@@ -57,10 +57,30 @@ namespace Silent::Renderer
         const Mesh* operator[](const std::string& name) const;
 
     private:
+        /** @brief Unloads GPU meshes from an ILM model asset.
+         *
+         * @note By convention, each GPUmesh is named as follows:
+         * `[model name]_[bone name]_[bone mesh variant index]`.
+         *
+         * @param asset ILM asset.
+         */
         void UnloadIlm(const Asset& asset);
 
+        /** @brief Unloads GPU meshes from an IPD model asset.
+         *
+         * @todo Note.
+         *
+         * @param asset IPD asset.
+         */
         void UnloadIpd(const Asset& asset);
 
+        /** @brief Unloads GPU meshes from a TMD model asset.
+         *
+         * @note By convention, each GPU mesh is named as follows:
+         * `[model name]_[mesh index]`.
+         *
+         * @param asset TMD asset.
+         */
         void UnloadTmd(const Asset& asset);
     };
 }

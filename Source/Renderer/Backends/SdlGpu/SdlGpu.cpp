@@ -141,8 +141,7 @@ namespace Silent::Renderer::SdlGpu
             3, 2, 6, 6, 7, 3, // Top
             4, 5, 1, 1, 0, 4  // Bottom
         };
-        //GetMeshes().Load(*copyPass, "ITEM/UNQE1.TMD");
-        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test2");
+        GetMeshes().Load(*copyPass, "ITEM/UNQE1.TMD");
         GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test");
 
         // @todo If this isn't called and the texture is missing, for some reason
@@ -397,8 +396,8 @@ namespace Silent::Renderer::SdlGpu
 
         PushFragmentUniform(UniformModel{ false }, UniformSlot::PerObject);
 
-        const auto* mesh = GetMeshes()["Test"];
-        //const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_0"];
+        //const auto* mesh = GetMeshes()["Test"];
+        const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_1"];
         if (mesh != nullptr && mesh->IsValid())
         {
             SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);

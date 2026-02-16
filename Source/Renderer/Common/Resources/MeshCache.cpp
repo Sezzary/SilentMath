@@ -33,7 +33,7 @@ namespace Silent::Renderer
         _meshes.erase(name);
     }
 
-    void MeshCacheBase::UnloadAssetModel(const std::string& assetName)
+    void MeshCacheBase::UnloadModel(const std::string& assetName)
     {
         auto& assets = g_App.GetAssets();
 
@@ -41,10 +41,10 @@ namespace Silent::Renderer
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to unload invalid asset `{}` as GPU mesh.", asset->Name), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Attempted to unload GPU meshes from invalid asset `{}`.", asset->Name), Debug::LogLevel::Error);
         }
 
-        // Unload model asset meshes.
+        // Unload meshes from model asset.
         switch (asset->Type)
         {
             case AssetType::Ilm:
@@ -64,7 +64,7 @@ namespace Silent::Renderer
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to unload non-mesh asset `{}` as GPU mesh.", asset->Name),
+                Debug::Log(Fmt("Attempted to unload GPU meshes from non-mesh asset `{}`.", asset->Name),
                            Debug::LogLevel::Error);
                 break;
             }

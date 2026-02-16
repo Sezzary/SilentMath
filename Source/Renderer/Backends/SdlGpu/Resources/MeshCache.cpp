@@ -57,10 +57,10 @@ namespace Silent::Renderer::SdlGpu
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU meshes.", asset->Name), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Attempted to load GPU meshes from invalid asset `{}`.", asset->Name), Debug::LogLevel::Error);
         }
 
-        // Load model asset meshes.
+        // Load model meshes from asset.
         switch (asset->Type)
         {
             case AssetType::Ilm:
@@ -80,7 +80,7 @@ namespace Silent::Renderer::SdlGpu
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load non-model asset `{}` as GPU meshes.", asset->Name),
+                Debug::Log(Fmt("Attempted to load GPU meshes from non-model asset `{}`.", asset->Name),
                            Debug::LogLevel::Error);
                 break;
             }

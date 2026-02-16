@@ -55,9 +55,9 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        /** @brief Loads model meshes from an ILM asset.
+        /** @brief Loads GPU meshes from an ILM model asset.
          *
-         * @note By convention, each mesh is named as follows:
+         * @note By convention, each GPUmesh is named as follows:
          * `[model name]_[bone name]_[bone mesh variant index]`.
          *
          * @param copyPass Copy pass.
@@ -65,16 +65,16 @@ namespace Silent::Renderer::SdlGpu
          */
         void LoadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
-        /** @brief Loads model meshes from an IPD asset.
+        /** @brief Loads GPU meshes from an IPD model asset.
          *
          * @param copyPass Copy pass.
          * @param asset IPD asset.
          */
         void LoadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
-        /** @brief Loads model meshes from a TMD asset.
+        /** @brief Loads GPU meshes from a TMD model asset.
          *
-         * @note By convention, each mesh is named as follows:
+         * @note By convention, each GPU mesh is named as follows:
          * `[model name]_[mesh index]`.
          *
          * @param copyPass Copy pass.
