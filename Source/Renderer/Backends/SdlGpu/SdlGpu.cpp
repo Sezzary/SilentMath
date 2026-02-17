@@ -66,6 +66,11 @@ namespace Silent::Renderer::SdlGpu
             throw std::runtime_error(Fmt("Failed to claim window for GPU device: {}", SDL_GetError()));
         }
 
+        // Enable VSync.
+        bool supportsMailbox = SDL_WindowSupportsGPUPresentMode(_device, _window, SDL_GPU_PRESENTMODE_MAILBOX);
+        SDL_SetGPUSwapchainParameters(_device, _window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR,
+                                      supportsMailbox ? SDL_GPU_PRESENTMODE_MAILBOX : SDL_GPU_PRESENTMODE_VSYNC);
+
         // Initialize buffers.
         InitializeDoubleBuffer();
         InitializeGpuBuffers();
@@ -141,8 +146,9 @@ namespace Silent::Renderer::SdlGpu
             3, 2, 6, 6, 7, 3, // Top
             4, 5, 1, 1, 0, 4  // Bottom
         };
+        GetMeshes().Load(*copyPass, "CHARA/DOC.ILM");
         GetMeshes().Load(*copyPass, "ITEM/UNQE1.TMD");
-        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "Test");
+        GetMeshes().Load(*copyPass, bufferVertsTest, bufferIdxsTest, "TestCube");
 
         // @todo If this isn't called and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
@@ -397,7 +403,8 @@ namespace Silent::Renderer::SdlGpu
         PushFragmentUniform(UniformModel{ false }, UniformSlot::PerObject);
 
         //const auto* mesh = GetMeshes()["Test"];
-        const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_1"];
+        //const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_1"];
+        const auto* mesh = GetMeshes()["TestCube"];
         if (mesh != nullptr && mesh->IsValid())
         {
             SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
