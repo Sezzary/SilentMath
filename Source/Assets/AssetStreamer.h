@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Assets/Parsers/Anm.h"
 #include "Assets/Parsers/Ilm.h"
 #include "Assets/Parsers/Ipd.h"
+#include "Assets/Parsers/Plm.h"
 #include "Assets/Parsers/Png.h"
 #include "Assets/Parsers/Tim.h"
 #include "Assets/Parsers/Tmd.h"
@@ -12,19 +12,19 @@ namespace Silent::Assets
     /** @brief Streamable asset types. Used in `Asset`. */
     enum class AssetType
     {
-        Tim, /** "Texture IMage"                | PsyQ SDK texture data. */
-        Vab, /** "Voice Audio Bank"             | PsyQ SDK audio container data. */
-        Bin, /** "BINary"                       | Original compiled logic overlay data. */ // @todo Only tracked for 1:1 legacy index registration. All instances of asset access should be refactored to use names instead of indices.
-        Dms, /** "Demo Motion Sequence"?        | Cutscene keyframe data. */
-        Anm, /** "ANiMation"                    | Animation data. */
-        Plm, /** "Polygon List Model"?          | Global static model data. */
-        Ipd, /** "Instance Polygon Data"?       | Local static model data with collision. */
-        Ilm, /** "Indexed List Model"?          | Skeletal model data. */
-        Tmd, /** "Three-dimensional Model Data" | PsyQ SDK 3D model data. Only used for inventory items. */
-        Dat, /** "Demo dATa"?                   | Demo playback data. */
-        Kdt, /** "Key Data Tracker"?            | Konami MIDI tracker data. */
-        Cmp, /** "CoMPressed" or "CoMPiled"?    | Unknown. */
-        Xa,  /** "eXtended Audio"               | PSX XA audio stream. */
+        Tim, /** "Texture IMage"                 | PsyQ SDK texture data. */
+        Vab, /** "Voice Audio Bank"              | PsyQ SDK audio container data. */
+        Bin, /** "BINary"                        | Original compiled logic overlay data. */
+        Dms, /** "Demo Motion Sequence"?         | Cutscene keyframe data. */
+        Anm, /** "ANiMation"                     | Animation data. */
+        Plm, /** "PoLygon Model"?                | Model data. */
+        Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. Used for environment streaming. */
+        Ilm, /** "Instanced Linked Model"?       | Skeletal model data. Used for characters. */
+        Tmd, /** "Three-dimensional Model Data"  | PsyQ SDK 3D model data. Used for inventory items. */
+        Dat, /** "Demo dATa"?                    | Demo playback data. */
+        Kdt, /** "Key Data Tracker"?             | Konami MIDI tracker data. */
+        Cmp, /** "CoMPressed" or "CoMPiled"?     | Unknown. */
+        Xa,  /** "eXtended Audio"                | PSX XA audio stream. */
 
         Png
     };
@@ -38,7 +38,7 @@ namespace Silent::Assets
         Error
     };
 
-    /** @brief Streamable asset data and metadata. */
+    /** @brief Streamable asset. */
     struct Asset
     {
         std::string             Name = {};                    /** Filename relative to assets folder. */
@@ -52,7 +52,7 @@ namespace Silent::Assets
          *
          * @tparam T Loaded asset type to cast the asset data to.
          * @return Typed loaded asset data.
-         * @throws `std::runtime_error` if `data` is `nullptr`.
+         * @throws `std::runtime_error` if `Data` is `nullptr`.
          */
         template <typename T>
         std::shared_ptr<const T> GetData() const

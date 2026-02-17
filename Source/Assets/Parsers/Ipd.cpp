@@ -34,19 +34,21 @@ namespace Silent::Assets
         }
 
         // Read header.
-        uint8  isInitialized      = stream.ReadUint8();
-        int8   levelGridX         = stream.ReadInt8();
-        int8   levelGridZ         = stream.ReadInt8();
-        uint32 lmHeaderOffset     = stream.ReadUint32();
-        uint8  meshCount          = stream.ReadUint8();
-        uint8  meshBufferCount    = stream.ReadUint8();
-        uint8  meshOrderCount     = stream.ReadUint8();
+        uint8  isInitialized       = stream.ReadUint8();
+        int8   levelGridX          = stream.ReadInt8();
+        int8   levelGridZ          = stream.ReadInt8();
+        uint32 lmHeaderOffset      = stream.ReadUint32();
+        uint8  modelCount          = stream.ReadUint8();
+        uint8  modelBufferCount    = stream.ReadUint8();
+        uint8  modelOrderCount     = stream.ReadUint8();
         stream.Skip(9); // Unknown.
-        uint32 meshInfoOffset     = stream.ReadUint32();
-        uint32 meshBuffersOffset  = stream.ReadUint32();
-        uint8 texCount            = stream.ReadUint8();
+        uint32 modelInfoOffset     = stream.ReadUint32();
+        uint32 modelBuffersOffset  = stream.ReadUint32();
+        uint8  texsOffset          = stream.ReadUint8();
         stream.Skip(51); // Unknown.
-        uint32 meshOrderPtrOffset = stream.ReadUint32();
+        uint32 modelOrderPtrOffset = stream.ReadUint32();
+
+        // @todo
 
         return std::make_shared<IpdAsset>(std::move(asset));
     }

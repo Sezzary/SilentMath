@@ -39,6 +39,8 @@ namespace Silent::Assets
     {
         { AssetType::Anm, ParseAnm },
         { AssetType::Ilm, ParseIlm },
+        { AssetType::Ipd, ParseIpd },
+        //{ AssetType::Plm, ParsePlm },
         { AssetType::Png, ParsePng },
         { AssetType::Tim, ParseTim },
         { AssetType::Tmd, ParseTmd }

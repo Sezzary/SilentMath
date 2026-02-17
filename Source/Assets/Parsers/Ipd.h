@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Silent::Renderer
+namespace Silent::Assets
 {
     /** @brief IPD mesh. */
     struct IpdMesh
@@ -14,7 +14,7 @@ namespace Silent::Renderer
         std::vector<Vector2>      Uvs         = {};
     };
 
-    /** @brief Ipd asset data. */
+    /** @brief IPD asset data. */
     struct IpdAsset
     {
         std::vector<IpdMesh> Meshes = {};

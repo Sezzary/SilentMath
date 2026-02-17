@@ -57,7 +57,9 @@ namespace Silent::Renderer::SdlGpu
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load GPU meshes from invalid asset `{}`.", asset->Name), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Attempted to load GPU meshes from invalid asset `{}`.", asset->Name),
+                       Debug::LogLevel::Error);
+            return;
         }
 
         // Load model meshes from asset.
@@ -71,6 +73,11 @@ namespace Silent::Renderer::SdlGpu
             case AssetType::Ipd:
             {
                 LoadIpd(copyPass, *asset);
+                break;
+            }
+            case AssetType::Plm:
+            {
+                LoadPlm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
@@ -93,10 +100,16 @@ namespace Silent::Renderer::SdlGpu
 
         for (int i = 0; i < data->Meshes.size(); i++)
         {
-            // @todo Also append bone mesh variant index to name.
             const auto& mesh = data->Meshes[i];
             Load(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
         }
+    }
+
+    void MeshCache::LoadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    {
+        const auto data = asset.GetData<PlmAsset>();
+
+        // @todo
     }
 
     void MeshCache::LoadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
