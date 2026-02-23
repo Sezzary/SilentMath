@@ -1,0 +1,214 @@
+//#include "gpu.h"
+#include "Framework.h"
+#include "Game/Main/FsQueue.h"
+
+#include <memory.h>
+//#include <psyq/libapi.h>
+//#include <psyq/libcd.h>
+//#include <psyq/libetc.h>
+//#include <psyq/libgte.h>
+//#include <psyq/libgpu.h>
+//#include <psyq/string.h>
+//#include <psyq/sys/file.h>
+
+#include "Application.h"
+#include "Assets/AssetStreamer.h"
+#include "Game/Main/FsMem.h"
+//#include "bodyprog/bodyprog.h"
+//#include "bodyprog/demo.h"
+
+using namespace Silent::Assets;
+
+namespace Silent::Game
+{
+    s_FsQueue g_FsQueue;
+
+    bool Fs_QueueIsEntryLoaded(s32 queueIdx)
+    {
+        return queueIdx < g_FsQueue.postLoad.idx;
+    }
+
+    s32 Fs_QueueGetLength(void)
+    {
+        const auto& assets = g_App.GetAssets();
+
+        return assets.GetLoadingCount();
+    }
+
+    bool Fs_QueueDoThingWhenEmpty(void)
+    {
+        // @toddo
+        //D_800C489C = true;
+
+        bool result = false;
+        if (Fs_QueueGetLength() == 0)
+        {
+            // @todo
+            //result = Ipd_ChunkInitCheck() != 0;
+        }
+
+        return result;
+    }
+
+    void Fs_QueueWaitForEmpty(void)
+    {
+        const auto& assets = g_App.GetAssets();
+
+        while (assets.IsBusy())
+        {
+            // @todo Avoid busy-waiting?
+        }
+
+        // @todo Are any of these important?
+        /*func_800892A4(0);
+        func_80089128();
+
+        while (true)
+        {
+            VSync(SyncMode_Wait);
+            if (Fs_QueueGetLength() <= 0)
+            {
+                break;
+            }
+
+            Fs_QueueUpdate();
+        }
+
+        func_800892A4(1);
+        DrawSync(SyncMode_Wait);
+        VSync(SyncMode_Wait);*/
+    }
+
+    const std::future<void>& Fs_QueueStartSeek(e_FsFile fileIdx)
+    {
+        auto& assets = g_App.GetAssets();
+
+        return assets.Load(fileIdx);
+    }
+
+    const std::future<void>& Fs_QueueStartRead(e_FsFile fileIdx, void* dest)
+    {
+        auto& assets = g_App.GetAssets();
+
+        return assets.Load(fileIdx);
+    }
+
+    const std::future<void>& Fs_QueueStartReadTim(e_FsFile fileIdx, void* dest, const s_FsImageDesc* image)
+    {
+        auto& assets = g_App.GetAssets();
+
+        return assets.Load(fileIdx);
+    }
+
+    const std::future<void>& Fs_QueueStartReadAnm(s32 idx, s32 charaId, void* dest, GsCOORDINATE2* coords)
+    {
+        auto& assets = g_App.GetAssets();
+
+        s32            fileIdx;
+        s_FsQueueExtra extra;
+
+        //fileIdx             = CHARA_FILE_INFOS[charaId].animFileIdx; // @todo Port over `CHARA_FILE_INFOS`.
+        extra.anm.charaId_4 = charaId;
+        extra.anm.field_0   = idx;
+        extra.anm.coords_8  = coords;
+        return assets.Load(fileIdx);
+    }
+
+    s32 Fs_QueueEnqueue(e_FsFile fileIdx, u8 op, u8 postLoad, u8 alloc, void* data, u32 unused0, s_FsQueueExtra* extra)
+    {
+        // @stub Not used anymore.
+        return 0;
+    }
+
+    void Fs_QueueInitialize(void)
+    {
+        // @stub
+    }
+
+    void Fs_QueueReset(void)
+    {
+        // @stub
+        // @todo Cleared queue in OG, should it be ignored here?
+    }
+
+    void Fs_QueueUpdate(void)
+    {
+        // @stub
+        // @todo `Fs_QueueUpdatePostLoad` call seemed important.
+    }
+
+    bool Fs_QueueUpdateSeek(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueUpdateRead(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueAllocEntryData(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueCanRead(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueDoBuffersOverlap(u8* data0, u32 size0, u8* data1, u32 size1)
+    {
+        // @stub
+        return false;
+    }
+
+    bool Fs_QueueTickSetLoc(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueTickRead(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueResetTick(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueTickReadPcDrv(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueueUpdatePostLoad(s_FsQueueEntry* entry)
+    {
+        // @stub
+        // @todo `Fs_QueuePostLoadAnm` call seemed important.
+        return true;
+    }
+
+    bool Fs_QueuePostLoadTim(s_FsQueueEntry* entry)
+    {
+        // @stub
+        return true;
+    }
+
+    bool Fs_QueuePostLoadAnm(s_FsQueueEntry* entry)
+    {
+        // @todo Seems important, not decompiled yet.
+        //Fs_CharaAnimInfoUpdate(entry->extra.anm.field_0, entry->extra.anm.charaId_4, entry->externalData,
+        //                       entry->extra.anm.coords_8);
+        return true;
+    }
+}

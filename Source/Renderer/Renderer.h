@@ -31,6 +31,11 @@ namespace Silent::Renderer
             std::vector<Shape2d>               DebugShapes2d     = {};
             std::vector<Primitive3d>           DebugPrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls = {};
+
+            std::vector<std::string> TextureLoadQueue   = {};
+            std::vector<std::string> TextureUnloadQueue = {};
+            std::vector<std::string> MeshLoadQueue      = {};
+            std::vector<std::string> MeshUnloadQueue    = {};
         };
 
         Data Active = {};
@@ -122,6 +127,14 @@ namespace Silent::Renderer
 
         /** @brief Signals a viewport resize. */
         void SignalResize();
+
+        void QueueTextureLoad(const std::string& name);
+
+        void QueueTextureUnload(const std::string& name);
+
+        void QueueMeshLoad(const std::string& name);
+
+        void QueueMeshUnload(const std::string& name);
 
         /** @brief Submits an immediate-mode 2D screen shape for drawing.
          *

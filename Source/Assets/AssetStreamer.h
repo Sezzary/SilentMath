@@ -104,6 +104,12 @@ namespace Silent::Assets
          */
         std::vector<std::string> GetLoadedNames() const;
 
+        /** @brief Gets the number of assets currently being loaded.
+         *
+         * @return Number of assets being loaded.
+         */
+        int GetLoadingCount() const;
+
         /** @brief Gets a loaded asset via a file index.
          *
          * @param assetIdx Asset file index.

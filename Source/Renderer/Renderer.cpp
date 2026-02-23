@@ -107,6 +107,10 @@ namespace Silent::Renderer
         _doubleBuffer.Active.Primitives3d.clear();
         _doubleBuffer.Active.DebugPrimitives3d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
+        _doubleBuffer.Active.TextureLoadQueue.clear();
+        _doubleBuffer.Active.TextureUnloadQueue.clear();
+        _doubleBuffer.Active.MeshLoadQueue.clear();
+        _doubleBuffer.Active.MeshUnloadQueue.clear();
 
         _shapes2d.clear();
         _sprites2d.clear();
@@ -116,6 +120,26 @@ namespace Silent::Renderer
     void RendererBase::SignalResize()
     {
         _isResized = true;
+    }
+
+    void RendererBase::QueueTextureLoad(const std::string& name)
+    {
+        _doubleBuffer.Active.TextureLoadQueue.push_back(name);
+    }
+
+    void RendererBase::QueueTextureUnload(const std::string& name)
+    {
+        _doubleBuffer.Active.TextureUnloadQueue.push_back(name);
+    }
+
+    void RendererBase::QueueMeshLoad(const std::string& name)
+    {
+        _doubleBuffer.Active.MeshLoadQueue.push_back(name);
+    }
+
+    void RendererBase::QueueMeshUnload(const std::string& name)
+    {
+        _doubleBuffer.Active.MeshUnloadQueue.push_back(name);
     }
 
     bool RendererBase::SubmitShape2d(const Shape2d& shape)

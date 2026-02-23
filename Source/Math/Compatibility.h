@@ -20,7 +20,8 @@ namespace Silent::Math
         Q12
     };
 
-#if 0
+// @todo Clashes with Psy-Z types. Should that lib be integrated or only have things picked from it?
+//#if 0
     /** @brief PsyQ matrix. */
     struct MATRIX
     {
@@ -86,7 +87,7 @@ namespace Silent::Math
         struct GsCOORDINATE2* super; /** Parent. */
         struct GsCOORDINATE2* sub;   /** Child. */
     };
-#endif
+//#endif
 
     struct s_Line2d
     {
