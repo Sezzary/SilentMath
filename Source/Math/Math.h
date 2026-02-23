@@ -13,6 +13,7 @@
 #include "Math/Objects/EulerAngles.h"
 #include "Math/Objects/Matrix.h"
 #include "Math/Objects/OrientedBoundingBox.h"
+#include "Math/Objects/Plane.h"
 #include "Math/Objects/Ray.h"
 #include "Math/Objects/Quaternion.h"
 #include "Math/Objects/Vector2.h"

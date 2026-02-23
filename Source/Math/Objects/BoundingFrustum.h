@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/Objects/Plane.h"
 #include "Math/Objects/Vector3.h"
 #include "Math/Objects/Quaternion.h"
 
@@ -14,6 +15,12 @@ namespace Silent::Math
     class BoundingFrustum
     {
     public:
+        // ==========
+        // Constants
+        // ==========
+
+        static constexpr int PLANE_COUNT = 6;
+
         // =======
         // Fields
         // =======
@@ -130,5 +137,24 @@ namespace Silent::Math
          * @return Containment type.
          */
         ContainmentType Contains(const BoundingFrustum& frustum) const;
+
+        // ==========
+        // Operators
+        // ==========
+
+        bool             operator==(const BoundingFrustum& frustum) const;
+        bool             operator!=(const BoundingFrustum& frustum) const;
+        BoundingFrustum& operator=(const BoundingFrustum& frustum) = default;
+
+    private:
+        // ========
+        // Helpers
+        // ========
+
+        /** @brief Computes the planes of the frustum.
+         *
+         * @return Frustum planes.
+         */
+        std::array<Plane, PLANE_COUNT> GetPlanes() const;
     };
 }
