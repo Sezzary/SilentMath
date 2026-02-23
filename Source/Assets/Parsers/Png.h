@@ -5,8 +5,9 @@ namespace Silent::Assets
     /** @brief PNG asset data. */
     struct PngAsset
     {
-        Vector2i          Resolution = Vector2i::Zero;
-        std::vector<byte> Pixels     = {};
+        Vector2i          Resolution  = Vector2i::Zero;
+        std::vector<byte> Pixels      = {};
+        float             AspectRatio = 0.0f;
     };
 
     /** @brief Parses a PNG asset file.

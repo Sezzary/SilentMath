@@ -5,9 +5,10 @@ namespace Silent::Assets
     /** @brief TIM asset data. */
     struct TimAsset
     {
-        Vector2i                         Resolution = Vector2i::Zero;
-        std::vector<byte>                Pixels     = {}; // @todo Make this `PixelIdxs`.
-        std::vector<std::vector<uint16>> Cluts      = {};
+        Vector2i                         Resolution  = Vector2i::Zero;
+        std::vector<byte>                Pixels      = {}; // @todo Make this `PixelIdxs`.
+        float                            AspectRatio = 0.0f;
+        std::vector<std::vector<uint16>> Cluts       = {};
     };
 
     /** @brief Parses a TIM asset file.

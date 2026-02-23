@@ -139,8 +139,9 @@ namespace Silent::Assets
         // Create asset.
         auto asset = TimAsset
         {
-            .Resolution = res,
-            .Pixels     = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT)
+            .Resolution  = res,
+            .Pixels      = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT),
+            .AspectRatio = (float)res.x / (float)res.y
         };
 
         auto SetPixelColor = [&](int x, int y, uint16 color)

@@ -31,7 +31,8 @@ TEMP_OUTPUT_PATH = OUTPUT_PATH / ".temp"
 
 def generate_shaders():
     """
-    Run `shadercross` to generate platform-specific shaders. If generated shaders already exist and are outdated, they will be overwritten.
+    Run `shadercross` to generate platform-specific shaders.
+    If generated shaders already exist and are outdated, they will be overwritten.
     """
     try:
         print("Generating shaders...")
@@ -98,7 +99,10 @@ def generate_shaders():
         if build_count == 0 and len(fail_names) == 0:
             print("Shaders are up-to-date.")
         else:
-            print(f"{build_count} shader{"" if build_count == 1 else "s"} built successfully." + (f" {len(fail_names)} failed:" if len(fail_names) > 0 else ""))
+            successStr = f"{build_count} shader{"" if build_count == 1 else "s"} built successfully."
+            failStr = (f" {len(fail_names)} failed:" if len(fail_names) > 0 else "")
+            print(successStr + failStr)
+            
             for fail_name in fail_names:
                 print(f"`{fail_name}`")
     except Exception as ex:

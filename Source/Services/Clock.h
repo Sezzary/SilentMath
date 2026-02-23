@@ -2,7 +2,7 @@
 
 namespace Silent::Services
 {
-    constexpr int TICKS_PER_SECOND = 60;
+    constexpr int TICKS_PER_SECOND = 30;
 
     /** @brief Game clock manager. */
     class ClockManager

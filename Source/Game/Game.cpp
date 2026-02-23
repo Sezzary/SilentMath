@@ -7,8 +7,6 @@
 
 namespace Silent
 {
-    float g_FullscreenAlphaBlend = 0.0f;
-
     static void MainLoop()
     {
         s32 vBlanks;
@@ -56,7 +54,7 @@ namespace Silent
             //g_SysWork.field_22A0 = 0;
 
             // Call update function for current GameState.
-            //D_800A977C[g_GameWork.gameState_594]();
+            //g_GameStateUpdateFuncs[g_GameWork.gameState_594]();
 
             /*Demo_Update();
             Demo_GameRandSeedSet();*/
@@ -156,7 +154,9 @@ namespace Silent
             GsClearVcount();*/
             
             // Set clear color.
-            //renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor_R_58C, g_GameWork.background2dColor_G_58D, g_GameWork.background2dColor_B_58E));
+            //renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor_R_58C,
+            //                                       g_GameWork.background2dColor_G_58D,
+            //                                       g_GameWork.background2dColor_B_58E));
             // Then draw everything.
         }
         // Initialize engine.
@@ -179,14 +179,13 @@ namespace Silent
 
     void Entry()
     {
-        constexpr int FADE_STEP = 4;
+        constexpr q23_8 FADE_STEP = 4;
 
         static bool isInitComplete = false;
 
         // Run game.
         if (isInitComplete)
         {
-            // Run main loop.
             MainLoop();
         }
         // Initialize.
@@ -202,25 +201,23 @@ namespace Silent
             assets.Load("1ST/2ZANKO_E.TIM").wait();
 
             // Fade in `1ST/2ZANKO_E.TIM` with luma-multiply blending.
-            static int fade = 0;
+            static q23_8 fade = Q8(0.0f);
             if (fade > Q8_COLOR(1.0f))
             {
                 isInitComplete = true;
             }
             else
             {
-                // @todo Non-functioning call. Submit fullscreen sprite with luma-multiply blending.
-                auto color = Color(1.0f, 1.0f, 1.0f, (float)fade / (float)Q8_COLOR(1.0f));
-                //renderer.SubmitSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One, SCREEN_SPACE_RES / 2.0f, Q12_ANGLE(0.0f), Vector2::One,
-                //                            color, 0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
+                auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
+                                                       SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                                       0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                renderer.SubmitSprite2d(sprite);
 
-                g_FullscreenAlphaBlend = (float)fade / (float)Q8_COLOR(1.0f); // TEMP.
-
-                fade += FADE_STEP;
+                Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(fade, Q8_SHIFT), 0, 1);
+                if (fade < 255) // temp check
+                    fade += 1;//FADE_STEP;
             }
-
-            // Load `1ST/FONT8NOC.TIM` (8x8 font).
-            assets.Load("1ST/FONT8NOC.TIM").wait();
         }
     }
 }

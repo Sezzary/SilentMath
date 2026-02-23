@@ -27,7 +27,8 @@ namespace Silent::Assets
         }
 
         // Copy pixels.
-        asset.Pixels = std::vector<byte>(pixels, pixels + ((asset.Resolution.x * asset.Resolution.y) * RGBA_COMP_COUNT));
+        asset.Pixels      = std::vector<byte>(pixels, pixels + ((asset.Resolution.x * asset.Resolution.y) * RGBA_COMP_COUNT));
+        asset.AspectRatio = (float)asset.Resolution.x / (float)asset.Resolution.y;
 
         // Free resources.
         stbi_image_free(pixels);

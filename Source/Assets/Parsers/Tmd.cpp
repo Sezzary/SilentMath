@@ -426,6 +426,49 @@ namespace Silent::Assets
             asset.Meshes.push_back(std::move(mesh));
         }
 
+        /*for (auto& mesh : asset.Meshes)
+        {
+            float radius = 0.0f;
+            int i = 0;
+            for (const auto& prim : mesh.Primitives)
+            {
+                for (const auto& vert : prim.Vertices)
+                {
+                    auto pos = mesh.Positions[vert.PositionIdx];
+                    auto normal = mesh.Normals[std::min<int>(vert.NormalIdx, mesh.Normals.size() - 1)];
+                    auto uv = mesh.Uvs[vert.UvIdx];
+                    auto color = mesh.Colors[vert.ColorIdx];
+                    mesh.Linear.Vertices.push_back(BufferVertex3d
+                    {
+                        .Position = pos / 5792.61865f,
+                        .Normal   = normal,
+                        .Uv       = uv,
+                        .Col      = color
+                    });
+
+                    radius = std::max(radius, Vector3::Distance(Vector3::Zero, pos));
+                }
+                i++;
+
+                // Collect linear vertex indices.
+                if (prim.Vertices.size() == TRI_IDX_COUNT)
+                {
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
+                    {
+                        (uint16)mesh.Linear.Vertices.size() - 2, (uint16)mesh.Linear.Vertices.size() - 1, (uint16)mesh.Linear.Vertices.size()
+                    });
+                }
+                else if (prim.Vertices.size() == QUAD_IDX_COUNT)
+                {
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
+                    {
+                        (uint16)mesh.Linear.Vertices.size() - 2, (uint16)mesh.Linear.Vertices.size() - 1, (uint16)mesh.Linear.Vertices.size(),
+                        (uint16)mesh.Linear.Vertices.size() - 2, (uint16)mesh.Linear.Vertices.size(), (uint16)mesh.Linear.Vertices.size() - 3
+                    });
+                }
+            }
+        }*/
+
         // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
         for (auto& mesh : asset.Meshes)
         {
@@ -465,8 +508,8 @@ namespace Silent::Assets
             {
                 mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
-                    .Position = mesh.Positions[keyVert.PositionIdx],
-                    .Normal   = mesh.Normals[keyVert.NormalIdx],
+                    .Position = mesh.Positions[keyVert.PositionIdx] / 4096.0f,
+                    .Normal   = mesh.Normals[std::min<int>(keyVert.NormalIdx, mesh.Normals.size() - 1)],
                     .Uv       = mesh.Uvs[keyVert.UvIdx],
                     .Col      = mesh.Colors[keyVert.ColorIdx]
                 };

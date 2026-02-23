@@ -11,6 +11,17 @@ using namespace Silent::Renderer;
 
 namespace Silent::Game
 {
+    constexpr int SCREEN_WIDTH  = 320;
+    constexpr int SCREEN_HEIGHT = 240;
+
+    /** @brief Converts a floating-point X screen position in percent to a fixed-point X screen coodinate. */
+    #define SCREEN_POSITION_X(percent) \
+        (s32)(SCREEN_WIDTH * ((percent) / 100.0f))
+
+    /** @brief Converts a floating-point Y screen position in percent to a fixed-point Y screen coodinate. */
+    #define SCREEN_POSITION_Y(percent) \
+        (s32)(SCREEN_HEIGHT * ((percent) / 100.0f))
+
     constexpr auto STRING_COLORS = std::array<Color, (int)e_StringColorId::Count>
     {
         Color::From8Bit(160, 128, 64),
@@ -27,21 +38,10 @@ namespace Silent::Game
     Vector2i g_StringPosition;
     int      g_StringPositionX1;
 
-    #define SCREEN_WIDTH                   320
-    #define SCREEN_HEIGHT                  240
-
-    /** @brief Converts a floating-point X screen position in percent to a fixed-point X screen coodinate. */
-    #define SCREEN_POSITION_X(percent) \
-        (s32)(SCREEN_WIDTH * ((percent) / 100.0f))
-
-    /** @brief Converts a floating-point Y screen position in percent to a fixed-point Y screen coodinate. */
-    #define SCREEN_POSITION_Y(percent) \
-        (s32)(SCREEN_HEIGHT * ((percent) / 100.0f))
-
     void Gfx_StringSetPosition(int posX, int posY)
     {
-        #define OFFSET_X SCREEN_POSITION_X(2.0f)//SCREEN_POSITION_X(50.0f)
-        #define OFFSET_Y -(SCREEN_POSITION_Y(9.0f)) + 3
+        constexpr int OFFSET_X = SCREEN_POSITION_X(2.0f);//SCREEN_POSITION_X(50.0f);
+        constexpr int OFFSET_Y = -(SCREEN_POSITION_Y(9.0f)) + 3;
 
         if (posX != NO_VALUE)
         {
