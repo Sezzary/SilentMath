@@ -21,7 +21,7 @@ namespace Silent::Renderer::SdlGpu
         _idxAllocator    = BlockAllocator(vertBuffer.GetIdxCapacity());
     }
 
-    void MeshCache::Load(SDL_GPUCopyPass& copyPass,
+    void MeshCache::Upload(SDL_GPUCopyPass& copyPass,
                          const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
                          const std::string& name)
     {
@@ -49,7 +49,7 @@ namespace Silent::Renderer::SdlGpu
         _vertexBuffer->UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
     }
 
-    void MeshCache::Load(SDL_GPUCopyPass& copyPass, const std::string& assetName)
+    void MeshCache::Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName)
     {
         auto& assets = g_App.GetAssets();
 
@@ -62,27 +62,27 @@ namespace Silent::Renderer::SdlGpu
             return;
         }
 
-        // Load model meshes from asset.
+        // Upload model meshes from asset.
         switch (asset->Type)
         {
             case AssetType::Ilm:
             {
-                LoadIlm(copyPass, *asset);
+                UploadIlm(copyPass, *asset);
                 break;
             }
             case AssetType::Ipd:
             {
-                LoadIpd(copyPass, *asset);
+                UploadIpd(copyPass, *asset);
                 break;
             }
             case AssetType::Plm:
             {
-                LoadPlm(copyPass, *asset);
+                UploadPlm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
             {
-                LoadTmd(copyPass, *asset);
+                UploadTmd(copyPass, *asset);
                 break;
             }
             default:
@@ -94,39 +94,39 @@ namespace Silent::Renderer::SdlGpu
         }
     }
 
-    void MeshCache::LoadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<IlmAsset>();
 
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Load(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
+            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
         }
     }
 
-    void MeshCache::LoadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<PlmAsset>();
 
         // @todo
     }
 
-    void MeshCache::LoadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<IpdAsset>();
 
         // @todo
     }
 
-    void MeshCache::LoadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<TmdAsset>();
 
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Load(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + std::to_string(i));
+            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + std::to_string(i));
         }
     }
 }

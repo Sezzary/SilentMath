@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Assets/Parsers/Ilm.h"
+#include "Assets/Loaders/Ilm.h"
 
 #include "Application.h"
 #include "Renderer/Common/Resources/Buffers.h"

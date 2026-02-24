@@ -1,7 +1,8 @@
 #include "Framework.h"
-#include "Assets/Parsers/Tim.h"
+#include "Assets/Loaders/Tim.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Renderer/Common/Constants.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
@@ -28,7 +29,7 @@ namespace Silent::Assets
         HasClut = 1 << 3
     };
 
-    std::shared_ptr<void> ParseTim(const std::filesystem::path& filename)
+    std::shared_ptr<void> TimParse(const std::filesystem::path& filename)
     {
         constexpr int HEADER_MAGIC           = 0x10;
         constexpr int BPP_MASK               = 0x7;
@@ -229,5 +230,19 @@ namespace Silent::Assets
         }
 
         return std::make_shared<TimAsset>(std::move(asset));
+    }
+
+    void TimQueueGpuUpload(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueTextureUpload(asset.Name);
+    }
+
+    void TimQueueGpuRelease(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueTextureRelease(asset.Name);
     }
 }

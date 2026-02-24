@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Assets/Parsers/Anm.h"
+#include "Assets/Loaders/Anm.h"
 
 #include "Application.h"
 #include "Utils/Stream.h"

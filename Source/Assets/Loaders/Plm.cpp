@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Assets/Parsers/Plm.h"
+#include "Assets/Loaders/Plm.h"
 
 #include "Application.h"
 #include "Utils/Stream.h"

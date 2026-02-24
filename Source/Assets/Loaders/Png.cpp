@@ -1,8 +1,10 @@
 #include "Framework.h"
-#include "Assets/Parsers/Png.h"
+#include "Assets/Loaders/Png.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Renderer/Common/Constants.h"
+#include "Renderer/Renderer.h"
 #include "Services/Filesystem.h"
 
 using namespace Silent::Renderer;
@@ -10,7 +12,7 @@ using namespace Silent::Services;
 
 namespace Silent::Assets
 {
-    std::shared_ptr<void> ParsePng(const std::filesystem::path& filename)
+    std::shared_ptr<void> PngParse(const std::filesystem::path& filename)
     {
         const auto& fs = g_App.GetFilesystem();
 
@@ -34,5 +36,19 @@ namespace Silent::Assets
         stbi_image_free(pixels);
 
         return std::make_shared<PngAsset>(std::move(asset));
+    }
+
+    void PngQueueGpuUpload(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueTextureUpload(asset.Name);
+    }
+
+    void PngQueueGpuRelease(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueTextureRelease(asset.Name);
     }
 }

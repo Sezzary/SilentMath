@@ -30,14 +30,15 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Creates an instance and uploads data to the GPU.
          *
          * @param device GPU device.
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param usageFlags Texture usage flags.
          * @param pixels Texture image pixels.
          * @param res Texture image resolution.
          * @param name Texture image name.
          */
         Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
-                SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res, const std::string& name);
+                SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res, 
+                const std::string& name);
 
         /** @brief Gracefully destroys the instance and frees GPU resources. */
         ~Texture();
@@ -64,12 +65,13 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Updates a specified region of pixels in the texture.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param pixels Updated texture image pixels.
          * @param region Start pixel position of the region to update (top-left corner).
          * @param size Pixel size of the region to update.
          */
-        void Update(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i& region, const Vector2i& size);
+        void Update(SDL_GPUCopyPass& copyPass,
+                    std::span<const byte> pixels, const Vector2i& region, const Vector2i& size);
 
         /** @brief Binds the texture for use on the active fragment shader.
          *
@@ -105,26 +107,31 @@ namespace Silent::Renderer::SdlGpu
         // Utilities
         // ==========
 
-        /** @brief Loads a texture from a texture image. If the texture is already loaded, it will be overwritten with new data.
+        /** @brief Uploads a texture from a texture image to the GPU.
+         * If the texture is already loaded, it will be overwritten with new data.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param pixels Texture image pixels.
          * @param res Texture image resolution.
          * @param name Texture name.
          */
-        void Load(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name);
+        void Upload(SDL_GPUCopyPass& copyPass,
+                    std::span<const byte> pixels, const Vector2i res, const std::string& name);
 
-        /** @brief Loads a texture from a streamable asset.
+        /** @brief Uploads a texture from a streamable asset to the GPU.
          *
-         * @param copyPass Copy pass.
-         * @param assetName Streamable asset name.
+         * @param copyPass GPU copy pass.
+         * @param assetName Streamable texture asset name.
          */
-        void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
+        void Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
-        /** @brief Unloads */
-        void Unload(const std::string& name);
+        /** @brief Releases a texture from the GPU.
+         *
+         * @param name Texture name.
+         */
+        void Release(const std::string& name);
 
-        /** @brief Clears all textures in the cache. */
+        /** @brief Releases all cached textures from the GPU. */
         void Clear();
 
         Texture* operator[](const std::string& name);
@@ -134,18 +141,18 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        /** @brief Loads a texture from a PNG asset.
+        /** @brief Uploads a texture from a PNG asset to the GPU.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param asset PNG asset.
          */
-        void LoadPng(SDL_GPUCopyPass& copyPass, const Asset& asset);
+        void UploadPng(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
-        /** @brief Loads a texture from a TIM asset.
+        /** @brief Loads a texture from a TIM asset to the GPU.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param asset TIM asset.
          */
-        void LoadTim(SDL_GPUCopyPass& copyPass, const Asset& asset);
+        void UploadTim(SDL_GPUCopyPass& copyPass, const Asset& asset);
     };
 }

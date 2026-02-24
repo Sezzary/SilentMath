@@ -8,7 +8,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    /** @brief GPU mesh. */
+    /** @brief GPU mesh allocation. */
     struct Mesh
     {
         int VertexOffset = 0;
@@ -35,19 +35,19 @@ namespace Silent::Renderer
         // Utilities
         // ==========
 
-        /** @brief Unloads a cached GPU mesh.
+        /** @brief Releases a cached mesh from the GPU.
          *
          * @param name Name of the GPU mesh to unload.
          */
-        void Unload(const std::string& name);
+        void Release(const std::string& name);
 
-        /** @brief Unloads GPU meshes from a streamable model asset.
+        /** @brief Releases meshes of a streamable model asset from the GPU.
          *
          * @param assetName Streamable model asset name.
          */
-        void UnloadModel(const std::string& assetName);
+        void ReleaseModel(const std::string& assetName);
 
-        /** @brief Clears all cached GPU meshes. */
+        /** @brief Releases all cached meshes from the GPU. */
         void Clear();
 
         // ==========
@@ -57,30 +57,30 @@ namespace Silent::Renderer
         const Mesh* operator[](const std::string& name) const;
 
     private:
-        /** @brief Unloads GPU meshes from an ILM model asset.
+        /** @brief Releases meshes of an ILM model asset from the GPU.
          *
          * @note By convention, each GPUmesh is named as follows:
          * `[model name]_[bone name]_[bone mesh variant index]`.
          *
          * @param asset ILM asset.
          */
-        void UnloadIlm(const Asset& asset);
+        void ReleaseIlm(const Asset& asset);
 
-        /** @brief Unloads GPU meshes from an IPD model asset.
+        /** @brief Releases meshes of an IPD model asset from the GPU.
          *
-         * @todo Note.
+         * @todo Mesh naming convention note.
          *
          * @param asset IPD asset.
          */
-        void UnloadIpd(const Asset& asset);
+        void ReleaseIpd(const Asset& asset);
 
-        /** @brief Unloads GPU meshes from a TMD model asset.
+        /** @brief Releases meshes of a TMD model asset from the GPU.
          *
          * @note By convention, each GPU mesh is named as follows:
          * `[model name]_[mesh index]`.
          *
          * @param asset TMD asset.
          */
-        void UnloadTmd(const Asset& asset);
+        void ReleaseTmd(const Asset& asset);
     };
 }

@@ -13,7 +13,8 @@ using namespace Silent::Utils;
 namespace Silent::Renderer::SdlGpu
 {
     Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
-                     SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res, const std::string& name)
+                     SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res,
+                     const std::string& name)
     {
         _device     = &device;
         _resolution = res;
@@ -78,7 +79,8 @@ namespace Silent::Renderer::SdlGpu
         return _resolution;
     }
 
-    void Texture::Update(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i& region, const Vector2i& size)
+    void Texture::Update(SDL_GPUCopyPass& copyPass,
+                         std::span<const byte> pixels, const Vector2i& region, const Vector2i& size)
     {
         // Create transfer buffer.
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
@@ -128,12 +130,15 @@ namespace Silent::Renderer::SdlGpu
         _device = &device;
     }
 
-    void TextureCache::Load(SDL_GPUCopyPass& copyPass, std::span<const byte> pixels, const Vector2i res, const std::string& name)
+    void TextureCache::Upload(SDL_GPUCopyPass& copyPass,
+                              std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
-        _textures[name] = std::make_unique<Texture>(*_device, copyPass, SDL_GPU_TEXTUREUSAGE_SAMPLER, pixels, res, name);
+        _textures[name] = std::make_unique<Texture>(*_device, copyPass,
+                                                    SDL_GPU_TEXTUREUSAGE_SAMPLER, pixels, res,
+                                                    name);
     }
 
-    void TextureCache::Load(SDL_GPUCopyPass& copyPass, const std::string& assetName)
+    void TextureCache::Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName)
     {
         auto& assets = g_App.GetAssets();
 
@@ -141,7 +146,8 @@ namespace Silent::Renderer::SdlGpu
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU texture.", asset->Name), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU texture.", asset->Name),
+                       Debug::LogLevel::Error);
         }
 
         // Load image asset.
@@ -149,23 +155,24 @@ namespace Silent::Renderer::SdlGpu
         {
             case AssetType::Png:
             {
-                LoadPng(copyPass, *asset);
+                UploadPng(copyPass, *asset);
                 break;
             }
             case AssetType::Tim:
             {
-                LoadTim(copyPass, *asset);
+                UploadTim(copyPass, *asset);
                 break;
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU texture.", asset->Name), Debug::LogLevel::Error);
+                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU texture.", asset->Name),
+                           Debug::LogLevel::Error);
                 break;
             }
         }
     }
 
-    void TextureCache::Unload(const std::string& name)
+    void TextureCache::Release(const std::string& name)
     {
         _textures.erase(name);
     }
@@ -187,15 +194,15 @@ namespace Silent::Renderer::SdlGpu
         return (Texture*)tex->get();
     }
 
-    void TextureCache::LoadPng(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void TextureCache::UploadPng(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<PngAsset>();
-        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
+        Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
     }
 
-    void TextureCache::LoadTim(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void TextureCache::UploadTim(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<TimAsset>();
-        Load(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
+        Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
     }
 }

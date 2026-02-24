@@ -32,62 +32,62 @@ namespace Silent::Renderer::SdlGpu
          */
         MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
 
-        /** @brief Loads a mesh from vertices and indices.
+        /** @brief Uploads 3D vertices and indices of a mesh to the GPU.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param verts 3D vertices.
          * @param idxs 3D vertex indices.
          * @param name Mesh name.
          */
-        void Load(SDL_GPUCopyPass& copyPass,
-                  const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
-                  const std::string& name);
+        void Upload(SDL_GPUCopyPass& copyPass,
+                    const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                    const std::string& name);
 
-        /** @brief Loads model meshes from a streamable model asset.
+        /** @brief Uploads model meshes from a streamable model asset to the GPU.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param assetName Streamable model asset name.
          */
-        void Load(SDL_GPUCopyPass& copyPass, const std::string& assetName);
+        void Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
     private:
         // ========
         // Helpers
         // ========
 
-        /** @brief Loads GPU meshes from an ILM model asset.
+        /** @brief Uploads meshes from an ILM model asset to the GPU.
          *
          * @note By convention, each GPUmesh is named as follows:
          * `[model name]_[bone name]_[bone mesh variant index]`.
          * @todo Also append bone mesh variant index to name.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param asset ILM asset.
          */
-        void LoadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset);
+        void UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
-        /** @brief Loads GPU meshes from an IPD model asset.
+        /** @brief Uploads meshes from an IPD model asset to the GPU.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param asset IPD asset.
          */
-        void LoadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset);
+        void UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
-        /** @brief Loads GPU meshes from a PLM model asset.
+        /** @brief Uploads meshes from a PLM model asset to the GPU.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param asset PLM asset.
          */
-        void LoadPlm(SDL_GPUCopyPass&, const Asset& asset);
+        void UploadPlm(SDL_GPUCopyPass&, const Asset& asset);
 
-        /** @brief Loads GPU meshes from a TMD model asset.
+        /** @brief Uploads meshes from a TMD model asset to the GPU.
          *
          * @note By convention, each GPU mesh is named as follows:
          * `[model name]_[mesh index]`.
          *
-         * @param copyPass Copy pass.
+         * @param copyPass GPU copy pass.
          * @param asset TMD asset.
          */
-        void LoadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset);
+        void UploadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset);
     };
 }

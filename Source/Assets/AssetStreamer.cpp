@@ -2,11 +2,11 @@
 #include "Assets/AssetStreamer.h"
 
 #include "Application.h"
-#include "Assets/Parsers/Anm.h"
-#include "Assets/Parsers/Ilm.h"
-#include "Assets/Parsers/Ipd.h"
-#include "Assets/Parsers/Tim.h"
-#include "Assets/Parsers/Tmd.h"
+#include "Assets/Loaders/Anm.h"
+#include "Assets/Loaders/Ilm.h"
+#include "Assets/Loaders/Ipd.h"
+#include "Assets/Loaders/Tim.h"
+#include "Assets/Loaders/Tmd.h"
 #include "Utils/Parallel.h"
 #include "Utils/Utils.h"
 
@@ -14,14 +14,16 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    using ParseFunc          = std::function<std::shared_ptr<void>(const std::filesystem::path& file)>;
-    using QueueGpuUploadFunc = std::function<void(std::shared_ptr<void> data)>;
+    using ParseFunc           = std::function<std::shared_ptr<void>(const std::filesystem::path& file)>;
+    using QueueGpuUploadFunc  = std::function<void(const Asset& asset)>;
+    using QueueGpuReleaseFunc = std::function<void(const Asset& asset)>;
 
     /** @brief Streamable asset file loader. */
     struct AssetLoader
     {
-        ParseFunc          Parse          = nullptr;
-        QueueGpuUploadFunc QueueGpuUpload = nullptr;
+        ParseFunc          Parse           = nullptr;
+        QueueGpuUploadFunc QueueGpuUpload  = nullptr;
+        QueueGpuUploadFunc QueueGpuRelease = nullptr;
     };
 
     static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
@@ -45,18 +47,13 @@ namespace Silent::Assets
 
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
-        { AssetType::Anm, { ParseAnm, nullptr }  },
-        { AssetType::Ilm, { ParseIlm, nullptr }  },
-        { AssetType::Ipd, { ParseIpd, nullptr }  },
-        //{ AssetType::Plm, { ParsePlm, nullptr }  },
-        { AssetType::Png, { ParsePng, nullptr }  },
-        { AssetType::Tim, { ParseTim, nullptr }  },
-        { AssetType::Tmd, { ParseTmd, nullptr }  }
-    };
-
-    static const auto GPU_QUEUE_FUNCS = std::unordered_map<AssetType, ParseFunc>
-    {
-        // @todo
+        { AssetType::Anm, { ParseAnm }                                        },
+        { AssetType::Ilm, { ParseIlm }                                        },
+        { AssetType::Ipd, { ParseIpd }                                        },
+        //{ AssetType::Plm, { ParsePlm } },
+        { AssetType::Png, { PngParse, PngQueueGpuUpload, PngQueueGpuRelease } },
+        { AssetType::Tim, { TimParse, TimQueueGpuUpload, TimQueueGpuRelease } },
+        { AssetType::Tmd, { ParseTmd }                                        }
     };
 
     const std::string& AssetStreamer::GetName(int assetIdx) const
@@ -250,13 +247,16 @@ namespace Silent::Assets
             {
                 asset.State = AssetState::Loaded;
 
+                // Parse file.
                 if (loader->Parse != nullptr)
                 {
                     asset.Data = loader->Parse(asset.File);
                 }
+
+                // Queue GPU resource upload.
                 if (loader->QueueGpuUpload != nullptr)
                 {
-                    //loader->QueueGpuUpload();
+                    loader->QueueGpuUpload(asset);
                 }
 
                 Debug::Log(Fmt("Loaded streamable asset `{}`.", asset.Name),
@@ -308,6 +308,13 @@ namespace Silent::Assets
             return;
         }
 
+        // Queue GPU resource release.
+        const auto* loader = Find(ASSET_LOADERS, asset.Type);
+        if (loader != nullptr && loader->QueueGpuRelease != nullptr)
+        {
+            loader->QueueGpuRelease(asset);
+        }
+
         // Unload.
         asset.State = AssetState::Unloaded;
         asset.Data  = nullptr;
@@ -342,6 +349,13 @@ namespace Silent::Assets
             if (asset->State == AssetState::Unloaded)
             {
                 continue;
+            }
+
+            // Queue GPU resource release.
+            const auto* loader = Find(ASSET_LOADERS, asset->Type);
+            if (loader != nullptr && loader->QueueGpuRelease != nullptr)
+            {
+                loader->QueueGpuRelease(*asset);
             }
 
             // Unload.

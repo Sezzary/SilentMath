@@ -85,7 +85,7 @@ namespace Silent::Renderer
         // @todo Need to call `UpdateFontAtlasTextures` here. Backends need their own
         // pre-render data prep method.
 
-        // @todo Using parallelism causes flickering here. Why?
+        // @todo Using parallelism here causes flickering. Why if lock guards are in place?
         // Generate active buffer data.
         //auto tasks = ParallelTasks
         //{
@@ -107,14 +107,19 @@ namespace Silent::Renderer
         _doubleBuffer.Active.Primitives3d.clear();
         _doubleBuffer.Active.DebugPrimitives3d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
-        _doubleBuffer.Active.TextureLoadQueue.clear();
-        _doubleBuffer.Active.TextureUnloadQueue.clear();
-        _doubleBuffer.Active.MeshLoadQueue.clear();
-        _doubleBuffer.Active.MeshUnloadQueue.clear();
+        _doubleBuffer.Active.TextureUploadQueue.clear();
+        _doubleBuffer.Active.TextureReleaseQueue.clear();
+        _doubleBuffer.Active.MeshUploadQueue.clear();
+        _doubleBuffer.Active.MeshReleaseQueue.clear();
 
+        // Clear scene objects.
         _shapes2d.clear();
         _sprites2d.clear();
         _glyphs2d.clear();
+
+        // Swap and clear debug messages.
+        Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
+        Debug::g_Work.Messages.clear();
     }
 
     void RendererBase::SignalResize()
@@ -122,24 +127,24 @@ namespace Silent::Renderer
         _isResized = true;
     }
 
-    void RendererBase::QueueTextureLoad(const std::string& name)
+    void RendererBase::QueueTextureUpload(const std::string& assetName)
     {
-        _doubleBuffer.Active.TextureLoadQueue.push_back(name);
+        _doubleBuffer.Active.TextureUploadQueue.push_back(assetName);
     }
 
-    void RendererBase::QueueTextureUnload(const std::string& name)
+    void RendererBase::QueueTextureRelease(const std::string& assetName)
     {
-        _doubleBuffer.Active.TextureUnloadQueue.push_back(name);
+        _doubleBuffer.Active.TextureReleaseQueue.push_back(assetName);
     }
 
-    void RendererBase::QueueMeshLoad(const std::string& name)
+    void RendererBase::QueueMeshUpload(const std::string& assetName)
     {
-        _doubleBuffer.Active.MeshLoadQueue.push_back(name);
+        _doubleBuffer.Active.MeshUploadQueue.push_back(assetName);
     }
 
-    void RendererBase::QueueMeshUnload(const std::string& name)
+    void RendererBase::QueueMeshRelease(const std::string& assetName)
     {
-        _doubleBuffer.Active.MeshUnloadQueue.push_back(name);
+        _doubleBuffer.Active.MeshReleaseQueue.push_back(assetName);
     }
 
     bool RendererBase::SubmitShape2d(const Shape2d& shape)
@@ -398,7 +403,6 @@ namespace Silent::Renderer
                                       SPRITE_2D_COUNT_MAX + 
                                       GLYPH_2D_COUNT_MAX);
         };
-
         ReserveMemory(_doubleBuffer.Active);
         ReserveMemory(_doubleBuffer.Render);
 

@@ -32,10 +32,10 @@ namespace Silent::Renderer
             std::vector<Primitive3d>           DebugPrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls = {};
 
-            std::vector<std::string> TextureLoadQueue   = {};
-            std::vector<std::string> TextureUnloadQueue = {};
-            std::vector<std::string> MeshLoadQueue      = {};
-            std::vector<std::string> MeshUnloadQueue    = {};
+            std::vector<std::string> TextureUploadQueue  = {};
+            std::vector<std::string> TextureReleaseQueue = {};
+            std::vector<std::string> MeshUploadQueue     = {};
+            std::vector<std::string> MeshReleaseQueue    = {};
         };
 
         Data Active = {};
@@ -128,13 +128,29 @@ namespace Silent::Renderer
         /** @brief Signals a viewport resize. */
         void SignalResize();
 
-        void QueueTextureLoad(const std::string& name);
+        /** @brief Queues a texture upload to the GPU.
+         *
+         * @param assetName Texture asset name.
+         */
+        void QueueTextureUpload(const std::string& assetName);
 
-        void QueueTextureUnload(const std::string& name);
+        /** @brief Queues a texture release from the GPU.
+         *
+         * @param assetName Texture asset name.
+         */
+        void QueueTextureRelease(const std::string& assetName);
 
-        void QueueMeshLoad(const std::string& name);
+        /** @brief Queues a mesh upload to the GPU.
+         *
+         * @param assetName Mesh asset name.
+         */
+        void QueueMeshUpload(const std::string& assetName);
 
-        void QueueMeshUnload(const std::string& name);
+        /** @brief Queues a mesh unload from the GPU.
+         *
+         * @param assetName Mesh asset name.
+         */
+        void QueueMeshRelease(const std::string& assetName);
 
         /** @brief Submits an immediate-mode 2D screen shape for drawing.
          *
@@ -165,6 +181,9 @@ namespace Silent::Renderer
 
         /** @brief Gracefully deinitializes the renderer and its subsystems. */
         virtual void Deinitialize() = 0;
+
+        /** @brief Sets up parameters for a new frame. */
+        virtual void Setup() = 0;
 
         /** @brief Prepares all GPU data and draws to the render surface. */
         virtual void Update() = 0;

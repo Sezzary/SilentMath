@@ -194,7 +194,8 @@ namespace Silent
         _work.Input.Initialize();
 
         // Show fullscreen toggle toaster hint.
-        _work.Toaster.Add(_work.Translator((PLATFORM_TYPE == PlatformType::MacOs) ? KEY_SYS_FULLSCREEN_HINT_MAC : KEY_SYS_FULLSCREEN_HINT_GENERIC));
+        _work.Toaster.Add(_work.Translator((PLATFORM_TYPE == PlatformType::MacOs) ? KEY_SYS_FULLSCREEN_HINT_MAC :
+                                                                                    KEY_SYS_FULLSCREEN_HINT_GENERIC));
 
         Debug::Log("Startup complete.");
     }
@@ -314,11 +315,11 @@ namespace Silent
             _prevFrameFuture.wait();
         }
 
-        Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
-        Debug::g_Work.Messages.clear();
+        // Prepare renderer for new frame.
+        _work.Renderer->PrepareRenderBuffer();
+        _work.Renderer->Setup();
 
         // Render frame asynchronously.
-        _work.Renderer->PrepareRenderBuffer();
         if (_work.Options->EnableParallelism)
         {
             _prevFrameFuture = std::async(std::launch::async, TASK(_work.Renderer->Update()));
