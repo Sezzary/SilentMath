@@ -146,19 +146,19 @@ namespace Silent::Renderer::SdlGpu
             3, 2, 6, 6, 7, 3, // Top
             4, 5, 1, 1, 0, 4  // Bottom
         };
-        GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
-        GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
+        //GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
+        //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
         GetMeshes().Upload(*copyPass, bufferVertsTest, bufferIdxsTest, "TestCube");
+
+        // Load temp. textures.
+        GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
+        GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
+        GetTextures().Upload(*copyPass, "TIM/BG_ETC.TIM");
 
         // @todo If atlas textures aren't updated and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
         // handled as written?
         UpdateResources(*copyPass);
-
-        // Load temp. textures.
-        //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
-        GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
-        GetTextures().Upload(*copyPass, "TIM/BG_ETC.TIM");
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(uploadCmdBuffer);
@@ -408,7 +408,7 @@ namespace Silent::Renderer::SdlGpu
 
         PushFragmentUniform(UniformModel{ false }, UniformSlot::PerObject);
 
-        //const auto* mesh = GetMeshes()["Test"];
+        //const auto* mesh = GetMeshes()["CHARA/DOC.ILM_0"];
         //const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_1"];
         const auto* mesh = GetMeshes()["TestCube"];
         if (mesh != nullptr && mesh->IsValid())

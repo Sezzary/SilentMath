@@ -293,8 +293,9 @@ namespace Silent
         // Update input.
         _work.Input.Update(*_window, _mouseWheelAxis);
 
-        // Tick game state.
-        for (int i = 0; i < _work.Clock.GetTicks(); i++)
+        // Tick game state. @todo Don't process catch-up ticks for now.
+        if (_work.Clock.GetTicks() > 0)
+        //for (int i = 0; i < _work.Clock.GetTicks(); i++)
         {
             Entry();
         }

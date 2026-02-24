@@ -32,6 +32,10 @@ namespace Silent::Renderer::SdlGpu
          */
         MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
 
+        // ==========
+        // Utilities
+        // ==========
+
         /** @brief Uploads 3D vertices and indices of a mesh to the GPU.
          *
          * @param copyPass GPU copy pass.
@@ -58,7 +62,7 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Uploads meshes from an ILM model asset to the GPU.
          *
          * @note By convention, each GPUmesh is named as follows:
-         * `[model name]_[bone name]_[bone mesh variant index]`.
+         * `[ILM asset name]_[bone name]_[bone mesh variant index]`.
          * @todo Also append bone mesh variant index to name.
          *
          * @param copyPass GPU copy pass.
@@ -82,8 +86,8 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Uploads meshes from a TMD model asset to the GPU.
          *
-         * @note By convention, each GPU mesh is named as follows:
-         * `[model name]_[mesh index]`.
+         * @note Each GPU mesh uses the following naming convention:
+         * `[TMD asset name]_[mesh index]`.
          *
          * @param copyPass GPU copy pass.
          * @param asset TMD asset.

@@ -36,8 +36,8 @@ namespace Silent::Renderer::SdlGpu
         int vertOffset = _vertexAllocator.Allocate(verts.size());
         int idxOffset  = _idxAllocator.Allocate(idxs.size());
 
-        // Insert mesh
-        _meshes.emplace(name, Mesh
+        // Insert mesh.
+        _meshes.try_emplace(name, Mesh
         {
             .VertexOffset = vertOffset,
             .IdxOffset    = idxOffset,

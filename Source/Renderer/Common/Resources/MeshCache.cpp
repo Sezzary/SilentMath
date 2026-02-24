@@ -41,7 +41,8 @@ namespace Silent::Renderer
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to unload GPU meshes from invalid asset `{}`.", asset->Name), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Attempted to unload GPU meshes from invalid asset `{}`.", asset->Name),
+                       Debug::LogLevel::Error);
         }
 
         // Unload meshes from model asset.
@@ -98,7 +99,7 @@ namespace Silent::Renderer
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Release(asset.Name + "_" + mesh.BoneName);
+            Release(asset.Name + "_" + mesh.BoneName); // @todo Append bone variant index.
         }
     }
 

@@ -60,7 +60,7 @@ namespace Silent::Renderer
         /** @brief Releases meshes of an ILM model asset from the GPU.
          *
          * @note By convention, each GPUmesh is named as follows:
-         * `[model name]_[bone name]_[bone mesh variant index]`.
+         * `[ILM asset name]_[bone name]_[bone mesh variant index]`.
          *
          * @param asset ILM asset.
          */
@@ -76,8 +76,8 @@ namespace Silent::Renderer
 
         /** @brief Releases meshes of a TMD model asset from the GPU.
          *
-         * @note By convention, each GPU mesh is named as follows:
-         * `[model name]_[mesh index]`.
+         * @note Each GPU mesh uses the following naming convention:
+         * `[TMD asset name]_[mesh index]`.
          *
          * @param asset TMD asset.
          */

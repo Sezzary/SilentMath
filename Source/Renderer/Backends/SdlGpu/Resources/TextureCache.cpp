@@ -133,6 +133,13 @@ namespace Silent::Renderer::SdlGpu
     void TextureCache::Upload(SDL_GPUCopyPass& copyPass,
                               std::span<const byte> pixels, const Vector2i res, const std::string& name)
     {
+        // Check if texture with same name already exists.
+        if (Find(_textures, name) != nullptr)
+        {
+            Debug::Log(Fmt("Attempted to overwrite existing GPU texture `{}`.", name), Debug::LogLevel::Warning);
+            return;
+        }
+
         _textures[name] = std::make_unique<Texture>(*_device, copyPass,
                                                     SDL_GPU_TEXTUREUSAGE_SAMPLER, pixels, res,
                                                     name);
