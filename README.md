@@ -48,7 +48,7 @@ https://github.com/Vatuu/silent-hill-decomp
 
 ## Building (Windows/macOS/Linux)
 
-This section is incomplete. Ideally, the project will be able to cross-compile between all main development platforms.
+NOTE: Project setup is yet to be streamlined and this section is incomplete. Ideally, the project will be able to cross-compile between all main development platforms.
 
 ### Install dependencies
 
@@ -96,11 +96,27 @@ cd Libraries/LuaJIT && make && cd ../..
 ```
 
 <details>
-<summary>Linux</summary>
+<summary>Windows</summary>
+TODO: Steps incomplete.
 
+Build shaders:
 ```
-sudo apt install build-essential git ninja-build python3 python3-pip
+python Tools/GenerateShaders.py Windows
 ```
+</details>
+
+<details>
+<summary>macOS</summary>
+TODO: Steps incomplete.
+
+Build shaders:
+```
+python Tools/GenerateShaders.py macOS
+```
+</details>
+
+<details>
+<summary>Linux</summary>
 
 Install SDL dependencies:
 ```
@@ -117,19 +133,17 @@ Set up Python virtual environment:
 python3 -m venv .venv
 source .venv/bin/activate
 ```
-</details>
 
 Build shaders:
 ```
-python Tools/GenerateShaders.py # Or `python3` depending on your system.
+python Tools/GenerateShaders.py Linux
 ```
+</details>
 
 ### Transfer assets
 
 Copy the `Assets` folder from the root of the repository to the `Build` folder. Then, extract all folders from the ROM's .SILENT archive to `Assets/Stream/Psx`.
-Original game assets are not provided and your own ROM of the 1.1 US release of the game must be sourced.
-
-This is yet to be streamlined and automation of this step will be provided in the future.
+Original game assets are not provided. Your own ROM of the 1.1 US release of the game must be sourced.
 
 ### Build the code (Debug/Release)
 
