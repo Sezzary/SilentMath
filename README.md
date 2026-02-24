@@ -44,7 +44,6 @@ https://github.com/Vatuu/silent-hill-decomp
 - Forward renderer. Basic system abstraction is done, now it needs expansion.
 - Sound system. Need to write a `KDC`+`VAB` -> `XM` converter?
 - Parsers for all proprietary game file types.
-- Renderer expanison.
 - Lua scripting.
 
 ## Building (Windows/macOS/Linux)
@@ -80,7 +79,12 @@ sudo apt install build-essential git ninja-build python3 python3-pip
 
 ### Clone the repository
 
-Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will ensure the submodules are included in the process.
+Initialize Git LFS to ensure assets are pulled correctly:
+```
+git lfs install
+```
+
+Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will include submodules in the process:
 ```
 git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive
@@ -114,6 +118,11 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 </details>
+
+Build shaders:
+```
+python Tools/GenerateShaders.py # Or `python3` depending on your system.
+```
 
 ### Transfer assets
 
