@@ -78,7 +78,7 @@ namespace Silent::Renderer
         // @todo
     }
 
-    void RendererBase::PrepareRenderBuffer()
+    void RendererBase::PrepareFrameData()
     {
         auto& executor = g_App.GetExecutor();
 
@@ -97,8 +97,6 @@ namespace Silent::Renderer
 
         // Swap double buffer.
         std::swap(_doubleBuffer.Render, _doubleBuffer.Active);
-
-        // Clear active buffer.
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.Primitives2d.clear();
         _doubleBuffer.Active.Primitives3d.clear();
@@ -109,12 +107,7 @@ namespace Silent::Renderer
         _doubleBuffer.Active.MeshUploadQueue.clear();
         _doubleBuffer.Active.MeshReleaseQueue.clear();
 
-        // Clear scene objects.
-        _shapes2d.clear();
-        _sprites2d.clear();
-        _glyphs2d.clear();
-
-        // Swap and clear debug messages.
+        // Swap debug messages.
         Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
         Debug::g_Work.Messages.clear();
     }
@@ -470,6 +463,8 @@ namespace Silent::Renderer
                 });
             }
         }
+
+        _shapes2d.clear();
     }
 
     void RendererBase::ProcessSprites2d()
@@ -578,6 +573,8 @@ namespace Silent::Renderer
                 });
             }
         }
+
+        _sprites2d.clear();
     }
 
     void RendererBase::ProcessGlyphs2d()
@@ -638,6 +635,8 @@ namespace Silent::Renderer
                 });
             }
         }
+
+        _glyphs2d.clear();
     }
 
     void RendererBase::SortRenderBufferData()

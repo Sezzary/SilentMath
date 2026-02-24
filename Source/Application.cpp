@@ -316,8 +316,8 @@ namespace Silent
         }
 
         // Prepare renderer for new frame.
-        _work.Renderer->PrepareRenderBuffer();
-        _work.Renderer->Setup();
+        _work.Renderer->PrepareFrameData();
+        _work.Renderer->PrepareFrameResources();
 
         // Render frame asynchronously.
         if (_work.Options->EnableParallelism)

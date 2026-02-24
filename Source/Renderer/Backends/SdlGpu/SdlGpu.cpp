@@ -181,7 +181,7 @@ namespace Silent::Renderer::SdlGpu
         SDL_DestroyGPUDevice(_device);
     }
 
-    void Renderer::Setup()
+    void Renderer::PrepareFrameResources()
     {
         // Acquire command buffer.
         _commandBuffer = SDL_AcquireGPUCommandBuffer(_device);
@@ -785,7 +785,6 @@ namespace Silent::Renderer::SdlGpu
                     const auto& atlas = atlases[atlasIdx];
 
                     // Initialize new or update existing GPU font atlas textures.
-                    // @todo Not efficient. Updates all atlases even if only 1 has been updated.
                     auto  name = metadata.Name + std::to_string(atlasIdx);
                     auto* tex  = GetTextures()[name];
                     if (tex != nullptr)

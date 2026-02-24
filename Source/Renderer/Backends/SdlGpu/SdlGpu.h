@@ -74,8 +74,8 @@ namespace Silent::Renderer::SdlGpu
 
         void Initialize(SDL_Window& window) override;
         void Deinitialize() override;
+        void PrepareFrameResources() override;
         void Update() override;
-        void Setup() override;
         void SaveScreenshot() const override;
 
     private:

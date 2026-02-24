@@ -32,10 +32,10 @@ namespace Silent::Renderer
             std::vector<Primitive3d>           DebugPrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls = {};
 
-            std::vector<std::string> TextureUploadQueue  = {};
-            std::vector<std::string> TextureReleaseQueue = {};
-            std::vector<std::string> MeshUploadQueue     = {};
-            std::vector<std::string> MeshReleaseQueue    = {};
+            std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
+            std::vector<std::string> TextureReleaseQueue = {}; /** Asset names. */
+            std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
+            std::vector<std::string> MeshReleaseQueue    = {}; /** Asset names. */
         };
 
         Data Active = {};
@@ -122,8 +122,8 @@ namespace Silent::Renderer
         /** @brief Updates the render view. */
         void UpdateView();
 
-        /** @brief Processes high-level object data and swaps the double buffer.. */
-        void PrepareRenderBuffer();
+        /** @brief Processes high-level object data and swaps the double buffer for a new frame. */
+        void PrepareFrameData();
 
         /** @brief Signals a viewport resize. */
         void SignalResize();
@@ -182,8 +182,8 @@ namespace Silent::Renderer
         /** @brief Gracefully deinitializes the renderer and its subsystems. */
         virtual void Deinitialize() = 0;
 
-        /** @brief Sets up parameters for a new frame. */
-        virtual void Setup() = 0;
+        /** @brief Sets up GPU resources for a new frame. */
+        virtual void PrepareFrameResources() = 0;
 
         /** @brief Prepares all GPU data and draws to the render surface. */
         virtual void Update() = 0;
