@@ -28,6 +28,7 @@ namespace Silent::Math
         short m[3][3]; /** 3x3 rotation matrix. */
         int   t[3];    /** Transfer vector. */
 
+        MATRIX();
         MATRIX(const Matrix& mat);
 
         Matrix ToMatrix() const;
@@ -63,6 +64,7 @@ namespace Silent::Math
         int& vy;
         int& vz;
 
+        VECTOR3();
         VECTOR3(int x, int y, int z) : Vector3i(x, y, z), vx(this->x), vy(this->y), vz(this->z) {}
 
         Vector3 ToVector3(QType qType) const;
