@@ -129,12 +129,6 @@ namespace Silent::Renderer::SdlGpu
          */
         void UpdateResources(SDL_GPUCopyPass& copyPass);
 
-        /** @brief Adds new glyph texture atlases and updates old ones if new glyphs have been added.
-         *
-         * @param copyPass GPU copy pass.
-         */
-        void UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass);
-
         /** @brief Converts render buffer data to 2D triangle GPU buffer data and uploads it to the GPU.
          *
          * Processes 2D sprites and shapes.

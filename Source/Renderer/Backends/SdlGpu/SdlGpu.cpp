@@ -150,11 +150,10 @@ namespace Silent::Renderer::SdlGpu
         GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
         GetMeshes().Upload(*copyPass, bufferVertsTest, bufferIdxsTest, "TestCube");
 
-        // @todo If `UpdateFontAtlasTextures` isn't called and the texture is missing, for some reason
+        // @todo If atlas textures aren't updated and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
         // handled as written?
         UpdateResources(*copyPass);
-        UpdateFontAtlasTextures(*copyPass);
 
         // Load temp. textures.
         //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
@@ -217,7 +216,6 @@ namespace Silent::Renderer::SdlGpu
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
         UpdateResources(*copyPass);
-        UpdateFontAtlasTextures(*copyPass);
 
         SDL_EndGPUCopyPass(copyPass);
     }
@@ -751,6 +749,8 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::UpdateResources(SDL_GPUCopyPass& copyPass)
     {
+        auto& fonts = g_App.GetFonts();
+
         // Release and upload textures.
         auto& texs = GetTextures();
         for (const auto& assetName : _doubleBuffer.Render.TextureReleaseQueue)
@@ -772,11 +772,6 @@ namespace Silent::Renderer::SdlGpu
         {
             meshes.Upload(copyPass, assetName);
         }
-    }
-
-    void Renderer::UpdateFontAtlasTextures(SDL_GPUCopyPass& copyPass)
-    {
-        auto& fonts = g_App.GetFonts();
 
         // Run through registered fonts.
         for (const auto& metadata : FONTS_METADATA)

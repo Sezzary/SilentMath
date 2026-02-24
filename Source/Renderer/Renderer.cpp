@@ -82,9 +82,6 @@ namespace Silent::Renderer
     {
         auto& executor = g_App.GetExecutor();
 
-        // @todo Need to call `UpdateFontAtlasTextures` here. Backends need their own
-        // pre-render data prep method.
-
         // @todo Using parallelism here causes flickering. Why if lock guards are in place?
         // Generate active buffer data.
         //auto tasks = ParallelTasks
