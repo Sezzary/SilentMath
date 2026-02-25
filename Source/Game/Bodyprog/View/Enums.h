@@ -49,7 +49,7 @@ namespace Silent::Game
         DebugCameraMode_Init               = 4  // TODO: Name uncertain.
     };
 
-     enum VC_CAM_MV_TYPE
+    enum VC_CAM_MV_TYPE
     {
         VC_MV_CHASE        = 0, /** Chase player. */
         VC_MV_SETTLE       = 1,
@@ -58,7 +58,7 @@ namespace Silent::Game
         VC_MV_THROUGH_DOOR = 4,
 
         VC_MV_SUU          = 5  /** Count. */
-    } 
+    };
 
     enum VC_CAM_CHK_TYPE
     {
@@ -93,7 +93,7 @@ namespace Silent::Game
         VC_AREA_WIDE    = 2,
         VC_AREA_OUTDOOR = 3,
 
-    //    VC_AREA_SUU     = 4 /**Count. Disabled to remove size warning since it's unused. */
+        //VC_AREA_SUU     = 4 /**Count. Disabled to remove size warning since it's unused. */
     };
 
     enum THROUGH_DOOR_SET_CMD_TYPE

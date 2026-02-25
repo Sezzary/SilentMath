@@ -9,7 +9,7 @@
 
 namespace Silent::Math
 {
-#if 0
+//#if 0
     constexpr float Q4_SCALE  = 1.0f / (float)FP_TO(1, Q4_SHIFT);
     constexpr float Q6_SCALE  = 1.0f / (float)FP_TO(1, Q6_SHIFT);
     constexpr float Q8_SCALE  = 1.0f / (float)FP_TO(1, Q8_SHIFT);
@@ -57,34 +57,9 @@ namespace Silent::Math
         return mat;
     }
 
-    Vector3 VECTOR3::ToVector3(QType qType) const
+    Vector3 VECTOR3::ToVector3(float qScale) const
     {
-        float scale = 0.0f;
-        switch (qType)
-        {
-            case QType::Q4:
-            {
-                scale = Q4_SCALE;
-                break;
-            }
-            case QType::Q6:
-            {
-                scale = Q6_SCALE;
-                break;
-            }
-            case QType::Q8:
-            {
-                scale = Q8_SCALE;
-                break;
-            }
-            case QType::Q12:
-            {
-                scale = Q12_SCALE;
-                break;
-            }
-        }
-
-        return Vector3((float)x, (float)y, (float)z) * scale;
+        return Vector3((float)x, (float)y, (float)z) * qScale;
     }
-#endif
+//#endif
 }

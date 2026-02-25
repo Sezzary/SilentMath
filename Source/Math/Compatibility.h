@@ -11,15 +11,6 @@ namespace Silent::Math
     constexpr int RECT_VERTEX_COUNT = 4;
     constexpr int BOX_VERTEX_COUNT  = 8;
 
-    /** @brief Fixed-point Q types. */
-    enum class QType
-    {
-        Q4,
-        Q6,
-        Q8,
-        Q12
-    };
-
 // @todo Clashes with Psy-Z types. Should that lib be integrated or only have things picked from it?
 //#if 0
     /** @brief PsyQ matrix. */
@@ -28,46 +19,110 @@ namespace Silent::Math
         short m[3][3]; /** 3x3 rotation matrix. */
         int   t[3];    /** Transfer vector. */
 
-        MATRIX();
+        MATRIX() = default;
         MATRIX(const Matrix& mat);
 
         Matrix ToMatrix() const;
     };
 
+    /** @brief PsyQ color vector. */
+    struct CVECTOR
+    {
+        uchar r;
+        uchar g;
+        uchar b;
+        uchar cd;
+    };
+
     /** @brief PsyQ `short`-based XY vector. */
     struct DVECTOR
     {
-        short vx;
-        short vy;
+        union 
+        {
+            struct
+            {
+                short x;
+                short y;
+            };
+            struct
+            {
+                short vx;
+                short vy;
+            };
+        };
+
+        DVECTOR() : x(0), y(0) {}
+        DVECTOR(int x, int y) : x(x), y(y) {}
     };
 
     /** @brief `DVECTOR` variant with a `vz` component instead of `vy`. */
     struct DVECTOR_XZ
     {
-        short vx;
-        short vz;
+        union 
+        {
+            struct
+            {
+                short x;
+                short z;
+            };
+            struct
+            {
+                short vx;
+                short vz;
+            };
+        };
+
+        DVECTOR_XZ() : x(0), z(0) {}
+        DVECTOR_XZ(int x, int z) : x(x), z(z) {}
     };
 
     /** @brief PsyQ `short`-based XYZ vector. */
     struct SVECTOR3
     {
-        short vx;
-        short vy;
-        short vz;
+        union 
+        {
+            struct
+            {
+                short x;
+                short y;
+                short z;
+            };
+            struct
+            {
+                short vx;
+                short vy;
+                short vz;
+            };
+        };
+
+        SVECTOR3() : x(0), y(0), z(0) {}
+        SVECTOR3(int x, int y, int z) : x(x), y(y), z(z) {}
     };
     using SVECTOR = SVECTOR3;
 
     /** @brief PsyQ `int`-based XYZ vector. */
-    struct VECTOR3 : Vector3i
+    struct VECTOR3
     {
-        int& vx;
-        int& vy;
-        int& vz;
+        union 
+        {
+            struct
+            {
+                short x;
+                short y;
+                short z;
+            };
+            struct
+            {
+                short vx;
+                short vy;
+                short vz;
+            };
+        };
 
-        VECTOR3();
-        VECTOR3(int x, int y, int z) : Vector3i(x, y, z), vx(this->x), vy(this->y), vz(this->z) {}
+        VECTOR3() : x(0), y(0), z(0) {}
+        VECTOR3(int x, int y, int z) : x(x), y(y), z(z) {}
 
-        Vector3 ToVector3(QType qType) const;
+        Vector3 ToVector3(float qScale) const;
     };
     using VECTOR = VECTOR3;
 

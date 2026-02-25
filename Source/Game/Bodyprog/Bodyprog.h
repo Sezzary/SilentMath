@@ -1,0 +1,2584 @@
+#pragma once
+
+#include "Game/Game.h"
+
+#include "Game/Bodyprog/SoundEffects.h"
+#include "Game/Bodyprog/MapMarkingFlags.h"
+#include "Game/Bodyprog/View/VwSystem.h"
+#include "Game/Main/FsQueue.h"
+
+namespace Silent::Game
+{
+    /** @brief This header is used to declare any variable, struct, or
+     * function of `BODYPROG.BIN` that has not been identified to
+     * be related to a currently recognized and separated section of
+     * the engine (like player logic, save game, or item screens).
+     */
+
+    // ==========
+    // CONSTANTS
+    // ==========
+
+    constexpr int WORLD_OBJECT_COUNT_MAX = 29;
+
+    constexpr int OPT_SOUND_VOLUME_MIN   = 0;
+    constexpr int OPT_SOUND_VOLUME_MAX   = 128;
+    constexpr int OPT_VIBRATION_DISABLED = 0;
+    constexpr int OPT_VIBRATION_ENABLED  = 128;
+
+    constexpr int  IPD_HEADER_MAGIC = 20;
+    constexpr char LM_HEADER_MAGIC  = '0';
+    constexpr int  LM_VERSION       = 6;
+
+    constexpr int CHARA_FORCE_FREE_ALL = 0xFF; /** `Chara_Load` can force free already loaded models to make room for new ones. */
+
+    // ==============
+    // HELPER MACROS
+    // ==============
+
+    /** @brief Compares 8-character filenames using `u32`. Similar to `strcmp`.
+     *
+     * @param a First filename.
+     * @param b Second filename.
+     * @return `true` if the filenames aren't equal, `false` otherwise.
+     */
+    #define COMPARE_FILENAMES(a, b)                                  \
+        (((u_Filename*)(a))->u32[0] != ((u_Filename*)(b))->u32[0] || \
+        ((u_Filename*)(a))->u32[1] != ((u_Filename*)(b))->u32[1])
+
+    // ======
+    // ENUMS
+    // ======
+
+    /** @brief Background music flags. */
+    typedef enum _BgmFlags
+    {
+        BgmFlag_Unk0 = 1 << 0,
+        BgmFlag_Unk1 = 1 << 1,
+        BgmFlag_Unk2 = 1 << 2,
+        BgmFlag_Unk3 = 1 << 3,
+        BgmFlag_Unk4 = 1 << 4,
+        BgmFlag_Unk5 = 1 << 5,
+        BgmFlag_Unk6 = 1 << 6,
+        BgmFlag_Unk7 = 1 << 7,
+        BgmFlag_Unk8 = 1 << 8,
+        BgmFlag_Unk9 = 1 << 9
+    } e_BgmFlags;
+
+    typedef enum _CollisionType
+    {
+        CollisionType_None = 0,
+        CollisionType_Wall = 1,
+        CollisionType_Unk2 = 2
+    } e_CollisionType;
+
+    /** Map flags. */
+    typedef enum _MapFlags
+    {
+        MapFlag_FourActiveChunks = 0,      /** Used by exterior maps. */
+        MapFlag_OneActiveChunk   = 1 << 0,
+        MapFlag_TwoActiveChunks  = 1 << 1,
+        MapFlag_Interior         = 1 << 2,
+        MapFlag_Unk3             = 1 << 3  /** @unused Unused map type `XXX` has this flag. */
+    } e_MapFlags;
+
+    /** @brief Used as index into `MAP_INFOS` array.
+     * TODO: Add descriptions for which areas are included in each type?
+    */
+    typedef enum _MapType
+    {
+        MapType_THR = 0,
+        MapType_SC  = 1,
+        MapType_SU  = 2,
+        MapType_SPR = 3,
+        MapType_SPU = 4,
+        MapType_RSR = 5,
+        MapType_RSU = 6,
+        MapType_APR = 7, /** @unused */
+        MapType_APU = 8,
+        MapType_ER  = 9,
+        MapType_ER2 = 10,
+        MapType_DR  = 11,
+        MapType_DRU = 12,
+        MapType_HP  = 13,
+        MapType_HU  = 14,
+        MapType_XXX = 15, /** @unused */
+
+        MapType_Count
+    } e_MapType;
+
+    typedef enum _BoneHierarchy
+    {
+        BoneHierarchy_MultiModel = -3,
+        BoneHierarchy_End        = -2
+    } e_BoneHierarchy;
+
+    typedef enum _EffectTextureFlags
+    {
+        EffectTextureFlag_None         = 0,
+        EffectTextureFlag_Glass        = 1 << 1, /** Broken glass in the cafe Air Screamer cutscene. */
+        EffectTextureFlag_WaterRefract = 1 << 2, /** Water waves and light reflection in the sewer. */
+        EffectTextureFlag_Water        = 1 << 3,
+        EffectTextureFlag_Fire         = 1 << 4,
+        EffectTextureFlag_Ef           = 1 << 5, // TODO: Rename. Looks like stringy flesh?
+        EffectTextureFlag_Blood        = 1 << 6,
+        EffectTextureFlag_WarmTest     = 1 << 7  /** @unused Test lens flare? */
+    } e_EffectTextureFlags;
+
+    typedef enum _SpeedZoneType
+    {
+        SpeedZoneType_Slow   = 0,
+        SpeedZoneType_Normal = 1,
+        SpeedZoneType_Fast   = 2
+    } e_SpeedZoneType;
+
+    typedef enum _MainMenuEntry
+    {
+        MainMenuEntry_Load     = 0,
+        MainMenuEntry_Continue = 1,
+        MainMenuEntry_Start    = 2,
+        MainMenuEntry_Option   = 3,
+        MainMenuEntry_Extra    = 4 /** @unused The extra options menu may have been accessible via the main menu. */
+    } e_MainMenuEntry;
+
+    typedef enum _MainMenuState
+    {
+        MenuState_Start              = 0,
+        MenuState_Main               = 1,
+        MenuState_LoadGame           = 2,
+        MenuState_DifficultySelector = 3,
+        MenuState_NewGameStart       = 4
+    } e_MainMenuState;
+
+    /** Used by `func_8003F654` to cast a specific field to the desired type. */
+    typedef enum _PrimitiveType
+    {
+        PrimitiveType_None = 0,
+        PrimitiveType_S8   = 1,
+        PrimitiveType_U8   = 2,
+        PrimitiveType_S16  = 3,
+        PrimitiveType_U16  = 4,
+        PrimitiveType_S32  = 5
+    } e_PrimitiveType;
+
+    typedef enum _LoadingScreenId
+    {
+        LoadingScreenId_None              = 0,
+        LoadingScreenId_PlayerRun         = 1,
+        LoadingScreenId_BackgroundTexture = 2,
+        LoadingScreenId_StageString       = 3
+    } e_LoadingScreenId;
+
+    typedef enum _StaticModelLoadState
+    {
+        StaticModelLoadState_Invalid   = 0,
+        StaticModelLoadState_Unloaded  = 1,
+        StaticModelLoadState_Corrupted = 2, // Maybe wrong name for this.
+        StaticModelLoadState_Loaded    = 3
+    } e_StaticModelLoadState;
+
+    /** @brief Reset types used in `MainLoop_ShouldWarmReset`. */
+    typedef enum _ResetType
+    {
+        ResetType_None     = 0,
+        ResetType_WarmBoot = 2
+    } e_ResetType;
+
+    // ================
+    // UNKNOWN STRUCTS
+    // ================
+
+    /* Structs called by functions that haven't been identified. */
+
+    /** SFX pair used for area loading (e.g. door opening and closing). */
+    typedef struct
+    {
+        u16 sfx_0;
+        u16 sfx_2;
+    } s_AreaLoadSfx;
+
+    // Exception, as one of the unidentified structs uses this.
+    typedef struct _s_8002AC04
+    {
+        struct _s_8002AC04* field_0;
+
+        union
+        {
+            u8 funcIdx_4; // `funcIdx_4` in structs below, needs to be part of those structs for match.
+
+            struct
+            {
+                u8  funcIdx_4;
+                u8  field_5;
+                u16 field_6;
+                s32 field_8;
+                u32 field_C;
+            } func_8008973C_data;
+            struct
+            {
+                u8  funcIdx_4;
+                u8  field_5;
+                u16 field_6;
+                s32 field_8;
+                u32 field_C;
+            } func_80089D0C_data;
+
+            struct
+            {
+                u8                  funcIdx_4;
+                u8                  field_5   : 7;
+                u32                 field_5_7 : 1;
+                u16                 field_6;
+                struct _s_8002AC04* field_8;
+                u32                 field_C;
+            } func_80089BB8_data;
+
+            struct
+            {
+                u8  funcIdx_4;
+                u8  field_5;
+                u16 field_6;
+                u8* field_8;
+                u32 field_C_0  : 16;
+                u32 field_C_16 : 12;
+                u32 field_C_28 : 3;
+                u32 field_C_31 : 1;
+            } func_80089DF0_data;
+            struct
+            {
+                u8  funcIdx_4;
+                u8  field_5_0 : 5;
+                u32 field_5_5 : 1;
+                u32 field_5_6 : 1;
+                u32 field_5_7 : 1;
+                u16 field_6;
+                s32 field_8;
+                u32 field_C;
+            } func_80089A30_data;
+        } field_4;
+    } s_8002AC04;
+
+    typedef struct
+    {
+        s32               id_0;
+        s32               flags_4;
+        s32               modelCount_8;
+        //struct TMD_STRUCT models_c[1];
+    } s_TmdFile;
+
+    typedef struct
+    {
+        u8  unk_0;
+        u8  field_1;
+        u8  unk_2[18];
+        s32 field_14;
+    } s_800C45C8;
+
+    typedef struct
+    {
+        char pad[12];
+    } s_func_8005B424;
+
+    // Something related to enemies attacks.
+    typedef struct
+    {
+        union
+        {
+            s32 vx_0; // Q23.8 } Displacement offset. `func_80062708` indicates Q12?
+            struct
+            {
+                s16 field_0;
+                s16 field_2;
+            } s_0;
+            struct
+            {
+                u16 field_0;
+                u16 field_2;
+            } s_1;
+        } field_0;
+        union
+        {
+            s32 vz_4; // Q23.8 } `func_80062708` indicates Q12?
+            struct
+            {
+                s16 field_0;
+                s16 field_2;
+            } s_0;
+        } field_4;
+        s16 vy_8; // Q7.8
+        u8  field_A;
+        u8  field_B; // Flags?
+        union
+        {
+            s32 field_0;
+            struct
+            {
+                q3_12 field_0; // Angle.
+                q3_12 field_2; // Angle.
+            } s_0;
+            struct
+            {
+                u8 field_0;
+                u8 field_1;
+                u8 field_2;
+                u8 field_3;
+            } s_1;
+            struct
+            {
+                u16 field_0;
+                u16 field_2;
+            } s_2;
+        } field_C;
+        union
+        {
+            q20_12 field_0;
+            struct
+            {
+                s16 field_0;
+                s16 field_2;
+            } s_0;
+            struct
+            {
+                s16 field_0;
+                u8  field_2;
+                u8  field_3;
+            } s_1;
+            struct
+            {
+                u8 field_0;
+                u8 field_1;
+                u8 field_2;
+                u8 field_3;
+            } s_2;
+            struct
+            {
+                u16 field_0;
+                u16 field_2;
+            } s_3;
+        } field_10;
+    } s_MapHdr_field_4C;
+
+    typedef struct _Collision
+    {
+        q19_12 groundHeight_0;
+        q3_12  field_4;  // } Angles??
+        q3_12  field_6;  // }
+        s8     field_8;  // Count of something, maybe valid ground at probed points around center? Set to 0, 7, or 12.
+        // 3 bytes of padding.
+    } s_Collision;
+
+    typedef struct
+    {
+        VECTOR3  position_0; // Q19.12
+        SVECTOR3 rotation_C; // Q3.12
+        s8       field_12;
+    } s_func_8006AB50;
+
+    typedef struct
+    {
+        s32        field_0;
+        s32        field_4; // `bool`?
+        s32        field_8; // 2D distance.
+        SVECTOR    field_C; // Q23.8 | Position.
+        DVECTOR_XZ direction_14;
+        q23_8      positionX_18;
+        q23_8      positionZ_1C;
+        s32        field_20;
+        s32        field_24;
+        s16        field_28; // } `SVECTOR3`, packed rotation? Probably not.
+        s16        field_2A; // }
+        s16        field_2C; // }
+    } s_func_8006ABC0;
+
+    typedef struct
+    {
+        u8  unk_0[2];
+        s16 field_2;
+        u8  unk_4[2];
+        s16 field_6;
+    } s_func_8006CA18;
+
+    typedef struct
+    {
+        u8  field_0;
+        u8  field_1;
+        s16 field_2;
+        s32 field_4;
+    } s_func_8006CC44_A8;
+
+    typedef struct
+    {
+        s8      field_0;
+        s8      unk_1;
+        DVECTOR field_2; // Q3.12 | XY rotation.
+    } s_func_8006CC44_44_0;
+
+    typedef struct
+    {
+        s_func_8006CC44_44_0 field_0;
+        s16                  field_6;
+        s_func_8006CC44_44_0 field_8;
+        s16                  field_E;
+        s8*                  field_10[8];
+        s_func_8006CC44_44_0 field_30;
+        s16                  field_36;
+    } s_func_8006CC44_44;
+
+    typedef struct
+    {
+        q23_8 field_0; // X position.                } Q8 according to `func_8006EE0C`?
+        q23_8 field_4; // Y position.                }
+        q7_8  field_8; // Z position, but why `s16`? }
+        q7_8  field_A; // Y??
+        q7_8  field_C; // Some kind of bound or threshold?
+        s16   field_E;
+    } s_RayState_6C; // Unknown size;
+
+    typedef struct
+    {
+        s16 field_0;
+        s16 field_2;
+    } s_RayState_8C;
+
+    /** @brief State for an in-progress ray trace. Contains pointers to active characters among other things. */
+    typedef struct
+    {
+        s32              field_0;
+        s16              field_4;
+        s16              field_6;
+        q7_8             field_8; // Distance X?
+        s8               unk_A[2];
+        q23_8            field_C;  // } Q23.8 `VECTOR3`
+        q23_8            field_10; // }
+        q23_8            field_14; // }
+        s8               unk_18[4];
+        q7_8             field_1C; // Distance Z?
+        s8               unk_1E[2];
+        s_SubCharacter*  field_20;
+        s16              field_24; // X } Q19.12
+        s16              field_26; // Z }
+        s32              field_28;
+        VECTOR3          field_2C; // Q23.8
+        s8               unk_38[4];
+        s32              field_3C; // X  } Q23.8 `VECTOR3`?
+        s32              field_40; // Y? }
+        s32              field_44; // Z  }
+        s8               unk_48[4];
+        q7_8             field_4C; // X?
+        q7_8             field_4E; // Z?
+        SVECTOR          field_50; // Q23.8
+        u16              field_58;
+        s16              field_5A;
+        s16              field_5C;
+        s16              field_5E;
+        s16              field_60;
+        s8               unk_62[2];
+        s_SubCharacter** characters_64; // Active characters?
+        s32              characterCount_68;
+        s_RayState_6C    field_6C;
+        s32              field_7C;
+        s32              field_80;
+        u16              field_84;
+        u8               unk_86[2];
+        s32              field_88;
+        s_RayState_8C    field_8C[1]; // Unknown size.
+    } s_RayState;
+
+    // Function from lib_unk
+    typedef struct _func_8009ECCC
+    {
+        struct _func_8009ECCC* field_0; // TODO: Not sure if these point to other struct type or same type.
+        struct _func_8009ECCC* field_4;
+        s32                    field_8;
+        s32                    field_C;
+        s_8002AC04*            field_10;
+        u32                    field_14_0  : 16;
+        u32                    field_14_16 : 8;
+        u32                    field_14_24 : 7;
+        u32                    field_14_31 : 1;
+        u32                    field_18;
+        u16                    field_1C;
+        u16                    field_1E;
+    } s_func_8009ECCC;
+
+    typedef struct
+    {
+        q19_12 field_0; // X position.
+        q19_12 field_4; // Z position.
+        s32    field_8;
+        s32    field_C;
+        q19_12 field_10; // X
+        q19_12 field_14; // Z
+        s32    field_18; // X } Bounds?
+        s32    field_1C; // X }
+        s32    field_20; // Z }
+        s32    field_24; // Z }
+        q19_12 field_28; // } Maybe XZ position.
+        q19_12 field_2C; // }
+    } s_func_8006F338;
+
+    typedef struct
+    {
+        s16 field_0;
+        s16 field_2;
+    } s_func_8006E490_20;
+
+    typedef struct
+    {
+        s8                 unk_0[8];
+        DVECTOR            field_8;
+        s16                field_C;
+        s16                field_E;
+        s32                field_10; // } X
+        s32                field_14; // } Z?
+        s16                field_18;
+        s8                 unk_1A[2];
+        s32                field_1C; // Index into `field_20`.
+        s_func_8006E490_20 field_20[2];
+    } s_func_8006E490;
+
+    /** @brief Animation keyframe? Doesn't hold bone data, but something gameplay-related
+     * which is derived from here.
+     */
+    typedef struct _Keyframe
+    {
+        q3_12 field_0;
+        q3_12 field_2;
+        q3_12 field_4;
+        q3_12 field_6;
+        q3_12 field_8;
+        q3_12 field_A;
+        q3_12 field_C;
+        q3_12 field_E;
+        q3_12 field_10; // X offset?
+        q3_12 field_12; // Z offset?
+    } s_Keyframe;
+
+    // ========
+    // STRUCTS
+    // ========
+
+    typedef struct _Normal
+    {
+        s8 nx;
+        s8 ny;
+        s8 nz;
+        u8 count;
+    } s_Normal;
+
+    /** @brief 8-character string usually used for filenames. Can be compared via the `u32` field. */
+    typedef union _Filename
+    {
+        char str[8];
+        u32  u32[2];
+    } u_Filename;
+
+    /** @brief Struct used by many functions involved with GTE. Kept at `PSX_SCRATCH_ADDR` (possibly only temporarily). */
+    typedef struct _GteScratchData
+    {
+        DVECTOR screenXy_0[90];
+        u16     screenZ_168[18];
+
+        s16 field_18C[99]; // The size changed from 150 due to the addition of `field_252`. Not sure if this is correct.
+        u8  field_252[102];
+
+        u8      field_2B8[200]; // Size likely incorrect.
+
+        union
+        {
+            MATRIX field_0;
+            struct
+            {
+                s32     field_0;
+                s32     field_4;
+                CVECTOR field_8;
+                CVECTOR field_C;
+                u8      field_10;
+                u8      field_11;
+                u8      field_12;
+                u8      field_13;
+                u8      field_14;
+                u8      field_15;
+                u8      field_16;
+                u8      field_17;
+                s32     field_18;
+                s32     field_1C;
+            } s_0;
+        } field_380;
+
+        s_Normal field_3A0;
+
+        DVECTOR  screenPos_3A4;
+        s32      depthP_3A8;
+        SVECTOR  field_3AC;
+        u8       unk_3B4[36];
+        CVECTOR  field_3D8; // Written by `func_8005A42C`.
+        DVECTOR  screenPos_3DC;
+        s32      depthP_3E0;
+        MATRIX   field_3E4;
+    } s_GteScratchData;
+
+    typedef struct _Primitive
+    {
+        u16 field_0;
+        u16 field_2;
+        u16 field_4;
+        union
+        {
+            struct
+            {
+                u8 field_6_0  : 8;
+                s8 field_6_8  : 7;
+                u8 field_6_15 : 1; // `bool`
+            } bits;
+
+            u16 flags; // @hack `func_8005AC50` accesses `field_6_15` above with some weird shifts, haven't found how to make it work with bitfield yet.
+        } field_6;
+        u16 field_8;
+        u16 field_A;
+        u8  field_C[4];  // } Unknown type. `func_8005AC50` reads these as `s32`, but that breaks other funcs which use this struct. `s32` reads might have just been `memcpy`?
+        u8  field_10[4]; // }
+    } s_Primitive;
+
+    typedef struct _MeshHeader
+    {
+        u8 primitiveCount_0;
+        u8 vertexCount_1;
+        u8 normalCount_2;
+        u8 unkCount_3;
+
+        s_Primitive* primitives_4;
+        DVECTOR*     verticesXy_8;
+        s16*         verticesZ_C;
+        s_Normal*    normals_10;
+        u8*          unkPtr_14;
+    } s_MeshHeader;
+
+    typedef struct _ModelHeader
+    {
+        u_Filename    name_0;
+        u8            meshCount_8;
+        u8            vertexOffset_9;
+        u8            normalOffset_A;
+        u8            field_B_0 : 1;
+        u8            field_B_1 : 3; // Value used in `func_800571D0` switch.
+        u8            field_B_4 : 2;
+        u8            unk_B_6   : 2;
+        s_MeshHeader* meshHdrs_C;
+    } s_ModelHeader;
+
+    typedef struct _Texture
+    {
+        s_FsImageDesc imageDesc_0;
+        u_Filename    name_8;
+        u32           queueIdx_10;
+        s8            refCount_14;
+    } s_Texture;
+
+    typedef struct _Material
+    {
+        u_Filename name_0;
+        s_Texture* texture_8;
+        u8         field_C;
+        u8         unk_D[1];
+        u8         field_E;
+        u8         field_F;
+        u16        field_10;
+        u16        field_12;
+        union
+        {
+            u8  u8[2];
+            u16 u16;
+        } field_14;
+        union
+        {
+            u8  u8[2];
+            u16 u16;
+        } field_16;
+    } s_Material;
+
+    typedef struct _LmHeader
+    {
+        u8             magic_0;    /** See `LM_HEADER_MAGIC`. */
+        u8             version_1;  /** See `LM_VERSION`. */
+        u8             isLoaded_2; /** `bool` */
+        u8             materialCount_3;
+        s_Material*    materials_4;
+        u8             modelCount_8;
+        u8             unk_9[3];
+        s_ModelHeader* modelHdrs_C;
+        u8*            modelOrder_10;
+    } s_LmHeader;
+
+    typedef struct _IpdCollisionData_10
+    {
+        s16 field_0;
+        s16 field_2;
+        s16 field_4;
+        u16 field_6_0  : 5; // TODO: Might be using `s_IpdCollisionData_18` substruct here? Won't fit though.
+        u16 field_6_5  : 3;
+        u16 field_6_8  : 3;
+        u16 field_6_11 : 4;
+        u16 field_6_15 : 1;
+        s16 field_8;
+        s16 field_A;
+    } s_IpdCollisionData_10;
+
+    typedef struct
+    {
+        s16 field_0_0  : 14;
+        u16 field_0_14 : 2;
+        s16 field_2_0  : 14;
+        u16 field_2_14 : 2;
+        s16 field_4;
+        u8  field_6;
+        u8  field_7;
+        u8  field_8;
+        u8  field_9;
+    } s_IpdCollisionData_14;
+
+    typedef struct
+    {
+        s16 field_0;
+        s8  unk_2[2];
+    } s_IpdCollisionData_20;
+
+    typedef struct _IpdCollisionData_18
+    {
+        u16      field_0_0  : 5;
+        u16      field_0_5  : 3;
+        u16      field_0_8  : 4;
+        u16      field_0_12 : 3;
+        u16      field_0_15 : 1;
+        SVECTOR3 vec_2;
+        s16      field_8;
+    } s_IpdCollisionData_18;
+
+    typedef struct _IpdCollisionData
+    {
+        s32                    positionX_0;
+        s32                    positionZ_4;
+        u32                    field_8_0  : 8;
+        u32                    field_8_8  : 8;
+        u32                    field_8_16 : 8;
+        u32                    field_8_24 : 8;
+        SVECTOR3*              ptr_C;
+        s_IpdCollisionData_10* ptr_10;
+        s_IpdCollisionData_14* ptr_14;
+        s_IpdCollisionData_18* ptr_18;
+        s16                    field_1C;
+        u8                     field_1E; // } Used as multipliers for `field_1C` in `func_8006B004`.
+        u8                     field_1F; // }
+        s_IpdCollisionData_20* ptr_20;
+        u16                    field_24; // `field_24/``field_26` defined in ipd2obj but haven't seen used yet, might be size of `ptr_28`/`ptr_2C`.
+        u16                    field_26;
+        u8*                    ptr_28; // Accessed as array of indices into `field_34` by `func_8006E53C`.
+        void*                  ptr_2C;
+        u8                     field_30;
+        u8                     unk_31[3];
+        u8                     field_34[256];
+    } s_IpdCollisionData;
+
+    typedef struct _IpdModelBuffer_C
+    {
+        s_ModelHeader* modelHdr_0;
+        MATRIX         field_4;
+    } s_IpdModelBuffer_C;
+
+    typedef struct _IpdModelBuffer
+    {
+        u8                  field_0; // Count of `field_C` entries.
+        u8                  field_1;
+        u8                  field_2;
+        s8                  unk_3;
+        s16                 field_4;
+        s16                 field_6;
+        s16                 field_8;
+        s16                 field_A;
+        s_IpdModelBuffer_C* field_C;
+        SVECTOR*            field_10; // Pointer to unknown collision data, type assumed.
+        SVECTOR*            field_14; // Pointer to unknown collision data, type assumed.
+    } s_IpdModelBuffer;
+
+    typedef struct _IpdModelInfo
+    {
+        u8             isGlobalPlm_0; // `false` if loaded from inside `IPD`, `true` if loaded from `*_GLB.PLM`.
+        u8             unk_1[3];
+        u_Filename     modelName_4;
+        s_ModelHeader* modelHdr_C;
+    } s_IpdModelInfo;
+
+    typedef struct _IpdHeader
+    {
+        u8                 magic_0;
+        u8                 isLoaded_1; /** `bool` */
+        s8                 cellX_2;
+        s8                 cellZ_3;
+        s_LmHeader*        lmHdr_4;
+        u8                 modelCount_8;
+        u8                 modelBufferCount_9;
+        u8                 modelOrderCount_A;
+        u8                 unk_B[1];
+        u8                 unk_C[8];
+        s_IpdModelInfo*    modelInfo_14;
+        s_IpdModelBuffer*  modelBuffers_18;
+        u8                 textureCount_1C; // Should it be `u32`?
+                                            // "`u8` - Relative pointer to textures list"
+                                            // "`u32` - Relative pointer to object order"
+        u8                 unk_1D[3];
+        u8                 unk_20[48];
+        u8*                modelOrderList_50;
+        s_IpdCollisionData collisionData_54;
+    } s_IpdHeader;
+
+    // See: https://github.com/laura-a-n-n/silent-hill-museum/blob/main/ksy/sh1anm.ksy
+    typedef struct _AnmBindPose
+    {
+        s8 parentBone;
+        s8 rotationDataIdx_1;
+        s8 translationDataIdx_2;
+        s8 translationInitial_3[3];
+    } s_AnmBindPose;
+
+    typedef struct _AnmHeader
+    {
+        u16           dataOffset_0;
+        u8            rotationBoneCount_2;
+        u8            translationBoneCount_3;
+        u16           keyframeDataSize_4; // Size per keyframe, `(rotationBoneCount_2 * 9) + (translationBoneCount_3 * 3)`?
+        u8            boneCount_6;
+        u8            unk_7;
+        u32           activeBones_8; // Holds bit field of bones to update.
+        u32           fileSize_C;
+        u16           keyframeCount_10;
+        u8            scaleLog2_12;
+        u8            rootYOffset_13;
+        s_AnmBindPose bindPoses_14[0]; // Array size = `boneCount_6`.
+    } s_AnmHeader;
+
+    typedef union
+    {
+        s16 field_0;
+        struct
+        {
+            u8 field_0;
+            u8 field_1;
+        } s_field_0;
+    } s_func_8006CC44_CC_C;
+
+    typedef struct
+    {
+        DVECTOR_XZ field_0;
+        DVECTOR_XZ field_4;
+        u32        field_8;
+        s32        field_C;
+        s16        field_10;
+        u8         unk_12[2];
+        DVECTOR_XZ field_14;
+    } s_func_8006CC44_CC_20;
+
+    typedef struct
+    {
+        s_IpdCollisionData*   ipdCollisionData_0;
+        u8                    field_4; // Index.
+        u8                    field_5;
+        SVECTOR3              field_6;
+        s_func_8006CC44_CC_C  field_C;
+        u8                    field_E;
+        u8                    field_F;
+        u8                    field_10;
+        u8                    field_11;
+        SVECTOR3              field_12;
+        SVECTOR3              field_18;
+        s8                    unk_1E[2];
+        s_func_8006CC44_CC_20 field_20;
+    } s_func_8006CC44_CC;
+
+    typedef struct
+    {
+        u8                 field_0_0  : 8;
+        s8                 field_0_8  : 1;
+        s8                 field_0_9  : 1;
+        s8                 field_0_10 : 1;
+        s8                 field_0_11 : 5;
+        u16                field_2    : 16;
+        s_func_8006ABC0    field_4;
+        s32                field_34;
+        s16                field_38;
+        s16                field_3A;
+        s16                field_3C; // X?
+        s16                field_3E; // Z?
+        s8*                field_40;
+        s_func_8006CC44_44 field_44;
+        s32                field_7C;
+        s32                field_80; // X
+        s32                field_84; // Z
+        s32                field_88; // X
+        s32                field_8C; // Z
+        s32                field_90; // `bool`?
+        s32                field_94;
+        union
+        {
+            DVECTOR_XZ vec_0;
+            s32        field_0;
+        } field_98;
+        union
+        {
+            DVECTOR_XZ vec_0;
+            s32        field_0;
+        } field_9C;
+        union
+        {
+            struct
+            {
+                u8                 field_0; // Start index for something.
+                u8                 field_1;
+                u8                 field_2;
+                u8                 field_3;
+                s_func_8006CA18*   field_4;
+                s_func_8006CC44_A8 field_8[4];
+            } s_0;
+            struct
+            {
+                q7_8 field_0;
+                q7_8 field_2;
+                s16  field_4;
+                u8   field_6;
+                u8*  field_8;
+                s8   unk_C[28];
+            } s_1;
+        } field_A0;
+        u8                 field_C8;
+        u8                 unk_C9[1];
+        s16                field_CA;
+        s_func_8006CC44_CC field_CC;
+        // TODO: May be incomplete. Maybe not, added the final padding based on `Collision_Get`.
+    } s_func_8006CC44;
+
+    typedef struct _GlobalLm
+    {
+        s_LmHeader* lmHdr_0;
+        s32         fileIdx_4;
+        s32         queueIdx_8;
+    } s_GlobalLm;
+
+    typedef struct
+    {
+        s32            field_0; // Bone flags?
+        GsCOORDINATE2* coord_4;
+        s_ModelHeader* modelHdr_8;
+        s32            modelIdx_C;
+    } s_ModelInfo;
+
+    typedef struct _Bone
+    {
+        s_ModelInfo   modelInfo_0;
+        s8            field_10;
+        s8            unk_11[3];
+    } s_Bone;
+
+    typedef struct _LinkedBone
+    {
+        s_Bone              bone_0;
+        struct _LinkedBone* next_14;
+    } s_LinkedBone;
+
+    typedef struct
+    {
+        u8            boneCount_0;
+        u8            boneIdx_1;
+        u8            field_2;
+        s8            field_3;
+        s_LinkedBone* bones_4;
+        s_LinkedBone* bones_8;
+        s_LinkedBone  bones_C[56];
+    } s_Skeleton;
+
+    typedef struct
+    {
+        s8  field_0;
+        s8  field_1;
+        s8  field_2;
+        s8  field_3;
+        s32 field_4[4];
+    } s_800382B0;
+
+    typedef struct
+    {
+        s16 field_0; // Flags?
+    } s_8008D850;
+
+    // or `s_AnimMetadata`?
+    typedef struct _CharaAnimDataInfo
+    {
+        s8             charaId0_0;  /** `e_CharacterId` */
+        s8             charaId1_1;  /** `e_CharacterId` */
+        // 2 bytes of padding.
+        s32            animFile0_4; // s_AnmHeader* animFile0_4; // TODO: Needs to be a pointer.
+        s_AnmHeader*   animFile1_8;
+        s32            animBufferSize1_C;
+        s32            animBufferSize2_10;
+        GsCOORDINATE2* npcCoords_14;
+    } s_CharaAnimDataInfo;
+
+    /** Related to weapon attacks. Stats, SFX IDs, damange values, etc.? */
+    typedef struct
+    {
+        q4_12 field_0;
+        s16   field_2;
+        u16   field_4;  // Related to damage. Multiplier?
+        s8    field_6;  // Accessed by `func_8008BF84` as `u16`
+        s8    unk_7;
+        u8    field_8;  // Accessed by `func_8008BF84` as `u16`
+        u8    field_9;  /** `e_CharacterId` */
+        u8    field_A;  // Accessed by `func_8008BF84` as `u16`
+        u8    field_B;
+        u16   field_C;
+        u8    field_E;  // Keyframe index offset?
+        u8    field_F;  // Keyframe index offset?
+        u8    field_10; // State.
+        u8    field_11;
+        u8    field_12;
+        u8    unk_13;
+        u32*  unk_14; // Some pointer. All entries have the same value `D_800AD4C4`.
+    } s_800AD4C8;
+
+    /** @brief Collision point data. */
+    typedef struct
+    {
+        VECTOR3     position_0; // Q19.12
+        s_Collision collision_C;
+        s32         field_18; // Count of points in circle?
+    } s_CollisionPoint;
+
+    typedef struct
+    {
+        s8 field_0;
+        s8 field_1;
+        s8 field_2;
+        s8 field_3;
+    } s_800BCDA8;
+
+    typedef struct _SpeedZone
+    {
+        s8   type_0; /** `e_SpeedZoneType` */
+        // 1 byte of padding.
+        q11_4 minX_2;
+        q11_4 maxX_4;
+        q11_4 minZ_6;
+        q11_4 maxZ_8;
+    } s_SpeedZone;
+
+    typedef struct _WaterZone
+    {
+        u8  isEnabled_0; /** `bool` */
+        // 1 byte of padding.
+        s16 illumination_2;
+        q11_4 minX_4;
+        q11_4 maxX_6;
+        q11_4 minZ_8;
+        q11_4 maxZ_A;
+    } s_WaterZone;
+
+    typedef struct
+    {
+        u8            charaId_0;  /** `e_CharacterId` */
+        u8            isLoaded_1; /** `bool` */
+        // 2 bytes of padding.
+        s32           queueIdx_4;
+        s_LmHeader*   lmHdr_8;
+        s_FsImageDesc texture_C;
+        s_Skeleton    skeleton_14;
+    } s_CharaModel;
+
+    typedef struct _MapInfo
+    {
+        s16                plmFileIdx_0;
+        char               tag_2[4];
+        u8                 flags_6; /** `e_MapFlags` */
+        // 1 byte of padding.
+        const s_WaterZone* waterZones_8;
+        const s_SpeedZone* speedZones_C;
+    } s_MapInfo;
+
+    // Rough name.
+    typedef struct _WorldObjectMetadata
+    {
+        u_Filename name_0;
+        s8         field_8;
+        s8         lmIdx_9; /** Set to 2 when found in `g_Map.globalLm_138.lmHdr_0` and 3-6 if found in `g_Map.ipdActive_15C[i] (i + 3)`. */
+    } s_WorldObjectMetadata;
+
+    // Rough name.
+    typedef struct _WorldObjectModel
+    {
+        s_ModelInfo           modelInfo_0;
+        s_WorldObjectMetadata metadata_10;
+    } s_WorldObjectModel;
+
+    /** @brief Geometry space world object to draw. */
+    typedef struct _WorldObject
+    {
+        s_WorldObjectModel* model_0;
+        s32                 positionX_4 : 18; /** Q9.8 */
+        s32                 positionY_4 : 14; /** Q5.8 */
+        s32                 positionZ_8 : 18; /** Q9.8 */
+        s32                 pad_8_18    : 14;
+        s32                 rotationX_C : 10; /** Q0.10 */
+        s32                 rotationY_C : 12; /** Q0.12 */
+        s32                 rotationZ_C : 10; /** Q0.10 */
+    } s_WorldObject;
+
+    typedef struct
+    {
+        u8  endOfArray_0_0 : 1;  // End of array marker.
+        s32 positionX_0_1  : 10; // X
+        s32 positionZ_0_11 : 10; // Z
+        u32 sizeX_0_21     : 4;  // X size
+        u32 sizeZ_0_25     : 4;  // Z size
+        u32 field_0_29     : 3;  // Related to ground height? Used to set `s_func_8006F338::field_2C` which then gets copied by `func_8006F250`, that func has only been seen called by AirScreamer?
+    } s_func_8006F8FC;
+
+    typedef struct _HeldItem
+    {
+        s32           itemId_0; /** `e_InventoryItemId` */
+        s32           queueIdx_4;
+        char*         textureName_8;
+        s_FsImageDesc imageDesc_C;
+        s_LmHeader*   lmHdr_14;
+        s_Bone        bone_18;
+    } s_HeldItem;
+
+    /** @brief World GFX workspace.
+     * TODO: Could be `s_RendererWork`? Will depend on where other data resides.
+     * Will: `s_WorldModelWork` fits better, this is mainly responsible for handling model data.
+     * `s_WorldEnvWork` should have this name as it is used for general GFX.
+     */
+    typedef struct _WorldGfxWork
+    {
+        s_MapInfo*        mapInfo_0;
+        u8                useStoredPoint_4; /** `bool` */
+        u8                unk_5[3];
+        VECTOR3           ipdSamplePoint_8; /** Used by IPD logic to sample which chunks to load or unload. */
+        u8*               charaLmBuffer_14;
+        s_CharaModel*     registeredCharaModels_18[Chara_Count];
+        s_CharaModel      charaModels_CC[GROUP_CHARA_COUNT];
+        s_CharaModel      harryModel_164C;
+        s_HeldItem        heldItem_1BAC;             /** The item held by the player. */
+        s_func_8006F8FC*  field_1BD8;
+        VC_CAMERA_INTINFO vcCameraInternalInfo_1BDC; /** Debug camera info. */
+        s_LmHeader        itemLmHdr_1BE4;
+        u8                itemLmData_1BF4[4096 - sizeof(s_LmHeader)]; // Retail game uses 2.75kb file, but they allocate 4kb for it.
+        s32               itemLmQueueIdx_2BE4;
+        s32               objectCount_2BE8;                     /** `objects_2BEC` size. */
+        s_WorldObject     objects_2BEC[WORLD_OBJECT_COUNT_MAX]; /** World objects to draw. */
+    } s_WorldGfxWork;
+
+    // IPD data?
+    typedef struct
+    {
+        s_IpdHeader* ipdHdr_0;
+        s32          queueIdx_4;
+        s16          cellX_8;
+        s16          cellZ_A;
+        q19_12       distance0_C;
+        q19_12       distance1_10;
+        u8           materialCount_14;
+        s8           unk_15[3];
+        s32          outsideCount_18;
+    } s_IpdChunk;
+
+    typedef struct _IpdRow
+    {
+        s16 idx[16];
+    } s_IpdColumn;
+
+    typedef struct _ActiveTextures
+    {
+        s32        count_0;
+        s_Texture* textures_4[10];
+    } s_ActiveTextures;
+
+    typedef struct _IpdTextures
+    {
+        s_ActiveTextures fullPage_0;
+        s_ActiveTextures halfPage_2C;
+        s_Texture        fullPageTextures_58[8];
+        s_Texture        halfPageTextures_118[2];
+    } s_IpdTextures;
+
+    typedef struct _Map
+    {
+        s_IpdCollisionData collisionData_0; // Default chunk collision data?
+        s32                texFileIdx_134;
+        s_GlobalLm         globalLm_138;
+        char               mapTag_144[4];
+        s32                mapTagSize_148;
+        s32                ipdFileIdx_14C;
+        s_IpdHeader*       ipdBuffer_150;
+        s32                ipdBufferSize_154;
+        s32                ipdActiveSize_158;
+        s_IpdChunk         ipdActive_15C[4];
+        s_IpdColumn        ipdGrid_1CC[18];
+        s8                 unk_40C[32];     // Could be one extra row in table above.
+        s_IpdColumn*       ipdGridCenter_42C;
+        s_IpdTextures      ipdTextures_430;
+        q19_12             positionX_578;
+        q19_12             positionX_57C;
+        s32                cellX_580;
+        s32                cellZ_584;
+        bool               isExterior_588;
+    } s_Map;
+
+    // Used in string parsing.
+    typedef struct
+    {
+        s8 field_0;
+        s8 positionIdx_1;
+    } s_800C38B0;
+
+    typedef struct
+    {
+        VECTOR3 field_0[2][1];
+    } s_WorldEnvWork_84;
+
+    /** @brief World environment workspace.
+     *  Holds fog distances and ramps, lighting and color parameters,
+     *  water zone references, and other per-map environmental data
+     *  used during world rendering.
+     */
+    typedef struct _WorldEnvWork
+    {
+        u8            field_0;        // `bool`?
+        u8            isFogEnabled_1; /** `bool` */
+        u8            field_2;
+        u8            field_3;        // Enviroment lighting.
+        s_WaterZone*  waterZones_4;
+        s32           screenBrightness_8;
+        s32           fogNearDistance_C;
+        q23_8         fogFarDistance_10; // "DrawDistanmce" in SHME, "has no effect when fog is disabled".
+        s32           fogDepthShift_14;   // "FogThing1" from SHME. Affects the distance where fog begins.
+        s32           fogIntensity_18;   // "FogThing2" from SHME. Affects the distance where fog begins.
+        CVECTOR       fogColor_1C;
+        s32           field_20;        // Map lighting.
+        u8            field_24; // } RGB. Character color lighting.
+        u8            field_25; // }
+        u8            field_26; // }
+        s8            unk_27;
+        CVECTOR       worldTintColor_28;
+        MATRIX        field_2C;
+        s32           field_4C;
+        s16           field_50;
+        s32           field_54;
+        SVECTOR       field_58; // Rotation.
+        VECTOR3       field_60;
+        SVECTOR       field_6C; // Player current angles?
+        SVECTOR       field_74;
+        SVECTOR       field_7C;
+        s_WorldEnvWork_84 field_84[3];
+        u8            fogRamp_CC[128]; // Fog-related values based on `fogNearDistance_C`/`fogFarDistance_10`.
+        u16           field_14C;
+    } s_WorldEnvWork;
+
+    typedef struct
+    {
+        u16              field_0; // Flags.
+        u8               field_2; // Size of `field_4`.
+        u8               unk_3;
+        s_func_8006F8FC* field_4[20]; // Guessed size.
+    } s_800C4478;
+
+    typedef struct
+    {
+        u8      field_0; // `bool`?
+        u8      field_1; // `bool`?
+        u8      field_2; // `bool`?
+        u8      field_3;
+        s8      unk_4[4];
+        s16     field_8;
+        s16     field_A;
+        VECTOR3 field_C;
+        s8      unk_18[4];
+        s32     field_1C;
+        s32     field_20;
+    } s_800C4818;
+
+    typedef struct
+    {
+        u8  unk_0[4];
+        s16 field_4;
+        s16 field_6; // Keyframe index or time.
+    } s_800C44F0; // Probable size: 8 bytes.
+
+    /** Holds file IDs of anim/model/texture for each `e_CharacterId`, along with some data used in VC camera code. */
+    typedef struct
+    {
+        s16            animFileIdx;
+        s16            modelFileIdx;
+        s16            textureFileIdx         : 16;
+        q8_8           field_6                : 10;
+        u16            materialBlendMode_6_10 : 6; /** `e_BlendMode` */
+        s_FsImageDesc* field_8;                    // Extra texture pointer? Usually `NULL` in `CHARA_FILE_INFOS`.
+        u16            cameraAnchor_C_0  : 2;      /** `e_CameraAnchor` */
+        q19_12         cameraOffsetY_C_2 : 14;
+        // 2 bytes of padding.
+    } s_CharaFileInfo;
+
+    typedef struct
+    {
+        SVECTOR3 positionTarget_0; /** Q7.8 */
+        SVECTOR3 lookAtTarget_6;   /** Q7.8 */
+        s16      field_C[2];       // `field_C[1]` gets passed to `vcChangeProjectionValue`.
+    } s_DmsKeyframeCamera;
+
+    typedef struct
+    {
+        SVECTOR3 position_0; /** Q7.8 */
+        SVECTOR3 rotation_6; /** Q7.8 */
+    } s_DmsKeyframeCharacter;
+
+    typedef struct
+    {
+        s16       keyframeCount_0;
+        u8        svectorCount_2;
+        u8        field_3;      // Usually 0, but sometimes filled in, possibly junk data left in padding byte.
+        char      name_4[4];    // First 4 chars of name. E.g. Code checks for "DAHLIA", file is "DAHL".
+        SVECTOR3* svectorPtr_8; // Pointer to `SVECTOR3`s. Unknown purpose.
+        union
+        {
+            s_DmsKeyframeCharacter* character;
+            s_DmsKeyframeCamera*    camera;
+        } keyframes_C;
+    } s_DmsEntry;
+
+    typedef struct
+    {
+        s16 startKeyframeIdx_0;
+        s16 frameCount_2; /** Frame duration at 30 FPS. */
+    } s_DmsInterval;
+
+    typedef struct
+    {
+        u8             isLoaded_0; /** `bool` */
+        u8             characterCount_1;
+        u8             intervalCount_2;
+        u8             field_3; // Usually 0, but sometimes filled in.
+        u32            field_4; // Unknown, correlates with DMS file size.
+        s_DmsInterval* intervalPtr_8;
+        VECTOR3        origin_C; /** Q23.8 | Origin point. Gets added to character positions. */
+        s_DmsEntry*    characters_18;
+        s_DmsEntry     camera_1C;
+    } s_DmsHeader;
+
+    /** @brief Used for normal credits screen. */
+    typedef struct
+    {
+        s16  field_0;  /** Prim vertex X. */
+        s16  field_2;  /** Prim vertex Y. */
+        s16  field_4;  /** Width? */
+        s8   field_6;  /** Height? */
+        s8   field_7;  /** Blend flag. */
+        s32  field_8;  /** Rgb24 color + code. */
+        s16* field_C;  /** Points to 0x801E5C24, data size 400. */
+        s32* field_10; /** Points to 0x801E5E24, data size 28, rgb24 + code. */
+        u16  field_14; /** Tpage for `setDrawTPage`, calculated from `field_18` with `func_801E434C`. */
+        s16  field_16; /** Clut XY. */
+        u32  field_18; /** Texture UV. */
+    } s_800AFE08;
+
+    /** @brief Used for UFO ending credits screen. */
+    typedef struct
+    {
+        s_800AFE08 sub_0;
+        s32        field_1C;
+        s16        field_20;
+        s16        field_22;
+        s32        field_24;
+        s32        field_28;
+        s32        field_2C;
+        s32        field_30;
+        s32        field_34;
+        s32        field_38;
+        s32        field_3C;
+        s32        field_40;
+        s32        field_44;
+        s32        field_48;
+        s32        field_4C;
+        s32        field_50;
+        s32        field_54;
+    } s_800AFE24; // Size: 85
+
+    /** @brief Contains X/Z coordinates and optional 4 bytes of data.
+     * Map headers include an array of these, into which `s_EventData` includes an index. */
+    typedef struct _MapPoint2d
+    {
+        q19_12 positionX_0;
+
+        // Optional data.
+        u32   mapIdx_4_0          : 5; /** `e_PaperMapIdx`? */
+        u32   field_4_5           : 4;
+        u32   loadingScreenId_4_9 : 3; /** `e_LoadingScreenId` */
+        u32   field_4_12          : 4;
+        q24_8 triggerParam0_4_16  : 8; // Usually a `Q8_ANGLE`
+        u32   triggerParam1_4_24  : 8;
+
+        q19_12 positionZ_8;
+    } s_MapPoint2d;
+
+    typedef struct _SpawnInfo
+    {
+        q19_12 positionX_0;
+        s8  charaId_4;   /** `e_CharacterId` */
+        u8  rotationY_5; /** Degrees in Q7.8, range [0, 256]. */
+        s8  flags_6;     /** Copied to `stateStep_3` in `s_Model`, with `controlState_2 = ModelState_Uninitialized`. */
+        s32 minGameDifficulty_7_0 : 4;
+        q19_12 positionZ_8;
+    } s_SpawnInfo;
+
+    /** Special map-specific Harry anim data. */
+    typedef struct
+    {
+        s16   status_0; /** Packed anim status. See `s_ModelAnim::status_0`. */
+        s16   status_2; /** Packed anim status. See `s_ModelAnim::status_0`. */
+        q3_12 time_4;   /** Fixed-point anim time. */
+        s16   keyframeIdx_6;
+    } s_UnkStruct3_Mo; // Probable size: 8 bytes.
+
+    /** Guessed based on in-debugger observation during gameplay.
+     * Everything is inited to 0xFFFF and some data is written when the player is hit by monsters.
+     * Might be more generic particles/decals struct.
+     */
+    typedef struct _BloodSplat
+    {
+        s16 field_0; // Maybe an array of `u16`s? Contains indices.
+    } s_BloodSplat;
+
+    typedef struct
+    {
+        u8    unk_0;
+        u8    field_1;
+        u8    field_2;
+        u8    unk_3;
+        u8    field_4;
+        u8    field_5;
+        u8    field_6;
+        u8    unk_7;
+        u8    unk_8[2];
+        s16   field_A;
+        u8    unk_C[2];
+        s16   field_E;
+        q3_12 field_10;
+        u8    unk_12[4];
+        s16   field_16;
+        u8    unk_18[8];
+        s32   field_20;
+        s32   field_24;
+    } s_MapOverlayHeader_5C;
+
+    typedef struct
+    {
+        u8  field_0;
+        u8  field_1;
+        u8  field_2;
+        u8  field_3;
+        s16 field_4;
+        s16 field_6;
+        s16 field_8;
+        s16 field_A;
+        s16 field_C;
+        s16 field_E;
+        s16 field_10;
+        s16 field_12;
+        s32 field_14;
+        s32 field_18;
+        s32 field_1C;
+    } s_MapOverlayHeader_7C;
+
+    typedef struct
+    {
+        s32    field_0[4];
+        s16    field_10[4];
+        s32    field_18[4];
+        u16    field_28[4];
+        u8     field_30[4];
+        q3_12  field_34[4]; // Y angles.
+        u16    field_3C[4];
+        u16    field_44[4];
+        s16    field_4C[4];
+        u16    field_54[4];
+        u16    field_5C[4];
+        q4_12  field_64[4];
+        s16    field_6c[4];
+        s16    field_74;
+        s16    unk_76;
+        u8     field_78;
+    } s_MapOverlayHeader_94;
+
+    /** TODO: `g_MapOverlayHeader` is part of the map overlay BIN files. Maybe should be moved to `maps/shared.h`.
+     * If field has a comment that lists only certain map(s) it means all others set this field to 0.
+     * func(?) means the signature is unknown and a default void() was selected for now.
+     */
+    typedef struct _MapOverlayHeader
+    {
+        s_MapInfo*             mapInfo_0;
+        u8                     (*getMapRoomIdxFunc_4)(s32 x, s32 y); // Called by `Savegame_MapRoomIdxUpdate`.
+        s8                     field_8;
+        s32                    (*func_C)();
+        // 3 bytes of padding.
+        void                   (*bgmEvent_10)(bool);
+        s8                     bgmIdx_14;           // Flags? Music related.
+        u8                     ambientAudioIdx_15; // Ambient file index from `g_AmbientVabTaskLoadCmds`.
+        s8                     field_16;           // Set ambient tint and render distance.
+                                                // A value of 3 sets the map to night.
+                                                // A value of 2 will sets the map to use a tint used during the hallaway
+                                                // intro.
+                                                // Giving this and next variable a name will require further investigation
+                                                // of `particle.c` code.
+        s8                     field_17;           // Set weather to play. Rain, heavy rain, or snow.
+        void                   (**loadingScreenFuncs_18)();
+        s_MapPoint2d*          mapPointsOfInterest_1C;
+        void                   (**mapEventFuncs_20)(); /** Points to array of event functions. */
+        s_EventData*           mapEvents_24;
+        GsCOORDINATE2*         field_28;
+        u8*                    loadableItems_2C;
+        const char**           mapMessages_30; // Array of strings.
+        s_AnimInfo*            animInfos_34;   // Map-specific anim infos for Harry (for anims 38+).
+        s_UnkStruct3_Mo*       field_38; // Array of 40?
+        void                   (*worldObjectsInit_3C)(void); // func(?).
+        void                   (*worldObjectsUpdate_40)(void);
+        void                   (*func_44)();
+        void                   (*npcSpawnEvent_48)(); // func(?).
+        s_MapHdr_field_4C*     unkTable1_4C; // Related to collision?
+        s16                    unkTable1Count_50;
+        // 2 bytes of padding.
+        s_BloodSplat*          bloodSplats_54;
+        s16                    bloodSplatCount_58;
+        // 2 bytes of padding.
+        s_MapOverlayHeader_5C* field_5C;
+        void                   (*func_60)(s32, s32);
+        //s32                    (*func_64)(POLY_FT4** poly, s32);
+        //s32                    (*func_68)(POLY_FT4** poly, s32);
+        void                   (*func_6C)(); // func(?).
+        //s32                    (*func_70)(POLY_FT4** poly, s32);
+        void                   (*func_74)(); // func(?).
+        //s32                    (*func_78)(POLY_FT4** poly, s32);
+        s_MapOverlayHeader_7C* field_7C;     // only map1_s01, map6_s04.
+        void                   (*func_80)(); // func(?).
+        //s32                    (*func_84)(POLY_FT4** poly, s32);
+        s32*                   func_88; // only map0_s01, map7_s01.
+        //s32                    (*func_8C)(POLY_FT4** poly, s32); // func(?) only map0_s01, map7_s01.
+        //s32                    (*func_90)(POLY_FT4** poly, s32); // func(?) only map5_s00.
+        s_MapOverlayHeader_94* field_94;                    // only map1_s02, map1_s03.
+        //s32                    (*func_98)(POLY_FT4** poly, s32); // only map1_s02, map1_s03.
+        void                   (*func_9C)();                // only map1_s02, map1_s03.
+        s32*                   func_A0; // only map1_s03.
+        //s32                    (*func_A4)(POLY_FT4** poly, s32); // func(?) only map1_s03.
+        void                   (*func_A8)(); // func(?) only map6_s02.
+        //s32                    (*func_AC)(POLY_FT4** poly, s32); // func(?) only map4_s03, map4_s05.
+        //s32                    (*func_B0)(POLY_FT4** poly, s32); // func(?) only map4_s03, map4_s05.
+        //s32                    (*func_B4)(POLY_FT4** poly, s32); // func(?) only map1_s03, map4_s05, map6_s01, map6_s02, map5_s01.
+        void                   (*func_B8)(s_SubCharacter* chara, s_PlayerExtra* extra, GsCOORDINATE2* coords);
+        void                   (*func_BC)(s_SubCharacter* chara, s_PlayerExtra* extra, GsCOORDINATE2* coords);
+        void                   (*func_C0)(); // func(?).
+        void                   (*playerMatchArmAnimDisable_C4)(); // func(?).
+        void                   (*playerControlFreeze_C8)();
+        void                   (*playerControlUnfreeze_CC)(bool);
+        s32                    (*func_D0)(s32 playerExtraState, VECTOR3* vec, q3_12 angle, s32 vecCount); // 0x800C964C
+        s32                    (*func_D4)(s32);                  // Assumed return type.
+        void                   (*func_D8)();                     // Assumed return type.
+        void                   (*playerAnimLock_DC)(void);
+        void                   (*func_E0)(); // func(?).
+        s32                    (*playerAnimUnlock_E4)(s_SubCharacter*, s32); // Assumed return type.
+        s64                    (*func_E8)(s_SubCharacter*);      // Is it really `s64`???
+        s32                    (*playerMoveDistClear)();
+        void                   (*func_F0)(); // func(?).
+        void                   (*playerFallBackward_F4)();
+        void                   (*func_F8)(); // func(?).
+        void                   (*playerDamageFeetFront_FC)(); // func(?).
+        void                   (*func_100)(); // func(?).
+        void                   (*func_104)(); // func(?).
+        s32                    (*func_108)();
+        void                   (*func_10C)(); // func(?).
+        void                   (*func_110)(); // func(?).
+        void                   (*func_114)(); // func(?).
+        void                   (*func_118)(); // func(?).
+        void                   (*func_11C)(); // func(?).
+        void                   (*func_120)(); // func(?).
+        void                   (*func_124)(s_SubCharacter*); // Assumed return type.
+        s32                    (*func_128)(s_SubCharacter*); // Assumed return type.
+        s32                    (*func_12C)(s_SubCharacter*); // Assumed return type.
+        void                   (*func_130)(); // func(?).
+        s32                    (*func_134)(s_SubCharacter*); // Assumed return type.
+        s32                    (*func_138)(s_SubCharacter*); // Keyframe state getter. Return value depends on the anim update function being used.
+        s32                    (*func_13C)(s32, s32, void*, s16, s32); // `arg0` is `s_SubCharacter*`.
+        void                   (*func_140)(); // func(?).
+        void                   (*func_144)(); // func(?).
+        void                   (*func_148)(); // func(?).
+        void                   (*func_14C)(); // func(?).
+        void                   (*animStartKeyframeIdxGet_150)();
+        void                   (*func_154)(); // func(?).
+        void                   (*func_158)(q19_12 x, q19_12 z); // only map1_s05, map1_s06.
+        void                   (*func_15C)(); // func(?) only map5_s01.
+        void                   (*func_160)(); // func(?) only map5_s01.
+        void                   (*func_164)(); // func(?) only map5_s01.
+        void                   (*particlesUpdate_168)(s32 unused, s32 mapId, s32);
+        void                   (*enviromentSet_16C)(s8, u32);
+        void                   (*func_170)(); // func(?).
+        void                   (*func_174)(); // func(?).
+        void                   (*particleHyperBlasterBeamDraw_178)(VECTOR3* vec0, q19_12* rotX, q19_12* rotY);
+        void                   (*particleBeamDraw_17C)(const VECTOR3* from, const VECTOR3* to);
+        void                   (*particleSoundStop_17C)();
+        s32*                   windSpeedX_184;
+        s32*                   windSpeedZ_188;
+        s32*                   data_18C;
+        s32*                   data_190;
+        void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharacterId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
+        s8                     charaGroupIds_248[GROUP_CHARA_COUNT];                              /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
+        s_SpawnInfo            charaSpawns_24C[2][16];                                            /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
+        VC_ROAD_DATA           roadDataList_3CC[100];
+        s_func_8006F8FC        field_D2C[200];
+    } s_MapOverlayHeader;
+
+    typedef struct
+    {
+        s8 maxIdx_0;
+        u8 selectedEntryIdx_1;
+    } s_MapMsgSelect;
+
+    // TODO: Might just be an array of `char*`, array is in `.data` while strings inside are in `.rodata`?
+    typedef struct
+    {
+        char* field_0;               // `NULL`
+        char* savePadName_4;         // "PAD_NEAR"
+        char* firstAidKitName_8;     // "AIDKIT_N"
+        char* healthDrinkName_C;     // "DRINK_NE"
+        char* ampouleName_10;        // "AMPULE_N"
+        char* handgunBulletsName_14; // "BULLET_N"
+        char* shotgunShellsName_18;  // "SHELL_NE"
+        char* rifleShellsName_1C;    // "SHOT_NEA"
+    } s_800A99E4;
+
+    typedef struct
+    {
+        u8 presetIdx1_0;
+        u8 presetIdx2_1;
+    } s_MapEffectsPresetIdxs;
+
+    /** @brief Line of sight data for finished ray trace. TODO: Could rename to `s_Los` to keep "ray" as a generic math term? */
+    typedef struct
+    {
+        s8              hasHit_0; /** `bool` */
+        u8              field_1;
+        s8              unk_2[2]; // Probably padding.
+        VECTOR3         field_4;  // Q19.12
+        s_SubCharacter* chara_10;
+        q19_12          field_14; // Hit distance X?
+        q19_12          field_18; // Hit distance Z?
+        q7_8            field_1C; // Angle.
+    } s_RayData;
+
+    typedef struct
+    {
+        VECTOR3 offset_0;  // Q19.12
+        s32     field_C;   // Absolute ground height? Might be using `s_Collision` substruct?
+        s16     field_10;
+        s16     field_12;
+        s8      field_14;  // Count of something? 12 is significant.
+        s8      unk_15[3]; // Probably padding.
+        s32     field_18;
+    } s_800C4590;
+
+    typedef struct
+    {
+        DVECTOR  screenXy_0[90];
+        s16      screenZ_168[18];
+        s16      field_18C[72];
+        s32      field_21C[39]; // Used as `VECTOR3`?
+        u8       field_2B8[200];
+        MATRIX   field_380;
+        s_Normal field_3A0;
+        DVECTOR  screenPos_3A4;
+        s32      depthP_3A8;
+        SVECTOR  field_3AC;
+        u8       unk_3B4[36];
+        CVECTOR  field_3D8;
+
+        // Different functions access different data at 0x3DC onwards.
+        // Union works for it, but also possible those functions just took different `s_GteScratchData` structs.
+        union
+        {
+            struct
+            {
+                DVECTOR  screenPos_3DC;
+                s32      depthP_3E0;
+                MATRIX   field_3E4;
+            } vertex;
+
+            struct
+            {
+                s_Normal field_3DC;
+                SVECTOR  field_3E0[3];
+            } normal;
+
+            struct
+            {
+                u8  field_0;
+                u8  field_1;
+                u8  field_2;
+                u8  field_3;
+                u8  field_4;
+                u8  field_5;
+                u8  field_6;
+                u8  field_7;
+                s32 field_8;
+            } s_1;
+        } u;
+    } s_GteScratchData2;
+
+    typedef struct
+    {
+        s16   field_0;
+        s16   field_2; // Move dist?
+        q3_12 field_4; // Angle.
+        s16   unk_6;
+        s16   unk_8;
+        s16   unk_A;
+        s16   field_C;
+        s16   field_E;
+        s16   field_10;
+        s16   unk_12;
+        s16   field_14;
+        s16   field_16;
+        s16   field_18;
+        s16   unk_1A;
+    } s_800AE204;
+
+    typedef struct
+    {
+        s_800AE204* ptr_0;
+        s16         count_4;
+        s16         unk_6;
+        u8          unk_8;
+        u8          unk_9;
+        u8          unk_A;
+        u8          unk_B;
+    } s_800AE4DC;
+
+    typedef struct
+    {
+        u8 field_0;
+        u8 field_1;
+        u8 field_2;
+        u8 field_3; // Map marking sprite height?
+    } s_800AE8A0_0;
+
+    typedef struct
+    {
+        s8 field_0;
+        s8 field_1;
+        u8 field_2;
+        u8 field_3;
+    } s_800AE8A0_4;
+
+    /** Paper map marking graphic data? */
+    typedef struct
+    {
+        //POLY_FT4*    field_0;
+        s_800AE8A0_0 field_4;
+        s_800AE8A0_4 field_8;
+        s32          field_C; // Count.
+    } s_func_80068E0C;
+
+    typedef struct
+    {
+        //POLY_FT4* field_0;
+        SVECTOR   field_4; // Q23.8
+        MATRIX    field_C;
+        VECTOR3   field_2C; // Q23.8
+        s32       field_38;
+        DVECTOR   field_3C;
+        s32       field_40;
+        DVECTOR   field_44;
+        DVECTOR   field_48;
+    } s_func_80065B94;
+
+    typedef struct
+    {
+        //POLY_GT4* field_0;
+        MATRIX    field_4;
+        SVECTOR   field_24[3];
+        VECTOR3   field_3C; // Q19.12
+        s32       field_48;
+        DVECTOR   field_4C;
+        DVECTOR   field_50;
+        DVECTOR   field_54;
+        DVECTOR   field_58;
+        s32       field_5C;
+        s32       field_60;
+        s32       field_64;
+        s32       field_68;
+        s32       field_6C;
+        s32       field_70;
+        s32       field_74;
+        s32       field_78;
+    } s_func_80066184;
+
+    typedef struct
+    {
+        u8  field_0;
+        u8  field_1;
+        s16 field_2;
+        s32 field_4;
+        s32 field_8;
+    } s_800C42E8;
+
+    typedef struct
+    {
+        s16 field_0;
+        s16 field_2;
+        s16 field_4;
+        s16 field_6;
+        u16 field_8;
+        u16 field_A;
+        u8  field_C;
+    } s_800C4418;
+
+    typedef struct
+    {
+        VECTOR3 field_0; // Q23.8 | Position.
+        MATRIX  field_C;
+        s32     field_2C;
+        DVECTOR field_30;
+        s16     field_34[24];
+        s16     field_64[24];
+        s16     field_94[24];
+        s16     field_C4;
+        s16     field_C6;
+        s16     field_C8;
+        s16     field_CA;
+        s16     field_CC;
+        s16     field_CE;
+        s32     field_D0;
+        s32     field_D4;
+        s32     field_D8;
+        s16     field_DC[4];
+        s16     field_E4[4];
+        union
+        {
+            DVECTOR field_0[4];
+            s32     raw_0[4];
+        } u_field_EC;
+        union
+        {
+            DVECTOR field_0[4];
+            s32     raw_0[4];
+        } u_field_FC; // Q3.12 | Positions or offsets.
+        s32     field_10C[4];
+        s32     field_11C[4];
+    } s_func_8005E89C;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        PACKET*         field_12C;
+        CVECTOR         field_130;
+        CVECTOR         field_134;
+        SVECTOR         field_138;
+        s32             field_140;
+        DVECTOR         field_144;
+        u16             field_148;
+        u8              unk_14A[2];
+        s32             field_14C;
+        s32             field_150;
+        s32             field_154;
+        s32             field_158;
+        s32             field_15C;
+        s32             field_160;
+        s32             field_164;
+        s32             field_168;
+        s32             field_16C;
+        s32             field_170;
+        s32             field_174;
+    } s_func_80060044;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        CVECTOR         field_12C;
+        CVECTOR         field_130;
+        SVECTOR         field_134;
+        SVECTOR         field_13C;
+        SVECTOR         field_144;
+        VECTOR3         field_14C;
+        s32             field_158;
+        s32             field_15C;
+        s32             field_160;
+        s32             field_164;
+        s32             field_168;
+        DVECTOR         field_16C;
+        s32             field_170;
+        s32             field_174;
+        s32             field_178;
+        s32             field_17C;
+        s32             field_180;
+        s32             field_184;
+        s32             field_188;
+        s32             field_18C;
+        s32             field_190;
+        s32             field_194;
+        s32             field_198;
+        s32             field_19C;
+        s32             field_1A0;
+    } s_func_800611C0;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        CVECTOR         field_12C;
+        CVECTOR         field_130;
+        SVECTOR         field_134[25];
+        VECTOR3         field_1FC; // Q19.12
+        q20_12          field_208;
+        s32             field_20C;
+        s32             field_210;
+        s32             field_214[25];
+        DVECTOR         field_278[25];
+        s32             field_2DC;
+    } s_func_80062708;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        SVECTOR field_12C;
+        s8      unk_138[8];
+        DVECTOR field_13C;
+        s32     field_140;
+        s32     field_144;
+    } s_func_80064FC0;
+
+    typedef struct
+    {
+        //POLY_G4*  field_0;
+        //DR_TPAGE* field_4;
+        SVECTOR   field_8[3];
+        MATRIX    field_20;
+        VECTOR3   field_40; // Q23.8
+        s32       field_4C;
+        s16       field_50;
+        s32       field_54[3];
+        s16       field_60[3];
+        s32       field_68;
+    } s_func_800652F4;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        MATRIX          field_12C;
+        SVECTOR         field_14C[3];
+        SVECTOR         field_164;
+        VECTOR          field_16C[3];
+        VECTOR          field_19C;
+        VECTOR          field_1AC; // Q27.4
+        s32             field_1BC;
+        s32             field_1C0;
+        s32             field_1C4;
+        s32             field_1C8;
+        DVECTOR         field_1CC;
+        s16             field_1D0;
+        u8              unk_1D2[2];
+        s32             field_1D4; // Count.
+        s32             field_1D8;
+        s32             field_1DC;
+        s32             field_1E0;
+        s32             field_1E4;
+        s32             field_1E8;
+    } s_func_80063A50;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        //PACKET*         field_12C;
+        CVECTOR         field_130;
+        CVECTOR         field_134;
+        SVECTOR         field_138;
+        u8              unk_140[16];
+        s32             field_150;
+        DVECTOR         field_154;
+        u16             field_158;
+        u16             field_15A;
+        u8              field_15C;
+        s32             field_160;
+        s32             field_164;
+        s32             field_168;
+    } s_func_80064334;
+
+    typedef struct
+    {
+        s_func_8005E89C field_0;
+        s_Collision     field_12C;
+        MATRIX          field_138;
+        SVECTOR         field_158[4];
+        VECTOR          field_178[4];
+        CVECTOR         field_1B8;
+        CVECTOR         field_1BC;
+        s32             field_1C0;
+        s32             field_1C4;
+        s32             field_1C8;
+        s32             field_1CC;
+        s32             field_1D0;
+        DVECTOR         field_1D4;
+    } s_func_800CD1F8;
+
+    typedef struct
+    {
+        MATRIX  field_0;
+        SVECTOR field_20;
+        VECTOR  field_28; // Q27.4
+        s32     field_38;
+        s32     field_3C[5];
+        s32     field_50;
+    } s_func_8006342C;
+
+    // ========
+    // GLOBALS
+    // ========
+
+    extern s_FsImageDesc g_MainImg0; // 0x80022C74 - TODO: Part of main exe, move to `main/` headers?
+
+    extern const s_MapInfo MAP_INFOS[MapType_Count];
+
+    extern char D_80028544[16];
+
+    //extern RECT D_80028A20;
+
+    extern const s_AnimInfo D_80028B94[];
+
+    extern s_800C44F0 D_800294F4[];
+
+    extern const s_AnimInfo* D_800297B8;
+
+    extern u_Filename D_8002B2CC;
+
+    extern u8 g_BackgroundColor;
+
+    //extern DR_MODE D_800A8E5C[];
+
+    //extern TILE D_800A8E74[];
+
+    extern q19_12 g_ScreenFadeProgress;
+
+    //extern DR_MODE D_800A8E98[];
+
+    //extern POLY_G4 D_800A8EB0[];
+
+    extern s32 D_800A8F40;
+
+    extern s_FsImageDesc g_Font16AtlasImg;
+    extern s_FsImageDesc g_KonamiLogoImg;
+    extern s_FsImageDesc g_KcetLogoImg;
+    extern s_FsImageDesc g_TitleImg;
+    extern s_FsImageDesc g_PaperMapImg;
+    extern s_FsImageDesc g_PaperMapMarkingAtlasImg;
+    extern s_FsImageDesc g_ItemInspectionImg;
+    extern s_FsImageDesc g_LoadingScreenImg;
+    extern s_FsImageDesc g_ControllerButtonAtlasImg;
+    extern s_FsImageDesc g_BrightnessScreenImg0;
+    extern s_FsImageDesc g_BrightnessScreenImg1;
+    extern s_FsImageDesc g_DeathTipImg;
+    extern s_FsImageDesc g_HealthPortraitImg;
+    extern s_FsImageDesc g_InventoryKeyItemTextureImg;
+    extern s_FsImageDesc g_FirstAidKitItemTextureImg;
+
+    /** Some intentory item texture (`ITEM/TIM07.TIM`). */
+    extern s_FsImageDesc D_800A9074;
+
+    extern s_FsImageDesc D_800A907C;
+
+    extern s_FsImageDesc D_800A9084;
+
+    extern s_FsImageDesc D_800A908C;
+
+    extern s_FsImageDesc D_800A9094;
+
+    extern s_FsImageDesc g_Font24AtlasImg; // 0x800A909C
+
+    /** Array containg file IDs used for each `e_CharacterId`, used in `Fs_QueueStartReadAnm`. */
+    extern s_CharaFileInfo CHARA_FILE_INFOS[Chara_Count]; // 0x800A90FC
+
+    extern s_MapEffectsInfo g_MapEffectsPresets[21];
+
+    extern s_StructUnk3 D_800A952C;
+
+    extern u16 D_800A9774[];
+
+    extern u16 g_BgmChannelSetTaskCmds[];
+
+    extern s32 D_800A9A20;
+
+    /** X. */
+    extern s32 D_800A9A24;
+
+    /** Z. */
+    extern s32 D_800A9A28;
+
+    /** Loaded NPC types in memory and their `g_CharaTypeAnimInfo` indices. */
+    extern s8 g_CharaAnimInfoIdxs[Chara_Count];
+
+    extern s32 D_800A9EB0;
+
+    extern s_FsImageDesc D_800A9EB4;
+
+    extern s_FsImageDesc D_800A9EBC;
+
+    extern s_FsImageDesc D_800A9EC4;
+
+    /** `Demo_FrameCount` */
+    extern s32 g_Demo_FrameCount;
+
+    extern s32 g_UnknownFrameCounter;
+
+    /** Function pointer array, maybe state funcs of some kind. */
+    extern void (*g_GameStateUpdateFuncs[])(void);
+
+    /** Related to sound commands. */
+    extern u16 g_BgmTaskLoadCmds[];
+
+    extern u16 g_AmbientVabTaskLoadCmds[];
+
+    /** @brief Stores a loaded character's animation data information. */
+    extern s_CharaAnimDataInfo g_CharaTypeAnimInfo[];
+
+    extern s32 D_800A9938;
+
+    extern u8 D_800A9944[];
+
+    /** Player anim info? */
+    extern s_AnimInfo D_800A998C;
+
+    /** Current player anim index store? */
+    extern u8 D_800A9990;
+
+    /** Used in `func_800D929C` from `map0_s00.c`. */
+    extern s32 D_800A999C;
+
+    // Likely declared as static inside the function that uses it.
+    extern s32 D_800A99A0;
+
+    /** Relative file offset for map texture? */
+    extern s8 D_800A99B5;
+
+    extern s_800A99E4 D_800A99E4;
+
+    extern s32 g_MapMsg_CurrentIdx;
+
+    extern s16 g_MapMsg_SelectFlashTimer;
+
+    extern s8 g_PaperMapFileIdxs[24];
+
+    extern s8 g_PaperMapMarkingFileIdxs[56];
+
+    extern s_FsImageDesc D_800A9A04;
+
+    extern s32 D_800A9A0C; // Old IDB name `FS_AllFilesLoaded`, though FS code doesn't set it.
+
+    extern s32 g_MapEventSysState; /** `e_InventoryItemId` */
+
+    extern s32 g_MapEventLastUsedItem; /** `e_InventoryItemId` */
+
+    /** Radio pitch state based on the distance from the player to an enemy. Range: `[0, 3]`. */
+    extern s32 g_RadioPitchState;
+
+    extern void (*g_SysStateFuncs[])(void);
+
+    extern s32 D_800A9A68;
+
+    extern s32 g_MainMenuState;
+
+    extern s32 g_MainMenu_SelectedEntry;
+
+    /** Flags for which main menu entries should be visible.
+     * @unused Flag (1 << 5) corresponds to the "EXTRA" option, which is unused and never set.
+     */
+    extern u32 g_MainMenu_VisibleEntryFlags;
+
+    /** Counts the amount of times that demos has been play in the current game session. */
+    extern s8 g_Demo_ReproducedCount;
+
+    extern s32 g_MainMenu_NewGameSelectedDifficultyIdx;
+
+    //extern RECT D_800A9A6C; // `RECT<320, 256, 160, 240>`, only used in `SysState_Fmv_Update`?
+
+    extern u32 D_800A9AAC[];
+
+    extern s32 D_800A9ECC;
+
+    extern s32 D_800A9ED0;
+
+    extern s32 D_800A9ED4;
+
+    extern s32 D_800A9ED8;
+
+    extern s32 D_800A9EDC;
+
+    extern s32 D_800A9EE0;
+
+    extern s32 D_800A9EE4;
+
+    extern s32 D_800A9EE8;
+
+    extern s32 D_800A9EEC;
+
+    extern s32 D_800A9EF0;
+
+    extern s32 D_800A9EF4;
+
+    extern s32 D_800A9EF8;
+
+    extern s32 D_800A9EFC;
+
+    extern s32 D_800A9F00;
+
+    extern s32 D_800A9F04;
+
+    extern s32 D_800A9F08;
+
+    extern s32 D_800A9F0C;
+
+    extern s32 D_800A9F10;
+
+    extern s32 D_800A9F14;
+
+    extern s32 D_800A9F18;
+
+    extern s32 D_800A9F1C;
+
+    extern s32 D_800A9F20;
+
+    extern s32 D_800A9F28;
+
+    extern s32 D_800A9F2C;
+
+    extern s32 D_800A9F30;
+
+    extern s32 D_800A9F34;
+
+    extern s32 D_800A9F38;
+
+    extern s32 D_800A9F3C;
+
+    extern s32 D_800A9F40;
+
+    extern s32 D_800A9F44;
+
+    extern s32 D_800A9F48;
+
+    extern s32 D_800A9F4C;
+
+    extern s32 D_800A9F50;
+
+    extern s32 D_800A9F54;
+
+    extern s32 D_800A9F58;
+
+    extern s32 D_800A9F60;
+
+    extern s32 D_800A9F64;
+
+    extern s32 D_800A9F68;
+
+    extern s32 D_800A9F6C;
+
+    extern s32 D_800A9F74;
+
+    extern s32 D_800A9F78;
+
+    extern s32 D_800A9F7C;
+
+    extern s_MapEffectsPresetIdxs D_800A9F80;
+
+    extern s_MapEffectsPresetIdxs D_800A9F84;
+
+    extern s_MapEffectsPresetIdxs D_800A9F88;
+
+    extern s_MapEffectsPresetIdxs D_800A9F8C;
+
+    extern s_MapEffectsPresetIdxs D_800A9F98;
+
+    extern u32 D_800A9FB0;
+
+    extern s32 D_800A9FB4[];
+
+    extern u8 D_800AA604[][16];
+
+    extern u8 D_800AE185;
+
+    extern u8 D_800AE186;
+
+    extern u8 g_SysState_GameOver_TipIdx;
+
+    extern s8 pad_bss_800BCD81[3];
+
+    /** Copy of delta timers.
+     * Appears to be used as save of the delta timer currently used as some instances where 2D backgrounds
+     * are drawn uses `g_DeltaTimeRaw` while `g_DeltaTime` is being stopped.
+     */
+    extern s32 g_DeltaTimeCpy;
+
+    extern s32 pad_bss_800BCD88[2];
+
+    extern s_EventData* g_ItemTriggerEvents[];
+
+    extern s32 pad_bss_800BCD94[5];
+
+    extern s_800BCDA8 D_800BCDA8[2];
+
+    extern s_MapPoint2d D_800BCDB0;
+
+    extern s32 pad_bss_800BCDD0;
+
+    /** Related to special item interactions. */
+    extern s32 g_ItemTriggerItemIds[5];
+
+    extern u8 D_800BCDD4;
+
+    extern s8 pad_bss_800BCDD5[3];
+
+    extern s_EventData* g_MapEventData;
+
+    /** `e_InventoryItemId` | related to displaying items. */
+    extern u8 D_800AE187;
+
+    extern s16 D_800AE1A8;
+
+    extern s_800AE204 D_800AE204[26];
+
+    extern s32 g_Items_PickupAnimState;
+
+    extern q19_12 g_Items_PickupScale;
+
+    extern s16 D_800AE520[];
+
+    extern s16 D_800AE564[];
+
+    extern s16 D_800AE5CC[];
+
+    extern s16 D_800AE5F0[];
+
+    extern u8 D_800AE700[];
+
+    /** `[1]` contains relative paper map file indices. */
+    extern u8 D_800AE740[][2];
+
+    extern s32 D_800AE770;
+
+    extern q3_12 g_Player_FlexRotationY;
+
+    extern q3_12 g_Player_FlexRotationX;
+
+    /** Related to player. */
+    extern u8 D_800AF220;
+
+    /** @brief Last weapon selected. While it is being assigned the value of
+     * `g_SysWork::playerCombat_38::weaponAttack_F` this time it is used to determine
+     * the last weapon used in order to load the required animation data.
+     */
+    extern s32 g_Player_LastWeaponSelected;
+
+    extern s_AnimInfo HARRY_BASE_ANIM_INFOS[]; // Maybe part of bigger struct. 0x800AF228
+
+    extern s16 D_800AF506;
+
+    extern s16 D_800AF526;
+
+    extern s16 D_800AF5C6;
+
+    extern s16 D_800AF624;
+
+    /** Keyframe index. */
+    extern s16 D_800AF626;
+
+    /** Generic collision global used by high-level getters. */
+    extern s_CollisionPoint g_CollisionPoint;
+
+    extern u8 D_800AFD04;
+
+    extern u8 D_800AFD05;
+
+    extern const s_AreaLoadSfx SfxPairs[25];
+
+    extern s32 D_800AFD3C;
+
+    extern s32 D_800AFD44;
+
+    extern s32 D_800AFD60;
+
+    extern s32 D_800AFD9C;
+
+    extern SVECTOR D_800AFDB0;
+
+    extern s32 D_800AFDEC;
+
+    //extern PACKET D_800BFBF0[2][0xA10];
+
+    extern u8 g_Items_GunsMaxLoadAmmo[36]; // Max loaded ammo that a weapon can hold. 0x800AD4A0
+
+    extern const char* INVENTORY_ITEM_NAMES[];
+
+    extern const char* g_ItemDescriptions[];
+
+    extern s_FsImageDesc D_800A90A4;
+
+    extern s_FsImageDesc D_800A90B4;
+
+    extern s_SubCharacter D_800BA00C; // Often passed to `func_800700F8`, might not be full `s_SubCharacter`?
+
+    extern u8 D_800BC74F;
+
+    extern u16 D_800BCCB0;
+
+    extern u16 D_800BCCB2;
+
+    /** @brief Packed screen fade effect data. Uses `e_ScreenFadeState`.
+     *
+     * Data is packed as follows:
+     * State as `e_ScreenFadeState`: bits 0-2.
+     * Is white:                     bit 3.
+     *
+     * TODO: Reference enum entries for details below.
+     * 0-1   - Nothing.
+     * 2-5   - Fades to black and keeps the screen black.
+     * 6-7   - Fades from black.
+     * 10-15 - Fades to white and keeps the screen white.
+     * 16    - Fades to black.
+     */
+    extern s32 g_Screen_FadeStatus;
+
+    extern s32 D_800BCD5C;
+
+    extern s_MapMsgSelect g_MapMsg_Select;
+
+    extern u8 g_MapMsg_AudioLoadBlock;
+
+    extern s8 g_MapMsg_SelectCancelIdx;
+
+    extern s32 D_800BCD84;
+
+    /** Related to main menu fog randomization. */
+    extern s8* D_800BCDE0; // Type assumed.
+
+    /** Angles. */
+    extern s16 D_800BCDE8[8];
+
+    extern u16 D_800BCE14;
+
+    // TODO: Rename to `g_WorldGfxWork`.
+    extern s_WorldGfxWork g_WorldGfx;
+
+    extern s_IpdCollisionData* D_800C1010[4];
+
+    extern s_Map g_Map;
+
+    extern s8* D_800C15B0;
+
+    extern s8 D_800C15B4;
+
+    extern s16 D_800C16A4;
+
+    extern s32 D_800C3920;
+
+    extern s32 pad_bss_800C3924;
+
+    extern s16 D_800C391E;
+
+    extern s8 D_800C39A0;
+
+    /** Functions from `bodyprog_8003AB28` access `g_WorldEnvWork` as constant, but some functions from `bodyprog_80055028` write to it.
+     * It appears that g_WorldEnvWork is intended to be defined inside `bodyprog_80055028` as writable and declared as read-only (`const`) outside of it.
+     */
+    // extern s_WorldEnvWork g_WorldEnvWork;
+
+    extern GsCOORDINATE2* D_800C42B8;
+
+    extern VECTOR3 D_800C42C0;
+
+    extern VECTOR3* D_800C42CC;
+
+    extern u16 D_800C42D0;
+
+    extern u16 D_800C42D2;
+
+    extern s_800C42E8 D_800C42E8[24];
+
+    extern s16 D_800C4408;
+
+    extern s16 pad_bss_800C440A;
+
+    extern GsCOORDINATE2* D_800C440C;
+
+    extern GsCOORDINATE2* D_800C4410;
+
+    /** Flags. */
+    extern s8 D_800C4414;
+
+    extern s8 pad_bss_800C4415[3];
+
+    extern s_800C4418 D_800C4418;
+
+    extern s16 D_800C4454;
+
+    // emoose: Also works: `extern u16 D_800C4478[];`, `arg0->field_4 = D_800C4478[0];`.
+    // Didn't see any array accesses in Ghidra though, struct might be more likely.
+    extern s_800C4478 D_800C4478;
+
+    extern s8 D_800C447A;
+
+    extern s16 D_800AEEDC[][2]; // Type assumed.
+
+    extern s16 D_800AEF78[][2]; //  Type assumed.
+
+    extern s16 D_800AF014[];
+
+    extern s16 D_800AF04C[];
+
+    extern s16 D_800AF070[]; // Type assumed.
+
+    extern s16 D_800AF1FC[]; // Type assumed.
+
+    extern u8 D_800C4606;
+
+    extern s_Collision D_800C4620;
+
+    extern VECTOR3 D_800C4640[2][8];
+
+    /** Y angles. */
+    extern q3_12 D_800C4700[8];
+
+    /** Times. */
+    extern q19_12 D_800C4710[];
+
+    /** Q19.12 */
+    extern VECTOR3 D_800C4788[];
+
+    extern VECTOR3 D_800C47B8;
+
+    extern VECTOR3 D_800C47C8[];
+
+    extern VECTOR3 D_800C47E8;
+
+    extern s_RayData D_800C47F8;
+
+    extern s_800C4818 D_800C4818;
+
+    extern s32 D_800C48F0;
+
+    extern u8 D_800C6E90;
+
+    extern u8 D_800AD480[24];
+
+    /** Weapon attacks. */
+    extern s_800AD4C8 D_800AD4C8[70];
+
+    extern const s_MapOverlayHeader g_MapOverlayHeader; // 0x800C957C
+
+    extern s16 SQRT[100];
+}

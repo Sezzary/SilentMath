@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Game/Game.h"
+#include "Game/Entry.h"
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
@@ -145,11 +145,11 @@ namespace Silent
             }*/
 
             // Update delta time.
-            /*g_DeltaTime0 =
-            g_DeltaTime1 = FP_FLOAT_TO((1.0f / (float)TICKS_PER_SECOND) * clock.GetTicks(), Q12_SHIFT);*/
+            /*g_DeltaTime =
+            g_DeltaTimeRaw = FP_FLOAT_TO((1.0f / (float)TICKS_PER_SECOND) * clock.GetTicks(), Q12_SHIFT);*/
 
-            /*g_DeltaTime0 = FP_MULTIPLY(vCount, H_BLANKS_FP_TO_SEC_SCALE, Q12_SHIFT);
-            g_DeltaTime1 = FP_MULTIPLY(vCountCopy, H_BLANKS_FP_TO_SEC_SCALE, Q12_SHIFT);
+            /*g_DeltaTime = FP_MULTIPLY(vCount, H_BLANKS_FP_TO_SEC_SCALE, Q12_SHIFT);
+            g_DeltaTimeRaw = FP_MULTIPLY(vCountCopy, H_BLANKS_FP_TO_SEC_SCALE, Q12_SHIFT);
             g_DeltaTime2 = FP_MULTIPLY(vCount, H_BLANKS_UNKNOWN_SCALE, Q12_SHIFT); // @todo Unknown time scale.
             GsClearVcount();*/
             

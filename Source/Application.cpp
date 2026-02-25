@@ -6,7 +6,7 @@
 #include "Assets/Locales.h"
 #include "Assets/TranslationKeys.h"
 #include "Audio/Audio.h"
-#include "Game/Game.h"
+#include "Game/Entry.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 #include "Savegame/Savegame.h"
