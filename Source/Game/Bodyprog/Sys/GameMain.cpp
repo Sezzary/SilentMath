@@ -111,11 +111,11 @@ namespace Silent::Game
                 if (ScreenFade_IsFinished())
                 {
                     // @todo Avoid blocking.
-                    Fs_QueueWaitForEmpty();
-                    //if (assets.IsBusy())
-                    //{
-                    //    break;
-                    //}
+                    //Fs_QueueWaitForEmpty();
+                    if (assets.IsBusy())
+                    {
+                        break;
+                    }
 
                     gameState = g_GameWork.gameState_594;
 
@@ -142,6 +142,7 @@ namespace Silent::Game
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
                                                 0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
+        Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(g_ScreenFadeProgress, Q8_SHIFT), 0, 1);
         //Gfx_BackgroundSpriteDraw(&g_MainImg0);
 
         //func_80089090(1);
