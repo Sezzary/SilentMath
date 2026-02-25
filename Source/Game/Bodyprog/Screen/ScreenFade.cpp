@@ -102,14 +102,11 @@ namespace Silent::Game
 
     void Screen_FadeUpdate(void) // 0x8003260C
     {
-        s32      queueLength;
-        s32      timestep;
-        //GsOT*    ot;
-        TILE*    tile;
-        DR_MODE* drMode;
+        s32 queueLength;
+        s32 timestep;
 
-        //drMode                   = &D_800A8E5C[g_ActiveBufferIdx];
-        //tile                     = &D_800A8E74[g_ActiveBufferIdx];
+        static auto dummyTile = TILE{};
+
         g_PrevScreenFadeProgress = g_ScreenFadeProgress;
 
         switch (g_Screen_FadeStatus)
@@ -121,7 +118,7 @@ namespace Silent::Game
 
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutSteps, false):
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutSteps, true):
-                Screen_FadeDrawModeSet(drMode);
+                //Screen_FadeDrawModeSet(drMode);
                 queueLength = Fs_QueueGetLength();
 
                 if (g_ScreenFadeTimestep > Q12(0.0f))
@@ -139,10 +136,6 @@ namespace Silent::Game
                     g_ScreenFadeProgress = Q12_CLAMPED(1.0f);
                     g_Screen_FadeStatus++;
                 }
-
-                tile->r0 = Q12_TO_Q8(g_ScreenFadeProgress);
-                tile->g0 = Q12_TO_Q8(g_ScreenFadeProgress);
-                tile->b0 = Q12_TO_Q8(g_ScreenFadeProgress);
                 break;
 
             case SCREEN_FADE_STATUS(ScreenFadeState_ResetTimestep, false):
@@ -156,15 +149,12 @@ namespace Silent::Game
 
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutComplete, false):
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutComplete, true):
-                Screen_FadeDrawModeSet(drMode);
-                tile->r0 = Q12_TO_Q8(g_ScreenFadeProgress);
-                tile->g0 = Q12_TO_Q8(g_ScreenFadeProgress);
-                tile->b0 = Q12_TO_Q8(g_ScreenFadeProgress);
+                //Screen_FadeDrawModeSet(drMode);
                 break;
 
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeInSteps, false):
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeInSteps, true):
-                Screen_FadeDrawModeSet(drMode);
+                //Screen_FadeDrawModeSet(drMode);
 
                 if (g_ScreenFadeTimestep > Q12(0.0f))
                 {
@@ -183,10 +173,6 @@ namespace Silent::Game
                     ScreenFade_Reset();
                     return;
                 }
-
-                tile->r0 = Q12_TO_Q8(g_ScreenFadeProgress);
-                tile->g0 = Q12_TO_Q8(g_ScreenFadeProgress);
-                tile->b0 = Q12_TO_Q8(g_ScreenFadeProgress);
                 break;
 
             case SCREEN_FADE_STATUS(ScreenFadeState_Reset, false):
@@ -199,9 +185,7 @@ namespace Silent::Game
                 return;
         }
 
-        //ot = &g_OtTags0[g_ActiveBufferIdx][5];
-        //AddPrim(ot, tile);
-        //AddPrim(ot, drMode);
+        // Submit to renderer. Turn `return`s into `breaks`.
     }
 
     static void Screen_BlackBorderDraw(POLY_G4* poly, s32 color)

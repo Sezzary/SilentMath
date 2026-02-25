@@ -199,7 +199,7 @@ namespace Silent::Game
 
             // Fade in `1ST/2ZANKO_E.TIM` with luma-multiply blending.
             static q23_8 fade = Q8(0.0f);
-            if (fade > Q8_COLOR(1.0f))
+            if (fade >= Q8_COLOR(1.0f))
             {
                 isInitComplete = true;
             }
@@ -212,8 +212,7 @@ namespace Silent::Game
                 renderer.SubmitSprite2d(sprite);
 
                 Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(fade, Q8_SHIFT), 0, 1);
-                //if (fade < 255) // temp check
-                    fade += FADE_STEP;
+                fade = std::clamp(fade + FADE_STEP, Q8(0.0f), Q8(1.0f));
             }
         }
     }

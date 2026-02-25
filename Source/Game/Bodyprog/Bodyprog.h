@@ -2076,6 +2076,7 @@ namespace Silent::Game
     extern s_FsImageDesc g_Font16AtlasImg;
     extern s_FsImageDesc g_KonamiLogoImg;
     extern s_FsImageDesc g_KcetLogoImg;
+    extern s_FsImageDesc D_800A900C;
     extern s_FsImageDesc g_TitleImg;
     extern s_FsImageDesc g_PaperMapImg;
     extern s_FsImageDesc g_PaperMapMarkingAtlasImg;

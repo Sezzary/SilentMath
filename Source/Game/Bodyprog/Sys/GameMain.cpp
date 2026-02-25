@@ -6,7 +6,15 @@
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
+#include "Game/Screens/BKonami/BKonami.h"
+#include "Renderer/Renderer.h"
+//#include "bodyprog/demo.h"
+//#include "bodyprog/memcard.h"
+//#include "bodyprog/sound_system.h"
+//#include "screens/saveload.h"
 
 using namespace Silent::Assets;
 
@@ -27,8 +35,8 @@ namespace Silent::Game
     void (*g_GameStateUpdateFuncs[])(void) =
     {
         GameState_Boot_Update,
-        nullptr,//GameState_KonamiLogo_Update,
-        nullptr,//GameState_KcetLogo_Update,
+        GameState_KonamiLogo_Update,
+        GameState_KcetLogo_Update,
         nullptr,//GameState_MovieIntroFadeIn_Update,
         nullptr,//GameState_AutoLoadSavegame_Update,
         nullptr,//GameState_MovieIntroAlternate_Update,
@@ -92,7 +100,7 @@ namespace Silent::Game
                 break;
 
             case 2:
-                Fs_QueueStartReadTim(FILE_1ST_FONT16_TIM, FS_BUFFER_1, &g_Font16AtlasImg);
+                //Fs_QueueStartReadTim(FILE_1ST_FONT16_TIM, FS_BUFFER_1, &g_Font16AtlasImg);
                 Fs_QueueStartReadTim(FILE_1ST_KONAMI_TIM, FS_BUFFER_1, &g_KonamiLogoImg);
 
                 ScreenFade_Start(true, false, false);

@@ -1,7 +1,7 @@
 #include "Framework.h"
 
 #include "Game/Bodyprog/Bodyprog.h"
-//#include "bodyprog/gfx/screen_draw.h"
+#include "Game/Bodyprog/Screen/ScreenDraw.h"
 
 namespace Silent::Game
 {
