@@ -48,7 +48,7 @@ namespace Silent::Game
 
         while (assets.IsBusy())
         {
-            // @todo Avoid busy-waiting?
+            // @todo calls to this function should be deprecated. Blocking behaviours shouldn't occur the port.
         }
 
         // @todo Are any of these important?
@@ -120,7 +120,7 @@ namespace Silent::Game
     void Fs_QueueReset(void)
     {
         // @stub
-        // @todo It cleared the queue in OG, should that translate to clearing all loaded assets?
+        // @todo Previously cleared the queue, should that translate to clearing all loaded assets?
     }
 
     void Fs_QueueUpdate(void)

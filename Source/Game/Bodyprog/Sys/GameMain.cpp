@@ -3,7 +3,12 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
+#include "Application.h"
+#include "Assets/AssetStreamer.h"
+#include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Main/FsQueue.h"
+
+using namespace Silent::Assets;
 
 namespace Silent::Game
 {
@@ -50,6 +55,9 @@ namespace Silent::Game
         e_GameState gameState;
         s32         unkGameStateVar;
 
+        const auto& assets   = g_App.GetAssets();
+        auto&       renderer = g_App.GetRenderer();
+
         switch (g_GameWork.gameStateStep_598[0])
         {
             case 0:
@@ -57,7 +65,7 @@ namespace Silent::Game
                 g_GameWork.background2dColor_58C.g = 0;
                 g_GameWork.background2dColor_58C.b = 0;
 
-                //Screen_Init(SCREEN_WIDTH, false);
+                Screen_Init(SCREEN_WIDTH, false);
                 g_SysWork.timer_20              = 0;
                 g_GameWork.gameStateStep_598[1] = 0;
                 g_GameWork.gameStateStep_598[2] = 0;
@@ -84,17 +92,22 @@ namespace Silent::Game
                 break;
 
             case 2:
-                //Fs_QueueStartReadTim(FILE_1ST_FONT16_TIM, FS_BUFFER_1, &g_Font16AtlasImg);
-                //Fs_QueueStartReadTim(FILE_1ST_KONAMI_TIM, FS_BUFFER_1, &g_KonamiLogoImg);
+                Fs_QueueStartReadTim(FILE_1ST_FONT16_TIM, FS_BUFFER_1, &g_Font16AtlasImg);
+                Fs_QueueStartReadTim(FILE_1ST_KONAMI_TIM, FS_BUFFER_1, &g_KonamiLogoImg);
 
-                //ScreenFade_Start(true, false, false);
+                ScreenFade_Start(true, false, false);
                 g_GameWork.gameStateStep_598[0]++;
                 break;
 
             case 3:
-                //if (ScreenFade_IsFinished())
+                if (ScreenFade_IsFinished())
                 {
+                    // @todo Avoid blocking.
                     Fs_QueueWaitForEmpty();
+                    //if (assets.IsBusy())
+                    //{
+                    //    break;
+                    //}
 
                     gameState = g_GameWork.gameState_594;
 
@@ -115,7 +128,14 @@ namespace Silent::Game
         }
 
         //func_80033548();
+
+        // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
+        auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
+                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                                0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+        renderer.SubmitSprite2d(sprite);
         //Gfx_BackgroundSpriteDraw(&g_MainImg0);
+
         //func_80089090(1);
     }
 }

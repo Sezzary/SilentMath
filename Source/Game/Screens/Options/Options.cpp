@@ -116,7 +116,7 @@ namespace Silent::Game
                 break;
 
             case OptionsMenuState_EnterScreenPos:
-                if (false)//(ScreenFade_IsFinished())
+                if (ScreenFade_IsFinished())
                 {
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_ScreenPos;
                     g_SysWork.timer_20              = 0;

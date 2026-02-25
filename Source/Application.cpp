@@ -152,7 +152,6 @@ namespace Silent
         {
             throw std::runtime_error(Fmt("Failed to create window: {}", SDL_GetError()));
         }
-
         SDL_SetWindowMinimumSize(_window, (int)RETRO_SCREEN_SPACE_RES.x, (int)RETRO_SCREEN_SPACE_RES.y);
         SDL_SetWindowAspectRatio(_window, WINDOW_ASPECT_RATIO_MIN, WINDOW_ASPECT_RATIO_MAX);
 

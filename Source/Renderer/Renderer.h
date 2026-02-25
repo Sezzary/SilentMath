@@ -232,7 +232,8 @@ namespace Silent::Renderer
          * @param scaleMode Screen space scale mode.
          * @param page Debug page in which the triangle will be visible.
          */
-        void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, ScaleMode scaleMode, Debug::Page page);
+        void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2,
+                                 const Color& color, ScaleMode scaleMode, Debug::Page page);
 
         /** @brief Submits a 3D triangle polygon with additive blending for drawing.
          * Used to construct more complex geometry.
@@ -243,7 +244,8 @@ namespace Silent::Renderer
          * @param color Triangle color.
          * @param page Debug page in which the triangle will be visible.
          */
-        void SubmitDebugTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2, const Color& color, Debug::Page page);
+        void SubmitDebugTriangle(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2,
+                                 const Color& color, Debug::Page page);
 
     protected:
         // ========
