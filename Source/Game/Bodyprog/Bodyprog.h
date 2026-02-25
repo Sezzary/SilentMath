@@ -2071,7 +2071,7 @@ namespace Silent::Game
 
     //extern POLY_G4 D_800A8EB0[];
 
-    extern s32 D_800A8F40;
+    extern s32 g_BlackBorderShade;
 
     extern s_FsImageDesc g_Font16AtlasImg;
     extern s_FsImageDesc g_KonamiLogoImg;

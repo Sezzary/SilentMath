@@ -37,7 +37,7 @@ namespace Silent::Game
 
     bool Fs_QueueDoThingWhenEmpty(void)
     {
-        // @toddo
+        // @todo
         //D_800C489C = true;
 
         bool result = false;

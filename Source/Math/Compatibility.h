@@ -144,6 +144,66 @@ namespace Silent::Math
         struct GsCOORDINATE2* super; /** Parent. */
         struct GsCOORDINATE2* sub;   /** Child. */
     };
+
+    /** @brief PsyQ rectangle. */
+    struct RECT
+    {
+        short x, y; /* Offset point on VRAM. */
+        short w, h; /* Width and height. */
+    };
+
+    /** @brief PsyQ Free-size tile. */
+    struct TILE
+    {
+        ulong tag;
+        uchar r0, g0, b0, code;
+        short x0, y0;
+        short w, h;
+    };
+
+    /** #brief PsyQ gouraud triangle. */
+    struct POLY_G3
+    {
+        ulong tag;
+        uchar r0, g0, b0, code;
+        short x0, y0;
+        uchar r1, g1, b1, pad1;
+        short x1, y1;
+        uchar r2, g2, b2, pad2;
+        short x2, y2;
+    };
+
+    /** #brief PsyQ gouraud quad. */
+    struct POLY_G4
+    {
+        ulong tag;
+        uchar r0, g0, b0, code;
+        short x0, y0;
+        uchar r1, g1, b1, pad1;
+        short x1, y1;
+        uchar r2, g2, b2, pad2;
+        short x2, y2;
+        uchar r3, g3, b3, pad3;
+        short x3, y3;
+    };
+
+    /** @brief PsyQ display area. */
+    struct DISPENV
+    {
+        RECT  disp;       /* Display area. */
+        RECT  screen;     /* Display start point. */
+        uchar isinter;    /* Rnterlace 0: off 1: on. */
+        uchar isrgb24;    /* RGB24 bit mode. */
+        uchar pad0, pad1; /* Reserved. */
+    };
+
+    /** @brief PsyQ drawing mode. */
+    struct DR_MODE
+    {
+        ulong tag;
+        ulong code[2];
+    };
+
 //#endif
 
     struct s_Line2d

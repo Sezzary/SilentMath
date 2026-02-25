@@ -170,15 +170,15 @@ namespace Silent::Game
      *
      * @return `true` if finished, `false` if still in progress.
      */
-    //#define ScreenFade_IsFinished() \
-    //    ((g_Screen_FadeStatus & 0x7) == ScreenFadeState_FadeOutComplete)
+    #define ScreenFade_IsFinished() \
+        ((g_Screen_FadeStatus & 0x7) == ScreenFadeState_FadeOutComplete)
 
     /** @brief Checks if the screen fade is is not in progress (idle step) without masking away the color bit.
      *
      * @return `true` if idle, `false` otherwise.
      */
-    //#define ScreenFade_IsNone() \
-    //    (g_Screen_FadeStatus == ScreenFadeState_None)
+    #define ScreenFade_IsNone() \
+        (g_Screen_FadeStatus == ScreenFadeState_None)
 
     /** @brief Checks if the screen fade is white.
      * See `g_Screen_FadeStatus` for bit layout.
@@ -197,18 +197,18 @@ namespace Silent::Game
      * @param fadeIn `true` for fade in, `false` for fade out.
      * @param isWhite `true` for white fade, `false` for black fade.
      */
-    //#define ScreenFade_Start(reset, fadeIn, isWhite) \
-    //    g_Screen_FadeStatus = (((((reset) == true) ? ScreenFadeState_FadeOutStart : ScreenFadeState_FadeOutSteps) + \
-    //                        (((fadeIn) == true) ? 4 : 0)) | \
-    //                        (((isWhite) == true) ? (1 << 3) : 0))
+    #define ScreenFade_Start(reset, fadeIn, isWhite) \
+        g_Screen_FadeStatus = (((((reset) == true) ? ScreenFadeState_FadeOutStart : ScreenFadeState_FadeOutSteps) + \
+                            (((fadeIn) == true) ? 4 : 0)) | \
+                            (((isWhite) == true) ? (1 << 3) : 0))
 
     /** @brief Resets the screen fade. */
-    //#define ScreenFade_Reset() \
-    //    g_Screen_FadeStatus = ScreenFadeState_Reset
+    #define ScreenFade_Reset() \
+        g_Screen_FadeStatus = ScreenFadeState_Reset
 
     /** @brief Resets the custom screen fade timestep back to zero, disregarding the color bit. */
-    //#define ScreenFade_ResetTimestep() \
-    //    g_Screen_FadeStatus = ScreenFadeState_ResetTimestep
+    #define ScreenFade_ResetTimestep() \
+        g_Screen_FadeStatus = ScreenFadeState_ResetTimestep
 
     #define MAP_CHUNK_CHECK_VARIABLE_DECL() \
         s32 __chunkIdx
@@ -239,7 +239,7 @@ namespace Silent::Game
 
     #define PLAYER_NEAR_POS(comp, base, tol)                                                                                                                             \
         (((g_SysWork.playerWork_4C.player_0.position_18.comp - Q12(base)) >= Q12(0.0f)) ? ((g_SysWork.playerWork_4C.player_0.position_18.comp - Q12(base)) < Q12(tol)) : \
-                                                                                        ((Q12(base) - g_SysWork.playerWork_4C.player_0.position_18.comp) < Q12(tol)))
+                                                                                          ((Q12(base) - g_SysWork.playerWork_4C.player_0.position_18.comp) < Q12(tol)))
 
     #define MIN_OFFSET(x, neg, pos) \
         ((((x) + (-neg)) <= ((x) + (pos))) ? ((x) - (neg)) : ((x) + (pos)))

@@ -323,7 +323,7 @@ namespace Silent::Math
      */
     constexpr q19_12 Q12_CLAMPED(float x)
     {
-        return CLAMP(Q12(x), Q12(0.0f), Q12(1.0f) - 1);
+        return CLAMP(Q12(x), Q12(0.0f), (Q12(1.0f) - 1));
     }
 
     /** @brief Converts a fixed-point value from Q27.4 to Q23.8.
@@ -442,9 +442,11 @@ namespace Silent::Math
      * @param analog Analog stick value (`float`).
      * @return Analog stick value in Q0.7 fixed-point, clamped integer range `[-128, 127]` (`q0_7`).
      */
-    #define FP_STICK(analog)                                                    \
-        (q0_7)(((analog) >= 0) ? CLAMP(Q8(analog) / 2, 0, (Q8(1.0f) / 2) - 1) : \
-                                -CLAMP(Q8(ABS(analog)) / 2, 0, Q8(1.0f) / 2))
+    constexpr q0_7 FP_STICK(float analog)
+    {
+        return ((analog) >= 0) ? CLAMP(Q8(analog) / 2, 0, (Q8(1.0f) / 2) - 1) :
+                                -CLAMP(Q8(ABS(analog)) / 2, 0, Q8(1.0f) / 2);
+    }
 
     /** @brief Converts a normalized floating-point color component in the range `[0.0f, 1.0f]` to Q0.8 fixed-point,
      * integer range `[0, 255]`.

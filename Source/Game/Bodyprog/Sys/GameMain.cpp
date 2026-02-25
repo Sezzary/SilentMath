@@ -22,7 +22,7 @@ namespace Silent::Game
 
     void (*g_GameStateUpdateFuncs[])(void) =
     {
-        nullptr,//GameState_Boot_Update,
+        GameState_Boot_Update,
         nullptr,//GameState_KonamiLogo_Update,
         nullptr,//GameState_KcetLogo_Update,
         nullptr,//GameState_MovieIntroFadeIn_Update,
