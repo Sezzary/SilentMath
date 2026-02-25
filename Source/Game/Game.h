@@ -901,19 +901,19 @@ namespace Silent::Game
         u8  leftY;
     } s_AnalogController;
 
-    typedef struct _ControllerData
+    struct s_ControllerData
     {
         s_AnalogController analogController_0;
         s32                pulseTicks_8;
-        e_ControllerFlags  btnsHeld_C;
-        e_ControllerFlags  btnsClicked_10;
-        e_ControllerFlags  btnsReleased_14;
-        e_ControllerFlags  btnsPulsed_18;
-        e_ControllerFlags  btnsPulsedGui_1C;
+        int                btnsHeld_C;       /** `e_ControllerFlags` */
+        int                btnsClicked_10;   /** `e_ControllerFlags` */
+        int                btnsReleased_14;  /** `e_ControllerFlags` */
+        int                btnsPulsed_18;    /** `e_ControllerFlags` */
+        int                btnsPulsedGui_1C; /** `e_ControllerFlags` */
         s_AnalogSticks     sticks_20;
         s_AnalogSticks     sticks_24;
         s32                field_28;
-    } s_ControllerData;
+    };
 
     /** @brief Controller key bindings for input actions. Contains bitfield of button presses assigned to each action.
      *
@@ -1629,7 +1629,7 @@ namespace Silent::Game
         q3_12 field_2;
     } s_SubCharacter_D4;
 
-    typedef struct _SubCharacter
+    struct s_SubCharacter
     {
         s_Model  model_0;          // In player: Manage the half lower part of Harry's body animations (legs and feet).
         VECTOR3  position_18;      /** Q19.12 */
@@ -1662,7 +1662,9 @@ namespace Silent::Game
         u8                field_E1_4 : 4; // Index for array of `s_func_8006CF18`.
         s_func_8006CF18*  field_E4;
 
-        union
+        s_SubCharacter() { memset(this, 0, sizeof(*this)); }
+
+        union _u
         {
             s_PropertiesDummy           dummy;
             s_PropertiesPlayer          player;
@@ -1684,8 +1686,10 @@ namespace Silent::Game
             s_PropertiesSplitHead       splitHead;
             s_PropertiesStalker         stalker;
             s_PropertiesTwinfeeler      twinfeeler;
+
+            _u() {}
         } properties_E4;
-    } s_SubCharacter;
+    };
 
     typedef struct _PlayerExtra
     {
@@ -1812,7 +1816,7 @@ namespace Silent::Game
         e_SysWorkProcessFlags processFlags_2298;
         s32             field_229C;    /** Dead code. It get assigned -1 when the player has been initalized and get 0 assigned when the player changes the area, beyond that, the code do not use this variable. */
         e_SysFlags      sysFlags_22A0; // Music related.
-        e_SysFlags2     flags_22A4;    // `e_SysFlags2` | `SysFlag2_6` passed as "use through door cam" flag in `vcSetFirstCamWork`. Also `e_SysFlags` or different?
+        int             flags_22A4;    // `e_SysFlags2` | `SysFlag2_6` passed as "use through door cam" flag in `vcSetFirstCamWork`. Also `e_SysFlags` or different?
         GsCOORDINATE2   coord_22A8;    // For particles only?
         GsCOORDINATE2   coord_22F8;    // Likely related to above.
         s8              field_2348   : 8;

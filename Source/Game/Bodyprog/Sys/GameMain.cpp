@@ -1,16 +1,15 @@
 #include "Framework.h"
 #include "Game/Bodyprog/Sys/GameMain.h"
 
-#include "Game/Game.h"
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game
 {
-    s32 g_Demo_FrameCount = 0;
+    s32 g_Demo_FrameCount     = 0;
     s32 g_UnknownFrameCounter = 0;
-    s32 g_PrevVBlanks = 0;
+    s32 g_PrevVBlanks         = 0;
 
     // Audio task for `SD_Call` meant to load some VAB audio.
     u16 D_800A9774[] =

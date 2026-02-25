@@ -1,8 +1,9 @@
 #include "Framework.h"
 #include "Game/Screens/Options/Options.h"
 
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Application.h"
-#include "Game/Dummy.h"
 #include "Game/Screens/Options/MenuGraphics.h"
 #include "Input/Input.h"
 
@@ -49,9 +50,9 @@ namespace Silent::Game
                     //VSync(SyncMode_Wait8);
                 }
 
-                g_GameWork.background2dColor_R_58C = 0;
-                g_GameWork.background2dColor_G_58D = 0;
-                g_GameWork.background2dColor_B_58E = 0;
+                g_GameWork.background2dColor_58C.r = 0;
+                g_GameWork.background2dColor_58C.g = 0;
+                g_GameWork.background2dColor_58C.b = 0;
 
                 //ScreenFade_Start(false, true, false);
                 //g_IntervalVBlanks   = 1;

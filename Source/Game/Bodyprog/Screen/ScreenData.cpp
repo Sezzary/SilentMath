@@ -58,22 +58,25 @@ namespace Silent::Game
         },
     };
 
-    /*GsOT g_OrderingTable0[2] = {
+    /*GsOT g_OrderingTable0[2] =
+    {
         { 11, &g_OtTags1[0][1], 0, 0, 0 },
         { 11, &g_OtTags1[1][1], 0, 0, 0 }
     };
 
-    GsOT g_OrderingTable1[2] = {
+    GsOT g_OrderingTable1[2] =
+    {
         { 9, (GsOT_TAG*)FS_BUFFER_1, 0, 0, 0 },
         { 9, (GsOT_TAG*)0x801E2E00, 0, 0, 0 }
     };
 
-    GsOT g_OrderingTable2[2] = {
+    GsOT g_OrderingTable2[2] =
+    {
         { 4, &g_OtTags0[0][0], 0, 0, 0 },
         { 4, &g_OtTags0[1][0], 0, 0, 0 }
     };*/
 
-    q19_12 g_DeltaTimeRaw      = TIMESTEP_60_FPS;
+    q19_12 g_DeltaTimeRaw    = TIMESTEP_60_FPS;
     s32    g_IntervalVBlanks = 1;
 
     s_FsImageDesc g_Font16AtlasImg             = { { 0,   16  }, 0,    240, 304, 511 };

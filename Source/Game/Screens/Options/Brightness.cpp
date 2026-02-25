@@ -1,7 +1,8 @@
 #include "Framework.h"
 #include "Game/Screens/Options/Brightness.h"
 
-#include "Game/Dummy.h"
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
 
@@ -21,14 +22,14 @@ namespace Silent::Game
 
             case BrightnessMenuState_1:
                 // Set fade.
-                //ScreenFade_Start(true, true, false);
+                ScreenFade_Start(true, true, false);
                 g_GameWork.gameStateStep_598[1] = BrightnessMenuState_2;
                 g_GameWork.gameStateStep_598[2] = 0;
                 break;
 
             case BrightnessMenuState_2:
                 // Set config.
-                if (g_Controller0.btnsPulsed_18 & ControllerFlag_LStickLeft)
+                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickLeft)
                 {
                     if (g_GameWork.config_0.optBrightness_22 != 0)
                     {
@@ -36,7 +37,7 @@ namespace Silent::Game
                         //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
-                if (g_Controller0.btnsPulsed_18 & ControllerFlag_LStickRight)
+                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickRight)
                 {
                     if (g_GameWork.config_0.optBrightness_22 < 7)
                     {
@@ -46,10 +47,10 @@ namespace Silent::Game
                 }
 
                 // Fade screen and leave menu.
-                if (g_Controller0.btnsClicked_10 & (g_GameWork.config_0.controllerConfig_0.enter_0 |
+                if (g_Controller0->btnsClicked_10 & (g_GameWork.config_0.controllerConfig_0.enter_0 |
                                                     g_GameWork.config_0.controllerConfig_0.cancel_2))
                 {
-                    if (g_Controller0.btnsClicked_10 & g_GameWork.config_0.controllerConfig_0.enter_0)
+                    if (g_Controller0->btnsClicked_10 & g_GameWork.config_0.controllerConfig_0.enter_0)
                     {
                         //Sd_PlaySfx(Sfx_Confirm, 0, Q8_CLAMPED(0.25f));
                     }
@@ -69,14 +70,14 @@ namespace Silent::Game
                 // TODO: Odd check for `ScreenFade_IsFinished()`.
                 if (g_Screen_FadeStatus & (1 << 2) && !(g_Screen_FadeStatus & (1 << 1)) && g_Screen_FadeStatus & (1 << 0))
                 {
-                    //ScreenFade_Start(true, true, false);
+                    ScreenFade_Start(true, true, false);
                     g_GameWork.gameStateStep_598[0]    = OptionsMenuState_LeaveBrightness;
                     g_SysWork.timer_20                 = 0;
                     g_GameWork.gameStateStep_598[1]    = 0;
                     g_GameWork.gameStateStep_598[2]    = 0;
-                    g_GameWork.background2dColor_R_58C = 0;
-                    g_GameWork.background2dColor_G_58D = 0;
-                    g_GameWork.background2dColor_B_58E = 0;
+                    g_GameWork.background2dColor_58C.r = 0;
+                    g_GameWork.background2dColor_58C.g = 0;
+                    g_GameWork.background2dColor_58C.b = 0;
                 }
                 break;
         }
@@ -122,11 +123,11 @@ namespace Silent::Game
 
         // Determine UI movement direction.
         int dir      = 0;
-        if (g_Controller0.btnsHeld_C & ControllerFlag_LStickLeft)
+        if (g_Controller0->btnsHeld_C & ControllerFlag_LStickLeft)
         {
             dir = 1;
         }
-        else if (g_Controller0.btnsHeld_C & ControllerFlag_LStickRight)
+        else if (g_Controller0->btnsHeld_C & ControllerFlag_LStickRight)
         {
             dir = 2;
         }

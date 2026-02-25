@@ -1,7 +1,7 @@
 #include "Framework.h"
-#include "Game/Sys/Joy.h"
+#include "Game/Bodyprog/Sys/Joy.h"
 
-#include "Game/Game.h"
+#include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
@@ -12,8 +12,6 @@ namespace Silent::Game
     void Joy_Init(void) // 0x8003441C
     {
         // @stub
-        PadInitDirect(&g_GameWork.rawController_5B4, g_Controller1);
-        PadStartCom();
     }
 
     void Joy_ReadP1(void) // 0x80034450
@@ -36,13 +34,14 @@ namespace Silent::Game
         constexpr int PULSE_INITIAL_INTERVAL_TICKS = TICKS_PER_SECOND / 2;
         constexpr int PULSE_INTERVAL_TICKS         = PULSE_INITIAL_INTERVAL_TICKS / 10;
 
-        s_ControllerData* cont;
+        s32               i;
         s32               prevBtnsHeld;
         s32               pulseTicks;
         s32               btnsPulsed;
+        s_ControllerData* cont;
 
         // Update controller button flags.
-        for (int i = CONTROLLER_COUNT, cont = g_Controller0; i > 0; i--, cont++)
+        for (i = CONTROLLER_COUNT, cont = g_Controller0; i > 0; i--, cont++)
         {
             prevBtnsHeld = cont->btnsHeld_C;
 
@@ -57,7 +56,7 @@ namespace Silent::Game
             }
 
             // TODO: Demagic hex values.
-            ControllerData_AnalogToDigital(cont, (*(u16*)&cont->analogController_0.status & 0x5300) == 0x5300);
+            //ControllerData_AnalogToDigital(cont, (*(u16*)&cont->analogController_0.status & 0x5300) == 0x5300);
 
             // Directional held flag sanitation? TODO: Find out what it's doing.
             cont->btnsHeld_C = cont->btnsHeld_C | (((cont->btnsHeld_C << 20) | (cont->btnsHeld_C << 8)) &

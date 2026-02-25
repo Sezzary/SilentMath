@@ -1,31 +1,38 @@
 #include "Framework.h"
 #include "Game/Entry.h"
 
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
+#include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Sys/GameMain.h"
+#include "Game/Bodyprog/Sys/Joy.h"
 #include "Services/Clock.h"
 
-namespace Silent
+namespace Silent::Game
 {
     static void MainLoop()
     {
+        constexpr q19_12 DELTA_TIME_30_FPS     = Q12(1.0f / (float)(TICKS_PER_SECOND / 2));
+        constexpr q19_12 GRAVITY_SPEED_PER_SEC = Q12(9.8f);
+
         s32 vBlanks;
         s32 interval;
 
-        static bool isInitComplete = false;
-
         // Run game loop.
+        static bool isInitComplete = false;
         if (isInitComplete)
         {
             const auto& clock    = g_App.GetClock();
             auto&       renderer = g_App.GetRenderer();
 
-            //g_MainLoop_FrameCount++;
+            g_TickCount++;
 
             // Update input.
-            /*Joy_ReadP1();
-            Demo_ControllerDataUpdate();
-            Joy_ControllerDataUpdate();*/
+            Joy_ReadP1();
+            //Demo_ControllerDataUpdate();
+            Joy_ControllerDataUpdate();
 
             /*if (MainLoop_ShouldWarmReset() == 2)
             {
@@ -33,9 +40,9 @@ namespace Silent
                 continue;
             }*/
 
-            //g_ActiveBufferIdx = GsGetActiveBuff();
+            /*g_ActiveBufferIdx = GsGetActiveBuff();
 
-            /*if (g_GameWork.gameState_594 >= GameState_MainLoadScreen && g_GameWork.gameState_594 < GameState_MapEvent)
+            if (g_GameWork.gameState_594 >= GameState_MainLoadScreen && g_GameWork.gameState_594 < GameState_MapEvent)
             {
                 GsOUT_PACKET_P = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx << 17));
             }
@@ -46,15 +53,18 @@ namespace Silent
             else
             {
                 GsOUT_PACKET_P = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx << 15));
-            }*/
+            }
 
-            /*GsClearOt(0, 0, &g_ObjectTable0[g_ActiveBufferIdx]);
+            GsClearOt(0, 0, &g_ObjectTable0[g_ActiveBufferIdx]);
             GsClearOt(0, 0, &g_ObjectTable1[g_ActiveBufferIdx]);*/
 
-            //g_SysWork.field_22A0 = 0;
+            g_SysWork.sysFlags_22A0 = SysFlag_None;
 
             // Call update function for current GameState.
-            //g_GameStateUpdateFuncs[g_GameWork.gameState_594]();
+            if (g_GameStateUpdateFuncs[g_GameWork.gameState_594])
+            {
+                g_GameStateUpdateFuncs[g_GameWork.gameState_594]();
+            }
 
             /*Demo_Update();
             Demo_GameRandSeedSet();*/
@@ -65,21 +75,20 @@ namespace Silent
                 continue;
             }*/
 
-            /*Screen_FadeUpdate();
-            func_8002EB88();
-            func_800485D8();*/
+            Screen_FadeUpdate();
+            //Sd_TaskPoolExecute();
 
-            /*if (!func_80045B28())
+            /*if (!Sd_AudioStreamingCheck())
             {
                 Fs_QueueUpdate();
             }*/
 
             /*func_80089128();
-            func_8008D78C(); // Camera update?
-            DrawSync(0);*/
+            func_8008D78C(); // Camera update?*/
+            //DrawSync(0);
 
             // Handle V sync.
-            /*if (g_SysWork.flags_22A4 & (1 << 1))
+            /*if (g_SysWork.flags_22A4 & SysFlag2_1)
             {
                 vBlanks   = VSync(-1);
                 g_VBlanks = vBlanks - g_PrevVBlanks;
@@ -145,31 +154,19 @@ namespace Silent
             }*/
 
             // Update delta time.
-            /*g_DeltaTime =
-            g_DeltaTimeRaw = FP_FLOAT_TO((1.0f / (float)TICKS_PER_SECOND) * clock.GetTicks(), Q12_SHIFT);*/
-
-            /*g_DeltaTime = FP_MULTIPLY(vCount, H_BLANKS_FP_TO_SEC_SCALE, Q12_SHIFT);
-            g_DeltaTimeRaw = FP_MULTIPLY(vCountCopy, H_BLANKS_FP_TO_SEC_SCALE, Q12_SHIFT);
-            g_DeltaTime2 = FP_MULTIPLY(vCount, H_BLANKS_UNKNOWN_SCALE, Q12_SHIFT); // @todo Unknown time scale.
-            GsClearVcount();*/
+            g_DeltaTime    =
+            g_DeltaTimeRaw = DELTA_TIME_30_FPS;
+            g_GravitySpeed = Q12_MULT(DELTA_TIME_30_FPS, GRAVITY_SPEED_PER_SEC);
             
             // Set clear color.
-            //renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor_R_58C,
-            //                                       g_GameWork.background2dColor_G_58D,
-            //                                       g_GameWork.background2dColor_B_58E));
-            // Then draw everything.
+            renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor_58C.r,
+                                                   g_GameWork.background2dColor_58C.g,
+                                                   g_GameWork.background2dColor_58C.b));
         }
         // Initialize engine.
         else
         {
-            /*GsInitVcount();
-            Savegame_CardCleanInit();
-            func_8002E7BC();
-            func_8002E85C();
-            //Joy_Init();
-            VSyncCallback(&Gfx_VSyncCallback);
-            InitGeom();
-            func_8004BB10(); // Initializes something for graphics.
+            /*func_8004BB10(); // Initializes something for graphics.
             func_800890B8();
             sd_init();*/
 
@@ -215,8 +212,8 @@ namespace Silent
                 renderer.SubmitSprite2d(sprite);
 
                 Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(fade, Q8_SHIFT), 0, 1);
-                if (fade < 255) // temp check
-                    fade += 1;//FADE_STEP;
+                //if (fade < 255) // temp check
+                    fade += FADE_STEP;
             }
         }
     }

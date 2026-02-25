@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Silent
+namespace Silent::Game
 {
     void Entry();
 }

@@ -1,7 +1,8 @@
 #include "Framework.h"
 #include "Game/Screens/Options/Controller.h"
 
-#include "Game/Dummy.h"
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Game/Screens/Options/Options.h"
 
 namespace Silent::Game

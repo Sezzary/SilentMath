@@ -21,6 +21,7 @@
 
 using namespace Silent::Assets;
 using namespace Silent::Audio;
+using namespace Silent::Game;
 using namespace Silent::Input;
 using namespace Silent::Renderer;
 using namespace Silent::Savegame;

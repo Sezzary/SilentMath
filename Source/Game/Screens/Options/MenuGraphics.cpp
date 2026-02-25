@@ -1,10 +1,11 @@
 #include "Framework.h"
 #include "Game/Screens/Options/MenuGraphics.h"
 
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
-#include "Game/Dummy.h"
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
 #include "Utils/Translator.h"

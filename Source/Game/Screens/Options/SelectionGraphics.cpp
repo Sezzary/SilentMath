@@ -1,11 +1,11 @@
 #include "Framework.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
 
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Application.h"
 #include "Game/Screens/Options/Options.h"
 #include "Renderer/Renderer.h"
-
-#include "Game/Dummy.h"
 
 using namespace Silent::Renderer;
 

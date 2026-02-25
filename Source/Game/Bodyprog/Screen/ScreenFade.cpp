@@ -1,77 +1,81 @@
 #include "Framework.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 
-#include "Game/Game.h"
-
 #include "Game/Bodyprog/Bodyprog.h"
+
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game
 {
+    s32    g_Screen_FadeStatus; // @todo Temporary placement. Not migrated yet, don't know where to put it.
     q19_12 g_PrevScreenFadeProgress;
     q19_12 g_ScreenFadeTimestep;
 
-    DR_MODE D_800A8E5C[] = {
+    DR_MODE D_800A8E5C[] =
+    {
         { 0x3000000, { 0xE1000240, 0x0 } },
         { 0x3000000, { 0xE1000240, 0x0 } }
     };
 
-    TILE D_800A8E74[] = {
+    TILE D_800A8E74[] =
+    {
         { 0x3000000, 255, 0, 0, 0x62, -320, -240, 640, 480 },
         { 0x3000000, 255, 0, 0, 0x62, -320, -240, 640, 480 }
     };
 
     q19_12 g_ScreenFadeProgress = Q12(0.0f);
 
-    DR_MODE D_800A8E98[] = {
+    DR_MODE D_800A8E98[] =
+    {
         { 0x3000000, { 0xE1000240, 0x0 } },
         { 0x3000000, { 0xE1000240, 0x0 } }
     };
 
     // TODO: Make a macro?
-    POLY_G4 D_800A8EB0[] = {
+    POLY_G4 D_800A8EB0[] =
+    {
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
-            0xFF60, 0xFF90,
+            -160, -112,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0xFF90,
+            0xA0, -112,
             0x0, 0x0, 0x0, 0x0,
-            0xFF60, 0xFFA0,
+            -160, -96,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0xFFA0
+            0xA0, -96
         },
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
-            0xFF60, 0xFF90,
+            -160, -112,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0xFF90,
+            0xA0, -112,
             0x0, 0x0, 0x0, 0x0,
-            0xFF60, 0xFFA0,
+            -160, -96,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0xFFA0
+            0xA0, -96
         },
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
-            0xFF60, 0x70,
+            -160, 0x70,
             0x0, 0x0, 0x0, 0x0,
             0xA0, 0x70,
             0x0, 0x0, 0x0, 0x0,
-            0xFF60, 0x60,
+            -160, 0x60,
             0x0, 0x0, 0x0, 0x0,
             0xA0, 0x60
         },
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
-            0xFF60, 0x70,
+            -160, 0x70,
             0x0, 0x0, 0x0, 0x0,
             0xA0, 0x70,
             0x0, 0x0, 0x0, 0x0,
-            0xFF60, 0x60,
+            -160, 0x60,
             0x0, 0x0, 0x0, 0x0,
             0xA0, 0x60
         }
@@ -209,9 +213,9 @@ namespace Silent::Game
         color0 = color >> 4;
         color1 = color >> 5;
 
-        if (color == 4095)
+        if (color == Q12_CLAMPED(1.0f))
         {
-            color1 = 255;
+            color1 = Q8_CLAMPED(1.0f);
         }
 
         for (i = 0; i < 2; i++)
@@ -234,7 +238,7 @@ namespace Silent::Game
     void Screen_CutsceneCameraStateUpdate(void) // 0x80032904
     {
         //GsOT*    ot;
-        //POLY_G4* poly;
+        POLY_G4* poly;
         //DR_MODE* drMode;
 
         //drMode = &D_800A8E98[g_ActiveBufferIdx];

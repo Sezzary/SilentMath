@@ -2,19 +2,11 @@
 #include "Framework.h"
 #include "Game/Main/FsQueue.h"
 
-#include <memory.h>
-//#include <psyq/libapi.h>
-//#include <psyq/libcd.h>
-//#include <psyq/libetc.h>
-//#include <psyq/libgte.h>
-//#include <psyq/libgpu.h>
-//#include <psyq/string.h>
-//#include <psyq/sys/file.h>
+#include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
 #include "Game/Main/FsMem.h"
-//#include "bodyprog/bodyprog.h"
 //#include "bodyprog/demo.h"
 
 using namespace Silent::Assets;
@@ -107,7 +99,7 @@ namespace Silent::Game
         s32            fileIdx;
         s_FsQueueExtra extra;
 
-        //fileIdx             = CHARA_FILE_INFOS[charaId].animFileIdx; // @todo Port over `CHARA_FILE_INFOS`.
+        fileIdx             = CHARA_FILE_INFOS[charaId].animFileIdx; // @todo Port over `CHARA_FILE_INFOS`.
         extra.anm.charaId_4 = charaId;
         extra.anm.field_0   = idx;
         extra.anm.coords_8  = coords;
@@ -116,7 +108,7 @@ namespace Silent::Game
 
     s32 Fs_QueueEnqueue(e_FsFile fileIdx, u8 op, u8 postLoad, u8 alloc, void* data, u32 unused0, s_FsQueueExtra* extra)
     {
-        // @stub Not used anymore.
+        // @stub
         return 0;
     }
 
@@ -128,7 +120,7 @@ namespace Silent::Game
     void Fs_QueueReset(void)
     {
         // @stub
-        // @todo Cleared queue in OG, should it be ignored here?
+        // @todo It cleared the queue in OG, should that translate to clearing all loaded assets?
     }
 
     void Fs_QueueUpdate(void)

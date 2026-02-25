@@ -2,8 +2,6 @@
 
 namespace Silent::Game
 {
-    #define DEFAULT_MAP_MESSAGE_LENGTH     99
-
     /** @brief String color IDs for strings displayed in screen space.
      * Used as indices into `STRING_COLORS`.
      */
