@@ -13,13 +13,17 @@ struct Input
 cbuffer PerFrame : register(b0, space3)
 {
     float FadeAlpha;
+    uint  IsWhite;
 };
 
 float4 main(Input input) : SV_Target
 {
-    float4 texColor = Texture.Sample(Sampler, input.TexCoord);
-    float  luma     = 1.0f - dot(texColor.rgb, Math::LUMA_BT601);
+    float4 texColor     = Texture.Sample(Sampler, input.TexCoord);
+    float3 workingColor = IsWhite ? texColor.rgb : (1.0f - texColor.rgb);
 
-    float4 color = texColor * Math::Remap(1.0f - FadeAlpha, luma, 1.0f, 0.0f, 1.0f);
-    return color;
+    float  luma       = 1.0f - dot(workingColor, Math::LUMA_BT601);
+    float3 fadedColor = workingColor * Math::Remap(1.0f - FadeAlpha, luma, 1.0f, 0.0f, 1.0f);
+
+    float3 finalColor = IsWhite ? fadedColor : (1.0f - fadedColor);
+    return float4(finalColor, 1.0f);
 }

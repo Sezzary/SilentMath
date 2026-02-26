@@ -6,5 +6,6 @@ namespace Silent::Renderer
     struct alignas(16) UniformLumaFade
     {
         float FadeAlpha = 0.0f;
+        uint  IsWhite   = false;
     };
 }

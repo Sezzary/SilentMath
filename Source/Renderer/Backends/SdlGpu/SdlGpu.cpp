@@ -570,7 +570,7 @@ namespace Silent::Renderer::SdlGpu
         // Luma-based fade.
         {
             _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
-            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha }, UniformSlot::PerFrame);
+            PushFragmentUniform(UniformLumaFade{ .FadeAlpha = Debug::g_Work.BlendAlpha, .IsWhite = false }, UniformSlot::PerFrame);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
