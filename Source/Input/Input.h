@@ -65,10 +65,14 @@ namespace Silent::Input
         std::vector<float> Events         = {}; /** Index = `EventId`. */
         Vector2            CursorPosition = {};
 
-        bool IsUsingGamepad     = false;
+        bool IsUsingGamepad = false;
+        bool IsUsingMouse   = false;
+
         bool HasKeyboardInput   = false;
         bool HasMouseInput      = false;
         bool HasGamepadInput    = false;
+        bool HasRawActionInput  = false;
+        bool HasUserActionInput = false;
     };
 
     /** @brief Input manager. */
@@ -184,12 +188,37 @@ namespace Silent::Input
          */
         bool IsGamepadConnected() const;
 
-        /** @brief Checks if a gamepad is being currently being used. The condition will be `true` if one of the inputs
+        /** @brief Checks if a gamepad is being currently being used. The condition will be `true` if any of the inputs
          * registered for the current tick came from a gamepad.
          *
          * @return `true` if a gamepad is being used, `false` otherwise.
          */
         bool IsUsingGamepad() const;
+
+        /** @brief Checks if a mouse is  being used. The condition will be `true` if no keyboard or gamepad inputs have
+         * been registered since the last tick a mouse input was registered.
+         *
+         * @return `true` if a mouse is being used, `false` otherwise.
+         */
+        bool IsUsingMouse() const;
+
+        /** @brief Checks if any device input has been registered on the current tick.
+         *
+         * @return `true` if any device input has been registered, `false` otherwise.
+         */
+        bool HasDeviceInput() const;
+
+        /** @brief Checks if any raw input action has been registered on the current tick.
+         *
+         * @return `true` if any raw input action has been registered, `false` otherwise.
+         */
+        bool HasRawActionInput() const;
+
+        /** @brief Checks if any user-bound input action has been registered on the current tick.
+         *
+         * @return `true` if any user-bound input action has been registered, `false` otherwise.
+         */
+        bool HasUserActionInput() const;
         
         // ==========
         // Utilities

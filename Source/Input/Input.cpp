@@ -83,6 +83,28 @@ namespace Silent::Input
         return _deviceStates.IsUsingGamepad;
     }
 
+    bool InputManager::IsUsingMouse() const
+    {
+        return _deviceStates.IsUsingMouse;
+    }
+
+    bool InputManager::HasDeviceInput() const
+    {
+        return _deviceStates.HasKeyboardInput ||
+               _deviceStates.HasMouseInput ||
+               _deviceStates.HasGamepadInput;
+    }
+
+    bool InputManager::HasRawActionInput() const
+    {
+        return _deviceStates.HasRawActionInput;
+    }
+
+    bool InputManager::HasUserActionInput() const
+    {
+        return _deviceStates.HasUserActionInput;
+    }
+
     void InputManager::Initialize()
     {
         const auto& options = g_App.GetOptions();
@@ -117,6 +139,13 @@ namespace Silent::Input
     {
         auto& executor = g_App.GetExecutor();
 
+        // Clear data.
+        _deviceStates.HasKeyboardInput   =
+        _deviceStates.HasMouseInput      =
+        _deviceStates.HasGamepadInput    =
+        _deviceStates.HasRawActionInput  =
+        _deviceStates.HasUserActionInput = false;
+
         // Capture event states asynchronously.
         auto tasks = ParallelTasks
         {
@@ -126,7 +155,6 @@ namespace Silent::Input
         };
         executor.AddTasks(tasks).wait();
 
-        // @todo Should also differentiate mouse to show/hide cursor.
         // Update "using gamepad" state.
         if (_deviceStates.HasKeyboardInput || _deviceStates.HasMouseInput)
         {
@@ -137,16 +165,21 @@ namespace Silent::Input
             _deviceStates.IsUsingGamepad = true;
         }
 
+        // Update "using mouse" state.
+        if (_deviceStates.HasKeyboardInput || _deviceStates.HasGamepadInput)
+        {
+            _deviceStates.IsUsingMouse = false;
+        }
+        else if (_deviceStates.HasMouseInput)
+        {
+            _deviceStates.IsUsingMouse = true;
+        }
+
         // Update components.
         UpdateActions();
         UpdateAnalogAxes();
         UpdateRumble();
         HandleHotkeyActions();
-
-        // Clear data.
-        _deviceStates.HasKeyboardInput = false;
-        _deviceStates.HasMouseInput    = false;
-        _deviceStates.HasGamepadInput  = false;
     }
 
     void InputManager::ConnectGamepad(int deviceId)
@@ -307,6 +340,10 @@ namespace Silent::Input
 
                     // Use max bound event state.
                     action.Update(state);
+                    if (state != 0.0f)
+                    {
+                        _deviceStates.HasUserActionInput;
+                    }
                 }
             }
         };
@@ -329,6 +366,10 @@ namespace Silent::Input
 
                     // Use max bound event state.
                     action.Update(state);
+                    if (state != 0.0f)
+                    {
+                        _deviceStates.HasRawActionInput;
+                    }
                 }
             }
         };
