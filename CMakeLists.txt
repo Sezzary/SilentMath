@@ -53,7 +53,9 @@ execute_process(
 add_definitions(-DGIT_COMMIT="${GIT_COMMIT}")
 
 # Add executable.
-file(GLOB_RECURSE SOURCES "Source/*.cpp")
+file(GLOB_RECURSE SOURCES
+    CONFIGURE_DEPENDS "Source/*.cpp"
+)
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${CMAKE_PROJECT_NAME}"

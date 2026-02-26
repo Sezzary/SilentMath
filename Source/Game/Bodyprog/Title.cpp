@@ -494,10 +494,10 @@ namespace Silent::Game
             func_8003BCF4();
         }
 
-        // Submit fullscreen sprite `TIM/TITLE_E.TIM.
+        // Submit fullscreen sprite `TIM/TITLE_E.TIM`.
         auto sprite = Sprite2d::CreateSprite2d("TIM/TITLE_E.TIM", Vector2::Zero, Vector2::One,
-                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
-                                                0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                               100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         //Gfx_BackgroundSpriteDraw(&g_TitleImg);
 
@@ -631,12 +631,14 @@ namespace Silent::Game
         u8* ptr1;
         s8* ptr2;
 
-        static s32 RAND = 0;
+        static q19_12 rand = 0;
+
+        return; // @todo6565
 
         ptr   = D_800BCDE0;
-        //ptr1  = ptr + 441;
-        RAND += Rng_GenerateInt(4, 11u);
-        val   = Q12_MULT(Math_Sin(RAND), 10) - 122;
+        ptr1  = (u8*)ptr + 441;
+        rand += Rng_GenerateInt(4, 11u);
+        val   = Q12_MULT(Math_Sin(rand), 10) - 122;
         ptr2  = ptr + 461;
 
         for (i = 20; i >= 0; i--)
@@ -664,11 +666,13 @@ namespace Silent::Game
         s32 val;
         u8* ptr;
 
+        return; // @todo segfault
+
         Gfx_MainMenu_FogRandomize();
 
         for (i = 0; i < MAIN_MENU_FOG_COUNT; i++)
         {
-            //ptr = &D_800BCDE0[i * MAIN_MENU_FOG_COUNT];
+            ptr = (u8*)&D_800BCDE0[i * MAIN_MENU_FOG_COUNT];
 
             for (j = 0; j < MAIN_MENU_FOG_COUNT; j++)
             {

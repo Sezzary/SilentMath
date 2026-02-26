@@ -3,7 +3,7 @@
 #include "Game/Game.h"
 
 #include "Game/Bodyprog/SoundEffects.h"
-#include "Game/Bodyprog/MapMarkingFlags.h"
+#include "Game/Bodyprog/EventFlags.h"
 #include "Game/Bodyprog/View/VwSystem.h"
 #include "Game/Main/FsQueue.h"
 

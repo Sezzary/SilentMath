@@ -38,21 +38,21 @@ namespace Silent::Game
         GameState_Boot_Update,
         GameState_KonamiLogo_Update,
         GameState_KcetLogo_Update,
-        nullptr,//GameState_MovieIntroFadeIn_Update,
+        GameState_MovieIntroFadeIn_Update,
         nullptr,//GameState_AutoLoadSavegame_Update,
-        nullptr,//GameState_MovieIntroAlternate_Update,
-        nullptr,//GameState_MovieIntro_Update,
+        GameState_MovieIntroAlternate_Update,
+        GameState_MovieIntro_Update,
         GameState_MainMenu_Update,
         nullptr,//GameState_LoadSavegameScreen_Update,
-        nullptr,//GameState_MovieOpening_Update,
+        GameState_MovieOpening_Update,
         nullptr,//GameState_LoadScreen_Update,
         nullptr,//GameState_InGame_Update,
         nullptr,//GameState_MapEvent_Update,
-        nullptr,//GameState_ExitMovie_Update,
+        GameState_ExitMovie_Update,
         nullptr,//GameState_ItemScreens_Update,
         nullptr,//GameState_MapScreen_Update,
         nullptr,//GameState_LoadSavegameScreen_Update,
-        nullptr,//GameState_DebugMoviePlayer_Update,
+        GameState_DebugMoviePlayer_Update,
         nullptr,//GameState_Options_Update,
         nullptr,//GameState_LoadStatusScreen_Update,
         nullptr,//GameState_LoadMapScreen_Update,
@@ -141,7 +141,7 @@ namespace Silent::Game
         // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
         auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
-                                                0, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(g_ScreenFadeProgress, Q8_SHIFT), 0, 1);
         //Gfx_BackgroundSpriteDraw(&g_MainImg0);
