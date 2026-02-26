@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Psyz.h"
+#include "Psx.h"
 
 #include "Game/Maps/Characters/Harry.h"
 

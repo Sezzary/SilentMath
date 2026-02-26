@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Psyz.h"
+#include "Psx.h"
 #include "Game/Bodyprog/View/VwMain.h"
 
 #include "Game/Bodyprog/View/VwSystem.h"

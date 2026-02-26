@@ -46,8 +46,6 @@ namespace Silent
     using u32 = uint32_t;
     using u64 = uint64_t;
 
-    using PACKET = uchar;
-
     constexpr    int  NO_VALUE     = -1;
     static const auto EMPTY_STRING = std::string();
 }

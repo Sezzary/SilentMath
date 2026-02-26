@@ -1997,7 +1997,7 @@ namespace Silent::Game
     typedef struct
     {
         s_func_8005E89C field_0;
-        //PACKET*         field_12C;
+        PACKET*         field_12C;
         CVECTOR         field_130;
         CVECTOR         field_134;
         SVECTOR         field_138;
@@ -2419,7 +2419,7 @@ namespace Silent::Game
 
     extern s32 D_800AFDEC;
 
-    //extern PACKET D_800BFBF0[2][0xA10];
+    extern PACKET D_800BFBF0[2][0xA10];
 
     extern u8 g_Items_GunsMaxLoadAmmo[36]; // Max loaded ammo that a weapon can hold. 0x800AD4A0
 
