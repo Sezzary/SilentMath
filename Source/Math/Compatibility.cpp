@@ -9,7 +9,7 @@
 
 namespace Silent::Math
 {
-//#if 0
+#if 0
     constexpr float Q4_SCALE  = 1.0f / (float)FP_TO(1, Q4_SHIFT);
     constexpr float Q6_SCALE  = 1.0f / (float)FP_TO(1, Q6_SHIFT);
     constexpr float Q8_SCALE  = 1.0f / (float)FP_TO(1, Q8_SHIFT);
@@ -56,10 +56,10 @@ namespace Silent::Math
 
         return mat;
     }
+#endif
 
     Vector3 VECTOR3::ToVector3(float qScale) const
     {
-        return Vector3((float)x, (float)y, (float)z) * qScale;
+        return Vector3((float)vx, (float)vy, (float)vz) * qScale;
     }
-//#endif
 }

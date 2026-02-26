@@ -1,6 +1,5 @@
 #include "Framework.h"
 #include "Game/Bodyprog/Sys/GameMain.h"
-
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"

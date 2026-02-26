@@ -2,7 +2,7 @@
 
 namespace Silent::Scripting
 {
-    class LuaManager
+    /*class LuaManager
     {
     private:
         // =======
@@ -33,7 +33,7 @@ namespace Silent::Scripting
 
         template <typename T>
         void CreateReadOnlyTable(sol::table parent, const std::string& tableName, const T& cont);
-    };
+    };*/
 
     /*template <typename T>
     void LuaManager::CreateReadOnlyTable(sol::table parent, const std::string& tableName, const T& cont)

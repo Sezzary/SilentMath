@@ -14,11 +14,14 @@ set(CMAKE_CXX_STANDARD 23)
 # Set compiler options.
 if(MSVC)
     add_compile_options(/std:c++20) # Enable modules.
+    add_compile_options(/wd4244)    # Suppress narrowing/conversion. Required for C struct compat.
     add_compile_options(/wd4018)    # Suppress sign comparison warnings.
     add_compile_options(/wd4244)    # Suppress type conversion warnings.
     add_compile_options(/wd4267)    # Suppress type conversion warnings.
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     add_compile_options(-Mmodules)            # Enable modules.
+    add_compile_options(-Wno-narrowing)       # Silence narrowing entirely. Required for C struct compat.
+    add_compile_options(-Wno-error=narrowing) # Suppress conversion narrowing errors. Required for C struct compat.
     add_compile_options(-Wno-changes-meaning) # Suppress name shadowing errors.
     add_compile_options(-Wformat-extra-args)  # Suppress format string errors.
     add_compile_options(-Wno-sign-compare)    # Suppress sign comparison warnings.

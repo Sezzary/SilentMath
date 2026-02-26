@@ -3,7 +3,7 @@
 
 namespace Silent::Scripting
 {
-    LuaManager::LuaManager(sol::state& state)
+    /*LuaManager::LuaManager(sol::state& state)
     {
         _state = &state;
     }
@@ -26,5 +26,5 @@ namespace Silent::Scripting
             //auto error = (sol::error)result;
             //throw std::runtime_error(error.what());
         }*/
-    }
+    //}
 };

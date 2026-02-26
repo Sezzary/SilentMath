@@ -1,5 +1,9 @@
 #pragma once
 
+#include <psyz.h>
+#include <libetc.h>
+#include <libgs.h>
+
 namespace Silent::Game
 {
     extern q19_12 g_PrevScreenFadeProgress;

@@ -48,7 +48,7 @@ namespace Silent::Math
     };
 
 // @todo Clashes with Psy-Z types. Should that lib be integrated or only have things picked from it?
-//#if 0
+#if 0
     /** @brief PsyQ matrix. */
     struct MATRIX
     {
@@ -90,77 +90,6 @@ namespace Silent::Math
         DVECTOR() : x(0), y(0) {}
         DVECTOR(int x, int y) : x(x), y(y) {}
     };
-
-    /** @brief `DVECTOR` variant with a `vz` component instead of `vy`. */
-    struct DVECTOR_XZ
-    {
-        union 
-        {
-            struct
-            {
-                short x;
-                short z;
-            };
-            struct
-            {
-                short vx;
-                short vz;
-            };
-        };
-
-        DVECTOR_XZ() : x(0), z(0) {}
-        DVECTOR_XZ(int x, int z) : x(x), z(z) {}
-    };
-
-    /** @brief PsyQ `short`-based XYZ vector. */
-    struct SVECTOR3
-    {
-        union 
-        {
-            struct
-            {
-                short x;
-                short y;
-                short z;
-            };
-            struct
-            {
-                short vx;
-                short vy;
-                short vz;
-            };
-        };
-
-        SVECTOR3() : x(0), y(0), z(0) {}
-        SVECTOR3(int x, int y, int z) : x(x), y(y), z(z) {}
-    };
-    using SVECTOR = SVECTOR3;
-
-    /** @brief PsyQ `int`-based XYZ vector. */
-    struct VECTOR3
-    {
-        union 
-        {
-            struct
-            {
-                short x;
-                short y;
-                short z;
-            };
-            struct
-            {
-                short vx;
-                short vy;
-                short vz;
-            };
-        };
-
-        VECTOR3() : x(0), y(0), z(0) {}
-        VECTOR3(int x, int y, int z) : x(x), y(y), z(z) {}
-
-        Vector3 ToVector3(float qScale) const;
-    };
-    using VECTOR = VECTOR3;
 
     /** @brief PsyQ coordinate. */
     struct GsCOORD2PARAM
@@ -239,8 +168,41 @@ namespace Silent::Math
         ulong tag;
         ulong code[2];
     };
+#endif
 
-//#endif
+    /** @brief `DVECTOR` variant with a `vz` component instead of `vy`. */
+    struct DVECTOR_XZ
+    {
+        short vx;
+        short vz;
+
+        DVECTOR_XZ() : vx(0), vz(0) {}
+        DVECTOR_XZ(int x, int z) : vx(x), vz(z) {}
+    };
+
+    /** @brief PsyQ `short`-based XYZ vector. */
+    struct SVECTOR3
+    {
+        short vx;
+        short vy;
+        short vz;
+
+        SVECTOR3() : vx(0), vy(0), vz(0) {}
+        SVECTOR3(int x, int y, int z) : vx(x), vy(y), vz(z) {}
+    };
+
+    /** @brief PsyQ `int`-based XYZ vector. */
+    struct VECTOR3
+    {
+        int vx;
+        int vy;
+        int vz;
+
+        VECTOR3() : vx(0), vy(0), vz(0) {}
+        VECTOR3(int x, int y, int z) : vx(x), vy(y), vz(z) {}
+
+        Vector3 ToVector3(float qScale) const;
+    };
 
     struct s_Line2d
     {

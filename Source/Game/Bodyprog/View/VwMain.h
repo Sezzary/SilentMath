@@ -1,5 +1,10 @@
 #pragma once
 
+#include <psyz.h>
+#include <libgte.h>
+#include <libgpu.h>
+#include <libgs.h>
+
 namespace Silent::Game
 {
     void vwInitViewInfo(void);
