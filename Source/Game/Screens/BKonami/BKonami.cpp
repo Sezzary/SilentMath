@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "Psyz.h"
 #include "Game/Screens/BKonami/BKonami.h"
 
 #include "Game/Bodyprog/Bodyprog.h"

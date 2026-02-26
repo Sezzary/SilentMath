@@ -178,7 +178,7 @@ namespace Silent::Renderer
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
         constexpr auto SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
-        constexpr auto SHADOW_OFFSET = Vector2(SCREEN_SPACE_RES.x * (1.0f / RETRO_SCREEN_SPACE_RES.y) / 2,
+        constexpr auto SHADOW_OFFSET = Vector2(SCREEN_SPACE_RES.x * (1.0f / RETRO_SCREEN_SPACE_RES.y),
                                                SCREEN_SPACE_RES.y * (1.0f / RETRO_SCREEN_SPACE_RES.y));
 
         auto& fonts = g_App.GetFonts();

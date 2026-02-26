@@ -1,11 +1,7 @@
 #include "Framework.h"
-
-#include <psyz.h>
-#include <libgte.h>
-#include <libgpu.h>
-#include <libgs.h>
-
+#include "Psyz.h"
 #include "Game/Bodyprog/View/VwMain.h"
+
 #include "Game/Bodyprog/View/VwSystem.h"
 
 namespace Silent::Game

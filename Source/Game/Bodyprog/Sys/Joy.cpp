@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "Psyz.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 
 #include "Game/Bodyprog/Bodyprog.h"

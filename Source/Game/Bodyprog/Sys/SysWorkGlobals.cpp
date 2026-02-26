@@ -1,7 +1,7 @@
 #include "Framework.h"
-#include "Game/Bodyprog/Bodyprog.h"
+#include "Psyz.h"
 
-#include "Game/Game.h"
+#include "Game/Bodyprog/Bodyprog.h"
 
 namespace Silent::Game
 {

@@ -1,10 +1,8 @@
 #include "Framework.h"
+#include "Psyz.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
-
-#include "Game/Game.h"
 
 #include "Game/Bodyprog/Bodyprog.h"
-#include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game

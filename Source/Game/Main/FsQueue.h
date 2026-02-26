@@ -1,10 +1,5 @@
 #pragma once
 
-#include <psyz.h>
-#include <libgte.h>
-#include <libgpu.h>
-#include <libgs.h>
-
 #include "Game/Main/FileInfo.h"
 
 namespace Silent::Game

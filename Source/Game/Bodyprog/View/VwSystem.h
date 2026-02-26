@@ -1,10 +1,5 @@
 #pragma once
 
-#include <psyz.h>
-#include <libgte.h>
-#include <libgpu.h>
-#include <libgs.h>
-
 #include "Game/Bodyprog/View/Enums.h"
 #include "Game/Bodyprog/View/Structs.h"
 //#include "Game/Bodyprog/View/VcMain.h"

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <psyz.h>
-#include <libgte.h>
-#include <libgpu.h>
-#include <libgs.h>
+#include "Psyz.h"
 
 #include "Game/Maps/Characters/Harry.h"
 

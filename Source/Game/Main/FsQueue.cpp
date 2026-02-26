@@ -1,10 +1,8 @@
 #include "Framework.h"
+#include "Psyz.h"
 #include "Game/Main/FsQueue.h"
-#include "Game/Bodyprog/Bodyprog.h"
 
-#include <psyz.h>
-#include <libetc.h>
-//#include <libcd.h>
+#include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
