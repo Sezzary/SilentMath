@@ -138,7 +138,9 @@ namespace Silent::Game
         MainMenuEntry_Continue = 1,
         MainMenuEntry_Start    = 2,
         MainMenuEntry_Option   = 3,
-        MainMenuEntry_Extra    = 4 /** @unused The extra options menu may have been accessible via the main menu. */
+        MainMenuEntry_Extra    = 4, /** @unused The extra options menu may have been accessible via the main menu. */
+
+        MainMenuEntry_Count    = 5
     } e_MainMenuEntry;
 
     typedef enum _MainMenuState
@@ -2192,15 +2194,6 @@ namespace Silent::Game
     extern void (*g_SysStateFuncs[])(void);
 
     extern s32 D_800A9A68;
-
-    extern s32 g_MainMenuState;
-
-    extern s32 g_MainMenu_SelectedEntry;
-
-    /** Flags for which main menu entries should be visible.
-     * @unused Flag (1 << 5) corresponds to the "EXTRA" option, which is unused and never set.
-     */
-    extern u32 g_MainMenu_VisibleEntryFlags;
 
     /** Counts the amount of times that demos has been play in the current game session. */
     extern s8 g_Demo_ReproducedCount;

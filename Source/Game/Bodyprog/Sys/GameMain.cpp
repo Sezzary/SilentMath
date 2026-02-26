@@ -42,7 +42,7 @@ namespace Silent::Game
         nullptr,//GameState_AutoLoadSavegame_Update,
         nullptr,//GameState_MovieIntroAlternate_Update,
         nullptr,//GameState_MovieIntro_Update,
-        nullptr,//GameState_MainMenu_Update,
+        GameState_MainMenu_Update,
         nullptr,//GameState_LoadSavegameScreen_Update,
         nullptr,//GameState_MovieOpening_Update,
         nullptr,//GameState_LoadScreen_Update,

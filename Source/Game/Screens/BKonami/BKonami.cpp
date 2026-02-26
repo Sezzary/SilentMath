@@ -6,6 +6,7 @@
 
 #include "Application.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
 //#include "Game/Screen/BackgroundDraw.h"
@@ -279,7 +280,7 @@ namespace Silent::Game
 
                             case GameState_MovieIntroAlternate:
                             default:
-                                //GameFs_TitleGfxLoad();
+                                GameFs_TitleGfxLoad();
                                 break;
                         }
 

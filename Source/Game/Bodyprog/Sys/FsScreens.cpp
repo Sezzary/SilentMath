@@ -1,0 +1,49 @@
+#include "Framework.h"
+#include "Psx.h"
+#include "Game/Bodyprog/Sys/FsScreens.h"
+
+#include "Game/Bodyprog/Bodyprog.h"
+
+#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Main/FsQueue.h"
+
+namespace Silent::Game
+{
+    void GameFs_TitleGfxSeek(void) // 0x80032bd0
+    {
+        Fs_QueueStartSeek(FILE_TIM_TITLE_E_TIM);
+    }
+
+    void GameFs_TitleGfxLoad(void) // 0x80032bf0
+    {
+        Fs_QueueStartReadTim(FILE_TIM_TITLE_E_TIM, FS_BUFFER_3, &g_TitleImg);
+    }
+
+    void GameFs_StreamBinSeek(void) // 0x80032C20
+    {
+        // @stub
+    }
+
+    void GameFs_StreamBinLoad(void) // 0x80032C40
+    {
+        // @stub
+    }
+
+    void GameFs_OptionBinLoad(void) // 0x80032C68
+    {
+        Fs_QueueStartReadTim(FILE_TIM_OPTION_TIM, FS_BUFFER_1, &g_ItemInspectionImg);
+        //Fs_QueueStartRead(FILE_VIN_OPTION_BIN, FS_BUFFER_1);
+    }
+
+    void GameFs_SaveLoadBinLoad(void) // 0x80032CA8
+    {
+        Fs_QueueStartReadTim(FILE_TIM_SAVELOAD_TIM, FS_BUFFER_1, &g_ItemInspectionImg);
+        //Fs_QueueStartRead(FILE_VIN_SAVELOAD_BIN, FS_BUFFER_1);
+    }
+
+    void func_80032CE8(void) // 0x80032CE8
+    {
+        Gfx_StringSetPosition(SCREEN_POSITION_X(33.75f), SCREEN_POSITION_Y(43.5f));
+        Gfx_StringDraw("\x7Now_loading.", 100);
+    }
+}
