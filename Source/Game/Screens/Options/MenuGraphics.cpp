@@ -94,7 +94,7 @@ namespace Silent::Game
         const auto& translator = g_App.GetTranslator();
 
         // Submit heading string.
-        Gfx_StringSetColor(e_StringColorId::White);
+        Gfx_StringSetColor(StringColorId_White);
         Gfx_StringSetPosition(HEADING_STR_POS.x, HEADING_STR_POS.y);
         Gfx_StringDraw(translator(KEY_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
 

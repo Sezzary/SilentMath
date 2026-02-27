@@ -5,26 +5,26 @@ namespace Silent::Game
     /** @brief String color IDs for strings displayed in screen space.
      * Used as indices into `STRING_COLORS`.
      */
-    enum class e_StringColorId
+    enum e_StringColorId
     {
-        Gold,
-        DarkGrey,
-        Green,
-        Nuclear,
-        Red,
-        LightGrey,
-        White,
-        Black, // @todo Need to add this one for paper maps.
+        StringColorId_Gold,
+        StringColorId_DarkGrey,
+        StringColorId_Green,
+        StringColorId_Nuclear,
+        StringColorId_Red,
+        StringColorId_LightGrey,
+        StringColorId_White,
+        //StringColorId_Black, // @todo Need to add this one for paper maps.
 
-        Count
+        StringColorId_Count
     };
 
     /** Used in string parsing. */
-    typedef struct
+    struct s_800C38B0
     {
         s8 field_0;
         s8 positionIdx_1;
-    } s_800C38B0;
+    };
 
     extern s_800C38B0 D_800C38B0;
 

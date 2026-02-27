@@ -96,7 +96,7 @@ namespace Silent::Game
     {
         auto& assets = g_App.GetAssets();
 
-        return assets.GetAsset(fileIdx)->Size; // @todo Check. OG had alignment, need to account for difference in handling.
+        return assets.GetAsset(fileIdx)->Size + (assets.GetAsset(fileIdx)->Size % 0x100);
     }
 
     void Fs_GetFileName(char* outName, s32 fileIdx)

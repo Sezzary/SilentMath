@@ -3,7 +3,7 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
-//#include "bodyprog/demo.h"
+#include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Sys/GameMain.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"

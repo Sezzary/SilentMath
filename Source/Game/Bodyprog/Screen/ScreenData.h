@@ -4,13 +4,18 @@
 
 namespace Silent::Game
 {
-    extern s32    g_ActiveBufferIdx;
-    extern GsOT   g_OrderingTable0[2];
-    extern GsOT   g_OrderingTable1[2];
-    extern GsOT   g_OrderingTable2[2];
-    /** Actual delta time since the previous tick. Unlike `g_DeltaTime`, this value is never overridden by demos or game code. Mostly seems used by UI code. */
+    extern s32  g_ActiveBufferIdx;
+    extern GsOT g_OrderingTable0[2];
+    extern GsOT g_OrderingTable1[2];
+    extern GsOT g_OrderingTable2[2];
+
+    /** Actual delta time since the previous tick.
+     * Unlike `g_DeltaTime`, this value is never overridden by demos or game code.
+     * Mostly seems used by UI code.
+     */
     extern q19_12 g_DeltaTimeRaw;
-    extern s32    g_IntervalVBlanks;
+
+    extern s32 g_IntervalVBlanks;
 
     // ====================
     // GLOBALS (BSS; Hack)

@@ -3,11 +3,11 @@
 namespace Silent::Game
 {
     /** @brief Reset types used in `MainLoop_ShouldWarmReset`. */
-    typedef enum _ResetType
+    enum e_ResetType
     {
         ResetType_None     = 0,
         ResetType_WarmBoot = 2
-    } e_ResetType;
+    };
 
     extern s32 g_WarmBootTimer;
 

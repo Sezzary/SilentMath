@@ -9,12 +9,12 @@
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
+#include "Game/Main/FsQueue.h"
 #include "Game/Main/Rng.h"
+#include "Game/Screens/Stream/Stream.h"
 #include "Renderer/Renderer.h"
 //#include "bodyprog/memcard.h"
 //#include "bodyprog/sound_system.h"
-//#include "main/fsqueue.h"
-//#include "screens/stream/stream.h"
 
 using namespace Silent::Renderer;
 
@@ -420,7 +420,7 @@ namespace Silent::Game
             }
 
             Gfx_StringSetPosition(COLUMN_POS_X - STR_OFFSETS_X[i], COLUMN_POS_Y + (i * STR_OFFSET_Y));
-            Gfx_StringSetColor(e_StringColorId::White);
+            Gfx_StringSetColor(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
             {
@@ -463,7 +463,7 @@ namespace Silent::Game
         for (i = 0; i < DIFFICULTY_MENU_SELECTION_COUNT; i++)
         {
             Gfx_StringSetPosition(COLUMN_POS_X - STR_OFFSETS_X[i], COLUMN_POS_Y + (i * STR_OFFSET_Y));
-            Gfx_StringSetColor(e_StringColorId::White);
+            Gfx_StringSetColor(StringColorId_White);
 
             if (i == idx)
             {

@@ -6,8 +6,8 @@
 
 namespace Silent::Game
 {
-    struct _AnmHeader;
-    struct _Model;
+    struct s_AnmHeader;
+    struct s_Model;
 
     constexpr int    TICKS_PER_SECOND = 60;                                        /** Game has a variable timestep with 60 ticks max. */
     constexpr q19_12 TIMESTEP_30_FPS  = Q12(1.0f / (float)(TICKS_PER_SECOND / 2)); /** Timestep at 30 FPS. */
@@ -268,7 +268,7 @@ namespace Silent::Game
         ((((u32*)ptr)[(idx) >> 5] &= ~((1 << 0) << ((idx) & 0x1F))))
 
     /** @brief Sync modes used by `DrawSync` and `VSync`. */
-    typedef enum _SyncMode
+    enum e_SyncMode
     {
         SyncMode_Count     = -1,
         SyncMode_Wait      = 0,
@@ -276,17 +276,17 @@ namespace Silent::Game
         SyncMode_Wait2     = 2,
         SyncMode_Wait3     = 3,
         SyncMode_Wait8     = 8
-    } e_SyncMode;
+    };
 
-    typedef enum _DmsIntervalState
+    enum e_DmsIntervalState
     {
         DmsIntervalState_Interpolating = 0,
         DmsIntervalState_SingleFrame   = 1,
         DmsIntervalState_Ending        = 2
-    } e_DmsIntervalState;
+    };
 
     /** @brief Screen fade states used by `g_Screen_FadeStatus`. The flow is not linear. */
-    typedef enum _ScreenFadeState
+    enum e_ScreenFadeState
     {
         ScreenFadeState_Reset           = 0,
         ScreenFadeState_None            = 1,
@@ -296,13 +296,13 @@ namespace Silent::Game
         ScreenFadeState_FadeOutComplete = 5,
         ScreenFadeState_FadeInStart     = 6,
         ScreenFadeState_FadeInSteps     = 7
-    } e_ScreenFadeState;
+    };
 
     /** @brief Map message indices.
      *
      * @note Each map has its own messages, with the first 15 hardcoded to be the same.
      */
-    typedef enum _MapMsgIdx
+    enum e_MapMsgIdx
     {
         MapMsgIdx_Yes               = 0,
         MapMsgIdx_No                = 1,
@@ -319,9 +319,9 @@ namespace Silent::Game
         MapMsgIdx_DoorLocked        = 12,
         MapMsgIdx_DoorUnlocked      = 13,
         MapMsgIdx_NowMaking         = 14 // @unused?
-    } e_MapMsgIdx;
+    };
 
-    typedef enum _MapMsgCode
+    enum e_MapMsgCode
     {
         MapMsgCode_None        = 0,
         MapMsgCode_Select2     = 2,
@@ -330,31 +330,31 @@ namespace Silent::Game
         MapMsgCode_DisplayAll  = 20,
         MapMsgCode_SetByT      = 88,
         MapMsgCode_AlignCenter = 99
-    } e_MapMsgCode;
+    };
 
     /** @brief Map message states.
      *
      * Return states used by `MapMsg_Draw`.
      */
-    typedef enum _MapMsgState
+    enum e_MapMsgState
     {
         MapMsgState_Finish       = NO_VALUE, /** Initial setup complete, cutscene timer complete, or input to continue from user received. */
         MapMsgState_Idle         = 0,        /** Continue displaying message. */
         MapMsgState_SelectEntry0 = 1,        /** First entry selected in selection dialog. */
         MapMsgState_SelectEntry1 = 2,        /** Second entry selected in selection dialog. */
         MapMsgState_SelectEntry2 = 3         /** Third entry selected in selection dialog. */
-    } e_MapMsgState;
+    };
 
-    typedef enum _MapMsgAudioLoadBlock
+    enum e_MapMsgAudioLoadBlock
     {
         MapMsgAudioLoadBlock_None = 0, // TODO: Some code checks only for bit 0, so it should mean something.
         MapMsgAudioLoadBlock_Unk1 = 1,
         MapMsgAudioLoadBlock_J2   = 3  // `J2` map messages set this, causing voice audio to not load.
                                     // `J2` cutscenes use single audio file for all lines (e.g. video tape cutscene).
-    } e_MapMsgAudioLoadBlock;
+    };
 
     /** @brief Map overlay IDs. */
-    typedef enum _MapOverlayId
+    enum e_MapOverlayId
     {
         MapOverlayId_MAP0_S00 = 0,
         MapOverlayId_MAP0_S01 = 1,
@@ -401,10 +401,10 @@ namespace Silent::Game
         MapOverlayId_MAP7_S03 = 42,
         MapOverlayId_MAPT_S00 = 43, // } @unused Empty test maps. Only some code references remain and `HB_MTS00.ANM`/`HB_MTX00.ANM` anim files.
         MapOverlayId_MAPX_S00 = 44  // }
-    } e_MapOverlayId;
+    };
 
     /** @brief Paper map indices. Used for the map screen. */
-    typedef enum _PaperMapIdx
+    enum e_PaperMapIdx
     {
         PaperMapIdx_OtherPlaces    = 0,
         PaperMapIdx_OldTown        = 1,
@@ -430,10 +430,10 @@ namespace Silent::Game
         PaperMapIdx_AltHospital1F  = 21,
         PaperMapIdx_AltHospital2F  = 22,
         PaperMapIdx_AltHospital3F  = 23
-    } e_PaperMapIdx;
+    };
 
     // Temp name. Related to music.
-    typedef enum _SysFlags
+    enum e_SysFlags
     {
         SysFlag_None   = 0,
         SysFlag_Freeze = 1 << 0,
@@ -444,10 +444,10 @@ namespace Silent::Game
         SysFlag_5      = 1 << 5,
         SysFlag_6      = 1 << 6,
         SysFlag_7      = 1 << 7
-    } e_SysFlags;
+    };
 
     // Temp name.
-    typedef enum _SysFlags2
+    enum e_SysFlags2
     {
         SysFlag2_None     = 0,
         SysFlag2_0        = 1 << 0,
@@ -461,9 +461,9 @@ namespace Silent::Game
         SysFlag2_8        = 1 << 8,
         SysFlag2_9        = 1 << 9,
         SysFlag2_10       = 1 << 10
-    } e_SysFlags2;
+    };
 
-    typedef enum _SysWorkProcessFlags
+    enum e_SysWorkProcessFlags
     {
         SysWorkProcessFlag_None              = 0,
         SysWorkProcessFlag_RoomTransition    = 1 << 0,
@@ -472,9 +472,9 @@ namespace Silent::Game
         SysWorkProcessFlag_LoadSave          = 1 << 3,
         SysWorkProcessFlag_Continue          = 1 << 4,
         SysWorkProcessFlag_BootDemo          = 1 << 5
-    } e_SysWorkProcessFlags;
+    };
 
-    typedef enum _ControllerFlags
+    enum e_ControllerFlags
     {
         ControllerFlag_None         = 0,
         ControllerFlag_Select       = 1 << 0,
@@ -505,10 +505,10 @@ namespace Silent::Game
         ControllerFlag_LStickRight  = 1 << 25,
         ControllerFlag_LStickDown   = 1 << 26,
         ControllerFlag_LStickLeft   = 1 << 27
-    } e_ControllerFlags;
+    };
 
     /** @brief Character flags. Used by `s_SubCharacter::flags_3E`. */
-    typedef enum _CharaFlags
+    enum e_CharaFlags
     {
         CharaFlag_None    = 0,
         CharaFlag_Unk1    = 1 << 0, // Specific to padlock. Maybe used for special handling.
@@ -520,18 +520,18 @@ namespace Silent::Game
         CharaFlag_Dead    = 1 << 6, // Unure.
         CharaFlag_Unk8    = 1 << 7,
         CharaFlag_Unk9    = 1 << 8  // Only set for bosses and NPCs in special scenarios.
-    } e_CharaFlags;
+    };
 
     /** @brief Character animation flags. */
-    typedef enum _AnimFlags
+    enum e_AnimFlags
     {
         AnimFlag_None     = 0,
         AnimFlag_Unlocked = 1 << 0,
         AnimFlag_Visible  = 1 << 1
-    } e_AnimFlags;
+    };
 
     /** @brief State IDs used by the main game loop. The values are used as indices into the `g_GameStateUpdateFuncs` function array. */
-    typedef enum _GameState
+    enum e_GameState
     {
         GameState_Init                = 0,
         GameState_KonamiLogo          = 1,
@@ -558,13 +558,13 @@ namespace Silent::Game
         GameState_Unk16               = 22, /** Removed debug menu? Doesn't exist in function array, but `DebugMoviePlayer` state tries to switch to it. */
 
         GameState_Hack                = NO_VALUE // @hack Force enum to be treated as s32.
-    } e_GameState;
+    };
 
     /** @brief State IDs used by `GameState_InGame`.
      *
      * The values are used as indices into the 0x800A9A2C function array.
      */
-    typedef enum _SysState
+    enum e_SysState
     {
         SysState_Gameplay       = 0,
         SysState_OptionsMenu    = 1,
@@ -582,10 +582,10 @@ namespace Silent::Game
         SysState_GameOver       = 13,
         SysState_GamePaused     = 14,
         SysState_Invalid        = 15 /** Used by `Event_Update` to signal that SysState shouldn't be updated. */
-    } e_SysState;
+    };
 
     /** @brief Inventory command IDs. */
-    typedef enum _InventoryCmdId
+    enum e_InventoryCmdId
     {
         InventoryCmdId_UseHealth     = 0, /** Text is "Use", but this one is used exclusively on health items. */
         InventoryCmdId_Use           = 1,
@@ -599,9 +599,9 @@ namespace Silent::Game
         InventoryCmdId_UseLook       = 9,
         InventoryCmdId_Unk10         = 10,
         InventoryCmdId_Unk11         = 11 // Flashlight in daytime?
-    } e_InventoryCmdId;
+    };
 
-    typedef enum _InventoryItemId
+    enum e_InventoryItemId
     {
         InventoryItemId_Empty                 = NO_VALUE,
         InventoryItemId_Unequipped            = 0,
@@ -697,10 +697,10 @@ namespace Silent::Game
         InventoryItemId_Flashlight            = 224,
         InventoryItemId_PocketRadio           = 225,
         InventoryItemId_GasolineTank          = 226
-    } e_InventoryItemId;
+    };
 
     /** @brief Common pickup item IDs. */
-    typedef enum _CommonPickupItemId
+    enum e_CommonPickupItemId
     {
         CommonPickupItemId_FirstAidKit    = 0,
         CommonPickupItemId_HealthDrink    = 1,
@@ -708,21 +708,21 @@ namespace Silent::Game
         CommonPickupItemId_HandgunBullets = 3,
         CommonPickupItemId_RifleShells    = 4,
         CommonPickupItemId_ShotgunShells  = 5
-    } e_CommonPickupItemId;
+    };
 
     /** @brief Attack input types. Packed into a weapon attack using `WEAPON_ATTACK`. */
-    typedef enum _AttackInputType
+    enum e_AttackInputType
     {
         AttackInputType_Tap      = 0,
         AttackInputType_Hold     = 1,
         AttackInputType_Multitap = 2
-    } e_AttackInputType;
+    };
 
     /** @brief Equipped weapon IDs. Derivative of `e_InventoryItemId`.
      *
      * TODO: Maybe just "Weapon ID", "equipable item ID", "[something else] item ID"?
      */
-    typedef enum _EquippedWeaponId
+    enum e_EquippedWeaponId
     {
         EquippedWeaponId_KitchenKnife   = 0,
         EquippedWeaponId_SteelPipe      = 1,
@@ -750,10 +750,10 @@ namespace Silent::Game
         EquippedWeaponId_Flashlight     = 96,
         EquippedWeaponId_PocketRadio    = 97,
         EquippedWeaponId_GasolineTank   = 98
-    } e_EquippedWeaponId;
+    };
 
     /** @brief Player control flags. */
-    typedef enum _PlayerFlags
+    enum e_PlayerFlags
     {
         PlayerFlag_None           = 0,
         PlayerFlag_Unk0           = 1 << 0,
@@ -782,10 +782,10 @@ namespace Silent::Game
         PlayerFlag_Unk29          = 1 << 29,
         PlayerFlag_Unk30          = 1 << 30,
         PlayerFlag_Unk31          = 1 << 31
-    } e_PlayerFlags;
+    };
 
     /** @brief Character IDs. The `CHARA_FILE_INFOS` array associates each character ID with animimation, model, and texture files. */
-    typedef enum _CharacterId
+    enum e_CharacterId
     {
         Chara_None             = 0,
         Chara_Harry            = 1,
@@ -836,23 +836,23 @@ namespace Silent::Game
         Chara_Count,
 
         Chara_Hack = NO_VALUE, // @hack Force enum to be treated as `s32`.
-    } e_CharacterId;
+    };
 
     /** @brief Character model states. TODO: Remove. Each character should have its own enum of control states. */
-    typedef enum _ModelState
+    enum e_ModelState
     {
         ModelState_Uninitialized = 0,
 
-    } e_ModelState;
+    };
 
-    typedef enum _GameDifficulty
+    enum e_GameDifficulty
     {
         GameDifficulty_Easy   = -1,
         GameDifficulty_Normal = 0,
         GameDifficulty_Hard   = 1
-    } e_GameDifficulty;
+    };
 
-    typedef enum _TriggerType
+    enum e_TriggerType
     {
         TriggerType_EndOfArray     = NO_VALUE,
         TriggerType_None           = 0, /** Skips trigger/activation type checks. Always activates if required event flags are set and skips processing later events until flags deactivate it. */
@@ -860,24 +860,24 @@ namespace Silent::Game
         TriggerType_TouchFacing    = 2, /** Checks if the player is within a small area and facing toward the trigger point. */
         TriggerType_TouchObbFacing = 3, /** Checks if the player has stepped into a shaped area and is facing toward it. */
         TriggerType_TouchObb       = 4, /** Checks if the player has stepped into a shaped area. No facing requirement. */
-    } e_TriggerType;
+    };
 
-    typedef enum _TriggerActivationType
+    enum e_TriggerActivationType
     {
         TriggerActivationType_None      = 0, /** No activation conditions other than event flag/trigger checks. */
         TriggerActivationType_Exclusive = 1, /** Prevents other events from being triggered while this event is active. */
         TriggerActivationType_Button    = 2, /** Requires a button press to activate. */
         TriggerActivationType_Item      = 3, /** Requires an inventory item to activate. */
-    } e_TriggerActivationType;
+    };
 
     /** Some events indicate specific cutscenes behavior via flags. */
-    typedef enum _EventDataUnkState
+    enum e_EventDataUnkState
     {
         EventParamUnkState_None = 0,
         EventParamUnkState_0    = 1 << 0, /** Possible name: `EventParamUnkState_UnfreezeWorld`. Used to freeze/unfreeze the game world. */
         EventParamUnkState_1    = 1 << 1, /** Triggers cutscenes that go to the in-game mode. */
         EventParamUnkState_2    = 1 << 2
-    } e_EventDataUnkState;
+    };
 
     typedef union
     {
@@ -891,7 +891,7 @@ namespace Silent::Game
         } sticks_0; // Normalized range: `[-128, 127]`.
     } s_AnalogSticks;
 
-    typedef struct _AnalogController
+    struct s_AnalogController
     {
         u8  status;
         u8  received_bytes : 4; /** Number of bytes received / 2. */
@@ -901,7 +901,7 @@ namespace Silent::Game
         u8  rightY;
         u8  leftX;
         u8  leftY;
-    } s_AnalogController;
+    };
 
     struct s_ControllerData
     {
@@ -921,7 +921,7 @@ namespace Silent::Game
      *
      * Bitfields only contain buttons. Analog directions and D-Pad aren't included.
      */
-    typedef struct _ControllerConfig
+    struct s_ControllerConfig
     {
         u16 enter_0;
         u16 cancel_2;
@@ -937,15 +937,15 @@ namespace Silent::Game
         u16 item_16;
         u16 map_18;
         u16 option_1A;
-    } s_ControllerConfig;
+    };
 
-    typedef struct _InventoryItem
+    struct s_InventoryItem
     {
         u8 id_0;      /** `InventoryItemId` */
         u8 count_1;
         u8 command_2; /** `InventoryCmdId` */
         u8 field_3;   // Some sort of index?
-    } s_InventoryItem;
+    };
 
     typedef enum _ItemToggleFlags
     {
@@ -1105,7 +1105,7 @@ namespace Silent::Game
      */
     typedef struct _AnimInfo
     {
-        void (*updateFunc_0)(struct _Model* model, struct _AnmHeader* anmHdr, GsCOORDINATE2* coords, struct _AnimInfo* animInfo);
+        void (*updateFunc_0)(struct s_Model* model, struct d_AnmHeader* anmHdr, GsCOORDINATE2* coords, struct _AnimInfo* animInfo);
         u8 status_4;                 /** Packed anim status. Init base? See `s_ModelAnimData::status_0`. */
         s8 hasVariableDuration_5;    /** `bool` | Use `duration_8.variableFunc`: `true`, Use `duration_8.constant`: `false`. */
         u8 status_6;                 /** Packed anim status. Link target? Sometimes `NO_VALUE`, unknown why. See `s_ModelAnim::status_0`. */
@@ -1133,7 +1133,7 @@ namespace Silent::Game
     } s_ModelAnim;
 
     /** @brief Character model. */
-    typedef struct _Model
+    struct s_Model
     {
         s8          charaId_0;      /** `e_CharacterId` */
         u8          paletteIdx_1;   /** Changes the texture palette index for this model. */
@@ -1142,7 +1142,7 @@ namespace Silent::Game
                                     // Used differently in player's `s_SubCharacter`. 0: anim transitioning(?), bit 1: animated, bit 2: turning.
                                     // Sometimes holds actual anim index?
         s_ModelAnim anim_4;
-    } s_Model;
+    };
 
     typedef union
     {

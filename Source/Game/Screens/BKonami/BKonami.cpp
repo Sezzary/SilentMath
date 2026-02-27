@@ -5,15 +5,15 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
-//#include "Game/Screen/BackgroundDraw.h"
+#include "Game/Screens/Stream/Stream.h"
 #include "Renderer/Renderer.h"
-//#include "bodyprog/demo.h"
+//#include "Game/Screen/BackgroundDraw.h"
 //#include "bodyprog/memcard.h"
-//#include "screens/stream/stream.h"
 
 using namespace Silent::Renderer;
 

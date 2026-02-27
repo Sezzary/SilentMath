@@ -613,7 +613,7 @@ namespace Silent::Game
         MATRIX   field_3E4;
     } s_GteScratchData;
 
-    typedef struct _Primitive
+    struct s_Primitive
     {
         u16 field_0;
         u16 field_2;
@@ -633,9 +633,9 @@ namespace Silent::Game
         u16 field_A;
         u8  field_C[4];  // } Unknown type. `func_8005AC50` reads these as `s32`, but that breaks other funcs which use this struct. `s32` reads might have just been `memcpy`?
         u8  field_10[4]; // }
-    } s_Primitive;
+    };
 
-    typedef struct _MeshHeader
+    struct s_MeshHeader
     {
         u8 primitiveCount_0;
         u8 vertexCount_1;
@@ -647,9 +647,9 @@ namespace Silent::Game
         s16*         verticesZ_C;
         s_Normal*    normals_10;
         u8*          unkPtr_14;
-    } s_MeshHeader;
+    };
 
-    typedef struct _ModelHeader
+    struct s_ModelHeader
     {
         u_Filename    name_0;
         u8            meshCount_8;
@@ -660,17 +660,17 @@ namespace Silent::Game
         u8            field_B_4 : 2;
         u8            unk_B_6   : 2;
         s_MeshHeader* meshHdrs_C;
-    } s_ModelHeader;
+    };
 
-    typedef struct _Texture
+    struct s_Texture
     {
         s_FsImageDesc imageDesc_0;
         u_Filename    name_8;
         u32           queueIdx_10;
         s8            refCount_14;
-    } s_Texture;
+    };
 
-    typedef struct _Material
+    struct s_Material
     {
         u_Filename name_0;
         s_Texture* texture_8;
@@ -690,9 +690,9 @@ namespace Silent::Game
             u8  u8[2];
             u16 u16;
         } field_16;
-    } s_Material;
+    };
 
-    typedef struct _LmHeader
+    struct s_LmHeader
     {
         u8             magic_0;    /** See `LM_HEADER_MAGIC`. */
         u8             version_1;  /** See `LM_VERSION`. */
@@ -703,7 +703,7 @@ namespace Silent::Game
         u8             unk_9[3];
         s_ModelHeader* modelHdrs_C;
         u8*            modelOrder_10;
-    } s_LmHeader;
+    };
 
     typedef struct _IpdCollisionData_10
     {
@@ -835,7 +835,7 @@ namespace Silent::Game
         s8 translationInitial_3[3];
     } s_AnmBindPose;
 
-    typedef struct _AnmHeader
+    struct s_AnmHeader
     {
         u16           dataOffset_0;
         u8            rotationBoneCount_2;
@@ -849,7 +849,7 @@ namespace Silent::Game
         u8            scaleLog2_12;
         u8            rootYOffset_13;
         s_AnmBindPose bindPoses_14[0]; // Array size = `boneCount_6`.
-    } s_AnmHeader;
+    };
 
     typedef union
     {

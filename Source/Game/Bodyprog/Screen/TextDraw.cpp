@@ -23,7 +23,7 @@ namespace Silent::Game
     #define SCREEN_POSITION_Y(percent) \
         (s32)(SCREEN_HEIGHT * ((percent) / 100.0f))
 
-    constexpr auto STRING_COLORS = std::array<Color, (int)e_StringColorId::Count>
+    constexpr auto STRING_COLORS = std::array<Color, (int)StringColorId_Count>
     {
         Color::From8Bit(160, 128, 64),
         Color::From8Bit(32,  32,  32),
@@ -34,7 +34,7 @@ namespace Silent::Game
         Color::From8Bit(128, 128, 128)
     };
 
-    static auto g_StringColorId = e_StringColorId::White;
+    static auto g_StringColorId = StringColorId_White;
 
     Vector2i g_StringPosition;
 
