@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
@@ -499,7 +500,7 @@ namespace Silent::Game
                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
-        //Gfx_BackgroundSpriteDraw(&g_TitleImg);
+        //Screen_BackgroundImgDraw(&g_TitleImg);
 
         Gfx_MainMenu_FogUpdate();
     }

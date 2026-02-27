@@ -21,12 +21,13 @@ using namespace Silent::Assets;
 
 namespace Silent::Game
 {
-    s32 g_Demo_FrameCount     = 0;
-    s32 g_UnknownFrameCounter = 0;
-    s32 g_PrevVBlanks         = 0;
+    s32 g_Demo_FrameCount = 0;
+    s32 g_WarmBootTimer   = 0;
+
+    static s32 g_PrevVBlanks = 0;
 
     // Audio task for `SD_Call` meant to load some VAB audio.
-    u16 D_800A9774[] =
+    u16 g_BaseVabAudiosTaskId[] =
     {
         160,
         162,
@@ -62,7 +63,7 @@ namespace Silent::Game
     void GameState_Boot_Update(void) // 0x80032D1C
     {
         e_GameState gameState;
-        s32         unkGameStateVar;
+        s32         vabAudioTaskId;
 
         const auto& assets   = g_App.GetAssets();
         auto&       renderer = g_App.GetRenderer();
@@ -84,10 +85,10 @@ namespace Silent::Game
             case 1:
                 //if (!Sd_AudioStreamingCheck())
                 {
-                    unkGameStateVar = D_800A9774[g_GameWork.gameStateStep_598[1]];
-                    if (unkGameStateVar != 0)
+                    vabAudioTaskId = g_BaseVabAudiosTaskId[g_GameWork.gameStateStep_598[1]];
+                    if (vabAudioTaskId != 0)
                     {
-                        //SD_Call(unkGameStateVar);
+                        //SD_Call(vabAudioTaskId);
                         g_GameWork.gameStateStep_598[1]++;
                     }
                     else
@@ -144,7 +145,7 @@ namespace Silent::Game
                                                 100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(g_ScreenFadeProgress, Q8_SHIFT), 0, 1);
-        //Gfx_BackgroundSpriteDraw(&g_MainImg0);
+        //Screen_BackgroundImgDraw(&g_MainImg0);
 
         //func_80089090(1);
     }

@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "Psx.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
 
 #include "Application.h"
@@ -36,7 +37,10 @@ namespace Silent::Game
     static auto g_StringColorId = e_StringColorId::White;
 
     Vector2i g_StringPosition;
-    int      g_StringPositionX1;
+
+    int g_StringPositionX1;
+
+    s_800C38B0 D_800C38B0;
 
     void Gfx_StringSetPosition(int posX, int posY)
     {

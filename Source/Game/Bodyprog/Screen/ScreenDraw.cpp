@@ -3,6 +3,8 @@
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 
 #include "Game/Bodyprog/Bodyprog.h"
+
+#include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game

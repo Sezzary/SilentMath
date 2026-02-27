@@ -249,7 +249,7 @@ namespace Silent::Game
         Options_MainOptionsMenu_ConfigDraw();
         Options_MainOptionsMenu_SelectionHighlightDraw();
         Options_Menu_VignetteDraw();
-        //Gfx_BackgroundSpriteDraw(&g_ItemInspectionImg);
+        //Screen_BackgroundImgDraw(&g_ItemInspectionImg);
         Options_MainOptionsMenu_BgmVolumeBarDraw();
         Options_MainOptionsMenu_SfxVolumeBarDraw();
 
@@ -505,7 +505,7 @@ namespace Silent::Game
         //Options_ExtraOptionsMenu_ConfigDraw();
         //Options_ExtraOptionsMenu_SelectionHighlightDraw();
         //Options_Menu_VignetteDraw();
-        //Gfx_BackgroundSpriteDraw(&g_ItemInspectionImg);
+        //Screen_BackgroundImgDraw(&g_ItemInspectionImg);
 
         if (g_GameWork.gameStateStep_598[0] != OptionsMenuState_ExtraOptions)
         {

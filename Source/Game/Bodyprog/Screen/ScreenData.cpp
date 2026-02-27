@@ -1,24 +1,20 @@
 #include "Framework.h"
+#include "Psx.h"
+#include "Game/Bodyprog/Screen/ScreenData.h"
 
 #include "Game/Bodyprog/Bodyprog.h"
+
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 
 namespace Silent::Game
 {
+    s32      g_ActiveBufferIdx; // Not originally here.
     s32      g_VBlanks;
-
     s32      g_UncappedVBlanks;
-
-    s32      pad_bss_800B5C3C;
-
-    //GsOT_TAG g_OtTags0[2][16];
-
+    GsOT_TAG g_OtTags0[2][16];
     q19_12   g_DeltaTime;
-
-    //GsOT_TAG g_OtTags1[2][ORDERING_TABLE_SIZE];
-
+    GsOT_TAG g_OtTags1[2][ORDERING_TABLE_SIZE];
     q19_12   g_GravitySpeed;
-
     s32      g_TickCount;
 
     // SH2 symbols indicate this should be in `vc_main.c`, but the file already has its data segment assigned.

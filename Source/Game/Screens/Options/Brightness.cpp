@@ -87,11 +87,11 @@ namespace Silent::Game
         // Draw graphics.
         if (g_GameWork.gameStatePrev_590 == GameState_MainMenu)
         {
-            //Gfx_BackgroundSpriteDraw(&g_BrightnessScreenImg0);
+            //Screen_BackgroundImgDraw(&g_BrightnessScreenImg0);
         }
         else
         {
-            //Gfx_BackgroundSpriteDraw(&g_BrightnessScreenImg1);
+            //Screen_BackgroundImgDraw(&g_BrightnessScreenImg1);
         }
 
         //func_8003E5E8(g_GameWork.config_0.optBrightness_22);

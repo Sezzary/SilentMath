@@ -46,7 +46,7 @@ namespace Silent::Game
         }
 
         // "No memory card" image.
-        //Gfx_BackgroundSpriteDraw(D_800A900C);
+        //Screen_BackgroundImgDraw(D_800A900C);
     }
 
     void GameState_MovieIntro_Update(void) // 0x801E279C
