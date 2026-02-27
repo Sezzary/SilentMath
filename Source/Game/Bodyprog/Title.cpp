@@ -631,14 +631,14 @@ namespace Silent::Game
         u8* ptr1;
         s8* ptr2;
 
-        static q19_12 rand = 0;
+        static q19_12 randAngle = Q12_ANGLE(0.0f);
 
         return; // @todo6565
 
         ptr   = D_800BCDE0;
         ptr1  = (u8*)ptr + 441;
-        rand += Rng_GenerateInt(4, 11u);
-        val   = Q12_MULT(Math_Sin(rand), 10) - 122;
+        randAngle += Rng_GenerateInt(4, 11u);
+        val   = Q12_MULT(Math_Sin(randAngle), 10) - 122;
         ptr2  = ptr + 461;
 
         for (i = 20; i >= 0; i--)
