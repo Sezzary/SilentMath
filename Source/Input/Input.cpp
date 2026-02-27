@@ -603,7 +603,7 @@ namespace Silent::Input
 
         // Collect stick axes.
         auto stickAxes = std::vector<Vector2>(VALID_GAMEPAD_STICK_AXIS_CODES.size() / Vector2::AXIS_COUNT);
-        for (int i, j = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
+        for (int i = 0, j = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
         {
             if (!IsGamepadConnected())
             {

@@ -315,8 +315,8 @@ namespace Silent::Renderer::SdlGpu
             .type                 = SDL_GPU_TEXTURETYPE_2D,
             .format               = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
             .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
-            .width                = viewportRes.x,
-            .height               = viewportRes.y,
+            .width                = (uint)viewportRes.x,
+            .height               = (uint)viewportRes.y,
             .layer_count_or_depth = 1,
             .num_levels           = 1
         };
@@ -341,8 +341,8 @@ namespace Silent::Renderer::SdlGpu
             .type                 = SDL_GPU_TEXTURETYPE_2D,
             .format               = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
             .usage                = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
-            .width                = viewportRes.x,
-            .height               = viewportRes.y,
+            .width                = (uint)viewportRes.x,
+            .height               = (uint)viewportRes.y,
             .layer_count_or_depth = 1,
             .num_levels           = 1
         };

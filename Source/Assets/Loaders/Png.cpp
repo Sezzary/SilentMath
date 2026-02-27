@@ -21,7 +21,7 @@ namespace Silent::Assets
 
         // Read pixels.
         int    channels = 0;
-        uchar* pixels   = stbi_load(filename.c_str(), &asset.Resolution.x, &asset.Resolution.y, &channels, RGBA_COMP_COUNT);
+        uchar* pixels   = stbi_load(filename.string().c_str(), &asset.Resolution.x, &asset.Resolution.y, &channels, RGBA_COMP_COUNT);
         if (pixels == nullptr) 
         {
             throw std::runtime_error(Fmt("Failed to open PNG `{}`.",

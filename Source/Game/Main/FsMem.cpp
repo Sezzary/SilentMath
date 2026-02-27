@@ -10,7 +10,7 @@ namespace Silent::Game
         // @stub
     }
 
-    void* Fs_AllocMem(s32 size)
+    void Fs_AllocMem(s32 size)
     {
         // @stub
     }

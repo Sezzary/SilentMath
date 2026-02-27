@@ -154,19 +154,19 @@ namespace Silent::Renderer::SdlGpu
         auto shadersDir = fs.GetAssetsDirectory() / ASSETS_SHADERS_DIR_NAME / filename;
         if (formatFlags & SDL_GPU_SHADERFORMAT_SPIRV)
         {
-            snprintf(fullPath, sizeof(fullPath), "%s.spv", shadersDir.c_str());
+            snprintf(fullPath, sizeof(fullPath), "%s.spv", shadersDir.string().c_str());
             activeFormatFlag = SDL_GPU_SHADERFORMAT_SPIRV;
             entryPoint       = "main";
         }
         else if (formatFlags & SDL_GPU_SHADERFORMAT_MSL)
         {
-            snprintf(fullPath, sizeof(fullPath), "%s.msl", shadersDir.c_str());
+            snprintf(fullPath, sizeof(fullPath), "%s.msl", shadersDir.string().c_str());
             activeFormatFlag = SDL_GPU_SHADERFORMAT_MSL;
             entryPoint       = "main0";
         }
         else if (formatFlags & SDL_GPU_SHADERFORMAT_DXIL)
         {
-            snprintf(fullPath, sizeof(fullPath), "%s.dxil", shadersDir.c_str());
+            snprintf(fullPath, sizeof(fullPath), "%s.dxil", shadersDir.string().c_str());
             activeFormatFlag = SDL_GPU_SHADERFORMAT_DXIL;
             entryPoint       = "main";
         }

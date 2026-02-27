@@ -41,7 +41,7 @@ namespace Silent::Game
      * @param size Number of bytes to allocate.
      * @return Allocated memory block.
      */
-    void* Fs_AllocMem(s32 size);
+    void Fs_AllocMem(s32 size);
 
     /** @brief Clamp memory buffer size to heap bounds.
      * @param start Buffer start.

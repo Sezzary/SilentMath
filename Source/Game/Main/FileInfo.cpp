@@ -27,7 +27,7 @@ namespace Silent::Game
     //#endif
     };
 
-    char* g_FilePaths[] =
+    const char* g_FilePaths[] =
     {
         "\\1ST\\",
         "\\ANIM\\",
@@ -42,7 +42,7 @@ namespace Silent::Game
         "\\XA\\"
     };
 
-    char* g_FileExts[] =
+    const char* g_FileExts[] =
     {
         ".TIM",
         ".VAB",
@@ -110,7 +110,7 @@ namespace Silent::Game
         char  decoded;
         u32   namePart;
         char  fileType;
-        char* fileExt;
+        const char* fileExt;
 
         namePart = fileEntry->name0123_4_4;
 

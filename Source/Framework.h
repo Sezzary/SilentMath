@@ -67,8 +67,8 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
-// ImGuizmo
-#include <ImGuizmo.h>
+// ImGuizmo @todo Issues on Windows build.
+//#include <ImGuizmo.h>
 
 // json
 #include <nlohmann/json.hpp>

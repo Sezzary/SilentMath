@@ -85,7 +85,7 @@ namespace Silent::Game
      * @note Not `const char*` because it has to end up in .data/.sdata. Was also `char*` in the header
      * found in one of the prototypes.
      */
-    extern char* g_FilePaths[];
+    extern const char* g_FilePaths[];
 
     /** @brief Array of file extension strings.
      *
@@ -98,7 +98,7 @@ namespace Silent::Game
      * @note Not `const char*` because it has to end up in .data/.sdata. Was also `char*` in the header
      * found in one of the prototypes.
      */
-    extern char* g_FileExts[];
+    extern const char* g_FileExts[];
 
     /** @brief Array of starting sector numbers for the first 9 \XA\ files in the file table (2044 - 2052).
      * These files seem to contain dialog and music. Array starts and ends with 0s.
