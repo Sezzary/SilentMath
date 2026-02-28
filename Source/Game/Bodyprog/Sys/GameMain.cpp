@@ -13,6 +13,7 @@
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Screens/BKonami/BKonami.h"
+#include "Game/Screens/Options/Options.h"
 #include "Game/Screens/SaveLoad/SaveLoad.h"
 #include "Renderer/Renderer.h"
 //#include "bodyprog/sound_system.h"
@@ -54,7 +55,7 @@ namespace Silent::Game
         nullptr,//GameState_MapScreen_Update,
         GameState_LoadSavegameScreen_Update,
         GameState_DebugMoviePlayer_Update,
-        nullptr,//GameState_Options_Update,
+        GameState_Options_Update,
         nullptr,//GameState_LoadStatusScreen_Update,
         nullptr,//GameState_LoadMapScreen_Update,
         nullptr,//GameState_Unk15_Update

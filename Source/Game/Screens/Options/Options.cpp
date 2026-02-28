@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Game/Main/FsQueue.h"
 #include "Game/Screens/Options/MenuGraphics.h"
 #include "Input/Input.h"
 
@@ -14,18 +15,20 @@ namespace Silent::Game
 {
     constexpr int LINE_CURSOR_TIMER_MAX = 8;
 
-    s32 g_Options_SelectionHighlightTimer = 0;
-
     int  g_MainOptionsMenu_SelectedEntry      = 0;
     int  g_ExtraOptionsMenu_SelectedEntry     = 0;
     int  g_MainOptionsMenu_PrevSelectedEntry  = 0;
     int  g_ExtraOptionsMenu_PrevSelectedEntry = 0;
     bool g_ScreenPosMenu_InvertBackgroundFade = false;
 
-    Vector2i g_MainOptions_SelectionHighlightFrom  = Vector2i::Zero;
-    Vector2i g_MainOptions_SelectionHighlightTo    = Vector2i::Zero;
-    Vector2i g_ExtraOptions_SelectionHighlightFrom = Vector2i::Zero;
-    Vector2i g_ExtraOptions_SelectionHighlightTo   = Vector2i::Zero;
+    /** @brief Tracks movement time of the cursor highlight. */
+    s32 g_Options_SelectionHighlightTimer = 0;
+
+    /** @brief Number of options to show in the extra options screen. Shows extra unlockable settings if they are unlocked. */
+    static s32 g_ExtraOptionsMenu_EntryCount = 0;
+
+    static s32 g_ExtraOptionsMenu_SelectedBloodColorEntry = 0;
+    static s32 g_ExtraOptionsMenu_BulletMultMax           = 0;
 
     void GameState_Options_Update()
     {
@@ -55,7 +58,7 @@ namespace Silent::Game
                 g_GameWork.background2dColor_58C.g = 0;
                 g_GameWork.background2dColor_58C.b = 0;
 
-                //ScreenFade_Start(false, true, false);
+                ScreenFade_Start(false, true, false);
                 //g_IntervalVBlanks   = 1;
 
                 if (g_GameWork.gameStatePrev_590 == GameState_InGame)
@@ -63,12 +66,12 @@ namespace Silent::Game
                     //func_80037188();
                 }
 
-                //g_MainOptionsMenu_SelectedEntry      = MainOptionsMenuEntry_Exit;
-                //g_MainOptionsMenu_PrevSelectedEntry  = 0;
-                //g_ExtraOptionsMenu_SelectedEntry     = 0;
-                //g_ExtraOptionsMenu_PrevSelectedEntry = 0;
-                //g_Options_SelectionHighlightTimer    = 0;
-                //g_ExtraOptionsMenu_BulletMultMax     = 1;
+                g_MainOptionsMenu_SelectedEntry      = MainOptionsMenuEntry_Exit;
+                g_MainOptionsMenu_PrevSelectedEntry  = 0;
+                g_ExtraOptionsMenu_SelectedEntry     = 0;
+                g_ExtraOptionsMenu_PrevSelectedEntry = 0;
+                g_Options_SelectionHighlightTimer    = 0;
+                g_ExtraOptionsMenu_BulletMultMax     = 1;
                 unlockedOptFlags                     = g_GameWork.config_0.optExtraOptionsEnabled_27;
                 
                 // Set available bullet multiplier.
@@ -76,7 +79,7 @@ namespace Silent::Game
                 {
                     if (unlockedOptFlags & (1 << i))
                     {
-                        //g_ExtraOptionsMenu_BulletMultMax++;
+                        g_ExtraOptionsMenu_BulletMultMax++;
                     }
                 }
 
@@ -133,7 +136,7 @@ namespace Silent::Game
             case OptionsMenuState_EnterBrightness:
                 if (false)//(ScreenFade_IsFinished())
                 {
-                    //Fs_QueueWaitForEmpty();
+                    Fs_QueueWaitForEmpty();
 
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Brightness;
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Brightness;
@@ -149,7 +152,7 @@ namespace Silent::Game
 
             case OptionsMenuState_EnterController:
                 // Switch to controller menu.
-                if (false)//(ScreenFade_IsFinished())
+                if (ScreenFade_IsFinished())
                 {
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Controller;
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Controller;
@@ -164,7 +167,7 @@ namespace Silent::Game
                 break;
 
             case OptionsMenuState_Leave:
-                //ScreenFade_Start(true, false, false);
+                ScreenFade_Start(true, false, false);
 
                 g_GameWork.gameStateStep_598[0] = OptionsMenuState_LeaveMainOptions;
                 g_SysWork.counters_1C[1]              = 0;
@@ -173,7 +176,7 @@ namespace Silent::Game
                 break;
 
             case OptionsMenuState_LeaveMainOptions:
-                if (false)//(ScreenFade_IsFinished())
+                if (ScreenFade_IsFinished())
                 {
                     // TODO: Likely `Game_StateSetPrevious` inline, but `gameState_594`/`gameStatePrev_590` loads inside are switched?
 
@@ -199,21 +202,21 @@ namespace Silent::Game
                 {
                     g_GameWork.gameStateStep_598[0]   = OptionsMenuState_ExtraOptions;
                     g_SysWork.counters_1C[1]                = 0;
-                    //ScreenFade_Start(false, true, false);
+                    ScreenFade_Start(false, true, false);
                     g_GameWork.gameStateStep_598[1]   = 0;
                     g_GameWork.gameStateStep_598[2]   = 0;
-                    //g_Options_SelectionHighlightTimer = 0;
+                    g_Options_SelectionHighlightTimer = 0;
                 }
                 break;
 
             case OptionsMenuState_LeaveExtraOptions:
-                if (false)//(ScreenFade_IsFinished())
+                if (ScreenFade_IsFinished())
                 {
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterMainOptions;
                     g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
-                    //ScreenFade_Start(false, true, false);
+                    ScreenFade_Start(false, true, false);
                 }
                 break;
         }
@@ -228,19 +231,19 @@ namespace Silent::Game
             case OptionsMenuState_EnterBrightness:
             case OptionsMenuState_EnterController:
             case OptionsMenuState_EnterExtraOptions:
-                //Options_MainOptionsMenu_Control();
+                Options_MainOptionsMenu_Control();
                 break;
 
             case OptionsMenuState_ExtraOptions:
             case OptionsMenuState_LeaveExtraOptions:
-                //Options_ExtraOptionsMenu_Control();
+                Options_ExtraOptionsMenu_Control();
                 break;
         }
     }
 
     void Options_MainOptionsMenu_Control()
     {
-        #define SOUND_VOL_STEP 8
+        constexpr int SOUND_VOL_STEP = 8;
 
         const auto& input = g_App.GetInput();
 
@@ -327,9 +330,9 @@ namespace Silent::Game
                 if (input.GetAction(In::Enter).IsClicked())
                 {
                     //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
-                    //Fs_QueueStartReadTim(FILE_TIM_OPTION2_TIM, IMAGE_BUFFER_3, &g_ControllerButtonAtlasImg);
+                    Fs_QueueStartReadTim(FILE_TIM_OPTION2_TIM, IMAGE_BUFFER_3, &g_ControllerButtonAtlasImg);
 
-                    //ScreenFade_Start(true, false, false);
+                    ScreenFade_Start(true, false, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterController;
                     g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
@@ -343,7 +346,7 @@ namespace Silent::Game
                 {
                     //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
 
-                    //ScreenFade_Start(true, false, false);
+                    ScreenFade_Start(true, false, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterScreenPos;
                     g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
@@ -357,14 +360,14 @@ namespace Silent::Game
                     //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
                     if (g_GameWork.gameStatePrev_590 == GameState_MainMenu)
                     {
-                        //Fs_QueueStartReadTim(FILE_TIM_OP_BRT_E_TIM, IMAGE_BUFFER_3, &g_BrightnessScreenImg0);
+                        Fs_QueueStartReadTim(FILE_TIM_OP_BRT_E_TIM, IMAGE_BUFFER_3, &g_BrightnessScreenImg0);
                     }
                     else
                     {
-                        //Fs_QueueStartReadTim(FILE_TIM_OP_BRT_E_TIM, IMAGE_BUFFER_3, &g_BrightnessScreenImg1);
+                        Fs_QueueStartReadTim(FILE_TIM_OP_BRT_E_TIM, IMAGE_BUFFER_3, &g_BrightnessScreenImg1);
                     }
 
-                    //ScreenFade_Start(true, false, false);
+                    ScreenFade_Start(true, false, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterBrightness;
                     g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
@@ -478,7 +481,7 @@ namespace Silent::Game
 
             //Sd_PlaySfx(Sfx_MenuConfirm, 0, 64);
 
-            //ScreenFade_Start(true, false, false);
+            ScreenFade_Start(true, false, false);
             g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterExtraOptions;
             g_SysWork.counters_1C[1]              = 0;
             g_GameWork.gameStateStep_598[1] = 0;

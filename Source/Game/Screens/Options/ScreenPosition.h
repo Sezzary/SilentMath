@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Game/Common.h"
+// Not needed for the port, but the arrow graphics could be reused elsewhere.
 
 /** @brief Screen position menu states. Facilitates menu switching via `s_GameWork::gameStateStep[1]`. */
 enum e_ScreenPosMenuState
@@ -10,10 +10,6 @@ enum e_ScreenPosMenuState
     ScreenPosMenuState_2     = 2,
     ScreenPosMenuState_Leave = 3
 };
-
-extern bool     g_ScreenPosMenu_InvertBackgroundFade;
-extern int      g_ScreenPosMenu_BackgroundFade;
-extern Vector2i g_ScreenPosMenu_Position;
 
 /** @brief Controller for the screen position options menu.
  *

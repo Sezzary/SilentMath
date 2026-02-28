@@ -9,7 +9,6 @@
 namespace Silent::Game
 {
     bool g_ControllerMenu_IsOnActionsPane = false;
-    s_ControllerMenu_SelectedEntries g_ControllerMenu_SelectedEntries;
 
     /** @brief Draw modes for textured entry selection highlights in the controller config menu.
      * 0 corresponds to the presets pane on the left,
@@ -60,12 +59,14 @@ namespace Silent::Game
         int           boundActionIdx = NO_VALUE;
         e_InputAction actionIdx;
 
+        static auto selectedEntries = s_ControllerMenu_SelectedEntries{};
+
         // Handle controller config menu state.
         switch (g_GameWork.gameStateStep_598[1])
         {
             case ControllerMenuState_Exit:
                 //ScreenFade_Start(false, true, false);
-                g_ControllerMenu_SelectedEntries.preset_0 = ControllerMenuState_Exit;
+                selectedEntries.preset_0 = ControllerMenuState_Exit;
 
                 // Leave menu.
                 if (g_Controller0.btnsClicked_10 & (g_GameWork.config_0.controllerConfig_0.enter_0 |
@@ -101,7 +102,7 @@ namespace Silent::Game
             case ControllerMenuState_Type1:
             case ControllerMenuState_Type2:
             case ControllerMenuState_Type3:
-                g_ControllerMenu_SelectedEntries.preset_0 = g_GameWork.gameStateStep_598[1];
+                selectedEntries.preset_0 = g_GameWork.gameStateStep_598[1];
 
                 // Set binding preset.
                 if (g_Controller0.btnsClicked_10 & g_GameWork.config_0.controllerConfig_0.enter_0)
@@ -140,36 +141,36 @@ namespace Silent::Game
                 break;
 
             case ControllerMenuState_Actions:
-                actionIdx = g_ControllerMenu_SelectedEntries.action_4;
+                actionIdx = selectedEntries.action_4;
 
                 // Move selection cursor up/down.
                 if (g_Controller0.btnsPulsedGui_1C & ControllerFlag_LStickUp)
                 {
                     if (actionIdx != InputAction_Enter)
                     {
-                        g_ControllerMenu_SelectedEntries.action_4 = actionIdx - 1;
+                        selectedEntries.action_4 = actionIdx - 1;
                     }
                     else
                     {
-                        g_ControllerMenu_SelectedEntries.action_4 = InputAction_Option;
+                        selectedEntries.action_4 = InputAction_Option;
                     }
                 }
                 else if (g_Controller0.btnsPulsedGui_1C & ControllerFlag_LStickDown)
                 {
                     if (actionIdx != InputAction_Option)
                     {
-                        g_ControllerMenu_SelectedEntries.action_4 = actionIdx + 1;
+                        selectedEntries.action_4 = actionIdx + 1;
                     }
                     else
                     {
-                        g_ControllerMenu_SelectedEntries.action_4 = InputAction_Enter;
+                        selectedEntries.action_4 = InputAction_Enter;
                     }
                 }
                 // Move selection cursor left/right.
                 else if (g_Controller0.btnsPulsedGui_1C & (ControllerFlag_LStickLeft | ControllerFlag_LStickRight))
                 {
                     g_GameWork.gameStateStep_598[2] = 0;
-                    g_GameWork.gameStateStep_598[1] = g_ControllerMenu_SelectedEntries.preset_0;
+                    g_GameWork.gameStateStep_598[1] = selectedEntries.preset_0;
                 }
                 // Bind button to input action.
                 else
@@ -207,6 +208,6 @@ namespace Silent::Game
         }
 
         // Draw menu graphics.
-        Options_ControllerMenu_EntriesDraw(g_ControllerMenu_IsOnActionsPane, g_ControllerMenu_SelectedEntries.preset_0, g_ControllerMenu_SelectedEntries.action_4, boundActionIdx);
+        Options_ControllerMenu_EntriesDraw(g_ControllerMenu_IsOnActionsPane, selectedEntries.preset_0, selectedEntries.action_4, boundActionIdx);
     }*/
 }

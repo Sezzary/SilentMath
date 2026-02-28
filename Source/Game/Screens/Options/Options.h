@@ -90,15 +90,7 @@ namespace Silent::Game
     extern int g_MainOptionsMenu_PrevSelectedEntry;
     extern int g_ExtraOptionsMenu_PrevSelectedEntry;
 
-    extern Vector2i g_ExtraOptions_SelectionHighlightFrom;
-    extern Vector2i g_ExtraOptions_SelectionHighlightTo;
-    extern Vector2i g_MainOptions_SelectionHighlightFrom;
-    extern Vector2i g_MainOptions_SelectionHighlightTo;
-
-    extern int g_Options_SelectionHighlightTimer;
-    extern int g_ExtraOptionsMenu_EntryCount;
-    extern int g_ExtraOptionsMenu_SelectedBloodColorEntry;
-    extern int g_ExtraOptionsMenu_BulletMultMax;
+    extern s32 g_Options_SelectionHighlightTimer;
 
     /** @brief Options menu game state handler. */
     void GameState_Options_Update();
