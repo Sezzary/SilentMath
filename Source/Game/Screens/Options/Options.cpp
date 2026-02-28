@@ -102,7 +102,7 @@ namespace Silent::Game
 
                 //g_ExtraOptionsMenu_EntryCount   = (g_GameWork.config_0.optExtraOptionsEnabled_27) ? 8 : 6;
                 g_GameWork.gameStateStep_598[0] = OptionsMenuState_MainOptions;
-                g_SysWork.timer_20              = 0;
+                g_SysWork.counters_1C[1]              = 0;
                 g_GameWork.gameStateStep_598[1] = 0;
                 g_GameWork.gameStateStep_598[2] = 0;
                 break;
@@ -111,7 +111,7 @@ namespace Silent::Game
             case OptionsMenuState_LeaveBrightness:
             case OptionsMenuState_LeaveController:
                 g_GameWork.gameStateStep_598[0] = OptionsMenuState_MainOptions;
-                g_SysWork.timer_20              = 0;
+                g_SysWork.counters_1C[1]              = 0;
                 g_GameWork.gameStateStep_598[1] = 0;
                 g_GameWork.gameStateStep_598[2] = 0;
                 break;
@@ -120,7 +120,7 @@ namespace Silent::Game
                 if (ScreenFade_IsFinished())
                 {
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_ScreenPos;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -137,7 +137,7 @@ namespace Silent::Game
 
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Brightness;
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Brightness;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -153,7 +153,7 @@ namespace Silent::Game
                 {
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Controller;
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Controller;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -167,7 +167,7 @@ namespace Silent::Game
                 //ScreenFade_Start(true, false, false);
 
                 g_GameWork.gameStateStep_598[0] = OptionsMenuState_LeaveMainOptions;
-                g_SysWork.timer_20              = 0;
+                g_SysWork.counters_1C[1]              = 0;
                 g_GameWork.gameStateStep_598[1] = 0;
                 g_GameWork.gameStateStep_598[2] = 0;
                 break;
@@ -180,8 +180,8 @@ namespace Silent::Game
                     auto prevGameState = g_GameWork.gameStatePrev_590;
                     auto gameState     = g_GameWork.gameState_594;
 
-                    g_SysWork.timer_1C              = 0;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[0]              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
 
@@ -198,7 +198,7 @@ namespace Silent::Game
                 if (false)//(ScreenFade_IsFinished())
                 {
                     g_GameWork.gameStateStep_598[0]   = OptionsMenuState_ExtraOptions;
-                    g_SysWork.timer_20                = 0;
+                    g_SysWork.counters_1C[1]                = 0;
                     //ScreenFade_Start(false, true, false);
                     g_GameWork.gameStateStep_598[1]   = 0;
                     g_GameWork.gameStateStep_598[2]   = 0;
@@ -210,7 +210,7 @@ namespace Silent::Game
                 if (false)//(ScreenFade_IsFinished())
                 {
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterMainOptions;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                     //ScreenFade_Start(false, true, false);
@@ -282,7 +282,7 @@ namespace Silent::Game
             //Sd_PlaySfx(Sfx_MenuCancel, 0, 64);
 
             g_GameWork.gameStateStep_598[0] = OptionsMenuState_Leave;
-            g_SysWork.timer_20              = 0;
+            g_SysWork.counters_1C[1]              = 0;
             g_GameWork.gameStateStep_598[1] = 0;
             g_GameWork.gameStateStep_598[2] = 0;
             return;
@@ -316,7 +316,7 @@ namespace Silent::Game
                     //Sd_PlaySfx(Sfx_MenuCancel, 0, 64);
 
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_Leave;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -331,7 +331,7 @@ namespace Silent::Game
 
                     //ScreenFade_Start(true, false, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterController;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -345,7 +345,7 @@ namespace Silent::Game
 
                     //ScreenFade_Start(true, false, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterScreenPos;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -366,7 +366,7 @@ namespace Silent::Game
 
                     //ScreenFade_Start(true, false, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterBrightness;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }
@@ -480,7 +480,7 @@ namespace Silent::Game
 
             //ScreenFade_Start(true, false, false);
             g_GameWork.gameStateStep_598[0] = OptionsMenuState_EnterExtraOptions;
-            g_SysWork.timer_20              = 0;
+            g_SysWork.counters_1C[1]              = 0;
             g_GameWork.gameStateStep_598[1] = 0;
             g_GameWork.gameStateStep_598[2] = 0;
         }
@@ -534,7 +534,7 @@ namespace Silent::Game
                 //Sd_PlaySfx(Sfx_Cancel, 0, 64);
 
                 g_GameWork.gameStateStep_598[0] = OptionsMenuState_Leave;
-                g_SysWork.timer_20              = 0;
+                g_SysWork.counters_1C[1]              = 0;
                 g_GameWork.gameStateStep_598[1] = 0;
                 g_GameWork.gameStateStep_598[2] = 0;
                 return;
@@ -695,7 +695,7 @@ namespace Silent::Game
 
             ScreenFade_Start(true, false, false);
             g_GameWork.gameStateStep_598[0] = OptionsMenuState_LeaveExtraOptions;
-            g_SysWork.timer_20              = 0;
+            g_SysWork.counters_1C[1]              = 0;
             g_GameWork.gameStateStep_598[1] = 0;
             g_GameWork.gameStateStep_598[2] = 0;
         }

@@ -54,7 +54,7 @@ namespace Silent::Game
                     break;
 
                 case KonamiLogoStateStep_LogoDelay:
-                    if (g_Controller0->btnsHeld_C != 0 || g_SysWork.timer_1C > 180)
+                    if (g_Controller0->btnsHeld_C != 0 || g_SysWork.counters_1C[0] > 180)
                     {
                         ScreenFade_Start(false, false, false);
                         g_ScreenFadeTimestep            = Q12(0.2f);
@@ -184,7 +184,7 @@ namespace Silent::Game
                     nextGameState = GameState_MovieIntroFadeIn;
 
                     g_GameWork.gameStateStep_598[0] = KcetLogoStateStep_LogoDelay;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                     break;
@@ -195,7 +195,7 @@ namespace Silent::Game
                     nextGameState = GameState_MovieIntroFadeIn;
 
                     g_GameWork.gameStateStep_598[0] = KcetLogoStateStep_LogoDelay;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                     break;
@@ -206,7 +206,7 @@ namespace Silent::Game
                     nextGameState = GameState_MovieIntro;
 
                     g_GameWork.gameStateStep_598[0] = KcetLogoStateStep_LogoDelay;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                     break;
@@ -254,13 +254,13 @@ namespace Silent::Game
                     }
 
                     g_GameWork.gameStateStep_598[0] = KcetLogoStateStep_LogoDelay;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                     break;
 
                 case KcetLogoStateStep_LogoDelay:
-                    if (g_Controller0->btnsHeld_C != 0 || g_SysWork.timer_1C > 180)
+                    if (g_Controller0->btnsHeld_C != 0 || g_SysWork.counters_1C[0] > 180)
                     {
                         ScreenFade_Start(false, false, false);
                         g_ScreenFadeTimestep = Q12(0.2f);
@@ -293,8 +293,8 @@ namespace Silent::Game
                         //Demo_DemoDataRead();
                         Fs_QueueWaitForEmpty();
 
-                        g_SysWork.timer_1C = 0;
-                        g_SysWork.timer_20 = 0;
+                        g_SysWork.counters_1C[0] = 0;
+                        g_SysWork.counters_1C[1] = 0;
 
                         g_GameWork.gameStateStep_598[1] = 0;
                         g_GameWork.gameStateStep_598[2] = 0;

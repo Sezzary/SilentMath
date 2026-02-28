@@ -184,7 +184,7 @@ namespace Silent::Game
                 {
                     //ScreenFade_Start(true, true, false);
                     g_GameWork.gameStateStep_598[0] = OptionsMenuState_LeaveController;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
                 }

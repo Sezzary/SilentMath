@@ -76,7 +76,7 @@ namespace Silent::Game
                 g_GameWork.background2dColor_58C.b = 0;
 
                 Screen_Init(SCREEN_WIDTH, false);
-                g_SysWork.timer_20              = 0;
+                g_SysWork.counters_1C[1]              = 0;
                 g_GameWork.gameStateStep_598[1] = 0;
                 g_GameWork.gameStateStep_598[2] = 0;
                 g_GameWork.gameStateStep_598[0]++;
@@ -93,7 +93,7 @@ namespace Silent::Game
                     }
                     else
                     {
-                        g_SysWork.timer_20              = 0;
+                        g_SysWork.counters_1C[1]              = 0;
                         g_GameWork.gameStateStep_598[1] = 0;
                         g_GameWork.gameStateStep_598[2] = 0;
                         g_GameWork.gameStateStep_598[0]++;
@@ -121,8 +121,8 @@ namespace Silent::Game
 
                     gameState = g_GameWork.gameState_594;
 
-                    g_SysWork.timer_1C = 0;
-                    g_SysWork.timer_20 = 0;
+                    g_SysWork.counters_1C[0] = 0;
+                    g_SysWork.counters_1C[1] = 0;
 
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;

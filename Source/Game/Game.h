@@ -1793,9 +1793,7 @@ namespace Silent::Game
         e_SysState      sysState_8;
         s32             sysStateStep_C[3]; /** Temp data used by current `sysState_8`. Can be another state ID or other data. */
         s32             isMgsStringSet_18; /** `bool` | Indicates if string have been loaded and is going (or it is) being display. */
-        s32             timer_1C;
-        s32             timer_20;
-        s32             timer_24;
+        s32             counters_1C[3];
         q19_12          field_28; // Multi-purpose? Used as alpha to fade between images in `Screen_BackgroundImgTransition`.
         q19_12          timer_2C; // Cutscene message timer?
         s32             field_30;
@@ -1882,7 +1880,7 @@ namespace Silent::Game
 
         state                       =
         g_SysWork.sysState_8        = sysState;
-        g_SysWork.timer_24          = 0;
+        g_SysWork.counters_1C[2]          = 0;
         g_SysWork.sysStateStep_C[0] = 0;
         g_SysWork.field_28          = 0;//Q12(0.0f);
         g_SysWork.sysStateStep_C[1] = 0;
@@ -1988,8 +1986,8 @@ namespace Silent::Game
         prevState = g_GameWork.gameState_594;
 
         g_GameWork.gameState_594        = gameState;
-        g_SysWork.timer_1C              = 0;
-        g_SysWork.timer_20              = 0;
+        g_SysWork.counters_1C[0]              = 0;
+        g_SysWork.counters_1C[1]              = 0;
         g_GameWork.gameStateStep_598[1] = 0;
         g_GameWork.gameStateStep_598[2] = 0;
 
@@ -2012,8 +2010,8 @@ namespace Silent::Game
         prevState = g_GameWork.gameState_594;
 
         g_GameWork.gameState_594        = gameState;
-        g_SysWork.timer_1C              = 0;
-        g_SysWork.timer_20              = 0;
+        g_SysWork.counters_1C[0]              = 0;
+        g_SysWork.counters_1C[1]              = 0;
         g_GameWork.gameStateStep_598[1] = 0;
         g_GameWork.gameStateStep_598[2] = 0;
 
@@ -2033,8 +2031,8 @@ namespace Silent::Game
 
         prevState = g_GameWork.gameState_594;
 
-        g_SysWork.timer_1C              = 0;
-        g_SysWork.timer_20              = 0;
+        g_SysWork.counters_1C[0]              = 0;
+        g_SysWork.counters_1C[1]              = 0;
         g_GameWork.gameStateStep_598[1] = 0;
         g_GameWork.gameStateStep_598[2] = 0;
 

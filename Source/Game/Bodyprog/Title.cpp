@@ -90,7 +90,7 @@ namespace Silent::Game
                 {
                     //GameFs_MapStartup();
 
-                    if (g_GameWork.gameStateStep_598[0] == 1 && g_SysWork.timer_20 == Q12(0.0f))
+                    if (g_GameWork.gameStateStep_598[0] == 1 && g_SysWork.counters_1C[1] == 0)
                     {
                         g_Demo_ReproducedCount++;
                     }
@@ -222,7 +222,7 @@ namespace Silent::Game
                 {
                     //GameFs_MapStartup();
 
-                    if (g_GameWork.gameStateStep_598[0] == 1 && g_SysWork.timer_20 == Q12(0.0f))
+                    if (g_GameWork.gameStateStep_598[0] == 1 && g_SysWork.counters_1C[1] == 0)
                     {
                         g_Demo_ReproducedCount++;
                     }
@@ -317,10 +317,10 @@ namespace Silent::Game
                     prevState                       = g_GameWork.gameState_594;
                     g_GameWork.gameStateStep_598[0] = prevState;
                     g_GameWork.gameState_594        = (e_GameState)NEXT_GAME_STATES[g_MainMenu_SelectedEntry];
-                    g_SysWork.timer_1C              = 0;
+                    g_SysWork.counters_1C[0]              = 0;
                     g_GameWork.gameStatePrev_590    = prevState;
                     g_GameWork.gameStateStep_598[0] = 0;
-                    g_SysWork.timer_20              = 0;
+                    g_SysWork.counters_1C[1]              = 0;
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
 
@@ -331,7 +331,7 @@ namespace Silent::Game
 
         if (g_Controller0->btnsHeld_C != 0)
         {
-            g_SysWork.timer_20 = 0;
+            g_SysWork.counters_1C[1] = 0;
         }
 
         if (!playInGameDemo)
@@ -339,7 +339,7 @@ namespace Silent::Game
             switch (g_GameWork.gameStateStep_598[0])
             {
                 case 1:
-                    if (g_SysWork.timer_20 > 1740)
+                    if (g_SysWork.counters_1C[1] > 1740)
                     {
                         GameFs_StreamBinLoad();
                         g_GameWork.gameStateStep_598[0]++;

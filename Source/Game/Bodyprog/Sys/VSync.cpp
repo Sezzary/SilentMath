@@ -15,8 +15,8 @@ namespace Silent::Game
         //g_Demo_FrameCount++; // `extern` from demo.h
         g_WarmBootTimer++;
 
-        g_SysWork.timer_1C++;
-        g_SysWork.timer_20++;
-        g_SysWork.timer_24++;
+        g_SysWork.counters_1C[0]++;
+        g_SysWork.counters_1C[1]++;
+        g_SysWork.counters_1C[2]++;
     }
 }
