@@ -71,7 +71,9 @@ namespace Silent::Game
                     break;
             }
 
-            if (g_GameWork.gameState_594 != GameState_KonamiLogo)
+            // @todo Original code depended on blocking logic, but the new way continues the game loop.
+            // Need to do some light refactoring here for logos to show properly.
+            //if (g_GameWork.gameState_594 != GameState_KonamiLogo)
             {
                 BootScreen_KonamiScreenDraw();
                 Screen_FadeUpdate();

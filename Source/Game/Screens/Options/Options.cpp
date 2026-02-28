@@ -185,7 +185,7 @@ namespace Silent::Game
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
 
-                    //SysWork_StateSetNext(SysState_Gameplay);
+                    SysWork_StateSetNext(SysState_Gameplay);
 
                     g_GameWork.gameStateStep_598[0] = gameState;
                     g_GameWork.gameState_594        = prevGameState;

@@ -129,7 +129,7 @@ namespace Silent::Game
                     g_SysWork.field_30++;
                 }
 
-                Screen_BlackBorderDraw(poly, g_BlackBorderShade);
+                //Screen_BlackBorderDraw(poly, g_BlackBorderShade);
                 break;
 
             case 20:
@@ -138,7 +138,7 @@ namespace Silent::Game
                 g_SysWork.field_30++;
 
             case 21:
-                Screen_BlackBorderDraw(poly, g_BlackBorderShade);
+                //Screen_BlackBorderDraw(poly, g_BlackBorderShade);
                 break;
 
             case 23:
@@ -150,7 +150,7 @@ namespace Silent::Game
                     return;
                 }
 
-                Screen_BlackBorderDraw(poly, g_BlackBorderShade);
+                //Screen_BlackBorderDraw(poly, g_BlackBorderShade);
                 break;
 
             case 0:

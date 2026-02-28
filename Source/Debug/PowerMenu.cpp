@@ -5,6 +5,7 @@
 #include "Assets/AssetStreamer.h"
 #include "Assets/Locales.h"
 #include "Debug/Debug.h"
+#include "Debug/GameData.h"
 #include "Services/Options.h"
 #include "Utils/Bitfield.h"
 #include "Utils/Translator.h"
@@ -42,39 +43,55 @@ namespace Silent::Debug
             {
                 if constexpr (IS_DEBUG_BUILD)
                 {
-                    // `Scratchpad` tab.
-                    if (ImGui::BeginTabItem("Scratchpad"))
+                    // `General` tab.
+                    if (ImGui::BeginTabItem("General"))
                     {
+                        if (ImGui::BeginTable("Status", 2))
+                        {
+                            // `Sys state` info.
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Sys state:", 0, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("%d", *g_SysState, 0, 1);
+
+                            // `Sys state steps` info.
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Sys state steps:", 1, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("%d, %d, %d",
+                                        g_SysStateSteps[0],
+                                        g_SysStateSteps[1],
+                                        g_SysStateSteps[2],
+                                        1, 1);
+
+                            // `Game state` info.
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Game state:", 2, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("%d", *g_GameState, 2, 1);
+
+                            // `Game state steps` info.
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Game state steps:", 3, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("%d, %d, %d",
+                                        g_GameStateSteps[0],
+                                        g_GameStateSteps[1],
+                                        g_GameStateSteps[2],
+                                        3, 1);
+
+                            ImGui::EndTable();
+                        }
+
                         // 'Alpha blend' slider.
                         ImGui::SliderFloat("Alpha Blend", &g_Work.BlendAlpha, 0.0f, 1.0f);
     
                         ImGui::EndTabItem();
                     }
-                }
-
-                // `Resources` tab.
-                if (ImGui::BeginTabItem("Resources"))
-                {
-                    // `Loaded Assets` section.
-                    ImGui::SeparatorText("Loaded Assets");
-                    {
-                        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-                        if (ImGui::BeginChild("LoadedAssetsBox",
-                                              ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8),
-                                              ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
-                        {
-                            auto assetNames = assets.GetLoadedNames();
-                            for (const auto& assetName : assetNames)
-                            {
-                                ImGui::Bullet();
-                                ImGui::TextWrapped(assetName.c_str());
-                            }
-                        }
-                        ImGui::PopStyleColor();
-                        ImGui::EndChild();
-                    }
-
-                    ImGui::EndTabItem();
                 }
 
                 // `Renderer` tab.
@@ -117,7 +134,32 @@ namespace Silent::Debug
 
                     ImGui::EndTabItem();
                 }
-                
+
+                // `Resources` tab.
+                if (ImGui::BeginTabItem("Resources"))
+                {
+                    // `Loaded Assets` section.
+                    ImGui::SeparatorText("Loaded Assets");
+                    {
+                        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+                        if (ImGui::BeginChild("LoadedAssetsBox",
+                                              ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8),
+                                              ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
+                        {
+                            auto assetNames = assets.GetLoadedNames();
+                            for (const auto& assetName : assetNames)
+                            {
+                                ImGui::Bullet();
+                                ImGui::TextWrapped(assetName.c_str());
+                            }
+                        }
+                        ImGui::PopStyleColor();
+                        ImGui::EndChild();
+                    }
+
+                    ImGui::EndTabItem();
+                }
+
                 // `Input` tab.
                 if (ImGui::BeginTabItem("Input"))
                 {

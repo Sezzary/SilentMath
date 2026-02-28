@@ -137,8 +137,6 @@ namespace Silent::Game
                 break;
         }
 
-        //func_80033548();
-
         // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
         auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
@@ -146,7 +144,5 @@ namespace Silent::Game
         renderer.SubmitSprite2d(sprite);
         Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - FP_FLOAT(g_ScreenFadeProgress, Q8_SHIFT), 0, 1);
         //Screen_BackgroundImgDraw(&g_MainImg0);
-
-        //func_80089090(1);
     }
 }
