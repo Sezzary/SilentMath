@@ -2159,9 +2159,7 @@ namespace Silent::Game
 
     extern s32 g_MainMenu_NewGameSelectedDifficultyIdx;
 
-    //extern RECT D_800A9A6C; // `RECT<320, 256, 160, 240>`, only used in `SysState_Fmv_Update`?
-
-    extern u32 D_800A9AAC[];
+    extern RECT D_800A9A6C; // `RECT<320, 256, 160, 240>`, only used in `SysState_Fmv_Update`?
 
     extern s32 D_800A9ECC;
 

@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
@@ -13,7 +14,6 @@
 #include "Game/Main/Rng.h"
 #include "Game/Screens/Stream/Stream.h"
 #include "Renderer/Renderer.h"
-//#include "bodyprog/memcard.h"
 //#include "bodyprog/sound_system.h"
 
 using namespace Silent::Renderer;
@@ -514,7 +514,7 @@ namespace Silent::Game
         D_800BCDE0 = s0;*/
     }
 
-    u32 D_800A9AAC[256] =
+    static u32 g_MainMenu_FogGradientMap[256] =
     {
         0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000,
         0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000, 0x3A000000,
@@ -553,7 +553,7 @@ namespace Silent::Game
     u32 func_8003B7FC(s32 idx) // 0x8003B7FC
     {
         u8  idx0 = D_800BCDE0[idx];
-        u32 val  = D_800A9AAC[idx0];
+        u32 val  = g_MainMenu_FogGradientMap[idx0];
 
         if (idx < 210)
         {
@@ -617,7 +617,7 @@ namespace Silent::Game
         GsOT_TAG* tag;
 
         //tag    = g_OrderingTable2[g_ActiveBufferIdx].org;
-        //packet = Gfx_MainMenu_FogPacketGet(&tag[6], GsOUT_PACKET_P);
+        //packet = Gfx_MainMenu_FogPacketGet((GsOT*)&tag[6], (PACKET*)GsOUT_PACKET_P);
         //SetDrawMode((DR_MODE*)packet, 0, 1, 42, NULL);
         //addPrim(&tag[6], packet);
         //GsOUT_PACKET_P = packet + sizeof(DR_MODE);

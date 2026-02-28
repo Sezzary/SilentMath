@@ -60,4 +60,6 @@ namespace Silent::Game
      * @param strLength String length for rollout.
      */
     bool Gfx_StringDraw(const std::string& str, int strLength);
+
+    void Gfx_StringDrawInt(s32 widthMin, s32 strLength);
 }

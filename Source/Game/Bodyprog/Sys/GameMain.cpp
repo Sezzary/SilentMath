@@ -6,16 +6,16 @@
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
+#include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Screens/BKonami/BKonami.h"
+#include "Game/Screens/SaveLoad/SaveLoad.h"
 #include "Renderer/Renderer.h"
-//#include "bodyprog/memcard.h"
 //#include "bodyprog/sound_system.h"
-//#include "screens/saveload.h"
 
 using namespace Silent::Assets;
 
@@ -40,11 +40,11 @@ namespace Silent::Game
         GameState_KonamiLogo_Update,
         GameState_KcetLogo_Update,
         GameState_MovieIntroFadeIn_Update,
-        nullptr,//GameState_AutoLoadSavegame_Update,
+        GameState_AutoLoadSavegame_Update,
         GameState_MovieIntroAlternate_Update,
         GameState_MovieIntro_Update,
         GameState_MainMenu_Update,
-        nullptr,//GameState_LoadSavegameScreen_Update,
+        GameState_LoadSavegameScreen_Update,
         GameState_MovieOpening_Update,
         nullptr,//GameState_LoadScreen_Update,
         nullptr,//GameState_InGame_Update,
@@ -52,7 +52,7 @@ namespace Silent::Game
         GameState_ExitMovie_Update,
         nullptr,//GameState_ItemScreens_Update,
         nullptr,//GameState_MapScreen_Update,
-        nullptr,//GameState_LoadSavegameScreen_Update,
+        GameState_LoadSavegameScreen_Update,
         GameState_DebugMoviePlayer_Update,
         nullptr,//GameState_Options_Update,
         nullptr,//GameState_LoadStatusScreen_Update,

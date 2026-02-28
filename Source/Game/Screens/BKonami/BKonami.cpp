@@ -6,6 +6,7 @@
 
 #include "Application.h"
 #include "Game/Bodyprog/Demo.h"
+#include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
@@ -13,7 +14,6 @@
 #include "Game/Screens/Stream/Stream.h"
 #include "Renderer/Renderer.h"
 //#include "Game/Screen/BackgroundDraw.h"
-//#include "bodyprog/memcard.h"
 
 using namespace Silent::Renderer;
 
@@ -71,19 +71,22 @@ namespace Silent::Game
                     break;
             }
 
-            BootScreen_KonamiScreenDraw();
-            Screen_FadeUpdate();
-            Fs_QueueUpdate();
-            //MemCard_Update();
-            //func_80033548();
-            //VSync(SyncMode_Wait);
-            //GsSwapDispBuff();
-            //GsDrawOt(&g_OrderingTable2[g_ActiveBufferIdx]);
+            if (g_GameWork.gameState_594 != GameState_KonamiLogo)
+            {
+                BootScreen_KonamiScreenDraw();
+                Screen_FadeUpdate();
+                Fs_QueueUpdate();
+                //MemCard_Update();
+                //func_80033548();
+                //VSync(SyncMode_Wait);
+                //GsSwapDispBuff();
+                //GsDrawOt(&g_OrderingTable2[g_ActiveBufferIdx]);
 
-            //g_ActiveBufferIdx = GsGetActiveBuff();
-            //GsOUT_PACKET_P   = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx << 15));
-            //GsClearOt(0, 0, &g_OrderingTable0[g_ActiveBufferIdx]);
-            //GsClearOt(0, 0, &g_OrderingTable2[g_ActiveBufferIdx]);
+                //g_ActiveBufferIdx = GsGetActiveBuff();
+                //GsOUT_PACKET_P   = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx << 15));
+                //GsClearOt(0, 0, &g_OrderingTable0[g_ActiveBufferIdx]);
+                //GsClearOt(0, 0, &g_OrderingTable2[g_ActiveBufferIdx]);
+            }
         }
     }
 

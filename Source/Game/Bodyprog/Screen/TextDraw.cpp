@@ -35,12 +35,12 @@ namespace Silent::Game
     };
 
     static auto g_StringColorId = StringColorId_White;
+    Vector2i    g_StringPosition;
+    int         g_StringPositionX1;
+    s_800C38B0  D_800C38B0;
 
-    Vector2i g_StringPosition;
-
-    int g_StringPositionX1;
-
-    s_800C38B0 D_800C38B0;
+    // @todo Not original placement.
+    GsSPRITE D_800C38F8;
 
     void Gfx_StringSetPosition(int posX, int posY)
     {
@@ -79,5 +79,66 @@ namespace Silent::Game
         renderer.SubmitText2d(text);
 
         return true;
+    }
+
+    void Gfx_StringDrawInt(s32 widthMin, s32 val) // 0x8004B9F8
+    {
+        constexpr int GLYPH_SIZE_X       = 11;
+        constexpr int ATLAS_COLUMN_COUNT = 10;
+
+        s32   quotient;
+        s32   isNegative;
+        s32   i;
+        char* str;
+        char  buffer[47];
+
+        if (widthMin > 0)
+        {
+            for (i = 0; i < (widthMin - 1); i++)
+            {
+                D_800C38F8.x += GLYPH_SIZE_X;
+            }
+        }
+
+        str  = buffer;
+        *str = 0;
+
+        if (val < 0)
+        {
+            isNegative = true;
+            val        = -val;
+        }
+        else
+        {
+            isNegative = false;
+        }
+
+        // Wrap atlas row?
+        while (val >= ATLAS_COLUMN_COUNT)
+        {
+            str--;
+            quotient = (val / ATLAS_COLUMN_COUNT) >> 32;
+            *str     = (val - (quotient * ATLAS_COLUMN_COUNT)) + '0';
+
+            if (widthMin > 0)
+            {
+                D_800C38F8.x -= GLYPH_SIZE_X;
+            }
+
+            val = quotient;
+        }
+
+        str--;
+        *str = val + '0';
+
+        if (isNegative)
+        {
+            str--;
+            *str          = '-';
+            D_800C38F8.x -= GLYPH_SIZE_X;
+        }
+
+        // Draw numeric string.
+        Gfx_StringDraw(str, 5);
     }
 }
