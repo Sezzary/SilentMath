@@ -71,6 +71,16 @@ namespace Silent::Math
         return TO_FIXED(FP_FROM(x, shift), shift);
     }
 
+    /** @brief Truncates a value in a fixed-point Q format toward zero.
+     *
+     * @param x Fixed-point value to truncate.
+     * @return Fixed-point result of `x` truncated toward zero.
+     */
+    constexpr int FP_TRUNCATE(int x, int shift)
+    {
+        return TO_FIXED(x / TO_FIXED(1.0f, shift), shift);
+    }
+
     /** @brief Converts an integer from a scaled fixed-point Q format rounded to the nearest value.
      *
      * @param x Fixed-point value to convert.
@@ -186,6 +196,16 @@ namespace Silent::Math
         return FP_FLOOR(x, Q12_SHIFT);
     }
 
+    /** @brief Truncates a Q19.12 fixed-point value toward zero.
+     *
+     * @param x Q19.12 fixed-point value to truncate.
+     * @return Q19.12 result of `x` truncated toward zero.
+     */
+    constexpr q19_12 Q12_TRUNC(q19_12 x, int shift)
+    {
+        return FP_TRUNCATE(x, Q12_SHIFT);
+    }
+
     /** @brief Multiplies two integers in Q19.12 fixed-point.
      *
      * @param a First Q19.12 fixed-point factor.
@@ -195,6 +215,18 @@ namespace Silent::Math
     constexpr q19_12 Q12_MULT(q19_12 a, q19_12 b)
     {
         return FP_MULTIPLY(a, b, Q12_SHIFT);
+    }
+
+    /** @brief Multiplies two integers in Q19.12 fixed-point.
+     * Alternative to `Q12_MULT` using division instead of a bitwise shift.
+     *
+     * @param a First Q19.12 fixed-point factor.
+     * @param b Second Q19.12 fixed-point factor.
+     * @return Q19.12 product of `a` and `b`.
+     */
+    constexpr q19_12 Q12_MULT_ALT(q19_12 a, q19_12 b)
+    {
+        return (a * b) / TO_FIXED(1.0f, Q12_SHIFT);
     }
 
     /** @brief Multiplies two integers in Q19.12 fixed-point, using 64-bit intermediates for higher precision.
