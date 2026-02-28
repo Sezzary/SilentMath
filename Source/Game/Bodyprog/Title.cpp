@@ -235,7 +235,7 @@ namespace Silent::Game
 
                 if (g_Controller0->btnsPulsed_18 & (ControllerFlag_LStickUp | ControllerFlag_LStickDown) ||
                     g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config_0.controllerConfig_0.enter_0 |
-                                                    g_GameWorkPtr->config_0.controllerConfig_0.cancel_2))
+                                                     g_GameWorkPtr->config_0.controllerConfig_0.cancel_2))
                 {
                     g_GameWork.gameState_594 = GameState_MainMenu;
 

@@ -14,8 +14,6 @@ namespace Silent::Game
 
     void Screen_XyPositionSet(s32 x, s32 y);
 
-    void Screen_FadeDrawModeSet(DR_MODE* drMode);
-
     q19_12 Screen_FadeInProgressGet(void);
 
     void Screen_FadeUpdate(void);

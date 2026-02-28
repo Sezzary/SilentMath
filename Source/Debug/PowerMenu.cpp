@@ -61,28 +61,33 @@ namespace Silent::Debug
                             ImGui::Text("Sys state steps:", 1, 0);
                             ImGui::TableSetColumnIndex(1);
                             ImGui::Text("%d, %d, %d",
-                                        g_SysStateSteps[0],
-                                        g_SysStateSteps[1],
-                                        g_SysStateSteps[2],
+                                        g_SysStateSteps[0], g_SysStateSteps[1], g_SysStateSteps[2],
                                         1, 1);
+
+                            // `Sys counters` info.
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Text("Sys counters:", 2, 0);
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("%d, %d, %d",
+                                        g_SysCounters[0], g_SysCounters[1], g_SysCounters[2],
+                                        2, 1);
 
                             // `Game state` info.
                             ImGui::TableNextRow();
                             ImGui::TableSetColumnIndex(0);
-                            ImGui::Text("Game state:", 2, 0);
+                            ImGui::Text("Game state:", 3, 0);
                             ImGui::TableSetColumnIndex(1);
-                            ImGui::Text("%d", *g_GameState, 2, 1);
+                            ImGui::Text("%d", *g_GameState, 3, 1);
 
                             // `Game state steps` info.
                             ImGui::TableNextRow();
                             ImGui::TableSetColumnIndex(0);
-                            ImGui::Text("Game state steps:", 3, 0);
+                            ImGui::Text("Game state steps:", 4, 0);
                             ImGui::TableSetColumnIndex(1);
                             ImGui::Text("%d, %d, %d",
-                                        g_GameStateSteps[0],
-                                        g_GameStateSteps[1],
-                                        g_GameStateSteps[2],
-                                        3, 1);
+                                        g_GameStateSteps[0], g_GameStateSteps[1], g_GameStateSteps[2],
+                                        4, 1);
 
                             ImGui::EndTable();
                         }

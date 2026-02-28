@@ -11,23 +11,11 @@ namespace Silent::Game
 {
     q19_12 g_ScreenFadeTimestep;
     s32    g_Screen_FadeStatus; // @todo Temporary placement. Not migrated yet, don't know where to put it.
-    static q19_12 g_PrevScreenFadeProgress;
-
-    static DR_MODE D_800A8E5C[] =
-    {
-        { 0x3000000, 0xE1000240, 0x0 },
-        { 0x3000000, 0xE1000240, 0x0 }
-    };
-
-    static TILE D_800A8E74[] =
-    {
-        { 0x3000000, 255, 0, 0, 0x62, -SCREEN_WIDTH, -SCREEN_HEIGHT, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2 },
-        { 0x3000000, 255, 0, 0, 0x62, -SCREEN_WIDTH, -SCREEN_HEIGHT, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2 }
-    };
-
     q19_12 g_ScreenFadeProgress = Q12(0.0f);
 
-    void Screen_FadeDrawModeSet(DR_MODE* drMode) // 0x800325A4
+    static q19_12 g_PrevScreenFadeProgress;
+
+    static void Screen_FadeDrawModeSet() // 0x800325A4
     {
         if (IS_SCREEN_FADE_WHITE(g_Screen_FadeStatus))
         {
@@ -62,7 +50,7 @@ namespace Silent::Game
 
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutSteps, false):
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutSteps, true):
-                //Screen_FadeDrawModeSet(drMode);
+                Screen_FadeDrawModeSet();
                 queueLength = Fs_QueueGetLength();
 
                 if (g_ScreenFadeTimestep > Q12(0.0f))
@@ -93,12 +81,12 @@ namespace Silent::Game
 
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutComplete, false):
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeOutComplete, true):
-                //Screen_FadeDrawModeSet(drMode);
+                Screen_FadeDrawModeSet();
                 break;
 
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeInSteps, false):
             case SCREEN_FADE_STATUS(ScreenFadeState_FadeInSteps, true):
-                //Screen_FadeDrawModeSet(drMode);
+                Screen_FadeDrawModeSet();
 
                 if (g_ScreenFadeTimestep > Q12(0.0f))
                 {

@@ -1055,7 +1055,6 @@ namespace Silent::Game
         u8                 optExtraWeaponCtrl_23;     /** `bool` | Switch: `false`, Press: `true`, default: Press. */
         u8                 optExtraBloodColor_24;     /** `e_BloodColor` | Default: Normal. */
         s8                 optAutoLoad_25;            /** `bool` | Off: `false`, On: `true`, default: Off. */
-        u8                 unk_26;                    // Padding?
         u8                 optExtraOptionsEnabled_27; /** Holds unlocked option flags. */
         s8                 optExtraViewCtrl_28;       /** `bool` | Normal: `false`, Reverse: `true`, default: Normal. */
         s8                 optExtraViewMode_29;       /** `bool` | Normal: `false`, Self View: `true`, default: Normal. */
@@ -1109,7 +1108,6 @@ namespace Silent::Game
         u8 status_4;                 /** Packed anim status. Init base? See `s_ModelAnimData::status_0`. */
         s8 hasVariableDuration_5;    /** `bool` | Use `duration_8.variableFunc`: `true`, Use `duration_8.constant`: `false`. */
         u8 status_6;                 /** Packed anim status. Link target? Sometimes `NO_VALUE`, unknown why. See `s_ModelAnim::status_0`. */
-        // 1 byte of padding.
         union
         {
             q19_12 constant;          /** Constant duration at 30 FPS. */
@@ -1546,7 +1544,6 @@ namespace Silent::Game
     typedef struct _PropertiesStalker
     {
         s16    flags_E8; /** `e_StalkerFlags` */
-        s8     unk_EA[2]; // Padding?
         q3_12  offset_EC;
         q3_12  offset_EE;
         q19_12 targetPositionX_F0;
@@ -1559,7 +1556,6 @@ namespace Silent::Game
         q19_12 relAnimTime_104;
         q4_12  timer_108;
         u8     field_10A;
-        s8     unk_10B; // Padding?
         q19_12 timer_10C;
         q19_12 health_110;
         q3_12  angle_114;
@@ -1648,7 +1644,6 @@ namespace Silent::Game
                             // Possibly `Game_NpcRoomInitSpawn` may have the answer, indicating
                             // it's used to indicate the NPC index in `s_Savegame::ovlEnemyStates`.
         s8  attackReceived_41; // Packed weapon attack indicating what attack has been performed to the character. See `WEAPON_ATTACK`.
-        s8  unk_42[2];         // Most likely padding.
         s_SubCharacter_44  field_44;
         q19_12  health_B0;
         s_CharaDamage damage_B4;
@@ -1747,7 +1742,6 @@ namespace Silent::Game
         q3_12   worldTintB_C;
         u8      field_E; // Fog enabled if not set to 0, `Gfx_FogParametersSet` checks for values 0/1/2/3.
                         // Sets the transparent grey layer overlaid on characters and the enviroment.
-        s8      unk_F; // Padding?
         q19_12  fogDistance_10;
         CVECTOR fogColor_14;
         u8      field_18; // `bool`?
@@ -1755,8 +1749,6 @@ namespace Silent::Game
         CVECTOR screenTint_1D; // Subtractive screen tint.
         CVECTOR field_21;      // Particle effect related. Only the first value affects snow transparency.
         CVECTOR field_25;
-        u8      unk_29; // } Padding?
-        s16     unk_2A; // }
     } s_MapEffectsInfo;
 
     typedef struct
@@ -1777,7 +1769,6 @@ namespace Silent::Game
         u8              field_14;
         u8              isFlashlightOn_15;          /** `bool` */
         u8              isFlashlightUnavailable_16; /** `bool` */
-        s8              unk_17;                     // Most likely padding.
         q3_12           flashlightIntensity_18;     // Alpha.
         u16             field_1A;
         s_StructUnk3    field_1C[2];
@@ -1797,7 +1788,6 @@ namespace Silent::Game
         q19_12          field_28; // Multi-purpose? Used as alpha to fade between images in `Screen_BackgroundImgTransition`.
         q19_12          timer_2C; // Cutscene message timer?
         s32             field_30;
-        s8              unk_34[4]; // Padding?
         s_PlayerCombat  playerCombat_38; // Information related to weapons and attack.
         s_PlayerWork    playerWork_4C;
         s_SubCharacter  npcs_1A0[NPC_COUNT_MAX];
@@ -1812,7 +1802,6 @@ namespace Silent::Game
                                     // Enabling a flag for Larval Stalkers causes them to die.
         s32             field_228C[1];
         s32             npcFlags_2290; // Flags related to NPCs. Each bit corresponds to `npcs_1A0` index.
-        s8              unk_2294[4];   // Padding?
         e_SysWorkProcessFlags processFlags_2298;
         s32             field_229C;    /** Dead code. It get assigned -1 when the player has been initalized and get 0 assigned when the player changes the area, beyond that, the code do not use this variable. */
         e_SysFlags      sysFlags_22A0; // Music related.
