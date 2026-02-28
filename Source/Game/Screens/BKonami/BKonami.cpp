@@ -12,9 +12,11 @@
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Screens/Stream/Stream.h"
+#include "Input/Input.h"
 #include "Renderer/Renderer.h"
 //#include "Game/Screen/BackgroundDraw.h"
 
+using namespace Silent::Input;
 using namespace Silent::Renderer;
 
 namespace Silent::Game

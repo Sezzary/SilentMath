@@ -13,9 +13,11 @@
 #include "Game/Main/FsQueue.h"
 #include "Game/Main/Rng.h"
 #include "Game/Screens/Stream/Stream.h"
+#include "Input/Input.h"
 #include "Renderer/Renderer.h"
 //#include "bodyprog/sound_system.h"
 
+using namespace Silent::Input;
 using namespace Silent::Renderer;
 
 namespace Silent::Game
@@ -31,7 +33,7 @@ namespace Silent::Game
 
     void GameState_MainMenu_Update(void) // 0x8003AB28
     {
-        #define MAIN_MENU_GAME_STATE_COUNT 5
+        constexpr int MAIN_MENU_GAME_STATE_COUNT = 5;
 
         s32 NEXT_GAME_STATES[MAIN_MENU_GAME_STATE_COUNT] =
         {
@@ -48,6 +50,8 @@ namespace Silent::Game
         e_GameState prevState;
         static s32  newGameSelectedDifficultyIdx = 1;
         static s32  prevSavegameCount            = 0;
+
+        const auto& input = g_App.GetInput();
 
         //func_80033548();
 
@@ -129,7 +133,8 @@ namespace Silent::Game
 
                 g_MainMenu_VisibleEntryFlags |= g_MainMenu_VisibleEntryFlags << MainMenuEntry_Count;
 
-                if (g_Controller0->btnsPulsed_18 & (ControllerFlag_LStickUp | ControllerFlag_LStickDown))
+                if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f),
+                    input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
                     //SD_Call(Sfx_MenuMove);
                     g_GameWork.gameState_594 = GameState_MainMenu;
@@ -141,13 +146,13 @@ namespace Silent::Game
                     }
                 }
 
-                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickUp)
+                if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f))
                 {
                     g_MainMenu_SelectedEntry += MainMenuEntry_Count;
                     while(!(g_MainMenu_VisibleEntryFlags & (1 << --g_MainMenu_SelectedEntry)));
                 }
 
-                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickDown)
+                if (input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
                     while(!(g_MainMenu_VisibleEntryFlags & (1 << ++g_MainMenu_SelectedEntry)));
                 }
@@ -155,7 +160,7 @@ namespace Silent::Game
                 // Wrap selection.
                 g_MainMenu_SelectedEntry %= MainMenuEntry_Count;
 
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.enter_0)
+                if (input.GetAction(In::Enter).IsClicked())
                 {
                     g_GameWork.gameState_594 = GameState_MainMenu;
 
@@ -212,7 +217,7 @@ namespace Silent::Game
                     }
                 }
 
-                //prevSavegameCount = g_MemCard_SavegameCount;
+                prevSavegameCount = g_MemCard_SavegameCount;
 
             default:
                 break;
@@ -233,9 +238,10 @@ namespace Silent::Game
                     }
                 }
 
-                if (g_Controller0->btnsPulsed_18 & (ControllerFlag_LStickUp | ControllerFlag_LStickDown) ||
-                    g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config_0.controllerConfig_0.enter_0 |
-                                                     g_GameWorkPtr->config_0.controllerConfig_0.cancel_2))
+                if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f) ||
+                    input.GetAction(In::Down).IsPulsed(0.2f, 0.6f) ||
+                    input.GetAction(In::Enter).IsClicked() ||
+                    input.GetAction(In::Cancel).IsClicked())
                 {
                     g_GameWork.gameState_594 = GameState_MainMenu;
 
@@ -247,7 +253,7 @@ namespace Silent::Game
                 }
 
                 // Scroll game difficulty options.
-                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickUp)
+                if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f))
                 {
                     prevGameDifficultyIdx = 2;
                     if (newGameSelectedDifficultyIdx > 0)
@@ -256,7 +262,7 @@ namespace Silent::Game
                     }
                     newGameSelectedDifficultyIdx = prevGameDifficultyIdx;
                 }
-                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickDown)
+                if (input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
                     nextGameDifficultyIdx = 0;
                     if (newGameSelectedDifficultyIdx < 2)
@@ -267,13 +273,14 @@ namespace Silent::Game
                 }
 
                 // Play scroll sound.
-                if (g_Controller0->btnsPulsed_18 & (ControllerFlag_LStickUp | ControllerFlag_LStickDown))
+                if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f) ||
+                    input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
                     //SD_Call(Sfx_MenuMove);
                 }
 
                 // Select game difficulty.
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.enter_0)
+                if (input.GetAction(In::Enter).IsClicked())
                 {
                     //Game_SavegameInitialize(0, newGameSelectedDifficultyIdx - 1);
                     //Game_PlayerInit();
@@ -288,7 +295,7 @@ namespace Silent::Game
                     g_MainMenuState     = 4;
                 }
                 // Cancel.
-                else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.cancel_2)
+                else if (input.GetAction(In::Cancel).IsClicked())
                 {
                     //SD_Call(Sfx_MenuCancel);
                     g_MainMenuState = 1;
@@ -329,7 +336,7 @@ namespace Silent::Game
                 break;
         }
 
-        if (g_Controller0->btnsHeld_C != 0)
+        if (input.HasUserActionInput())
         {
             g_SysWork.counters_1C[1] = 0;
         }

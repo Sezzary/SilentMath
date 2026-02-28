@@ -195,7 +195,7 @@ namespace Silent::Renderer
         // Get shaped text glyphs.
         auto shapedText = font->GetShapedText(text.Message);
 
-        // Compute trasformation parameters.
+        // Compute transformation parameters.
         auto rotMat           = Matrix::CreateRotationZ(text.Rotation);
         auto fontScaleFactor  = SCREEN_SPACE_RES / (float)font->GetPointSize();
         auto textSize         = (Vector2(shapedText.Width, (float)font->GetPointSize()) * fontScaleFactor) * text.Scale;

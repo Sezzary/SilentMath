@@ -2,22 +2,25 @@
 #include "Psx.h"
 #include "Game/Screens/Stream/Stream.h"
 
-//#include <libds.h>
-//#include <libpress.h>
-
 #include "Game/Bodyprog/Bodyprog.h"
 
+#include "Application.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/TextDraw.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
-//#include "bodyprog/libsd.h"
 #include "Game/Main/FileInfo.h"
+#include "Input/Input.h"
+//#include "bodyprog/libsd.h"
+
+using namespace Silent::Input;
 
 namespace Silent::Game
 {
     void GameState_MovieIntroFadeIn_Update(void) // 0x801E2654
     {
+        const auto& input = g_App.GetInput();
+
         switch (g_GameWork.gameStateStep_598[0])
         {
             case 0:
@@ -29,7 +32,7 @@ namespace Silent::Game
                 break;
 
             case 1:
-                if (g_Controller0->btnsHeld_C != 0 || g_SysWork.counters_1C[0] > 300)
+                if (input.HasUserActionInput() || g_SysWork.counters_1C[0] > 300)
                 {
                     ScreenFade_Start(false, false, false);
                     g_GameWork.gameStateStep_598[0] = 2;
@@ -79,22 +82,24 @@ namespace Silent::Game
     {
         static s32 g_Debug_MoviePlayerIdx = 0; // 0x801E3F3C
 
-        if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.cancel_2)
+        const auto& input = g_App.GetInput();
+
+        if (input.GetAction(In::Cancel).IsClicked())
         {
             Game_StateSetNext(GameState_Unk16); // Changes to non-existent state 22 and crashes. Maybe removed debug menu.
         }
 
-        if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickLeft)
+        if (input.GetAction(In::Left).IsPulsed(0.2f, 0.4f))
         {
             g_Debug_MoviePlayerIdx--;
         }
 
-        if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickRight)
+        if (input.GetAction(In::Right).IsPulsed(0.2f, 0.4f))
         {
             g_Debug_MoviePlayerIdx++;
         }
 
-        if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.enter_0)
+        if (input.GetAction(In::Enter).IsClicked())
         {
             open_main(FILE_XA_ZC_14392 - g_Debug_MoviePlayerIdx, 0);
         }
@@ -120,7 +125,7 @@ namespace Silent::Game
         /*do
         {
         }
-        while (!(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.skip_4) &&
+        while (!input.GetAction(In::Enter).IsClicked() &&
             MainLoop_ShouldWarmReset() <= ResetType_None);*/
     }
 }

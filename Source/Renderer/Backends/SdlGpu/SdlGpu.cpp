@@ -751,7 +751,7 @@ namespace Silent::Renderer::SdlGpu
     {
         auto& fonts = g_App.GetFonts();
 
-        // Release and upload textures.
+        // Release/upload textures.
         auto& texs = GetTextures();
         for (const auto& assetName : _doubleBuffer.Render.TextureReleaseQueue)
         {
@@ -762,7 +762,7 @@ namespace Silent::Renderer::SdlGpu
             texs.Upload(copyPass, assetName);
         }
 
-        // Release and upload meshes.
+        // Release/upload meshes.
         auto& meshes = GetMeshes();
         for (const auto& assetName : _doubleBuffer.Render.MeshReleaseQueue)
         {
