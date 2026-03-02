@@ -1732,7 +1732,7 @@ namespace Silent::Game
         } s_field_0;
     } u_Unk0;
 
-    typedef struct _MapEffectsInfo
+    struct s_MapEffectsInfo
     {
         u_Unk0  field_0;
         q3_12   field_4; // Alpha.
@@ -1741,7 +1741,7 @@ namespace Silent::Game
         q3_12   worldTintG_A;
         q3_12   worldTintB_C;
         u8      field_E; // Fog enabled if not set to 0, `Gfx_FogParametersSet` checks for values 0/1/2/3.
-                        // Sets the transparent grey layer overlaid on characters and the enviroment.
+                         // Sets the transparent grey layer overlaid on characters and the enviroment.
         q19_12  fogDistance_10;
         CVECTOR fogColor_14;
         u8      field_18; // `bool`?
@@ -1749,7 +1749,7 @@ namespace Silent::Game
         CVECTOR screenTint_1D; // Subtractive screen tint.
         CVECTOR field_21;      // Particle effect related. Only the first value affects snow transparency.
         CVECTOR field_25;
-    } s_MapEffectsInfo;
+    };
 
     typedef struct
     {
@@ -1844,9 +1844,6 @@ namespace Silent::Game
         s32             field_2760;
         s32             field_2764;
     };
-
-    extern void* g_OvlBodyprog;
-    extern void* g_OvlDynamic;
 
     extern s_SysWork               g_SysWork;
     extern s_GameWork              g_GameWork;

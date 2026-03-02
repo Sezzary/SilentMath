@@ -78,6 +78,13 @@ namespace Silent::Game
         return assets.Load(fileIdx);
     }
 
+    const std::future<void>& Fs_QueueStartRead(e_FsFile fileIdx)
+    {
+        auto& assets = g_App.GetAssets();
+
+        return assets.Load(fileIdx);
+    }
+
     const std::future<void>& Fs_QueueStartRead(e_FsFile fileIdx, void* dest)
     {
         auto& assets = g_App.GetAssets();

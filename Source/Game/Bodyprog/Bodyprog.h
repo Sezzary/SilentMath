@@ -2068,8 +2068,6 @@ namespace Silent::Game
     /** Array containg file IDs used for each `e_CharacterId`, used in `Fs_QueueStartReadAnm`. */
     extern s_CharaFileInfo CHARA_FILE_INFOS[Chara_Count]; // 0x800A90FC
 
-    extern s_MapEffectsInfo g_MapEffectsPresets[21];
-
     extern s_StructUnk3 D_800A952C;
 
     extern s32 D_800A9A20;

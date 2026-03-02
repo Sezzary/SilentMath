@@ -290,6 +290,8 @@ namespace Silent::Game
      */
     const std::future<void>& Fs_QueueStartSeek(e_FsFile fileIdx);
 
+    const std::future<void>& Fs_QueueStartRead(e_FsFile fileIdx);
+
     /** @brief Add a new read operation to the queue.
      *
      * @param fileIdx File table index of the file to read.
