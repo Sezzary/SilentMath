@@ -359,7 +359,6 @@ namespace Silent::Game
         q3_12  field_4;  // } Angles??
         q3_12  field_6;  // }
         s8     field_8;  // Count of something, maybe valid ground at probed points around center? Set to 0, 7, or 12.
-        // 3 bytes of padding.
     } s_Collision;
 
     typedef struct
@@ -1008,7 +1007,6 @@ namespace Silent::Game
     {
         s8             charaId0_0;  /** `e_CharacterId` */
         s8             charaId1_1;  /** `e_CharacterId` */
-        // 2 bytes of padding.
         s32            animFile0_4; // s_AnmHeader* animFile0_4; // TODO: Needs to be a pointer.
         s_AnmHeader*   animFile1_8;
         s32            animBufferSize1_C;
@@ -1057,7 +1055,6 @@ namespace Silent::Game
     typedef struct _SpeedZone
     {
         s8   type_0; /** `e_SpeedZoneType` */
-        // 1 byte of padding.
         q11_4 minX_2;
         q11_4 maxX_4;
         q11_4 minZ_6;
@@ -1067,7 +1064,6 @@ namespace Silent::Game
     typedef struct _WaterZone
     {
         u8  isEnabled_0; /** `bool` */
-        // 1 byte of padding.
         s16 illumination_2;
         q11_4 minX_4;
         q11_4 maxX_6;
@@ -1079,7 +1075,6 @@ namespace Silent::Game
     {
         u8            charaId_0;  /** `e_CharacterId` */
         u8            isLoaded_1; /** `bool` */
-        // 2 bytes of padding.
         s32           queueIdx_4;
         s_LmHeader*   lmHdr_8;
         s_FsImageDesc texture_C;
@@ -1091,7 +1086,6 @@ namespace Silent::Game
         s16                plmFileIdx_0;
         char               tag_2[4];
         u8                 flags_6; /** `e_MapFlags` */
-        // 1 byte of padding.
         const s_WaterZone* waterZones_8;
         const s_SpeedZone* speedZones_C;
     } s_MapInfo;
@@ -1309,7 +1303,6 @@ namespace Silent::Game
         s_FsImageDesc* field_8;                    // Extra texture pointer? Usually `NULL` in `CHARA_FILE_INFOS`.
         u16            cameraAnchor_C_0  : 2;      /** `e_CameraAnchor` */
         q19_12         cameraOffsetY_C_2 : 14;
-        // 2 bytes of padding.
     } s_CharaFileInfo;
 
     typedef struct
@@ -1416,10 +1409,10 @@ namespace Silent::Game
     typedef struct _SpawnInfo
     {
         q19_12 positionX_0;
-        s8  charaId_4;   /** `e_CharacterId` */
-        u8  rotationY_5; /** Degrees in Q7.8, range [0, 256]. */
-        s8  flags_6;     /** Copied to `stateStep_3` in `s_Model`, with `controlState_2 = ModelState_Uninitialized`. */
-        s32 minGameDifficulty_7_0 : 4;
+        s8     charaId_4;   /** `e_CharacterId` */
+        u8     rotationY_5; /** Degrees in Q7.8, range [0, 256]. */
+        s8     flags_6;     /** Copied to `stateStep_3` in `s_Model`, with `controlState_2 = ModelState_Uninitialized`. */
+        s32    gameDifficultyMin_7_0 : 4;
         q19_12 positionZ_8;
     } s_SpawnInfo;
 
@@ -1512,7 +1505,6 @@ namespace Silent::Game
         u8                     (*getMapRoomIdxFunc_4)(s32 x, s32 y); // Called by `Savegame_MapRoomIdxUpdate`.
         s8                     field_8;
         s32                    (*func_C)();
-        // 3 bytes of padding.
         void                   (*bgmEvent_10)(bool);
         s8                     bgmIdx_14;           // Flags? Music related.
         u8                     ambientAudioIdx_15; // Ambient file index from `g_AmbientVabTaskLoadCmds`.
@@ -1538,10 +1530,8 @@ namespace Silent::Game
         void                   (*npcSpawnEvent_48)(); // func(?).
         s_MapHdr_field_4C*     unkTable1_4C; // Related to collision?
         s16                    unkTable1Count_50;
-        // 2 bytes of padding.
         s_BloodSplat*          bloodSplats_54;
         s16                    bloodSplatCount_58;
-        // 2 bytes of padding.
         s_MapOverlayHeader_5C* field_5C;
         void                   (*func_60)(s32, s32);
         //s32                    (*func_64)(POLY_FT4** poly, s32);
@@ -1657,7 +1647,6 @@ namespace Silent::Game
     {
         s8              hasHit_0; /** `bool` */
         u8              field_1;
-        s8              unk_2[2]; // Probably padding.
         VECTOR3         field_4;  // Q19.12
         s_SubCharacter* chara_10;
         q19_12          field_14; // Hit distance X?
@@ -1672,7 +1661,6 @@ namespace Silent::Game
         s16     field_10;
         s16     field_12;
         s8      field_14;  // Count of something? 12 is significant.
-        s8      unk_15[3]; // Probably padding.
         s32     field_18;
     } s_800C4590;
 
@@ -2084,8 +2072,6 @@ namespace Silent::Game
 
     extern s_StructUnk3 D_800A952C;
 
-    extern u16 g_BgmChannelSetTaskCmds[];
-
     extern s32 D_800A9A20;
 
     /** X. */
@@ -2104,11 +2090,6 @@ namespace Silent::Game
     extern s_FsImageDesc D_800A9EBC;
 
     extern s_FsImageDesc D_800A9EC4;
-
-    /** Related to sound commands. */
-    extern u16 g_BgmTaskLoadCmds[];
-
-    extern u16 g_AmbientVabTaskLoadCmds[];
 
     /** @brief Stores a loaded character's animation data information. */
     extern s_CharaAnimDataInfo g_CharaTypeAnimInfo[];
@@ -2135,9 +2116,9 @@ namespace Silent::Game
 
     extern s16 g_MapMsg_SelectFlashTimer;
 
-    extern s8 g_PaperMapFileIdxs[24];
+    extern s8 g_PaperMapFileIdxs[];
 
-    extern s8 g_PaperMapMarkingFileIdxs[56];
+    extern s8 g_PaperMapMarkingFileIdxs[];
 
     extern s_FsImageDesc D_800A9A04;
 
@@ -2408,6 +2389,14 @@ namespace Silent::Game
 
     extern s32 D_800BCD5C;
 
+    extern const char D_80025320[];
+    extern const char D_8002532C[];
+    extern const char D_80025338[];
+    extern const char D_80025344[];
+    extern const char D_80025350[];
+    extern const char D_8002535C[];
+    extern const char D_80025368[];
+
     extern s_MapMsgSelect g_MapMsg_Select;
 
     extern u8 g_MapMsg_AudioLoadBlock;
@@ -2525,7 +2514,7 @@ namespace Silent::Game
     /** Weapon attacks. */
     extern s_800AD4C8 D_800AD4C8[70];
 
-    extern const s_MapOverlayHeader g_MapOverlayHeader; // 0x800C957C
+    extern s_MapOverlayHeader g_MapOverlayHeader; // 0x800C957C
 
     extern s16 SQRT[100];
 }
