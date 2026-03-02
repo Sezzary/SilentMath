@@ -6,9 +6,9 @@
 
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/View/Structs.h"
+#include "Game/Bodyprog/View/VcUtil.h"
 #include "Game/Main/FsQueue.h"
 //#include "bodyprog/view/vc_main.h"
-//#include "bodyprog/view/vc_util.h"
 
 namespace Silent::Game
 {
@@ -109,7 +109,7 @@ namespace Silent::Game
         //drMode = &D_800A8E98[g_ActiveBufferIdx];
         //poly   = &D_800A8EB0[g_ActiveBufferIdx];
 
-        //vcSetEvCamRate(g_BlackBorderShade);
+        vcSetEvCamRate(g_BlackBorderShade);
 
         if (g_SysWork.sysFlags_22A0 & SysFlag_Freeze)
         {

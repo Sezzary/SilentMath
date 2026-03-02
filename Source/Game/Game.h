@@ -1778,7 +1778,7 @@ namespace Silent::Game
     } s_SysWork_2388;
 
     /** @brief Main system workspace. Stores key engine data. */
-    typedef struct _SysWork
+    struct s_SysWork
     {
         s8              unk_0[8];
         e_SysState      sysState_8;
@@ -1843,7 +1843,7 @@ namespace Silent::Game
         q19_12          field_275C;
         s32             field_2760;
         s32             field_2764;
-    } s_SysWork;
+    };
 
     extern void* g_OvlBodyprog;
     extern void* g_OvlDynamic;

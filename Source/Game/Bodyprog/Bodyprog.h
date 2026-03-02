@@ -1506,7 +1506,7 @@ namespace Silent::Game
      * If field has a comment that lists only certain map(s) it means all others set this field to 0.
      * func(?) means the signature is unknown and a default void() was selected for now.
      */
-    typedef struct _MapOverlayHeader
+    struct s_MapOverlayHeader
     {
         s_MapInfo*             mapInfo_0;
         u8                     (*getMapRoomIdxFunc_4)(s32 x, s32 y); // Called by `Savegame_MapRoomIdxUpdate`.
@@ -1625,7 +1625,7 @@ namespace Silent::Game
         s_SpawnInfo            charaSpawns_24C[2][16];                                            /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
         VC_ROAD_DATA           roadDataList_3CC[100];
         s_func_8006F8FC        field_D2C[200];
-    } s_MapOverlayHeader;
+    };
 
     typedef struct
     {

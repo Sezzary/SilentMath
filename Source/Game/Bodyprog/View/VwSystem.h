@@ -3,7 +3,7 @@
 #include "Game/Bodyprog/View/Enums.h"
 #include "Game/Bodyprog/View/Structs.h"
 //#include "Game/Bodyprog/View/VcMain.h"
-//#include "Game/Bodyprog/View/VcUtil.h"
+#include "Game/Bodyprog/View/VcUtil.h"
 //#include "Game/Bodyprog/View/VwCalc.h"
 #include "Game/Bodyprog/View/VwMain.h"
 
@@ -57,13 +57,15 @@
  * Flipped:      ?
  * Limit area:   2D AABB parameters defining a camera path's spatial constraint.
  * Marge:        Merge.
- * Near road:    Nearby camera path collision containing info about a path's relation to the player in space (distance, priority, etc.).
+ * Near road:    Nearby camera path collision containing info about a path's relation to the player in space
+ *               (distance, priority, etc.).
  *               An array of these is kept to track which path should take effect.
  * Oresen hokan: Polyline interpolation, linear interpolation over an array of values.
  * Renewal:      Reset.
  * Road:         Camera path. A region which dictates specific camera behaviors while the player is inside.
  * Self view:    First-person view.
- * Suu:          "Count" in Japanese. Usually refers to the number of entries in an array or is included in enums to denote the number of entries it contains.
+ * Suu:          "Count" in Japanese. Usually refers to the number of entries in an array or is included in enums to
+ *               denote the number of entries it contains.
  * Switch:       ?
  * Through door: Rail camera.
  * Watch:        Camera look-at.
@@ -78,7 +80,7 @@ namespace Silent::Game
     extern VC_CAM_MV_PARAM   cam_mv_prm_user;
     extern q19_12            excl_r_ary[9];
     extern VC_WORK           vcWork;
-    extern VECTOR3           vcRefPosSt; /** Q19.12 */
+    extern VECTOR3           vcRefPosSt;
     extern VW_VIEW_WORK      vwViewPointInfo;
     extern MATRIX            D_800C3868;
     extern MATRIX            VbWvsMatrix;
