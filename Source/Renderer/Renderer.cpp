@@ -177,9 +177,10 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
-        constexpr auto SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
-        constexpr auto SHADOW_OFFSET = Vector2(SCREEN_SPACE_RES.x * (1.0f / RETRO_SCREEN_SPACE_RES.y),
-                                               SCREEN_SPACE_RES.y * (1.0f / RETRO_SCREEN_SPACE_RES.y));
+        constexpr auto SHADOW_COLOR              = Color::From8Bit(16, 16, 16);
+        constexpr auto SHADOW_RETRO_PIXEL_OFFSET = Vector2(1.0f, 1.0f);
+        constexpr auto RETRO_PIXEL_SCALE         = Vector2(SCREEN_SPACE_RES.x / RETRO_SCREEN_SPACE_RES.y,
+                                                           SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y);
 
         auto& fonts = g_App.GetFonts();
 
@@ -258,6 +259,13 @@ namespace Silent::Renderer
         }
         auto adjTextPos = text.Position + Vector2::Transform(textOffset, rotMat);
 
+        // Compute shadow offset.
+        auto shadowOffset    = (SHADOW_RETRO_PIXEL_OFFSET * RETRO_PIXEL_SCALE) * aspectCorrection;
+        auto adjShadowOffset = Vector2::Transform(shadowOffset, rotMat);
+        // @todo This version scales according to the internal pixel size of the font.
+        //auto shadowOffset    = ((SHADOW_RETRO_PIXEL_OFFSET * fontScaleFactor) * text.Scale) * aspectCorrection;
+        //auto adjShadowOffset = Vector2::Transform(shadowOffset, rotMat);
+
         // Run through shaped glyphs.
         auto pixelOffset = Vector2::Zero;
         for (const auto& shapedGlyph : shapedText.Glyphs)
@@ -314,8 +322,6 @@ namespace Silent::Renderer
             // Submit 2D drop shadow glyph.
             if (text.HasShadow)
             {
-                // @todo Scale offset.
-                auto adjShadowOffset = Vector2::Transform(SHADOW_OFFSET, rotMat);
                 if (!AddGlyph(adjShadowOffset, SHADOW_COLOR, text.Depth + 1, false))
                 {
                     return false;
