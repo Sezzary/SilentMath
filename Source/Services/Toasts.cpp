@@ -68,21 +68,30 @@ namespace Silent::Services
 
     void ToastManager::Render()
     {
-        constexpr float ROW_OFFSET = 2.0f;
+        constexpr float TEXT_SCALE  = RETRO_PIXEL_SCALE.y * 10.0f;
+        constexpr float TEXT_MARGIN = (SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y) * 10.0f;
+        constexpr float LINE_OFFSET = (SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y) * 12.0f;
+
+        const auto& options  = g_App.GetOptions();
+        auto&       renderer = g_App.GetRenderer();
 
         // Check if toasts are enabled.
-        const auto& options = g_App.GetOptions();
         if (!options->EnableToasts)
         {
             return;
         }
 
         // Submit text to renderer.
-        auto pos = Vector2(0.0f, ROW_OFFSET * _toasts.size());
+        auto linePos = Vector2(TEXT_MARGIN, LINE_OFFSET);
         for (const auto& toast : _toasts)
         {
-            //g_App.GetRenderer().SubmitText(toast.Message, toast.Position, toast.Col);
-            pos.y -= ROW_OFFSET;
+            auto text = Text2d::CreateText2d(toast.Message, "RetroSans",
+                                             linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
+                                             0.5f, TextStyle::Flat, true,
+                                             0, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+            renderer.SubmitText2d(text);
+
+            linePos.y += LINE_OFFSET;
         }
     }
 }

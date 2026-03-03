@@ -18,11 +18,6 @@ namespace Silent::Renderer
         Gradient
     };
 
-    /** @brief Glyph gradient data. */
-    struct GlyphGradient
-    {
-    };
-
     /** @brief 2D screen glyph. */
     struct Glyph2d
     {
@@ -50,19 +45,19 @@ namespace Silent::Renderer
     /** @brief 2D screen text with markup. */
     struct Text2d
     {
-        std::string Message      = {};
-        std::string FontName     = {};
-        Vector2     Position     = Vector2::Zero;
-        float       Rotation     = 0.0f;
-        float       Scale        = 0.0f;
-        float       Tracking     = 0.0f;
-        float       Opacity      = 0.0f;
-        TextStyle   Style        = TextStyle::Flat;
-        bool        HasShadow    = false;
-        int         Depth        = 0;
-        AlignMode   AlignMd      = AlignMode::Center;
-        ScaleMode   ScaleMd      = ScaleMode::ShortEdge;
-        BlendMode   BlendMd      = BlendMode::Alpha;
+        std::string Message   = {};
+        std::string FontName  = {};
+        Vector2     Position  = Vector2::Zero;
+        float       Rotation  = 0.0f;
+        float       Scale     = 0.0f;
+        float       Tracking  = 0.0f;
+        float       Opacity   = 0.0f;
+        TextStyle   Style     = TextStyle::Flat;
+        bool        HasShadow = false;
+        int         Depth     = 0;
+        AlignMode   AlignMd   = AlignMode::Center;
+        ScaleMode   ScaleMd   = ScaleMode::ShortEdge;
+        BlendMode   BlendMd   = BlendMode::Alpha;
 
         /** @brief Creates a 2D text message.
          *
