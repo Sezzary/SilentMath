@@ -9,7 +9,7 @@
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
-#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Screens/BKonami/BKonami.h"

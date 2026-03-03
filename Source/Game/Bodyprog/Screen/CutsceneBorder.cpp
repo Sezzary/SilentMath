@@ -1,14 +1,15 @@
 #include "Framework.h"
 #include "Psx.h"
-#include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/CutsceneBorder.h"
 
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Game/Bodyprog/Screen/ScreenData.h"
+#include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/View/Structs.h"
+//#include "Game/Bodyprog/View/vc_main.h"
 #include "Game/Bodyprog/View/VcUtil.h"
 #include "Game/Main/FsQueue.h"
-//#include "bodyprog/view/vc_main.h"
 
 namespace Silent::Game
 {
@@ -26,44 +27,44 @@ namespace Silent::Game
             0x0, 0x0, 0x0, 0x3A,
             -160, -112,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, -112,
+            160, -112,
             0x0, 0x0, 0x0, 0x0,
             -160, -96,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, -96
+            160, -96
         },
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
             -160, -112,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, -112,
+            160, -112,
             0x0, 0x0, 0x0, 0x0,
             -160, -96,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, -96
+            160, -96
         },
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
             -160, 0x70,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0x70,
+            160, 0x70,
             0x0, 0x0, 0x0, 0x0,
             -160, 0x60,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0x60
+            160, 96
         },
         {
             0x8000000,
             0x0, 0x0, 0x0, 0x3A,
-            -160, 0x70,
+            -160, 112,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0x70,
+            160, 0x70,
             0x0, 0x0, 0x0, 0x0,
-            -160, 0x60,
+            -160, 96,
             0x0, 0x0, 0x0, 0x0,
-            0xA0, 0x60
+            160, 96
         }
     };
 

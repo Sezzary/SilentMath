@@ -20,8 +20,6 @@ namespace Silent::Game
 
     extern e_FsFile g_Demo_PlayFileIdx;
 
-    extern s32 pad_bss_800C4848[2];
-
     extern s_SaveUserConfig g_Demo_UserConfigBackup;
 
     extern u32 g_Demo_PrevRandSeed;

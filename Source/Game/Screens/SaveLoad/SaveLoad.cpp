@@ -5,7 +5,7 @@
 
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
-#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
 
 namespace Silent::Game
 {
@@ -1318,14 +1318,12 @@ namespace Silent::Game
             // Red line.
             {
                 { { -142, -33 }, { 136, 33 } },
-                255, 0, 0,
-                0,
+                255, 0, 0
             },
             // Green line.
             {
                 { { -142, -33 }, { 136, 33 } },
-                0, 255, 0,
-                0
+                0, 255, 0
             }
         };
 

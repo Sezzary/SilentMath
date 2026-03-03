@@ -8,6 +8,7 @@
 #include "Assets/AssetStreamer.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sys/GameMain.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Services/Clock.h"

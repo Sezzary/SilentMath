@@ -1,6 +1,6 @@
 #include "Framework.h"
 #include "Psx.h"
-#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
 
 #include "Application.h"
 #include "Renderer/Renderer.h"

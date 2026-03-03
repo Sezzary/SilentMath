@@ -13,12 +13,4 @@ namespace Silent::Game
     void Screen_Init(s32 screenWidth, bool isInterlaced);
 
     void Screen_XyPositionSet(s32 x, s32 y);
-
-    q19_12 Screen_FadeInProgressGet(void);
-
-    void Screen_FadeUpdate(void);
-
-    void Screen_CutsceneCameraStateUpdate(void);
-
-    void Screen_VSyncCallback(void);
 }

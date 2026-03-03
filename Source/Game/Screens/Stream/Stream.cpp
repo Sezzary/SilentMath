@@ -6,9 +6,9 @@
 
 #include "Application.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
-#include "Game/Bodyprog/Screen/TextDraw.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FileInfo.h"
 #include "Input/Input.h"
 //#include "bodyprog/libsd.h"

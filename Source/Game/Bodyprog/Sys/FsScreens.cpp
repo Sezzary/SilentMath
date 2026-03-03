@@ -4,7 +4,7 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
-#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game

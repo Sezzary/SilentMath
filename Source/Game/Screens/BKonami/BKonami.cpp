@@ -8,6 +8,7 @@
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Main/FsQueue.h"

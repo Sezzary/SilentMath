@@ -27,7 +27,6 @@ namespace Silent::Game
 
     extern s32      g_VBlanks;
     extern s32      g_UncappedVBlanks;
-    extern s32      pad_bss_800B5C3C;
     extern GsOT_TAG g_OtTags0[2][16];
 
     /** Main gameplay timer. Code pauses gameplay by setting this to 0.

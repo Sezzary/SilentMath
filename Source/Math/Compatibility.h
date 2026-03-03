@@ -72,7 +72,6 @@ namespace Silent::Math
         ushort   r;
         ushort   g;
         ushort   b;
-        ushort   __pad_E; // Maybe 4th component of a RGB+code struct?
     };
 
     struct s_LineBorder

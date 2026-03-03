@@ -9,16 +9,6 @@
 
 namespace Silent::Game
 {
-    /** @brief This header is used to declare any variable, struct, or
-     * function of `BODYPROG.BIN` that has not been identified to
-     * be related to a currently recognized and separated section of
-     * the engine (like player logic, save game, or item screens).
-     */
-
-    // ==========
-    // CONSTANTS
-    // ==========
-
     constexpr int WORLD_OBJECT_COUNT_MAX = 29;
 
     constexpr int OPT_SOUND_VOLUME_MIN   = 0;
@@ -32,10 +22,6 @@ namespace Silent::Game
 
     constexpr int CHARA_FORCE_FREE_ALL = 0xFF; /** `Chara_Load` can force free already loaded models to make room for new ones. */
 
-    // ==============
-    // HELPER MACROS
-    // ==============
-
     /** @brief Compares 8-character filenames using `u32`. Similar to `strcmp`.
      *
      * @param a First filename.
@@ -45,10 +31,6 @@ namespace Silent::Game
     #define COMPARE_FILENAMES(a, b)                                  \
         (((u_Filename*)(a))->u32[0] != ((u_Filename*)(b))->u32[0] || \
         ((u_Filename*)(a))->u32[1] != ((u_Filename*)(b))->u32[1])
-
-    // ======
-    // ENUMS
-    // ======
 
     /** @brief Background music flags. */
     typedef enum _BgmFlags
@@ -178,12 +160,6 @@ namespace Silent::Game
         StaticModelLoadState_Corrupted = 2, // Maybe wrong name for this.
         StaticModelLoadState_Loaded    = 3
     } e_StaticModelLoadState;
-
-    // ================
-    // UNKNOWN STRUCTS
-    // ================
-
-    /* Structs called by functions that haven't been identified. */
 
     /** SFX pair used for area loading (e.g. door opening and closing). */
     typedef struct
@@ -547,10 +523,6 @@ namespace Silent::Game
         q3_12 field_10; // X offset?
         q3_12 field_12; // Z offset?
     } s_Keyframe;
-
-    // ========
-    // STRUCTS
-    // ========
 
     typedef struct _Normal
     {
@@ -2015,10 +1987,6 @@ namespace Silent::Game
         s32     field_50;
     } s_func_8006342C;
 
-    // ========
-    // GLOBALS
-    // ========
-
     extern s_FsImageDesc g_MainImg0; // 0x80022C74 - TODO: Part of main exe, move to `main/` headers?
 
     extern const s_MapInfo MAP_INFOS[MapType_Count];
@@ -2246,32 +2214,22 @@ namespace Silent::Game
 
     extern u8 g_SysState_GameOver_TipIdx;
 
-    extern s8 pad_bss_800BCD81[3];
-
     /** Copy of delta timers.
      * Appears to be used as save of the delta timer currently used as some instances where 2D backgrounds
      * are drawn uses `g_DeltaTimeRaw` while `g_DeltaTime` is being stopped.
      */
     extern s32 g_DeltaTimeCpy;
 
-    extern s32 pad_bss_800BCD88[2];
-
     extern s_EventData* g_ItemTriggerEvents[];
-
-    extern s32 pad_bss_800BCD94[5];
 
     extern s_800BCDA8 D_800BCDA8[2];
 
     extern s_MapPoint2d D_800BCDB0;
 
-    extern s32 pad_bss_800BCDD0;
-
     /** Related to special item interactions. */
     extern s32 g_ItemTriggerItemIds[5];
 
     extern u8 D_800BCDD4;
-
-    extern s8 pad_bss_800BCDD5[3];
 
     extern s_EventData* g_MapEventData;
 
@@ -2447,16 +2405,12 @@ namespace Silent::Game
 
     extern s16 D_800C4408;
 
-    extern s16 pad_bss_800C440A;
-
     extern GsCOORDINATE2* D_800C440C;
 
     extern GsCOORDINATE2* D_800C4410;
 
     /** Flags. */
     extern s8 D_800C4414;
-
-    extern s8 pad_bss_800C4415[3];
 
     extern s_800C4418 D_800C4418;
 

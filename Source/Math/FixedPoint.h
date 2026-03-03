@@ -116,6 +116,19 @@ namespace Silent::Math
         return (a * b) >> shift;
     }
 
+    /** @brief Multiplies two integers in a fixed-point Q format.
+     * Alternative to `FP_MULTIPLY` using division instead of a bitwise shift.
+     *
+     * @param a First fixed-point factor.
+     * @param b Second fixed-point factor.
+     * @param shift Fixed-point shift.
+     * @return Fixed-point product of `a` and `b`.
+     */
+    constexpr int FP_MULTIPLY_ALT(int a, int b, int shift)
+    {
+        return (a * b) / TO_FIXED(1.0f, shift);
+    }
+
     /** @brief Multiplies two integers in a fixed-point Q format, using 64-bit intermediates for higher precision.
      *
      * @param a First fixed-point factor.
@@ -226,7 +239,7 @@ namespace Silent::Math
      */
     constexpr q19_12 Q12_MULT_ALT(q19_12 a, q19_12 b)
     {
-        return (a * b) / TO_FIXED(1.0f, Q12_SHIFT);
+        return FP_MULTIPLY_ALT(a, b, Q12_SHIFT);
     }
 
     /** @brief Multiplies two integers in Q19.12 fixed-point, using 64-bit intermediates for higher precision.

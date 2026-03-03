@@ -6,7 +6,7 @@
 
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
-#include "Game/Bodyprog/Screen/TextDraw.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
 #include "Utils/Translator.h"
