@@ -70,12 +70,14 @@ namespace Silent::Game
     {
         constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
 
-        auto& renderer = g_App.GetRenderer();
-
-        auto text = Text2d::CreateText2d(str, "RetroSerif",
-                                         ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
-                                         1.0f, TextStyle::Gradient, true,
-                                         6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+        const auto& options  = g_App.GetOptions();
+        auto&       renderer = g_App.GetRenderer();
+        
+        auto fontName = (options->TextQuality == TextQualityType::Original) ? "RetroSerif" : "SmoothSerif";
+        auto text     = Text2d::CreateText2d(str, fontName,
+                                             ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
+                                             1.0f, TextStyle::Gradient, true,
+                                             6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
         renderer.SubmitText2d(text);
 
         return true;
