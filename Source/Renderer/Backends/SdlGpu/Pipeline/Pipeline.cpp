@@ -92,12 +92,11 @@ namespace Silent::Renderer::SdlGpu
                 {
                     .fill_mode = (blendMode == BlendMode::Wireframe) ? SDL_GPU_FILLMODE_LINE : SDL_GPU_FILLMODE_FILL
                 },
-                .depth_stencil_state = !config.EnableDepthTest ? SDL_GPUDepthStencilState{} :
-                SDL_GPUDepthStencilState
+                .depth_stencil_state = SDL_GPUDepthStencilState
                 {
-                    .compare_op         = SDL_GPU_COMPAREOP_LESS,
-                    .enable_depth_test  = true,
-                    .enable_depth_write = true
+                    .compare_op         = config.EnableDepthTest ? SDL_GPU_COMPAREOP_LESS : SDL_GPU_COMPAREOP_INVALID,
+                    .enable_depth_test  = config.EnableDepthTest,
+                    .enable_depth_write = config.EnableDepthTest
                 },
                 .target_info = SDL_GPUGraphicsPipelineTargetInfo
                 {

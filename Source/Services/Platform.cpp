@@ -19,10 +19,6 @@ namespace Silent::Services
             {
                 return "Linux";
             }
-            default:
-            {
-                break;
-            }
         }
 
         return "Unknown";

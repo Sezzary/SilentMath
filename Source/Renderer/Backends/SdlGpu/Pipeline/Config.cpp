@@ -185,7 +185,8 @@ namespace Silent::Renderer::SdlGpu
                 BlendMode::Add,
                 BlendMode::Subtract,
                 BlendMode::Wireframe
-            }
+            },
+            .EnableDepthTest = true
         },
         // 2D sprite.
         {
@@ -205,7 +206,8 @@ namespace Silent::Renderer::SdlGpu
                 BlendMode::Add,
                 BlendMode::Subtract,
                 BlendMode::Wireframe
-            }
+            },
+            .EnableDepthTest = true
         },
         // 2D glyph.
         {
@@ -220,7 +222,8 @@ namespace Silent::Renderer::SdlGpu
             {
                 BlendMode::Alpha,
                 BlendMode::Wireframe
-            }
+            },
+            .EnableDepthTest = true
         },
         // 3D model.
         {

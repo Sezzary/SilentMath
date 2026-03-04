@@ -177,10 +177,8 @@ namespace Silent::Renderer
 
     bool RendererBase::SubmitText2d(const Text2d& text)
     {
-        constexpr auto SHADOW_COLOR              = Color::From8Bit(16, 16, 16);
-        constexpr auto SHADOW_RETRO_PIXEL_OFFSET = Vector2(1.0f, 1.0f);
-        constexpr auto RETRO_PIXEL_SCALE         = Vector2(SCREEN_SPACE_RES.x / RETRO_SCREEN_SPACE_RES.y,
-                                                           SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y);
+        constexpr auto    SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
+        static const auto SHADOW_OFFSET = SCREEN_SPACE_RES / Vector2(RETRO_SCREEN_SPACE_RES.y);
 
         auto& fonts = g_App.GetFonts();
 
@@ -260,7 +258,7 @@ namespace Silent::Renderer
         auto adjTextPos = text.Position + Vector2::Transform(textOffset, rotMat);
 
         // Compute shadow offset.
-        auto shadowOffset    = (SHADOW_RETRO_PIXEL_OFFSET * RETRO_PIXEL_SCALE) * aspectCorrection;
+        auto shadowOffset    = SHADOW_OFFSET * aspectCorrection;
         auto adjShadowOffset = Vector2::Transform(shadowOffset, rotMat);
         // @todo This version scales according to the internal pixel size of the font.
         //auto shadowOffset    = ((SHADOW_RETRO_PIXEL_OFFSET * fontScaleFactor) * text.Scale) * aspectCorrection;

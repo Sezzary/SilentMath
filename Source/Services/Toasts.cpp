@@ -69,7 +69,7 @@ namespace Silent::Services
     void ToastManager::Render()
     {
         constexpr float TEXT_SCALE  = RETRO_PIXEL_SCALE.y * 10.0f;
-        constexpr float TEXT_MARGIN = (SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y) * 10.0f;
+        constexpr float TEXT_MARGIN = (SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y) * 5.0f;
         constexpr float LINE_OFFSET = (SCREEN_SPACE_RES.y / RETRO_SCREEN_SPACE_RES.y) * 12.0f;
 
         const auto& options  = g_App.GetOptions();
