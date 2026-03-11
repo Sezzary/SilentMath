@@ -69,23 +69,23 @@ FILE_TYPE_NAMES = {
     "UU2": "Unused 2",
     "UU3": "Unused 3",
     "UU4": "Unused 4",
-    "": "XA Track Data"
+    "XA":  "XA Track Data"
 }
 
 # Mapping of type index -> type string. Mappings change in certain releases.
 FILE_TYPES = [
     "TIM", "VAB", "BIN", "DMS", "ANM", "PLM", "IPD", "ILM", 
-    "TMD", "DAT", "KDT", "CMP", "TXT", "UU1", "UU2", ""
+    "TMD", "DAT", "KDT", "CMP", "TXT", "UU1", "UU2", "XA"
 ]
 
 FILE_TYPES_DEMO = [
     "TIM", "VAB", "BIN", "ANM", "DMS", "PLM", "IPD", "ILM", 
-    "TMD", "DAT", "KDT", "CMP", "TXT", "UU1", "UU2", ""
+    "TMD", "DAT", "KDT", "CMP", "TXT", "UU1", "UU2", "XA"
 ]
 
 FILE_TYPES_OPM16 = [
     "TIM", "VAB", "BIN", "ANM", "DMS", "PLM", "IPD", "ILM", 
-    "TMD", "KDT", "CMP", "UU1", "UU2", "UU3", "UU4", ""
+    "TMD", "KDT", "CMP", "UU1", "UU2", "UU3", "UU4", "XA"
 ]
 
 # Mapping of directory index -> dir string. Mappings change in certain releases.
@@ -132,9 +132,9 @@ RELEASES = (
     Release("PAL 99-06-07",                "SLES-01514", 0x337E4A60, 0xB8FC, 2310, DIRS_PAL,  FILE_TYPES, Flags.ENCRYPTED_1ST_FOLDER),
 )
 
-FILESIZE_STEP     = 256
-ASSET_COUNT       = 2048
-ASSET_COUNT_PROTO = 2336
+FILESIZE_STEP      = 256
+MODE_1_SECTOR_SIZE = 2048
+MODE_2_SECTOR_SIZE = 2336
 
 ENTRY_STRUCT = Struct("<3I")
 
@@ -277,8 +277,50 @@ def _decompress_lzss_file(data: bytes) -> bytes:
 
                 # Move reference offset forward (circularly).
                 offset = (offset + 1) & 0xFFF
-  
+
     return bytes(output)
+
+def _demux_xa_sectors(data: bytes, base_path: Path):
+    CD_XA_SYNC_HEADER = b'\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00' + b'\x00\x00\x00\x02'
+
+    channels       = {}
+    active_channel = None
+
+    for offset in range(0, len(data), MODE_2_SECTOR_SIZE):
+        sector = data[offset:offset + MODE_2_SECTOR_SIZE]
+        if len(sector) < MODE_2_SECTOR_SIZE:
+            break
+
+        channel = sector[1]
+        submode = sector[2]
+
+        is_video = submode & 0x02
+        is_audio = submode & 0x04
+        is_data  = submode & 0x08
+
+        # Skip irrelevant sectors.
+        if not (is_audio or is_video or is_data):
+            continue
+
+        # Use first valid channel.
+        if active_channel is None:
+            active_channel = channel
+
+        # Ignore other interleaved channels as they are unused.
+        if channel != active_channel:
+            continue
+
+        ext = ".XA" if is_audio else ".STR"
+        channel_path = base_path.with_name(f"{base_path.name}{ext}")
+
+        if channel_path not in channels:
+            print(f"Creating: {channel_path.name} (Detected Channel {channel})")
+            channels[channel_path] = channel_path.open("wb")
+
+        channels[channel_path].write(CD_XA_SYNC_HEADER + sector)
+
+    for f in channels.values():
+        f.close()
 
 def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorSize: int, releaseFlags: int):
     index = 0
@@ -287,12 +329,11 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorS
         if not outputPath.parent.exists():
             outputPath.parent.mkdir(parents = True)
 
-        ext = "XA" if i.type == "" else i.type
-        logging.info(f"{index} Extracting {FILE_TYPE_NAMES[i.type]}(.{ext}) to {outputPath}...")
+        logging.info(f"{index} Extracting {FILE_TYPE_NAMES[i.type]}(.{i.type}) to {outputPath}...")
 
         file.seek((i.offset - entries[0].offset) * sectorSize)
         size = 0
-        if not i.size == 0 and (i.type != ""):
+        if not i.size == 0 and i.type != "XA":
             size = i.size * FILESIZE_STEP
         elif index + 1 < len(entries):
             size = (entries[index + 1].offset - i.offset) * sectorSize
@@ -300,6 +341,7 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorS
             size = -1 # Read until end of file.
 
         data = file.read(size)
+
         if i.type == "BIN" and (releaseFlags & Flags.ENCRYPTED_1ST_FOLDER):
             if i.path.startswith("1ST"):
                 logging.info(f"\tDecrypting `{i.path}`...")
@@ -313,6 +355,10 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorS
             outputDecPath = outputPath.with_name(outputPath.name + ".dec")
             with outputDecPath.open("wb") as _file:
                 _file.write(decData)
+        elif i.type == "XA":
+            _demux_xa_sectors(data, outputPath)
+            index += 1
+            continue
 
         with outputPath.open("wb") as _file:
             _file.write(data)
@@ -342,7 +388,7 @@ def main():
         rawEntry                   = exe.read(ENTRY_STRUCT.size)
         size, lba, name, dir, type = _parse_entry(rawEntry, release)
 
-        fullPath    = os.path.join(dir, f"{name}.{type}" if not type == "" else f"{name}").replace("\\", "/")
+        fullPath    = os.path.join(dir, f"{name}.{type}" if not type == "XA" else f"{name}").replace("\\", "/")
         headerText += f"/* {i:4d} */ {_format_entry(size, lba, name, dir, type, release)}, // {fullPath}\n"
         enumName    = fullPath.replace("/", "_").replace("\\", "_").replace(".", "_")
         enumText   += f"    FILE_{enumName} = {i}, // {fullPath}\n"
@@ -355,10 +401,10 @@ def main():
                 entriesSilent.append(entry)
     exe.close
 
-    _extract(entriesSilent, args.outputFolder, args.silentFile, ASSET_COUNT, release.flags)
+    _extract(entriesSilent, args.outputFolder, args.silentFile, MODE_1_SECTOR_SIZE, release.flags)
 
     if not release.flags & Flags.NO_XA_CONTAINER and args.hillFile:
-        _extract(entriesHill, args.outputFolder, args.hillFile, ASSET_COUNT_PROTO, release.flags)
+        _extract(entriesHill, args.outputFolder, args.hillFile, MODE_2_SECTOR_SIZE, release.flags)
 
     with open(os.path.join(args.outputFolder, "filetable.c.inc"), "a+") as file:
         file.truncate(0)
