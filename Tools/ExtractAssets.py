@@ -26,11 +26,17 @@ from struct      import Struct
 from typing      import BinaryIO, Iterable
 from zlib        import crc32
 
-class Flags(IntFlag):
+class RomFlags(IntFlag):
     NONE                 = 0
-    ENCRYPTED_1ST_FOLDER = 1
-    NO_XA_CONTAINER      = 2
-    ALT_FILE_STRUCT      = 4
+    ENCRYPTED_1ST_FOLDER = 1 << 0
+    NO_XA_CONTAINER      = 1 << 1
+    ALT_FILE_STRUCT      = 1 << 2
+
+class XaFlags(IntFlag):
+    NONE  = 0
+    VIDEO = 1 << 1
+    AUDIO = 1 << 2
+    DATA  = 1 << 3
 
 @dataclass
 class Release:
@@ -41,7 +47,7 @@ class Release:
     fileCount: int
     dirs:      list[str]
     filetypes: list[str]
-    flags:     Flags
+    flags:     RomFlags
 
 @dataclass
 class TableEntry:
@@ -49,6 +55,13 @@ class TableEntry:
     type:   str
     size:   int
     offset: int
+
+FILESIZE_STEP      = 256
+MODE_1_SECTOR_SIZE = 2048
+MODE_2_SECTOR_SIZE = 2336
+
+ENTRY_STRUCT      = Struct("<3I")
+CD_XA_SYNC_HEADER = b'\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00' + b'\x00\x00\x00\x02'
 
 # Description of each file type.
 FILE_TYPE_NAMES = {
@@ -111,32 +124,26 @@ DIRS_OPM16 = [
 
 RELEASES = (
 # Partial demo releases.
-    Release("NTSC OPM16 Demo 98-10-19", "SCUS-94278", 0x2534D4BE, 0xAA90, 886,  DIRS_OPM16, FILE_TYPES_OPM16, Flags.ALT_FILE_STRUCT),
-    Release("NTSC-J Demo 98-11-06",     "SLPM-80366", 0x1BCE20E4, 0xB9B0, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  Flags.ALT_FILE_STRUCT),
-    Release("NTSC-J Demo 98-11-06",     "SLPM-80363", 0xBE8E95CF, 0xB780, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  Flags.ALT_FILE_STRUCT),
+    Release("NTSC OPM16 Demo 98-10-19", "SCUS-94278", 0x2534D4BE, 0xAA90, 886,  DIRS_OPM16, FILE_TYPES_OPM16, RomFlags.ALT_FILE_STRUCT),
+    Release("NTSC-J Demo 98-11-06",     "SLPM-80366", 0x1BCE20E4, 0xB9B0, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.ALT_FILE_STRUCT),
+    Release("NTSC-J Demo 98-11-06",     "SLPM-80363", 0xBE8E95CF, 0xB780, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.ALT_FILE_STRUCT),
     Release("PAL Demo 98-12-16",        "SLED-01735", 0x9AE067D4, 0xB648, 850,  DIRS_DEMO,  FILE_TYPES_DEMO,  0),
     Release("NTSC Demo 99-01-16",       "SLUS-90050", 0x55E85F78, 0xB648, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  0),
-    Release("PAL Demo 99-06-08",        "SLED-02190", 0x08E0B752, 0xC8FC, 1015, DIRS_PAL,   FILE_TYPES,       Flags.ENCRYPTED_1ST_FOLDER),
-    Release("PAL Demo 99-06-16",        "SLED-02186", 0x1782AA0A, 0xB8FC, 1015, DIRS_PAL,   FILE_TYPES,       Flags.ENCRYPTED_1ST_FOLDER),
+    Release("PAL Demo 99-06-08",        "SLED-02190", 0x08E0B752, 0xC8FC, 1015, DIRS_PAL,   FILE_TYPES,       RomFlags.ENCRYPTED_1ST_FOLDER),
+    Release("PAL Demo 99-06-16",        "SLED-02186", 0x1782AA0A, 0xB8FC, 1015, DIRS_PAL,   FILE_TYPES,       RomFlags.ENCRYPTED_1ST_FOLDER),
 
 # Prototypes.
-    Release("NTSC Preview 98-11-24",    "SLUS-45678", 0x8B88326C, 0xB71C, 1926, DIRS_NTSC, FILE_TYPES, Flags.NO_XA_CONTAINER),
-    Release("NTSC Review 99-01-07",     "SLUS-00707", 0xCC454534, 0xB7B8, 2076, DIRS_NTSC, FILE_TYPES, Flags.NO_XA_CONTAINER),
+    Release("NTSC Preview 98-11-24",    "SLUS-45678", 0x8B88326C, 0xB71C, 1926, DIRS_NTSC, FILE_TYPES, RomFlags.NO_XA_CONTAINER),
+    Release("NTSC Review 99-01-07",     "SLUS-00707", 0xCC454534, 0xB7B8, 2076, DIRS_NTSC, FILE_TYPES, RomFlags.NO_XA_CONTAINER),
     Release("NTSC Trade Demo 99-01-17", "SLUS-80707", 0xC9FFEF2A, 0xB850, 2040, DIRS_NTSC, FILE_TYPES, 0),
     Release("NTSC Beta 99-01-22",       "SLUS-00707", 0x84AB9750, 0xB850, 2072, DIRS_NTSC, FILE_TYPES, 0),
 
 # Final releases.
-    Release("NTSC-J Rev 0 99-01-26",       "SLPM-86192", 0x1532C55C, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, Flags.ENCRYPTED_1ST_FOLDER),
-    Release("NTSC 1.1 99-02-10",           "SLUS-00707", 0xCF9CD8E5, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, Flags.ENCRYPTED_1ST_FOLDER),
-    Release("NTSC-J Rev 1/Rev 2 99-06-02", "SLPM-86192", 0xEB733CAA, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, Flags.ENCRYPTED_1ST_FOLDER),
-    Release("PAL 99-06-07",                "SLES-01514", 0x337E4A60, 0xB8FC, 2310, DIRS_PAL,  FILE_TYPES, Flags.ENCRYPTED_1ST_FOLDER),
+    Release("NTSC-J Rev 0 99-01-26",       "SLPM-86192", 0x1532C55C, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
+    Release("NTSC 1.1 99-02-10",           "SLUS-00707", 0xCF9CD8E5, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
+    Release("NTSC-J Rev 1/Rev 2 99-06-02", "SLPM-86192", 0xEB733CAA, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
+    Release("PAL 99-06-07",                "SLES-01514", 0x337E4A60, 0xB8FC, 2310, DIRS_PAL,  FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
 )
-
-FILESIZE_STEP      = 256
-MODE_1_SECTOR_SIZE = 2048
-MODE_2_SECTOR_SIZE = 2336
-
-ENTRY_STRUCT = Struct("<3I")
 
 def _create_parser():
     parser = ArgumentParser()
@@ -164,7 +171,7 @@ def _detect_release(checksum: int, name: str) -> Release:
 def _parse_entry(entry, release):
     meta, file0, file1 = ENTRY_STRUCT.unpack(entry)
 
-    if not release.flags & Flags.ALT_FILE_STRUCT:
+    if not release.flags & RomFlags.ALT_FILE_STRUCT:
         name = "".join(chain(
             (chr(32 + ((file0 >> shift) & 0x3F)) for shift in range(4, 28, 6)),
             (chr(32 + ((file1 >> shift) & 0x3F)) for shift in range(0, 24, 6))
@@ -201,11 +208,11 @@ def _format_entry(size, lba, name, path, type, release):
 def _decrypt_overlay(data: bytes):
     output   = bytearray(data)
     outArray = memoryview(output).cast("I") # `uint32`
-    seed = 0
+    seed     = 0
 
     for i, value in enumerate(outArray):
-        seed = (seed + 0x01309125) & 0xFFFFFFFF
-        seed = (seed * 0x03A452f7) & 0xFFFFFFFF
+        seed         = (seed + 0x01309125) & 0xFFFFFFFF
+        seed         = (seed * 0x03A452f7) & 0xFFFFFFFF
         outArray[i] ^= seed
 
     return output
@@ -241,7 +248,7 @@ def _decompress_lzss_file(data: bytes) -> bytes:
 
             # Load new tag and set sentinel bit at 9th position.
             tag_register = data[input_ptr] | 0xFF00
-            input_ptr += 1
+            input_ptr   += 1
 
         # LSB contains current flag.
         if tag_register & 0x1:
@@ -281,46 +288,30 @@ def _decompress_lzss_file(data: bytes) -> bytes:
     return bytes(output)
 
 def _demux_xa_sectors(data: bytes, base_path: Path):
-    CD_XA_SYNC_HEADER = b'\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00' + b'\x00\x00\x00\x02'
+    # Check for `XaFlags.VIDEO` or `XaFlags.DATA` flag to determine if format should be `.STR` or `.XA`.
+    has_str_content = False
+    for i in range(0, len(data), MODE_2_SECTOR_SIZE):
+        if i + 2 < len(data):
+            if data[i + 2] & (XaFlags.VIDEO | XaFlags.DATA):
+                has_str_content = True
+                break
 
-    channels       = {}
-    active_channel = None
+    # Set output path.
+    ext         = ".STR" if has_str_content else ".XA"
+    output_path = base_path.with_name(f"{base_path.name}{ext}")
+    print(f"Creating: {output_path.name}")
+    
+    # Process and combine.
+    with output_path.open("wb") as out_file:
+        for offset in range(0, len(data), MODE_2_SECTOR_SIZE):
+            sector = data[offset : offset + MODE_2_SECTOR_SIZE]
+            if len(sector) < MODE_2_SECTOR_SIZE:
+                break
 
-    for offset in range(0, len(data), MODE_2_SECTOR_SIZE):
-        sector = data[offset:offset + MODE_2_SECTOR_SIZE]
-        if len(sector) < MODE_2_SECTOR_SIZE:
-            break
-
-        channel = sector[1]
-        submode = sector[2]
-
-        is_video = submode & 0x02
-        is_audio = submode & 0x04
-        is_data  = submode & 0x08
-
-        # Skip irrelevant sectors.
-        if not (is_audio or is_video or is_data):
-            continue
-
-        # Use first valid channel.
-        if active_channel is None:
-            active_channel = channel
-
-        # Ignore other interleaved channels as they are unused.
-        if channel != active_channel:
-            continue
-
-        ext = ".XA" if is_audio else ".STR"
-        channel_path = base_path.with_name(f"{base_path.name}{ext}")
-
-        if channel_path not in channels:
-            print(f"Creating: {channel_path.name} (Detected Channel {channel})")
-            channels[channel_path] = channel_path.open("wb")
-
-        channels[channel_path].write(CD_XA_SYNC_HEADER + sector)
-
-    for f in channels.values():
-        f.close()
+            submode = sector[2]
+            
+            if (submode & (XaFlags.VIDEO | XaFlags.AUDIO | XaFlags.DATA)):
+                out_file.write(CD_XA_SYNC_HEADER + sector)
 
 def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorSize: int, releaseFlags: int):
     index = 0
@@ -342,7 +333,7 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorS
 
         data = file.read(size)
 
-        if i.type == "BIN" and (releaseFlags & Flags.ENCRYPTED_1ST_FOLDER):
+        if i.type == "BIN" and (releaseFlags & RomFlags.ENCRYPTED_1ST_FOLDER):
             if i.path.startswith("1ST"):
                 logging.info(f"\tDecrypting `{i.path}`...")
                 data = _decrypt_overlay(data)
@@ -403,7 +394,7 @@ def main():
 
     _extract(entriesSilent, args.outputFolder, args.silentFile, MODE_1_SECTOR_SIZE, release.flags)
 
-    if not release.flags & Flags.NO_XA_CONTAINER and args.hillFile:
+    if not release.flags & RomFlags.NO_XA_CONTAINER and args.hillFile:
         _extract(entriesHill, args.outputFolder, args.hillFile, MODE_2_SECTOR_SIZE, release.flags)
 
     with open(os.path.join(args.outputFolder, "filetable.c.inc"), "a+") as file:

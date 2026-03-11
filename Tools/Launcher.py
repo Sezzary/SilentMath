@@ -1,7 +1,7 @@
 """
 Silent Engine Launcher
 
-Runs a simple launcher which prompts ROM selection for asset extraction and launches the application.
+Runs a simple launcher which prompts ROM selection for asset extraction and starts the Silent Engine application.
 """
 
 import customtkinter
@@ -20,6 +20,8 @@ BASE_PATH           = Path(__file__).parent
 TEMP_BASE_PATH      = Path(getattr(sys, '_MEIPASS', os.path.abspath(".")))
 TEMP_OUTPUT_PATH    = BASE_PATH / ".temp"
 ASSETS_PATH         = BASE_PATH / "AssetsTest"
+ASSETS_AUDIO_PATH   = ASSETS_PATH / "Audio"
+ASSETS_VIDEO_PATH   = ASSETS_PATH / "Video"
 
 def _get_dumpsxiso_exe():
     """
@@ -70,6 +72,63 @@ def _select_rom_file():
 
     return None
 
+def _dump_rom(romPath: str):
+    # Setup.
+    dumpsxiso_exe = _get_dumpsxiso_exe()
+
+    # Run command.
+    command = [dumpsxiso_exe,
+               "-x", TEMP_OUTPUT_PATH,
+               "-s", TEMP_OUTPUT_PATH / "Layout.xml",
+               romPath]
+
+    # Report status.
+    result = subprocess.run(command)
+    if result.returncode != 0:
+        raise Exception(f"ROM dump failed: {result.stderr.decode()}")
+
+def _extract_assets():
+    # Setup.
+    extract_assets_script = _get_extract_assets_script()
+
+    # Run command.
+    command = [extract_assets_script,
+               ASSETS_PATH,
+               "-exe", TEMP_OUTPUT_PATH / "SLUS_007.07",
+               "-fs", TEMP_OUTPUT_PATH / "SILENT.",
+               "-fh", TEMP_OUTPUT_PATH / "HILL."]
+
+    # Report status.
+    result = subprocess.run(command)
+    if result.returncode != 0:
+        raise Exception(f"Asset extraction failed: {result.stderr.decode()}")
+            
+def _convert_audio_and_video():
+    # Run through `.XA` and `.STR` files.
+    for file in (ASSETS_PATH / "XA").iterdir():
+        # Run command.
+        if file.suffix == ".XA":
+            command = ["ffmpeg",
+                       "-hide_banner", "-loglevel", "error", "-i", str(file),
+                       ASSETS_AUDIO_PATH]
+        elif file.suffix == ".STR":
+            command = ["ffmpeg",
+                       "-hide_banner", "-loglevel", "error",
+                       "-i", str(file),
+                       "-r", "30",
+                       "-c:v", "mpeg1video", "-q:v", "1", "-bf", "0",
+                       "-maxrate:v", "1500k", "-bufsize:v", "1835k",
+                       "-vf", "format=yuv420p",
+                       "-c:a", "mp2", "-ar", "44100", "-ac", "2",
+                       "-f", "mpeg", ASSETS_VIDEO_PATH]
+        else:
+            continue
+
+        # Report status.
+        result = subprocess.run(command)
+        if result.returncode != 0:
+            raise Exception(f"Asset conversion failed for file `{file.name}`: {result.stderr.decode()}")
+
 def main():
     multiprocessing.freeze_support()
 
@@ -85,37 +144,19 @@ def main():
         root.resizable(False, False)
         root.geometry(f"{WIDTH}x{HEIGHT}")
 
-        # Add simple label.
-        label = customtkinter.CTkLabel(root, text="Hello, world!")
+        # Add label.
+        label = customtkinter.CTkLabel(root, text="Select a Silent Hill ROM.")
         label.pack(expand=True)
 
-        dumpsxiso_exe         = _get_dumpsxiso_exe()
-        extract_assets_script = _get_extract_assets_script()
-
         def handle_click():
-            # Get ROM path.
-            #romPath = _select_rom_file()
-            #if romPath:
-            #    label.configure(text=f"Path: ...{romPath[-30:]}")
-#
-            ## Run dump command.
-            #command = [dumpsxiso_exe,
-            #           "-x", TEMP_OUTPUT_PATH,
-            #           "-s", TEMP_OUTPUT_PATH / "Layout.xml",
-            #           romPath]
-            #result  = subprocess.run(command)
-            #if result.returncode != 0:
-            #    raise Exception(f"ROM dump failed: {result.stderr.decode()}")
+            # Get ROM path
+            romPath = _select_rom_file()
+            if romPath:
+                label.configure(text=f"Path: ...{romPath[-30:]}")
 
-            # Run asset extraction command.
-            command = [extract_assets_script,
-                       ASSETS_PATH,
-                       "-exe", TEMP_OUTPUT_PATH / "SLUS_007.07",
-                       "-fs", TEMP_OUTPUT_PATH / "SILENT.",
-                       "-fh", TEMP_OUTPUT_PATH / "HILL."]
-            result  = subprocess.run(command)
-            if result.returncode != 0:
-                raise Exception(f"Asset extraction failed: {result.stderr.decode()}")
+            _dump_rom(romPath)
+            _extract_assets()
+            _convert_audio_and_video()
 
         button = customtkinter.CTkButton(root, text="Browse Files", command=handle_click)
         button.pack(expand=True)
