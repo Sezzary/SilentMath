@@ -32,7 +32,7 @@ class RomFlags(IntFlag):
     NO_XA_CONTAINER      = 1 << 1
     ALT_FILE_STRUCT      = 1 << 2
 
-class XaFlags(IntFlag):
+class SubmodeFlags(IntFlag):
     NONE  = 0
     VIDEO = 1 << 1
     AUDIO = 1 << 2
@@ -287,31 +287,31 @@ def _decompress_lzss_file(data: bytes) -> bytes:
 
     return bytes(output)
 
-def _demux_xa_sectors(data: bytes, base_path: Path):
-    # Check for `XaFlags.VIDEO` or `XaFlags.DATA` flag to determine if format should be `.STR` or `.XA`.
-    has_str_content = False
+def _extract_cd_stream(data: bytes, base_path: Path):
+    # Check for `XaFlags.VIDEO` or `XaFlags.DATA` flag to determine if format should be `.STR` (video) or `.XA` (audio).
+    is_video_stream = False
     for i in range(0, len(data), MODE_2_SECTOR_SIZE):
         if i + 2 < len(data):
-            if data[i + 2] & (XaFlags.VIDEO | XaFlags.DATA):
-                has_str_content = True
+            if data[i + 2] & (SubmodeFlags.VIDEO | SubmodeFlags.DATA):
+                is_video_stream = True
                 break
 
     # Set output path.
-    ext         = ".STR" if has_str_content else ".XA"
+    ext         = ".STR" if is_video_stream else ".XA"
     output_path = base_path.with_name(f"{base_path.name}{ext}")
     print(f"Creating: {output_path.name}")
-    
+
     # Process and combine.
-    with output_path.open("wb") as out_file:
+    with output_path.open("wb") as output_file:
         for offset in range(0, len(data), MODE_2_SECTOR_SIZE):
             sector = data[offset : offset + MODE_2_SECTOR_SIZE]
             if len(sector) < MODE_2_SECTOR_SIZE:
                 break
 
             submode = sector[2]
-            
-            if (submode & (XaFlags.VIDEO | XaFlags.AUDIO | XaFlags.DATA)):
-                out_file.write(CD_XA_SYNC_HEADER + sector)
+
+            if (submode & (SubmodeFlags.VIDEO | SubmodeFlags.AUDIO | SubmodeFlags.DATA)):
+                output_file.write(CD_XA_SYNC_HEADER + sector)
 
 def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorSize: int, releaseFlags: int):
     index = 0
@@ -347,7 +347,7 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorS
             with outputDecPath.open("wb") as _file:
                 _file.write(decData)
         elif i.type == "XA":
-            _demux_xa_sectors(data, outputPath)
+            _extract_cd_stream(data, outputPath)
             index += 1
             continue
 
