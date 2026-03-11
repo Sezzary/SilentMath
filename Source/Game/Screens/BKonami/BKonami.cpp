@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/MemCard.h"
+#include "Game/Bodyprog/Screen/BackgroundDraw.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
@@ -15,7 +16,6 @@
 #include "Game/Screens/Stream/Stream.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
-//#include "Game/Screen/BackgroundDraw.h"
 
 using namespace Silent::Input;
 using namespace Silent::Renderer;

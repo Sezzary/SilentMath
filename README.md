@@ -54,6 +54,7 @@ NOTE: Project setup is yet to be streamlined and this section is incomplete. Ide
 
 The project requires the following system tools:
 - cmake
+- ffmpeg
 - git
 - ninja
 - pip
@@ -74,7 +75,7 @@ winget install Kitware.CMake Git.Git Ninja-build.Ninja Python.Python.3
 </details> <details> <summary>Linux</summary>
 
 ```
-sudo apt install build-essential git ninja-build python3 python3-pip
+sudo apt install build-essential git ninja-build python3 python3-pip ffmpeg
 ```
 </details>
 

@@ -57,17 +57,13 @@ namespace Silent::Game
 
     void GameState_MovieIntro_Update() // 0x801E279C
     {
-        s32 fileIdx = FILE_XA_C1_20670;
-
-        if (g_GameWorkConst->config_0.optExtraOptionsEnabled_27 & (1 << 0))
+        const char* videoName = (g_GameWorkConst->config_0.optExtraOptionsEnabled_27 & (1 << 0)) ? "C1_20670.MPG" :
+                                                                                                   "C2_20670.MPG";
+        if (!movie_main(videoName, 0, 0))
         {
-            fileIdx = FILE_XA_C2_20670;
+            Game_StateSetNext(GameState_MainMenu);
+            g_ScreenFadeTimestep = Q12(1.0f);
         }
-
-        open_main(fileIdx, 0);
-        Game_StateSetNext(GameState_MainMenu);
-
-        g_ScreenFadeTimestep = Q12(1.0f);
     }
 
     void GameState_MovieOpening_Update() // 0x801E2838
@@ -128,7 +124,7 @@ namespace Silent::Game
         //movie_main(nullptr, num_frames, g_FileTable[file_idx].startSector_0_0);
     }
 
-    bool movie_main(char* file_name, s32 f_size, s32 sector) // 0x801E2B9C
+    bool movie_main(const char* file_name, s32 f_size, s32 sector) // 0x801E2B9C
     {
         const auto& input    = g_App.GetInput();
         auto&       renderer = g_App.GetRenderer();

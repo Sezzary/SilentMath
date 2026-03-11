@@ -94,6 +94,9 @@ namespace Silent::Renderer
                                       int depth, AlignMode alignMode, ScaleMode scaleMode,
                                       BlendMode blendMode)
     {
+        auto aspect     = GetSpriteAspectRatio(texName);
+        auto localScale = Vector2(std::min(aspect, 1.0f), std::max(aspect, 1.0f));
+
         return Sprite2d
         {
             .TextureName = texName,
@@ -101,7 +104,7 @@ namespace Silent::Renderer
             .UvMax       = uvMax,
             .Position    = pos,
             .Rotation    = rot,
-            .Scale       = Vector2(GetSpriteAspectRatio(texName) * scale, scale),
+            .Scale       = localScale * scale,
             .Col0        = color,
             .Col1        = color,
             .Col2        = color,
