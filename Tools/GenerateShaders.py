@@ -138,9 +138,9 @@ def main():
         if build_count == 0 and len(fail_names) == 0:
             print("Shaders are up-to-date.")
         else:
-            successStr = f"{build_count} shader{"" if build_count == 1 else "s"} built successfully."
-            failStr = (f" {len(fail_names)} failed:" if len(fail_names) > 0 else "")
-            print(successStr + failStr)
+            success_str = f"{build_count} shader{"" if build_count == 1 else "s"} built successfully."
+            fail_str = (f" {len(fail_names)} failed:" if len(fail_names) > 0 else "")
+            print(success_str + fail_str)
 
             for fail_name in fail_names:
                 print(f"`{fail_name}`")

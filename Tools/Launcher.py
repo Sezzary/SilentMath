@@ -77,10 +77,12 @@ def _dump_rom(romPath: str):
     dumpsxiso_exe = _get_dumpsxiso_exe()
 
     # Run command.
-    command = [dumpsxiso_exe,
-               "-x", TEMP_OUTPUT_PATH,
-               "-s", TEMP_OUTPUT_PATH / "Layout.xml",
-               romPath]
+    command = [
+        dumpsxiso_exe,
+        "-x", TEMP_OUTPUT_PATH,
+        "-s", TEMP_OUTPUT_PATH / "Layout.xml",
+        romPath
+    ]
 
     # Report status.
     result = subprocess.run(command)
@@ -92,11 +94,13 @@ def _extract_assets():
     extract_assets_script = _get_extract_assets_script()
 
     # Run command.
-    command = [extract_assets_script,
-               ASSETS_PATH,
-               "-exe", TEMP_OUTPUT_PATH / "SLUS_007.07",
-               "-fs", TEMP_OUTPUT_PATH / "SILENT.",
-               "-fh", TEMP_OUTPUT_PATH / "HILL."]
+    command = [
+        extract_assets_script,
+        ASSETS_PATH,
+        "-exe", TEMP_OUTPUT_PATH / "SLUS_007.07",
+        "-fs", TEMP_OUTPUT_PATH / "SILENT.",
+        "-fh", TEMP_OUTPUT_PATH / "HILL."
+    ]
 
     # Report status.
     result = subprocess.run(command)
@@ -108,19 +112,23 @@ def _convert_audio_and_video():
     for file in (ASSETS_PATH / "XA").iterdir():
         # Run command.
         if file.suffix == ".XA":
-            command = ["ffmpeg",
-                       "-hide_banner", "-loglevel", "error", "-i", str(file),
-                       ASSETS_AUDIO_PATH]
+            command = [
+                "ffmpeg",
+                "-hide_banner", "-loglevel", "error", "-i", str(file),
+                ASSETS_AUDIO_PATH
+            ]
         elif file.suffix == ".STR":
-            command = ["ffmpeg",
-                       "-hide_banner", "-loglevel", "error",
-                       "-i", str(file),
-                       "-r", "30",
-                       "-c:v", "mpeg1video", "-q:v", "1", "-bf", "0",
-                       "-maxrate:v", "1500k", "-bufsize:v", "1835k",
-                       "-vf", "format=yuv420p",
-                       "-c:a", "mp2", "-ar", "44100", "-ac", "2",
-                       "-f", "mpeg", ASSETS_VIDEO_PATH]
+            command = [
+                "ffmpeg",
+                "-hide_banner", "-loglevel", "error",
+                "-i", str(file),
+                "-r", "30",
+                "-c:v", "mpeg1video", "-q:v", "1", "-bf", "0",
+                "-maxrate:v", "1500k", "-bufsize:v", "1835k",
+                "-vf", "format=yuv420p",
+                "-c:a", "mp2", "-ar", "44100", "-ac", "2",
+                "-f", "mpeg", ASSETS_VIDEO_PATH
+            ]
         else:
             continue
 

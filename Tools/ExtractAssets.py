@@ -40,14 +40,14 @@ class SubmodeFlags(IntFlag):
 
 @dataclass
 class Release:
-    id:        str
-    name:      str
-    checksum:  int
-    tocOffset: int
-    fileCount: int
-    dirs:      list[str]
-    filetypes: list[str]
-    flags:     RomFlags
+    id:         str
+    name:       str
+    checksum:   int
+    toc_offset: int
+    fileCount:  int
+    dirs:       list[str]
+    filetypes:  list[str]
+    flags:      RomFlags
 
 @dataclass
 class TableEntry:
@@ -169,35 +169,35 @@ def _detect_release(checksum: int, name: str) -> Release:
     return None
 
 def _parse_entry(entry, release):
-    meta, file0, file1 = ENTRY_STRUCT.unpack(entry)
+    meta, file_0, file_1 = ENTRY_STRUCT.unpack(entry)
 
     if not release.flags & RomFlags.ALT_FILE_STRUCT:
         name = "".join(chain(
-            (chr(32 + ((file0 >> shift) & 0x3F)) for shift in range(4, 28, 6)),
-            (chr(32 + ((file1 >> shift) & 0x3F)) for shift in range(0, 24, 6))
+            (chr(32 + ((file_0 >> shift) & 0x3F)) for shift in range(4, 28, 6)),
+            (chr(32 + ((file_1 >> shift) & 0x3F)) for shift in range(0, 24, 6))
         )).strip()
 
         # size, lba, name, path, type
-        return meta >> 19, meta & 0x7FFFF, name, release.dirs[file0 & 0xF], release.filetypes[(file1 >> 24) & 0xF]
+        return meta >> 19, meta & 0x7FFFF, name, release.dirs[file_0 & 0xF], release.filetypes[(file_1 >> 24) & 0xF]
     else:
-        directoryIndex0 = (meta >> 31) & 0x1
-        directoryIndex1 = file0 & 0x7
+        dir_idx_0 = (meta >> 31) & 0x1
+        dir_idx_1 = file_0 & 0x7
 
-        name0 = (file0 >> 3) & 0x1FFFFFFF
-        name1 = file1 & 0x7FFFF
+        name_0 = (file_0 >> 3) & 0x1FFFFFFF
+        name_1 = file_1 & 0x7FFFF
 
-        extensionIndex = (file1 >> 19) & 0xFF
-        directoryIndex = (directoryIndex1 << 1) | directoryIndex0
+        ext_idx = (file_1 >> 19) & 0xFF
+        dir_idx = (dir_idx_1 << 1) | dir_idx_0
 
-        nameBits = (name1 << 29) | name0
+        name_bits = (name_1 << 29) | name_0
 
         name = "".join(
-            chr(32 + ((nameBits >> shift) & 0x3F))
+            chr(32 + ((name_bits >> shift) & 0x3F))
             for shift in range(0, 48, 6)
         ).strip()
 
         # size, lba, name, path, type
-        return (meta >> 19) & 0xFFF, meta & 0x7FFFF, name, release.dirs[directoryIndex], release.filetypes[extensionIndex]
+        return (meta >> 19) & 0xFFF, meta & 0x7FFFF, name, release.dirs[dir_idx], release.filetypes[ext_idx]
 
 def _format_entry(size, lba, name, path, type, release):
     name    = name.ljust(8)
@@ -206,14 +206,14 @@ def _format_entry(size, lba, name, path, type, release):
     return f'{{ {lba:#07x}, {size:4d}, {release.dirs.index(path):2d}, FN({namesep}), {release.filetypes.index(type):2d} }}'
 
 def _decrypt_overlay(data: bytes):
-    output   = bytearray(data)
-    outArray = memoryview(output).cast("I") # `uint32`
-    seed     = 0
+    output       = bytearray(data)
+    output_array = memoryview(output).cast("I") # `uint32`
+    seed         = 0
 
-    for i, value in enumerate(outArray):
-        seed         = (seed + 0x01309125) & 0xFFFFFFFF
-        seed         = (seed * 0x03A452f7) & 0xFFFFFFFF
-        outArray[i] ^= seed
+    for i, value in enumerate(output_array):
+        seed             = (seed + 0x01309125) & 0xFFFFFFFF
+        seed             = (seed * 0x03A452f7) & 0xFFFFFFFF
+        output_array[i] ^= seed
 
     return output
 
@@ -292,6 +292,7 @@ def _extract_cd_stream(data: bytes, base_path: Path):
     is_video_stream = False
     for i in range(0, len(data), MODE_2_SECTOR_SIZE):
         if i + 2 < len(data):
+            submode = data[i + 2]
             if data[i + 2] & (SubmodeFlags.VIDEO | SubmodeFlags.DATA):
                 is_video_stream = True
                 break
@@ -302,38 +303,37 @@ def _extract_cd_stream(data: bytes, base_path: Path):
     print(f"Creating: {output_path.name}")
 
     # Process and combine.
-    with output_path.open("wb") as output_file:
+    with output_path.open("wb") as _file:
         for offset in range(0, len(data), MODE_2_SECTOR_SIZE):
             sector = data[offset : offset + MODE_2_SECTOR_SIZE]
             if len(sector) < MODE_2_SECTOR_SIZE:
                 break
 
             submode = sector[2]
-
             if (submode & (SubmodeFlags.VIDEO | SubmodeFlags.AUDIO | SubmodeFlags.DATA)):
-                output_file.write(CD_XA_SYNC_HEADER + sector)
+                _file.write(CD_XA_SYNC_HEADER + sector)
 
-def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorSize: int, releaseFlags: int):
-    index = 0
+def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_size: int, release_flags: int):
+    idx = 0
     for i in entries:
-        outputPath = (output / i.path).absolute()
-        if not outputPath.parent.exists():
-            outputPath.parent.mkdir(parents = True)
+        output_path = (output / i.path).absolute()
+        if not output_path.parent.exists():
+            output_path.parent.mkdir(parents = True)
 
-        logging.info(f"{index} Extracting {FILE_TYPE_NAMES[i.type]}(.{i.type}) to {outputPath}...")
+        logging.info(f"{idx} Extracting {FILE_TYPE_NAMES[i.type]}(.{i.type}) to {output_path}...")
 
-        file.seek((i.offset - entries[0].offset) * sectorSize)
+        file.seek((i.offset - entries[0].offset) * sector_size)
         size = 0
         if not i.size == 0 and i.type != "XA":
             size = i.size * FILESIZE_STEP
-        elif index + 1 < len(entries):
-            size = (entries[index + 1].offset - i.offset) * sectorSize
+        elif idx + 1 < len(entries):
+            size = (entries[idx + 1].offset - i.offset) * sector_size
         else:
             size = -1 # Read until end of file.
 
         data = file.read(size)
 
-        if i.type == "BIN" and (releaseFlags & RomFlags.ENCRYPTED_1ST_FOLDER):
+        if i.type == "BIN" and (release_flags & RomFlags.ENCRYPTED_1ST_FOLDER):
             if i.path.startswith("1ST"):
                 logging.info(f"\tDecrypting `{i.path}`...")
                 data = _decrypt_overlay(data)
@@ -342,18 +342,18 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sectorS
                 data = _decrypt_overlay(_decompress_lzss_file(data))
         elif i.type == "CMP":
             logging.info(f"\tDecompressing `{i.path}`...")
-            decData = _decompress_lzss_file(data)
-            outputDecPath = outputPath.with_name(outputPath.name + ".dec")
-            with outputDecPath.open("wb") as _file:
-                _file.write(decData)
+            dec_data = _decompress_lzss_file(data)
+            output_dec_path_j = output_path.with_name(output_path.name + ".dec")
+            with output_dec_path_j.open("wb") as _file:
+                _file.write(dec_data)
         elif i.type == "XA":
-            _extract_cd_stream(data, outputPath)
-            index += 1
+            _extract_cd_stream(data, output_path)
+            idx += 1
             continue
 
-        with outputPath.open("wb") as _file:
+        with output_path.open("wb") as _file:
             _file.write(data)
-        index = index + 1
+        idx = idx + 1
 
 def main():
     logging.basicConfig(level = logging.INFO)
@@ -369,40 +369,40 @@ def main():
         if release == None:
             return
 
-    originText    = f"// Generated from `{release.name}` ({release.id}).\n"
-    headerText    = originText
-    enumText      = f"    {originText}"
-    entriesSilent = []
-    entriesHill   = []
-    exe.seek(release.tocOffset)
+    origin_text    = f"// Generated from `{release.name}` ({release.id}).\n"
+    header_text    = origin_text
+    enum_text      = f"    {origin_text}"
+    entries_silent = []
+    entries_hill   = []
+    exe.seek(release.toc_offset)
     for i in range(release.fileCount):
         rawEntry                   = exe.read(ENTRY_STRUCT.size)
         size, lba, name, dir, type = _parse_entry(rawEntry, release)
 
         fullPath    = os.path.join(dir, f"{name}.{type}" if not type == "XA" else f"{name}").replace("\\", "/")
-        headerText += f"/* {i:4d} */ {_format_entry(size, lba, name, dir, type, release)}, // {fullPath}\n"
+        header_text += f"/* {i:4d} */ {_format_entry(size, lba, name, dir, type, release)}, // {fullPath}\n"
         enumName    = fullPath.replace("/", "_").replace("\\", "_").replace(".", "_")
-        enumText   += f"    FILE_{enumName} = {i}, // {fullPath}\n"
+        enum_text   += f"    FILE_{enumName} = {i}, // {fullPath}\n"
         entry       = TableEntry(fullPath, type, size, lba)
 
         match dir:
             case "XA":
-                entriesHill.append(entry)
+                entries_hill.append(entry)
             case _:
-                entriesSilent.append(entry)
+                entries_silent.append(entry)
     exe.close
 
-    _extract(entriesSilent, args.outputFolder, args.silentFile, MODE_1_SECTOR_SIZE, release.flags)
+    _extract(entries_silent, args.outputFolder, args.silentFile, MODE_1_SECTOR_SIZE, release.flags)
 
     if not release.flags & RomFlags.NO_XA_CONTAINER and args.hillFile:
-        _extract(entriesHill, args.outputFolder, args.hillFile, MODE_2_SECTOR_SIZE, release.flags)
+        _extract(entries_hill, args.outputFolder, args.hillFile, MODE_2_SECTOR_SIZE, release.flags)
 
     with open(os.path.join(args.outputFolder, "filetable.c.inc"), "a+") as file:
         file.truncate(0)
-        file.write(headerText)
+        file.write(header_text)
     with open(os.path.join(args.outputFolder, "fileenum.h.inc"), "a+") as file:
         file.truncate(0)
-        file.write(enumText)
+        file.write(enum_text)
 
     logging.info("All done!")
 
