@@ -77,6 +77,8 @@ def main():
                        "--specpath", "Build/Launcher",
                        "Tools/Launcher.py"]
             result  = subprocess.run(command)
+
+            # Report status.
             if result.returncode == 0:
                 print("Launcher generated successfully.")
             else:

@@ -117,6 +117,8 @@ def main():
                                "-I", SOURCES_PATH,
                                "-o", temp_shader_output]
                     result  = subprocess.run(command, capture_output=True)
+
+                    # Report status.
                     if result.returncode == 0:
                         print(f"`{output_name}`")
                         build_count += 1

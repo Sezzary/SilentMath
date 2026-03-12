@@ -2,6 +2,7 @@
 Silent Hill Asset Extractor
 
 Extracts assets from a Silent Hill PSX ROM.
+Supports final releases, partial demos, and prototypes.
 
 Usage:
     `python Tools/ExtractAssets.py <outputFolder> [-exe <path>] [-fs <path>] [-fh <path>] [-c]`
@@ -82,7 +83,7 @@ FILE_TYPE_NAMES = {
     "UU2": "Unused 2",
     "UU3": "Unused 3",
     "UU4": "Unused 4",
-    "XA":  "XA Track Data"
+    "XA":  "XA CD Track Data"
 }
 
 # Mapping of type index -> type string. Mappings change in certain releases.
@@ -123,26 +124,26 @@ DIRS_OPM16 = [
 ]
 
 RELEASES = (
-# Partial demo releases.
-    Release("NTSC OPM16 Demo 98-10-19", "SCUS-94278", 0x2534D4BE, 0xAA90, 886,  DIRS_OPM16, FILE_TYPES_OPM16, RomFlags.ALT_FILE_STRUCT),
-    Release("NTSC-J Demo 98-11-06",     "SLPM-80366", 0x1BCE20E4, 0xB9B0, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.ALT_FILE_STRUCT),
-    Release("NTSC-J Demo 98-11-06",     "SLPM-80363", 0xBE8E95CF, 0xB780, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.ALT_FILE_STRUCT),
-    Release("PAL Demo 98-12-16",        "SLED-01735", 0x9AE067D4, 0xB648, 850,  DIRS_DEMO,  FILE_TYPES_DEMO,  0),
-    Release("NTSC Demo 99-01-16",       "SLUS-90050", 0x55E85F78, 0xB648, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  0),
-    Release("PAL Demo 99-06-08",        "SLED-02190", 0x08E0B752, 0xC8FC, 1015, DIRS_PAL,   FILE_TYPES,       RomFlags.ENCRYPTED_1ST_FOLDER),
-    Release("PAL Demo 99-06-16",        "SLED-02186", 0x1782AA0A, 0xB8FC, 1015, DIRS_PAL,   FILE_TYPES,       RomFlags.ENCRYPTED_1ST_FOLDER),
-
-# Prototypes.
-    Release("NTSC Preview 98-11-24",    "SLUS-45678", 0x8B88326C, 0xB71C, 1926, DIRS_NTSC, FILE_TYPES, RomFlags.NO_XA_CONTAINER),
-    Release("NTSC Review 99-01-07",     "SLUS-00707", 0xCC454534, 0xB7B8, 2076, DIRS_NTSC, FILE_TYPES, RomFlags.NO_XA_CONTAINER),
-    Release("NTSC Trade Demo 99-01-17", "SLUS-80707", 0xC9FFEF2A, 0xB850, 2040, DIRS_NTSC, FILE_TYPES, 0),
-    Release("NTSC Beta 99-01-22",       "SLUS-00707", 0x84AB9750, 0xB850, 2072, DIRS_NTSC, FILE_TYPES, 0),
-
-# Final releases.
+    # Final releases.
     Release("NTSC-J Rev 0 99-01-26",       "SLPM-86192", 0x1532C55C, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
     Release("NTSC 1.1 99-02-10",           "SLUS-00707", 0xCF9CD8E5, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
     Release("NTSC-J Rev 1/Rev 2 99-06-02", "SLPM-86192", 0xEB733CAA, 0xB91C, 2074, DIRS_NTSC, FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
     Release("PAL 99-06-07",                "SLES-01514", 0x337E4A60, 0xB8FC, 2310, DIRS_PAL,  FILE_TYPES, RomFlags.ENCRYPTED_1ST_FOLDER),
+
+    # Partial demo releases.
+    Release("NTSC OPM16 Demo 98-10-19", "SCUS-94278", 0x2534D4BE, 0xAA90, 886,  DIRS_OPM16, FILE_TYPES_OPM16, RomFlags.ALT_FILE_STRUCT),
+    Release("NTSC-J Demo 98-11-06",     "SLPM-80366", 0x1BCE20E4, 0xB9B0, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.ALT_FILE_STRUCT),
+    Release("NTSC-J Demo 98-11-06",     "SLPM-80363", 0xBE8E95CF, 0xB780, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.ALT_FILE_STRUCT),
+    Release("PAL Demo 98-12-16",        "SLED-01735", 0x9AE067D4, 0xB648, 850,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.NONE),
+    Release("NTSC Demo 99-01-16",       "SLUS-90050", 0x55E85F78, 0xB648, 849,  DIRS_DEMO,  FILE_TYPES_DEMO,  RomFlags.NONE),
+    Release("PAL Demo 99-06-08",        "SLED-02190", 0x08E0B752, 0xC8FC, 1015, DIRS_PAL,   FILE_TYPES,       RomFlags.ENCRYPTED_1ST_FOLDER),
+    Release("PAL Demo 99-06-16",        "SLED-02186", 0x1782AA0A, 0xB8FC, 1015, DIRS_PAL,   FILE_TYPES,       RomFlags.ENCRYPTED_1ST_FOLDER),
+
+    # Prototypes.
+    Release("NTSC Preview 98-11-24",    "SLUS-45678", 0x8B88326C, 0xB71C, 1926, DIRS_NTSC, FILE_TYPES, RomFlags.NO_XA_CONTAINER),
+    Release("NTSC Review 99-01-07",     "SLUS-00707", 0xCC454534, 0xB7B8, 2076, DIRS_NTSC, FILE_TYPES, RomFlags.NO_XA_CONTAINER),
+    Release("NTSC Trade Demo 99-01-17", "SLUS-80707", 0xC9FFEF2A, 0xB850, 2040, DIRS_NTSC, FILE_TYPES, RomFlags.NONE),
+    Release("NTSC Beta 99-01-22",       "SLUS-00707", 0x84AB9750, 0xB850, 2072, DIRS_NTSC, FILE_TYPES, RomFlags.NONE)
 )
 
 def _create_parser():
@@ -267,12 +268,12 @@ def _decompress_lzss_file(data: bytes) -> bytes:
             if input_ptr + 1 >= len(data):
                 break
 
-            byte0      = data[input_ptr]
-            byte1      = data[input_ptr + 1]
+            byte_0     = data[input_ptr]
+            byte_1     = data[input_ptr + 1]
             input_ptr += 2
 
-            offset = byte0 | ((byte1 & 0xF0) << 4)
-            length = (byte1 & 0x0F) + 3
+            offset = byte_0 | ((byte_1 & 0xF0) << 4)
+            length = (byte_1 & 0x0F) + 3
 
             for _ in range(length):
                 byte = window[offset]
@@ -300,7 +301,7 @@ def _extract_cd_stream(data: bytes, base_path: Path):
     # Set output path.
     ext         = ".STR" if is_video_stream else ".XA"
     output_path = base_path.with_name(f"{base_path.name}{ext}")
-    print(f"Creating: {output_path.name}")
+    print(f"Creating `{output_path.name}`")
 
     # Process and combine.
     with output_path.open("wb") as _file:
@@ -320,7 +321,7 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
         if not output_path.parent.exists():
             output_path.parent.mkdir(parents = True)
 
-        logging.info(f"{idx} Extracting {FILE_TYPE_NAMES[i.type]}(.{i.type}) to {output_path}...")
+        logging.info(f"{idx} Extracting {FILE_TYPE_NAMES[i.type]} (.{i.type}) to `{output_path}`...")
 
         file.seek((i.offset - entries[0].offset) * sector_size)
         size = 0
@@ -356,6 +357,8 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
         idx = idx + 1
 
 def main():
+    print("Extracting assets...")
+
     logging.basicConfig(level = logging.INFO)
     args          = _create_parser().parse_args()
     exe: BinaryIO = args.executable
@@ -397,14 +400,15 @@ def main():
     if not release.flags & RomFlags.NO_XA_CONTAINER and args.hillFile:
         _extract(entries_hill, args.outputFolder, args.hillFile, MODE_2_SECTOR_SIZE, release.flags)
 
-    with open(os.path.join(args.outputFolder, "filetable.c.inc"), "a+") as file:
-        file.truncate(0)
-        file.write(header_text)
-    with open(os.path.join(args.outputFolder, "fileenum.h.inc"), "a+") as file:
-        file.truncate(0)
-        file.write(enum_text)
+    # Generate file table and enum.
+    #with open(os.path.join(args.outputFolder, "filetable.c.inc"), "a+") as file:
+    #    file.truncate(0)
+    #    file.write(header_text)
+    #with open(os.path.join(args.outputFolder, "fileenum.h.inc"), "a+") as file:
+    #    file.truncate(0)
+    #    file.write(enum_text)
 
-    logging.info("All done!")
+    logging.info("Asset extraction completed successfully.")
 
 if __name__ == "__main__":
     main()
