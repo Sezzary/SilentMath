@@ -2,9 +2,6 @@
 
 namespace Silent::Utils
 {
-    // ffmpeg -i INPUT.STR -r 30 -c:v mpeg1video -q:v 1 -bf 0 -maxrate:v 1500k -bufsize:v 1835k -vf "format=yuv420p" -c:a mp2 -ar 44100 -ac 2 -f mpeg OUTPUT.mpg
-    // ffmpeg -i INPUT.XA OUTPUT.wav
-
     /** @brief MPEG1 video player. */
     class VideoPlayer
     {

@@ -19,13 +19,15 @@ import sys
 
 from pathlib import Path
 
-LAUNCHER_NAME    = "Launcher.py"
-SPEC_NAME        = "Launcher.spec"
-BASE_PATH        = Path(__file__).parent
-OUTPUT_PATH      = BASE_PATH / "../Build/Launcher"
-TEMP_OUTPUT_PATH = OUTPUT_PATH / ".temp"
-LAUNCHER_SCRIPT  = BASE_PATH / LAUNCHER_NAME
-SPEC_FILE        = OUTPUT_PATH / SPEC_NAME
+LAUNCHER_NAME      = "Launcher.py"
+SPEC_NAME          = "Launcher.spec"
+BASE_PATH          = Path(__file__).parent
+BUILD_PATH         = BASE_PATH / "../Build"
+DEBUG_BUILD_PATH   = BUILD_PATH / "Debug"
+RELEASE_BUILD_PATH = BUILD_PATH / "Release"
+TEMP_OUTPUT_PATH   = BUILD_PATH / ".temp"
+LAUNCHER_SCRIPT    = BASE_PATH / LAUNCHER_NAME
+SPEC_FILE          = BUILD_PATH / SPEC_NAME
 
 def _get_platform_name():
     """
@@ -56,33 +58,44 @@ def main():
         _cleanup()
 
         # Setup.
-        platform_name = _get_platform_name()
-        exe_ext       = ".exe" if platform_name == "Windows" else ""
-        colon         = ";"    if platform_name == "Windows" else ":"
-        launcher_exe  = OUTPUT_PATH / f"Launcher{exe_ext}"
+        platform_name        = _get_platform_name()
+        exe_ext              = ".exe" if platform_name == "Windows" else ""
+        colon                = ";"    if platform_name == "Windows" else ":"
+        launcher_exes        = [
+            DEBUG_BUILD_PATH   / f"Launcher{exe_ext}",
+            RELEASE_BUILD_PATH / f"Launcher{exe_ext}"
+        ]
 
         # Check if new launcher build is required.
-        if launcher_exe.exists():
-            run_new_build = os.path.getmtime(LAUNCHER_SCRIPT) > os.path.getmtime(launcher_exe)
-        else:
-            run_new_build = True
+        existing_mtimes = [
+            os.path.getmtime(file) for file in launcher_exes
+            if os.path.exists(file)
+        ]
+        newest_exe_mtime = max(existing_mtimes, default=0)
+        run_new_build    = os.path.getmtime(LAUNCHER_SCRIPT) > newest_exe_mtime
 
         # Run generation command.
         if run_new_build:
             command = ["pyinstaller", "--onefile", "--windowed", "--noconfirm",
-                       "--add-data", f"../../Tools/ExtractAssets.py{colon}.",
-                       "--add-binary", f"../../Tools/dumpsxiso/{platform_name}/dumpsxiso{exe_ext}{colon}.",
-                       "--distpath", "Build/Launcher",
-                       "--workpath", "Build/Launcher/.temp",
-                       "--specpath", "Build/Launcher",
-                       "Tools/Launcher.py"]
+                       "--add-data", BASE_PATH / f"ExtractAssets.py{colon}.",
+                       "--add-binary", BASE_PATH / f"dumpsxiso/{platform_name}/dumpsxiso{exe_ext}{colon}.",
+                       "--distpath", BUILD_PATH,
+                       "--workpath", TEMP_OUTPUT_PATH,
+                       "--specpath", BUILD_PATH,
+                       BASE_PATH / "Launcher.py"]
             result  = subprocess.run(command)
 
-            # Report status.
+            # Report status and copy launcher to final output folders.
             if result.returncode == 0:
+                DEBUG_BUILD_PATH.mkdir(parents=True, exist_ok=True)
+                RELEASE_BUILD_PATH.mkdir(parents=True, exist_ok=True)
+
+                shutil.copy2(BUILD_PATH / f"Launcher{exe_ext}", DEBUG_BUILD_PATH)
+                shutil.copy2(BUILD_PATH / f"Launcher{exe_ext}", RELEASE_BUILD_PATH)
+
                 print("Launcher generated successfully.")
             else:
-                print(f"Failed to generate launcher: {result.stderr.decode()}")
+                raise Exception(f"Failed to generate launcher: {result.stderr.decode()}")
         else:
             print("Launcher is up-to-date.")
 

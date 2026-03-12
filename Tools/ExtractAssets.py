@@ -83,7 +83,7 @@ FILE_TYPE_NAMES = {
     "UU2": "Unused 2",
     "UU3": "Unused 3",
     "UU4": "Unused 4",
-    "XA":  "XA CD Track Data"
+    "XA":  "CD Track Data"
 }
 
 # Mapping of type index -> type string. Mappings change in certain releases.
