@@ -1,2 +1,4 @@
+charset-normalizer
 customtkinter
 pyinstaller
+static-ffmpeg
