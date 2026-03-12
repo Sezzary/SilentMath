@@ -5,10 +5,11 @@ Runs a simple launcher which prompts ROM selection for asset extraction and star
 """
 
 import customtkinter
+import hashlib
 import multiprocessing
 import os
 import platform
-import re
+import shutil
 import subprocess
 import sys
 
@@ -24,13 +25,12 @@ ASSETS_PATH         = BASE_PATH / "Assets/Stream/Psx"
 ASSETS_AUDIO_PATH   = BASE_PATH / "Assets/Audio"
 ASSETS_VIDEO_PATH   = BASE_PATH / "Assets/Video"
 
-# Checksums for ROMs supported for asset extraction.
-# @todo Support all final releases. Ideal setup would collect every translated puzzle texture from multiple ROMs.
-SUPPORTED_RELEASE_CHECKSUMS = [
-    #0x1532C55C, # NTSC-J   Rev 0 99-01-26       (SLPM-86192).
-    0xCF9CD8E5, # NTSC 1.1 99-02-10             (SLUS-00707).
-    #0xEB733CAA, # NTSC-J   Rev 1/Rev 2 99-06-02 (SLPM-86192).
-    #0x337E4A60  # PAL      99-06-07             (SLES-01514).
+# Checksums for supported ROMs.
+ROM_CHECKSUMS = [
+    0x80145C264A974B210E75A020967F10B7F806E22C, # NTSC-J   Rev 0 99-01-26       (SLPM-86192).
+    0x34278D31D9B9B12B3B5DB5E45BCBE548991ECBC7, # NTSC 1.1 99-02-10             (SLUS-00707).
+    0x83B8D89398829493457A48BE9820300ADE8703D4, # NTSC-J   Rev 1/Rev 2 99-06-02 (SLPM-86192).
+    0xCA67A93E507B999A0040242362162E442F2BA07E  # PAL      99-06-07             (SLES-01514).
 ]
 
 def _get_python_cmd():
@@ -45,7 +45,11 @@ def get_ffmpeg_cmd():
     Get the platform-specific system FFmpeg command.
     If FFmpeg is missing on the first call, it will be downloaded.
     """
-    ffmpeg_exe, ffprobe_exe = run.get_or_fetch_platform_executables_else_raise()
+    ffmpeg_exe = shutil.which("ffmpeg")
+    if ffmpeg_exe:
+        return ffmpeg_exe
+
+    ffmpeg_exe = run.get_or_fetch_platform_executables_else_raise()
     return ffmpeg_exe
 
 def _get_dumpsxiso_exe():
@@ -55,9 +59,9 @@ def _get_dumpsxiso_exe():
     # Define executable path.
     system_os = platform.system().lower()
     if system_os == "windows":
-        dumpsxiso_exe = os.path.join(TEMP_BASE_PATH, DUMPSXISO_NAME + ".exe")
+        dumpsxiso_exe = TEMP_BASE_PATH / f"{DUMPSXISO_NAME}.exe"
     elif system_os == "darwin" or system_os == "linux": # `darwin` = macOS.
-        dumpsxiso_exe = os.path.join(TEMP_BASE_PATH, DUMPSXISO_NAME)
+        dumpsxiso_exe = TEMP_BASE_PATH / DUMPSXISO_NAME
     else:
         raise Exception(f"'{system_os}' is unsupported.")
 
@@ -75,7 +79,7 @@ def _get_extract_assets_script():
     Get the `ExtractAssets.py` script to use.
     """
     # Define script path.
-    extract_assets_script = os.path.join(TEMP_BASE_PATH, EXTRACT_ASSETS_NAME)
+    extract_assets_script = TEMP_BASE_PATH / EXTRACT_ASSETS_NAME
 
     # Set permissions.
     system_os = platform.system().lower()
@@ -84,6 +88,17 @@ def _get_extract_assets_script():
 
     return extract_assets_script
 
+def _generate_sha1(file_path: Path):
+    """
+    Generate a SHA-1 checksum from a file.
+    """
+    sha1_hash = hashlib.sha1()
+    with open(file_path, "rb") as _file:
+        for byte_block in iter(lambda: _file.read(4096), b""):
+            sha1_hash.update(byte_block)
+
+    return int(sha1_hash.hexdigest(), 16)
+
 def _select_rom_file():
     """
     Show a file selection window to prompt a ROM selection.
@@ -91,6 +106,11 @@ def _select_rom_file():
     file_path = filedialog.askopenfilename(
         title="Select a Silent Hill ROM",
         filetypes=[("Silent Hill ROM Image", "*.bin")])
+    
+    checksum = _generate_sha1(file_path)
+    if checksum not in ROM_CHECKSUMS:
+        print(f"Unsupported ROM with checksum {checksum}")
+        return None
 
     if file_path:
         print(f"Selected: {file_path}")
@@ -98,9 +118,9 @@ def _select_rom_file():
 
     return None
 
-def _dump_rom(romPath: str):
+def _dump_rom(rom_path: str):
     """
-    Dump a supportedd Silent Hill ROM.
+    Dump a supported Silent Hill ROM.
     Exported to `TEMP_BASE_PATH`.
     """
     print("Dumping ROM...")
@@ -113,7 +133,7 @@ def _dump_rom(romPath: str):
         dumpsxiso_exe,
         "-x", TEMP_BASE_PATH,
         "-s", TEMP_BASE_PATH / "Layout.xml",
-        romPath
+        rom_path
     ]
 
     # Report status.
@@ -122,38 +142,6 @@ def _dump_rom(romPath: str):
         raise Exception(f"ROM dump failed: {result.stderr.decode()}")
 
     print("ROM dump completed successfully.")
-
-def _check_supported_checksum():
-    """
-    Check if a given Silent Hill executable checksum matches that of a supported release.
-    """
-    # Setup.
-    python_cmd            = _get_python_cmd()
-    extract_assets_script = _get_extract_assets_script()
-
-    # Run command.
-    command = [
-        python_cmd, extract_assets_script,
-        ASSETS_PATH,
-        "-exe", TEMP_BASE_PATH / "SLUS_007.07",
-        "-fs", TEMP_BASE_PATH / "SILENT.",
-        "-fh", TEMP_BASE_PATH / "HILL.",
-        "-c"
-    ]
-    result = subprocess.run(command, capture_output=True, text=True)
-
-    # Report status.
-    if result.returncode != 0:
-        raise Exception(f"Supported checksum check failed: {result.stderr}")
-
-    # Confirm compatible checksum.
-    full_output  = result.stdout + result.stderr
-    checksum_str = re.search(r"Checksum of `.*?`: ([0-9A-F]{8})", full_output)
-    if checksum_str:
-        checksum = int(checksum_str.group(1), 16)
-        return checksum in SUPPORTED_RELEASE_CHECKSUMS
-
-    return False
 
 def _extract_assets(rom_exe: str):
     """
@@ -196,16 +184,18 @@ def _convert_audio_and_video():
     for file in (ASSETS_PATH / "XA").iterdir():
         # Run command.
         if file.suffix == ".XA":
+            newFile = f"{file.stem}.WAV"
             command = [
-                ffmpeg_cmd,
+                ffmpeg_cmd, "-y",
                 "-hide_banner", "-loglevel", "error", "-i", str(file),
-                ASSETS_AUDIO_PATH / f"{file.stem}.WAV"
+                ASSETS_AUDIO_PATH / newFile
             ]
 
-            print(f"Converting `{file.name}` to `{file.stem}.WAV`...")
+            print(f"Converting `{file.name}` to `{newFile}`...")
         elif file.suffix == ".STR":
+            newFile = f"{file.stem}.MPG"
             command = [
-                ffmpeg_cmd,
+                ffmpeg_cmd, "-y",
                 "-hide_banner", "-loglevel", "error",
                 "-i", str(file),
                 "-r", "30",
@@ -213,10 +203,10 @@ def _convert_audio_and_video():
                 "-maxrate:v", "1500k", "-bufsize:v", "1835k",
                 "-vf", "format=yuv420p",
                 "-c:a", "mp2", "-ar", "44100", "-ac", "2",
-                "-f", "mpeg", ASSETS_VIDEO_PATH / f"{file.stem}.MPG"
+                "-f", "mpeg", ASSETS_VIDEO_PATH / newFile
             ]
 
-            print(f"Converting `{file.name}` to `{file.stem}.MPG`...")
+            print(f"Converting `{file.name}` to `{newFile}`...")
         else:
             continue
         result = subprocess.run(command)
@@ -248,16 +238,13 @@ def main():
 
         def handle_click():
             # Get ROM path
-            romPath = _select_rom_file()
-            if romPath:
-                label.configure(text=f"Path: ...{romPath[-30:]}")
+            rom_path = _select_rom_file()
+            if rom_path:
+                label.configure(text=f"Path: ...{rom_path[-30:]}")
 
-            _dump_rom(romPath)
-            if not _check_supported_checksum():
-                return
-
-            _extract_assets("SLUS_007.07") # @todo Dehardcode executable.
-            _convert_audio_and_video()
+                _dump_rom(rom_path)
+                _extract_assets("SLUS_007.07") # @todo Dehardcode executable.
+                _convert_audio_and_video()
 
         button = customtkinter.CTkButton(root, text="Browse Files", command=handle_click)
         button.pack(expand=True)
