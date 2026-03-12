@@ -62,10 +62,6 @@
     path = Libraries/utfcpp
     url = https://github.com/nemtrif/utfcpp.git
 
-[submodule "Libraries/vlc"]
-    path = Libraries/vlc
-    url = https://github.com/videolan/vlc.git
-
 [submodule "Libraries/yalantinglibs"]
     path = Libraries/yalantinglibs
     url = https://github.com/alibaba/yalantinglibs.git

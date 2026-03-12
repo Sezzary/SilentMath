@@ -108,9 +108,6 @@ using json = nlohmann::json;
 // UTF8-CPP
 #include <utf8.h>
 
-// VLC
-#include <vlc/vlc.h>
-
 // yaLanTingLibs
 #include <ylt/struct_pack.hpp>
 
