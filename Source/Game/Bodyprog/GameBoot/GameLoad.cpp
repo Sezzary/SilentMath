@@ -1,0 +1,265 @@
+#include "Framework.h"
+#include "Psx.h"
+#include "Game/Bodyprog/GameBoot/GameLoad.h"
+
+#include "Game/Bodyprog/Bodyprog.h"
+
+#include "Game/Bodyprog/Demo.h"
+#include "Game/Bodyprog/GameBoot/GameBoot.h"
+//#include "Game/Bodyprog/item_screens.h"
+//#include "Game/Bodyprog/player.h"
+//#include "Game/Bodyprog/ranking.h"
+#include "Game/Bodyprog/Screen/BackgroundDraw.h"
+#include "Game/Bodyprog/Screen/ScreenData.h"
+#include "Game/Bodyprog/Screen/ScreenDraw.h"
+//#include "Game/Bodyprog/sound_background.h"
+//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Text/TextDraw.h"
+#include "Game/Main/FsQueue.h"
+#include "Game/Main/Mem.h"
+#include "Game/Main/Rng.h"
+#include "Game/Screens/Stream/Stream.h"
+
+namespace Silent::Game
+{
+    void Anim_CharaTypeAnimInfoClear(void) // 0x800348C0
+    {
+        bzero(&g_CharaTypeAnimInfo[1], 72);
+    }
+
+    /** @brief Initalizes drawing of a loading screen. */
+    static void GameBoot_LoadingScreen(void) // 0x80034E58
+    {
+        if (g_SysWork.loadingScreenIdx_2281 != LoadingScreenId_None && g_GameWork.gameStateStep_598[0] < 10)
+        {
+            ScreenFade_Start(false, true, false);
+            g_ScreenFadeTimestep = Q12(0.8f);
+            g_MapOverlayHeader.loadingScreenFuncs_18[g_SysWork.loadingScreenIdx_2281]();
+        }
+
+        Screen_BackgroundMotionBlur(SyncMode_Wait2);
+    }
+
+    void GameState_LoadScreen_Update(void) // 0x800348E8
+    {
+        GameBoot_LoadingScreen();
+        GameBoot_GameStartup();
+
+        if (g_SysWork.flags_22A4 & SysFlag2_10)
+        {
+            D_800BCDD4++;
+
+            if (D_800BCDD4 >= 21)
+            {
+                g_SysWork.flags_22A4 &= ~SysFlag2_10;
+
+                //SD_Call(Sfx_Unk1502);
+                //SD_Call(Sfx_Unk1501);
+            }
+        }
+    }
+
+    static inline void Game_StateStepIncrement(void) // TODO: Move to header?
+    {
+        s32 gameStateStep0 = g_GameWork.gameStateStep_598[0];
+
+        g_SysWork.counters_1C[1]        = 0;
+        g_GameWork.gameStateStep_598[1] = 0;
+        g_GameWork.gameStateStep_598[2] = 0;
+        g_GameWork.gameStateStep_598[0] = gameStateStep0 + 1;
+    }
+
+    void GameBoot_GameStartup(void) // 0x80034964
+    {
+        // It makes up to 5 attemps. If the load fails, it restarts
+        // the entire process by restarting the timer used to check if a demo
+        // should be triggered.
+        static s32 demoLoadAttempCount;
+
+        switch (g_GameWork.gameStateStep_598[0])
+        {
+            case 0:
+                g_IntervalVBlanks                  = 1;
+                g_GameWork.background2dColor_58C.r = 0;
+                g_GameWork.background2dColor_58C.g = 0;
+                g_GameWork.background2dColor_58C.b = 0;
+
+                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_RoomTransition)
+                {
+                    //AreaLoad_UpdatePlayerPosition();
+                    g_GameWork.gameStateStep_598[0] = 7;
+                }
+                else if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_BootDemo)
+                {
+                    demoLoadAttempCount             = 0;
+                    g_GameWork.gameStateStep_598[0] = 1;
+                    g_SysWork.counters_1C[1]        = 1;
+                }
+                else
+                {
+                    g_GameWork.gameStateStep_598[0] = 3;
+                }
+
+                //SD_Call(19);
+                break;
+
+            case 1:
+                if (g_SysWork.counters_1C[1] > 1200 && Fs_QueueGetLength() == 0/* && !Sd_AudioStreamingCheck()*/)
+                {
+                    Demo_DemoFileSavegameUpdate();
+                    GameBoot_PlayerInit();
+
+                    if (Demo_PlayFileBufferSetup() != 0)
+                    {
+                        GameBoot_MapLoad(g_SavegamePtr->mapOverlayId_A4);
+
+                        g_GameWork.gameStateStep_598[0] = 2;
+                        g_SysWork.counters_1C[1]        = 0;
+                        g_GameWork.gameStateStep_598[1] = 0;
+                        g_GameWork.gameStateStep_598[2] = 0;
+                        break;
+                    }
+
+                    Demo_SequenceAdvance(1);
+                    Demo_DemoDataRead();
+
+                    demoLoadAttempCount++;
+                    if (demoLoadAttempCount >= 5)
+                    {
+                        demoLoadAttempCount = 0;
+                        g_SysWork.counters_1C[1]  = 0;
+                        break;
+                    }
+                }
+                break;
+
+            case 2:
+                if (Fs_QueueGetLength() == 0/* && !Sd_AudioStreamingCheck()*/)
+                {
+                    Demo_PlayDataRead();
+
+                    g_GameWork.gameStateStep_598[0] = 3;
+                    g_SysWork.counters_1C[1]              = 0;
+                    g_GameWork.gameStateStep_598[1] = 0;
+                    g_GameWork.gameStateStep_598[2] = 0;
+                }
+                break;
+
+            case 3:
+                if (Fs_QueueGetLength() == 0)
+                {
+                    g_GameWork.gameStateStep_598[0] = 4;
+                }
+                break;
+
+            case 4:
+                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_OverlayTransition)
+                {
+                    //AreaLoad_UpdatePlayerPosition();
+                }
+                else if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_LoadSave ||
+                        g_SysWork.processFlags_2298 == SysWorkProcessFlag_Continue)
+                {
+                    g_SysWork.loadingScreenIdx_2281 = LoadingScreenId_PlayerRun;
+                }
+
+                g_GameWork.gameStateStep_598[0]++;
+                break;
+
+            case 5:
+                //Fs_CharaAnimDataAlloc(1, g_MapOverlayHeader.charaGroupIds_248[0], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(2, g_MapOverlayHeader.charaGroupIds_248[1], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(3, g_MapOverlayHeader.charaGroupIds_248[2], nullptr, 0);
+                //WorldGfx_MapInitCharaLoad(&g_MapOverlayHeader);
+
+                g_GameWork.gameStateStep_598[0]++;
+
+            case 6:
+                if (Fs_QueueGetLength() == 0)
+                {
+                    g_GameWork.gameStateStep_598[0]++;
+                }
+                break;
+
+            case 7:
+                //if (func_80039F90() & EventParamUnkState_0)
+                {
+                    //Map_WorldClear();
+                }
+
+                //Ipd_PlayerChunkInit(&g_MapOverlayHeader, g_SysWork.playerWork_4C.player_0.position_18.vx, g_SysWork.playerWork_4C.player_0.position_18.vz);
+                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_OverlayTransition)
+                {
+                    //Game_RadioSoundStop();
+                }
+
+                g_GameWork.gameStateStep_598[0]++;
+
+            case 8:
+                //if (Ipd_ChunkInitCheck() != false)
+                {
+                    Game_StateStepIncrement();
+                }
+                break;
+
+            case 9:
+                //if (Bgm_Init() == 0)
+                {
+                    g_GameWork.gameState_594 = GameState_MainLoadScreen;
+                    Game_StateStepIncrement();
+                }
+                break;
+
+            case 10:
+                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_BootDemo && !(g_SysWork.flags_22A4 & SysFlag2_1))
+                {
+                    Demo_Start();
+                    g_SysWork.flags_22A4 |= SysFlag2_1;
+                }
+
+                //if (func_80039F90() & EventParamUnkState_2 || Sd_AmbientSfxInit() == 0)
+                {
+                    Game_StateStepIncrement();
+                }
+                break;
+
+            case 11:
+                if (g_SysWork.counters_1C[0] >= 60)
+                {
+                    if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_RoomTransition)
+                    {
+                        //GameBoot_NpcInit();
+                    }
+                    else
+                    {
+                        //GameBoot_InGameInit();
+                    }
+
+                    if (g_SysWork.processFlags_2298 <= (u32)SysWorkProcessFlag_OverlayTransition)
+                    {
+                        //AreaLoad_TransitionSound();
+                    }
+
+                    //MemCard_Disable();
+                    g_GameWork.gameStateStep_598[0]++;
+                }
+                break;
+
+            case 12:
+                //if (!Sd_AudioStreamingCheck())
+                {
+                    Game_StateSetNext(GameState_InGame);
+
+                    //if (func_80039F90() & EventParamUnkState_1)
+                    {
+                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_Screen_FadeStatus             = SCREEN_FADE_STATUS(ScreenFadeState_ResetTimestep, IS_SCREEN_FADE_WHITE(g_Screen_FadeStatus));
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+}

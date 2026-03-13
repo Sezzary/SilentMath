@@ -977,9 +977,9 @@ namespace Silent::Game
     // or `s_AnimMetadata`?
     typedef struct _CharaAnimDataInfo
     {
-        s8             charaId0_0;  /** `e_CharacterId` */
-        s8             charaId1_1;  /** `e_CharacterId` */
-        s32            animFile0_4; // s_AnmHeader* animFile0_4; // TODO: Needs to be a pointer.
+        e_CharacterId  charaId0_0;
+        e_CharacterId  charaId1_1;
+        s_AnmHeader*   animFile0_4;
         s_AnmHeader*   animFile1_8;
         s32            animBufferSize1_C;
         s32            animBufferSize2_10;
@@ -989,23 +989,23 @@ namespace Silent::Game
     /** Related to weapon attacks. Stats, SFX IDs, damange values, etc.? */
     typedef struct
     {
-        q4_12 field_0;
-        s16   field_2;
-        u16   field_4;  // Related to damage. Multiplier?
-        s8    field_6;  // Accessed by `func_8008BF84` as `u16`
-        s8    unk_7;
-        u8    field_8;  // Accessed by `func_8008BF84` as `u16`
-        u8    field_9;  /** `e_CharacterId` */
-        u8    field_A;  // Accessed by `func_8008BF84` as `u16`
-        u8    field_B;
-        u16   field_C;
-        u8    field_E;  // Keyframe index offset?
-        u8    field_F;  // Keyframe index offset?
-        u8    field_10; // State.
-        u8    field_11;
-        u8    field_12;
-        u8    unk_13;
-        u32*  unk_14; // Some pointer. All entries have the same value `D_800AD4C4`.
+        q4_12         field_0;
+        s16           field_2;
+        u16           field_4;  // Related to damage. Multiplier?
+        s8            field_6;  // Accessed by `func_8008BF84` as `u16`
+        s8            unk_7;
+        u8            field_8;  // Accessed by `func_8008BF84` as `u16`
+        e_CharacterId field_9;
+        u8            field_A;  // Accessed by `func_8008BF84` as `u16`
+        u8            field_B;
+        u16           field_C;
+        u8            field_E;  // Keyframe index offset?
+        u8            field_F;  // Keyframe index offset?
+        u8            field_10; // State.
+        u8            field_11;
+        u8            field_12;
+        u8            unk_13;
+        u32*          unk_14; // Some pointer. All entries have the same value `D_800AD4C4`.
     } s_800AD4C8;
 
     /** @brief Collision point data. */

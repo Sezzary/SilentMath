@@ -9,6 +9,7 @@
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Events/GameSysStates.h"
+#include "Game/Bodyprog/GameBoot/GameLoad.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
@@ -48,7 +49,7 @@ namespace Silent::Game
         GameState_MainMenu_Update,
         GameState_LoadSavegameScreen_Update,
         GameState_MovieOpening_Update,
-        nullptr,//GameState_LoadScreen_Update,
+        GameState_LoadScreen_Update,
         GameState_InGame_Update,
         GameState_MapEvent_Update,
         GameState_ExitMovie_Update,
