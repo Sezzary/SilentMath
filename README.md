@@ -50,16 +50,9 @@ https://github.com/Vatuu/silent-hill-decomp
 
 NOTE: Project setup is yet to be streamlined and this section is incomplete. Ideally, the project will be able to cross-compile between all main development platforms.
 
-### Install dependencies
+### Prerequisites
 
-The project requires the following system tools:
-- cmake
-- ffmpeg
-- git
-- ninja
-- pip
-- python3
-- python3-tk (on Linux)
+Install the required system tools.
 
 <details>
 <summary>Windows</summary>
@@ -70,23 +63,18 @@ winget install Kitware.CMake Git.Git Ninja-build.Ninja Python.Python.3
 </details> <details> <summary>macOS</summary>
 
 ```
-# TODO: Add macOS instructions here
+brew install cmake git ninja ffmpeg python
 ```
 </details> <details> <summary>Linux</summary>
 
 ```
-sudo apt install build-essential git ninja-build python3 python3-pip ffmpeg
+sudo apt install build-essential cmake ffmpeg git ninja-build python3 python3-pip python3-tk
 ```
 </details>
 
-Install Python packages:
-```
-pip install -r Requirements.txt
-```
-
 ### Clone the repository
 
-Initialize Git LFS to ensure assets are pulled correctly:
+Initialize Git LFS to ensure assets are pulled correctly.
 ```
 git lfs install
 ```
@@ -97,7 +85,18 @@ git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive
 ```
 
-Build LuaJIT locally:
+Set up a Python virtual environment. Make sure to activate it whenever working with any of the scripts in `Tools`.
+```
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install Python packages.
+```
+pip install -r Requirements.txt
+```
+
+Build LuaJIT locally.
 ```
 cd Libraries/LuaJIT && make && cd ../..
 ```
@@ -106,7 +105,7 @@ cd Libraries/LuaJIT && make && cd ../..
 <summary>Windows</summary>
 TODO: Steps incomplete.
 
-Build shaders:
+Build shaders.
 ```
 python Tools/GenerateShaders.py Windows
 ```
@@ -116,7 +115,7 @@ python Tools/GenerateShaders.py Windows
 <summary>macOS</summary>
 TODO: Steps incomplete.
 
-Build shaders:
+Build shaders.
 ```
 python Tools/GenerateShaders.py macOS
 ```
@@ -125,7 +124,7 @@ python Tools/GenerateShaders.py macOS
 <details>
 <summary>Linux</summary>
 
-Install SDL dependencies:
+Install SDL dependencies.
 ```
 sudo apt-get install build-essential git make \
 pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
@@ -135,13 +134,7 @@ libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
 libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev
 ```
 
-Set up Python virtual environment:
-```
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Build shaders:
+Build shaders.
 ```
 python Tools/GenerateShaders.py Linux
 ```
@@ -162,7 +155,10 @@ Available commands:
 - Build Release: `cmake --build Build/Release`
 
 - Activate Python virtual environment: `source .venv/bin/activate`
+- Generate shaders: ``
 
 ## Contributing
 
 Too early for this, but feel free to take a look around in the meantime!
+
+Active discussion is in the `#silent-hill` channel's `#Multi-Platform Port` thread on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server.

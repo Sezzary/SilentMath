@@ -2,12 +2,7 @@
 Silent Engine Launcher Generator
 
 Generates a launcher application for the active platform.
-If a generated launcher already exist and is outdated, it will be overwritten.
-"""
-
-"""
-@todo Need to ask the user to run these commands.
-sudo apt install python3-tk
+If a generated launcher already exists and is outdated, it will be overwritten.
 """
 
 import os
@@ -23,7 +18,7 @@ BASE_PATH        = Path(__file__).parent
 BUILD_PATH       = BASE_PATH / "../Build"
 RESOURCES_PATH   = BASE_PATH / "Resources"
 TEMP_OUTPUT_PATH = BUILD_PATH / ".temp"
-SPEC_FILE        = BUILD_PATH / "Launcher.spec"
+LAUNCHER_SPEC    = BUILD_PATH / "Launcher.spec"
 LAUNCHER_SCRIPT  = BASE_PATH / "Launcher.py"
 
 def _get_icon_ext():
@@ -47,7 +42,7 @@ def _cleanup():
     Delete temporary build files.
     """
     shutil.rmtree(TEMP_OUTPUT_PATH, ignore_errors=True)
-    SPEC_FILE.unlink(missing_ok=True)
+    LAUNCHER_SPEC.unlink(missing_ok=True)
 
 def main():
     try:
