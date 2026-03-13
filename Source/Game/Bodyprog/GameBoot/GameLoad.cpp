@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Game/Bodyprog/Demo.h"
+#include "Game/Bodyprog/Events/Radio.h"
 #include "Game/Bodyprog/GameBoot/GameBoot.h"
 //#include "Game/Bodyprog/item_screens.h"
 //#include "Game/Bodyprog/player.h"
@@ -190,7 +191,7 @@ namespace Silent::Game
                 //Ipd_PlayerChunkInit(&g_MapOverlayHeader, g_SysWork.playerWork_4C.player_0.position_18.vx, g_SysWork.playerWork_4C.player_0.position_18.vz);
                 if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_OverlayTransition)
                 {
-                    //Game_RadioSoundStop();
+                    Game_RadioSoundStop();
                 }
 
                 g_GameWork.gameStateStep_598[0]++;

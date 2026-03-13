@@ -7,6 +7,7 @@
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Events/MapMsgDisplay.h"
 #include "Game/Bodyprog/Events/EventsMain.h"
+#include "Game/Bodyprog/Events/Radio.h"
 #include "Game/Bodyprog/GameBoot/GameBoot.h"
 #include "Game/Bodyprog/Title.h"
 //#include "Game/Bodyprog/item_screens.h"
@@ -86,7 +87,7 @@ namespace Silent::Game
 
             case 1:
                 //DrawSync(SyncMode_Wait);
-                //func_80037154();
+                func_80037154();
                 //Savegame_MapRoomIdxUpdate();
                 //func_800892A4(1);
 
@@ -987,7 +988,7 @@ namespace Silent::Game
                 else
                 {
                     Fs_QueueWaitForEmpty();
-                    //Game_RadioSoundStop();
+                    Game_RadioSoundStop();
                     SysWork_StateStepIncrement(0);
                 }
 
