@@ -32,9 +32,6 @@ namespace Silent::Debug
             auto& renderer = g_App.GetRenderer();
             auto& fonts    = g_App.GetFonts();
 
-            return;
-
-
             Msg("Does this work?");
 
             // ====================================

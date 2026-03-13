@@ -40,7 +40,8 @@ namespace Silent::Assets
         { ".DAT", AssetType::Dat },
         { ".KDT", AssetType::Kdt },
         { ".CMP", AssetType::Cmp },
-        { "",     AssetType::Xa  }, // @todo Should be given .XA extension when exporting from ROM.
+        { ".XA",  AssetType::Xa  },
+        { ".STR", AssetType::Str },
 
         { ".PNG", AssetType::Png }
     };

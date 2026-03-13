@@ -387,19 +387,10 @@ namespace Silent::Renderer::SdlGpu
         // @temp
         //---------------------------
 
-        // Use video as texture, or placeholder if not playing.
-        auto* tex = GetTextures()[g_App.GetVideo().GetName()];
+        auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
         if (tex != nullptr)
         {
             tex->Bind(renderPass, GetActiveSampler());
-        }
-        else
-        {
-            auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
-            if (tex != nullptr)
-            {
-                tex->Bind(renderPass, GetActiveSampler());
-            }
         }
 
         _view.Move();
@@ -861,7 +852,6 @@ namespace Silent::Renderer::SdlGpu
             auto* tex = GetTextures()[videoName];
             if (tex != nullptr)
             {
-                video.Update(1.0f / 30.0f); // @temp
                 tex->Update(copyPass, ToSpan(video.GetVideoFrame()), Vector2i::Zero, video.GetResolution());
             }
             else

@@ -206,10 +206,6 @@ namespace Silent
                                                                                     KEY_SYS_FULLSCREEN_HINT_GENERIC));
 
         Debug::Log("Startup complete.");
-
-        // Play temp. video.
-        auto& video = g_App.GetVideo();
-        video.Play("C1_20670.MPG");
     }
 
     void ApplicationManager::Deinitialize()

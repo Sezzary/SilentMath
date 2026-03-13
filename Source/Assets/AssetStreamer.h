@@ -12,19 +12,20 @@ namespace Silent::Assets
     /** @brief Streamable asset types. Used in `Asset`. */
     enum class AssetType
     {
-        Tim, /** "Texture IMage"                 | PsyQ SDK texture data. */
-        Vab, /** "Voice Audio Bank"              | PsyQ SDK audio container data. */
-        Bin, /** "BINary"                        | Original compiled logic overlay data. */
-        Dms, /** "Demo Motion Sequence"?         | Cutscene keyframe data. */
+        Tim, /** "Texture IMage"                 | PsyQ SDK texture image. */
+        Vab, /** "Voice Audio Bank"              | PsyQ SDK audio bank. */
+        Bin, /** "BINary"                        | Original overlay data. */
+        Dms, /** "Demo Motion Sequence"?         | Cutscene data. */
         Anm, /** "ANiMation"                     | Animation data. */
-        Plm, /** "PoLygon Model"?                | Model data. */
+        Plm, /** "PoLygon Model"?                | Map model data. */
         Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. Used for environment streaming. */
         Ilm, /** "Instanced Linked Model"?       | Skeletal model data. Used for characters. */
         Tmd, /** "Three-dimensional Model Data"  | PsyQ SDK 3D model data. Used for inventory items. */
         Dat, /** "Demo dATa"?                    | Demo playback data. */
         Kdt, /** "Key Data Tracker"?             | Konami MIDI tracker data. */
-        Cmp, /** "CoMPressed" or "CoMPiled"?     | Unknown. */
-        Xa,  /** "eXtended Audio"                | PSX XA audio stream. */
+        Cmp, /** "CoMPressed"                    | Compressed data. */
+        Xa,  /** "eXtended Audio"                | PSX AXPCM audio stream. */
+        Str, /** "video STReam"                  | PSX video stream. */
 
         Png
     };
