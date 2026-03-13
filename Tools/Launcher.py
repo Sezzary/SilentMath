@@ -43,7 +43,7 @@ def _get_python_cmd():
 def get_ffmpeg_cmd():
     """
     Get the platform-specific system FFmpeg command.
-    If FFmpeg is missing on the first call, it will be downloaded.
+    If FFmpeg is missing, it will fall back on a static download.
     """
     ffmpeg_exe = shutil.which("ffmpeg")
     if ffmpeg_exe:
@@ -101,7 +101,7 @@ def _generate_sha1(file_path: Path):
 
 def _select_rom_file():
     """
-    Show a file selection window to prompt a ROM selection.
+    Show a file selection window to prompt ROM selection.
     """
     file_path = filedialog.askopenfilename(
         title="Select a Silent Hill ROM",
@@ -109,7 +109,7 @@ def _select_rom_file():
     
     checksum = _generate_sha1(file_path)
     if checksum not in ROM_CHECKSUMS:
-        print(f"Unsupported ROM with checksum {checksum}")
+        print(f"Unsupported ROM with checksum {checksum}.")
         return None
 
     if file_path:
@@ -187,7 +187,9 @@ def _convert_audio_and_video():
             newFile = f"{file.stem}.WAV"
             command = [
                 ffmpeg_cmd, "-y",
-                "-hide_banner", "-loglevel", "error", "-i", str(file),
+                "-hide_banner",
+                "-loglevel", "error",
+                "-i", str(file),
                 ASSETS_AUDIO_PATH / newFile
             ]
 
@@ -196,14 +198,21 @@ def _convert_audio_and_video():
             newFile = f"{file.stem}.MPG"
             command = [
                 ffmpeg_cmd, "-y",
-                "-hide_banner", "-loglevel", "error",
+                "-hide_banner",
+                "-loglevel", "error",
                 "-i", str(file),
                 "-r", "30",
-                "-c:v", "mpeg1video", "-q:v", "1", "-bf", "0",
-                "-maxrate:v", "1500k", "-bufsize:v", "1835k",
+                "-c:v", "mpeg1video",
+                "-q:v", "1",
+                "-bf", "0",
+                "-maxrate:v", "1500k",
+                "-bufsize:v", "1835k",
                 "-vf", "format=yuv420p",
-                "-c:a", "mp2", "-ar", "44100", "-ac", "2",
-                "-f", "mpeg", ASSETS_VIDEO_PATH / newFile
+                "-c:a", "mp2",
+                "-ar", "44100",
+                "-ac", "2",
+                "-f", "mpeg",
+                ASSETS_VIDEO_PATH / newFile
             ]
 
             print(f"Converting `{file.name}` to `{newFile}`...")

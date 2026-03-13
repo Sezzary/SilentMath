@@ -8,7 +8,6 @@ If a generated launcher already exist and is outdated, it will be overwritten.
 """
 @todo Need to ask the user to run these commands.
 sudo apt install python3-tk
-pip install customtkinter
 """
 
 import os
@@ -19,27 +18,29 @@ import sys
 
 from pathlib import Path
 
+ICON_NAME        = "Icon"
 BASE_PATH        = Path(__file__).parent
 BUILD_PATH       = BASE_PATH / "../Build"
+RESOURCES_PATH   = BASE_PATH / "Resources"
 TEMP_OUTPUT_PATH = BUILD_PATH / ".temp"
 SPEC_FILE        = BUILD_PATH / "Launcher.spec"
 LAUNCHER_SCRIPT  = BASE_PATH / "Launcher.py"
 
-def _get_platform_name():
+def _get_icon_ext():
     """
-    Get the name of the active platform.
+    Get the platform-specific application icon extension.
     """
     system_os = platform.system().lower()
     if system_os == "windows":
-        platform_name = "Windows"
+        ext = ".ico"
     elif system_os == "darwin": # macOS
-        platform_name = "macOs"
+        ext = ".icns"
     elif system_os == "linux":
-        platform_name = "Linux"
+        ext = ".png" # @todo Icons must be handled differently on Linux.
     else:
         raise Exception(f"'{system_os}' is unsupported.")
 
-    return platform_name
+    return ext
 
 def _cleanup():
     """
@@ -54,10 +55,10 @@ def main():
         _cleanup()
 
         # Setup.
-        platform_name        = _get_platform_name()
-        exe_ext              = ".exe" if platform_name == "Windows" else ""
-        colon                = ";"    if platform_name == "Windows" else ":"
-        launcher_exes        = [
+        system_os     = platform.system().lower()
+        exe_ext       = ".exe" if system_os == "windows" else ""
+        colon         = ";"    if system_os == "windows" else ":"
+        launcher_exes = [
             BUILD_PATH / f"Launcher_d{exe_ext}", # @todo Create separate debug launcher.
             BUILD_PATH / f"Launcher{exe_ext}"
         ]
@@ -73,7 +74,9 @@ def main():
         # Run generation command.
         if run_new_build:
             command = [
-                "pyinstaller", "--onefile", "--windowed", "--noconfirm",
+                "pyinstaller",
+                "--onefile", "--windowed", "--noconfirm",
+                "--icon", RESOURCES_PATH / f"{ICON_NAME}{_get_icon_ext()}",
                 "--collect-all", "static_ffmpeg",
                 "--hidden-import", "charset_normalizer",
                 "--add-data", BASE_PATH / f"ExtractAssets.py{colon}.",
