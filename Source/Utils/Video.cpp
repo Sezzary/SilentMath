@@ -138,7 +138,7 @@ namespace Silent::Utils
         // Check if video player is initialized.
         if (_videosPath.empty())
         {
-            Debug::Log(Fmt("Attempted to load video `{}` in uninitialized video player.", filename),
+            Debug::Log(Fmt("Attempted to play video `{}` in uninitialized video player.", filename),
                        Debug::LogLevel::Warning);
             return;
         }
@@ -158,7 +158,7 @@ namespace Silent::Utils
         _plm           = plm_create_with_filename(videoPath.string().c_str());
         if (_plm == nullptr)
         {
-            Debug::Log(Fmt("Failed to load video `{}`.", filename), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Failed to play video `{}`.", filename), Debug::LogLevel::Warning);
             return;
         }
 
@@ -174,7 +174,7 @@ namespace Silent::Utils
         plm_set_video_decode_callback(_plm, OnVideoFrame, _frameBuffer.data());
         plm_set_audio_decode_callback(_plm, OnAudioFrame, this);
 
-        Debug::Log(Fmt("Loaded video `{}`.", filename));
+        Debug::Log(Fmt("Playing video `{}`.", filename));
     }
 
     void VideoPlayer::Stop()

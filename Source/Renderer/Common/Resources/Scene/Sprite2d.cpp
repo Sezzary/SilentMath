@@ -95,7 +95,7 @@ namespace Silent::Renderer
                                       BlendMode blendMode)
     {
         auto aspect     = GetSpriteAspectRatio(texName);
-        auto localScale = Vector2(std::min(aspect, 1.0f), std::max(aspect, 1.0f));
+        auto localScale = Vector2(std::max(aspect, 1.0f), std::min(aspect, 1.0f));
 
         return Sprite2d
         {

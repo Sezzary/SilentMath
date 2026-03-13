@@ -21,6 +21,22 @@ TEMP_OUTPUT_PATH = BUILD_PATH / ".temp"
 LAUNCHER_SPEC    = BUILD_PATH / "Launcher.spec"
 LAUNCHER_SCRIPT  = BASE_PATH / "Launcher.py"
 
+def _get_platform_name():
+    """
+    Get the name of the active platform.
+    """
+    system_os = platform.system().lower()
+    if system_os == "windows":
+        platform_name = "Windows"
+    elif system_os == "darwin": # macOS
+        platform_name = "macOs"
+    elif system_os == "linux":
+        platform_name = "Linux"
+    else:
+        raise Exception(f"'{system_os}' is unsupported.")
+
+    return platform_name
+
 def _get_icon_ext():
     """
     Get the platform-specific application icon extension.
@@ -75,7 +91,7 @@ def main():
                 "--collect-all", "static_ffmpeg",
                 "--hidden-import", "charset_normalizer",
                 "--add-data", BASE_PATH / f"ExtractAssets.py{colon}.",
-                "--add-binary", BASE_PATH / f"dumpsxiso/{platform_name}/dumpsxiso{exe_ext}{colon}.",
+                "--add-binary", BASE_PATH / f"dumpsxiso/{_get_platform_name()}/dumpsxiso{exe_ext}{colon}.",
                 "--distpath", BUILD_PATH,
                 "--workpath", TEMP_OUTPUT_PATH,
                 "--specpath", BUILD_PATH,

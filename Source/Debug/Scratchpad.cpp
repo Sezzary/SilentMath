@@ -34,6 +34,8 @@ namespace Silent::Debug
 
             Msg("Does this work?");
 
+            return;
+
             // ====================================
 
             Options_MainOptionsMenu_EntryStringsDraw();

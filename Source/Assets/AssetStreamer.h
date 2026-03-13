@@ -24,7 +24,7 @@ namespace Silent::Assets
         Dat, /** "Demo dATa"?                    | Demo playback data. */
         Kdt, /** "Key Data Tracker"?             | Konami MIDI tracker data. */
         Cmp, /** "CoMPressed"                    | Compressed data. */
-        Xa,  /** "eXtended Audio"                | PSX AXPCM audio stream. */
+        Xa,  /** "eXtended Audio"                | PSX ADPCM audio stream. */
         Str, /** "video STReam"                  | PSX video stream. */
 
         Png

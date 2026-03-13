@@ -145,16 +145,16 @@ namespace Silent::Game
             }
             else
             {
-                video.Update(Q12_TO_FLT(g_DeltaTime));
+                video.Update(1.0f / 30.0f);//Q12_TO_FLT(g_DeltaTime));
             }
         }
 
         // Submit fullscreen video sprite.
-        float aspect = video.GetAspectRatio();
-        auto  scale  = Vector2(std::min(aspect, 1.0f), std::max(aspect, 1.0f));
+        float aspect = 3.0f / 2.0f;//video.GetAspectRatio(); // @todo PL_MPEG returns wrong info.
+        auto  scale  = Vector2(std::max(aspect, 1.0f), std::min(aspect, 1.0f));
         auto  sprite = Sprite2d::CreateSprite2d(video.GetName(), Vector2::Zero, Vector2::One,
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), scale, Color::White,
-                                                DEPTH_MAX, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         return true;
     }
