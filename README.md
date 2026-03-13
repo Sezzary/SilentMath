@@ -10,14 +10,16 @@ https://github.com/Vatuu/silent-hill-decomp
 
 ## Contributing
 
-Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found in the `#silent-hill` channel's `#Multi-Platform Port` thread on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server.
+Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (look for the `#Multi-Platform Port` thread under the `#silent-hill` channel.).
 
 ## Prospects
 
 - Easy to use.
 - Windows/macOS/Linux support out of the box, with the potential for other platforms later.
 - Modern renderer supporting Vulkan, DX12, and Metal, with the potential for other backends in the future if needed.
-- Retro and HD font options. .TTF fonts matching the originals have been found or meticulously recreated.
+- Keyboard/mouse and gamepad support.
+- Widescreen and CRT filter support,
+- Retro and HD font options  (.TTF fonts matching the originals have been found or meticulously recreated, allowing for modern font rendering to take place without relying on the original sprites).
 - Various graphics toggles for a retro or modern look.
 - Clean, well-documented codebase.
 - Lua scripting.
@@ -27,10 +29,10 @@ Too early for this, but feel free to take a look around in the meantime! Active 
 ## Current foundations
 
 - Simple launcher with automated asset extraction from a user-provided compatible ROM
-- Math wrappers and functions (similar to DXTK but with some usability improvements)
+- User config options handling
+- User savegame handling
 - Input handling
-- Savegame handling
-- Config options handling
+- Math wrappers and functions (similar to DXTK but with some usability improvements)
 - Window handling
 - Asset streaming
 - Timestep handling
