@@ -3,25 +3,30 @@
 *Silent Engine* is an in-progress cross-platform engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, and future-proof foundation with modern standards that will enable long-term goals such as translation support and modding. Written from the ground-up with a high-quality, no-compromise codebase.
 
 *Q: CAN I PLAY THIS?*
-A: Not yet! There's still significant work to be done. Very little game logic resides in this repository so far, as the focus is on building a solid engine foundation before integrating gameplay and graphics. All considerations are being made to avoid technical debt. Additionally, the decompilation must be farther along before most of the porting work can begin. While basics like game menus are slowly underway, it's best to wait on the rest while the decompilation remains in constunt flux. Much of the original engine code is yet to be deobfuscated and documented.
+A: Not yet! There's still significant work to be done. While some game logic is slowly being migrated from our decompilation project's repository, the focus is on building a solid engine foundation before integrating gameplay and graphics, and it will thus take time before reaching a playable state. All considerations are being made to avoid technical debt and to enforce standards of maintainability. Furthermore, much of the decompiled code is yet to be documented and deobfuscated. While near "100%" completion, that doesn't mean the code itself is in a very usable state. Rushing the port with ongoing efforts on the other repository would be a mistake. With that said, basics like the boot menu, FMV playback, and main menu have been successfully ported. The rest is slowly underway.
 
 Decompilation progress can be tracked here:
 https://github.com/Vatuu/silent-hill-decomp
 
+## Contributing
+
+Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found in the `#silent-hill` channel's `#Multi-Platform Port` thread on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server.
+
 ## Prospects
 
+- Easy to use.
 - Windows/macOS/Linux support out of the box, with the potential for other platforms later.
 - Modern renderer supporting Vulkan, DX12, and Metal, with the potential for other backends in the future if needed.
-- Various graphics toggles for a retro or modern look.
 - Retro and HD font options. .TTF fonts matching the originals have been found or meticulously recreated.
+- Various graphics toggles for a retro or modern look.
 - Clean, well-documented codebase.
 - Lua scripting.
 - Translation support.
 - Modding support.
-- Many others.
 
 ## Current foundations
 
+- Simple launcher with automated asset extraction from a user-provided compatible ROM
 - Math wrappers and functions (similar to DXTK but with some usability improvements)
 - Input handling
 - Savegame handling
@@ -35,7 +40,8 @@ https://github.com/Vatuu/silent-hill-decomp
 - Renderer with swappable backends
 - Translator for internationalized scripts
 - Font manager
-- "Power" menu for deubgging
+  FMV video player
+- Debug menu
 - Various utilities pulled from other projects
 
 ### TODOs
@@ -85,20 +91,25 @@ git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive
 ```
 
-Set up a Python virtual environment. Make sure to activate it whenever working with any of the scripts in `Tools`.
+Build the LuaJIT dependency locally.
+```
+cd Libraries/LuaJIT && make && cd ../..
+```
+
+Set up a Python virtual environment. Make sure to activate it whenever working with any of the scripts found in `Tools`.
 ```
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Install Python packages.
+Install required Python packages.
 ```
 pip install -r Requirements.txt
 ```
 
-Build LuaJIT locally.
+Generate the launcher. This small GUI utility automates asset extraction from a compatible user-provided ROM.
 ```
-cd Libraries/LuaJIT && make && cd ../..
+python3 Tools/GenerateLauncher.py
 ```
 
 <details>
@@ -155,10 +166,3 @@ Available commands:
 - Build Release: `cmake --build Build/Release`
 
 - Activate Python virtual environment: `source .venv/bin/activate`
-- Generate shaders: ``
-
-## Contributing
-
-Too early for this, but feel free to take a look around in the meantime!
-
-Active discussion is in the `#silent-hill` channel's `#Multi-Platform Port` thread on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server.
