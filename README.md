@@ -158,8 +158,8 @@ python Tools/GenerateShaders.py Linux
 
 ### Transfer assets
 
-Copy the `Assets` folder from the root of the repository to the `Build` folder. Then, extract all folders from the ROM's .SILENT archive to `Assets/Stream/Psx`.
-Original game assets are not provided. Your own ROM of the 1.1 US release of the game must be sourced.
+Copy the `Assets` folder from the root of the repository to the `Build` folder. Then, run the `Launcher` utility to extract all required assets from a 1.1 US release of the game.
+Original game assets are not provided. Your own ROM must be sourced.
 
 ### Build the code (Debug/Release)
 
