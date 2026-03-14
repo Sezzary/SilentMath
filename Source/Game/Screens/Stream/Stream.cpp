@@ -27,7 +27,6 @@ namespace Silent::Game
         switch (g_GameWork.gameStateStep_598[0])
         {
             case 0:
-                //VSync(SyncMode_Wait8);
                 ScreenFade_Start(true, true, false);
                 GameFs_TitleGfxLoad();
 
@@ -50,16 +49,13 @@ namespace Silent::Game
                 }
                 break;
         }
-
-        // "No memory card" image.
-        //Screen_BackgroundImgDraw(D_800A900C);
     }
 
     void GameState_MovieIntro_Update() // 0x801E279C
     {
         const char* videoName = (g_GameWorkConst->config_0.optExtraOptionsEnabled_27 & (1 << 0)) ? "C1_20670.MPG" :
                                                                                                    "C2_20670.MPG";
-        if (!movie_main(videoName, 0, 0))
+        if (!movie_main(std::string(videoName), 0, 0))
         {
             Game_StateSetNext(GameState_MainMenu);
             g_ScreenFadeTimestep = Q12(1.0f);
@@ -82,30 +78,6 @@ namespace Silent::Game
     void GameState_DebugMoviePlayer_Update() // 0x801E2908
     {
         // @stub
-
-        /*static s32 g_Debug_MoviePlayerIdx = 0; // 0x801E3F3C
-
-        const auto& input = g_App.GetInput();
-
-        if (input.GetAction(In::Cancel).IsClicked())
-        {
-            Game_StateSetNext(GameState_Unk16); // Changes to non-existent state 22 and crashes. Maybe removed debug menu.
-        }
-
-        if (input.GetAction(In::Left).IsPulsed(0.2f, 0.4f))
-        {
-            g_Debug_MoviePlayerIdx--;
-        }
-
-        if (input.GetAction(In::Right).IsPulsed(0.2f, 0.4f))
-        {
-            g_Debug_MoviePlayerIdx++;
-        }
-
-        if (input.GetAction(In::Enter).IsClicked())
-        {
-            open_main(FILE_XA_ZC_14392 - g_Debug_MoviePlayerIdx, 0);
-        }*/
     }
 
     void GameState_MovieIntroAlternate_Update() // 0x801E2A24
@@ -119,12 +91,11 @@ namespace Silent::Game
 
     void open_main(s32 file_idx, s16 num_frames) // 0x801E2AA4
     {
-
         //Fs_QueueWaitForEmpty();
         //movie_main(nullptr, num_frames, g_FileTable[file_idx].startSector_0_0);
     }
 
-    bool movie_main(const char* file_name, s32 f_size, s32 sector) // 0x801E2B9C
+    bool movie_main(const std::string& file_name, s32 f_size, s32 sector) // 0x801E2B9C
     {
         const auto& input    = g_App.GetInput();
         auto&       renderer = g_App.GetRenderer();
@@ -150,7 +121,7 @@ namespace Silent::Game
         }
 
         // Submit fullscreen video sprite.
-        float aspect = 3.0f / 2.0f;//video.GetAspectRatio(); // @todo PL_MPEG returns wrong info.
+        float aspect = 4.0f / 3.0f;//video.GetAspectRatio(); // @todo PL_MPEG returns wrong info.
         auto  scale  = Vector2(std::max(aspect, 1.0f), std::min(aspect, 1.0f));
         auto  sprite = Sprite2d::CreateSprite2d(video.GetName(), Vector2::Zero, Vector2::One,
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), scale, Color::White,

@@ -52,8 +52,8 @@ namespace Silent::Game
     void Screen_BackgroundImgTransition(s_FsImageDesc* image0, s_FsImageDesc* image1, q3_12 alpha) // 0x800317CC
     {
         // @stub
-
         // @todo Translate blending logic.
+        
         /*for (i = 0; i < 3; i++)
         {
             image = (i > 0) ? image0 : image1;
