@@ -3,14 +3,14 @@
 *Silent Engine* is an in-progress cross-platform engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, and future-proof foundation with modern standards that will enable long-term goals such as translation support and modding. Written from the ground-up with a high-quality, no-compromise codebase.
 
 *Q: CAN I PLAY THIS?*
-A: Not yet! There's still significant work to be done. While some game logic is slowly being migrated from our decompilation project's repository, the focus is on building a solid engine foundation before integrating gameplay and graphics, and it will thus take time before reaching a playable state. All considerations are being made to avoid technical debt and to enforce standards of maintainability. Furthermore, much of the decompiled code is yet to be documented and deobfuscated. While near "100%" completion, that doesn't mean the code itself is in a very usable state. Rushing the port with ongoing efforts on the other repository would be a mistake. With that said, basics like the boot menu, FMV playback, and main menu have been successfully ported. The rest is slowly underway.
+Not yet! While some core logic has been migrated from our decompilation repository, the priority is building a stable engine foundation before integrating gameplay and graphics. I prioritize maintainability over quick, observable progress I can show off; simply getting the game to "work" is secondary to avoiding long-term technical debt. Additionally, much of the decompiled source still requires documentation and deobfuscation. Despite what completion metrics might suggest, the decompiled game code is hardly in a usable state, and rushing the port while the base source is being refined would be a mistake. However, the boot process, FMV playback, and main menus are already functional, with the rest steadily underway.
 
 Decompilation progress can be tracked here:
 https://github.com/Vatuu/silent-hill-decomp
 
 ## Contributing
 
-Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (look for the `#Multi-Platform Port` thread under the `#silent-hill` channel.).
+Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (look for the `#Multi-Platform Port (Silent Engine)` thread under the `#silent-hill` channel.).
 
 ## Prospects
 
@@ -25,6 +25,7 @@ Too early for this, but feel free to take a look around in the meantime! Active 
 - Lua scripting.
 - Translation support.
 - Modding support.
+- Custom levels (ambition for the far future).
 
 ## Current foundations
 
