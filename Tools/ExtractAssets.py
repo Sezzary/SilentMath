@@ -341,12 +341,12 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
             elif "HP_SAFE1" in i.path or "S__SAFE2" in i.path:
                 logging.info(f"\tDecompressing/decrypting `{i.path}`...")
                 data = _decrypt_overlay(_decompress_lzss_file(data))
-        elif i.type == "CMP":
-            logging.info(f"\tDecompressing `{i.path}`...")
-            dec_data = _decompress_lzss_file(data)
-            output_dec_path_j = output_path.with_name(output_path.name + ".dec")
-            with output_dec_path_j.open("wb") as _file:
-                _file.write(dec_data)
+        #elif i.type == "CMP":
+        #    logging.info(f"\tDecompressing `{i.path}`...")
+        #    dec_data = _decompress_lzss_file(data)
+        #    output_dec_path_j = output_path.with_name(output_path.name + ".dec")
+        #    with output_dec_path_j.open("wb") as _file:
+        #        _file.write(dec_data)
         elif i.type == "XA":
             _extract_cd_stream(data, output_path)
             idx += 1

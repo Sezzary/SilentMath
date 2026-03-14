@@ -10,13 +10,13 @@ https://github.com/Vatuu/silent-hill-decomp
 
 ## Contributing
 
-Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (look for the `#Multi-Platform Port (Silent Engine)` thread under the `#silent-hill` channel.).
+Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (look for the `#Multi-Platform Port (Silent Engine)` thread under the `#silent-hill` channel).
 
 ## Prospects
 
 - Easy to use.
 - Windows/macOS/Linux support out of the box, with the potential for other platforms later.
-- Modern renderer supporting Vulkan, DX12, and Metal, with the potential for other backends in the future if needed.
+- Modern renderer supporting Vulkan, DX12, and Metal, with the potential for other backends in the future.
 - Keyboard/mouse and gamepad support.
 - Widescreen and CRT filter support,
 - Retro and HD font options  (.TTF fonts matching the originals have been found or meticulously recreated, allowing for modern font rendering to take place without relying on the original sprites).

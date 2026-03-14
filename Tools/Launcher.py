@@ -230,8 +230,8 @@ def main():
     multiprocessing.freeze_support()
 
     try:
-        WIDTH  = 400
-        HEIGHT = 500
+        WIDTH  = 500
+        HEIGHT = 400
 
         customtkinter.set_appearance_mode("Dark")
 
