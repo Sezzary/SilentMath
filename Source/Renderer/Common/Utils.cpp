@@ -71,7 +71,7 @@ namespace Silent::Renderer
                 }
                 else
                 {
-                    aspectCorrection.y = 1.0f / (1.0f / aspect);
+                    aspectCorrection.y = aspect;
                 }
                 break;
             }
@@ -79,7 +79,7 @@ namespace Silent::Renderer
             {
                 if (aspect >= 1.0f)
                 {
-                    aspectCorrection.y = 1.0f / (1.0f / aspect);
+                    aspectCorrection.y = aspect;
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace Silent::Renderer
             }
             case ScaleMode::VerticalEdge:
             {
-                aspectCorrection.y = 1.0f / (1.0f / aspect);
+                aspectCorrection.y = aspect;
                 break;
             }
             default:

@@ -541,7 +541,7 @@ namespace Silent::Renderer
             }
 
             // Compute aspect correction.
-            auto aspectCorrection = GetScreenAspectCorrection(ScaleMode::ShortEdge);
+            auto aspectCorrection = GetScreenAspectCorrection(sprite.ScaleMd);
 
             // Compute relative vertex positions.
             auto rotMat  = Matrix::CreateRotationZ(-sprite.Rotation);
