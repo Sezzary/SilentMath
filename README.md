@@ -49,11 +49,13 @@ Too early for this, but feel free to take a look around in the meantime! Active 
 
 ### TODOs
 
-- Switch to GCC as the compiler. Works on Linux, Windows build has problems and relies on MSVC for now. Need MinGW?
-- Forward renderer. Basic system abstraction is done, now it needs expansion.
+- Stability.
+- Switch to GCC as the compiler on Windows with MinGW.
+- Forward renderer.
 - Sound system. Need to write a `KDC`+`VAB` -> `XM` converter?
 - Parsers for all proprietary game file types.
 - Lua scripting.
+- Decompiled code migration.
 
 ## Building (Windows/macOS/Linux)
 
