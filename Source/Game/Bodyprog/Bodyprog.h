@@ -867,7 +867,7 @@ namespace Silent::Game
         s8                 field_0_9  : 1;
         s8                 field_0_10 : 1;
         s8                 field_0_11 : 5;
-        u16                field_2    : 16;
+        u16                field_2    : 16; // Collision flags.
         s_func_8006ABC0    field_4;
         s32                field_34;
         s16                field_38;
@@ -1090,15 +1090,16 @@ namespace Silent::Game
         s32                 rotationZ_C : 10; /** Q0.10 */
     } s_WorldObject;
 
-    typedef struct
+    /** @brief World space trigger zone. */
+    typedef struct _TriggerZone
     {
-        u8  endOfArray_0_0 : 1;  // End of array marker.
-        s32 positionX_0_1  : 10; // X
-        s32 positionZ_0_11 : 10; // Z
-        u32 sizeX_0_21     : 4;  // X size
-        u32 sizeZ_0_25     : 4;  // Z size
-        u32 field_0_29     : 3;  // Related to ground height? Used to set `s_func_8006F338::field_2C` which then gets copied by `func_8006F250`, that func has only been seen called by AirScreamer?
-    } s_func_8006F8FC;
+        u8  endOfArray_0_0 : 1; // End of array marker.
+        s32 positionX_0_1  : 10;
+        s32 positionZ_0_11 : 10;
+        u32 sizeX_0_21     : 4;
+        u32 sizeZ_0_25     : 4;
+        u32 field_0_29     : 3; // Related to ground height? Used to set `s_func_8006F338::field_2C` which then gets copied by `func_8006F250`, that func has only been seen called by AirScreamer?
+    } s_TriggerZone;
 
     typedef struct _HeldItem
     {
@@ -1126,7 +1127,7 @@ namespace Silent::Game
         s_CharaModel      charaModels_CC[GROUP_CHARA_COUNT];
         s_CharaModel      harryModel_164C;
         s_HeldItem        heldItem_1BAC;             /** The item held by the player. */
-        s_func_8006F8FC*  field_1BD8;
+        s_TriggerZone*    triggerZone_1BD8;
         VC_CAMERA_INTINFO vcCameraInternalInfo_1BDC; /** Debug camera info. */
         s_LmHeader        itemLmHdr_1BE4;
         u8                itemLmData_1BF4[4096 - sizeof(s_LmHeader)]; // Retail game uses 2.75kb file, but they allocate 4kb for it.
@@ -1236,10 +1237,10 @@ namespace Silent::Game
 
     typedef struct
     {
-        u16              field_0; // Flags.
-        u8               field_2; // Size of `field_4`.
-        u8               unk_3;
-        s_func_8006F8FC* field_4[20]; // Guessed size.
+        u16            flags_0;
+        u8             triggerZoneCount_2;
+        u8             unk_3;
+        s_TriggerZone* triggerZones_4[20]; // Guessed size.
     } s_800C4478;
 
     typedef struct
@@ -1583,10 +1584,10 @@ namespace Silent::Game
         s32*                   data_18C;
         s32*                   data_190;
         void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharacterId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
-        s8                     charaGroupIds_248[GROUP_CHARA_COUNT];                              /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
-        s_SpawnInfo            charaSpawns_24C[2][16];                                            /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
+        s8                     charaGroupIds_248[GROUP_CHARA_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
+        s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
         VC_ROAD_DATA           roadDataList_3CC[100];
-        s_func_8006F8FC        field_D2C[200];
+        s_TriggerZone          triggerZones_D2C[200];
     };
 
     typedef struct
