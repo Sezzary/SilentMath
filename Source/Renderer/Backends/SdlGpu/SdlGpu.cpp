@@ -433,19 +433,12 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawDither()
     {
-        return; // @todo Treat like post-process.
-        auto& executor = g_App.GetExecutor();
-        auto& options  = g_App.GetOptions();
+        auto& options = g_App.GetOptions();
         
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        // Copy prepared GPU data.
-        auto copyTasks = ParallelTasks
-        {
-            TASK(CopyGpuViewportQuad(*copyPass))
-        };
-        executor.AddTasks(copyTasks).wait();
+        CopyGpuViewportQuad(*copyPass);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -482,17 +475,10 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw2dScene()
     {
-        auto& executor = g_App.GetExecutor();
-
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        // Copy prepared GPU data.
-        auto copyTasks = ParallelTasks
-        {
-            TASK(CopyGpuPrimitives2d(*copyPass))
-        };
-        executor.AddTasks(copyTasks).wait();
+        CopyGpuPrimitives2d(*copyPass);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -541,15 +527,12 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawPostProcess()
     {
-        auto&       executor = g_App.GetExecutor();
         const auto& options  = g_App.GetOptions();
 
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
-        auto copyTasks = ParallelTasks
-        {
-            TASK(CopyGpuViewportQuad(*copyPass))
-        };
-        executor.AddTasks(copyTasks).wait();
+
+        CopyGpuViewportQuad(*copyPass);
+
         SDL_EndGPUCopyPass(copyPass);
 
         auto RunPostProcessPass = [&](RenderStage renderStage, auto pushUniforms)
