@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief GPU ping-pong render texture. */
+    /** @brief GPU ping-pong render target texture. */
     class PingPongTexture
     {
     private:
@@ -35,15 +35,17 @@ namespace Silent::Renderer
         // Getters
         // ========
 
-        /** @brief Gets the read texture.
+        /** @brief Gets the active read GPU texture.
+         * Used as the main render texture.
          *
-         * @return Read texture.
+         * @return Read GPU texture.
          */
         SDL_GPUTexture*& Read();
 
-        /** @brief Gets the read texture.
+        /** @brief Gets the active write GPU texture.
+         * Used during multiple render passes to prevent race conditions which produce graphical artefacts.
          *
-         * @return Read texture.
+         * @return Write GPU texture.
          */
         SDL_GPUTexture*& Write();
 

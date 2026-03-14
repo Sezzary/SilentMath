@@ -17,7 +17,7 @@ namespace Silent::Renderer
     {
         _writeIdx = 1 - _writeIdx;
     }
-    
+
     void PingPongTexture::Release()
     {
         if (_device == nullptr)
