@@ -5,6 +5,7 @@
 #include "Assets/Fonts.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
+#include "Renderer/Backends/SdlGpu/Resources/PingPongTexture.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Common/Resources/Buffers.h"
 #include "Renderer/Common/Resources/Uniforms.h"
@@ -76,8 +77,9 @@ namespace Silent::Renderer::SdlGpu
         InitializeDoubleBuffer();
         InitializeGpuBuffers();
 
-        // Initialize GPU texture cache.
+        // Initialize GPU textures.
         _textures = std::make_unique<TextureCache>(*_device);
+        _renderTexture.Initialize(*_device);
 
         // Initialize pipelines.
         _pipelines.Initialize(*_window, *_device);
@@ -192,12 +194,8 @@ namespace Silent::Renderer::SdlGpu
             return;
         }
 
-        // Acquire render texture.
-        _renderTexture = GetRenderTexture();
-        if (_renderTexture == nullptr)
-        {
-            return;
-        }
+        // Acquire render textures.
+        UpdateRenderTargets();
 
         // Acquire depth stencil texture.
         _depthTexture = GetDepthTexture();
@@ -298,17 +296,15 @@ namespace Silent::Renderer::SdlGpu
         return *(MeshCache*)_meshes.get();
     }
 
-    SDL_GPUTexture* Renderer::GetRenderTexture()
+    void Renderer::UpdateRenderTargets()
     {
-        // @todo Entering fullscreen mode doesn't signal a resize?
-        if (_depthTexture != nullptr && !_isResized)
+        if (_renderTexture.Read() != nullptr && _renderTexture.Write() != nullptr &&
+            !_isResized)
         {
-            return _renderTexture;
+            return;
         }
 
-        SDL_ReleaseGPUTexture(_device, _renderTexture);
-
-        // @todo Size should depend on aspect ratio: 4:3, 16:9, or native.
+        _renderTexture.Release();
 
         auto viewportRes   = GetViewportResolution();
         auto renderTexInfo = SDL_GPUTextureCreateInfo
@@ -321,7 +317,8 @@ namespace Silent::Renderer::SdlGpu
             .layer_count_or_depth = 1,
             .num_levels           = 1
         };
-        return SDL_CreateGPUTexture(_device, &renderTexInfo);
+        _renderTexture.Read()  = SDL_CreateGPUTexture(_device, &renderTexInfo);
+        _renderTexture.Write() = SDL_CreateGPUTexture(_device, &renderTexInfo);
     }
 
     SDL_GPUTexture* Renderer::GetDepthTexture()
@@ -367,7 +364,7 @@ namespace Silent::Renderer::SdlGpu
         // Process render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture     = _renderTexture,
+            .texture     = _renderTexture.Read(),
             .clear_color = SDL_FColor{ _clearColor.R(), _clearColor.G(), _clearColor.B(), _clearColor.A() },
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
@@ -436,6 +433,7 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawDither()
     {
+        return; // @todo Treat like post-process.
         auto& executor = g_App.GetExecutor();
         auto& options  = g_App.GetOptions();
         
@@ -454,7 +452,7 @@ namespace Silent::Renderer::SdlGpu
         // Process render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _renderTexture,
+            .texture  = _renderTexture.Read(),
             .load_op  = SDL_GPU_LOADOP_LOAD,
             .store_op = SDL_GPU_STOREOP_STORE
         };
@@ -469,7 +467,7 @@ namespace Silent::Renderer::SdlGpu
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
             {
-                .texture = _renderTexture,
+                .texture = _renderTexture.Read(),
                 .sampler = _samplers[(int)TextureFilterType::Nearest]
             };
             SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
@@ -501,7 +499,7 @@ namespace Silent::Renderer::SdlGpu
         // Process render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _renderTexture,
+            .texture  = _renderTexture.Read(),
             .load_op  = SDL_GPU_LOADOP_LOAD,
             .store_op = SDL_GPU_STOREOP_STORE
         };
@@ -546,130 +544,82 @@ namespace Silent::Renderer::SdlGpu
         auto&       executor = g_App.GetExecutor();
         const auto& options  = g_App.GetOptions();
 
-        // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
-
-        // Copy prepared GPU data.
         auto copyTasks = ParallelTasks
         {
             TASK(CopyGpuViewportQuad(*copyPass))
         };
         executor.AddTasks(copyTasks).wait();
-
         SDL_EndGPUCopyPass(copyPass);
 
-        // Process render pass.
-        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        auto RunPostProcessPass = [&](RenderStage renderStage, auto pushUniforms)
         {
-            .texture  = _renderTexture,
-            .load_op  = SDL_GPU_LOADOP_LOAD,
-            .store_op = SDL_GPU_STOREOP_STORE
-        };
-        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+            auto colorTargetInfo = SDL_GPUColorTargetInfo
+            {
+                .texture  = _renderTexture.Write(),
+                .load_op  = SDL_GPU_LOADOP_DONT_CARE,
+                .store_op = SDL_GPU_STOREOP_STORE
+            };
 
-        // Bind viewport quad.
-        _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
+            auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // @todo Severe visual artefacts.
-        // Temp. test dither.
-        /*if (options->EnableDithering)
-        {
-            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
+            _gpuBuffers.ViewportVertices2d.Bind(*renderPass, 0, 0);
+            _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque);
 
-            // Bind render texture.
+            pushUniforms();
+
             auto binding = SDL_GPUTextureSamplerBinding
             {
-                .texture = _renderTexture,
+                .texture = _renderTexture.Read(),
                 .sampler = _samplers[(int)TextureFilterType::Nearest]
             };
-            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+            SDL_BindGPUFragmentSamplers(renderPass, 0, &binding, 1);
 
-            // Draw.
-            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+            SDL_EndGPURenderPass(renderPass);
+
+            _renderTexture.Swap();
             _doubleBuffer.Active.DrawCallCount++;
-        }*/
+        };
 
-        // Luma-based fade.
         if (Debug::g_Work.BlendAlpha > 0.0f)
         {
-            _pipelines.Bind(renderPass, RenderStage::Fade, BlendMode::Opaque);
-
-            // Push uniform.
-            auto uni = UniformLumaFade
+            RunPostProcessPass(RenderStage::Fade, [&]()
             {
-                .FadeAlpha = Debug::g_Work.BlendAlpha,
-                .IsWhite   = false
-            };
-            PushFragmentUniform(uni, 0);
-
-            // Bind render texture.
-            auto binding = SDL_GPUTextureSamplerBinding
-            {
-                .texture = _renderTexture,
-                .sampler = _samplers[(int)TextureFilterType::Nearest]
-            };
-            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
-
-            // Draw.
-            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-            _doubleBuffer.Active.DrawCallCount++;
+                auto uni = UniformLumaFade
+                {
+                    .FadeAlpha = Debug::g_Work.BlendAlpha,
+                    .IsWhite   = false
+                };
+                PushFragmentUniform(uni, 0);
+            });
         }
 
-        // @todo Severe visual artefacts.
-        // CRT filter.
         if (options->EnableCrtFilter)
         {
-            _pipelines.Bind(renderPass, RenderStage::Crt, BlendMode::Opaque);
-
-            // Push uniform.
-            auto uni = UniformCrt
+            RunPostProcessPass(RenderStage::Crt, [&]()
             {
-                .Resolution = GetViewportResolution().ToVector2(),
-                .Time       = 0.0f
-            };
-            PushFragmentUniform(uni, 0);
-
-            // Bind render texture.
-            auto binding = SDL_GPUTextureSamplerBinding
-            {
-                .texture = _renderTexture,
-                .sampler = _samplers[(int)TextureFilterType::Nearest]
-            };
-            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
-
-            // Draw.
-            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-            _doubleBuffer.Active.DrawCallCount++;
+                auto uni = UniformCrt
+                {
+                    .Resolution = GetViewportResolution().ToVector2(),
+                    .Time       = 0.0f
+                };
+                PushFragmentUniform(uni, 0);
+            });
         }
 
-        // @todo Severe visual artefacts.
-        // Vignette.
         if (options->EnableVignette)
         {
-            _pipelines.Bind(renderPass, RenderStage::Vignette, BlendMode::Opaque);
-
-            // Push uniform.
-            auto uni = UniformCrt
+            RunPostProcessPass(RenderStage::Vignette, [&]()
             {
-                .Resolution = GetViewportResolution().ToVector2(),
-                .Time       = 0.0f
-            };
-            PushFragmentUniform(uni, 0);
-
-            // Bind render texture.
-            auto binding = SDL_GPUTextureSamplerBinding
-            {
-                .texture = _renderTexture,
-                .sampler = _samplers[(int)TextureFilterType::Nearest]
-            };
-            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
-
-            // Draw.
-            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-            _doubleBuffer.Active.DrawCallCount++;
+                auto uni = UniformCrt
+                {
+                    .Resolution = GetViewportResolution().ToVector2(),
+                    .Time       = 0.0f
+                };
+                PushFragmentUniform(uni, 0);
+            });
         }
-
-        SDL_EndGPURenderPass(&renderPass);
     }
 
     void Renderer::DrawViewport()
@@ -704,7 +654,7 @@ namespace Silent::Renderer::SdlGpu
         // Bind render texture.
         auto binding = SDL_GPUTextureSamplerBinding
         {
-            .texture = _renderTexture,
+            .texture = _renderTexture.Read(),
             .sampler = _samplers[(int)TextureFilterType::Nearest]
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);

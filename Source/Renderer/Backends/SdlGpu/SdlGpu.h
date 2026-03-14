@@ -3,6 +3,7 @@
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
+#include "Renderer/Backends/SdlGpu/Resources/PingPongTexture.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
 #include "Renderer/Common/Resources/Buffers.h"
@@ -53,12 +54,12 @@ namespace Silent::Renderer::SdlGpu
         std::vector<SDL_GPUSampler*> _samplers  = {};
         PipelineManager              _pipelines = PipelineManager();
         
-        SDL_GPUTexture*       _renderTexture    = nullptr;
-        SDL_GPUTexture*       _depthTexture     = nullptr;
-        SDL_GPUTexture*       _swapchainTexture = nullptr;
-        SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
-        DrawBatches           _drawBatches      = {};
-        GpuBuffers            _gpuBuffers       = {};
+        PingPongTexture       _renderTexture      = PingPongTexture();
+        SDL_GPUTexture*       _depthTexture       = nullptr;
+        SDL_GPUTexture*       _swapchainTexture   = nullptr;
+        SDL_GPUCommandBuffer* _commandBuffer      = nullptr;
+        DrawBatches           _drawBatches        = {};
+        GpuBuffers            _gpuBuffers         = {};
 
     public:
         // =============
@@ -99,7 +100,7 @@ namespace Silent::Renderer::SdlGpu
          *
          * @return Offscreen render texture.
          */
-        SDL_GPUTexture* GetRenderTexture();
+        void UpdateRenderTargets();
 
         /** @brief Gets the offscreen depth stencil texture.
          *

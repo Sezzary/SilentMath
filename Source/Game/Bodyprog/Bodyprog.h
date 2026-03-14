@@ -581,7 +581,7 @@ namespace Silent::Game
         CVECTOR  field_3D8; // Written by `func_8005A42C`.
         DVECTOR  screenPos_3DC;
         s32      depthP_3E0;
-        MATRIX   field_3E4;
+        s16      rotMatrix_3E4[3][3]; // Truncated `MATRIX` without the `long t[3];` transfer vector?
     } s_GteScratchData;
 
     struct s_Primitive
@@ -1705,7 +1705,8 @@ namespace Silent::Game
     typedef struct
     {
         s_800AE204* ptr_0;
-        s16         count_4;
+        u8          count_4;
+        u8          unk_5;
         s16         unk_6;
         u8          unk_8;
         u8          unk_9;
@@ -2232,6 +2233,9 @@ namespace Silent::Game
     extern s32 g_Items_PickupAnimState;
 
     extern q19_12 g_Items_PickupScale;
+
+    extern s_800AE4DC D_800AE4DC[3];
+    extern SVECTOR    D_800AE500[4];
 
     extern s16 D_800AE520[];
 
