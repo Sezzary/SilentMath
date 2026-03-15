@@ -47,6 +47,16 @@ namespace Silent::Game
         BgmFlag_Unk9 = 1 << 9
     } e_BgmFlags;
 
+    typedef enum _CollisionFlags
+    {
+        CollisionFlag_None = 0,
+        CollisionFlag_0    = 1 << 0,
+        CollisionFlag_1    = 1 << 1,
+        CollisionFlag_2    = 1 << 2,
+        CollisionFlag_3    = 1 << 3,
+        CollisionFlag_All  = 0xFFFF
+    } e_CollisionFlags;
+
     typedef enum _CollisionType
     {
         CollisionType_None = 0,
@@ -342,7 +352,7 @@ namespace Silent::Game
         VECTOR3  position_0; // Q19.12
         SVECTOR3 rotation_C; // Q3.12
         s8       field_12;
-    } s_func_8006AB50;
+    } s_CollisionQuery;
 
     typedef struct
     {
@@ -374,25 +384,25 @@ namespace Silent::Game
         u8  field_1;
         s16 field_2;
         s32 field_4;
-    } s_func_8006CC44_A8;
+    } s_CollisionState_A8;
 
     typedef struct
     {
         s8      field_0;
         s8      unk_1;
         DVECTOR field_2; // Q3.12 | XY rotation.
-    } s_func_8006CC44_44_0;
+    } s_CollisionState_44_0;
 
     typedef struct
     {
-        s_func_8006CC44_44_0 field_0;
+        s_CollisionState_44_0 field_0;
         s16                  field_6;
-        s_func_8006CC44_44_0 field_8;
+        s_CollisionState_44_0 field_8;
         s16                  field_E;
         s8*                  field_10[8];
-        s_func_8006CC44_44_0 field_30;
+        s_CollisionState_44_0 field_30;
         s16                  field_36;
-    } s_func_8006CC44_44;
+    } s_CollisionState_44;
 
     typedef struct
     {
@@ -414,7 +424,7 @@ namespace Silent::Game
     typedef struct
     {
         s32              field_0;
-        s16              field_4;
+        s16              field_4; // Collision flags.
         s16              field_6;
         q7_8             field_8; // Distance X?
         s8               unk_A[2];
@@ -830,7 +840,7 @@ namespace Silent::Game
             u8 field_0;
             u8 field_1;
         } s_field_0;
-    } s_func_8006CC44_CC_C;
+    } s_CollisionState_CC_C;
 
     typedef struct
     {
@@ -841,7 +851,7 @@ namespace Silent::Game
         s16        field_10;
         u8         unk_12[2];
         DVECTOR_XZ field_14;
-    } s_func_8006CC44_CC_20;
+    } s_CollisionState_CC_20;
 
     typedef struct
     {
@@ -849,7 +859,7 @@ namespace Silent::Game
         u8                    field_4; // Index.
         u8                    field_5;
         SVECTOR3              field_6;
-        s_func_8006CC44_CC_C  field_C;
+        s_CollisionState_CC_C  field_C;
         u8                    field_E;
         u8                    field_F;
         u8                    field_10;
@@ -857,8 +867,8 @@ namespace Silent::Game
         SVECTOR3              field_12;
         SVECTOR3              field_18;
         s8                    unk_1E[2];
-        s_func_8006CC44_CC_20 field_20;
-    } s_func_8006CC44_CC;
+        s_CollisionState_CC_20 field_20;
+    } s_CollisionState_CC;
 
     typedef struct
     {
@@ -875,7 +885,7 @@ namespace Silent::Game
         s16                field_3C; // X?
         s16                field_3E; // Z?
         s8*                field_40;
-        s_func_8006CC44_44 field_44;
+        s_CollisionState_44 field_44;
         s32                field_7C;
         s32                field_80; // X
         s32                field_84; // Z
@@ -902,7 +912,7 @@ namespace Silent::Game
                 u8                 field_2;
                 u8                 field_3;
                 s_func_8006CA18*   field_4;
-                s_func_8006CC44_A8 field_8[4];
+                s_CollisionState_A8 field_8[4];
             } s_0;
             struct
             {
@@ -917,9 +927,9 @@ namespace Silent::Game
         u8                 field_C8;
         u8                 unk_C9[1];
         s16                field_CA;
-        s_func_8006CC44_CC field_CC;
+        s_CollisionState_CC field_CC;
         // TODO: May be incomplete. Maybe not, added the final padding based on `Collision_Get`.
-    } s_func_8006CC44;
+    } s_CollisionState;
 
     typedef struct _GlobalLm
     {
@@ -1237,7 +1247,7 @@ namespace Silent::Game
 
     typedef struct
     {
-        u16            flags_0;
+        u16            flags_0; // Collision flags.
         u8             triggerZoneCount_2;
         u8             unk_3;
         s_TriggerZone* triggerZones_4[20]; // Guessed size.
@@ -1627,15 +1637,16 @@ namespace Silent::Game
         q7_8            field_1C; // Angle.
     } s_RayData;
 
-    typedef struct
+    struct s_CollisionResult
     {
         VECTOR3 offset_0;  // Q19.12
         s32     field_C;   // Absolute ground height? Might be using `s_Collision` substruct?
         s16     field_10;
         s16     field_12;
         s8      field_14;  // Count of something? 12 is significant.
+        s8      unk_15[3]; // Probably padding.
         s32     field_18;
-    } s_800C4590;
+    };
 
     typedef struct
     {
@@ -2358,7 +2369,7 @@ namespace Silent::Game
     /** Angles. */
     extern s16 D_800BCDE8[8];
 
-    extern u16 D_800BCE14;
+    extern u16 g_CollisionFlags;
 
     extern s_WorldGfxWork g_WorldGfxWork;
 
