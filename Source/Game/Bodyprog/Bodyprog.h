@@ -358,14 +358,14 @@ namespace Silent::Game
     {
         s32        field_0;
         s32        field_4; // `bool`?
-        s32        field_8; // 2D distance.
-        SVECTOR    field_C; // Q23.8 | Position.
+        q19_12     distance_8;
+        SVECTOR    offset_C; // Q23.8
         DVECTOR_XZ direction_14;
         q23_8      positionX_18;
         q23_8      positionZ_1C;
         s32        field_20;
         s32        field_24;
-        s16        field_28; // } `SVECTOR3`, packed rotation? Probably not.
+        s16        field_28; // } `SVECTOR3`, Q8 rotation? Probably not.
         s16        field_2A; // }
         s16        field_2C; // }
     } s_func_8006ABC0;
@@ -873,7 +873,7 @@ namespace Silent::Game
     typedef struct
     {
         u8                 field_0_0  : 8;
-        s8                 field_0_8  : 1;
+        s8                 field_0_8  : 1; // Something to do with collision. `bool` flag that states if there's a displacement?
         s8                 field_0_9  : 1;
         s8                 field_0_10 : 1;
         s8                 field_0_11 : 5;
@@ -1700,8 +1700,8 @@ namespace Silent::Game
         s16   field_0;
         s16   field_2; // Move dist?
         q3_12 field_4; // Angle.
-        s16   unk_6;
-        s16   unk_8;
+        s16   field_6;
+        s16   field_8;
         s16   unk_A;
         s16   field_C;
         s16   field_E;
@@ -1718,11 +1718,11 @@ namespace Silent::Game
         s_800AE204* ptr_0;
         u8          count_4;
         u8          unk_5;
-        s16         unk_6;
-        u8          unk_8;
-        u8          unk_9;
-        u8          unk_A;
-        u8          unk_B;
+        s16         field_6;
+        u8          field_8;
+        u8          field_9;
+        u8          field_A;
+        u8          field_B;
     } s_800AE4DC;
 
     typedef struct

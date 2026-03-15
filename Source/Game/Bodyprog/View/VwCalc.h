@@ -27,9 +27,15 @@ namespace Silent::Game
     q19_12 vwRetNewAngSpdToTargetAng(q19_12 now_ang_spd, q3_12 now_ang, q3_12 tgt_ang,
                                      q19_12 accel_spd, q19_12 total_max_ang_spd, q19_12 dec_val_lim_spd);
 
-    s32 func_800494B0(s32 arg0, s32 arg1, s32 arg2);
+    q19_12 Vw_ClampedSpeedToTargetGet(q19_12 speedFrom, q19_12 speedTo, q19_12 rateMax);
 
-    s32 func_80049530(VECTOR* arg0, DVECTOR* arg1);
+    /** @brief Projects a 3D world position to 2D screen coordinates with translation accumulation.
+     *
+     * @param worldPos 3D position to transform and project.
+     * @param screenPos Output 2D screen coordinates.
+     * @return Projected depth / 4.
+     */
+    s32 Vw_TransformAndProjectPoint(VECTOR* arg0, DVECTOR* arg1);
 
     void vwMatrixToAngleYXZ(SVECTOR* ang, const MATRIX* mat);
 
@@ -46,15 +52,29 @@ namespace Silent::Game
     /** @brief Computes the transformation matrix of a given coord.
      *
      * @param rootCoord Root coord.
-     * @param outMat Output transformation matrix.
+     * @param viewMat Output transformation matrix.
      */
-    void Vw_CoordHierarchyMatrixCompute(GsCOORDINATE2* rootCoord, MATRIX* outMat);
+    void Vw_CoordHierarchyMatrixCompute(GsCOORDINATE2* rootCoord, MATRIX* viewMat);
 
-    void func_80049AF8(GsCOORDINATE2* rootCoord, MATRIX* outMat);
+    /** @brief Computes a view-space matrix for a coordinate hierarchy node.
+     *
+     * Gets the cumulative world matrix, subtracts the camera position, and multiplies by `VbWvsMatrix`.
+     *
+     * @param rootCoord Root coordinate hierarchy node.
+     * @param outViewMat Output view-space matrix.
+     */
+    void Vw_CoordToViewSpaceMatrix(GsCOORDINATE2* rootCoord, MATRIX* viewMat);
 
-    void func_80049B6C(GsCOORDINATE2* rootCoord, MATRIX* outMat0, MATRIX* outMat1);
+    void Vw_CoordToWorldAndViewMatrices(GsCOORDINATE2* rootCoord, MATRIX* worldMat, MATRIX* viewMat);
 
-    void func_80049C2C(MATRIX* mat, q19_12 posX, q19_12 posY, q19_12 posZ);
+    /** @brief Constructs a world-to-screen matrix at a given world position.
+     *
+     * @param worldToScreenMat Output world-screen matrix.
+     * @param posX World X position).
+     * @param posY World Y position).
+     * @param posZ World Z position).
+     */
+    void Vw_WorldScreenMatrixAtPositionGet(MATRIX* worldToScreenMat, q19_12 posX, q19_12 posY, q19_12 posZ);
 
     /** @brief Checks if an AABB is visible in the screen.
      *
