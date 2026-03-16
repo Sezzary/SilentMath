@@ -294,14 +294,14 @@ def _extract_cd_stream(data: bytes, base_path: Path):
     for i in range(0, len(data), MODE_2_SECTOR_SIZE):
         if i + 2 < len(data):
             submode = data[i + 2]
-            if data[i + 2] & (SubmodeFlags.VIDEO | SubmodeFlags.DATA):
+            if submode & (SubmodeFlags.VIDEO | SubmodeFlags.DATA):
                 is_video_stream = True
                 break
 
     # Set output path.
     ext         = ".STR" if is_video_stream else ".XA"
     output_path = base_path.with_name(f"{base_path.name}{ext}")
-    print(f"Creating `{output_path.name}`")
+    logging.info(f"Creating `{output_path.name}`")
 
     # Process and combine.
     with output_path.open("wb") as _file:
@@ -357,7 +357,7 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
         idx = idx + 1
 
 def main():
-    print("Extracting assets...")
+    logging.info("Extracting assets...")
 
     logging.basicConfig(level = logging.INFO)
     args          = _create_parser().parse_args()

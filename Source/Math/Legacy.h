@@ -236,19 +236,6 @@ namespace Silent::Math
         return (uint)(val + range) > (range * 2);
     }
 
-    //void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat);
-
-    //void Math_RotMatrixZxyNegGte(SVECTOR* rot, MATRIX* mat);
-
-    /** @brief Multiplies two integers in a fixed-point Q format.
-     *
-     * @param a First fixed-point factor.
-     * @param b Second fixed-point factor.
-     * @param shift Fixed-point shift.
-     * @return Fixed-point product of `a` and `b`.
-     */
-    int Math_MulFixed(int a, int b, int shift);
-
     /** @brief Computes the sine in Q19.12 of degrees in Q19.12, integer range `[0, 4096]`.
      *
      * Possible original name: `shRsin`.
@@ -267,10 +254,6 @@ namespace Silent::Math
      */
     q19_12 Math_Cos(q19_12 angle);
 
-    //MATRIX* Math_RotMatrixZ(int, MATRIX*);
-
-    //void Math_RotMatrixXyz(SVECTOR* rot, MATRIX* mat);
-
     /** @brief Computes the real arc tangent in Q19.12, integer range `[0, 4096]`.
      *
      * @param x Fixed-point X component.
@@ -278,4 +261,29 @@ namespace Silent::Math
      * @return Real arc tangent of `x` and `y`.
      */
     q19_12 Math_Ratan2(int x, int y);
+
+    /** @brief Multiplies two integers in a fixed-point Q format.
+     *
+     * @param a First fixed-point factor.
+     * @param b Second fixed-point factor.
+     * @param shift Fixed-point shift.
+     * @return Fixed-point product of `a` and `b`.
+     */
+    int Math_MulFixed(int a, int b, int shift);
+
+    //q19_12 SquareRoot12(q19_12 x);
+
+    //void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat);
+
+    //void Math_RotMatrixZxyNegGte(SVECTOR* rot, MATRIX* mat);
+
+    //void Math_RotMatrixXyz(SVECTOR* rot, MATRIX* mat);
+
+    //void Math_RotMatrixZxy(SVECTOR* rot, MATRIX* mat);
+
+    //void Math_RotMatrixXyxGte(SVECTOR* rot, MATRIX* mat);
+
+    //MATRIX* Math_RotMatrixZ(int, MATRIX*);
+
+    //void Math_MatrixTransform(MATRIX* mat, VECTOR3* in, VECTOR3* out);
 }
