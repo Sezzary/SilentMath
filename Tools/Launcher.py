@@ -165,7 +165,7 @@ def _extract_assets(rom_exe: str):
     # Report status.
     if result.returncode != 0:
         raise Exception(f"Asset extraction failed: {result.stderr.decode()}")
-            
+
 def _convert_audio_and_video():
     """
     Convert `.XA` (audio) and `.STR` (video) asset files to usable formats.
