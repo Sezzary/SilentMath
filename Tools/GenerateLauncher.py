@@ -13,7 +13,6 @@ import sys
 
 from pathlib import Path
 
-ICON_NAME        = "Icon"
 BASE_PATH        = Path(__file__).parent
 BUILD_PATH       = BASE_PATH / "../Build"
 RESOURCES_PATH   = BASE_PATH / "Resources"
@@ -67,6 +66,8 @@ def main():
 
         # Setup.
         system_os     = platform.system().lower()
+        platform_name = _get_platform_name()
+        icon_ext      = _get_icon_ext()
         exe_ext       = ".exe" if system_os == "windows" else ""
         colon         = ";"    if system_os == "windows" else ":"
         launcher_exes = [
@@ -87,11 +88,14 @@ def main():
             command = [
                 "pyinstaller",
                 "--onefile", "--windowed", "--noconfirm",
-                "--icon", RESOURCES_PATH / f"{ICON_NAME}{_get_icon_ext()}",
+                "--icon", RESOURCES_PATH / f"Icon{icon_ext}",
                 "--collect-all", "static_ffmpeg",
                 "--hidden-import", "charset_normalizer",
                 "--add-data", BASE_PATH / f"ExtractAssets.py{colon}.",
-                "--add-binary", BASE_PATH / f"dumpsxiso/{_get_platform_name()}/dumpsxiso{exe_ext}{colon}.",
+                "--add-data", BASE_PATH / f"ConvertMedia.py{colon}.",
+                "--add-data", BASE_PATH / f"ConvertMusicSequence.py{colon}.",
+                "--add-binary", BASE_PATH / f"dumpsxiso/{platform_name}/dumpsxiso{exe_ext}{colon}.",
+                "--add-binary", BASE_PATH / f"vgmstream-cli/{platform_name}/vgmstream-cli{exe_ext}{colon}.",
                 "--distpath", BUILD_PATH,
                 "--workpath", TEMP_OUTPUT_PATH,
                 "--specpath", BUILD_PATH,
@@ -111,7 +115,6 @@ def main():
     except Exception as ex:
         _cleanup()
 
-        # Report exception.
         print(f"Error: {ex}")
         sys.exit(1)
 

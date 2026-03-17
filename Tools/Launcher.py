@@ -18,6 +18,7 @@ from pathlib       import Path
 from static_ffmpeg import run
 
 DUMPSXISO_NAME      = "dumpsxiso"
+VGMSTREAM_NAME      = "vgmstream-cli"
 EXTRACT_ASSETS_NAME = "ExtractAssets.py"
 BASE_PATH           = Path(sys.executable).parent
 TEMP_BASE_PATH      = Path(getattr(sys, '_MEIPASS', os.path.abspath(".")))
@@ -88,12 +89,12 @@ def _get_extract_assets_script():
 
     return extract_assets_script
 
-def _generate_sha1(file_path: Path):
+def get_checksum(file: Path):
     """
     Generate a SHA-1 checksum from a file.
     """
     sha1_hash = hashlib.sha1()
-    with open(file_path, "rb") as _file:
+    with open(file, "rb") as _file:
         for byte_block in iter(lambda: _file.read(4096), b""):
             sha1_hash.update(byte_block)
 
@@ -107,7 +108,7 @@ def _select_rom_file():
         title="Select a Silent Hill ROM",
         filetypes=[("Silent Hill ROM Image", "*.bin")])
     
-    checksum = _generate_sha1(file_path)
+    checksum = get_checksum(file_path)
     if checksum not in ROM_CHECKSUMS:
         print(f"Unsupported ROM with checksum {checksum}.")
         return None
@@ -261,7 +262,6 @@ def main():
         # Run window.
         root.mainloop()
     except Exception as ex:
-        # Report exception.
         print(f"Error: {ex}")
         sys.exit(1)
 

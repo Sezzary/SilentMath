@@ -147,19 +147,33 @@ RELEASES = (
 )
 
 def _create_parser():
+    """
+    Create an argument parser for the script.
+    """
     parser = ArgumentParser()
-    parser.add_argument("--executable", "-exe", type = FileType("rb"))
-    parser.add_argument("--silentFile", "-fs", type = FileType("rb"))
-    parser.add_argument("--hillFile", "-fh", type = FileType("rb"))
-    parser.add_argument("outputFolder", type = Path, default = ".")
-    parser.add_argument("--exeChecksum", "-c", action = "store_true")
+    parser.add_argument("--executable", "-exe", type=FileType("rb"))
+    parser.add_argument("--silentFile", "-fs", type=FileType("rb"))
+    parser.add_argument("--hillFile", "-fh", type=FileType("rb"))
+    parser.add_argument("outputFolder", type=Path, default=".")
+    parser.add_argument("--exeChecksum", "-c", action="store_true")
     return parser
 
 def _get_checksum(exe: BinaryIO):
+    """
+    Generate a SHA-1 checksum from a release executable.
+
+    :param exe: Executable to use.
+    """
     exe.seek(0)
     return crc32(exe.read(4096))
 
 def _detect_release(checksum: int, name: str) -> Release:
+    """
+    Detect if a release executable is supported by the script.
+
+    :param checksum: Checksum of the release.
+    :param exe: Name of the release executable.
+    """
     for release in RELEASES:
         if checksum == release.checksum:
             logging.info(f"Determined the release as {release.id} ({release.name}).")
@@ -289,7 +303,7 @@ def _decompress_lzss_file(data: bytes) -> bytes:
     return bytes(output)
 
 def _extract_cd_stream(data: bytes, base_path: Path):
-    # Check for `XaFlags.VIDEO` or `XaFlags.DATA` flag to determine if format should be `.STR` (video) or `.XA` (audio).
+    # Check for `XaFlags.VIDEO` or `XaFlags.DATA` flag to determine if format should be `STR` (video) or `XA` (audio).
     is_video_stream = False
     for i in range(0, len(data), MODE_2_SECTOR_SIZE):
         if i + 2 < len(data):
@@ -301,7 +315,7 @@ def _extract_cd_stream(data: bytes, base_path: Path):
     # Set output path.
     ext         = ".STR" if is_video_stream else ".XA"
     output_path = base_path.with_name(f"{base_path.name}{ext}")
-    logging.info(f"Creating `{output_path.name}`")
+    logging.info(f"Creating `{output_path.name}`...")
 
     # Process and combine.
     with output_path.open("wb") as _file:
@@ -359,7 +373,7 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
 def main():
     logging.info("Extracting assets...")
 
-    logging.basicConfig(level = logging.INFO)
+    logging.basicConfig(level=logging.INFO)
     args          = _create_parser().parse_args()
     exe: BinaryIO = args.executable
     checksum      = _get_checksum(exe)

@@ -30,7 +30,7 @@ SOURCES_PATH     = BASE_PATH / "../Source/Assets/Shaders"
 OUTPUT_PATH      = BASE_PATH / "../Build/Assets/Shaders"
 TEMP_OUTPUT_PATH = OUTPUT_PATH / ".temp"
 
-def _get_shadercross_executable():
+def _get_shadercross_exe():
     """
     Get the path to the appropriate `shadercross` executable based on the system OS.
     """
@@ -81,7 +81,7 @@ def main():
         _cleanup()
 
         # Setup.
-        shadercross_exe = _get_shadercross_executable()
+        shadercross_exe = _get_shadercross_exe()
         formats         = _get_output_formats()
         os.makedirs(OUTPUT_PATH,      exist_ok=True)
         os.makedirs(TEMP_OUTPUT_PATH, exist_ok=True)
@@ -151,7 +151,6 @@ def main():
     except Exception as ex:
         _cleanup()
 
-        # Report exception.
         print(f"Error: {ex}")
         sys.exit(1)
 
