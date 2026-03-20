@@ -419,7 +419,9 @@ class SF2:
 
 			if createPreset:
 				bank = 0
-				if self.getOpcode('PercussionMode', instrument, default = False):
+				if 'Bank' in instrument.keys():
+					bank = instrument['Bank']
+				elif self.getOpcode('PercussionMode', instrument, default = False):
 					bank = 128
 				phdrData += struct.pack('<19sBHHHIII', instrumentName.encode('ascii'), 0,
 					program, bank, pbagNdx, 0, 0, 0)

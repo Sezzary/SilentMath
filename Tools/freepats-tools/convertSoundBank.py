@@ -74,6 +74,32 @@ if inputFormat == 'sfz':
 		sys.exit(1)
 	soundBank = sfz.soundBank
 
+if outputFormat == 'sf2':
+	new_insts = {}
+	for inst in soundBank.get('instruments', []):
+		for group in inst.get('groups', []):
+			bank_group = group.get('bank', 0)
+			prog_group = group.get('program', 0)
+			for region in group.get('regions', []):
+				bank = int(region.get('bank', bank_group))
+				prog = int(region.get('program', prog_group))
+
+				k = (bank, prog)
+				if k not in new_insts:
+					new_insts[k] = {
+						'Instrument': 'Program {}'.format(prog + 1),
+						'Program': prog + 1,
+						'Bank': bank,
+						'groups': [{
+								'regions': []
+							}
+						]
+					}
+
+				new_insts[k]['groups'][0]['regions'].append(region)
+	if new_insts:
+		soundBank['instruments'] = [new_insts[k] for k in sorted(new_insts.keys())]
+
 print("Writing output file...")
 if outputFormat == 'sfz':
 	sfz = SFZ()

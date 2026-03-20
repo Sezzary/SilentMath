@@ -266,6 +266,9 @@ class SFZ:
 		elif opcode == 'loop_start' \
 		or opcode == 'loop_end':
 			value = self.convertNumberI(value, 0, 4294967296)
+		elif opcode == 'bank' \
+        or opcode == 'program':
+			value = self.convertNumberI(value, 0, 128)
 		elif opcode == 'loop_mode':
 			if not value in ['no_loop', 'one_shot', 'loop_continuous', 'loop_sustain']:
 				logging.error("Unknown parameter for loop_mode: {}".format(value))
