@@ -277,12 +277,47 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
     :param output_folder: Directory where the `SFZ` will be saved.
     :param vab_file: The source `VAB` to convert.
     """
-    def _psx_adsr_to_sec(rate, is_release=False):
+    def psx_adsr_to_sec(rate, is_release=False):
+        """
+        @todo
+
+        :param rate: 
+        :param is_release: 
+        """
         if rate <= 0:
             return 0.0
 
         # Simulate specific PS1 SPU power-of-two curve.
         return round(0.001 * (2 ** (rate / 2)), 3) if not is_release else round(0.001 * (2 ** ((31 - rate) / 2)) * 32, 3)
+
+    def get_wav_loop_points(wav_file: Path):
+        """
+        Extract the loop start/end points from the `smpl` chunk of a `WAV`.
+
+        :param wav_file: The source `WAV` to process.
+        """
+        with open(wav_file, "rb") as _file:
+            _file.read(12) # Skip RIFF header.
+
+            while True:
+                try:
+                    chunk_id, chunk_size = struct.unpack("<4sI", _file.read(8))
+                    if chunk_id == b"smpl":
+                        _file.read(28) # Skip standard `smpl` header data.
+                        loopCount = struct.unpack("<I", _file.read(4))[0]
+
+                        _file.read(4) # Skip sampler data.
+                        if loopCount > 0:
+                            _file.read(8) # Skip cue point ID and type.
+                            start, end = struct.unpack("<II", _file.read(8))
+                            return start, end
+
+                    # Skip chunk.
+                    _file.seek(chunk_size, 1)
+                except Exception:
+                    break
+
+        return 0, 0
 
     logging.info(f"Building `SFZ` from `{vab_file.name}`...")
 
@@ -304,10 +339,9 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                 sl = tone.adsr1 & 0x0F
                 rr = tone.adsr2 & 0x1F
 
-                # @todo extract this.
-                sample_start = 0#loop_start_block * 28
-                # VAG loops always go to the end of the file unless specified otherwise.
-                sample_end   = 0#total_samples - 1
+                # Get sample loop points.
+                wav_file                 = output_folder / vab_file.stem / wav_name
+                sample_start, sample_end = get_wav_loop_points(wav_file)
 
                 # Write program header.
                 output.write("<group> ")
@@ -333,10 +367,10 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                     "volume":          round(20 * math.log10(max(tone.vol, 1) / 127), 2),
                     "pan":             round((tone.pan - 64) / 64 * 100),
                     "tune":            round((tone.shift / 128) * 100),
-                    "ampeg_attack":    _psx_adsr_to_sec(ar),
-                    "ampeg_decay":     _psx_adsr_to_sec(dr),
+                    "ampeg_attack":    psx_adsr_to_sec(ar),
+                    "ampeg_decay":     psx_adsr_to_sec(dr),
                     "ampeg_sustain":   round((sl / 15) * 100, 2),
-                    "ampeg_release":   _psx_adsr_to_sec(rr, is_release=True),
+                    "ampeg_release":   psx_adsr_to_sec(rr, is_release=True),
                 }
                 output.write(" ".join([f"{key}={value}" for key, value in region_data.items()]))
                 output.write("\n\n")
@@ -501,7 +535,7 @@ def _cleanup():
     # @todo
 
 def main():
-    #try:
+    try:
         # Setup.
         logging.basicConfig(level = logging.INFO)
 
@@ -515,7 +549,7 @@ def main():
             subfolder = args.outputFolder / args.kdtFile.stem
             subfolder.mkdir(parents=True, exist_ok=True)
 
-            #_convert_kdt_to_midi(args.kdtToolPy, args.outputFolder, args.kdtFile)
+            _convert_kdt_to_midi(args.kdtToolPy, args.outputFolder, args.kdtFile)
 
         # Process `VAB` -> `SFZ`+`WAV`s -> `SF2`.
         if args.vabFile:
@@ -530,11 +564,11 @@ def main():
                 _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
 
         _cleanup()
-    #except Exception as ex:
-    #    _cleanup()
+    except Exception as ex:
+        _cleanup()
 
-    #    logging.error(f"{ex}")
-    #    sys.exit(1)
+        logging.error(f"{ex}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
