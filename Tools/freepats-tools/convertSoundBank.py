@@ -12,7 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import sys, logging
+import sys, logging, os
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 import re, textwrap
@@ -74,6 +74,10 @@ if inputFormat == 'sfz':
 		sys.exit(1)
 	soundBank = sfz.soundBank
 
+# Set SoundFont name based on the input filename.
+bank_name = os.path.splitext(os.path.basename(inputFile))[0]
+soundBank['Name'] = bank_name
+
 if outputFormat == 'sf2':
 	new_insts = {}
 	for inst in soundBank.get('instruments', []):
@@ -87,7 +91,7 @@ if outputFormat == 'sf2':
 				k = (bank, prog)
 				if k not in new_insts:
 					new_insts[k] = {
-						'Instrument': 'Program {}'.format(prog + 1),
+						'Instrument': 'Program {}'.format(prog),
 						'Program': prog + 1,
 						'Bank': bank,
 						'groups': [{
