@@ -235,7 +235,7 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
 
 def _parse_vab(vab_file: Path):
     """
-    Parse a `VAB` file int a header and programs.
+    Parse a `VAB` file into a readable header and programs.
     
     :param vab_file: The source `VAB` file to process.
     """
@@ -287,7 +287,8 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
     logging.info(f"Building `SFZ` from `{vab_file.name}`...")
 
     parsed_vab = _parse_vab(vab_file)
-    if not parsed_vab:return
+    if not parsed_vab:
+        return
 
     header, programs = parsed_vab
     sfz_file         = output_folder / vab_file.stem / f"{vab_file.stem}.sfz"

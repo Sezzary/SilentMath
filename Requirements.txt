@@ -1,4 +1,6 @@
 charset-normalizer
 customtkinter
 pyinstaller
+python-dateutil
+soundfile
 static-ffmpeg
