@@ -20,50 +20,6 @@ from pathlib     import Path
 SAMPLES_FOLDER = "Samples"
 VAG_PREFIX     = "VAG_"
 
-class VgaToneDataIdx:
-    MODE             = 1  # `ToneMode`
-    VOLUME           = 2  # `[0, 127]`
-    PANNING          = 3  # `[0, 127]`
-    CENTER           = 4  # `[0, 127]`
-    SHIFT            = 5  # `[0, 127]`
-    NOTE_MIN         = 6  # `[0, 127]`
-    NOTE_MAX         = 7  # `[0, 127]`
-    VIBRATO_WIDTH    = 8
-    VIBRATO_TIME     = 9
-    PORTAMENTO_WIDTH = 10
-    PORTAMENTO_TIME  = 11
-    PITCH_BEND_MIN   = 12
-    PITCH_BEND_MAX   = 13
-    ADSR1            = 16 # 2 bytes. Attack and decay.
-    ADSR2            = 18 # 2 bytes. Sustain and release.
-    VAG_ID           = 22 # 2 bytes.
-
-class ToneMode:
-    NORMAL = 0
-    REVERB = 4
-
-@dataclass
-class VgaTone:
-    program_idx:      int
-    mode:             int
-    volume:           int
-    center:           int
-    shift:            int
-    panning:          int
-    note_min:         int
-    note_max:         int
-    vibrato_width:    int
-    vibrato_time:     int
-    portamento_width: int
-    portamento_time:  int
-    pitch_bend_min:   int
-    pitch_bend_max:   int
-    adsr1:            int
-    adsr2:            int
-    vag_id:           int
-
-################################3
-
 # VAB header.
 @dataclass
 class VabHeader:
@@ -277,55 +233,40 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
     :param output_folder: Directory where the `SFZ` will be saved.
     :param vab_file: The source `VAB` to convert.
     """
-    def convert_psx_adsr_to_sec(rate, is_release=False):
-        """
-        Convert PSX SPU ADSR envelopes to seconds.
-
-        The PS1 SPU calculates envelope rates exponentially. For release,  each increment of 1 in the VAB rate doubles
-        the duration in seconds. For attack and decay, the rate is scaled to provide a smooth millisecond-based
-        transition.
-
-        :param rate: The raw 5-bit (release) or 7-bit (attack/decay) value.
-        :param is_release: `True` if processing the release stage.
-        :return: The duration in seconds, rounded to 3 decimal places.
-        """
-        if rate <= 0:
-            return 0.0
-
-        if is_release:
-            return round(0.0001479 * (2 ** rate), 3)
-
-        return round(0.001 * (2 ** (rate / 4)), 3)
-
     def get_wav_loop_points(wav_file: Path):
         """
-        Extract the loop start/end points from the `smpl` chunk of a `WAV`.
+        Extract the loop start/end points from the `smpl` chunk of a `WAV`. If loop points don't exist, it returns the
+        start and end of the sample as the loop points.
 
         :param wav_file: The source `WAV` to process.
-        :return: The start/end loop points.
+        :return: The start/end loop points and a flag noting if the `WAV` has a loop.
         """
         with open(wav_file, "rb") as _file:
             _file.read(12) # Skip `RIFF` header.
 
+            total_samples = 0
             while True:
                 try:
                     chunk_id, chunk_size = struct.unpack("<4sI", _file.read(8))
+
+                    # Fallback: calculate total samples from `data` chunk.
+                    if chunk_id == b"data":
+                        total_samples = chunk_size // 2
+
                     if chunk_id == b"smpl":
                         _file.read(28) # Skip standard `smpl` header data.
                         loopCount = struct.unpack("<I", _file.read(4))[0]
-
                         _file.read(4) # Skip sampler data.
                         if loopCount > 0:
                             _file.read(8) # Skip cue point ID and type.
                             start, end = struct.unpack("<II", _file.read(8))
-                            return start, end
-
-                    # Skip chunk.
-                    _file.seek(chunk_size, 1)
+                            return start, end, True
+                        
+                    _file.seek(chunk_size if chunk_size % 2 == 0 else chunk_size + 1, 1)
                 except Exception:
                     break
 
-        return 0, 0
+        return 0, max(0, total_samples - 1), False
 
     logging.info(f"Building `SFZ` from `{vab_file.name}`...")
 
@@ -342,14 +283,14 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                 wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag_id:03}.WAV"
 
                 # ADSR mapping.
-                ar = (tone.adsr1 >> 8) & 0x7F # Attack 7 bits (0-127).
-                dr = (tone.adsr1 >> 4) & 0x0F # Decay 4 bits (0-15).
-                sl = tone.adsr1 & 0x0F        # Sustain level 4 bits (0-15).
-                rr = tone.adsr2 & 0x1F        # Release 5 bits (0-31).
+                ar = (tone.adsr1 >> 8) & 0x7F # Attack        | 7 bits (0-127).
+                dr = (tone.adsr1 >> 4) & 0x0F # Decay         | 4 bits (0-15).
+                sl = tone.adsr1 & 0x0F        # Sustain level | 4 bits (0-15).
+                rr = tone.adsr2 & 0x1F        # Release       | 5 bits (0-31).
 
                 # Get sample loop points.
-                wav_file                 = output_folder / vab_file.stem / wav_name
-                sample_start, sample_end = get_wav_loop_points(wav_file)
+                wav_file                            = output_folder / vab_file.stem / wav_name
+                sample_start, sample_end, is_looped = get_wav_loop_points(wav_file)
 
                 # Write program header.
                 output.write("<group> ")
@@ -367,7 +308,7 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                     "bank":            0,
                     "program":         prog_idx,
                     #"offset":          28, @todo `WAV`s have 28 samples of padding at the start.
-                    "loop_mode":       "loop_continuous" if tone.mode == 4 else "one_shot",
+                    "loop_mode":       "loop_continuous" if is_looped else "one_shot",
                     "loop_start":      sample_start,
                     "loop_end":        sample_end,
                     "lokey":           tone.min_note,
@@ -376,10 +317,10 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                     "volume":          round(20 * math.log10(max(tone.vol, 1) / 127), 2),
                     "pan":             round(((tone.pan - 64) / 64) * 100),
                     "tune":            round((tone.shift / 128) * 100),
-                    "ampeg_attack":    convert_psx_adsr_to_sec(ar),
-                    "ampeg_decay":     convert_psx_adsr_to_sec(dr),
+                    "ampeg_attack":    0.0 if ar == 0  else round(0.001 * (2 ** ((127 - ar) / 9.6)), 3),
+                    "ampeg_decay":     0.0 if sl == 15 else round(0.001 * (2 ** (dr / 4)), 3),
                     "ampeg_sustain":   round((sl / 15) * 100, 2),
-                    "ampeg_release":   convert_psx_adsr_to_sec(rr, is_release=True),
+                    "ampeg_release":   round(min(0.000148 * (2 ** rr), 5.0), 3),
                     "bend_up":         tone.pb_max * 100,
                     "bend_down":       tone.pb_min * 100,
                     "pitchlfo_freq":   round((tone.vib_t / 127) * 10, 2),
