@@ -2,3 +2,4 @@
 /.vscode
 /Build
 /Libraries
+__pycache__/

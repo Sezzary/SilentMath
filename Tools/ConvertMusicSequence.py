@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from pathlib     import Path
 
 SAMPLES_FOLDER = "Samples"
+VAG_PREFIX     = "VAG_"
 
 class VgaToneDataIdx:
     MODE             = 1  # `ToneMode`
@@ -123,11 +124,12 @@ def _create_parser():
     Create an argument parser for the script.
     """
     parser = ArgumentParser()
-    parser.add_argument("--vgmstreamExe", "-exe", type=Path, help="Path to the `vgmstream-cli` executable.")
-    parser.add_argument("--kdtToolScript", "-scr", type=Path, help="Path to the `kdt-tool.py` script.")
+    parser.add_argument("--vgmstreamExe", "-exe", type=Path, help="Path to the `vgmstream-cli` executable (`VAB` -> `WAV`s tool).")
+    parser.add_argument("--kdtToolPy", "-ktp", type=Path, help="Path to the `kdt-tool.py` script (`KDT` -> `MIDI` tool).")
+    parser.add_argument("--convertSoundBankPy", "-csp", type=Path, help="Path to the `convertSoundBank.py` script (`SFZ` -> `SF2` tool).")
     parser.add_argument("--kdtFile", "-ikf", type=Path, help="Path to the optional `KDT` file.")
     parser.add_argument("--vabFile", "-ivf", type=Path, help="Path to the optional `VAB` file.")
-    parser.add_argument("outputFolder", type=Path, help="Path to the folder where converted `MIDI` and `SFZ`+`WAV` files will be saved.")
+    parser.add_argument("outputFolder", type=Path, help="Path to the folder where converted `MIDI`, `SFZ`+`WAV`s, and `SF2` will be saved.")
     return parser
 
 def _get_python_cmd():
@@ -137,13 +139,13 @@ def _get_python_cmd():
     system_os = platform.system().lower()
     return "python" if system_os == "windows" else "python3"
 
-def _convert_kdt_to_midi(kdt_tool_script: Path, output_folder: Path, kdt_file: Path):
+def _convert_kdt_to_midi(kdt_tool_py: Path, output_folder: Path, kdt_file: Path):
     """
     Convert a `KDT` sequence to `MIDI`.
 
-    :param kdt_tool_script: Path to the `kdt-tool.py` script.
+    :param kdt_tool_py: Path to the `kdt-tool.py` script.
     :param output_folder: Directory where the `MIDI` will be saved.
-    :param file: The source `KDT` to convert.
+    :param file: The source `KDT` file to convert.
     """
     logging.info(f"Converting `{kdt_file.name}` to `MIDI`...")
 
@@ -151,21 +153,92 @@ def _convert_kdt_to_midi(kdt_tool_script: Path, output_folder: Path, kdt_file: P
     python_cmd = _get_python_cmd()
     command    = [
         python_cmd,
-        kdt_tool_script,
+        kdt_tool_py,
         "-c", kdt_file
     ]
     result = subprocess.run(command, capture_output=True, text=True)
 
     # Report status.
     if result.returncode != 0:
-        logging.error(f"Failed to convert `{kdt_file.name}`.")
+        logging.error(f"Conversion failed.")
         return
 
     # Move `MIDI` to subfolder.
     midi_file = f"./{kdt_file.stem}.midi"
     shutil.move(midi_file, output_folder / kdt_file.stem) # @todo overwrite.
 
+def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_file: Path):
+    """
+    Extract audio samples from a `VAB` as `WAV`.
+    Each sample file's name takes the stem of the parent `VAB` and appends a numeric suffix as `_*`.
+    Indexing is 1-based.
+
+    :param vgmstream_exe: Path to the `vgmstream-cli` executable.
+    :param output_folder: Directory where the `WAV` samples will be saved.
+    :param vab_file: The source `VAB` file to process.
+    """
+    def _patch_wav_rate(wav_path: Path):
+        """
+        Overwrite a `WAV`'s header sample rate 44100 to without re-encoding data.
+
+        :param wav_path: The source `WAV` file to process.
+        """
+        RATE = 44100
+
+        if not wav_path.exists(): return
+        with open(wav_path, "r+b") as _file:
+            _file.seek(24)                           # Position of `SampleRate` in RIFF `WAV` header.
+            _file.write(struct.pack("<I", RATE))
+            _file.seek(28)                           # Position of `ByteRate`.
+            _file.write(struct.pack("<I", RATE * 2)) # Assuming 16-bit mono.
+
+    logging.info(f"Extracting samples from `{vab_file.name}` as `WAV`...")
+
+    # Run metadata fetch command.
+    command = [
+        vgmstream_exe.resolve(),
+        "-m", vab_file
+    ]
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    # Get stream count.
+    match = re.search(r"stream count: (\d+)", result.stdout)
+    if not match:
+        logging.error(f"Failed to determine stream count.")
+        return
+    stream_count = int(match.group(1))
+
+    # Run through samples.
+    logging.info(f"{stream_count} samples found.")
+    for i in range(1, stream_count):
+        logging.info(f"Extracting sample {i}...")
+
+        # Run conversion command.
+        wav_file = output_folder / vab_file.stem / SAMPLES_FOLDER / f"{VAG_PREFIX}{i:003}.WAV"
+        command = [
+            vgmstream_exe.resolve(),
+            "-s", str(i),
+            "-l", "1.0",
+            "-f", "0.0",
+            "-L",
+            "-o", str(wav_file),
+            str(vab_file)
+        ]
+        result = subprocess.run(command)
+        
+        # Patch the header so it plays at 44.1k natively.
+        _patch_wav_rate(wav_file)
+
+        # Report status.
+        if result.returncode != 0:
+            logging.error(f"Failed to extract sample {i}.")
+
 def _parse_vab(vab_file: Path):
+    """
+    Parse a `VAB` file int a header and programs.
+    
+    :param vab_file: The source `VAB` file to process.
+    """
     logging.info(f"Parsing `{vab_file.name}`...")
 
     with vab_file.open("rb") as _file:
@@ -197,64 +270,77 @@ def _parse_vab(vab_file: Path):
 
         return header, programs
 
-def _psx_adsr_to_sec(rate, is_release=False):
-    if rate <= 0: return 0.0
-    # Refined SPU conversion: The PS1 uses a specific power-of-two curve.
-    # Release 13 maps to ~0.512s in many SPU implementations.
-    return round(0.001 * (2 ** (rate / 2)), 3) if not is_release else round(0.001 * (2 ** ((31 - rate) / 2)) * 32, 3)
-
 def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
-    parsed_vab = _parse_vab(vab_file)
-    if not parsed_vab: return
-
-    header, programs = parsed_vab
-    sfz_file = output_folder / vab_file.stem / f"{vab_file.stem}.sfz"
-
-    with open(sfz_file, 'w') as output:
-        for prog_idx, prog in enumerate(programs):
-            for tone in prog.tones:
-                wav_name = f"{SAMPLES_FOLDER}/{vab_file.stem}_{tone.vag}.WAV"
-
-                # Now we use the center note directly from the VAB
-                sf_center = tone.center 
-
-                # Logarithmic volume conversion
-                sfz_vol = round(20 * math.log10(max(tone.vol, 1) / 127), 2)
-                
-                # ADSR mapping
-                ar = (tone.adsr1 >> 10) & 0x1F
-                dr = (tone.adsr1 >> 6) & 0x0F
-                sl = tone.adsr1 & 0x0F
-                rr = tone.adsr2 & 0x1F
-
-                region_data = {
-                    "sample": wav_name,
-                    "bank": 0,
-                    "program": prog_idx,
-                    "lokey": tone.min_note,
-                    "hikey": tone.max_note,
-                    "pitch_keycenter": sf_center,
-                    "volume": sfz_vol,
-                    "pan": round((tone.pan - 64) / 64 * 100),
-                    "tune": round((tone.shift / 128) * 100),
-                    "ampeg_attack": _psx_adsr_to_sec(ar),
-                    "ampeg_decay": _psx_adsr_to_sec(dr),
-                    "ampeg_sustain": round((sl / 15) * 100, 2),
-                    "ampeg_release": _psx_adsr_to_sec(rr, is_release=True),
-                }
-
-                output.write("<region> ")
-                output.write(" ".join([f"{k}={v}" for k, v in region_data.items()]))
-                if tone.mode == 4: output.write(" loop_mode=loop_continuous")
-                output.write("\n")
-
-def _build_sfz_from_vab_OLD(output_folder: Path, vab_file: Path):
     """
     Build an `SFZ` from a `VAB`.
 
     :param output_folder: Directory where the `SFZ` will be saved.
     :param vab_file: The source `VAB` to convert.
     """
+    def _psx_adsr_to_sec(rate, is_release=False):
+        if rate <= 0:
+            return 0.0
+
+        # Simulate specific PS1 SPU power-of-two curve.
+        return round(0.001 * (2 ** (rate / 2)), 3) if not is_release else round(0.001 * (2 ** ((31 - rate) / 2)) * 32, 3)
+
+    logging.info(f"Building `SFZ` from `{vab_file.name}`...")
+
+    parsed_vab = _parse_vab(vab_file)
+    if not parsed_vab:return
+
+    header, programs = parsed_vab
+    sfz_file         = output_folder / vab_file.stem / f"{vab_file.stem}.sfz"
+
+    with open(sfz_file, 'w') as output:
+        for prog_idx, prog in enumerate(programs):
+            for tone in prog.tones:
+                wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag:03}.WAV"
+
+                # ADSR mapping.
+                ar = (tone.adsr1 >> 10) & 0x1F
+                dr = (tone.adsr1 >> 6) & 0x0F
+                sl = tone.adsr1 & 0x0F
+                rr = tone.adsr2 & 0x1F
+
+                # @todo extract this.
+                sample_start = 0#loop_start_block * 28
+                # VAG loops always go to the end of the file unless specified otherwise.
+                sample_end   = 0#total_samples - 1
+
+                # Write program header.
+                output.write("<group> ")
+                group_data = {
+                    f"bank":    0,
+                    f"program": prog_idx
+                }
+                output.write(" ".join([f"{key}={value}" for key, value in group_data.items()]))
+                output.write("\n")
+
+                # Write sample header.
+                output.write("<region> ")
+                region_data = {
+                    "sample":          wav_name,
+                    "bank":            0,
+                    "program":         prog_idx,
+                    "loop_mode":       "loop_continuous" if tone.mode == 4 else "one_shot",
+                    "loop_start":      sample_start,
+                    "loop_end":        sample_end,
+                    "lokey":           tone.min_note,
+                    "hikey":           tone.max_note,
+                    "pitch_keycenter": tone.center,
+                    "volume":          round(20 * math.log10(max(tone.vol, 1) / 127), 2),
+                    "pan":             round((tone.pan - 64) / 64 * 100),
+                    "tune":            round((tone.shift / 128) * 100),
+                    "ampeg_attack":    _psx_adsr_to_sec(ar),
+                    "ampeg_decay":     _psx_adsr_to_sec(dr),
+                    "ampeg_sustain":   round((sl / 15) * 100, 2),
+                    "ampeg_release":   _psx_adsr_to_sec(rr, is_release=True),
+                }
+                output.write(" ".join([f"{key}={value}" for key, value in region_data.items()]))
+                output.write("\n\n")
+
+def _build_sfz_from_vab_OLD(output_folder: Path, vab_file: Path):
     def convert_psx_rate_to_sec(rate, max_val=0x1F):
         """
         Approximate a PSX SPU rate to `SFZ` seconds.
@@ -357,7 +443,7 @@ def _build_sfz_from_vab_OLD(output_folder: Path, vab_file: Path):
                 # If SR > 0, the sound fades toward silence (0%) during the sustain phase.
 
                 # Write SFZ data.
-                wav_name = f"{SAMPLES_FOLDER}/{vab_file.stem}_{tone.vag_id}.WAV"
+                wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag_id:03}.WAV"
                 output.write(
                     f"<region> "
                     f"sample={wav_name} "
@@ -383,69 +469,35 @@ def _build_sfz_from_vab_OLD(output_folder: Path, vab_file: Path):
                     f"{sfz_loop}\n"
                 )
 
-def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_file: Path):
+def _convert_sfz_to_sf2(convert_sound_bank_py: Path, output_folder: Path, sfz_file: Path):
     """
-    Extract audio samples from a `VAB` as `WAV`.
-    Each sample file's name takes the stem of the parent `VAB` and appends a numeric suffix as `_*`.
-    Indexing is 1-based.
+    Convert an `SFZ` file to `SF2`.
 
-    :param vgmstream_exe: Path to the `vgmstream-cli` executable.
-    :param output_folder: Directory where the `WAV` samples will be saved.
-    :param vab_file: The source `VAB` file to process.
+    :param convert_sound_bank_py: Path to the `convertSoundBank.py` script.
+    :param output_folder: Directory where the `SF2` file will be saved.
+    :param sfz_file: The source `SFZ` file to process.
     """
-    def _patch_wav_rate(wav_path: Path):
-        """
-        Overwrite a `WAV`'s header sample rate 44100 to without re-encoding data.
+    logging.info(f"Converting `{sfz_file.name}` to `SF2`...")
 
-        :param wav_path: The source `WAV` file to process.
-        """
-        RATE = 44100
-
-        if not wav_path.exists(): return
-        with open(wav_path, "r+b") as _file:
-            _file.seek(24)                           # Position of `SampleRate` in RIFF `WAV` header.
-            _file.write(struct.pack("<I", RATE))
-            _file.seek(28)                           # Position of `ByteRate`.
-            _file.write(struct.pack("<I", RATE * 2)) # Assuming 16-bit mono.
-
-    # Run metadata fetch command.
-    command = [
-        vgmstream_exe.resolve(),
-        "-m", vab_file
+    # Run command.
+    python_cmd = _get_python_cmd()
+    command    = [
+        python_cmd,
+        convert_sound_bank_py.resolve(),
+        sfz_file,
+        output_folder / sfz_file.stem / f"{sfz_file.stem}.sf2"
     ]
-    result = subprocess.run(command, capture_output=True, text=True)
+    result = subprocess.run(command)
 
-    # Get stream count.
-    match = re.search(r"stream count: (\d+)", result.stdout)
-    if not match:
-        logging.error(f"Failed to determine stream count for `{vab_file.name}`.")
-        return
-    stream_count = int(match.group(1))
-    logging.info(f"Extracting {stream_count} samples from `{vab_file.name}` as `WAV`...")
+    # Report status.
+    if result.returncode != 0:
+        logging.error(f"Conversion failed.")
 
-    # Run through samples.
-    logging.info(f"Processing `{vab_file.name}` samples...")
-    for i in range(1, stream_count):
-        logging.info(f"Extracting sample {i} as `WAV`...")
-
-        # Run conversion command.
-        wav_file = output_folder / vab_file.stem / SAMPLES_FOLDER / f"{vab_file.stem}_{i}.WAV"
-        command = [
-            vgmstream_exe.resolve(),
-            "-s", str(i),
-            "-l", "1.0",
-            "-f", "0.0",
-            "-o", str(wav_file),
-            str(vab_file)
-        ]
-        result = subprocess.run(command)
-        
-        # Patch the header so it plays at 44.1k natively.
-        _patch_wav_rate(wav_file)
-
-        # Report status.
-        if result.returncode != 0:
-            logging.error(f"Failed to extract sample {i}.")
+def _cleanup():
+    """
+    Clean up process files.
+    """
+    # @todo
 
 def main():
     #try:
@@ -457,23 +509,29 @@ def main():
         if not args.kdtFile and not args.vabFile:
             parser.error("At least one input file (`--kdtFile` or `--vabFile`) must be provided.")
 
-        # Process `KDT`.
+        # Process `KDT` -> `MIDI`.
         if args.kdtFile:
-            # Create subfolder.
             subfolder = args.outputFolder / args.kdtFile.stem
-            #subfolder.mkdir(parents=True, exist_ok=True)
+            subfolder.mkdir(parents=True, exist_ok=True)
 
-            #_convert_kdt_to_midi(args.kdtToolScript, args.outputFolder, args.kdtFile)
+            #_convert_kdt_to_midi(args.kdtToolPy, args.outputFolder, args.kdtFile)
 
-        # Process `VAB`.
+        # Process `VAB` -> `SFZ`+`WAV`s -> `SF2`.
         if args.vabFile:
-            # Create subfolders.
             subfolder = args.outputFolder / args.vabFile.stem / SAMPLES_FOLDER
             subfolder.mkdir(parents=True, exist_ok=True)
 
-            _build_sfz_from_vab(args.outputFolder, args.vabFile)
             _extract_vab_samples_to_wav(args.vgmstreamExe, args.outputFolder, args.vabFile)
+            _build_sfz_from_vab(args.outputFolder, args.vabFile)
+
+            sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}.sfz"
+            if args.convertSoundBankPy and sfz_file.exists():
+                _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
+
+        _cleanup()
     #except Exception as ex:
+    #    _cleanup()
+
     #    logging.error(f"{ex}")
     #    sys.exit(1)
 
