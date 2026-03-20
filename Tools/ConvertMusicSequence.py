@@ -238,27 +238,6 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
     :param output_folder: Directory where the `SFZ` will be saved.
     :param vab_file: The source `VAB` to convert.
     """
-    def convert_psx_adsr_to_sec(rate, is_release=False):
-        """
-        Convert PSX SPU ADSR envelopes to seconds.
-
-        The PS1 SPU calculates envelope rates exponentially.
-        For release,  each increment of 1 in the VAB rate doubles the duration in seconds.
-        For attack and decay, the rate is scaled to provide a smooth millisecond-based transition.
-
-        :param rate: The raw 5-bit (release) or 7-bit (attack/decay) value.
-        :param is_release: `True` if processing the release stage.
-        :return: The duration in seconds, rounded to 3 decimal places.
-        """
-        if rate <= 0:
-            return 0.0
-
-        if is_release:
-            time = 0.000148 * (2 ** rate)
-            return round(min(time, 5.0), 3)
-
-        return round(0.001 * (2 ** (rate / 4)), 3)
-
     def get_wav_loop_points(wav_file: Path):
         """
         Extract the loop start/end points from the `smpl` chunk of a `WAV`. If loop points don't exist, it returns the
@@ -344,9 +323,9 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                     "pan":             round(((tone.pan - 64) / 64) * 100),
                     "tune":            round((tone.shift / 128) * 100),
                     "ampeg_attack":    0.0 if ar == 0  else round(0.001 * (2 ** ((127 - ar) / 9.6)), 3),
-                    "ampeg_decay":     0.0 if sl == 15 else convert_psx_adsr_to_sec(dr),
+                    "ampeg_decay":     0.0 if sl == 15 else round(0.001 * (2 ** (dr / 4)), 3),
                     "ampeg_sustain":   round((sl / 15) * 100, 2),
-                    "ampeg_release":   convert_psx_adsr_to_sec(rr, is_release=True),
+                    "ampeg_release":   round(min(0.000148 * (2 ** rr), 5.0), 3),
                     "bend_up":         tone.pb_max * 100,
                     "bend_down":       tone.pb_min * 100,
                     "pitchlfo_freq":   round((tone.vib_t / 127) * 10, 2),
