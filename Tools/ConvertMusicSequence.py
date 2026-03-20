@@ -322,14 +322,14 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                     "volume":          round(20 * math.log10(max(tone.vol, 1) / 127), 2),
                     "pan":             round(((tone.pan - 64) / 64) * 100),
                     "tune":            round((tone.shift / 128) * 100),
-                    "ampeg_attack":    0.0 if ar == 0  else round(0.001 * (2 ** ((127 - ar) / 9.6)), 3),
+                    "ampeg_attack":    0.0 if ar == 0 else round(0.001 * (2 ** ((127 - ar) / 9.6)), 3),
                     "ampeg_decay":     0.0 if sl == 15 else round(0.001 * (2 ** (dr / 4)), 3),
                     "ampeg_sustain":   round((sl / 15) * 100, 2),
                     "ampeg_release":   round(min(0.000148 * (2 ** rr), 5.0), 3),
                     "bend_up":         tone.pb_max * 100,
                     "bend_down":       tone.pb_min * 100,
                     "pitchlfo_freq":   round((tone.vib_t / 127) * 10, 2),
-                    "pitchlfo_depth":  round((tone.vib_w / 127) * 50, 2),
+                    "pitchlfo_depth":  round((tone.vib_w / 127) * 50, 2)
                 }
                 output.write(" ".join([f"{key}={value}" for key, value in region_data.items()]))
                 output.write("\n\n")
