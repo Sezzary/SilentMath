@@ -124,8 +124,10 @@ def _convert_kdt_to_midi(kdt_tool_py: Path, output_folder: Path, kdt_file: Path)
         return
 
     # Move `MIDI` to subfolder.
-    midi_file = f"./{kdt_file.stem}.midi"
-    shutil.move(midi_file, output_folder / kdt_file.stem) # @todo overwrite.
+    midi_file_src = output_folder.parent / f"{kdt_file.stem}.midi"
+    midi_file_dst = output_folder / kdt_file.stem / f"{kdt_file.stem}.midi"
+    midi_file_dst.unlink(missing_ok=True)
+    shutil.move(midi_file_src, midi_file_dst)
 
 def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_file: Path):
     """
@@ -313,7 +315,7 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                     "bank":            0,
                     "program":         prog_idx,
                     #"offset":          28, @todo `WAV`s have 28 samples of padding at the start.
-                    "loop_mode":       "loop_continuous" if is_looped else "one_shot",
+                    "loop_mode":       "loop_continuous" if tone.mode == 4 else "one_shot",
                     "loop_start":      sample_start,
                     "loop_end":        sample_end,
                     "lokey":           tone.min_note,

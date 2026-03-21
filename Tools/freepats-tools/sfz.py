@@ -295,6 +295,12 @@ class SFZ:
 			value = self.convertNumberI(value, 1, 100)
 		elif opcode == 'amp_veltrack':
 			value = self.convertNumberF(value, -100, 100)
+		elif opcode == 'bend_up' or opcode == 'bend_down':
+			value = self.convertNumberI(value, -12000, 12000)
+		elif opcode == 'pitchlfo_freq':
+			value = self.convertNumberF(value, 0, 100)
+		elif opcode == 'pitchlfo_depth':
+			value = self.convertNumberF(value, -12000, 12000)
 		else:
 			logging.warning("Unknown opcode: {}".format(opcode))
 			return True

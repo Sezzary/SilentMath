@@ -29,9 +29,11 @@ class SF2ExportError(Exception):
 class SF2:
 
 	sfGenId = {
+		'vibLfoToPitch': 6,
 		'initialFilterFc': 8,
 		'initialFilterQ': 9,
 		'pan': 17,
+		'freqVibLfo': 24,
 		'delayVolEnv': 33,
 		'attackVolEnv': 34,
 		'holdVolEnv': 35,
@@ -61,7 +63,9 @@ class SF2:
 		'initialFilterQ': 'h',
 		'initialAttenuation': 'h',
 		'fineTune': 'h',
-		'scaleTuning': 'h'
+		'scaleTuning': 'h',
+		'vibLfoToPitch': 'h',
+		'freqVibLfo': 'h'
 	}
 
 	def exportSF2(self, soundBank, fileName):
@@ -285,7 +289,9 @@ class SF2:
 			'initialFilterQ': 'resonance',
 			'initialAttenuation': 'volume',
 			'fineTune': 'tune',
-			'scaleTuning': 'pitch_keytrack'
+			'scaleTuning': 'pitch_keytrack',
+			'vibLfoToPitch': 'pitchlfo_depth',
+			'freqVibLfo': 'pitchlfo_freq'
 		}
 		for gen in genOpcodes.keys():
 			value = self.getOpcode(genOpcodes[gen], instrument, group, region)
@@ -319,6 +325,16 @@ class SF2:
 				genList[gen] = int(value)
 			elif gen == 'scaleTuning':
 				genList[gen] = int(value)
+			elif gen == 'vibLfoToPitch':
+				genList[gen] = int(float(value))
+			elif gen == 'freqVibLfo':
+				freq = float(value)
+				if freq > 0:
+					# SF2 spec: `1200 * log2(Hz / 8.176)`.`
+					genList[gen] = int(round(1200 * math.log2(freq / 8.176)))
+				else:
+					# Essentially 0 Hz.
+					genList[gen] = -12000
 
 		loopMode = self.getOpcode('loop_mode', instrument, group, region, 'no_loop')
 		if loopMode == 'one_shot':
