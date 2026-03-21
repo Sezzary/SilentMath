@@ -2,6 +2,10 @@
     path = Libraries/assimp
     url = https://github.com/assimp/assimp.git
 
+[submodule "Libraries/fluidsynth"]
+    path = Libraries/fluidsynth
+    url = https://github.com/fluidsynth/fluidsynth.git
+
 [submodule "Libraries/freetype"]
     path = Libraries/freetype
     url = https://github.com/freetype/freetype.git

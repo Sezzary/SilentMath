@@ -52,7 +52,6 @@ Too early for this, but feel free to take a look around in the meantime! Active 
 - Stability.
 - Switch to GCC as the compiler on Windows with MinGW.
 - Forward renderer.
-- Sound system. Need to write a `KDC`+`VAB` -> `XM` converter?
 - Parsers for all proprietary game file types.
 - Lua scripting.
 - Decompiled code migration.
@@ -90,10 +89,16 @@ Initialize Git LFS to ensure assets are pulled correctly.
 git lfs install
 ```
 
-Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will include submodules in the process:
+Clone https://github.com/Sezzary/SilentEngine to your desired directory. Cloning recursively will include submodules in the process.
 ```
 git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive
+```
+
+Build the FluidSynth dependency locally.
+```
+cd Libraries/fluidsynth && mkdir build && cd build && cmake .. && cd ../../..
+
 ```
 
 Build the LuaJIT dependency locally.

@@ -46,6 +46,9 @@
 //#include <assimp/postprocess.h>
 //#include <assimp/scene.h>
 
+// FluidSynth
+#include <fluidsynth.h>
+
 // FreeType
 #include <ft2build.h>
 #include <freetype/freetype.h>

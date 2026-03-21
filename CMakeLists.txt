@@ -119,6 +119,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add library directories.
 #add_subdirectory(Libraries/assimp)
+add_subdirectory(Libraries/fluidsynth)
 add_subdirectory(Libraries/freetype)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/json)
@@ -132,6 +133,8 @@ add_subdirectory(Libraries/yalantinglibs)
 # Add library header paths.
 target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/build/include
+    ${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/freetype/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
@@ -160,6 +163,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE __psyz)
 # Add libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     #assimp
+    libfluidsynth
     freetype
     glm
     luajit
