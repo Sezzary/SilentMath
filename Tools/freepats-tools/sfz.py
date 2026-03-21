@@ -264,10 +264,11 @@ class SFZ:
 		or opcode == 'ampeg_release':
 			value = self.convertNumberF(value, 0, 100)
 		elif opcode == 'loop_start' \
-		or opcode == 'loop_end':
+		or opcode == 'loop_end'\
+		or opcode == 'offset':
 			value = self.convertNumberI(value, 0, 4294967296)
 		elif opcode == 'bank' \
-        or opcode == 'program':
+		or opcode == 'program':
 			value = self.convertNumberI(value, 0, 128)
 		elif opcode == 'loop_mode':
 			if not value in ['no_loop', 'one_shot', 'loop_continuous', 'loop_sustain']:

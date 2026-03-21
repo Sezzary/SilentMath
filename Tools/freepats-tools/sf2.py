@@ -257,6 +257,8 @@ class SF2:
 							loopEndDefault -= 8
 						loopStart = start + self.getOpcode('loop_start', instrument, group, region, loopStartDefault)
 						loopEnd = start + self.getOpcode('loop_end', instrument, group, region, loopEndDefault)
+						offset = self.getOpcode('offset', instrument, group, region, 0)
+						
 						name, ext = os.path.splitext(os.path.basename(sample))
 						sampleLink = 0
 						if channels == 2:
@@ -267,7 +269,7 @@ class SF2:
 								name += '_R'
 								sampleLink = sampleIndex - 1
 						self.shdrData += struct.pack('<19sBIIIIIBbHH',
-							name.encode('ascii'), 0, start, end, loopStart, loopEnd, rate, pitch, 0,
+							name.encode('ascii'), 0, start + offset, end, loopStart, loopEnd, rate, pitch, 0,
 							sampleLink, sampleType)
 						sampleIndex += 1
 
