@@ -259,7 +259,7 @@ class SF2:
 						loopStart = start + self.getOpcode('loop_start', instrument, group, region, loopStartDefault)
 						loopEnd = start + self.getOpcode('loop_end', instrument, group, region, loopEndDefault)
 						offset = self.getOpcode('offset', instrument, group, region, 0)
-						
+
 						name, ext = os.path.splitext(os.path.basename(sample))
 						sampleLink = 0
 						if channels == 2:
