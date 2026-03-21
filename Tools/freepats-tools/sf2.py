@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 #
 # Copyright 2016, roberto@zenvoid.org
+# Modified by Sezz, 2026
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
