@@ -113,9 +113,11 @@ def main():
 
                 # Run generation command.
                 if run_new_build:
-                    command = [shadercross_exe, shader_source,
-                               "-I", SOURCES_PATH,
-                               "-o", temp_shader_output]
+                    command = [
+                        shadercross_exe, shader_source,
+                        "-I", SOURCES_PATH,
+                        "-o", temp_shader_output
+                    ]
                     result  = subprocess.run(command, capture_output=True)
 
                     # Report status.
@@ -141,7 +143,7 @@ def main():
             print("Shaders are up-to-date.")
         else:
             success_str = f"{build_count} shader{"" if build_count == 1 else "s"} built successfully."
-            fail_str = (f" {len(fail_names)} failed:" if len(fail_names) > 0 else "")
+            fail_str    = (f" {len(fail_names)} failed:" if len(fail_names) > 0 else "")
             print(success_str + fail_str)
 
             for fail_name in fail_names:

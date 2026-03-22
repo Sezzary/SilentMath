@@ -17,6 +17,11 @@ from argparse    import ArgumentParser
 from dataclasses import dataclass
 from pathlib     import Path
 
+MIDI_EXT = ".MID"
+SF2_EXT  = ".SF2"
+SFZ_EXT  = ".SFZ"
+WAV_EXT  = ".WAV"
+
 SAMPLES_FOLDER  = "Samples"
 VAG_PREFIX      = "VAG_"
 PADDING_SAMPLES = 28
@@ -125,8 +130,8 @@ def _convert_kdt_to_midi(kdt_tool_py: Path, output_folder: Path, kdt_file: Path)
         return
 
     # Move `MIDI` file to subfolder.
-    midi_file_src = output_folder.parent / f"{kdt_file.stem}.midi"
-    midi_file_dst = output_folder / kdt_file.stem / f"{kdt_file.stem}.midi"
+    midi_file_src = output_folder.parent / f"{kdt_file.stem}{MIDI_EXT}"
+    midi_file_dst = output_folder / kdt_file.stem / f"{kdt_file.stem}{MIDI_EXT}"
     midi_file_dst.unlink(missing_ok=True)
     shutil.move(midi_file_src, midi_file_dst)
 
@@ -177,7 +182,7 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
         logging.info(f"Extracting sample {i}...")
 
         # Run conversion command.
-        wav_file = output_folder / vab_file.stem / SAMPLES_FOLDER / f"{VAG_PREFIX}{i:03}.WAV"
+        wav_file = output_folder / vab_file.stem / SAMPLES_FOLDER / f"{VAG_PREFIX}{i:03}{WAV_EXT}"
         command = [
             vgmstream_exe.resolve(),
             "-s", str(i),
@@ -283,12 +288,12 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
         return
 
     header, progs = parsed_vab
-    sfz_file      = output_folder / vab_file.stem / f"{vab_file.stem}.sfz"
+    sfz_file      = output_folder / vab_file.stem / f"{vab_file.stem}{SFZ_EXT}"
 
     with open(sfz_file, 'w') as output:
         for prog_idx, prog in enumerate(progs):
             for tone in prog.tones:
-                wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag_id:03}.WAV"
+                wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag_id:03}{WAV_EXT}"
 
                 # ADSR mapping.
                 ar = (tone.adsr1 >> 8) & 0x7F # Attack        | 7 bits (0-127).
@@ -353,19 +358,13 @@ def _convert_sfz_to_sf2(convert_sound_bank_py: Path, output_folder: Path, sfz_fi
         python_cmd,
         convert_sound_bank_py.resolve(),
         sfz_file,
-        output_folder / sfz_file.stem / f"{sfz_file.stem}.sf2"
+        output_folder / sfz_file.stem / f"{sfz_file.stem}{SF2_EXT}"
     ]
     result = subprocess.run(command)
 
     # Report status.
     if result.returncode != 0:
         logging.error(f"Conversion failed.")
-
-def _cleanup():
-    """
-    Clean up process files.
-    """
-    # @todo
 
 def main():
     try:
@@ -392,13 +391,10 @@ def main():
             _extract_vab_samples_to_wav(args.vgmstreamExe, args.outputFolder, args.vabFile)
             _build_sfz_from_vab(args.outputFolder, args.vabFile)
 
-            sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}.sfz"
+            sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}{SFZ_EXT}"
             if args.convertSoundBankPy and sfz_file.exists():
                 _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
-
-        _cleanup()
     except Exception as ex:
-        _cleanup()
 
         logging.error(f"{ex}")
         sys.exit(1)

@@ -1,5 +1,6 @@
 """
 Source: https://github.com/Nisto/kdt-tool
+Modified by Sezz, 2026
 
 kdt-tool
 
@@ -481,7 +482,7 @@ def kdt2midi(path):
 
         kdt.midi[mtrkoff+4:mtrkoff+8] = struct.pack(">I", kdt.moff-mtrkoff-8)
 
-    with open(os.path.splitext(kdt.path)[0] + ".midi", "wb") as midi:
+    with open(os.path.splitext(kdt.path)[0] + ".MID", "wb") as midi:
         midi.write(kdt.midi[:kdt.moff])
 
 def dump_events(path):
