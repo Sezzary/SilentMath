@@ -308,6 +308,8 @@ def _convert_tracks():
     Convert `KDT` and `VAB` asset files to usable formats.
     Exported to `ASSETS_TRACKS_PATH`
     """
+    MOVE_ALL = True # @debug Move entire folder to inspect output.
+
     logging.info("Converting tracks...")
 
     # Setup.
@@ -355,14 +357,14 @@ def _convert_tracks():
         # Move `MID` and `SF2` files to `ASSETS_TRACKS_PATH`.
         for _folder in (TEMP_BASE_PATH / "SND").iterdir():
             if _folder.is_dir():
-                # Move entire folder to inspect output.
-                #shutil.move(_folder, ASSETS_TRACKS_PATH / _folder.name)
-
-                mid_files = list(_folder.glob(f"*{_folder.stem}{MID_EXT}"))
-                sf2_files = list(_folder.glob(f"*{_folder.stem}{SF2_EXT}"))
-                for _file in mid_files + sf2_files:
-                    if _file.exists():
-                        shutil.move(_file, ASSETS_TRACKS_PATH / _file.name)
+                if MOVE_ALL:
+                    shutil.move(_folder, ASSETS_TRACKS_PATH / _folder.name)
+                else:
+                    mid_files = list(_folder.glob(f"*{_folder.stem}{MID_EXT}"))
+                    sf2_files = list(_folder.glob(f"*{_folder.stem}{SF2_EXT}"))
+                    for _file in mid_files + sf2_files:
+                        if _file.exists():
+                            shutil.move(_file, ASSETS_TRACKS_PATH / _file.name)
 
         # Report status.
         if result.returncode != 0:
@@ -398,9 +400,9 @@ def main():
             if rom_path:
                 label.configure(text=f"Path: ...{rom_path[-30:]}")
 
-                _dump_rom(rom_path)
-                _extract_assets("SLUS_007.07") # @todo Dehardcode executable.
-                _convert_audio_and_video()
+                #_dump_rom(rom_path)
+                #_extract_assets("SLUS_007.07") # @todo Dehardcode executable.
+                #_convert_audio_and_video()
                 _convert_tracks()
 
         button = customtkinter.CTkButton(root, text="Browse Files", command=handle_click)

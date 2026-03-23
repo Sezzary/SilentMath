@@ -189,8 +189,8 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
             "-l", "1.0",
             "-f", "0.0",
             "-L",
-            "-o", str(wav_file),
-            str(vab_file)
+            "-o", wav_file,
+            vab_file
         ]
         result = subprocess.run(command)
         
@@ -293,9 +293,9 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
 
     with open(sfz_file, 'w') as output:
         for prog_idx, prog in enumerate(progs):
-            # @todo Something not right here.
-            for tone_id, tone in enumerate(prog.tones, start=1):
-                wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag_id:03}{WAV_EXT}"
+            # @todo Something not right here. Off-by-1 error?
+            for tone in prog.tones:
+                wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{(tone.vag_id):03}{WAV_EXT}"
 
                 # ADSR mapping.
                 ar = (tone.adsr1 >> 8) & 0x7F # Attack        | 7 bits (0-127).
@@ -308,8 +308,7 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                 try:
                     sample_start, sample_end, is_looped = get_wav_loop_points(wav_file)
                 except Exception as ex:
-                    #logging.warning(f"`{vab_file.name}`: tone ID is {tone_id}`, VAG ID is `{tone.vag_id}`.")
-                    logging.error(f"Bad samples for `{vab_file.name}`: VAG ID is {tone.vag_id}.")
+                    logging.error(f"`{vab_file.name}` doesn't contain sample {tone.vag_id}. Bad data?")
                     continue
 
                 # Write program header.
