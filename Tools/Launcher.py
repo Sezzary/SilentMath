@@ -32,7 +32,11 @@ ASSETS_VIDEO_PATH       = BASE_PATH / "Assets" / "Video"
 ASSETS_TRACKS_PATH      = BASE_PATH / "Assets" / "Tracks"
 
 KDT_EXT = ".KDT"
+MID_EXT = ".MID"
+MPG_EXT = ".MPG"
+SF2_EXT = ".SF2"
 VAB_EXT = ".VAB"
+WAV_EXT = ".WAV"
 
 # Checksums for supported ROMs.
 ROM_CHECKSUMS = [
@@ -257,7 +261,7 @@ def _convert_audio_and_video():
     for _file in (ASSETS_PATH / "XA").iterdir():
         # Run command.
         if _file.suffix == "XA":
-            newFile = f"{_file.stem}.WAV"
+            newFile = f"{_file.stem}{WAV_EXT}"
             logging.info(f"Converting `{_file.name}` to `{newFile}`...")
 
             command = [
@@ -268,7 +272,7 @@ def _convert_audio_and_video():
                 ASSETS_AUDIO_PATH / newFile
             ]
         elif _file.suffix == "STR":
-            newFile = f"{_file.stem}.MPG"
+            newFile = f"{_file.stem}{MPG_EXT}"
             logging.info(f"Converting `{_file.name}` to `{newFile}`...")
 
             command = [
@@ -334,7 +338,7 @@ def _convert_tracks():
                 "-csp", convert_sound_bank_py,
                 "-ikf", kdt_file, 
                 "-ivf", vab_file,
-                ASSETS_TRACKS_PATH
+                TEMP_BASE_PATH / "SND"
             ]
         else:
             command = [
@@ -344,9 +348,21 @@ def _convert_tracks():
                 "-ktp", kdt_tool_py,
                 "-csp", convert_sound_bank_py,
                 "-ivf", vab_file,
-                ASSETS_TRACKS_PATH
+                TEMP_BASE_PATH / "SND"
             ]
         result = subprocess.run(command)
+
+        # Move `MID` and `SF2` files to `ASSETS_TRACKS_PATH`.
+        for _folder in (TEMP_BASE_PATH / "SND").iterdir():
+            if _folder.is_dir():
+                # Move entire folder to inspect output.
+                #shutil.move(_folder, ASSETS_TRACKS_PATH / _folder.name)
+
+                mid_files = list(_folder.glob(f"*{_folder.stem}{MID_EXT}"))
+                sf2_files = list(_folder.glob(f"*{_folder.stem}{SF2_EXT}"))
+                for _file in mid_files + sf2_files:
+                    if _file.exists():
+                        shutil.move(_file, ASSETS_TRACKS_PATH / _file.name)
 
         # Report status.
         if result.returncode != 0:
@@ -377,7 +393,7 @@ def main():
         label.pack(expand=True)
 
         def handle_click():
-            # Get ROM path
+            # Get ROM path.
             rom_path = _select_rom_file()
             if rom_path:
                 label.configure(text=f"Path: ...{rom_path[-30:]}")
