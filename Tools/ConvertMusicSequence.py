@@ -111,7 +111,7 @@ def _convert_kdt_to_midi(kdt_tool_py: Path, output_folder: Path, kdt_file: Path)
 
     :param kdt_tool_py: Path to the `kdt-tool.py` script.
     :param output_folder: Directory where the `MIDI` will be saved.
-    :param file: The source `KDT` file to convert.
+    :param file: Source `KDT` file to convert.
     """
     logging.info(f"Converting `{kdt_file.name}` to `MIDI`...")
 
@@ -130,7 +130,7 @@ def _convert_kdt_to_midi(kdt_tool_py: Path, output_folder: Path, kdt_file: Path)
         return
 
     # Move `MIDI` file to subfolder.
-    midi_file_src = output_folder.parent / f"{kdt_file.stem}{MIDI_EXT}"
+    midi_file_src = kdt_file.parent / f"{kdt_file.stem}{MIDI_EXT}"
     midi_file_dst = output_folder / kdt_file.stem / f"{kdt_file.stem}{MIDI_EXT}"
     midi_file_dst.unlink(missing_ok=True)
     shutil.move(midi_file_src, midi_file_dst)
@@ -143,13 +143,13 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
 
     :param vgmstream_exe: Path to the `vgmstream-cli` executable.
     :param output_folder: Directory where the `WAV` samples will be saved.
-    :param vab_file: The source `VAB` file to process.
+    :param vab_file: Source `VAB` file to process.
     """
     def _patch_wav_rate(wav_path: Path):
         """
         Overwrite a `WAV`'s header sample rate 44100 to without re-encoding data.
 
-        :param wav_path: The source `WAV` file to patch.
+        :param wav_path: Source `WAV` file to patch.
         """
         RATE = 44100
 
@@ -205,7 +205,7 @@ def _parse_vab(vab_file: Path):
     """
     Parse a `VAB` file into a readable header and programs.
     
-    :param vab_file: The source `VAB` file to process.
+    :param vab_file: Source `VAB` file to process.
     :return: A parsedd `VAB` header and programs.
     """
     logging.info(f"Parsing `{vab_file.name}`...")
@@ -244,14 +244,14 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
     Build an `SFZ` from a `VAB`.
 
     :param output_folder: Directory where the `SFZ` will be saved.
-    :param vab_file: The source `VAB` to convert.
+    :param vab_file: Source `VAB` to convert.
     """
     def get_wav_loop_points(wav_file: Path):
         """
         Extract the loop start/end points from the `smpl` chunk of a `WAV`. If loop points don't exist, it returns the
         start and end of the sample as the loop points.
 
-        :param wav_file: The source `WAV` to process.
+        :param wav_file: Source `WAV` to process.
         :return: The start/end loop points and a flag noting if the `WAV` has a loop.
         """
         with open(wav_file, "rb") as _file:
@@ -285,6 +285,7 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
 
     parsed_vab = _parse_vab(vab_file)
     if not parsed_vab:
+        logging.error(f"Parsing failed.")
         return
 
     header, progs = parsed_vab
@@ -292,7 +293,8 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
 
     with open(sfz_file, 'w') as output:
         for prog_idx, prog in enumerate(progs):
-            for tone in prog.tones:
+            # @todo Something not right here.
+            for tone_id, tone in enumerate(prog.tones, start=1):
                 wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{tone.vag_id:03}{WAV_EXT}"
 
                 # ADSR mapping.
@@ -302,8 +304,13 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                 rr = tone.adsr2 & 0x1F        # Release       | 5 bits (0-31).
 
                 # Get sample loop points.
-                wav_file                            = output_folder / vab_file.stem / wav_name
-                sample_start, sample_end, is_looped = get_wav_loop_points(wav_file)
+                wav_file = output_folder / vab_file.stem / wav_name
+                try:
+                    sample_start, sample_end, is_looped = get_wav_loop_points(wav_file)
+                except Exception as ex:
+                    #logging.warning(f"`{vab_file.name}`: tone ID is {tone_id}`, VAG ID is `{tone.vag_id}`.")
+                    logging.error(f"Bad samples for `{vab_file.name}`: VAG ID is {tone.vag_id}.")
+                    continue
 
                 # Write program header.
                 output.write("<group> ")
@@ -348,7 +355,7 @@ def _convert_sfz_to_sf2(convert_sound_bank_py: Path, output_folder: Path, sfz_fi
 
     :param convert_sound_bank_py: Path to the `convertSoundBank.py` script.
     :param output_folder: Directory where the `SF2` file will be saved.
-    :param sfz_file: The source `SFZ` file to process.
+    :param sfz_file: Source `SFZ` file to process.
     """
     logging.info(f"Converting `{sfz_file.name}` to `SF2`...")
 
@@ -367,7 +374,7 @@ def _convert_sfz_to_sf2(convert_sound_bank_py: Path, output_folder: Path, sfz_fi
         logging.error(f"Conversion failed.")
 
 def main():
-    try:
+    #try:
         # Setup.
         logging.basicConfig(level = logging.INFO)
 
@@ -394,10 +401,9 @@ def main():
             sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}{SFZ_EXT}"
             if args.convertSoundBankPy and sfz_file.exists():
                 _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
-    except Exception as ex:
-
-        logging.error(f"{ex}")
-        sys.exit(1)
+    #except Exception as ex:
+    #    logging.error(f"{ex}")
+    #    sys.exit(1)
 
 if __name__ == "__main__":
     main()

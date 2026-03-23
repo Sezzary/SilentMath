@@ -5,6 +5,7 @@ Generates a launcher application for the active platform.
 If a generated launcher already exists and is outdated, it will be overwritten.
 """
 
+import logging
 import os
 import platform
 import shutil
@@ -61,7 +62,10 @@ def _cleanup():
 
 def main():
     try:
-        print("Generating launcher...")
+        # Setup.
+        logging.basicConfig(level = logging.INFO)
+
+        logging.info("Generating launcher...")
         _cleanup()
 
         # Setup.
@@ -91,12 +95,15 @@ def main():
                 "--icon", RESOURCES_PATH / f"Icon{icon_ext}",
                 "--collect-all", "static_ffmpeg",
                 "--hidden-import", "charset_normalizer",
+                "--add-binary", BASE_PATH / "dumpsxiso" / f"{platform_name}" / f"dumpsxiso{exe_ext}{colon}.",
+                "--add-binary", BASE_PATH / "vgmstream-cli" / f"{platform_name}" / f"vgmstream-cli{exe_ext}{colon}.",
                 "--add-data", BASE_PATH / f"ExtractAssets.py{colon}.",
                 "--add-data", BASE_PATH / f"ConvertMedia.py{colon}.",
                 "--add-data", BASE_PATH / f"ConvertMusicSequence.py{colon}.",
-                "--add-binary", BASE_PATH / "dumpsxiso" / f"{platform_name}" / f"dumpsxiso{exe_ext}{colon}.",
+                "--add-data", BASE_PATH / "freepats-tools" / f"convertSoundBank.py{colon}.",
+                "--add-data", BASE_PATH / "freepats-tools" / f"sf2.py{colon}.",
+                "--add-data", BASE_PATH / "freepats-tools" / f"sfz.py{colon}.",
                 "--add-data", BASE_PATH / "kdt-tool" / f"kdt-tool.py{colon}.",
-                "--add-binary", BASE_PATH / "vgmstream-cli" / f"{platform_name}" / f"vgmstream-cli{exe_ext}{colon}.",
                 "--distpath", BUILD_PATH,
                 "--workpath", TEMP_OUTPUT_PATH,
                 "--specpath", BUILD_PATH,
@@ -105,18 +112,18 @@ def main():
             result  = subprocess.run(command)
 
             # Report status and copy launcher to final output folders.
-            if result.returncode == 0:
-                print("Launcher generated successfully.")
-            else:
+            if result.returncode != 0:
                 raise Exception(f"Failed to generate launcher: {result.stderr.decode()}")
+
+            logging.info("Launcher generated successfully.")
         else:
-            print("Launcher is up-to-date.")
+            logging.info("Launcher is up-to-date.")
 
         _cleanup()
     except Exception as ex:
         _cleanup()
 
-        print(f"Error: {ex}")
+        logging.error(f"Error: {ex}")
         sys.exit(1)
 
 if __name__ == "__main__":

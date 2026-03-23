@@ -6,6 +6,7 @@ Runs a simple launcher which prompts ROM selection for asset extraction and star
 
 import customtkinter
 import hashlib
+import logging
 import multiprocessing
 import os
 import platform
@@ -17,14 +18,21 @@ from customtkinter import filedialog
 from pathlib       import Path
 from static_ffmpeg import run
 
-DUMPSXISO_NAME      = "dumpsxiso"
-VGMSTREAM_NAME      = "vgmstream-cli"
-EXTRACT_ASSETS_NAME = "ExtractAssets.py"
-BASE_PATH           = Path(sys.executable).parent
-TEMP_BASE_PATH      = Path(getattr(sys, '_MEIPASS', os.path.abspath(".")))
-ASSETS_PATH         = BASE_PATH / "Assets/Stream/Psx"
-ASSETS_AUDIO_PATH   = BASE_PATH / "Assets/Audio"
-ASSETS_VIDEO_PATH   = BASE_PATH / "Assets/Video"
+DUMPSXISO_NAME          = "dumpsxiso"
+VGMSTREAM_NAME          = "vgmstream-cli"
+CONVERT_SOUND_BANK_NAME = "convertSoundBank.py"
+KDT_TOOL_NAME           = "kdt-tool.py"
+EXTRACT_ASSETS_NAME     = "ExtractAssets.py"
+CONVERT_MUSIC_SEQ_NAME  = "ConvertMusicSequence.py"
+BASE_PATH               = Path(sys.executable).parent
+TEMP_BASE_PATH          = Path(getattr(sys, '_MEIPASS', os.path.abspath(".")))
+ASSETS_PATH             = BASE_PATH / "Assets" / "Stream" / "Psx"
+ASSETS_AUDIO_PATH       = BASE_PATH / "Assets" / "Audio"
+ASSETS_VIDEO_PATH       = BASE_PATH / "Assets" / "Video"
+ASSETS_TRACKS_PATH      = BASE_PATH / "Assets" / "Tracks"
+
+KDT_EXT = ".KDT"
+VAB_EXT = ".VAB"
 
 # Checksums for supported ROMs.
 ROM_CHECKSUMS = [
@@ -75,19 +83,83 @@ def _get_dumpsxiso_exe():
 
     return dumpsxiso_exe
 
-def _get_extract_assets_script():
+def _get_vgmstream_exe():
     """
-    Get the `ExtractAssets.py` script to use.
+    Get the platform-specific `vgmstream-cli` executable to use.
+    """
+    # Define executable path.
+    system_os = platform.system().lower()
+    if system_os == "windows":
+        vgmstream_exe = TEMP_BASE_PATH / f"{VGMSTREAM_NAME}.exe"
+    elif system_os == "darwin" or system_os == "linux": # `darwin` = macOS.
+        vgmstream_exe = TEMP_BASE_PATH / VGMSTREAM_NAME
+    else:
+        raise Exception(f"'{system_os}' is unsupported.")
+
+    if not os.path.isfile(vgmstream_exe):
+        raise Exception(f"`{VGMSTREAM_NAME}` executable not found at '{vgmstream_exe}'.")
+
+    # Set permissions.
+    if system_os in ["darwin", "linux"]:
+        os.chmod(vgmstream_exe, 0o755)
+
+    return vgmstream_exe
+
+def _get_convert_music_seq_py():
+    """
+    Get the `ConvertMusicSequence.py` script to use.
     """
     # Define script path.
-    extract_assets_script = TEMP_BASE_PATH / EXTRACT_ASSETS_NAME
+    convert_music_seq_py = TEMP_BASE_PATH / CONVERT_MUSIC_SEQ_NAME
 
     # Set permissions.
     system_os = platform.system().lower()
     if system_os in ["darwin", "linux"]:
-        os.chmod(extract_assets_script, 0o755)
+        os.chmod(convert_music_seq_py, 0o755)
 
-    return extract_assets_script
+    return convert_music_seq_py
+
+def _get_convert_sound_bank_py():
+    """
+    Get the `convertSoundBank.py` script to use.
+    """
+    # Define script path.
+    convert_sound_bank_py = TEMP_BASE_PATH / CONVERT_SOUND_BANK_NAME
+
+    # Set permissions.
+    system_os = platform.system().lower()
+    if system_os in ["darwin", "linux"]:
+        os.chmod(convert_sound_bank_py, 0o755)
+
+    return convert_sound_bank_py
+
+def _get_extract_assets_py():
+    """
+    Get the `ExtractAssets.py` script to use.
+    """
+    # Define script path.
+    extract_assets_py = TEMP_BASE_PATH / EXTRACT_ASSETS_NAME
+
+    # Set permissions.
+    system_os = platform.system().lower()
+    if system_os in ["darwin", "linux"]:
+        os.chmod(extract_assets_py, 0o755)
+
+    return extract_assets_py
+
+def _get_kdt_tool_py():
+    """
+    Get the `kdt-tool.py` script to use.
+    """
+    # Define script path.
+    kdt_tool_py = TEMP_BASE_PATH / KDT_TOOL_NAME
+
+    # Set permissions.
+    system_os = platform.system().lower()
+    if system_os in ["darwin", "linux"]:
+        os.chmod(kdt_tool_py, 0o755)
+
+    return kdt_tool_py
 
 def get_checksum(file: Path):
     """
@@ -124,7 +196,7 @@ def _dump_rom(rom_path: str):
     Dump a supported Silent Hill ROM.
     Exported to `TEMP_BASE_PATH`.
     """
-    print("Dumping ROM...")
+    logging.info("Dumping ROM...")
 
     # Setup.
     dumpsxiso_exe = _get_dumpsxiso_exe()
@@ -142,7 +214,7 @@ def _dump_rom(rom_path: str):
     if result.returncode != 0:
         raise Exception(f"ROM dump failed: {result.stderr.decode()}")
 
-    print("ROM dump completed successfully.")
+    logging.info("ROM dump completed successfully.")
 
 def _extract_assets(rom_exe: str):
     """
@@ -151,7 +223,7 @@ def _extract_assets(rom_exe: str):
     """
     # Setup.
     python_cmd            = _get_python_cmd()
-    extract_assets_script = _get_extract_assets_script()
+    extract_assets_script = _get_extract_assets_py()
 
     # Run command.
     command = [
@@ -169,10 +241,10 @@ def _extract_assets(rom_exe: str):
 
 def _convert_audio_and_video():
     """
-    Convert `.XA` (audio) and `.STR` (video) asset files to usable formats.
+    Convert `XA` (audio) and `STR` (video) asset files to usable formats.
     Exported to `ASSETS_AUDIO_PATH` and `ASSETS_VIDEO_PATH`.
     """
-    print("Converting audio and video...")
+    logging.info("Converting audio and video...")
 
     # Setup.
     ffmpeg_cmd = get_ffmpeg_cmd()
@@ -181,27 +253,29 @@ def _convert_audio_and_video():
     ASSETS_AUDIO_PATH.mkdir(parents=True, exist_ok=True)
     ASSETS_VIDEO_PATH.mkdir(parents=True, exist_ok=True)
 
-    # Run through `.XA` and `.STR` files.
-    for file in (ASSETS_PATH / "XA").iterdir():
+    # Run through `XA` and `STR` files.
+    for _file in (ASSETS_PATH / "XA").iterdir():
         # Run command.
-        if file.suffix == ".XA":
-            newFile = f"{file.stem}.WAV"
+        if _file.suffix == "XA":
+            newFile = f"{_file.stem}.WAV"
+            logging.info(f"Converting `{_file.name}` to `{newFile}`...")
+
             command = [
                 ffmpeg_cmd, "-y",
                 "-hide_banner",
                 "-loglevel", "error",
-                "-i", str(file),
+                "-i", _file,
                 ASSETS_AUDIO_PATH / newFile
             ]
+        elif _file.suffix == "STR":
+            newFile = f"{_file.stem}.MPG"
+            logging.info(f"Converting `{_file.name}` to `{newFile}`...")
 
-            print(f"Converting `{file.name}` to `{newFile}`...")
-        elif file.suffix == ".STR":
-            newFile = f"{file.stem}.MPG"
             command = [
                 ffmpeg_cmd, "-y",
                 "-hide_banner",
                 "-loglevel", "error",
-                "-i", str(file),
+                "-i", _file,
                 "-r", "30",
                 "-c:v", "mpeg1video",
                 "-q:v", "1",
@@ -215,24 +289,80 @@ def _convert_audio_and_video():
                 "-f", "mpeg",
                 ASSETS_VIDEO_PATH / newFile
             ]
-
-            print(f"Converting `{file.name}` to `{newFile}`...")
         else:
             continue
         result = subprocess.run(command)
 
         # Report status.
         if result.returncode != 0:
-            raise Exception(f"Asset conversion failed for file `{file.name}`: {result.stderr.decode()}")
+            raise Exception(f"Asset conversion failed for file `{_file.name}`: {result.stderr.decode()}")
 
-    print("Audio and video conversion complete.")
+    logging.info("Audio and video conversion complete.")
+
+def _convert_tracks():
+    """
+    Convert `KDT` and `VAB` asset files to usable formats.
+    Exported to `ASSETS_TRACKS_PATH`
+    """
+    logging.info("Converting tracks...")
+
+    # Setup.
+    python_cmd            = _get_python_cmd()
+    convert_music_seq_py  = _get_convert_music_seq_py()
+    vgmstream_exe         = _get_vgmstream_exe()
+    kdt_tool_py           = _get_kdt_tool_py()
+    convert_sound_bank_py = _get_convert_sound_bank_py()
+
+    # Create folder.
+    ASSETS_TRACKS_PATH.mkdir(parents=True, exist_ok=True)
+
+    # Run through `KDT` and `VAB` files.
+    for _file in (ASSETS_PATH / "SND").glob(f"*{VAB_EXT}"):
+        kdt_file = _file.with_suffix(KDT_EXT)
+        vab_file = _file
+
+        has_kdt = kdt_file.exists()
+        logging.info(f"Converting `{kdt_file.name}` and `{vab_file.name}`" if has_kdt else f"`{vab_file.name}`...")
+
+        # Run command.
+        if has_kdt:
+            command = [
+                python_cmd,
+                convert_music_seq_py,
+                "-exe", vgmstream_exe,
+                "-ktp", kdt_tool_py,
+                "-csp", convert_sound_bank_py,
+                "-ikf", kdt_file, 
+                "-ivf", vab_file,
+                ASSETS_TRACKS_PATH
+            ]
+        else:
+            command = [
+                python_cmd,
+                convert_music_seq_py,
+                "-exe", vgmstream_exe,
+                "-ktp", kdt_tool_py,
+                "-csp", convert_sound_bank_py,
+                "-ivf", vab_file,
+                ASSETS_TRACKS_PATH
+            ]
+        result = subprocess.run(command)
+
+        # Report status.
+        if result.returncode != 0:
+            raise Exception(f"Asset conversion failed for files `{kdt_file.name}` and `{vab_file.name}`" if has_kdt else f"`{vab_file.name}`: {result.stderr.decode()}")
+
+    # @todo Move files, cleanup.
+
+    logging.info("Tracks conversion complete.")
 
 def main():
-    multiprocessing.freeze_support()
-
     try:
         WIDTH  = 500
         HEIGHT = 400
+
+        multiprocessing.freeze_support()
+        logging.basicConfig(level = logging.INFO)
 
         customtkinter.set_appearance_mode("Dark")
 
@@ -255,6 +385,7 @@ def main():
                 _dump_rom(rom_path)
                 _extract_assets("SLUS_007.07") # @todo Dehardcode executable.
                 _convert_audio_and_video()
+                _convert_tracks()
 
         button = customtkinter.CTkButton(root, text="Browse Files", command=handle_click)
         button.pack(expand=True)
@@ -262,7 +393,7 @@ def main():
         # Run window.
         root.mainloop()
     except Exception as ex:
-        print(f"Error: {ex}")
+        logging.error(f"Error: {ex}")
         sys.exit(1)
 
 if __name__ == "__main__":
