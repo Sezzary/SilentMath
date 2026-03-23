@@ -374,7 +374,7 @@ def _convert_sfz_to_sf2(convert_sound_bank_py: Path, output_folder: Path, sfz_fi
         logging.error(f"Conversion failed.")
 
 def main():
-    #try:
+    try:
         # Setup.
         logging.basicConfig(level = logging.INFO)
 
@@ -401,9 +401,9 @@ def main():
             sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}{SFZ_EXT}"
             if args.convertSoundBankPy and sfz_file.exists():
                 _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
-    #except Exception as ex:
-    #    logging.error(f"{ex}")
-    #    sys.exit(1)
+    except Exception as ex:
+        logging.error(f"{ex}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

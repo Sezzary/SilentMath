@@ -46,7 +46,7 @@ outputFile = sys.argv[2]
 outputFormat = None
 soundBank = None
 
-match = re.search('\.([a-z0-9]+)$', inputFile.lower())
+match = re.search(r'\.([a-z0-9]+)$', inputFile.lower())
 if match:
 	inputFormat = match.group(1)
 else:
@@ -57,7 +57,7 @@ if not inputFormat in inputFormats:
 	logging.error("Unknown or unsupported input format: {}".format(inputFormat))
 	sys.exit(1)
 
-match = re.search('\.([a-z0-9]+)$', outputFile.lower())
+match = re.search(r'\.([a-z0-9]+)$', outputFile.lower())
 if match:
 	outputFormat = match.group(1)
 else:
