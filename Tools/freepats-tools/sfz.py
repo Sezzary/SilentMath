@@ -117,7 +117,7 @@ class SFZ:
 
 
 	def processLine(self, line):
-		match = re.search('//\+ ([a-zA-Z0-9_&.+-]+): +(\S.*)$', line)
+		match = re.search(r'//\+ ([a-zA-Z0-9_&.+-]+): +(\S.*)$', line)
 		if match:
 			value = match.group(2)
 			value = value.rstrip()
@@ -155,12 +155,12 @@ class SFZ:
 				raise SFZParseError
 
 			# Find next opcode or header
-			match = re.search('[=<]', line)
+			match = re.search(r'[=<]', line)
 			if not match:
 				return self.processOpcode(opcode, line)
 
 			if line[match.start()] == '=':
-				nextOpcode = re.search('\s[a-zA-Z0-9_]+=', line)
+				nextOpcode = re.search(r'\s[a-zA-Z0-9_]+=', line)
 				if not nextOpcode:
 					raise SFZParseError
 				value = line[:nextOpcode.start()].rstrip()
@@ -363,7 +363,7 @@ class SFZ:
 
 
 	def convertNumberI(self, numS, minVal, maxVal):
-		if not re.search('^-?[0-9]+$', numS):
+		if not re.search(r'^-?[0-9]+$', numS):
 			raise SFZParseError
 		num = int(numS)
 		if num < minVal or num > maxVal:
@@ -372,7 +372,7 @@ class SFZ:
 
 
 	def convertNumberF(self, numS, minVal, maxVal):
-		if not re.search('^-?[0-9]*.?[0-9]+$', numS):
+		if not re.search(r'^-?[0-9]*.?[0-9]+$', numS):
 			raise SFZParseError
 		num = float(numS)
 		if num < minVal or num > maxVal:
@@ -387,12 +387,12 @@ class SFZ:
 		raise SFZParseError
 
 	def convertNote(self, note):
-		if re.search('^[0-9]{1,3}$', note):
+		if re.search(r'^[0-9]{1,3}$', note):
 			noteNum = int(note)
 			if noteNum >= 0 and noteNum <= 127:
 				return noteNum;
 
-		match = re.search('^([abcdefgABCDEFG])([b#]?)(-?[0-9])$', note)
+		match = re.search(r'^([abcdefgABCDEFG])([b#]?)(-?[0-9])$', note)
 		if not match:
 			raise SFZParseError
 		noteNum = SFZ.noteValue[match.group(1).upper()]

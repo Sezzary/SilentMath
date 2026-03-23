@@ -18,14 +18,30 @@
 # to convert from XML descriptions to SoundFont files:
 # https://github.com/freepats/tools
 
-import struct, logging, os, math, sys
 import dateutil.parser
-import soundfile
-
+import logging
+import math
+import numpy
+import os
+import struct
+import wave
 
 class SF2ExportError(Exception):
 	pass
 
+def _read_wav_as_int16(sample_path):
+	with wave.open(str(sample_path), 'rb') as _file:
+		rate = _file.getframerate()
+		channels = _file.getnchannels()
+
+		# Read raw bytes and convert to 16-bit integers.
+		raw_data = _file.readframes(_file.getnframes())
+		data = numpy.frombuffer(raw_data, dtype=numpy.int16)
+
+		# Reshape to 2D (samples, channels) to match `always_2d=True`.
+		data = data.reshape(-1, channels)
+
+		return data, rate
 
 class SF2:
 
@@ -222,7 +238,7 @@ class SF2:
 					if not os.path.isabs(samplePath) and 'Path' in self.soundBank.keys():
 						samplePath = os.path.join(self.soundBank['Path'], sample)
 					try:
-						data, rate = soundfile.read(file=samplePath, dtype='int16', always_2d=True)
+						data, rate = _read_wav_as_int16(samplePath)
 					except:
 						logging.error("Can not read input audio file {}".format(samplePath))
 						raise SF2ExportError
