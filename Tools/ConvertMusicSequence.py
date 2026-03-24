@@ -293,8 +293,10 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
 
     with open(sfz_file, 'w') as output:
         for prog_idx, prog in enumerate(progs):
-            # @todo Something not right here. Off-by-1 error?
             for tone in prog.tones:
+                # @todo Something not right here. VAGs are supposed to be 0-based, but (most of) the output matches only
+                # by assuming they are 1-based. Additionally, sometimes there are VAG IDs which are 0, or 1 or 2 beyond
+                # the max samples extracted.
                 wav_name = f"{SAMPLES_FOLDER}/{VAG_PREFIX}{(tone.vag_id):03}{WAV_EXT}"
 
                 # ADSR mapping.
@@ -308,7 +310,7 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
                 try:
                     sample_start, sample_end, is_looped = get_wav_loop_points(wav_file)
                 except Exception as ex:
-                    logging.error(f"`{vab_file.name}` doesn't contain sample {tone.vag_id}. Bad data?")
+                    logging.error(f"`{vab_file.name}`: bad VAG ID {tone.vag_id}.")
                     continue
 
                 # Write program header.

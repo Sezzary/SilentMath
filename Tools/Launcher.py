@@ -357,14 +357,22 @@ def _convert_tracks():
         # Move `MID` and `SF2` files to `ASSETS_TRACKS_PATH`.
         for _folder in (TEMP_BASE_PATH / "SND").iterdir():
             if _folder.is_dir():
+                # Clear existing output if it exists.
+                dest_folder = ASSETS_TRACKS_PATH / _folder.name
+                if dest_folder.exists():
+                    shutil.rmtree(dest_folder)
+
                 if MOVE_ALL:
-                    shutil.move(_folder, ASSETS_TRACKS_PATH / _folder.name)
+                    shutil.move(_folder, dest_folder)
                 else:
+                    dest_folder.mkdir(parents=True, exist_ok=True)
+
                     mid_files = list(_folder.glob(f"*{_folder.stem}{MID_EXT}"))
                     sf2_files = list(_folder.glob(f"*{_folder.stem}{SF2_EXT}"))
                     for _file in mid_files + sf2_files:
                         if _file.exists():
-                            shutil.move(_file, ASSETS_TRACKS_PATH / _file.name)
+                            # Move file into the newly created folder.
+                            shutil.move(_file, dest_folder / _file.name)
 
         # Report status.
         if result.returncode != 0:
