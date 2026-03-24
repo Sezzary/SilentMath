@@ -338,7 +338,7 @@ def _convert_tracks():
                 "-exe", vgmstream_exe,
                 "-ktp", kdt_tool_py,
                 "-csp", convert_sound_bank_py,
-                "-ikf", kdt_file, 
+                "-ikf", kdt_file,
                 "-ivf", vab_file,
                 TEMP_BASE_PATH / "SND"
             ]

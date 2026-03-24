@@ -135,7 +135,7 @@ def _convert_kdt_to_midi(kdt_tool_py: Path, output_folder: Path, kdt_file: Path)
     midi_file_dst.unlink(missing_ok=True)
     shutil.move(midi_file_src, midi_file_dst)
 
-def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_file: Path):
+def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_file: Path, parsed_vab: tuple[VabHeader, list]):
     """
     Extract audio samples from a `VAB` as `WAV`.
     Each sample file's name takes the stem of the parent `VAB` and appends a numeric suffix as `_*`.
@@ -144,6 +144,7 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
     :param vgmstream_exe: Path to the `vgmstream-cli` executable.
     :param output_folder: Directory where the `WAV` samples will be saved.
     :param vab_file: Source `VAB` file to process.
+    :param parsed_vab: Parsed `VAB` header and program data.
     """
     def _patch_wav_rate(wav_path: Path):
         """
@@ -162,28 +163,17 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
 
     logging.info(f"Extracting samples from `{vab_file.name}` as `WAV`...")
 
-    # Run metadata fetch command.
-    command = [
-        vgmstream_exe.resolve(),
-        "-m", vab_file
-    ]
-    result = subprocess.run(command, capture_output=True, text=True)
-
-    # Get stream count.
-    match = re.search(r"stream count: (\d+)", result.stdout)
-    if not match:
-        logging.error(f"Failed to determine stream count.")
-        return
-    stream_count = int(match.group(1))
+    # Setup.
+    header, progs = parsed_vab
 
     # Run through samples.
-    logging.info(f"{stream_count} samples found.")
-    for i in range(1, stream_count):
+    logging.info(f"{header.vag_count} samples found.")
+    for i in range(1, header.vag_count + 1):
         logging.info(f"Extracting sample {i}...")
 
         # Run conversion command.
         wav_file = output_folder / vab_file.stem / SAMPLES_FOLDER / f"{VAG_PREFIX}{i:03}{WAV_EXT}"
-        command = [
+        command  = [
             vgmstream_exe.resolve(),
             "-s", str(i),
             "-l", "1.0",
@@ -201,50 +191,13 @@ def _extract_vab_samples_to_wav(vgmstream_exe: Path, output_folder: Path, vab_fi
         if result.returncode != 0:
             logging.error(f"Failed to extract sample {i}.")
 
-def _parse_vab(vab_file: Path):
-    """
-    Parse a `VAB` file into a readable header and programs.
-    
-    :param vab_file: Source `VAB` file to process.
-    :return: A parsedd `VAB` header and programs.
-    """
-    logging.info(f"Parsing `{vab_file.name}`...")
-
-    with vab_file.open("rb") as _file:
-        header_data     = _file.read(32)
-        header_unpacked = struct.unpack('<4sIIIHHHHBBBBI', header_data)
-        header          = VabHeader(*header_unpacked)
-
-        if header.magic != b'pBAV':
-            logging.error("Invalid `VAB`.")
-            return None
-
-        # 128 fixed programs.
-        programs = []
-        for _ in range(128):
-            prog_data     = _file.read(16)
-            prog_unpacked = struct.unpack('<BBBBBBHII', prog_data)
-            prog          = ProgramAttr(*prog_unpacked, tones=[])
-            programs.append(prog)
-
-        # 16 tones per program.
-        for i in range(header.prog_count):
-            for j in range(16):
-                tone_data = _file.read(32)
-
-                if programs[i].tone_count > 0 and j < programs[i].tone_count:
-                    tone_unpacked = struct.unpack('<BBBBBBBBBBBBBBBBHHhh8s', tone_data)
-                    tone          = ToneAttr(*tone_unpacked[:-1])
-                    programs[i].tones.append(tone)
-
-        return header, programs
-
-def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
+def _build_sfz_from_vab(output_folder: Path, vab_file: Path, parsed_vab: tuple[VabHeader, list]):
     """
     Build an `SFZ` from a `VAB`.
 
     :param output_folder: Directory where the `SFZ` will be saved.
     :param vab_file: Source `VAB` to convert.
+    :param parsed_vab: Parsed `VAB` header and program data.
     """
     def get_wav_loop_points(wav_file: Path):
         """
@@ -283,11 +236,7 @@ def _build_sfz_from_vab(output_folder: Path, vab_file: Path):
 
     logging.info(f"Building `SFZ` from `{vab_file.name}`...")
 
-    parsed_vab = _parse_vab(vab_file)
-    if not parsed_vab:
-        logging.error(f"Parsing failed.")
-        return
-
+    # Setup.
     header, progs = parsed_vab
     sfz_file      = output_folder / vab_file.stem / f"{vab_file.stem}{SFZ_EXT}"
 
@@ -374,6 +323,44 @@ def _convert_sfz_to_sf2(convert_sound_bank_py: Path, output_folder: Path, sfz_fi
     if result.returncode != 0:
         logging.error(f"Conversion failed.")
 
+def _parse_vab(vab_file: Path):
+    """
+    Parse a `VAB` file into a readable header and programs.
+    
+    :param vab_file: Source `VAB` file to process.
+    :return: A parsedd `VAB` header and programs.
+    """
+    logging.info(f"Parsing `{vab_file.name}`...")
+
+    with vab_file.open("rb") as _file:
+        header_data     = _file.read(32)
+        header_unpacked = struct.unpack('<4sIIIHHHHBBBBI', header_data)
+        header          = VabHeader(*header_unpacked)
+
+        if header.magic != b'pBAV':
+            logging.error("Invalid `VAB`.")
+            return None
+
+        # 128 fixed programs.
+        programs = []
+        for _ in range(128):
+            prog_data     = _file.read(16)
+            prog_unpacked = struct.unpack('<BBBBBBHII', prog_data)
+            prog          = ProgramAttr(*prog_unpacked, tones=[])
+            programs.append(prog)
+
+        # 16 tones per program.
+        for i in range(header.prog_count):
+            for j in range(16):
+                tone_data = _file.read(32)
+
+                if programs[i].tone_count > 0 and j < programs[i].tone_count:
+                    tone_unpacked = struct.unpack('<BBBBBBBBBBBBBBBBHHhh8s', tone_data)
+                    tone          = ToneAttr(*tone_unpacked[:-1])
+                    programs[i].tones.append(tone)
+
+        return header, programs
+
 def main():
     try:
         # Setup.
@@ -396,12 +383,16 @@ def main():
             subfolder = args.outputFolder / args.vabFile.stem / SAMPLES_FOLDER
             subfolder.mkdir(parents=True, exist_ok=True)
 
-            _extract_vab_samples_to_wav(args.vgmstreamExe, args.outputFolder, args.vabFile)
-            _build_sfz_from_vab(args.outputFolder, args.vabFile)
+            parsed_vab = _parse_vab(args.vabFile)
+            if parsed_vab:
+                _extract_vab_samples_to_wav(args.vgmstreamExe, args.outputFolder, args.vabFile, parsed_vab)
+                _build_sfz_from_vab(args.outputFolder, args.vabFile, parsed_vab)
 
-            sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}{SFZ_EXT}"
-            if args.convertSoundBankPy and sfz_file.exists():
-                _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
+                sfz_file = args.outputFolder / args.vabFile.stem / f"{args.vabFile.stem}{SFZ_EXT}"
+                if args.convertSoundBankPy and sfz_file.exists():
+                    _convert_sfz_to_sf2(args.convertSoundBankPy, args.outputFolder, sfz_file)
+            else:
+                logging.error(f"Failed to parse `{args.vabFile.name}`.")
     except Exception as ex:
         logging.error(f"{ex}")
         sys.exit(1)
