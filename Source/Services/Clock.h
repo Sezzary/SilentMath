@@ -72,6 +72,20 @@ namespace Silent::Services
          * Used to avoid busy-waiting in the main loop if a logic iteration has finished early.
          */
         void WaitForNextTick() const;
+
+    private:
+        // ========
+        // Helpers
+        // ========
+
+        /** @brief Gets the current system uptime in microseconds.
+         * This utilizes the high-resolution performance counter to provide a precise microsecond timestamp since the
+         * start of the application.
+         *
+         * @return Current uptime in microseconds.
+         */
+        uint64 GetUptimeMicroseconds() const;
+
     };
 
     /** @brief Converts seconds to ticks.

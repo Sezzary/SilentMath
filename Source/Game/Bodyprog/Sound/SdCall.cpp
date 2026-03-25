@@ -427,13 +427,13 @@ namespace Silent::Game
         {
             g_Sd_VabPlayingInfo.toneIdx_6 = g_Vab_InfoTable[audioIdx].audioVabIdx_0;
             SdUtKeyOnV(23, g_Sd_VabPlayingInfo.typeIdx_2, g_Sd_VabPlayingInfo.progIdx_4, g_Sd_VabPlayingInfo.toneIdx_6, g_Sd_VabPlayingInfo.noteIdx_8, 120,
-                    Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeLeft_C), Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeRight_E));
+                       Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeLeft_C), Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeRight_E));
             g_Sd_VabPlayingInfo.audioVabIdx_0 = 23;
         }
         else
         {
             g_Sd_VabPlayingInfo.audioVabIdx_0 = SdVoKeyOn(g_Vab_InfoTable[audioIdx].vab_progIdx_2, g_Sd_VabPlayingInfo.noteIdx_8 * 0x100,
-                                                        Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeLeft_C), Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeRight_E));
+                                                          Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeLeft_C), Sd_GetVolSe(g_Sd_VabPlayingInfo.volumeRight_E));
         }
 
         for (i = 0; i < ARRAY_SIZE(g_AudioPlayingIdxList); i++)

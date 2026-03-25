@@ -10,7 +10,8 @@ namespace Silent::Audio
         // Fields
         // =======
 
-        SDL_AudioStream* _stream = nullptr;
+        SDL_AudioDeviceID _device = 0;
+        SDL_AudioStream*  _stream = nullptr;
 
     public:
         // =============

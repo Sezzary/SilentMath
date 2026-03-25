@@ -9,7 +9,7 @@ namespace Silent::Services
 {
     float ClockManager::GetDeltaTime() const
     {
-        uint64 uptimeDur  = SDL_GetPerformanceCounter();
+        uint64 uptimeDur  = GetUptimeMicroseconds();
         uint64 elapsedDur = uptimeDur - _prevUptimeDuration;
         return std::min((float)elapsedDur / 1000000.0f, ((float)TICKS_PER_SECOND / 6.0f) / (float)TICKS_PER_SECOND);
     }
@@ -37,12 +37,12 @@ namespace Silent::Services
     void ClockManager::Initialize()
     {
         _ticks              = 0;
-        _prevUptimeDuration = 0;
+        _prevUptimeDuration = GetUptimeMicroseconds();
     }
 
     void ClockManager::Update()
     {
-        uint64 uptimeDur  = SDL_GetPerformanceCounter();
+        uint64 uptimeDur  = GetUptimeMicroseconds();
         uint64 elapsedDur = uptimeDur - _prevUptimeDuration;
 
         // Calculate ticks for elapsed period.
@@ -51,21 +51,26 @@ namespace Silent::Services
         // Set previous uptime if new ticks accumulated.
         if (_ticks != 0)
         {
-            _prevUptimeDuration = uptimeDur;
+            _prevUptimeDuration += _ticks * TICK_INTERVAL_DURATION;
         }
     }
 
     void ClockManager::WaitForNextTick() const
     {
-        uint64 uptimeDur  = SDL_GetPerformanceCounter();
+        uint64 uptimeDur  = GetUptimeMicroseconds();
         uint64 elapsedDur = uptimeDur - _prevUptimeDuration;
 
         // Sleep current thread for remaining time before next tick.
-        uint64 remainingDur = TICK_INTERVAL_DURATION - (elapsedDur % TICK_INTERVAL_DURATION);
-        if (remainingDur > 0 && remainingDur < TICK_INTERVAL_DURATION)
+        if (elapsedDur < TICK_INTERVAL_DURATION)
         {
+            uint64 remainingDur = TICK_INTERVAL_DURATION - elapsedDur;
             std::this_thread::sleep_for(std::chrono::microseconds(remainingDur));
         }
+    }
+
+    uint64 ClockManager::GetUptimeMicroseconds() const
+    {
+        return (SDL_GetPerformanceCounter() * 1000000) / SDL_GetPerformanceFrequency();
     }
 
     std::string GetCurrentDateString()
