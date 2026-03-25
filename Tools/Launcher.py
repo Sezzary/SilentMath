@@ -408,10 +408,10 @@ def main():
             if rom_path:
                 label.configure(text=f"Path: ...{rom_path[-30:]}")
 
-                #_dump_rom(rom_path)
-                #_extract_assets("SLUS_007.07") # @todo Dehardcode executable.
-                #_convert_audio_and_video()
-                _convert_tracks()
+                _dump_rom(rom_path)
+                _extract_assets("SLUS_007.07") # @todo Dehardcode executable.
+                _convert_audio_and_video()
+                #_convert_tracks()
 
         button = customtkinter.CTkButton(root, text="Browse Files", command=handle_click)
         button.pack(expand=True)

@@ -6,7 +6,7 @@
 
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
-//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
 
@@ -125,7 +125,7 @@ namespace Silent::Game
 
                                 if (g_SysWork.sysFlags_22A0 & SysFlag_5)
                                 {
-                                    //SD_Call(19);
+                                    SD_Call(19);
                                 }
                                 break;
                             }
@@ -193,7 +193,7 @@ namespace Silent::Game
 
                         if (g_SysWork.sysFlags_22A0 & SysFlag_5)
                         {
-                            //SD_Call(19);
+                            SD_Call(19);
                         }
 
                         D_800BCD74 = 1;

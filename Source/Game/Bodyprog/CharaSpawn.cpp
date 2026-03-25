@@ -5,7 +5,7 @@
 
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 //#include "Game/Bodyprog/item_screens.h"
-//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game

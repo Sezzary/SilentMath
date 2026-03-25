@@ -10,6 +10,7 @@ extern "C"
 
     #include <libetc.h>
     #include <libsnd.h>
+    #include <libspu.h>
 }
 
 /** @brief Model primitive material flags. */

@@ -4,12 +4,10 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
-//#include "bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 
 namespace Silent::Game
 {
-    s32 g_RadioPitchState = 0;
-
     void func_80037154(void) // 0x80037154
     {
         s32 i;

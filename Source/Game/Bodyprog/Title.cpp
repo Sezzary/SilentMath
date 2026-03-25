@@ -9,6 +9,7 @@
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
@@ -16,7 +17,6 @@
 #include "Game/Screens/Stream/Stream.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
-//#include "bodyprog/sound_system.h"
 
 using namespace Silent::Input;
 using namespace Silent::Renderer;
@@ -137,7 +137,7 @@ namespace Silent::Game
                 if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f),
                     input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
-                    //SD_Call(Sfx_MenuMove);
+                    SD_Call(Sfx_MenuMove);
                     g_GameWork.gameState_594 = GameState_MainMenu;
 
                     if (g_GameWork.gameStateStep_598[0] != 1)
@@ -176,11 +176,11 @@ namespace Silent::Game
 
                     if (g_MainMenu_SelectedEntry < (u32)MainMenuEntry_Start) // TODO: Odd cast.
                     {
-                        //SD_Call(Sfx_MenuStartGame);
+                        SD_Call(Sfx_MenuStartGame);
                     }
                     else
                     {
-                        //SD_Call(Sfx_MenuConfirm);
+                        SD_Call(Sfx_MenuConfirm);
                     }
 
                     switch (g_MainMenu_SelectedEntry)
@@ -277,7 +277,7 @@ namespace Silent::Game
                 if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f) ||
                     input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
-                    //SD_Call(Sfx_MenuMove);
+                    SD_Call(Sfx_MenuMove);
                 }
 
                 // Select game difficulty.
@@ -290,7 +290,7 @@ namespace Silent::Game
 
                     //GameFs_MapLoad(MapOverlayId_MAP0_S00);
                     //GameFs_StreamBinLoad();
-                    //SD_Call(Sfx_MenuStartGame);
+                    SD_Call(Sfx_MenuStartGame);
 
                     ScreenFade_Start(true, false, false);
                     g_MainMenuState     = 4;
@@ -298,7 +298,7 @@ namespace Silent::Game
                 // Cancel.
                 else if (input.GetAction(In::Cancel).IsClicked())
                 {
-                    //SD_Call(Sfx_MenuCancel);
+                    SD_Call(Sfx_MenuCancel);
                     g_MainMenuState = 1;
                 }
                 break;

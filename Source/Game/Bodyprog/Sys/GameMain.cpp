@@ -11,6 +11,7 @@
 #include "Game/Bodyprog/Events/GameSysStates.h"
 #include "Game/Bodyprog/GameBoot/GameLoad.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
@@ -18,7 +19,6 @@
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/SaveLoad/SaveLoad.h"
 #include "Renderer/Renderer.h"
-//#include "bodyprog/sound_system.h"
 
 using namespace Silent::Assets;
 
@@ -91,7 +91,7 @@ namespace Silent::Game
                     vabAudioTaskId = g_BaseVabAudiosTaskId[g_GameWork.gameStateStep_598[1]];
                     if (vabAudioTaskId != 0)
                     {
-                        //SD_Call(vabAudioTaskId);
+                        SD_Call(vabAudioTaskId);
                         g_GameWork.gameStateStep_598[1]++;
                     }
                     else

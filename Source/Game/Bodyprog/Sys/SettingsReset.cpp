@@ -3,14 +3,14 @@
 #include "Game/Bodyprog/Sys/SettingsReset.h"
 
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
-//#include "bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 
 namespace Silent::Game
 {
     void Settings_ScreenAndVolUpdate() // 0x800333CC
     {
         Screen_XyPositionSet(g_GameWork.config_0.optScreenPosX_1C, g_GameWork.config_0.optScreenPosY_1D);
-        //SD_Call((g_GameWork.config_0.optSoundType_1E != 0) ? AUDIO_TYPE_MONO : AUDIO_TYPE_STEREO);
+        SD_Call((g_GameWork.config_0.optSoundType_1E != 0) ? AudioMode_Mono : AudioMode_Stereo);
         //Sd_SetVolume(OPT_SOUND_VOLUME_MAX, g_GameWork.config_0.optVolumeBgm_1F, g_GameWork.config_0.optVolumeSe_20);
     }
 

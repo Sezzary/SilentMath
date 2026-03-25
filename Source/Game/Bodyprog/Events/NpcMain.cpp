@@ -7,7 +7,7 @@
 #include "Game/Bodyprog/Demo.h"
 //#include "Game/Bodyprog/player.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
-//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game
@@ -406,7 +406,7 @@ namespace Silent::Game
             {
                 if (D_800BCDA8[l].field_1 >= 0)
                 {
-                    //SD_Call((u16)(Sfx_RadioInterferenceLoop + l));
+                    SD_Call((u16)(Sfx_RadioInterferenceLoop + l));
                 }
             }
             else

@@ -6,6 +6,7 @@
 #include "Game/Bodyprog/Events/MapMsgDisplay.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 
 namespace Silent::Game
@@ -1748,7 +1749,7 @@ namespace Silent::Game
                     (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft)))
                 {
                     g_SelectedSaveSlotIdx ^= 1;
-                    //SD_Call(Sfx_MenuMove);
+                    SD_Call(Sfx_MenuMove);
                 }
 
                 // A memory card is inserted.
@@ -1764,7 +1765,7 @@ namespace Silent::Game
                         if (g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx] != 0)
                         {
                             g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx]--;
-                            //SD_Call(Sfx_MenuMove);
+                            SD_Call(Sfx_MenuMove);
                         }
                     }
 
@@ -1774,7 +1775,7 @@ namespace Silent::Game
                         if (g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx] < g_Savegame_ElementCount0[g_SelectedSaveSlotIdx] - 1)
                         {
                             g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx]++;
-                            //SD_Call(Sfx_MenuMove);
+                            SD_Call(Sfx_MenuMove);
                         }
                     }
 
@@ -1818,7 +1819,7 @@ namespace Silent::Game
                             g_GameWork.gameStateStep_598[0] += g_SaveScreen_SaveScreenState;
                         }
 
-                        //SD_Call(Sfx_MenuConfirm);
+                        SD_Call(Sfx_MenuConfirm);
                     }
                 }
 
@@ -1829,11 +1830,11 @@ namespace Silent::Game
                     g_GameWork.gameStateStep_598[1] = 2;
                     g_GameWork.gameStateStep_598[2] = 0;
 
-                    //SD_Call(Sfx_MenuCancel);
+                    SD_Call(Sfx_MenuCancel);
 
                     if (g_GameWork.gameStatePrev_590 == GameState_InventoryScreen)
                     {
-                        //SD_Call(23);
+                        SD_Call(23);
                         //GameFs_TitleGfxLoad();
                         //GameFs_StreamBinSeek();
                     }
@@ -1851,13 +1852,13 @@ namespace Silent::Game
                 if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickLeft)
                 {
                     isSaveWriteOptionSelected = gameStateStep;
-                    //SD_Call(Sfx_MenuMove);
+                    SD_Call(Sfx_MenuMove);
                 }
 
                 if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickRight)
                 {
                     isSaveWriteOptionSelected = false;
-                    //SD_Call(Sfx_MenuMove);
+                    SD_Call(Sfx_MenuMove);
                 }
 
                 if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.enter_0)
@@ -1877,7 +1878,7 @@ namespace Silent::Game
                         g_GameWork.gameStateStep_598[0] = g_SaveScreen_IsNewSaveSelected + 2;
                     }
 
-                    //SD_Call(Sfx_MenuConfirm);
+                    SD_Call(Sfx_MenuConfirm);
                 }
 
                 // Cancel overwrite.
@@ -1885,7 +1886,7 @@ namespace Silent::Game
                 {
                     g_GameWork.gameStateStep_598[1] = 0;
                     g_GameWork.gameStateStep_598[2] = 0;
-                    //SD_Call(Sfx_MenuCancel);
+                    SD_Call(Sfx_MenuCancel);
                 }
 
                 SaveScreen_WriteOptionsDraw(g_SaveScreen_IsFormatting, isSaveWriteOptionSelected);

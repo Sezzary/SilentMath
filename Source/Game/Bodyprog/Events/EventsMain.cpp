@@ -8,8 +8,6 @@
 
 namespace Silent::Game
 {
-    s32 g_MapEventLastUsedItem = 0; // @todo Defined elsewhere in decomp.
-
     static void Event_ItemTriggersClear() // 0x80037388
     {
         s32 i;

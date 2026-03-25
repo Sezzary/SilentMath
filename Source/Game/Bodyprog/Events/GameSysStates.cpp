@@ -18,28 +18,13 @@
 #include "Game/Bodyprog/Text/TextDraw.h"
 //#include "Game/Bodyprog/player.h"
 //#include "Game/Bodyprog/ranking.h"
-//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Main/Rng.h"
 
 namespace Silent::Game
 {
     s_MapOverlayHeader g_MapOverlayHeader; // } @todo Defined elsewhere in decomp.
-    s32 g_MapEventSysState = SysState_Gameplay; // }
-    u32 g_MapEventParam;                   // }
-    s32 D_800A9A0C;                        // }
-    s8 g_PaperMapFileIdxs[] = // }
-    {
-        0, 0, 1, 1, 9, 12, 10, 11,
-        13, 12, 10, 11, 13, 2, 3, 4,
-        8, 5, 6, 7, 8, 5, 6, 7
-    };
-    s8 g_PaperMapMarkingFileIdxs[] = // }
-    {
-        255, 0, 1, 1, 1, 4, 4, 4,
-        4, 4, 4, 4, 4, 2, 2, 2,
-        3, 3, 3, 3, 3, 3, 3, 3
-    };
 
     static void (*g_SysStateFuncs[])() =
     {
@@ -290,7 +275,7 @@ namespace Silent::Game
 
         if (g_SysWork.sysStateStep_C[0] == 0)
         {
-            //SD_Call(3);
+            SD_Call(3);
             g_SysWork.sysStateStep_C[0]++;
         }
 
@@ -306,7 +291,7 @@ namespace Silent::Game
             (g_Controller0->btnsClicked_10 & ControllerFlag_L3))
         {
             D_800A9A68 = 0;
-            //SD_Call(4);
+            SD_Call(4);
             g_MapEventParam = 0;
             SysWork_StateSetNext(SysState_SaveMenu1);
             return;
@@ -315,7 +300,7 @@ namespace Silent::Game
         if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.pause_14)
         {
             D_800A9A68 = 0;
-            //SD_Call(4);
+            SD_Call(4);
             SysWork_StateSetNext(SysState_Gameplay);
         }
     }
@@ -332,7 +317,7 @@ namespace Silent::Game
             case 1:
                 //if (Ipd_ChunkInitCheck() != 0)
                 {
-                    //SD_Call(19);
+                    SD_Call(19);
                     //GameFs_OptionBinLoad();
 
                     g_SysWork.sysStateStep_C[0]++;
@@ -624,7 +609,7 @@ namespace Silent::Game
         g_SysWork.field_2283            = g_MapEventData->field_8_19;
         g_SysWork.field_2282            = g_MapEventData->flags_8_13;
 
-        //SD_Call(SfxPairs[g_SysWork.field_2283].sfx_0);
+        SD_Call(SfxPairs[g_SysWork.field_2283].sfx_0);
 
         if (g_SysWork.field_2283 == 7)
         {
@@ -682,7 +667,7 @@ namespace Silent::Game
 
     void AreaLoad_TransitionSound() // 0x80039F54
     {
-        //SD_Call(SfxPairs[g_SysWork.field_2283].sfx_2);
+        SD_Call(SfxPairs[g_SysWork.field_2283].sfx_2);
     }
 
     s8 func_80039F90() // 0x80039F90
@@ -862,7 +847,7 @@ namespace Silent::Game
     {
         g_DeltaTime = g_DeltaTimeCpy;
 
-        //SD_Call(((u16)g_MapEventParam + Sfx_Base) & 0xFFFF);
+        SD_Call(((u16)g_MapEventParam + Sfx_Base) & 0xFFFF);
 
         Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
         g_SysWork.sysState_8 = SysState_Gameplay;

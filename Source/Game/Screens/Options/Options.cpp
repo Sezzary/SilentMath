@@ -397,11 +397,11 @@ namespace Silent::Game
                     //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
 
                     // Set config.
-                    /*int audioType                           = AUDIO_TYPE_STEREO;
+                    /*int audioType                           = AudioMode_Stereo;
                     g_GameWork.config_0.optSoundType_1E = !g_GameWork.config_0.optSoundType_1E;
                     if (g_GameWork.config_0.optSoundType_1E)
                     {
-                        audioType = AUDIO_TYPE_MONO;
+                        audioType = AudioMode_Mono;
                     }
                     Sd_EngineCmd(audioType);*/
                 }

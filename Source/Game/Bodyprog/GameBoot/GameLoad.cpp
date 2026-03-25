@@ -14,7 +14,7 @@
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 //#include "Game/Bodyprog/sound_background.h"
-//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Main/Mem.h"
@@ -54,8 +54,8 @@ namespace Silent::Game
             {
                 g_SysWork.flags_22A4 &= ~SysFlag2_10;
 
-                //SD_Call(Sfx_Unk1502);
-                //SD_Call(Sfx_Unk1501);
+                SD_Call(Sfx_Unk1502);
+                SD_Call(Sfx_Unk1501);
             }
         }
     }
@@ -101,7 +101,7 @@ namespace Silent::Game
                     g_GameWork.gameStateStep_598[0] = 3;
                 }
 
-                //SD_Call(19);
+                SD_Call(19);
                 break;
 
             case 1:

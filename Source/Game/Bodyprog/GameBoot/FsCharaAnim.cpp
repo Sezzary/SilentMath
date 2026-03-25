@@ -9,7 +9,7 @@
 //#include "Game/Bodyprog/player.h"
 //#include "Game/Bodyprog/ranking.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
-//#include "Game/Bodyprog/sound_system.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Main/Mem.h"

@@ -1615,19 +1615,6 @@ namespace Silent::Game
         u8 selectedEntryIdx_1;
     } s_MapMsgSelect;
 
-    // TODO: Might just be an array of `char*`, array is in `.data` while strings inside are in `.rodata`?
-    typedef struct
-    {
-        char* field_0;               // `nullptr`
-        char* savePadName_4;         // "PAD_NEAR"
-        char* firstAidKitName_8;     // "AIDKIT_N"
-        char* healthDrinkName_C;     // "DRINK_NE"
-        char* ampouleName_10;        // "AMPULE_N"
-        char* handgunBulletsName_14; // "BULLET_N"
-        char* shotgunShellsName_18;  // "SHELL_NE"
-        char* rifleShellsName_1C;    // "SHOT_NEA"
-    } s_800A99E4;
-
     typedef struct
     {
         u8 presetIdx1_0;
@@ -2098,7 +2085,7 @@ namespace Silent::Game
     /** Relative file offset for map texture? */
     extern s8 D_800A99B5;
 
-    extern s_800A99E4 D_800A99E4;
+    extern char* D_800A99E4[8];
 
     extern s8 g_PaperMapFileIdxs[];
 
@@ -2222,7 +2209,7 @@ namespace Silent::Game
 
     extern s32 D_800A9FB4[];
 
-    extern u8 D_800AA604[][16];
+    extern u8 D_800AA604[41][16];
 
     extern u8 D_800AE185;
 
