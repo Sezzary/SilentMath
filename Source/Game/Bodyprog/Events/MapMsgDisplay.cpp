@@ -25,10 +25,10 @@ namespace Silent::Game
         constexpr int    FINISH_CUTSCENE = 0xFF;
         constexpr int    FINISH_MAP_MSG  = 0xFF;
 
-        s32  temp_s1;
-        bool hasInput;
-        s32  temp;
-        s32  var_a1;
+        s32        temp_s1;
+        bool       hasInput;
+        s32        temp;
+        s32        var_a1;
         static s32 stateMachineIdx0;
         static s32 stateMachineIdx1;
         static s32 msgDisplayLength;
