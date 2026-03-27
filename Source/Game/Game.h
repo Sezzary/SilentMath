@@ -19,12 +19,13 @@ namespace Silent::Game
     constexpr int FRAMEBUFFER_HEIGHT_INTERLACED  = FRAMEBUFFER_HEIGHT_PROGRESSIVE * 2;
     constexpr int ORDERING_TABLE_SIZE            = 2048;
 
-    constexpr int NPC_COUNT_MAX            = 6;
-    constexpr int NPC_BONE_COUNT_MAX       = 10 * NPC_COUNT_MAX;
-    constexpr int GROUP_CHARA_COUNT        = 4; /** While up to 6 NPCs and a player can exist in the game world, only 4 different character types (including the player) can be loaded at a time. */
-    constexpr int INVENTORY_ITEM_COUNT_MAX = 40;
-    constexpr int INPUT_ACTION_COUNT       = 14;
-    constexpr int CONTROLLER_COUNT_MAX     = 2;
+    constexpr int NPC_COUNT_MAX             = 6;
+    constexpr int NPC_BONE_COUNT_MAX        = 10 * NPC_COUNT_MAX;
+    constexpr int GROUP_CHARA_COUNT         = 4; /** While up to 6 NPCs and a player can exist in the game world, only 4 different character types (including the player) can be loaded at a time. */
+    constexpr int INVENTORY_ITEM_COUNT_MAX  = 40;
+    constexpr int INVENTORY_ITEM_GROUP_SIZE = 32; /** Number of `e_InventoryItemId`s per `e_InventoryItemGroup`. */
+    constexpr int INPUT_ACTION_COUNT        = 14;
+    constexpr int CONTROLLER_COUNT_MAX      = 2;
 
     constexpr int DEFAULT_PICKUP_ITEM_COUNT      = 1;
     constexpr int HANDGUN_AMMO_PICKUP_ITEM_COUNT = 15;
@@ -256,7 +257,7 @@ namespace Silent::Game
      * @param z Z cell coordinate.
      * @return Packed XZ cell coordinates.
      */
-    #define PACKED_CELL_XZ(x, z) \
+    #define CELL_XZ(x, z) \
         ((x) + ((z) << 8))
 
     #define HAS_FLAG(ptr, idx) \
@@ -267,6 +268,41 @@ namespace Silent::Game
 
     #define CLEAR_FLAG(ptr, idx) \
         ((((u32*)ptr)[(idx) >> 5] &= ~((1 << 0) << ((idx) & 0x1F))))
+
+    /** @brief Gets the `e_InventoryItemGroup` for an `e_InventoryItemId`.
+     * Divides the item ID by 32 (`INVENTORY_ITEM_GROUP_SIZE`), using a bitwise shift to match.
+     *
+     * @param itemId Item ID to process.
+     * @return Inventory item group.
+     */
+    #define INVENTORY_ITEM_GROUP(itemId) \
+        ((itemId) >> 5)
+
+    /** @brief Gets the index of an `e_InventoryItemId` inside the group it belongs to.
+     * Modulos the item ID by 32 (`INVENTORY_ITEM_GROUP_SIZE`), using AND to match.
+     * E.g. `itemId` 65 would be index 1, group 2.
+     *
+     * @param itemId Item ID to process.
+     * @return Inventory item group.
+     */
+    #define INVENTORY_ITEM_GROUP_ID(itemId) \
+        ((itemId) & 0x1F)
+
+    /** @brief Gets the `e_InventoryItemId` of the ammo for a given weapon item.
+     *
+     * @param itemId Weapon item ID to process.
+     * @return Inventory item group.
+     */
+    #define INVENTORY_WEAPON_AMMO_ID(weaponId) \
+        ((weaponId) + INVENTORY_ITEM_GROUP_SIZE)
+
+    /** @brief Gets the `e_InventoryItemId` of the weapon for a given ammo item.
+     *
+     * @param ammoId Ammo ID to process.
+     * @return Inventory item group.
+     */
+    #define INVENTORY_AMMO_WEAPON_ID(ammoId) \
+        ((ammoId) - INVENTORY_ITEM_GROUP_SIZE)
 
     /** @brief Sync modes used by `DrawSync` and `VSync`. */
     enum e_SyncMode
@@ -602,15 +638,32 @@ namespace Silent::Game
         InventoryCmdId_Unk11         = 11 // Flashlight in daytime?
     };
 
+    /** @brief Inventory item groups. Every 32nd item ID is treated as a separate group by some code. */
+    typedef enum _InventoryItemGroup
+    {
+        InventoryItemGroup_None          = 0,
+        InventoryItemGroup_HealthItems   = 1,
+        InventoryItemGroup_Keys          = 2,
+        InventoryItemGroup_PuzzleItems   = 3,
+        InventoryItemGroup_MeleeWeapons  = 4,
+        InventoryItemGroup_GunWeapons    = 5,
+        InventoryItemGroup_GunAmmo       = 6,
+        InventoryItemGroup_PortableItems = 7
+    } e_InventoryItemGroup;
+
+    /** @brief Inventory item IDs. */
     enum e_InventoryItemId
     {
+        // Group 0 (None)
         InventoryItemId_Empty                 = NO_VALUE,
         InventoryItemId_Unequipped            = 0,
 
+        // Group 1 (Health Items)
         InventoryItemId_HealthDrink           = 32,
         InventoryItemId_FirstAidKit           = 33,
         InventoryItemId_Ampoule               = 34,
 
+        // Group 2 (Keys)
         InventoryItemId_LobbyKey              = 64,
         InventoryItemId_HouseKey              = 65,
         InventoryItemId_KeyOfLion             = 66,
@@ -637,6 +690,7 @@ namespace Silent::Game
         InventoryItemId_SewerExitKey          = 87,
         InventoryItemId_ChannelingStone       = 88,
 
+        // Group 3 (Puzzle Items)
         InventoryItemId_Chemical              = 96,
         InventoryItemId_GoldMedallion         = 97,
         InventoryItemId_SilverMedallion       = 98,
@@ -670,6 +724,7 @@ namespace Silent::Game
         InventoryItemId_DaggerOfMelchior      = 126,
         InventoryItemId_DiskOfOuroboros       = 127,
 
+        // Group 4 (Melee Weapons)
         InventoryItemId_KitchenKnife          = 128,
         InventoryItemId_SteelPipe             = 129,
         InventoryItemId_RockDrill             = 130,
@@ -679,6 +734,7 @@ namespace Silent::Game
         InventoryItemId_Katana                = 134,
         InventoryItemId_Axe                   = 135,
 
+        // Group 5 (Guns)
         InventoryItemId_Handgun               = 160,
         InventoryItemId_HuntingRifle          = 161,
         InventoryItemId_Shotgun               = 162,
@@ -691,10 +747,12 @@ namespace Silent::Game
         InventoryItemId_CutsceneBaby          = 168,
         InventoryItemId_CutsceneBloodPack     = 169,
 
+        // Group 6 (Gun Ammo)
         InventoryItemId_HandgunBullets        = 192,
         InventoryItemId_RifleShells           = 193,
         InventoryItemId_ShotgunShells         = 194,
 
+        // Group 7 (Portable Items)
         InventoryItemId_Flashlight            = 224,
         InventoryItemId_PocketRadio           = 225,
         InventoryItemId_GasolineTank          = 226
@@ -733,20 +791,37 @@ namespace Silent::Game
         EquippedWeaponId_Chainsaw       = 5,
         EquippedWeaponId_Katana         = 6,
         EquippedWeaponId_Axe            = 7,
-        EquippedWeaponId_Unk8           = 8,
-        EquippedWeaponId_Unk9           = 9,
+        EquippedWeaponId_Kick           = 8,
+        EquippedWeaponId_Stomp          = 9,
 
-        EquippedWeaponId_Unk31          = 31,
+        EquippedWeaponId_Unk31          = 31, // Larval Stalker attack.
         EquippedWeaponId_Handgun        = 32,
         EquippedWeaponId_HuntingRifle   = 33,
         EquippedWeaponId_Shotgun        = 34,
         EquippedWeaponId_HyperBlaster   = 35,
 
-        EquippedWeaponId_Unk37          = 37,
+        EquippedWeaponId_Unk37          = 37, // Split Head attack.
 
-        EquippedWeaponId_HandgunBullets = 64,
-        EquippedWeaponId_RifleShells    = 65,
-        EquippedWeaponId_ShotgunShells  = 66,
+        EquippedWeaponId_Unk44          = 44, // } Hanged Scratcher attack.
+        EquippedWeaponId_Unk45          = 45, // }
+
+        EquippedWeaponId_Unk48          = 48, // } Stalker attack.
+        EquippedWeaponId_Unk49          = 49, // }
+
+        EquippedWeaponId_Unk56          = 56, // Puppet Nurse attack.
+
+        EquippedWeaponId_Unk59          = 59, // Float Stinger attack.
+
+        EquippedWeaponId_Unk61          = 61, // Twinfeeler attack.
+
+        EquippedWeaponId_Unk63          = 63, // Cybil or Monster Cybil attack.
+
+        EquippedWeaponId_HandgunBullets = 64, // Monster Cybil attack?
+        EquippedWeaponId_RifleShells    = 65, // Monster Cybil attack?
+        EquippedWeaponId_ShotgunShells  = 66, // Monster Cybil attack?
+
+        EquippedWeaponId_Unk69          = 69, // Bloodsucker attack.
+        EquippedWeaponId_Unk70          = 70, // Kaufmann attack on Dahlia?
 
         EquippedWeaponId_Flashlight     = 96,
         EquippedWeaponId_PocketRadio    = 97,
