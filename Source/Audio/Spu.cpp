@@ -1,8 +1,8 @@
 #include "Framework.h"
 #include "Psx.h"
-#include "Game/Compatibility/Spu.h"
+#include "Audio/Spu.h"
 
-namespace Silent::Game
+namespace Silent::Audio
 {
     // @todo Create temporary compatibility layer.
     //uint SpuGetReverbVoice();

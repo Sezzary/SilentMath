@@ -95,12 +95,6 @@ git clone --recursive https://github.com/Sezzary/SilentEngine
 git submodule update --init --recursive
 ```
 
-Build the FluidSynth dependency locally.
-```
-cd Libraries/fluidsynth && mkdir build && cd build && cmake .. && cd ../../..
-
-```
-
 Build the LuaJIT dependency locally.
 ```
 cd Libraries/LuaJIT && make && cd ../..

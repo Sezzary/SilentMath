@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.28.3)
 # @todo
 # - Modules don't work.
 # - Assimp doesn't work.
+# - If FluidSynth ever gets used, add this to build steps in the `README.md`:
+# Build the FluidSynth dependency locally.
+# ```
+# cd Libraries/fluidsynth && mkdir build && cd build && cmake .. && cd ../../..
+# 
+# ```
 
 # ==============
 # Project Setup
@@ -103,7 +109,7 @@ file(GLOB LIB_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/*.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdl3.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends/imgui_impl_sdlgpu3.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo/*.cpp"
+    #"${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo/*.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Libraries/smol-atlas/src/*.cpp"
 )
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${LIB_SOURCES})
@@ -119,7 +125,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add library directories.
 #add_subdirectory(Libraries/assimp)
-add_subdirectory(Libraries/fluidsynth)
+#add_subdirectory(Libraries/fluidsynth)
 add_subdirectory(Libraries/freetype)
 add_subdirectory(Libraries/glm)
 add_subdirectory(Libraries/json)
@@ -133,13 +139,13 @@ add_subdirectory(Libraries/yalantinglibs)
 # Add library header paths.
 target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/build/include
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/include
+    #${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/build/include
+    #${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/freetype/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/glm
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/imgui/backends
-    ${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo
+    #${CMAKE_CURRENT_LIST_DIR}/Libraries/ImGuizmo
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/json/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/LuaJIT/src
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/pl_mpeg
@@ -163,7 +169,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE __psyz)
 # Add libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     #assimp
-    libfluidsynth
+    #libfluidsynth
     freetype
     glm
     luajit

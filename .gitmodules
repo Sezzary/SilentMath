@@ -1,10 +1,10 @@
-[submodule "Libraries/assimp"]
-    path = Libraries/assimp
-    url = https://github.com/assimp/assimp.git
+#[submodule "Libraries/assimp"]
+#    path = Libraries/assimp
+#    url = https://github.com/assimp/assimp.git
 
-[submodule "Libraries/fluidsynth"]
-    path = Libraries/fluidsynth
-    url = https://github.com/fluidsynth/fluidsynth.git
+#[submodule "Libraries/fluidsynth"]
+#    path = Libraries/fluidsynth
+#    url = https://github.com/fluidsynth/fluidsynth.git
 
 [submodule "Libraries/freetype"]
     path = Libraries/freetype
@@ -18,9 +18,9 @@
     path = Libraries/imgui
     url = https://github.com/ocornut/imgui.git
 
-[submodule "Libraries/ImGuizmo"]
-    path = Libraries/ImGuizmo
-    url = https://github.com/CedricGuillemet/ImGuizmo.git
+#[submodule "Libraries/ImGuizmo"]
+#    path = Libraries/ImGuizmo
+#    url = https://github.com/CedricGuillemet/ImGuizmo.git
 
 [submodule "Libraries/json"]
     path = Libraries/json
@@ -37,10 +37,6 @@
 [submodule "Libraries/psyz"]
     path = Libraries/psyz
     url = https://github.com/Xeeynamo/psyz.git
-
-[submodule "Libraries/rectpack2D"]
-    path = Libraries/rectpack2D
-    url = https://github.com/TeamHypersomnia/rectpack2D.git
 
 [submodule "Libraries/SDL"]
     path = Libraries/SDL
