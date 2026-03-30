@@ -2,6 +2,7 @@
 #include "Audio/Audio.h"
 
 #include "Application.h"
+#include "Audio/Spu.h"
 #include "Utils/Video.h"
 
 using namespace Silent::Utils;
@@ -11,16 +12,16 @@ namespace Silent::Audio
     constexpr int SAMPLE_RATE    = 44100;
     constexpr int BUFFER_SAMPLES = 4096;
 
-    struct Voice
+    struct VoiceTest
     {
-        float phase;
-        float frequency;
-        float volumeLeft;
-        float volumeRight;
-        bool  active;
+        float phase = 0.0f;
+        float frequency = 0.0f;
+        float volumeLeft = 0.0f;
+        float volumeRight = 0.0f;
+        bool  active = false;
     };
 
-    static Voice voice;
+    static VoiceTest voice;
 
     void GenerateSamples(int16* buffer, int sampleCount)
     {
@@ -76,11 +77,18 @@ namespace Silent::Audio
         auto destSpec = SDL_AudioSpec{};
         SDL_GetAudioDeviceFormat(_device, &destSpec, nullptr);
 
-        auto srcSpec = SDL_AudioSpec{ SDL_AUDIO_F32, 2, SAMPLE_RATE };
-        _stream      = SDL_CreateAudioStream(&destSpec, &destSpec);
+        auto srcSpec = SDL_AudioSpec
+        {
+            .format   = SDL_AUDIO_F32,
+            .channels = 2,
+            .freq     = SAMPLE_RATE
+        };
+        _stream = SDL_CreateAudioStream(&destSpec, &destSpec);
 
         SDL_BindAudioStream(_device, _stream);
         SDL_ResumeAudioDevice(_device);
+
+        _spu.Initialize();
 
         // Init fake voice.
         voice.phase = 0.0f;

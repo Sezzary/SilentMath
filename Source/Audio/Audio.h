@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Audio/Spu.h"
+
 namespace Silent::Audio
 {
     /** @brief Audio manager. */
@@ -12,6 +14,7 @@ namespace Silent::Audio
 
         SDL_AudioDeviceID _device = 0;
         SDL_AudioStream*  _stream = nullptr;
+        VirtualSpu        _spu    = VirtualSpu();
 
     public:
         // =============
