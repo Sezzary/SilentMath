@@ -23,7 +23,7 @@ namespace Silent::Game
     struct s_800C38B0
     {
         s8 field_0;
-        s8 positionIdx_1;
+        u8 positionIdx_1;
     };
 
     extern s_800C38B0 D_800C38B0;
