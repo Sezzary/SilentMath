@@ -2,8 +2,7 @@
 
 namespace Silent::Game
 {
-    /**
-     * libsd: konami-customized version of libsnd?
+    /** libsd: konami-customized version of libsnd?
      * Majority of the functions work like the libsnd Ss versions.
      * libref.pdf v4.4 may be useful, though was likely based on an earlier SDK.
      */
@@ -272,23 +271,20 @@ namespace Silent::Game
         s32 size_4;
     } SD_SPU_ALLOC;
 
-    // smf_snd.c BSS
+    // `SmfSnd.cpp` BSS
     extern VAB_H        vab_h[SD_VAB_SLOTS];
     extern u8           sd_vb_malloc_rec[136];
     extern s16          sd_seq_loop_mode;
-    extern s16          pad_bss_800C7662;
     extern s32          sd_tick_mode;
     extern SD_SPU_ALLOC sd_spu_alloc[SD_ALLOC_SLOTS];
 
-    // smf_io.c BSS
-    extern s32  pad_bss_800C7730[2];
+    // `SmfIo.cpp` BSS
     extern MIDI smf_midi[2 * 16];   // 2 devices with 16 channels each?
     extern MIDI smf_midi_sound_off; // Set by `sound_off`, could be `smf_midi[32]`, but game doesn't use offsets for `[32]`?
-    extern s32  pad_bss_800C8314;
     extern PORT smf_port[24];
     extern s32  sd_timer_event;
 
-    // smf_mid.c BSS
+    // `SmfMid.cpp` BSS
     extern SMF_SONG smf_song[2];
 
     extern s32  sd_reverb_area_size[10];
@@ -311,7 +307,7 @@ namespace Silent::Game
         return &smf_port[voice];
     }
 
-    // smf_snd.c
+    // `SmfSnd.cpp`
 
     void tone_adsr_mem(s16 vab_id);
     void tone_adsr_back(s16 vab_id);
@@ -404,7 +400,7 @@ namespace Silent::Game
     void SsSetSerialVol(char s_num, s16 voll, s16 volr);
     void SsUtAllKeyOff(s16 mode);
 
-    // smf_io.c
+    // `SmfIo.cpp`
 
     void set_note_on(s16 arg0, u8 arg1, u8 arg2, s16 arg3, s16 arg4);
     void set_midi_info(s32 type, u8 midiChannel, u32 value); /** type = `SMF_MIDI_STAT` */
@@ -441,7 +437,7 @@ namespace Silent::Game
 
     void control_code_set(s32 seq_access_num);
 
-    // smf_main.c
+    // `SmfMain.cpp`
 
     bool smf_timer(void);
     void smf_timer_set(void);
@@ -449,7 +445,7 @@ namespace Silent::Game
     void smf_timer_stop(void);
     void smf_vsync(void);
 
-    // smf_mid.c
+    // `SmfMid.cpp`
 
     s32 MemCmp(u8* src, u8* des, u32 num);
     u32 readMThd(u32 loc);
@@ -458,7 +454,7 @@ namespace Silent::Game
     u32 egetc(SMF* p);
     u32 readvarinum(SMF* p);
 
-    // `to32bit`/`to16bit`/`len_add` only seem used inside `smf_mid.c`, can probably be removed from header.
+    // `to32bit`/`to16bit`/`len_add` only seem used inside `SmfMid.cpp`, can probably be removed from header.
     u32  to32bit(u8 c1, u8 c2, u8 c3, u8 c4);
     u32  to16bit(u8 c1, u8 c2);
     u32  read32bit(SMF* p);

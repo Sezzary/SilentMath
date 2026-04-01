@@ -22,14 +22,14 @@ namespace Silent::Game
         ((audioType << 8) + progIdx)
 
     /** @brief Audio modes. */
-    typedef enum _AudioMode
+    enum e_AudioMode
     {
         AudioMode_Mono   = 1,
         AudioMode_Stereo = 2
-    } e_AudioMode;
+    };
 
     /** @brief Audio types. */
-    typedef enum _AudioType
+    enum e_AudioType
     {
         AudioType_MusicKey      = 0,
         AudioType_BaseAudio     = 0,
@@ -37,14 +37,14 @@ namespace Silent::Game
         AudioType_Ambient       = 2,
         AudioType_SpecialScreen = 2,
         AudioType_MusicBank     = 3
-    } e_AudioType;
+    };
 
-    /** @brief VAB audio load states. */
-    typedef enum _AudioLoadState
+    /** @brief VAB audio and KDT sequence load states. */
+    enum e_AudioLoadState
     {
         AudioLoadState_Reset     = 0,
         AudioLoadState_Stop      = 1,
-        AudioLoadState_OffSet    = 2,
+        AudioLoadState_SetOff    = 2,
         AudioLoadState_LoadFile  = 3,
         AudioLoadState_CheckLoad = 4,
         AudioLoadState_Move      = 5,
@@ -52,7 +52,29 @@ namespace Silent::Game
         AudioLoadState_MoveNext  = 7,
         AudioLoadState_MoveLast  = 8,
         AudioLoadState_Finalize  = 9
-    } e_AudioLoadState;
+    };
+
+    /** @brief XA load states. */
+    enum e_XaLoadState
+    {
+        XaLoadState_Initialize    = 0,
+        XaLoadState_SetMode       = 1,
+        XaLoadState_PrepareFilter = 2,
+        XaLoadState_SetFilter     = 3,
+        XaLoadState_CalculateLba  = 4,
+        XaLoadState_Seek          = 5,
+        XaLoadState_StartRead     = 6,
+        XaLoadState_EnableAudio   = 7
+    };
+
+    /** @brief XA stop states. */
+    enum e_XaStopState
+    {
+        XaStopState_FadeOut   = 0,
+        XaStopState_Mute      = 1,
+        XaStopState_PauseDisc = 2,
+        XaStopState_Cleanup   = 3
+    };
 
     // Used for loading XA files. `field_0` holds commands for `Sd_CdPrimitiveCmdTry`
     typedef struct
@@ -94,10 +116,10 @@ namespace Silent::Game
 
     typedef struct
     {
-        u8 audioLoadState_0; /** Load VAB audio and KDT music key notes state. */
-        u8 xaLoadState_1;    /** Load XA audio state. */
-        u8 xaStopState_2;    /** Stop XA audio streaming state. */
-        u8 xaPreLoadState_3; /** Prepare Load XA audio state. Positions the current read point to the one where the XA audio to load resides. */
+        u8 audioLoadState_0; /** `e_AudioLoadState` */
+        u8 xaLoadState_1;    /** `e_XaLoadState` */
+        u8 xaStopState_2;    /**  `e_XaStopState` */
+        u8 xaPreLoadState_3; /** Prepare Load XA audio state. Positions the current read point to one where the XA audio to load resides. */
     } s_AudioStreamingStates;
 
     // Game audio channels volume configuration struct.

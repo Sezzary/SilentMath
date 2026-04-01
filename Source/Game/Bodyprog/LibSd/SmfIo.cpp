@@ -10,10 +10,8 @@ namespace Silent::Game
     extern SpuVoiceAttr s_attr; // @hack BSS
 
     SpuVoiceAttr s_attr;
-    s32  pad_bss_800C7730[2];
     MIDI smf_midi[2 * 16];
     MIDI smf_midi_sound_off;
-    s32  pad_bss_800C8314;
     PORT smf_port[24];
     s32  sd_timer_event;
 

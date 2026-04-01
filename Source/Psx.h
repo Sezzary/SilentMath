@@ -8,6 +8,7 @@ extern "C"
     #include <libgpu.h>
     #include <libgs.h>
 
+    #include <libcd.h>
     #include <libetc.h>
     #include <libsnd.h>
     #include <libspu.h>
@@ -48,3 +49,9 @@ enum PrimRectFlags
     RECT_BLEND    = 1 << 1,              /** Semi-transparency flag. */
     RECT_MODULATE = 1 << 0               /** Use primitive color to modulate texture. */
 };
+
+/** @brief LBA Integer to BCD. */
+constexpr int itob(int i)
+{
+    return ((i / 10) * 16) + (i % 10);
+}
