@@ -27,9 +27,9 @@ namespace Silent::Renderer
         {
             int DrawCallCount = 0;
 
-            std::vector<Primitive2d>           Primitives2d      = {};
-            std::vector<Primitive3d>           Primitives3d      = {};
-            std::vector<std::function<void()>> DebugGuiDrawCalls = {};
+            std::vector<Primitive2d>           ImmediatePrimitives2d = {};
+            std::vector<Primitive3d>           ImmediatePrimitives3d = {};
+            std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
 
             std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
             std::vector<std::string> TextureReleaseQueue = {}; /** Asset names. */

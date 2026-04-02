@@ -36,9 +36,9 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        VertexBuffer<BufferVertex2d> ViewportVertices = {};
-        VertexBuffer<BufferVertex2d> Vertices2d       = {};
-        VertexBuffer<BufferVertex3d> Vertices3d       = {};
+        VertexBuffer<BufferVertex2d> ViewportVertices    = {};
+        VertexBuffer<BufferVertex2d> ImmediateVertices2d = {};
+        VertexBuffer<BufferVertex3d> ImmediateVertices3d = {};
     };
 
     /** @brief SDL_gpu renderer backend. */
@@ -135,7 +135,7 @@ namespace Silent::Renderer::SdlGpu
          *
          * @param copyPass GPU copy pass.
          */
-        void CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass);
+        void CopyImmediatePrimitives2d(SDL_GPUCopyPass& copyPass);
 
         /** @brief Converts render buffer data to 3D triangle GPU buffer data and uploads it to the GPU.
          *
@@ -143,7 +143,7 @@ namespace Silent::Renderer::SdlGpu
          *
          * @param copyPass GPU copy pass.
          */
-        void CopyGpuPrimitives3d(SDL_GPUCopyPass& copyPass);
+        void CopyImmediatePrimitives3d(SDL_GPUCopyPass& copyPass);
 
         /** @brief Converts render buffer data to viewport quad GPU buffer data and uploads it to the GPU.
          *

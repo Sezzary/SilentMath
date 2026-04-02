@@ -14,16 +14,16 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer::SdlGpu
 {
-    MeshCache::MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer)
+    MeshCache::MeshCache(SDL_GPUDevice& device, int vertCount, int idxCount, const std::string& name)
     {
-        _vertexBuffer    = &vertBuffer;
-        _vertexAllocator = BlockAllocator(vertBuffer.GetVertexCapacity());
-        _idxAllocator    = BlockAllocator(vertBuffer.GetIdxCapacity());
+        _vertexBuffer.Initialize(device, vertCount, idxCount, name);
+        _vertexAllocator = BlockAllocator(_vertexBuffer.GetVertexCapacity());
+        _idxAllocator    = BlockAllocator(_vertexBuffer.GetIdxCapacity());
     }
 
     void MeshCache::Upload(SDL_GPUCopyPass& copyPass,
-                         const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
-                         const std::string& name)
+                           const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                           const std::string& name)
     {
         // Check if mesh with same name already exists.
         if (Find(_meshes, name) != nullptr)
@@ -45,8 +45,8 @@ namespace Silent::Renderer::SdlGpu
         });
 
         // Update GPU vertex buffer.
-        _vertexBuffer->UpdateVertices(copyPass, ToSpan(verts), vertOffset);
-        _vertexBuffer->UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
+        _vertexBuffer.UpdateVertices(copyPass, ToSpan(verts), vertOffset);
+        _vertexBuffer.UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
     }
 
     void MeshCache::Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName)
@@ -92,6 +92,11 @@ namespace Silent::Renderer::SdlGpu
                 break;
             }
         }
+    }
+
+    void MeshCache::Bind(SDL_GPURenderPass& renderPass)
+    {
+        _vertexBuffer.Bind(renderPass, 0, 0);
     }
 
     void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)

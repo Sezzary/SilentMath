@@ -101,8 +101,8 @@ namespace Silent::Renderer
         // Swap double buffer.
         std::swap(_doubleBuffer.Render, _doubleBuffer.Active);
         _doubleBuffer.Active.DrawCallCount = 0;
-        _doubleBuffer.Active.Primitives2d.clear();
-        _doubleBuffer.Active.Primitives3d.clear();
+        _doubleBuffer.Active.ImmediatePrimitives2d.clear();
+        _doubleBuffer.Active.ImmediatePrimitives3d.clear();
         _doubleBuffer.Active.DebugGuiDrawCalls.clear();
         _doubleBuffer.Active.TextureUploadQueue.clear();
         _doubleBuffer.Active.TextureReleaseQueue.clear();
@@ -288,8 +288,8 @@ namespace Silent::Renderer
             auto pos         = adjTextPos + (relPos * aspectCorrection);
 
             // Compute scale.
-            auto relScale = Vector2((float)(shapedGlyph.Attribs.AtlasSize.x) / (float)(shapedGlyph.Attribs.AtlasSize.y), 1.0f) *
-                            Vector2((float)(shapedGlyph.Attribs.AtlasSize.y) / (float)font->GetPointSize());
+            auto relScale = Vector2((float)shapedGlyph.Attribs.AtlasSize.x / (float)shapedGlyph.Attribs.AtlasSize.y, 1.0f) *
+                            Vector2((float)shapedGlyph.Attribs.AtlasSize.y / (float)font->GetPointSize());
             auto scale    = relScale * text.Scale;
 
             // Concatenate name for texture atlas containing glyph.
@@ -420,10 +420,10 @@ namespace Silent::Renderer
         auto ReserveMemory = [](DoubleBuffer::Data& data)
         {
             data.DebugGuiDrawCalls.reserve(DEBUG_GUI_COUNT_MAX);
-            data.Primitives2d.reserve(SHAPE_2D_COUNT_MAX + 
-                                      SPRITE_2D_COUNT_MAX + 
-                                      GLYPH_2D_COUNT_MAX);
-            data.Primitives3d.reserve(TRI_3D_COUNT_MAX);
+            data.ImmediatePrimitives2d.reserve(SHAPE_2D_COUNT_MAX + 
+                                               SPRITE_2D_COUNT_MAX + 
+                                               GLYPH_2D_COUNT_MAX);
+            data.ImmediatePrimitives3d.reserve(TRI_3D_COUNT_MAX);
         };
         ReserveMemory(_doubleBuffer.Active);
         ReserveMemory(_doubleBuffer.Render);
@@ -482,7 +482,7 @@ namespace Silent::Renderer
             {
                 auto lock = ParallelLock(_primitives2dMutex);
 
-                _doubleBuffer.Active.Primitives2d.push_back(Primitive2d
+                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices    = std::move(verts),
                     .Depth       = shape.Depth,
@@ -586,7 +586,7 @@ namespace Silent::Renderer
             {
                 auto lock = ParallelLock(_primitives2dMutex);
 
-                _doubleBuffer.Active.Primitives2d.push_back(Primitive2d
+                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -645,7 +645,7 @@ namespace Silent::Renderer
             {
                 auto lock = ParallelLock(_primitives2dMutex);
 
-                _doubleBuffer.Active.Primitives2d.push_back(Primitive2d
+                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -705,7 +705,7 @@ namespace Silent::Renderer
             {
                 auto lock = ParallelLock(_primitives3dMutex);
 
-                _doubleBuffer.Active.Primitives3d.push_back(Primitive3d
+                _doubleBuffer.Active.ImmediatePrimitives3d.push_back(Primitive3d
                 {
                     // @todo More here.
                     .Vertices  = std::move(verts),
@@ -726,7 +726,7 @@ namespace Silent::Renderer
             // Sort 2D primitives. @todo Use sort keys?
             [&]()
             {
-                Sort(_doubleBuffer.Render.Primitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
+                Sort(_doubleBuffer.Render.ImmediatePrimitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
                 {
                     return prim0.Depth > prim1.Depth;
                 });

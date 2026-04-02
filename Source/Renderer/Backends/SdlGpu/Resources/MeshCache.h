@@ -1,16 +1,14 @@
 #pragma once
 
 #include "Assets/AssetStreamer.h"
+#include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
+#include "Renderer/Common/Resources/Buffers.h"
 #include "Renderer/Common/Resources/MeshCache.h"
 
 using namespace Silent::Assets;
 
-namespace Silent::Renderer{ struct BufferVertex3d; }
-
 namespace Silent::Renderer::SdlGpu
 {
-    template <typename T> class VertexBuffer;
-
     /** @brief GPU mesh cache. */
     class MeshCache : public MeshCacheBase
     {
@@ -19,7 +17,7 @@ namespace Silent::Renderer::SdlGpu
         // Fields
         // =======
 
-        VertexBuffer<BufferVertex3d>* _vertexBuffer = nullptr;
+        VertexBuffer<BufferVertex3d> _vertexBuffer = {};
 
     public:
         // =============
@@ -30,7 +28,7 @@ namespace Silent::Renderer::SdlGpu
          *
          * @param vertBuffer GPU 3D vertex buffer.
          */
-        MeshCache(VertexBuffer<BufferVertex3d>& vertBuffer);
+        MeshCache(SDL_GPUDevice& device, int vertCount, int idxCount, const std::string& name);
 
         // ==========
         // Utilities
@@ -53,6 +51,12 @@ namespace Silent::Renderer::SdlGpu
          * @param assetName Streamable model asset name.
          */
         void Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName);
+
+        /** @brief Binds the cached meshes GPU buffer for drawing.
+         *
+         * @param renderPass Render pass.
+         */
+        void Bind(SDL_GPURenderPass& renderPass);
 
     private:
         // ========

@@ -359,7 +359,7 @@ namespace Silent::Renderer::SdlGpu
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        CopyGpuPrimitives3d(*copyPass);
+        CopyImmediatePrimitives3d(*copyPass);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -380,7 +380,7 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
-        _gpuBuffers.Vertices3d.Bind(renderPass, 0, 0);
+        GetMeshes().Bind(renderPass);
         _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
 
         // @temp
@@ -429,6 +429,31 @@ namespace Silent::Renderer::SdlGpu
         }
 
         //---------------------------
+
+        _gpuBuffers.ImmediateVertices3d.Bind(renderPass, 0, 0);
+        
+        // Draw 3D primitives.
+        for (const auto& batch : _drawBatches.Primitives3d)
+        {
+            _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
+
+            // Push uniforms.
+            PushFragmentUniform(batch.Uniform, 0);
+
+            // Bind texture.
+            if (!batch.TextureName.empty())
+            {
+                auto* tex = GetTextures()[batch.TextureName];
+                if (tex != nullptr)
+                {
+                    tex->Bind(renderPass, GetActiveSampler());
+                }
+            }
+
+            // Draw.
+            SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
+            _doubleBuffer.Active.DrawCallCount++;
+        }
 
         SDL_EndGPURenderPass(&renderPass);
     }
@@ -480,7 +505,7 @@ namespace Silent::Renderer::SdlGpu
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
-        CopyGpuPrimitives2d(*copyPass);
+        CopyImmediatePrimitives2d(*copyPass);
 
         SDL_EndGPUCopyPass(copyPass);
 
@@ -501,7 +526,7 @@ namespace Silent::Renderer::SdlGpu
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
         // Draw 2D primitives.
-        _gpuBuffers.Vertices2d.Bind(renderPass, 0, 0);
+        _gpuBuffers.ImmediateVertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Primitives2d)
         {
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
@@ -716,11 +741,9 @@ namespace Silent::Renderer::SdlGpu
 
         // Initialize GPU buffers.
         _gpuBuffers.ViewportVertices.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
-        _gpuBuffers.Vertices2d.Initialize(*_device, VERT_2D_COUNT_MAX, VERT_2D_IDX_COUNT_MAX, "2D vertices");
-        _gpuBuffers.Vertices3d.Initialize(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "3D vertices");
-
-        // Reserve mesh cache.
-        _meshes = std::make_unique<MeshCache>(_gpuBuffers.Vertices3d);
+        _gpuBuffers.ImmediateVertices2d.Initialize(*_device, VERT_2D_COUNT_MAX, VERT_2D_IDX_COUNT_MAX, "Immediate 2D vertices");
+        _gpuBuffers.ImmediateVertices3d.Initialize(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "Immediate 3D vertices");
+        _meshes = std::make_unique<MeshCache>(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "3D meshes vertices");
 
         // Reserve draw batches.
         _drawBatches.Primitives2d.reserve(PRIM_2D_BATCH_COUNT_MAX);
@@ -807,19 +830,19 @@ namespace Silent::Renderer::SdlGpu
         }
     }
 
-    void Renderer::CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass)
+    void Renderer::CopyImmediatePrimitives2d(SDL_GPUCopyPass& copyPass)
     {
         auto bufferVerts = std::vector<BufferVertex2d>{};
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.Primitives2d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.Primitives2d.size() * QUAD_IDX_COUNT);
+        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _doubleBuffer.Render.Primitives2d)
+        for (const auto& prim : _doubleBuffer.Render.ImmediatePrimitives2d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
@@ -883,23 +906,23 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Update GPU buffer.
-        _gpuBuffers.Vertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.Vertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        _gpuBuffers.ImmediateVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        _gpuBuffers.ImmediateVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 
-    void Renderer::CopyGpuPrimitives3d(SDL_GPUCopyPass& copyPass)
+    void Renderer::CopyImmediatePrimitives3d(SDL_GPUCopyPass& copyPass)
     {
         auto bufferVerts = std::vector<BufferVertex3d>{};
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.Primitives3d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.Primitives3d.size() * QUAD_IDX_COUNT);
+        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * QUAD_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _doubleBuffer.Render.Primitives3d)
+        for (const auto& prim : _doubleBuffer.Render.ImmediatePrimitives3d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
@@ -974,10 +997,9 @@ namespace Silent::Renderer::SdlGpu
             idxOffset  += curIdxCount;
         }
 
-        // @todo Mesh cache also uses ths full span of this buffer.
         // Update GPU buffer.
-        //_gpuBuffers.Vertices3d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        //_gpuBuffers.Vertices3d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        _gpuBuffers.ImmediateVertices3d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        _gpuBuffers.ImmediateVertices3d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 
     void Renderer::CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass)
