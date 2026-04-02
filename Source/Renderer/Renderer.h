@@ -7,6 +7,7 @@
 #include "Renderer/Common/Resources/Scene/Shape2d.h"
 #include "Renderer/Common/Resources/Scene/Sprite2d.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
+#include "Renderer/Common/Resources/Scene/Triangle3d.h"
 #include "Renderer/Common/Resources/MeshCache.h"
 #include "Renderer/Common/Resources/TextureCache.h"
 #include "Renderer/Common/View.h"
@@ -28,8 +29,6 @@ namespace Silent::Renderer
 
             std::vector<Primitive2d>           Primitives2d      = {};
             std::vector<Primitive3d>           Primitives3d      = {};
-            std::vector<Shape2d>               DebugShapes2d     = {};
-            std::vector<Primitive3d>           DebugPrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls = {};
 
             std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
@@ -52,19 +51,21 @@ namespace Silent::Renderer
 
         RendererType _type       = RendererType::SdlGpu;
         SDL_Window*  _window     = nullptr;
-        View         _view       = View();
-        Color        _clearColor = Color::Clear;
         bool         _isResized  = false;
+        Color        _clearColor = Color::Clear;
+        View         _view       = View();
 
         DoubleBuffer                      _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
         std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
 
         std::mutex _primitives2dMutex = {};
+        std::mutex _primitives3dMutex = {};
 
-        std::vector<Shape2d>  _shapes2d  = {}; // } @todo Not really renderer objects. Should be part of an external system.
-        std::vector<Sprite2d> _sprites2d = {}; // }
-        std::vector<Glyph2d>  _glyphs2d  = {}; // }
+        std::vector<Shape2d>    _shapes2d    = {}; // } @todo Not really renderer objects. Should be part of an external system.
+        std::vector<Sprite2d>   _sprites2d   = {}; // }
+        std::vector<Glyph2d>    _glyphs2d    = {}; // }
+        std::vector<Triangle3d> _triangles3d = {}; // }
 
     public:
         // =============
@@ -152,10 +153,10 @@ namespace Silent::Renderer
          */
         void QueueMeshRelease(const std::string& assetName);
 
-        /** @brief Submits an immediate-mode 2D screen shape for drawing.
+        /** @brief Submits an immediate-mode 2D untextured screen shape for drawing.
          *
-         * @param prim 2D screen shape to draw.
-         * @return `true` if the 2D screen shape was successfully submitted, `false` otherwise.
+         * @param prim 2D untextured screen shape to draw.
+         * @return `true` if the 2D untextured screen shape was successfully submitted, `false` otherwise.
          */
         bool SubmitShape2d(const Shape2d& shape);
 
@@ -172,6 +173,13 @@ namespace Silent::Renderer
          * @return `true` if the 2D screen text glyphs were successfully submitted, `false` otherwise.
          */
         bool SubmitText2d(const Text2d& text);
+
+        /** @brief Submits an immediate-mode 3D textured triangle for drawing.
+         *
+         * @param tri 3D textured triangle to draw.
+         * @return `true` if the 3D textured triangle was successfully submitted, `false` otherwise.
+         */
+        bool SubmitTriangle3d(const Triangle3d& tri);
 
         /** @brief Initializes the renderer and its subsystems.
          *
@@ -255,14 +263,17 @@ namespace Silent::Renderer
         /** @brief Initializes the double buffer. */
         void InitializeDoubleBuffer();
 
-        /** @brief Processes 2D sprites into 2d primitives. */
+        /** @brief Processes immediate-mode 2D sprites into 2D primitives. */
         void ProcessSprites2d();
 
-        /** @brief Processes 2D shapes into 2d primitives. */
+        /** @brief Processes immediate-mode 2D shapes into 2D primitives. */
         void ProcessShapes2d();
 
-        /** @brief Processes 2D glyphs into 2d primitives. */
+        /** @brief Processes immediate-mode 2D glyphs into 2D primitives. */
         void ProcessGlyphs2d();
+
+        /** @brief Processes immediate-mode 3D triangles into 3D primitives. */
+        void ProcessTriangles3d();
 
         /** @brief Sorts render buffer data in the double buffer.
          * Called at the start of `Update`.

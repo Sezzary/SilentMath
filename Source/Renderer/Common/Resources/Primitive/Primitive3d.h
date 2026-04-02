@@ -2,14 +2,18 @@
 
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Primitive/Vertex3d.h"
+#include "Renderer/Common/Resources/Uniforms.h"
 
 namespace Silent::Renderer
 {
     /** @brief 3D world space primitive representing a line or triangle. */
     struct Primitive3d
     {
-        std::vector<Vertex3d> Vertices = {};
-        BlendMode             BlendM   = BlendMode::Alpha;
+        std::vector<Vertex3d> Vertices    = {};
+        std::string           TextureName = {};
+        RenderStage           RenderStg   = RenderStage::Sprite2d;
+        BlendMode             BlendMd     = BlendMode::Opaque;
+        UniformType           Uniform     = {};
 
         /** @brief Creates a 3D debug line primitive with additive blending.
          *

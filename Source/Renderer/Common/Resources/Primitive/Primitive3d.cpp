@@ -22,7 +22,7 @@ namespace Silent::Renderer
                     .Col      = color
                 }
             },
-            .BlendM = BlendMode::Add
+            .BlendMd = BlendMode::Add
         };
     }
 
@@ -45,7 +45,7 @@ namespace Silent::Renderer
                     .Col      = color
                 }
             },
-            .BlendM = BlendMode::Add
+            .BlendMd = BlendMode::Add
         };
     }
 }

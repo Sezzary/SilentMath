@@ -7,7 +7,6 @@
 
 namespace Silent::Math
 {
-    constexpr int LINE_VERTEX_COUNT = 2;
     constexpr int RECT_VERTEX_COUNT = 4;
     constexpr int BOX_VERTEX_COUNT  = 8;
 

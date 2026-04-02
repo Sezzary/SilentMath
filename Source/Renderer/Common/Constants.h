@@ -9,6 +9,7 @@ namespace Silent::Renderer
 
     constexpr int DEBUG_GUI_COUNT_MAX = 8;
 
+    constexpr int LINE_IDX_COUNT  = 2;
     constexpr int TRI_IDX_COUNT   = 3;
     constexpr int QUAD_IDX_COUNT  = 6;
     constexpr int RGB_COMP_COUNT  = 3;

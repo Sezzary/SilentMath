@@ -1,24 +1,19 @@
 #pragma once
 
+#include "Renderer/Common/Resources/PingPongTexture.h"
+
 namespace Silent::Renderer
 {
     /** @brief GPU ping-pong render target texture. */
-    class PingPongTexture
+    class PingPongTexture : public PingPongTextureBase
     {
     private:
-        // ==========
-        // Constants
-        // ==========
-
-        static constexpr int TARGET_COUNT  = 2;
-
         // =======
         // Fields
         // =======
 
-        SDL_GPUDevice*               _device   = nullptr;
-        std::vector<SDL_GPUTexture*> _targets  = { nullptr, nullptr };
-        int                          _writeIdx = 0;
+        SDL_GPUDevice*                            _device  = nullptr;
+        std::array<SDL_GPUTexture*, TARGET_COUNT> _targets = { nullptr, nullptr };
 
     public:
         // =============
@@ -28,8 +23,7 @@ namespace Silent::Renderer
         /** @brief Creates a default uninitialized instance. */
         PingPongTexture() = default;
 
-        /** @brief Gracefully destroys the instance and frees GPU resources. */
-        ~PingPongTexture();
+        ~PingPongTexture() override;
 
         // ========
         // Getters
@@ -59,10 +53,6 @@ namespace Silent::Renderer
          */
         void Initialize(SDL_GPUDevice& device);
 
-        /** @brief Swaps the internal texture targets. */
-        void Swap();
-
-        /** @brief Releases GPU texture resources. */
-        void Release();
+        void Release() override;
     };
 }

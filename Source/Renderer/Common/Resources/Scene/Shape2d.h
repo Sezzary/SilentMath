@@ -7,7 +7,7 @@ namespace Silent::Renderer
 {
     constexpr int SHAPE_2D_COUNT_MAX = 128;
 
-    /** @brief 2D screen shape representing a line, triangle, or quad. */
+    /** @brief 2D untextured screen shape representing a line, triangle, or quad. */
     struct Shape2d
     {
         std::vector<Vertex2d> Vertices = {};

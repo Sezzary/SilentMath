@@ -13,6 +13,7 @@ namespace Silent::Math
     constexpr float EPSILON      = 0.00001f;
     constexpr uint  GOLDEN_RATIO = 0x9E3779B9;
 
+    constexpr int LINE_VERTEX_COUNT = 2;
     constexpr int TRI_VERTEX_COUNT  = 3;
     constexpr int QUAD_VERTEX_COUNT = 4;
 

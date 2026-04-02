@@ -13,11 +13,6 @@ namespace Silent::Renderer
         _device = &device;
     }
 
-    void PingPongTexture::Swap()
-    {
-        _writeIdx = 1 - _writeIdx;
-    }
-
     void PingPongTexture::Release()
     {
         if (_device == nullptr)

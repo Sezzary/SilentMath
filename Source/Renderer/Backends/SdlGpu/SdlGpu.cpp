@@ -359,6 +359,8 @@ namespace Silent::Renderer::SdlGpu
         // Process copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
+        CopyGpuPrimitives3d(*copyPass);
+
         SDL_EndGPUCopyPass(copyPass);
 
         // Process render pass.
@@ -546,7 +548,7 @@ namespace Silent::Renderer::SdlGpu
 
             auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-            _gpuBuffers.ViewportVertices2d.Bind(*renderPass, 0, 0);
+            _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
             _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque);
 
             pushUniforms();
@@ -623,7 +625,7 @@ namespace Silent::Renderer::SdlGpu
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
         // Bind viewport quad.
-        _gpuBuffers.ViewportVertices2d.Bind(renderPass, 0, 0);
+        _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
 
         _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque);
 
@@ -696,6 +698,8 @@ namespace Silent::Renderer::SdlGpu
         constexpr int SHAPE_2D_IDX_COUNT_MAX   = SHAPE_2D_VERT_COUNT_MAX;
         constexpr int GLYPH_2D_VERT_COUNT_MAX  = GLYPH_2D_COUNT_MAX * QUAD_VERTEX_COUNT;
         constexpr int GLYPH_2D_IDX_COUNT_MAX   = GLYPH_2D_COUNT_MAX * QUAD_IDX_COUNT;
+        constexpr int TRI_3D_VERT_COUNT_MAX    = TRI_3D_COUNT_MAX * TRI_VERTEX_COUNT;
+        constexpr int TRI_3D_IDX_COUNT_MAX     = TRI_3D_COUNT_MAX * TRI_IDX_COUNT;
 
         constexpr int VERT_2D_COUNT_MAX       = SPRITE_2D_VERT_COUNT_MAX +
                                                 SHAPE_2D_VERT_COUNT_MAX +
@@ -706,13 +710,12 @@ namespace Silent::Renderer::SdlGpu
         constexpr int PRIM_2D_BATCH_COUNT_MAX = SPRITE_2D_COUNT_MAX +
                                                 SHAPE_2D_COUNT_MAX +
                                                 GLYPH_2D_COUNT_MAX;
-
-        constexpr int VERT_3D_COUNT_MAX       = SHRT_MAX - 1;
+        constexpr int VERT_3D_COUNT_MAX       = TRI_3D_VERT_COUNT_MAX;
         constexpr int VERT_3D_IDX_COUNT_MAX   = VERT_3D_COUNT_MAX;
-        constexpr int PRIM_3D_BATCH_COUNT_MAX = VERT_3D_IDX_COUNT_MAX / 3;
+        constexpr int PRIM_3D_BATCH_COUNT_MAX = VERT_3D_IDX_COUNT_MAX / TRI_VERTEX_COUNT;
 
         // Initialize GPU buffers.
-        _gpuBuffers.ViewportVertices2d.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
+        _gpuBuffers.ViewportVertices.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
         _gpuBuffers.Vertices2d.Initialize(*_device, VERT_2D_COUNT_MAX, VERT_2D_IDX_COUNT_MAX, "2D vertices");
         _gpuBuffers.Vertices3d.Initialize(*_device, VERT_3D_COUNT_MAX, VERT_3D_IDX_COUNT_MAX, "3D vertices");
 
@@ -821,10 +824,14 @@ namespace Silent::Renderer::SdlGpu
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
             {
-                // @todo Need depth texture.
                 float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
                 auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
-                bufferVerts.push_back(BufferVertex2d{ pos, prim.Vertices[i].Uv, prim.Vertices[i].Col });
+                bufferVerts.push_back(BufferVertex2d
+                {
+                    .Position = pos,
+                    .Uv       = prim.Vertices[i].Uv,
+                    .Col      = prim.Vertices[i].Col
+                });
             }
 
             int curVertCount = 0;
@@ -839,6 +846,7 @@ namespace Silent::Renderer::SdlGpu
                     bufferIdxs.push_back(i);
                 }
 
+                // Set buffer region.
                 curVertCount = TRI_VERTEX_COUNT;
                 curIdxCount  = TRI_IDX_COUNT;
             }
@@ -851,6 +859,7 @@ namespace Silent::Renderer::SdlGpu
                     bufferIdxs.push_back(i);
                 }
 
+                // Set buffer region.
                 curVertCount = QUAD_VERTEX_COUNT;
                 curIdxCount  = QUAD_IDX_COUNT;
             }
@@ -876,6 +885,99 @@ namespace Silent::Renderer::SdlGpu
         // Update GPU buffer.
         _gpuBuffers.Vertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
         _gpuBuffers.Vertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+    }
+
+    void Renderer::CopyGpuPrimitives3d(SDL_GPUCopyPass& copyPass)
+    {
+        auto bufferVerts = std::vector<BufferVertex3d>{};
+        auto bufferIdxs  = std::vector<uint16>{};
+
+        // Reserve memory.
+        bufferVerts.reserve(_doubleBuffer.Render.Primitives3d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_doubleBuffer.Render.Primitives3d.size() * QUAD_IDX_COUNT);
+
+        // Create batched GPU buffer data.
+        int vertOffset = 0;
+        int idxOffset  = 0;
+        for (const auto& prim : _doubleBuffer.Render.Primitives3d)
+        {
+            // Add vertices.
+            for (int i = 0; i < prim.Vertices.size(); i++)
+            {
+                bufferVerts.push_back(BufferVertex3d
+                {
+                    .Position = prim.Vertices[i].Position,
+                    .Normal   = prim.Vertices[i].Normal,
+                    .Uv       = prim.Vertices[i].Uv,
+                    .Col      = prim.Vertices[i].Col
+                });
+            }
+
+            int curVertCount = 0;
+            int curIdxCount  = 0;
+
+            // @todo
+            // Line.
+            /*if (prim.Vertices.size() == LINE_VERTEX_COUNT)
+            {
+                // Add indices.
+                for (int i = 0; i < LINE_IDX_COUNT; i++)
+                {
+                    bufferIdxs.push_back(i);
+                }
+
+                // Set buffer region.
+                curVertCount = LINE_VERTEX_COUNT;
+                curIdxCount  = LINE_IDX_COUNT;
+            }
+            else */if (prim.Vertices.size() == TRI_VERTEX_COUNT)
+            {
+                // Add indices.
+                for (int i = 0; i < TRI_IDX_COUNT; i++)
+                {
+                    bufferIdxs.push_back(i);
+                }
+
+                // Set buffer region.
+                curVertCount = TRI_VERTEX_COUNT;
+                curIdxCount  = TRI_IDX_COUNT;
+            }
+            // Quad.
+            else if (prim.Vertices.size() == QUAD_VERTEX_COUNT)
+            {
+                // Add indices.
+                for (int i : QUAD_TRI_IDXS)
+                {
+                    bufferIdxs.push_back(i);
+                }
+
+                // Set buffer region.
+                curVertCount = QUAD_VERTEX_COUNT;
+                curIdxCount  = QUAD_IDX_COUNT;
+            }
+
+            // Add batch.
+            // @todo Smarter way that strings together primitives with the same render stage, blend mode, and texture.
+            // What to do with uniforms? For now, collect each as its own batch of 2 triangles.
+            _drawBatches.Primitives3d.push_back(DrawBatch
+            {
+                .TextureName  = prim.TextureName,
+                .RenderStg    = prim.RenderStg,
+                .BlendMd      = prim.BlendMd,
+                .Uniform      = prim.Uniform,
+                .VertexCount  = curIdxCount,
+                .VertexOffset = vertOffset,
+                .IdxOffset    = idxOffset
+            });
+
+            vertOffset += curVertCount;
+            idxOffset  += curIdxCount;
+        }
+
+        // @todo Mesh cache also uses ths full span of this buffer.
+        // Update GPU buffer.
+        //_gpuBuffers.Vertices3d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        //_gpuBuffers.Vertices3d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
     }
 
     void Renderer::CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass)
@@ -908,8 +1010,8 @@ namespace Silent::Renderer::SdlGpu
         };
 
         // Update GPU buffer.
-        _gpuBuffers.ViewportVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.ViewportVertices2d.UpdateIdxs(copyPass, ToSpan(BUFFER_IDXS), 0);
+        _gpuBuffers.ViewportVertices.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+        _gpuBuffers.ViewportVertices.UpdateIdxs(copyPass, ToSpan(BUFFER_IDXS), 0);
     }
 
     void Renderer::PushVertexUniform(const UniformType& uni, int slotIdx)

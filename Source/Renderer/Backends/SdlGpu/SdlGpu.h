@@ -36,10 +36,9 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffers. */
     struct GpuBuffers
     {
-        VertexBuffer<BufferVertex2d> ViewportVertices2d = {};
-
-        VertexBuffer<BufferVertex2d> Vertices2d = {};
-        VertexBuffer<BufferVertex3d> Vertices3d = {};
+        VertexBuffer<BufferVertex2d> ViewportVertices = {};
+        VertexBuffer<BufferVertex2d> Vertices2d       = {};
+        VertexBuffer<BufferVertex3d> Vertices3d       = {};
     };
 
     /** @brief SDL_gpu renderer backend. */
@@ -53,13 +52,13 @@ namespace Silent::Renderer::SdlGpu
         SDL_GPUDevice*               _device    = nullptr;
         std::vector<SDL_GPUSampler*> _samplers  = {};
         PipelineManager              _pipelines = PipelineManager();
-        
-        PingPongTexture       _renderTexture      = PingPongTexture();
-        SDL_GPUTexture*       _depthTexture       = nullptr;
-        SDL_GPUTexture*       _swapchainTexture   = nullptr;
-        SDL_GPUCommandBuffer* _commandBuffer      = nullptr;
-        DrawBatches           _drawBatches        = {};
-        GpuBuffers            _gpuBuffers         = {};
+
+        PingPongTexture       _renderTexture    = PingPongTexture();
+        SDL_GPUTexture*       _depthTexture     = nullptr;
+        SDL_GPUTexture*       _swapchainTexture = nullptr;
+        SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
+        DrawBatches           _drawBatches      = {};
+        GpuBuffers            _gpuBuffers       = {};
 
     public:
         // =============
@@ -132,12 +131,26 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Converts render buffer data to 2D triangle GPU buffer data and uploads it to the GPU.
          *
-         * Processes 2D sprites and shapes.
+         * Processes immediate-mode 2D sprites, shapes, and glyphs.
          *
          * @param copyPass GPU copy pass.
          */
         void CopyGpuPrimitives2d(SDL_GPUCopyPass& copyPass);
 
+        /** @brief Converts render buffer data to 3D triangle GPU buffer data and uploads it to the GPU.
+         *
+         * Processes immediate-mode 3D primitives.
+         *
+         * @param copyPass GPU copy pass.
+         */
+        void CopyGpuPrimitives3d(SDL_GPUCopyPass& copyPass);
+
+        /** @brief Converts render buffer data to viewport quad GPU buffer data and uploads it to the GPU.
+         *
+         * Processes a fullscreen quad.
+         *
+         * @param copyPass GPU copy pass.
+         */
         void CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass);
 
         /** @brief Pushes uniform data to the GPU for the vertex shader.

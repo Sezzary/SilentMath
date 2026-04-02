@@ -136,7 +136,7 @@ namespace Silent::Renderer::SdlGpu
         };
 
         // Create buffer.
-        _resourceBuffer = SDL_CreateGPUBuffer(&device, &bufferInfo);
+        _resourceBuffer = SDL_CreateGPUBuffer(_device, &bufferInfo);
         if (_resourceBuffer == nullptr)
         {
             Debug::Log(Fmt("Failed to create buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
