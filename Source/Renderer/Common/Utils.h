@@ -5,6 +5,15 @@ namespace Silent::Renderer
     enum class AlignMode;
     enum class ScaleMode;
 
+    /** @brief Computes a triangle normal from vertices in a clockwise winding order.
+     *
+     * @param vert0 First vertex.
+     * @param vert1 Second vertex.
+     * @param vert2 Third vertex.
+     * @return Triangle normal.
+     */
+    Vector3 GetNormal(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2);
+
     /** @brief Gets the normalized alignment pivot for a given alignment mode.
      *
      * @param alignMode Alignment mode.

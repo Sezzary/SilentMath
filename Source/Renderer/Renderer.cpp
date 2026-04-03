@@ -707,9 +707,14 @@ namespace Silent::Renderer
 
                 _doubleBuffer.Active.ImmediatePrimitives3d.push_back(Primitive3d
                 {
-                    // @todo More here.
-                    .Vertices  = std::move(verts),
-                    .RenderStg = RenderStage::Model
+                    .Vertices    = std::move(verts),
+                    .TextureName = tri.TextureName,
+                    .RenderStg   = RenderStage::Model,
+                    .BlendMd     = tri.BlendMd,
+                    .Uniform     = UniformModel
+                    {
+                        .IsFastAlpha = tri.BlendMd == BlendMode::FastAlpha
+                    }
                 });
             }
         }
@@ -721,14 +726,24 @@ namespace Silent::Renderer
     {
         auto& executor = g_App.GetExecutor();
 
+        // @todo Use sort keys?
         auto sortTasks = ParallelTasks
         {
-            // Sort 2D primitives. @todo Use sort keys?
+            // Sort 2D primitives.
             [&]()
             {
                 Sort(_doubleBuffer.Render.ImmediatePrimitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
                 {
                     return prim0.Depth > prim1.Depth;
+                });
+            },
+
+            // Sort 3D primitives.
+            [&]()
+            {
+                Sort(_doubleBuffer.Render.ImmediatePrimitives3d, [](const Primitive3d& prim0, const Primitive3d& prim1)
+                {
+                    return true;
                 });
             }
         };

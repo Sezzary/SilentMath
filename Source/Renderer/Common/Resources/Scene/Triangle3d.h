@@ -19,7 +19,10 @@ namespace Silent::Renderer
 
         std::array<Triangle3dVertex, TRI_VERTEX_COUNT> Vertices    = {};
         std::string                                    TextureName = {};
-        RenderStage                                    RenderStg   = RenderStage::Model;
         BlendMode                                      BlendMd     = BlendMode::Opaque;
+
+        static Triangle3d CreateTriangle3d(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2,
+                                           const Color& color,
+                                           BlendMode blendMode = BlendMode::Opaque);
     };
 }

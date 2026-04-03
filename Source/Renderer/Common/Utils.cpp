@@ -8,6 +8,16 @@
 
 namespace Silent::Renderer
 {
+    Vector3 GetNormal(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2)
+    {
+        // Compute edges.
+        auto edge0 = vert1 - vert0;
+        auto edge1 = vert2 - vert0;
+
+        // Compute edge normal.
+        return Vector3::Normalize(Vector3::Cross(edge0, edge1));
+    }
+
     Vector2 GetAlignmentPivot(AlignMode alignMode)
     {
         switch (alignMode)

@@ -435,9 +435,8 @@ namespace Silent::Renderer::SdlGpu
         // Draw 3D primitives.
         for (const auto& batch : _drawBatches.Primitives3d)
         {
+            // Bind pipeline.
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
-
-            // Push uniforms.
             PushFragmentUniform(batch.Uniform, 0);
 
             // Bind texture.
@@ -482,6 +481,7 @@ namespace Silent::Renderer::SdlGpu
         // Dither.
         if (options->EnableDithering)
         {
+            // Bind pipeline.
             _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
 
             // Bind render texture.
@@ -529,9 +529,8 @@ namespace Silent::Renderer::SdlGpu
         _gpuBuffers.ImmediateVertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Primitives2d)
         {
+            // Bind pipeline.
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
-
-            // Push uniform.
             PushFragmentUniform(batch.Uniform, 0);
 
             // Bind texture.
@@ -737,7 +736,7 @@ namespace Silent::Renderer::SdlGpu
                                                 GLYPH_2D_COUNT_MAX;
         constexpr int VERT_3D_COUNT_MAX       = TRI_3D_VERT_COUNT_MAX;
         constexpr int VERT_3D_IDX_COUNT_MAX   = VERT_3D_COUNT_MAX;
-        constexpr int PRIM_3D_BATCH_COUNT_MAX = VERT_3D_IDX_COUNT_MAX / TRI_VERTEX_COUNT;
+        constexpr int PRIM_3D_BATCH_COUNT_MAX = (VERT_3D_IDX_COUNT_MAX / TRI_VERTEX_COUNT) * 2; // @todo Check, because immediate + models.
 
         // Initialize GPU buffers.
         _gpuBuffers.ViewportVertices.Initialize(*_device, QUAD_VERTEX_COUNT, QUAD_IDX_COUNT, "2D viewport vertices");
