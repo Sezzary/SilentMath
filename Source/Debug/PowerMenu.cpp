@@ -124,11 +124,11 @@ namespace Silent::Debug
                             ImGui::Text("%d", g_Work.FrameTime, 1, 1);
 
                             // `Draw calls` info.
-                            /*ImGui::TableNextRow();
+                            ImGui::TableNextRow();
                             ImGui::TableSetColumnIndex(0);
                             ImGui::Text("Draw calls:", 2, 0);
                             ImGui::TableSetColumnIndex(1);
-                            ImGui::Text("%d", renderer.GetDrawCallCount(), 2, 1);*/
+                            ImGui::Text("%d", renderer.GetDrawCallCount(), 2, 1);
 
                             ImGui::EndTable();
                         }

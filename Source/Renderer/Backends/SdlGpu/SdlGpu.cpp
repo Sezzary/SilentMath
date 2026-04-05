@@ -380,8 +380,8 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
-        GetMeshes().Bind(renderPass);
-        _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
+        //GetMeshes().Bind(renderPass);
+        //_pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
 
         // @temp
         //---------------------------
@@ -389,10 +389,10 @@ namespace Silent::Renderer::SdlGpu
         //auto* tex = GetTextures()[g_App.GetVideo().GetName()];
         //if (tex == nullptr)
         //{
-            auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
+        //    auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
         //}
 
-        if (tex != nullptr)
+        /*if (tex != nullptr)
         {
             tex->Bind(renderPass, GetActiveSampler());
             
@@ -418,19 +418,18 @@ namespace Silent::Renderer::SdlGpu
             PushFragmentUniform(uni, 0);
 
             // Draw.
-            //const auto* mesh = GetMeshes()["CHARA/DOC.ILM_0"];
-            //const auto* mesh = GetMeshes()["ITEM/UNQE1.TMD_1"];
-            const auto* mesh = GetMeshes()["TestCube"];
-            if (mesh != nullptr && mesh->IsValid())
-            {
-                SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-                _doubleBuffer.Active.DrawCallCount++;
-            }
-        }
+            //const auto* mesh = GetMeshes()["TestCube"];
+            //if (mesh != nullptr && mesh->IsValid())
+            //{
+            //    SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+            //    _doubleBuffer.Active.DrawCallCount++;
+            //}
+        }*/
 
         //---------------------------
 
         _gpuBuffers.ImmediateVertices3d.Bind(renderPass, 0, 0);
+        auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
         
         // Draw 3D primitives.
         for (const auto& batch : _drawBatches.Primitives3d)
@@ -439,15 +438,28 @@ namespace Silent::Renderer::SdlGpu
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
             PushFragmentUniform(batch.Uniform, 0);
 
+            auto model = Matrix::Identity;
+            model.Rotate(DEG_TO_RAD(45.0f), Vector3::UnitX);
+
+            auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
+
+            auto uni0 = UniformView{};
+            memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
+            PushVertexUniform(uni0, 0);
+
+            auto uni1 = UniformPrimitive3d{};
+            memcpy(&uni1.ModelMat, &model[0][0], 64);
+            PushVertexUniform(uni1, 1);
+
             // Bind texture.
-            if (!batch.TextureName.empty())
-            {
-                auto* tex = GetTextures()[batch.TextureName];
-                if (tex != nullptr)
+            //if (!batch.TextureName.empty())
+            //{
+            //    //auto* tex = GetTextures()[batch.TextureName];
+            //    if (tex != nullptr)
                 {
                     tex->Bind(renderPass, GetActiveSampler());
                 }
-            }
+            //}
 
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
@@ -905,8 +917,11 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Update GPU buffer.
-        _gpuBuffers.ImmediateVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.ImmediateVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        if (!bufferVerts.empty() && !bufferIdxs.empty())
+        {
+            _gpuBuffers.ImmediateVertices2d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+            _gpuBuffers.ImmediateVertices2d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        }
     }
 
     void Renderer::CopyImmediatePrimitives3d(SDL_GPUCopyPass& copyPass)
@@ -915,8 +930,8 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * QUAD_IDX_COUNT);
+        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
+        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
@@ -997,8 +1012,11 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Update GPU buffer.
-        _gpuBuffers.ImmediateVertices3d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
-        _gpuBuffers.ImmediateVertices3d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        if (!bufferVerts.empty() && !bufferIdxs.empty())
+        {
+            _gpuBuffers.ImmediateVertices3d.UpdateVertices(copyPass, ToSpan(bufferVerts), 0);
+            _gpuBuffers.ImmediateVertices3d.UpdateIdxs(copyPass, ToSpan(bufferIdxs), 0);
+        }
     }
 
     void Renderer::CopyGpuViewportQuad(SDL_GPUCopyPass& copyPass)

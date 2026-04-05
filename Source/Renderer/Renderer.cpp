@@ -410,9 +410,8 @@ namespace Silent::Renderer
             return;
         }
 
-        // @todo Submit to `_triangles3d`.
-        auto tri = Primitive3d::CreateDebugTriangle(vert0, vert1, vert2, color);
-        //_doubleBuffer.Active.Primitives3d.push_back(tri);
+        auto tri = Triangle3d::CreateTriangle3d(vert0, vert1, vert2, color, BlendMode::Add);
+        _triangles3d.push_back(tri);
     }
 
     void RendererBase::InitializeDoubleBuffer()
@@ -674,26 +673,15 @@ namespace Silent::Renderer
 
     void RendererBase::ProcessTriangles3d()
     {
-        auto viewProjMat = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
-
         for (const auto& tri : _triangles3d)
         {
             auto verts = std::vector<Vertex3d>{};
             verts.reserve(tri.Vertices.size());
             for (const auto& vert : tri.Vertices)
             {
-                // Transform world position to clip space.
-                auto worldPos  = Vector4(vert.Position.x, vert.Position.y, vert.Position.z, 1.0f);
-                auto clipSpace = viewProjMat * worldPos;
-
-                // Perspective divide to reach NDC `[-1.0f, 1.0f]`.
-                auto ndc = Vector3(clipSpace.x / clipSpace.w,
-                                   clipSpace.y / clipSpace.w,
-                                   clipSpace.z / clipSpace.w);
-
                 verts.push_back(Vertex3d
                 {
-                    .Position = ndc,
+                    .Position = vert.Position,
                     .Normal   = vert.Normal,
                     .Col      = vert.Col,
                     .Uv       = vert.Uv
