@@ -127,31 +127,8 @@ namespace Silent::Renderer::SdlGpu
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
         // @temp
-        auto bufferVertsTest = std::vector<BufferVertex3d>
-        {
-            // Front Face (Z = 5.0)
-            { Vector3(-1.0f, -1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(0, 1), Color::White }, // 0
-            { Vector3( 1.0f, -1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(1, 1), Color::White }, // 1
-            { Vector3( 1.0f,  1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(1, 0), Color::White }, // 2
-            { Vector3(-1.0f,  1.0f,  1.0f) * 5.0f, Vector3( 0,  0,  1), Vector2(0, 0), Color::White }, // 3
-            // Back Face (Z = -5.0)
-            { Vector3(-1.0f, -1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(1, 1), Color::White }, // 4
-            { Vector3( 1.0f, -1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(0, 1), Color::White }, // 5
-            { Vector3( 1.0f,  1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(0, 0), Color::White }, // 6
-            { Vector3(-1.0f,  1.0f, -1.0f) * 5.0f, Vector3( 0,  0, -1), Vector2(1, 0), Color::White }  // 7
-        };
-        auto bufferIdxsTest = std::vector<uint16>
-        {
-            0, 1, 2, 2, 3, 0, // Front
-            1, 5, 6, 6, 2, 1, // Right
-            5, 4, 7, 7, 6, 5, // Back
-            4, 0, 3, 3, 7, 4, // Left
-            3, 2, 6, 6, 7, 3, // Top
-            4, 5, 1, 1, 0, 4  // Bottom
-        };
         //GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
         //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
-        GetMeshes().Upload(*copyPass, bufferVertsTest, bufferIdxsTest, "TestCube");
 
         // Load temp. textures.
         //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
@@ -382,6 +359,8 @@ namespace Silent::Renderer::SdlGpu
 
         //GetMeshes().Bind(renderPass);
         //_pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
+
+        _view.Move();
 
         // @temp
         //---------------------------

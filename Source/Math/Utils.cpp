@@ -95,7 +95,8 @@ namespace Silent::Math
         return Vector3::Translate(lineStart, line, alpha);
     }
 
-    Vector3 GetClosestPointOnLinePerp(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd, const Vector3& axis)
+    Vector3 GetClosestPointOnLinePerp(const Vector3& from, const Vector3& lineStart, const Vector3& lineEnd,
+                                      const Vector3& axis)
     {
         if (lineStart == lineEnd)
         {
@@ -129,7 +130,8 @@ namespace Silent::Math
         return Vector3::Translate(lineStart, line, alpha);
     }
 
-    bool IsPointInFront(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis)
+    bool IsPointInFront(const Vector3& from, const Vector3& to, const Vector3& ref,
+                        const Vector3& axis)
     {
         if (from == to)
         {
@@ -150,7 +152,8 @@ namespace Silent::Math
         return dot > 0.0f;
     }
 
-    bool IsPointOnLeft(const Vector3& from, const Vector3& to, const Vector3& ref, const Vector3& axis)
+    bool IsPointOnLeft(const Vector3& from, const Vector3& to, const Vector3& ref,
+                       const Vector3& axis)
     {
         if (from == to)
         {

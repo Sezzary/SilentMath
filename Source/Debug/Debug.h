@@ -64,7 +64,7 @@ namespace Silent::Debug
      *
      * @return `true` if the debug page is open, `false` otherwise.
      */
-    bool CheckPage(Debug::Page page);
+    bool CheckPage(Page page);
 
     /** @brief Initializes the debug logger, log file for flushing, and GUI. */
     void Initialize();
@@ -119,7 +119,7 @@ namespace Silent::Debug
      * @param scaleMode Screen space scale mode.
      * @param page Debug page in which the line will be visible.
      */
-    void CreateLine(const Vector2& from, const Vector2& to, const Color& color, Renderer::ScaleMode scaleMode, Debug::Page page = Page::None);
+    void CreateLine(const Vector2& from, const Vector2& to, const Color& color, Renderer::ScaleMode scaleMode, Page page = Page::None);
 
     /** @brief Creates a 3D line with additive blending and submits it to the renderer for drawing.
      * Used to construct more complex geometry.
@@ -141,7 +141,7 @@ namespace Silent::Debug
      * @param scaleMode Screen space scale mode.
      * @param page Debug page in which the triangle will be visible.
      */
-    void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, Renderer::ScaleMode scaleMode, Debug::Page page = Page::None);
+    void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, Renderer::ScaleMode scaleMode, Page page = Page::None);
 
     /** @brief Creates a 3D triangle polygon with additive blending and submits it to the renderer for drawing.
      * Used to construct more complex geometry.

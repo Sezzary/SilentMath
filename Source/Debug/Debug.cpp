@@ -22,10 +22,10 @@ namespace Silent::Debug
 
     DebugWork g_Work = {};
 
-    bool CheckPage(Debug::Page page)
+    bool CheckPage(Page page)
     {
         const auto& options = g_App.GetOptions();
-        return options->EnablePowerMode && (page == Debug::g_Work.Page || page == Debug::Page::None);
+        return options->EnablePowerMode && (page == g_Work.Page || page == Page::None);
     }
 
     void Initialize()
@@ -68,7 +68,7 @@ namespace Silent::Debug
         Scratchpad();
 
         // Check if power menu is enabled.
-        if (!Debug::g_Work.EnablePowerMenu)
+        if (!g_Work.EnablePowerMenu)
         {
             g_Work.Messages.clear();
             return;
@@ -122,7 +122,7 @@ namespace Silent::Debug
         constexpr int BUFFER_SIZE = 255;
 
         // Check if power menu is enabled.
-        if (!Debug::g_Work.EnablePowerMenu)
+        if (!g_Work.EnablePowerMenu)
         {
             return;
         }
@@ -248,7 +248,7 @@ namespace Silent::Debug
         renderer.SubmitDebugGui(drawFunc);
     }
 
-    void CreateLine(const Vector2& from, const Vector2& to, const Color& color, ScaleMode scaleMode, Debug::Page page)
+    void CreateLine(const Vector2& from, const Vector2& to, const Color& color, ScaleMode scaleMode, Page page)
     {
         auto& renderer = g_App.GetRenderer();
         renderer.SubmitDebugLine(from, to, color, scaleMode, page);
@@ -260,7 +260,7 @@ namespace Silent::Debug
         renderer.SubmitDebugLine(from, to, color, page);
     }
 
-    void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, ScaleMode scaleMode, Debug::Page page)
+    void SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Color& color, ScaleMode scaleMode, Page page)
     {
         auto& renderer = g_App.GetRenderer();
         renderer.SubmitDebugTriangle(vert0, vert1, vert2, color, scaleMode, page);

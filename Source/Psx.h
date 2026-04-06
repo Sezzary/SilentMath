@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.h"
+
 extern "C" 
 {
     #include <psyz.h>
@@ -13,6 +15,8 @@ extern "C"
     #include <libsnd.h>
     #include <libspu.h>
 }
+
+using namespace Silent;
 
 /** @brief Model primitive material flags. */
 enum e_MaterialFlags
@@ -55,3 +59,19 @@ constexpr int itob(int i)
 {
     return ((i / 10) * 16) + (i % 10);
 }
+
+q19_12 Compat_SquareRoot12(q19_12 x);
+
+void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat);
+
+void Math_RotMatrixZxyNegGte(SVECTOR* rot, MATRIX* mat);
+
+void Math_RotMatrixXyz(SVECTOR* rot, MATRIX* mat);
+
+void Math_RotMatrixZxy(SVECTOR* rot, MATRIX* mat);
+
+void Math_RotMatrixXyxGte(SVECTOR* rot, MATRIX* mat);
+
+MATRIX* Math_RotMatrixZ(q19_12 angle, MATRIX* mat);
+
+void Math_MatrixTransform(MATRIX* mat, VECTOR3* in, VECTOR3* out);

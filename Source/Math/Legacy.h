@@ -270,20 +270,4 @@ namespace Silent::Math
      * @return Fixed-point product of `a` and `b`.
      */
     int Math_MulFixed(int a, int b, int shift);
-
-    //q19_12 SquareRoot12(q19_12 x);
-
-    //void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat);
-
-    //void Math_RotMatrixZxyNegGte(SVECTOR* rot, MATRIX* mat);
-
-    //void Math_RotMatrixXyz(SVECTOR* rot, MATRIX* mat);
-
-    //void Math_RotMatrixZxy(SVECTOR* rot, MATRIX* mat);
-
-    //void Math_RotMatrixXyxGte(SVECTOR* rot, MATRIX* mat);
-
-    //MATRIX* Math_RotMatrixZ(int, MATRIX*);
-
-    //void Math_MatrixTransform(MATRIX* mat, VECTOR3* in, VECTOR3* out);
 }
