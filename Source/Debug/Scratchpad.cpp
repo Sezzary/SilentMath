@@ -33,7 +33,7 @@ namespace Silent::Debug
             auto& fonts    = g_App.GetFonts();
 
             float s = 5.0f;
-            auto col = Color::White;
+            auto col = Color::Blue;
             auto pg = Debug::Page::Renderer;
 
             // Front Face (Z = 5.0)
