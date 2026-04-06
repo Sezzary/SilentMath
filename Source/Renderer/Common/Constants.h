@@ -19,13 +19,10 @@ namespace Silent::Renderer
 
     constexpr int DEPTH_MAX = 1024;
 
-    constexpr char PLACEHOLDER_TEXTURE_NAME[] = "Placeholder";
-    constexpr auto PLACEHOLDER_TEXTURE_RES    = Vector2i(1, 1);
-    constexpr auto PLACEHOLDER_TEXTURE_PIXELS = std::array<byte, RGBA_COMP_COUNT>
+    constexpr char DEFAULT_TEXTURE_NAME[] = "Default";
+    constexpr auto DEFAULT_TEXTURE_RES    = Vector2i(1, 1);
+    constexpr auto DEFAULT_TEXTURE_PIXELS = std::array<byte, RGBA_COMP_COUNT>
     {
-        Q8_COLOR(1.0f),
-        Q8_COLOR(1.0f),
-        Q8_COLOR(1.0f),
-        Q8_COLOR(1.0f)
+        Q8_COLOR(1.0f), Q8_COLOR(1.0f), Q8_COLOR(1.0f), Q8_COLOR(1.0f)
     };
 }
