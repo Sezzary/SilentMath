@@ -28,14 +28,10 @@ namespace Silent::Renderer
         const auto& input = g_App.GetInput();
 
         // Modulate speed.
-        static float speed = 0.02f;
+        static float speed = 0.1f;
         if (input.GetAction(In::Shift).IsHeld())
         {
-            speed = 0.1f;
-        }
-        else
-        {
-            speed = 0.05f;
+            speed = 0.2f;
         }
 
         // Move on 2D plane.

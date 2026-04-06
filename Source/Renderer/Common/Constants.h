@@ -18,4 +18,14 @@ namespace Silent::Renderer
     constexpr std::array<int, TRI_VERTEX_COUNT * 2> QUAD_TRI_IDXS = { 0, 1, 2, 0, 2, 3 };
 
     constexpr int DEPTH_MAX = 1024;
+
+    constexpr char PLACEHOLDER_TEXTURE_NAME[] = "Placeholder";
+    constexpr auto PLACEHOLDER_TEXTURE_RES    = Vector2i(1, 1);
+    constexpr auto PLACEHOLDER_TEXTURE_PIXELS = std::array<byte, RGBA_COMP_COUNT>
+    {
+        Q8_COLOR(1.0f),
+        Q8_COLOR(1.0f),
+        Q8_COLOR(1.0f),
+        Q8_COLOR(1.0f)
+    };
 }

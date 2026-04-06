@@ -33,32 +33,26 @@ namespace Silent::Debug
             auto& fonts    = g_App.GetFonts();
 
             float s = 5.0f;
-            auto col = Color::Blue;
+            auto col = Color(0.4f,0.4f,0);
             auto pg = Debug::Page::Renderer;
 
             // Front Face (Z = 5.0)
             renderer.SubmitDebugTriangle({-s, -s,  s}, { s, -s,  s}, { s,  s,  s}, col, pg); // Tri 1
-            renderer.SubmitDebugTriangle({ s,  s,  s}, {-s,  s,  s}, {-s, -s,  s}, col, pg); // Tri 2
 
             // Back Face (Z = -5.0)
             renderer.SubmitDebugTriangle({ s, -s, -s}, {-s, -s, -s}, {-s,  s, -s}, col, pg); // Tri 1
-            renderer.SubmitDebugTriangle({-s,  s, -s}, { s,  s, -s}, { s, -s, -s}, col, pg); // Tri 2
 
             // Right Face (X = 5.0)
             renderer.SubmitDebugTriangle({ s, -s,  s}, { s, -s, -s}, { s,  s, -s}, col, pg); // Tri 1
-            renderer.SubmitDebugTriangle({ s,  s, -s}, { s,  s,  s}, { s, -s,  s}, col, pg); // Tri 2
 
             // Left Face (X = -5.0)
             renderer.SubmitDebugTriangle({-s, -s, -s}, {-s, -s,  s}, {-s,  s,  s}, col, pg); // Tri 1
-            renderer.SubmitDebugTriangle({-s,  s,  s}, {-s,  s, -s}, {-s, -s, -s}, col, pg); // Tri 2
 
             // Top Face (Y = 5.0)
             renderer.SubmitDebugTriangle({-s,  s,  s}, { s,  s,  s}, { s,  s, -s}, col, pg); // Tri 1
-            renderer.SubmitDebugTriangle({ s,  s, -s}, {-s,  s, -s}, {-s,  s,  s}, col, pg); // Tri 2
 
             // Bottom Face (Y = -5.0)
             renderer.SubmitDebugTriangle({-s, -s, -s}, { s, -s, -s}, { s, -s,  s}, col, pg); // Tri 1
-            renderer.SubmitDebugTriangle({ s, -s,  s}, {-s, -s,  s}, {-s, -s, -s}, col, pg); // Tri 2
 
             return;
 

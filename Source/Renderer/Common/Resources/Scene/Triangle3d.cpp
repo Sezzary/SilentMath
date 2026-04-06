@@ -20,22 +20,19 @@ namespace Silent::Renderer
                 {
                     .Position = vert0,
                     .Normal   = normal,
-                    .Col      = color,
-                    .Uv       = Vector2::Zero // @todo Temp. UVs. Need separates shader for textureless triangles?
+                    .Col      = color
                 },
                 Triangle3dVertex
                 {
                     .Position = vert1,
                     .Normal   = normal,
-                    .Col      = color,
-                    .Uv       = Vector2(1.0f, 0.0f)
+                    .Col      = color
                 },
                 Triangle3dVertex
                 {
                     .Position = vert2,
                     .Normal   = normal,
-                    .Col      = color,
-                    .Uv       = Vector2::One
+                    .Col      = color
                 },
             },
             .BlendMd = blendMode
