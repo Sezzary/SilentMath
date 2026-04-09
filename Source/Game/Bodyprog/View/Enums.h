@@ -2,6 +2,7 @@
 
 namespace Silent::Game
 {
+    /** @brief Camera path flags. */
     enum VC_ROAD_FLAGS
     {
         VC_RD_NOFLAG            = 0,
@@ -16,6 +17,7 @@ namespace Silent::Game
         VC_RD_MARGE_ROAD_F      = 1 << 7
     };
 
+    /** @brief Camera flags. */
     enum VC_FLAGS
     {
         VC_NOFLAG                = 0,
@@ -32,25 +34,7 @@ namespace Silent::Game
         VC_OLD_PRS_F_VIEW_F      = 1 << 10
     };
 
-    /** @brief Camera anchor types. */
-    enum e_CameraAnchor
-    {
-        CameraAnchor_Character = 0,
-        CameraAnchor_Ground    = 1,
-        CameraAnchor_Camera    = 2 // TODO: Name uncertain. Relies on some backup camera Y value? -- Sezz
-    };
-
-    /** @brief Debug camera mode state steps. */
-    enum e_DebugCameraMode
-    {
-        DebugCameraMode_Collision          = 0,
-        DebugCameraMode_SetReference       = 1,
-        DebugCameraMode_AnalogStickControl = 2,
-        DebugCameraMode_ResetReference     = 3, // TODO: Name uncertain.
-        DebugCameraMode_Init               = 4  // TODO: Name uncertain.
-    };
-
-    /** @brief Camera move type. */
+    /** @brief Camera move types. */
     enum VC_CAM_MV_TYPE
     {
         VC_MV_CHASE        = 0, /** Chase player. */
@@ -62,32 +46,37 @@ namespace Silent::Game
         VC_MV_SUU          = 5  /** Count. */
     };
 
+    /** @brief Camera check types. */
     enum VC_CAM_CHK_TYPE
     {
-        VC_CHK_NEAREST_ROAD_TYPE   = 0,
-        VC_CHK_NEAREST_SWITCH_TYPE = 1
+        VC_CHK_NEAREST_ROAD_TYPE   = 0, /** Closest camera path. */
+        VC_CHK_NEAREST_SWITCH_TYPE = 1  /** Closest switch type. */
     };
 
-    /** @brief Camera path type. */
+    /** @brief Camera path types. */
     enum VC_ROAD_TYPE
     {
-        VC_RD_TYPE_ROAD           = 0,
-        VC_RD_TYPE_EFFECT         = 1,
-        VC_RD_TYPE_EVENT          = 2,
-        VC_RD_TYPE_ROAD_PRIO_LOW  = 3,
-        VC_RD_TYPE_ROAD_PRIO_HIGH = 4,
-        VC_RD_TYPE_SV_ONLY        = 5,
+        VC_RD_TYPE_ROAD           = 0, /** Regular camera path. */
+        VC_RD_TYPE_EFFECT         = 1, /** Effect camera path. */
+        VC_RD_TYPE_EVENT          = 2, /** Event camera path. */
+        VC_RD_TYPE_ROAD_PRIO_LOW  = 3, /** Low-priority camera path. */
+        VC_RD_TYPE_ROAD_PRIO_HIGH = 4, /** High-priority camera path. */
+        VC_RD_TYPE_SV_ONLY        = 5, /** @todo */
 
         VC_RD_TYPE_SUU            = 6  /** Count. */
     };
 
-    // Not defined in SH2 symbols, values taken from `vrDispMsgVC_ROAD_DIR_TYPE` SH2 debug func.
+    /** @brief Camera path direction binding types.
+     *
+     * @note Not defined in SH2 symbols. Values are taken from the `vrDispMsgVC_ROAD_DIR_TYPE` SH2 debug function.
+     */
     enum VC_ROAD_DIR_TYPE
     {
-        VC_RD_DIR_Z = 0,
-        VC_RD_DIR_X = 1
+        VC_RD_DIR_Z = 0, /** Bound on X-axis. */
+        VC_RD_DIR_X = 1  /** Bound on Z-axis. */
     };
 
+    /** @brief Camera path spatial constraint size types. */
     enum VC_AREA_SIZE_TYPE
     {
         VC_AREA_TINY    = 0,
@@ -95,13 +84,32 @@ namespace Silent::Game
         VC_AREA_WIDE    = 2,
         VC_AREA_OUTDOOR = 3,
 
-        //VC_AREA_SUU     = 4 /**Count. Disabled to remove size warning since it's unused. */
+        //VC_AREA_SUU     = 4 /** Count. Disabled to remove size warning since it's unused. */
     };
 
+    /** @brief Rail camera set command types. */
     enum THROUGH_DOOR_SET_CMD_TYPE
     {
         VC_TDSC_START = 0,
         VC_TDSC_END   = 1,
         VC_TDSC_MAIN  = 2
+    };
+
+    /** @brief Camera anchor types. */
+    enum e_CameraAnchor
+    {
+        CameraAnchor_Character = 0,
+        CameraAnchor_Ground    = 1,
+        CameraAnchor_Camera    = 2 // TODO: Name uncertain. Relies on some backup camera Y value? -- Sezz
+    };
+
+    /** @brief Debug camera mode state steps. */
+    enum e_DebugCameraMode
+    {
+        DebugCameraMode_Collide          = 0,
+        DebugCameraMode_SetReference       = 1,
+        DebugCameraMode_AnalogStickControl = 2,
+        DebugCameraMode_ResetReference     = 3, // TODO: Name uncertain.
+        DebugCameraMode_Init               = 4  // TODO: Name uncertain.
     };
 }

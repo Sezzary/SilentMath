@@ -91,7 +91,7 @@ namespace Silent::Input
     bool InputManager::HasDeviceInput() const
     {
         return _deviceStates.HasKeyboardInput ||
-               _deviceStates.HasMouseInput ||
+               _deviceStates.HasMouseInput    ||
                _deviceStates.HasGamepadInput;
     }
 

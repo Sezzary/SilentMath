@@ -8,7 +8,7 @@ namespace Silent::Game
 
     constexpr int CAMERA_PATH_COLL_COUNT_MAX = 10;
 
-    /** @brief 2D area constraint on the XZ plane. */
+    /** @brief 2D camera path area constraint on the XZ plane. */
     struct VC_LIMIT_AREA
     {
         q11_4 min_hx;
@@ -17,12 +17,12 @@ namespace Silent::Game
         q11_4 max_hz;
     };
 
-    /** @brief Camera internal info. */
+    /** @brief Internal camera info. */
     struct VC_CAMERA_INTINFO
     {
-        u32   mode;      /** Mode state step. */
-        u8    mv_smooth; /** `VC_CAM_MV_TYPE` */
-        q3_12 ev_cam_rate;
+        u32   mode;        /** Mode state step. */
+        u8    mv_smooth;   /** `VC_CAM_MV_TYPE` */
+        q3_12 ev_cam_rate; /** Camera elevation rate. */
     };
 
     /** @brief Camera look-at move parameters.
@@ -47,7 +47,7 @@ namespace Silent::Game
 
     /** @brief Camera path data.
      *
-     * In SH2 the `.cam` files contain this struct, while in SH1 this is part of `s_MapOverlayHeader`.
+     * @note In SH2, the `.cam` files contain this struct, while in SH1 this is part of `s_MapOverlayHeader`.
      */
     struct VC_ROAD_DATA
     {
@@ -89,6 +89,7 @@ namespace Silent::Game
         VC_LIMIT_AREA sw_1C;                 /** Switch constraint on XZ plane. */
     };
 
+    /** @brief Camera workspace. */
     struct VC_WORK
     {
         u8                        view_cam_active_f_0;            /** `bool` */
@@ -99,7 +100,6 @@ namespace Silent::Game
         q3_12                     scr_half_ang_wy_2C;
         q3_12                     scr_half_ang_wx_2E;
         s16                       geom_screen_dist_30;            /** Related to `GsSetProjection`/`g_GameSys.gs_y_res_58A`. */
-        s16                       field_32; // Padding? Not used.
         VC_CAM_MV_PARAM           user_cam_mv_prm_34;             /** Look parameters? */
         VECTOR3                   cam_tgt_pos_44;                 /** Target camera position. */
         VECTOR3                   cam_pos_50;                     /** Q19.12 | Camera position. */
@@ -153,6 +153,7 @@ namespace Silent::Game
         GsCOORDINATE2* super;
     };
 
+    /** @brief Camera view renderer workspace. */
     struct VW_VIEW_WORK
     {
         VbRVIEW       rview;
@@ -161,7 +162,8 @@ namespace Silent::Game
         SVECTOR       worldang; /** Q3.12 | Camera world rotation. */
     };
 
-    struct s_Vw_AabbVisibleInFrustumCheck
+    /** @brief Camera view cull data. */
+    struct s_CameraCullData
     {
         MATRIX  field_0;
         SVECTOR field_20[8];
@@ -173,8 +175,9 @@ namespace Silent::Game
         s32     field_178;
     };
 
-    struct s_func_8004A54C
+    /** @brief 3x3 screen region occupancy flags. */
+    struct s_CameraScreenRegionFlags
     {
-        u8 field_0[3][3];
+        u8 flags[3][3];
     };
 }

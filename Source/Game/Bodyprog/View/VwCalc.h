@@ -2,7 +2,7 @@
 
 namespace Silent::Game
 {
-    struct s_func_8004A54C;
+    struct s_CameraScreenRegionFlags;
     struct VbRVIEW;
 
     void vwRenewalXZVelocityToTargetPos(q19_12* velo_x, q19_12* velo_z, const VECTOR3* now_pos, const VECTOR3* tgt_pos, q19_12 tgt_r,
@@ -103,7 +103,12 @@ namespace Silent::Game
      */
     bool Vw_AabbVisibleInFrustumCheck(MATRIX* modelMat, s16 minX, s16 minY, s16 minZ, s32 maxX, s32 maxY, s32 maxZ, u16 nearPlane, u16 farPlane);
 
-    bool func_8004A54C(s_func_8004A54C* arg0);
+    /** @brief Checks if screen-space region flags span across the screen center.
+     *
+     * @param regionFlags 3x3 screen region occupancy flags.
+     * @return `true` if geometry spans the visible region, `false` otherwise.
+     */
+    bool Vw_ScreenRegionSpanCheck(s_CameraScreenRegionFlags* regionFlags);
 
     /** @brief Converts a rotation to a direction vector with a given length.
      *

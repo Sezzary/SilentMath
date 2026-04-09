@@ -106,7 +106,7 @@ namespace Silent::Game
 
                 vcSetFirstCamWork(&first_cam_pos, g_SysWork.playerWork_4C.player_0.rotation_24.vy, false);
 
-            case DebugCameraMode_Collision:
+            case DebugCameraMode_Collide:
                 hr_p = &g_SysWork.playerWork_4C.player_0;
 
                 if (in_connect_f)

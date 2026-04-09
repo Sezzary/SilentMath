@@ -516,28 +516,29 @@ namespace Silent::Game
 
     bool Vw_AabbVisibleInFrustumCheck(MATRIX* modelMat, s16 minX, s16 minY, s16 minZ, s32 maxX, s32 maxY, s32 maxZ, u16 nearPlane, u16 farPlane) // 0x80049F38
     {
-        u8                              flags0[3];
-        u8                              flags1[3];
-        s_func_8004A54C                 sp20;
-        DVECTOR                         screenPos;
-        s32                             distToNearPlane;
-        s32                             distToFarPlane;
-        s32                             interpAlpha;
-        s32                             transformedZ;
-        s32                             flag1Idx;
-        s32                             flag0Idx;
-        s32                             pointsOutsideNearPlaneCount;
-        s32                             i;
-        s32                             pointsOutsideFarClipCount;
-        bool                            cond;
-        DVECTOR*                        screenPoints;
-        u8*                             var_t1_2;
-        SVECTOR*                        temp_a1_3;
-        SVECTOR*                        temp_a2;
-        SVECTOR*                        temp_a3;
-        s_Vw_AabbVisibleInFrustumCheck* cullData;
+        u8                        flags0[3];
+        u8                        flags1[3];
+        s_CameraScreenRegionFlags regionFlags;
+        DVECTOR                   screenPos;
+        s32                       distToNearPlane;
+        s32                       distToFarPlane;
+        s32                       interpAlpha;
+        s32                       transformedZ;
+        s32                       flag1Idx;
+        s32                       flag0Idx;
+        s32                       pointsOutsideNearPlaneCount;
+        s32                       i;
+        s32                       pointsOutsideFarClipCount;
+        bool                      cond;
+        DVECTOR*                  screenPoints;
+        u8*                       var_t1_2;
+        SVECTOR*                  temp_a1_3;
+        SVECTOR*                  temp_a2;
+        SVECTOR*                  temp_a3;
+        s_CameraCullData*         cullData;
 
-        static u8 D_800AD480[24] = {
+        static u8 D_800AD480[24] =
+        {
             0, 1, 1, 2, 2, 3, 3, 0,
             4, 5, 5, 6, 6, 7, 7, 4,
             0, 4, 1, 5, 2, 6, 3, 7
@@ -550,13 +551,13 @@ namespace Silent::Game
         flags1[1] = 0;
         flags1[0] = 0;
 
-        sp20.field_0[2][2] = 0;
+        regionFlags.flags[2][2] = 0;
 
-        //cullData          = (s_Vw_AabbVisibleInFrustumCheck*)PSX_SCRATCH;
+        //cullData          = (s_CameraCullData*)PSX_SCRATCH;
         cullData->field_0 = *modelMat;
 
-        ((u32*)&sp20)[1] = 0;
-        ((u32*)&sp20)[0] = 0;
+        ((u32*)&regionFlags)[1] = 0;
+        ((u32*)&regionFlags)[0] = 0;
 
         //GsSetLsMatrix(&cullData->field_0);
 
@@ -647,9 +648,9 @@ namespace Silent::Game
                     flag1Idx = 0;
                 }
 
-                flags0[flag0Idx]                 |= 1 << 0;
-                flags1[flag1Idx]                 |= 1 << 0;
-                sp20.field_0[flag1Idx][flag0Idx] |= 1 << 0;
+                flags0[flag0Idx]                      |= 1 << 0;
+                flags1[flag1Idx]                      |= 1 << 0;
+                regionFlags.flags[flag1Idx][flag0Idx] |= 1 << 0;
             }
         }
 
@@ -663,12 +664,12 @@ namespace Silent::Game
             return false;
         }
 
-        if (sp20.field_0[1][1] != 0)
+        if (regionFlags.flags[1][1])
         {
             return true;
         }
 
-        if (func_8004A54C(&sp20) != 1)
+        if (Vw_ScreenRegionSpanCheck(&regionFlags) != 1)
         {
             for (i = 0; i < 8; i++)
             {
@@ -778,7 +779,7 @@ namespace Silent::Game
         return true;
     }
 
-    bool func_8004A54C(s_func_8004A54C* arg0) // 0x8004A54C
+    bool Vw_ScreenRegionSpanCheck(s_CameraScreenRegionFlags* regionFlags) // 0x8004A54C
     {
         bool cond0;
         bool cond1;
@@ -790,16 +791,16 @@ namespace Silent::Game
         cond2 = false;
         cond3 = false;
 
-        if (arg0->field_0[1][1] != 0)
+        if (regionFlags->flags[1][1])
         {
             return true;
         }
 
-        if (arg0->field_0[1][0] || (arg0->field_0[0][0] && arg0->field_0[2][0]))
+        if (regionFlags->flags[1][0] || (regionFlags->flags[0][0] && regionFlags->flags[2][0]))
         {
             cond0 = true;
         }
-        if (arg0->field_0[1][2] || (arg0->field_0[0][2] && arg0->field_0[2][2]))
+        if (regionFlags->flags[1][2] || (regionFlags->flags[0][2] && regionFlags->flags[2][2]))
         {
             cond1 = true;
         }
@@ -808,11 +809,11 @@ namespace Silent::Game
             return true;
         }
 
-        if (arg0->field_0[0][1] || (arg0->field_0[0][0] && arg0->field_0[0][2]))
+        if (regionFlags->flags[0][1] || (regionFlags->flags[0][0] && regionFlags->flags[0][2]))
         {
             cond2 = true;
         }
-        if (arg0->field_0[2][1] || (arg0->field_0[2][0] && arg0->field_0[2][2]))
+        if (regionFlags->flags[2][1] || (regionFlags->flags[2][0] && regionFlags->flags[2][2]))
         {
             cond3 = true;
         }
