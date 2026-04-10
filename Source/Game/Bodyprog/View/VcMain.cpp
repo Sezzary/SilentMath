@@ -121,7 +121,7 @@ namespace Silent::Game
         return vcWork.watch_pos_y;
     }
 
-    void vcSetFirstCamWork(VECTOR3* cam_pos, s16 chara_eye_ang_y, bool use_through_door_cam_f) // 0x80080A4C
+    void vcSetFirstCamWork(VECTOR3* cam_pos, q3_12 chara_eye_ang_y, bool use_through_door_cam_f) // 0x80080A4C
     {
         Math_SVectorZero(&vcWork.ofs_cam_ang_spd);
 
@@ -167,9 +167,9 @@ namespace Silent::Game
         vcWork.flags = (vcWork.flags | enable) & ~disable;
     }
 
-    s32 Vc_LookAtOffsetYMaxSet(s32 lookAtOffsetYMax) // 0x80080C18
+    q19_12 Vc_LookAtOffsetYMaxSet(q19_12 lookAtOffsetYMax) // 0x80080C18
     {
-        s32 prevVal;
+        q19_12 prevVal;
 
         prevVal                = vcWork.watch_tgt_max_y;
         vcWork.watch_tgt_max_y = lookAtOffsetYMax;
@@ -225,7 +225,7 @@ namespace Silent::Game
         vcWork.geom_screen_dist = scr_y;
     }
 
-    void func_80080D68() // 0x80080D68
+    void Vc_UpdateLookAtPointSet() // 0x80080D68
     {
         vcWork.updateLookAtPoint = true;
     }

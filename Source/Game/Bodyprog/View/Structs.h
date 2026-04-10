@@ -73,7 +73,7 @@ namespace Silent::Game
         q19_12  timer;
         q3_12   rail_ang_y;             /** Rail Y angle. */
         VECTOR3 rail_sta_pos;           /** Rail start position. */
-        s32     rail_sta_to_chara_dist; /** Distance from rail start position to locked-on character position. */
+        q19_12  rail_sta_to_chara_dist; /** Distance from rail start position to locked-on character position. */
     };
 
     /** @brief Nearby camera path collision. */
@@ -82,7 +82,7 @@ namespace Silent::Game
         VC_ROAD_DATA* road_p;              /** Path associated with the collision. */
         u8            rd_dir_type;         /** `VC_ROAD_DIR_TYPE` */
         u8            use_priority;        /** Usage priority in case of overlap. Higher values take precedence. */
-        s32           chara2road_sum_dist; /** Character to path distance. */
+        q19_12        chara2road_sum_dist; /** Character to path distance. */
         q19_12        chara2road_vec_x;    /** Character to path distance on X axis. */
         q19_12        chara2road_vec_z;    /** Character to path distance on Z axis. */
         VC_LIMIT_AREA rd;                  /** Camera path constraint on XZ plane. */
@@ -105,11 +105,11 @@ namespace Silent::Game
         VECTOR3                   cam_pos;                      /** Q19.12 | Camera position. */
         q3_12                     cam_mv_ang_y;                 /** Angular velocity on the Y axis. */
         VECTOR3                   cam_velo;                     /** Q19.12 | Camera velocity. */
-        s32                       old_cam_excl_area_r;          /** Previous exclusion area radius. */
+        q19_12                    old_cam_excl_area_r;          /** Previous exclusion area radius. */
         VC_WATCH_MV_PARAM         user_watch_mv_prm;
         VECTOR3                   watch_tgt_pos;                /** Q19.12 | Target look-at position. */
-        s32                       watch_tgt_max_y;              /** Max look-at Y offset. */
-        s16                       watch_tgt_ang_z;              /** Target look-at Z angle. */
+        q19_12                    watch_tgt_max_y;              /** Max look-at Y offset. */
+        q3_12                     watch_tgt_ang_z;              /** Target look-at Z angle. */
         SVECTOR                   cam_mat_ang;                  /** Matrix rotation. */
         MATRIX                    cam_mat;                      /** Matrix. */
         SVECTOR                   ofs_cam_ang;                  /** Offset rotation. */

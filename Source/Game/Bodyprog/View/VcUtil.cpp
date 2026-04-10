@@ -72,9 +72,9 @@ namespace Silent::Game
         g_WorldGfxWork.vcCameraInternalInfo_1BDC.ev_cam_rate = ev_cam_rate;
     }
 
-    void func_800401CC() // 0x800401CC
+    void Vc_UpdateLookAtPointSetAlt() // 0x800401CC
     {
-        //func_80080D68();
+        Vc_UpdateLookAtPointSet();
     }
 
     void vcMoveAndSetCamera(bool in_connect_f, bool change_debug_mode,
