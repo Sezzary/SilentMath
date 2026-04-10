@@ -319,7 +319,7 @@ namespace Silent::Game
             }
         }
 
-        //Math_RotMatrixZxyNegGte(&cam_ang, &mat);
+        Math_RotMatrixZxyNegGte(&cam_ang, &lookAtMat);
 
         lookAtMat.t[0] = newCamPos.vx;
         lookAtMat.t[1] = newCamPos.vy;

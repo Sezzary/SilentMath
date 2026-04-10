@@ -94,7 +94,7 @@ namespace Silent::Game
      */
     static inline void Vc_CurNearRoadSet(VC_WORK* work, VC_NEAR_ROAD_DATA* road)
     {
-        memcpy(&work->cur_near_road_2B8, road, sizeof(VC_NEAR_ROAD_DATA));
+        memcpy(&work->cur_near_road, road, sizeof(VC_NEAR_ROAD_DATA));
     }
 
     /** @brief Clears a set of camera flags.
@@ -103,7 +103,7 @@ namespace Silent::Game
      */
     static inline void Vc_FlagClear(s32 flags)
     {
-        vcWork.flags_8 &= ~flags;
+        vcWork.flags &= ~flags;
     }
 
     /** @brief Sets a set of camera flags.
@@ -112,6 +112,6 @@ namespace Silent::Game
  */
     static inline void Vc_FlagSet(s32 flags)
     {
-        vcWork.flags_8 |= flags;
+        vcWork.flags |= flags;
     }
 }

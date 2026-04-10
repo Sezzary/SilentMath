@@ -307,7 +307,7 @@ namespace Silent::Game
         pos.vy      = rview->vr.vy - rview->vp.vy;
         pos.vz      = rview->vr.vz - rview->vp.vz;
         vwVectorToAngle(&rot, &pos);
-        //Math_RotMatrixZxyNegGte(&rot, &coord.coord);
+        Math_RotMatrixZxyNegGte(&rot, &coord.coord);
 
         coord.coord.t[0] = rview->vp.vx;
         coord.coord.t[1] = rview->vp.vy;
@@ -554,12 +554,12 @@ namespace Silent::Game
         regionFlags.flags[2][2] = 0;
 
         //cullData          = (s_CameraCullData*)PSX_SCRATCH;
-        cullData->field_0 = *modelMat;
+        cullData->modelMat = *modelMat;
 
         ((u32*)&regionFlags)[1] = 0;
         ((u32*)&regionFlags)[0] = 0;
 
-        //GsSetLsMatrix(&cullData->field_0);
+        //GsSetLsMatrix(&cullData->modelMat);
 
         cullData->field_20[0].vx = minX;
         cullData->field_20[0].vy = minY;
@@ -781,43 +781,45 @@ namespace Silent::Game
 
     bool Vw_ScreenRegionSpanCheck(s_CameraScreenRegionFlags* regionFlags) // 0x8004A54C
     {
-        bool cond0;
-        bool cond1;
-        bool cond2;
-        bool cond3;
+        bool isLeft   = false;
+        bool isRight  = false;
+        bool isTop    = false;
+        bool isBottom = false;
 
-        cond0 = false;
-        cond1 = false;
-        cond2 = false;
-        cond3 = false;
-
+        // Check center.
         if (regionFlags->flags[1][1])
         {
             return true;
         }
 
+        // Define vertical span.
         if (regionFlags->flags[1][0] || (regionFlags->flags[0][0] && regionFlags->flags[2][0]))
         {
-            cond0 = true;
+            isLeft = true;
         }
         if (regionFlags->flags[1][2] || (regionFlags->flags[0][2] && regionFlags->flags[2][2]))
         {
-            cond1 = true;
+            isRight = true;
         }
-        if (cond0 && cond1)
+
+        // Check vertical span.
+        if (isLeft && isRight)
         {
             return true;
         }
 
+        // Define horizontal span.
         if (regionFlags->flags[0][1] || (regionFlags->flags[0][0] && regionFlags->flags[0][2]))
         {
-            cond2 = true;
+            isTop = true;
         }
         if (regionFlags->flags[2][1] || (regionFlags->flags[2][0] && regionFlags->flags[2][2]))
         {
-            cond3 = true;
+            isBottom = true;
         }
-        if (cond2 && cond3)
+
+        // Check horizontal span.
+        if (isTop && isBottom)
         {
             return true;
         }
@@ -854,9 +856,6 @@ namespace Silent::Game
 
     s32 vwOresenHokan(const s32* y_ary, s32 y_suu, s32 input_x, s32 min_x, s32 max_x) // 0x8004A7C8
     {
-        // `y_ary` = array of Y values.
-        // `y_suu` = `y_ary` size.
-
         s32 amari;    // Remainder when calculating position within interval.
         s32 kukan_w;  // Width of each interval between Y values.
         s32 kukan_no; // Index of the interval containing `input_x` angle.
@@ -874,7 +873,7 @@ namespace Silent::Game
             }
             else
             {
-                kukan_w  = (max_x - min_x) / (y_suu - 1);
+                kukan_w  = (max_x   - min_x) / (y_suu - 1);
                 amari    = (input_x - min_x) % kukan_w;
                 kukan_no = (input_x - min_x) / kukan_w;
                 if (kukan_no >= (y_suu - 1))

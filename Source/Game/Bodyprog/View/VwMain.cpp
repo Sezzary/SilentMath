@@ -56,9 +56,9 @@ namespace Silent::Game
         rot.vz = Q12_ANGLE(0.0f);
         rot.vy = Math_Ratan2(deltaX, deltaZ);
         rot.vx = Math_Ratan2(-deltaY, SquareRoot0(SQUARE(deltaX) + SQUARE(deltaZ)));
-        // @math
+ 
         // Compute view transform matrix and set global info.
-        //Math_RotMatrixZxyNeg(&rot, &viewMat);
+        Math_RotMatrixZxyNeg(&rot, &viewMat);
         viewMat.t[0] = Q12_TO_Q8(pos->vx);
         viewMat.t[1] = Q12_TO_Q8(pos->vy);
         viewMat.t[2] = Q12_TO_Q8(pos->vz);
@@ -74,16 +74,18 @@ namespace Silent::Game
 
         view_mtx = &vwViewPointInfo.vwcoord.coord;
 
+        // Setup.
         vwViewPointInfo.vwcoord.flg   = false;
         vwViewPointInfo.vwcoord.super = parent_p;
 
+        // Compute look-at rotation.
         view_ang.vy = cam_ang_y;
         view_ang.vz = cam_ang_z;
         view_ang.vx = -Math_Ratan2(-cam_y, cam_xz_r);
         view_ang.vy = Q12_ANGLE_NORM_U(view_ang.vy + Q12_ANGLE(180.0f));
-        // @math
-        //Math_RotMatrixZxyNegGte(&view_ang, view_mtx);
+        Math_RotMatrixZxyNegGte(&view_ang, view_mtx);
 
+        // Compute view matrix.
         view_mtx->t[0] = Q12_TO_Q8(ref_x) + Q12_MULT(Q12_TO_Q8(cam_xz_r), Math_Sin(cam_ang_y));
         view_mtx->t[1] = Q12_TO_Q8(ref_y) + Q12_TO_Q8(cam_y);
         view_mtx->t[2] = Q12_TO_Q8(ref_z) + Q12_MULT(Q12_TO_Q8(cam_xz_r), Math_Cos(cam_ang_y));

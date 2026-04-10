@@ -11,14 +11,16 @@ namespace Silent::Game
     struct VC_WATCH_MV_PARAM;
     struct VC_WORK;
 
-    /** @brief Initializes the camera paths used in the active map.
+    /** @brief Initializes the camera paths used by the active map.
      *
      * @param vc_road_ary_list Camera paths.
      */
     void vcInitVCSystem(VC_ROAD_DATA* vc_road_ary_list);
 
+    /* @brief Enables the camera system. */
     void vcStartCameraSystem();
 
+    /* @brief Disables the camera system. */
     void vcEndCameraSystem();
 
     s32 func_80080A10();
@@ -49,6 +51,7 @@ namespace Silent::Game
 
     void vcChangeProjectionValue(s16 scr_y);
 
+    /** @brief Sets `vcWork.updateLookAtPoint` to `true`. */
     void func_80080D68();
 
     /** @brief Gets the current camera look-at position.
