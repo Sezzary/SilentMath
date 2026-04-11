@@ -964,14 +964,14 @@ namespace Silent::Game
 
     typedef struct _LinkedBone
     {
-        s_Bone              bone_0;
-        struct _LinkedBone* next_14;
+        s_Bone              bone;
+        struct _LinkedBone* next;
     } s_LinkedBone;
 
     typedef struct
     {
-        u8            boneCount_0;
-        u8            boneIdx_1;
+        u8            boneCount;
+        u8            boneIdx;
         u8            field_2;
         s8            field_3;
         s_LinkedBone* bones_4;
@@ -1403,7 +1403,7 @@ namespace Silent::Game
         q19_12 positionX_0;
         s8     charaId_4;   /** `e_CharacterId` */
         u8     rotationY_5; /** Degrees in Q7.8, range [0, 256]. */
-        s8     flags_6;     /** Copied to `stateStep_3` in `s_Model`, with `controlState_2 = ModelState_Uninitialized`. */
+        s8     flags_6;     /** Copied to `stateStep` in `s_Model`, with `controlState = ModelState_Uninitialized`. */
         s32    gameDifficultyMin_7_0 : 4;
         q19_12 positionZ_8;
     } s_SpawnInfo;
@@ -1411,9 +1411,9 @@ namespace Silent::Game
     /** Special map-specific Harry anim data. */
     typedef struct
     {
-        s16   status_0; /** Packed anim status. See `s_ModelAnim::status_0`. */
-        s16   status_2; /** Packed anim status. See `s_ModelAnim::status_0`. */
-        q3_12 time_4;   /** Fixed-point anim time. */
+        s16   status; /** Packed anim status. See `s_ModelAnim::status`. */
+        s16   status_2; /** Packed anim status. See `s_ModelAnim::status`. */
+        q3_12 time;   /** Fixed-point anim time. */
         s16   keyframeIdx_6;
     } s_UnkStruct3_Mo; // Probable size: 8 bytes.
 
@@ -1514,7 +1514,7 @@ namespace Silent::Game
         GsCOORDINATE2*         field_28;
         u8*                    loadableItems_2C;
         const char**           mapMessages_30; // Array of strings.
-        s_AnimInfo*            animInfos_34;   // Map-specific anim infos for Harry (for anims 38+).
+        s_AnimInfo*            harryMapAnimInfos_34;   // Map-specific anim infos for Harry (for anims 38+).
         s_UnkStruct3_Mo*       field_38; // Array of 40?
         void                   (*worldObjectsInit_3C)(); // func(?).
         void                   (*worldObjectsUpdate_40)();

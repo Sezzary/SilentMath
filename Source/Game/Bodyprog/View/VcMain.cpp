@@ -1388,7 +1388,7 @@ namespace Silent::Game
         }
 
         vcMixSelfViewEffectToWatchTgtPos(&w_p->watch_tgt_pos, &w_p->watch_tgt_ang_z, self_view_eff_rate,
-                                         w_p, &g_SysWork.playerBoneCoords_890[HarryBone_Head].workm, player.model_0.anim_4.status_0);
+                                         w_p, &g_SysWork.playerBoneCoords_890[HarryBone_Head].workm, player.model_0.anim.status);
 
         if (w_p->watch_tgt_pos.vy > w_p->watch_tgt_max_y)
         {

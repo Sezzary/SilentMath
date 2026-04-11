@@ -1176,14 +1176,14 @@ namespace Silent::Game
     } s_GameWork;
 
     /** @brief Constant character animation info passed to `Anim_Update` functions.
-     * The struct itself defines which `Anim_Update` function is to be called.
+     * Defines which `Anim_Update` function is to be called.
      */
     struct s_AnimInfo
     {
         void (*playbackFunc_0)(struct _Model* model, struct _AnmHeader* anmHdr, GsCOORDINATE2* coords, struct _AnimInfo* animInfo);
-        u8 status_4;                      /** Packed anim status. Init base? See `s_ModelAnimData::status_0`. */
+        u8 status_4;                      /** Packed anim status. Init base? See `s_ModelAnimData::status`. */
         s8 hasVariableDuration_5;         /** `bool` | Use `duration_8.variableFunc`: `true`, Use `duration_8.constant`: `false`. */
-        u8 linkStatus_6;                  /** Packed anim status link target. See `s_ModelAnim::status_0`. */
+        u8 linkStatus_6;                  /** Packed anim status link target. See `s_ModelAnim::status`. */
         // 1 byte of padding.
         union
         {
@@ -1197,26 +1197,26 @@ namespace Silent::Game
     /** @brief Character model animation. */
     typedef struct _ModelAnim
     {
-        u8          status_0;         /** Is active: bit 0, Anim index: bits 1-7. Possible original name: `anim_status`. */
-        u8          maybeSomeState_1; // State says if `time_4` is anim time/anim status or a func ptr? That field could be a union.
-        u16         flags_2;          /** `e_AnimFlags` */
-        q19_12      time_4;           /** Time on timeline. */
-        s16         keyframeIdx_8;    /** Active keyframe index. */
-        q3_12       alpha_A;          /** Keyframe progress alpha. Rename to `keyframeAlpha_A`? */
-        s_AnimInfo* animInfo_C;       // } Arrays of anim infos?
-        s_AnimInfo* animInfo_10;      // }
+        u8          status;             /** Is active: bit 0, Anim index: bits 1-7. */
+        u8          mapAnimStatusStart; /** Start packed anim status of map-specific anim infos. Only used for Harry. */
+        u16         flags;              /** `e_AnimFlags` */
+        q19_12      time;               /** Time on timeline. */
+        s16         keyframeIdx;        /** Active keyframe index. */
+        q3_12       alpha;              /** Keyframe progress alpha. */
+        s_AnimInfo* baseAnimInfos;      /** Anim infos. For Harry, used for base anims. */
+        s_AnimInfo* mapAnimInfos;       /** Map-specific anim infos. Only used for Harry. */
     } s_ModelAnim;
 
     /** @brief Character model. */
     struct s_Model
     {
         s8          charaId_0;      /** `e_CharacterId` */
-        u8          paletteIdx_1;   /** Changes the texture palette index for this model. */
-        u8          controlState_2; /** Active character control state. */
-        u8          stateStep_3;    // Step number or temp data for the current `controlState_2`? In `s_PlayerExtra` always 1, set to 0 for 1 tick when anim state appears to change.
-                                    // Used differently in player's `s_SubCharacter`. 0: anim transitioning(?), bit 1: animated, bit 2: turning.
-                                    // Sometimes holds actual anim index?
-        s_ModelAnim anim_4;
+        u8          paletteIdx;   /** Changes the texture palette index for this model. */
+        u8          controlState; /** Active character control state. */
+        u8          stateStep;    // Step number or temp data for the current `controlState`? In `s_PlayerExtra` always 1, set to 0 for 1 tick when anim state appears to change.
+                                  // Used differently in player's `s_SubCharacter`. 0: anim transitioning(?), bit 1: animated, bit 2: turning.
+                                  // Sometimes holds actual anim index?
+        s_ModelAnim anim;
     };
 
     typedef union
@@ -1256,7 +1256,7 @@ namespace Silent::Game
     typedef struct _CharaDamage
     {
         VECTOR3 position_0;
-        q19_12 amount_C;
+        q19_12  amount_C;
     } s_CharaDamage;
 
     /** @brief Temporary struct. */
@@ -1280,11 +1280,9 @@ namespace Silent::Game
         q19_12        runTimer_108;
         u8            field_10C;    // Player SFX pitch?
         u8            field_10D;
-        s8            unk_10E[2];
         q19_12        timer_110; // Increases when `flags_3E & CharaFlag_Unk4` is set, reset when reaches `D_800C45EC`.
         q19_12        gasWeaponPowerTimer_114; // Timer for the rock drill and chainsaw power.
         s16           field_118;
-        s8            unk_11A[2];
         e_PlayerFlags flags_11C;
         q3_12         quickTurnHeadingAngle_120; /** Target quick turn heading angle. */
         q3_12         field_122; // Some sort of X angle for the player. Specially used when aiming an enemy.
@@ -1729,7 +1727,7 @@ namespace Silent::Game
 
         // Fields seen used inside maps (eg. `map0_s00` `func_800D923C`)
         s_SubCharacter_C8 field_C8;
-        s_SubCharacter_D4 field_D4; // Contains collision radius and somethign else.
+        s_SubCharacter_D4 field_D4; // Contains collision radius and something else.
         s_SubCharacter_D8 field_D8; // Translation data?
         u8                field_E0; // Related to collision. If the player collides with the only enemy in memory and the enemy is knocked down, this is set to 1.
         s8                field_E1_0 : 4; // State.
@@ -1869,7 +1867,7 @@ namespace Silent::Game
         s_PlayerWork    playerWork_4C;
         s_SubCharacter  npcs_1A0[NPC_COUNT_MAX];
         GsCOORDINATE2   playerBoneCoords_890[HarryBone_Count];
-        GsCOORDINATE2   unkCoords_E30[5];  // Might be part of previous array for 5 extra coords which go unused.
+        GsCOORDINATE2   unkCoords_E30[5];                  // Might be part of previous array for 5 extra coords which go unused.
         GsCOORDINATE2   npcCoords_FC0[NPC_BONE_COUNT_MAX]; // Dynamic coord buffer? 10 coords per NPC (given max of 6 NPCs).
         s8              npcId_2280;                        // NPC ID for `npcFlags_2290`. Not an index, starts at 1.
         s8              loadingScreenIdx_2281;
@@ -1898,9 +1896,9 @@ namespace Silent::Game
         s8              targetNpcIdx_2353; /** Index of the NPC being targeted by the player. */
         s8              npcIdxs_2354[4];
         u8              enablePlayerMatchAnim_2358; /** `bool` | Activates the animation performed by Harry when lighting a match at the beginning of the game. */
-        s8              unk_2359[1];
+        // 1 byte of padding.
         u8              playerStopFlags_235A; /** `e_PlayerStopFlags` */
-        s8              unk_235B[1];
+        // 1 byte of padding.
         GsCOORDINATE2*  field_235C;              // Player torso bone.
         VECTOR3         pointLightPosition_2360; //                   } Often gets set from DMS cutscene data.
         GsCOORDINATE2*  field_236C;              // Player root bone. }
@@ -1914,9 +1912,8 @@ namespace Silent::Game
         s_SysWork_2388  field_2388;
         s32             field_2510;
         //s_SysWork_2514  field_2514;
-        u8              unk_254C[508];
+        u8              unk_254C[508]; // @unused Debug data?
         q3_12           bgmLayerVolumes_2748[BGM_LAYER_COUNT];
-        u8              unk_275A[2];
         q19_12          field_275C;
         s32             field_2760;
         s32             field_2764;
@@ -2193,15 +2190,15 @@ namespace Silent::Game
     /** @brief Sets the animation of a character.
      *
      * @param chara Character to set animation for. TODO: Maybe should take `s_ModelAnim` instead? If fits better, also rename to `Anim_Set`.
-     * @param animStatus Packed anim status. See `s_ModelAnim::status_0`.
+     * @param animStatus Packed anim status. See `s_ModelAnim::status`.
      * @param keyframeIdx Active keyframe index.
      */
     static inline void Character_AnimSet(s_SubCharacter* chara, s32 animStatus, s32 keyframeIdx)
     {
         // TODO: Problem with header includes prevents `Q12` macro use.
-        chara->model_0.anim_4.status_0      = animStatus;
-        chara->model_0.anim_4.time_4        = keyframeIdx << 12;//Q12(keyframeIdx);
-        chara->model_0.anim_4.keyframeIdx_8 = keyframeIdx;
+        chara->model_0.anim.status      = animStatus;
+        chara->model_0.anim.time        = keyframeIdx << 12;//Q12(keyframeIdx);
+        chara->model_0.anim.keyframeIdx = keyframeIdx;
     }
 
     /** @brief Checks if the `s_SubCharacter*` has the given `flags_3E` value set. */
@@ -2214,7 +2211,7 @@ namespace Silent::Game
      * @param flag Flags to set.
      */
     #define Model_AnimFlagsSet(model, flags) \
-        (model)->anim_4.flags_2 |= (flags)
+        (model)->anim.flags |= (flags)
 
     /** @brief Clears given animation flags for a model.
      *
@@ -2222,9 +2219,9 @@ namespace Silent::Game
      * @param flag Flags to clear.
      */
     #define Model_AnimFlagsClear(model, flags) \
-        (model)->anim_4.flags_2 &= ~(flags)
+        (model)->anim.flags &= ~(flags)
 
-    /** @brief Updates a model anim if `model->stateStep_3` is 0.
+    /** @brief Updates a model anim if `model->stateStep` is 0.
      *
      * @param model Model to update.
      * @param animIdx Anim index to set.
@@ -2232,10 +2229,10 @@ namespace Silent::Game
      */
     static inline void Model_AnimStatusSet(s_Model* model, s32 animIdx, bool isActive)
     {
-        if (model->stateStep_3 == 0)
+        if (model->stateStep == 0)
         {
-            model->anim_4.status_0 = ANIM_STATUS(animIdx, isActive);
-            model->stateStep_3++;
+            model->anim.status = ANIM_STATUS(animIdx, isActive);
+            model->stateStep++;
         }
     }
 
@@ -2245,7 +2242,7 @@ namespace Silent::Game
      */
     static inline void ModelAnim_StatusIncrement(s_ModelAnim* anim)
     {
-        anim->status_0++;
+        anim->status++;
     }
 
     /** @brief Decrements the anim status of a model anim.
@@ -2254,10 +2251,10 @@ namespace Silent::Game
      */
     static inline void ModelAnim_StatusDecrement(s_ModelAnim* anim)
     {
-        anim->status_0--;
+        anim->status--;
     }
 
-    /** @brief Similar to `Model_AnimStatusSet`, but also sets `anim_4.time_4` and `anim_4.keyframeIdx_8`
+    /** @brief Similar to `Model_AnimStatusSet`, but also sets `anim.time` and `anim.keyframeIdx`
      * from the `animInfos` `s_AnimInfo` array.
      *
      * @param model Model to update.
@@ -2267,12 +2264,12 @@ namespace Silent::Game
      * @param animInfosOffset Anim infos offset.
      */
     #define Model_AnimStatusKeyframeSet(model, animIdx, isActive, animInfos, animInfosOffset)                                       \
-        if ((model).stateStep_3 == 0)                                                                                               \
+        if ((model).stateStep == 0)                                                                                               \
         {                                                                                                                           \
-            (model).anim_4.status_0 = ANIM_STATUS(animIdx, isActive);                                                               \
-            (model).stateStep_3++;                                                                                                  \
-            (model).anim_4.time_4        = Q12((animInfos)[ANIM_STATUS(animIdx, isActive) + (animInfosOffset)].startKeyframeIdx_C); \
-            (model).anim_4.keyframeIdx_8 = (animInfos)[ANIM_STATUS(animIdx, (isActive) + (animInfosOffset))].startKeyframeIdx_C;    \
+            (model).anim.status = ANIM_STATUS(animIdx, isActive);                                                               \
+            (model).stateStep++;                                                                                                  \
+            (model).anim.time        = Q12((animInfos)[ANIM_STATUS(animIdx, isActive) + (animInfosOffset)].startKeyframeIdx_C); \
+            (model).anim.keyframeIdx = (animInfos)[ANIM_STATUS(animIdx, (isActive) + (animInfosOffset))].startKeyframeIdx_C;    \
         }
 
     /** @brief Attempts to reset a humanoid NPC's anim state index to 0.
@@ -2286,7 +2283,7 @@ namespace Silent::Game
         if (chara->properties_E4.dahlia.resetStateIdx0_F8)
         {
             chara->properties_E4.dahlia.stateIdx0         = 0;
-            chara->model_0.stateStep_3                    = 0;
+            chara->model_0.stateStep                    = 0;
             chara->properties_E4.dahlia.resetStateIdx0_F8 = 0;
         }
     }

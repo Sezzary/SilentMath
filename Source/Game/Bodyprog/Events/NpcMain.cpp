@@ -114,8 +114,8 @@ namespace Silent::Game
                 }
 
                 g_SysWork.npcs_1A0[npcIdx].field_40               = i;
-                g_SysWork.npcs_1A0[npcIdx].model_0.controlState_2 = ModelState_Uninitialized;
-                g_SysWork.npcs_1A0[npcIdx].model_0.stateStep_3    = curCharaSpawn->flags_6;
+                g_SysWork.npcs_1A0[npcIdx].model_0.controlState = ModelState_Uninitialized;
+                g_SysWork.npcs_1A0[npcIdx].model_0.stateStep    = curCharaSpawn->flags_6;
                 g_SysWork.npcs_1A0[npcIdx].position_18.vx         = curCharaSpawn->positionX_0;
                 g_SysWork.npcs_1A0[npcIdx].position_18.vz         = curCharaSpawn->positionZ_8;
 
@@ -128,7 +128,7 @@ namespace Silent::Game
                 SET_FLAG(g_SysWork.field_228C, i);
 
                 chara                          = &g_SysWork.npcs_1A0[npcIdx];
-                chara->model_0.anim_4.flags_2 |= AnimFlag_Visible;
+                chara->model_0.anim.flags |= AnimFlag_Visible;
             }
         }
     }
@@ -309,16 +309,16 @@ namespace Silent::Game
                         (!(g_SysWork.field_2388.field_154.effectsInfo_0.field_0.s_field_0.field_0 & 0x2) &&
                         Camera_Distance2dGet(&npc->position_18) > SQUARE(15)))
                     {
-                        npc->model_0.anim_4.flags_2 &= ~AnimFlag_Visible;
+                        npc->model_0.anim.flags &= ~AnimFlag_Visible;
                     }
                     else
                     {
 
-                        npc->model_0.anim_4.flags_2 |= AnimFlag_Visible;
+                        npc->model_0.anim.flags |= AnimFlag_Visible;
                     }
                 }
 
-                npc->model_0.anim_4.flags_2 |= AnimFlag_Unlocked;
+                npc->model_0.anim.flags |= AnimFlag_Unlocked;
 
                 animDataInfoIdx = g_CharaAnimInfoIdxs[npc->model_0.charaId_0];
                 coord           = g_CharaTypeAnimInfo[animDataInfoIdx].npcCoords_14;
@@ -333,9 +333,9 @@ namespace Silent::Game
                 func_80037E78(npc);
                 //func_8008A3AC(npc);
 
-                if (npc->model_0.anim_4.flags_2 & AnimFlag_Visible)
+                if (npc->model_0.anim.flags & AnimFlag_Visible)
                 {
-                    //func_8003DA9C(npc->model_0.charaId_0, coord, 1, npc->timer_C6, (s8)npc->model_0.paletteIdx_1);
+                    //func_8003DA9C(npc->model_0.charaId_0, coord, 1, npc->timer_C6, (s8)npc->model_0.paletteIdx);
                 }
             }
         }

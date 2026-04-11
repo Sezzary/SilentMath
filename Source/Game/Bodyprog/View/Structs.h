@@ -132,8 +132,8 @@ namespace Silent::Game
         q19_12                    chara_mv_spd;                              /** Locked-on character movement speed. */
         q3_12                     chara_mv_ang_y;                            /** Locked-on character heading angle. */
         q3_12                     chara_ang_spd_y;                           /** Locked-on character heading angle angular speed. */
-        q3_12                     chara_eye_ang_y;                           /** Locked-on character look heading angle? */
-        q3_12                     chara_eye_ang_wy;                          /** Locked-on character unknown Y angle */
+        q3_12                     chara_eye_ang_y;                           /** Locked-on character look heading angle. */
+        q3_12                     chara_eye_ang_wy;                          /** Unused. */
         q19_12                    chara_watch_xz_r;                          /** Locked-on character radius on the XZ plane. */
         VC_NEAR_ROAD_DATA         near_road_ary[CAMERA_PATH_COLL_COUNT_MAX]; /** Nearby camera path collisions. */
         q19_12                    near_road_suu;                             /** Count of valid `near_road_ary` entries. */
