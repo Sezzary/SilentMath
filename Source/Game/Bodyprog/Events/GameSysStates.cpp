@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Game/Bodyprog/Demo.h"
+#include "Game/Bodyprog/Events/bodyprog_data_800A99B4.h"
 #include "Game/Bodyprog/Events/MapMsgDisplay.h"
 #include "Game/Bodyprog/Events/EventsMain.h"
 #include "Game/Bodyprog/Events/Radio.h"

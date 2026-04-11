@@ -181,11 +181,11 @@ namespace Silent::Game
     } e_StaticModelLoadState;
 
     /** SFX pair used for area loading (e.g. door opening and closing). */
-    typedef struct
+    struct s_AreaLoadSfx
     {
         u16 sfx_0;
         u16 sfx_2;
-    } s_AreaLoadSfx;
+    };
 
     // Exception, as one of the unidentified structs uses this.
     typedef struct _s_8002AC04
@@ -2084,23 +2084,6 @@ namespace Silent::Game
 
     /** Relative file offset for map texture? */
     extern s8 D_800A99B5;
-
-    extern char* D_800A99E4[8];
-
-    extern s8 g_PaperMapFileIdxs[];
-
-    extern s8 g_PaperMapMarkingFileIdxs[];
-
-    extern s_FsImageDesc D_800A9A04;
-
-    extern s32 D_800A9A0C; // Old IDB name `FS_AllFilesLoaded`, though FS code doesn't set it.
-
-    extern s32 g_MapEventSysState; /** `e_InventoryItemId` */
-
-    extern s32 g_MapEventLastUsedItem; /** `e_InventoryItemId` */
-
-    /** Radio pitch state based on the distance from the player to an enemy. Range: `[0, 3]`. */
-    extern s32 g_RadioPitchState;
 
     extern s32 D_800A9A68;
 
