@@ -32,6 +32,15 @@ namespace Silent::Game
         (((u_Filename*)(a))->u32[0] != ((u_Filename*)(b))->u32[0] || \
         ((u_Filename*)(a))->u32[1] != ((u_Filename*)(b))->u32[1])
 
+    // Used by `func_8006E490` and `func_8006E150`.
+    typedef enum _OrientationFlags
+    {
+        OrientationFlags_None    = 0,
+        OrientationFlags_InvertX = 1 << 0,
+        OrientationFlags_InvertZ = 1 << 1,
+        OrientationFlags_SwapXz  = 1 << 2
+    } e_OrientationFlags;
+
     /** @brief Animation playback states. Returned by `Chara_AnimPlaybackStateGet`. */
     typedef enum _AnimPlaybackState
     {
@@ -2234,7 +2243,7 @@ namespace Silent::Game
     extern u8 D_800AF220;
 
     /** @brief Last weapon selected. While it is being assigned the value of
-     * `g_SysWork::playerCombat_38::weaponAttack_F` this time it is used to determine
+     * `g_SysWork::playerCombat_38::weaponAttack` this time it is used to determine
      * the last weapon used in order to load the required animation data.
      */
     extern s32 g_Player_LastWeaponSelected;

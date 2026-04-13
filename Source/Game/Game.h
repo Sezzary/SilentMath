@@ -145,7 +145,7 @@ namespace Silent::Game
         (FP_FROM(animTime, Q12_SHIFT) - (baseOffset))
 
     /** @brief Creates a bitmask with a contiguous range of bits set.
-     * For use with `s_PlayerExtra::disabledAnimBones_18`.
+     * For use with `s_PlayerExtra::disabledAnimBones`.
      *
      * Generates an `unsigned int` mask with all bits in the range `[fromInclusive, toInclusive]` set.
      *
@@ -224,26 +224,26 @@ namespace Silent::Game
      * if the chunk index will be a positive number. Seems like they forgot to use `ABS`?
      */
     #define PLAYER_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                                        \
-        (__chunkIdx = g_SysWork.playerWork_4C.player_0.position.comp / Q12(40.0f),                        \
-        ((g_SysWork.playerWork_4C.player_0.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) == (x1)) || \
-        (g_SysWork.playerWork_4C.player_0.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) == (x3))))
+        (__chunkIdx = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                        \
+        ((g_SysWork.playerWork.player.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) == (x1)) || \
+        (g_SysWork.playerWork.player.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) == (x3))))
 
     #define PLAYER_NOT_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                                    \
-        (__chunkIdx = g_SysWork.playerWork_4C.player_0.position.comp / Q12(40.0f),                        \
-        ((g_SysWork.playerWork_4C.player_0.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) != (x1)) || \
-        (g_SysWork.playerWork_4C.player_0.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) != (x3))))
+        (__chunkIdx = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                        \
+        ((g_SysWork.playerWork.player.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) != (x1)) || \
+        (g_SysWork.playerWork.player.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) != (x3))))
 
     #define MAP_CHUNK_CHECK_VARIABLE_DECL_2() \
         s32 __chunkIdx2
 
     #define PLAYER_IN_MAP_CHUNK_2(comp, x0, x1, x2, x3)                                                      \
-        (__chunkIdx2 = g_SysWork.playerWork_4C.player_0.position.comp / Q12(40.0f),                       \
-        ((g_SysWork.playerWork_4C.player_0.position.comp >  Q12(0.0f) && (__chunkIdx2 + (x0)) < (x1)) || \
-        (g_SysWork.playerWork_4C.player_0.position.comp <= Q12(0.0f) && (__chunkIdx2 + (x2)) < (x3))))
+        (__chunkIdx2 = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                       \
+        ((g_SysWork.playerWork.player.position.comp >  Q12(0.0f) && (__chunkIdx2 + (x0)) < (x1)) || \
+        (g_SysWork.playerWork.player.position.comp <= Q12(0.0f) && (__chunkIdx2 + (x2)) < (x3))))
 
     #define PLAYER_NEAR_POS(comp, base, tol)                                                                                                                             \
-        (((g_SysWork.playerWork_4C.player_0.position.comp - Q12(base)) >= Q12(0.0f)) ? ((g_SysWork.playerWork_4C.player_0.position.comp - Q12(base)) < Q12(tol)) : \
-                                                                                          ((Q12(base) - g_SysWork.playerWork_4C.player_0.position.comp) < Q12(tol)))
+        (((g_SysWork.playerWork.player.position.comp - Q12(base)) >= Q12(0.0f)) ? ((g_SysWork.playerWork.player.position.comp - Q12(base)) < Q12(tol)) : \
+                                                                                          ((Q12(base) - g_SysWork.playerWork.player.position.comp) < Q12(tol)))
 
     #define MIN_OFFSET(x, neg, pos) \
         ((((x) + (-neg)) <= ((x) + (pos))) ? ((x) - (neg)) : ((x) + (pos)))
@@ -1675,10 +1675,10 @@ namespace Silent::Game
 
     typedef struct
     {
-        s16 field_0; // Something dependent on `CharaFlag_Unk8`.
-        u8  field_2; // In player: packed weapon attack. See `WEAPON_ATTACK`.
-                    // This is not the same as `attackReceived`, as this value only resets when player is aiming.
-                    // In NPCs: Indicates attack performed on player.
+        s16     field_0; // Something dependent on `CharaFlag_Unk8`.
+        u8      field_2; // In player: packed weapon attack. See `WEAPON_ATTACK`.
+                         // This is not the same as `attackReceived`, as this value only resets when player is aiming.
+                         // In NPCs: Indicates attack performed on player.
         u8      field_3;
         u8      field_4;
         s8      unk_5[3];
@@ -1771,37 +1771,37 @@ namespace Silent::Game
         } properties;
     };
 
-    typedef struct _PlayerExtra
+    struct s_PlayerExtra
     {
-        s_Model           model;              /** Manages upper half body's animations (torso, arms, head). */
-        s32               disabledAnimBones_18; /** Bitfield of disabled animation bones. Can be created using the `BITMASK_RANGE` macro. */
-        s32               state_1C;             /** `e_PlayerState` */
-        s32               upperBodyState_20;    /** `e_PlayerUpperBodyState` */
-        s32               lowerBodyState_24;    /** `e_PlayerLowerBodyState` */
-        e_InventoryItemId lastUsedItem_28;      /** Holds the last item ID used from inventory when the player is inside an item trigger area. */
-    } s_PlayerExtra;
+        s_Model           model;             /** Manages upper half body's animations (torso, arms, head). */
+        s32               disabledAnimBones; /** Bitfield of disabled animation bones. Can be created using the `BITMASK_RANGE` macro. */
+        s32               state;             /** `e_PlayerState` */
+        s32               upperBodyState;    /** `e_PlayerUpperBodyState` */
+        s32               lowerBodyState;    /** `e_PlayerLowerBodyState` */
+        e_InventoryItemId lastUsedItem;      /** Holds the last item ID used from inventory when the player is inside an item trigger area. */
+    };
 
     /** @brief Player workspace.
      *
      * Possible original name: `shPlayerWork`.
      */
-    typedef struct _PlayerWork
+    struct s_PlayerWork
     {
-        s_SubCharacter player_0; /** Possible original name: `player`. */
-        s_PlayerExtra  extra_128;
-    } s_PlayerWork;
+        s_SubCharacter player;
+        s_PlayerExtra  extra;
+    };
 
     /** @brief Player combat info. */
-    typedef struct _PlayerCombat
+    struct s_PlayerCombat
     {
-        VECTOR3 field_0; // Q19.12 position offset?
-        s8      unk_C[3];
-        s8      weaponAttack_F;        /** Packed weapon attack. See `WEAPON_ATTACK`. */
-        u8      currentWeaponAmmo_10;
-        u8      totalWeaponAmmo_11;
-        s8      weaponInventoryIdx_12; /** Index of the currently equipped weapon in the inventory. */
-        u8      isAiming_13;           /** `bool` */
-    } s_PlayerCombat;
+        VECTOR3 field_0;            // Q19.12 position offset?
+        s8      __pad_C[3];
+        s8      weaponAttack;       /** Packed weapon attack. See `WEAPON_ATTACK`. */
+        u8      currentWeaponAmmo;
+        u8      totalWeaponAmmo;
+        s8      weaponInventoryIdx; /** Index of the currently equipped weapon in the inventory. */
+        u8      isAiming;           /** `bool` */
+    };
 
     typedef union
     {
@@ -1872,7 +1872,7 @@ namespace Silent::Game
         q19_12          timer_2C; // Cutscene message timer?
         s32             field_30;
         s_PlayerCombat  playerCombat_38; // Information related to weapons and attack.
-        s_PlayerWork    playerWork_4C;
+        s_PlayerWork    playerWork;
         s_SubCharacter  npcs_1A0[NPC_COUNT_MAX];
         GsCOORDINATE2   playerBoneCoords_890[HarryBone_Count];
         GsCOORDINATE2   unkCoords_E30[5];                  // Might be part of previous array for 5 extra coords which go unused.

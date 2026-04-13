@@ -189,7 +189,7 @@ namespace Silent::Game
                     //Map_WorldClear();
                 }
 
-                //Ipd_PlayerChunkInit(&g_MapOverlayHeader, g_SysWork.playerWork_4C.player_0.position.vx, g_SysWork.playerWork_4C.player_0.position.vz);
+                //Ipd_PlayerChunkInit(&g_MapOverlayHeader, g_SysWork.playerWork.player.position.vx, g_SysWork.playerWork.player.position.vz);
                 if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_OverlayTransition)
                 {
                     Game_RadioSoundStop();

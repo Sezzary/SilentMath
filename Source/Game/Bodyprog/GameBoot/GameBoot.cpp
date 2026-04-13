@@ -75,6 +75,6 @@ namespace Silent::Game
             //WorldGfx_PlayerPrevHeldItem(&g_SysWork.playerCombat_38);
         }
 
-        //Gfx_PlayerHeldItemAttach(g_SysWork.playerCombat_38.weaponAttack_F);
+        //Gfx_PlayerHeldItemAttach(g_SysWork.playerCombat_38.weaponAttack);
     }
 }

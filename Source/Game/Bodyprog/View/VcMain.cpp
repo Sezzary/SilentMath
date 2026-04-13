@@ -920,7 +920,7 @@ namespace Silent::Game
                         set_active_data_f = false;
                         if (sc_p == &g_SysWork.npcs_1A0[g_SysWork.targetNpcIdx_2353])
                         {
-                            set_active_data_f = g_SysWork.playerCombat_38.isAiming_13 > false;
+                            set_active_data_f = g_SysWork.playerCombat_38.isAiming > false;
                         }
                     }
                 }
@@ -1369,7 +1369,7 @@ namespace Silent::Game
     {
         VECTOR3 far_watch_pos; // Q19.12
 
-        const auto& player = g_SysWork.playerWork_4C.player_0;
+        const auto& player = g_SysWork.playerWork.player;
 
         vcMakeFarWatchTgtPos(&far_watch_pos, w_p, cur_rd_area_size);
         if (cam_mv_type != VC_MV_SELF_VIEW)
@@ -1407,7 +1407,7 @@ namespace Silent::Game
         q19_12  tgt_watch_cir_r;          // Guessed name.
         q19_12  tgt_watch_cir_r_ext;      // Guessed name.
 
-        auto& player = g_SysWork.playerWork_4C.player_0;
+        auto& player = g_SysWork.playerWork.player;
 
         *watch_tgt_ang_z_p = 0;
 
@@ -1489,7 +1489,7 @@ namespace Silent::Game
         q19_12     corrected_angle_y;
         s_SysWork* sys_work;
 
-        const auto& player = sys_work->playerWork_4C.player_0;
+        const auto& player = sys_work->playerWork.player;
 
         delta_x = watch_tgt_pos->vx - w_p->cam_pos.vx;
         delta_y = watch_tgt_pos->vy - w_p->cam_pos.vy;

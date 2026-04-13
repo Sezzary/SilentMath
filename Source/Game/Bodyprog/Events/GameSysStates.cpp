@@ -83,7 +83,7 @@ namespace Silent::Game
                 break;
         }
 
-        if (g_SysWork.sysState_8 != SysState_Gameplay && g_SysWork.playerWork_4C.player_0.health <= Q12(0.0f))
+        if (g_SysWork.sysState_8 != SysState_Gameplay && g_SysWork.playerWork.player.health <= Q12(0.0f))
         {
             SysWork_StateSetNext(SysState_Gameplay);
         }
@@ -143,7 +143,7 @@ namespace Silent::Game
 
             Demo_DemoRandSeedRestore();
 
-            player = &g_SysWork.playerWork_4C.player_0;
+            player = &g_SysWork.playerWork.player;
             //Player_Update(player, FS_BUFFER_0, g_SysWork.playerBoneCoords_890);
 
             Demo_DemoRandSeedRestore();
@@ -158,10 +158,10 @@ namespace Silent::Game
 
             if (player->model.anim.flags & AnimFlag_Visible)
             {
-                //func_8003DA9C(Chara_Harry, g_SysWork.playerBoneCoords_890, 1, g_SysWork.playerWork_4C.player_0.timer_C6, 0);
-                //Chara_Flag8Clear(&g_SysWork.playerWork_4C.player_0);
-                //Player_CombatUpdate(&g_SysWork.playerWork_4C, g_SysWork.playerBoneCoords_890);
-                //func_8008A3AC(&g_SysWork.playerWork_4C.player_0);
+                //func_8003DA9C(Chara_Harry, g_SysWork.playerBoneCoords_890, 1, g_SysWork.playerWork.player.timer_C6, 0);
+                //Chara_Flag8Clear(&g_SysWork.playerWork.player);
+                //Player_CombatUpdate(&g_SysWork.playerWork, g_SysWork.playerBoneCoords_890);
+                //func_8008A3AC(&g_SysWork.playerWork.player);
             }
 
             Demo_DemoRandSeedRestore();
@@ -178,7 +178,7 @@ namespace Silent::Game
     {
         s_SubCharacter* player;
 
-        player = &g_SysWork.playerWork_4C.player_0;
+        player = &g_SysWork.playerWork.player;
 
         Event_Update(player->attackReceived != NO_VALUE);
         //Savegame_MapRoomIdxUpdate();
@@ -211,7 +211,7 @@ namespace Silent::Game
                 break;
         }
 
-        if (g_SysWork.playerWork_4C.player_0.health <= Q12(0.0f))
+        if (g_SysWork.playerWork.player.health <= Q12(0.0f))
         {
             return;
         }
@@ -340,7 +340,7 @@ namespace Silent::Game
         s32 val0;
         s32 val1;
 
-        bool isRockDrillAttack = g_SysWork.playerCombat_38.weaponAttack_F == WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap);
+        bool isRockDrillAttack = g_SysWork.playerCombat_38.weaponAttack == WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap);
 
         //func_8008B3E4(0);
 
@@ -626,8 +626,8 @@ namespace Silent::Game
         if (D_800BCDB0.triggerParam1_4_24 == 1)
         {
             mapPoint                = &g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->pointOfInterestIdx_5];
-            offsetZ                 = g_SysWork.playerWork_4C.player_0.position.vz - mapPoint->positionZ_8;
-            D_800BCDB0.positionX_0 += g_SysWork.playerWork_4C.player_0.position.vx - mapPoint->positionX_0;
+            offsetZ                 = g_SysWork.playerWork.player.position.vz - mapPoint->positionZ_8;
+            D_800BCDB0.positionX_0 += g_SysWork.playerWork.player.position.vx - mapPoint->positionX_0;
             D_800BCDB0.positionZ_8 += offsetZ;
         }
 
@@ -747,10 +747,10 @@ namespace Silent::Game
         save = g_SavegamePtr;
 
         save->locationId_A8       = g_MapEventParam;
-        save->playerPositionX_244 = g_SysWork.playerWork_4C.player_0.position.vx;
-        save->playerPositionZ_24C = g_SysWork.playerWork_4C.player_0.position.vz;
-        save->playerRotationY_248 = g_SysWork.playerWork_4C.player_0.rotation.vy;
-        save->playerHealth_240    = g_SysWork.playerWork_4C.player_0.health;
+        save->playerPositionX_244 = g_SysWork.playerWork.player.position.vx;
+        save->playerPositionZ_24C = g_SysWork.playerWork.player.position.vz;
+        save->playerRotationY_248 = g_SysWork.playerWork.player.rotation.vy;
+        save->playerHealth_240    = g_SysWork.playerWork.player.health;
     }
 
     void func_8003A16C() // 0x8003A16C
@@ -766,10 +766,10 @@ namespace Silent::Game
 
     void SysWork_SavegameReadPlayer() // 0x8003A1F4
     {
-        g_SysWork.playerWork_4C.player_0.position.vx = g_SavegamePtr->playerPositionX_244;
-        g_SysWork.playerWork_4C.player_0.position.vz = g_SavegamePtr->playerPositionZ_24C;
-        g_SysWork.playerWork_4C.player_0.rotation.vy = g_SavegamePtr->playerRotationY_248;
-        g_SysWork.playerWork_4C.player_0.health      = g_SavegamePtr->playerHealth_240;
+        g_SysWork.playerWork.player.position.vx = g_SavegamePtr->playerPositionX_244;
+        g_SysWork.playerWork.player.position.vz = g_SavegamePtr->playerPositionZ_24C;
+        g_SysWork.playerWork.player.rotation.vy = g_SavegamePtr->playerRotationY_248;
+        g_SysWork.playerWork.player.health      = g_SavegamePtr->playerHealth_240;
     }
 
     void SysState_SaveMenu_Update() // 0x8003A230
