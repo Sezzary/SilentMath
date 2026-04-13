@@ -46,9 +46,9 @@ namespace Silent::Game
     Vector2i    g_StringPosition;
     int         g_StringPositionX1;
     s_800C38B0  D_800C38B0;
-    s32 D_800C38B4;
-    s32 g_MapMsg_WidthTable[12];
-    GsSPRITE D_800C38F8;
+    s32 g_MapMsg_WidthIdx;
+    s32 g_MapMsg_Widths[12];
+    GsSPRITE g_MapMsg_GlyphSprite;
     s16 D_800C391C;
     s32 D_800C3920;
 
@@ -112,12 +112,12 @@ namespace Silent::Game
         s32 msgArg;
         u8* mapMsg;
 
-        D_800C38B4  = 1;
+        g_MapMsg_WidthIdx  = 1;
         g_MapMsg_AudioLoadBlock = 0;
 
         /*for (i = (FONT_12X16_LINE_COUNT_MAX - 1); i >= 0; i--)
         {
-            g_MapMsg_WidthTable[i] = 0;
+            g_MapMsg_Widths[i] = 0;
         }
 
         mapMsg = g_MapOverlayHeader.mapMessages_30[mapMsgIdx];
@@ -136,7 +136,7 @@ namespace Silent::Game
 
                 case '_':
                     ++mapMsg;
-                    g_MapMsg_WidthTable[D_800C38B4 - 1] += FONT_12X16_SPACE_SIZE;
+                    g_MapMsg_Widths[g_MapMsg_WidthIdx - 1] += FONT_12X16_SPACE_SIZE;
                     break;
 
                 case MAP_MSG_CODE_MARKER:
@@ -152,7 +152,7 @@ namespace Silent::Game
 
                         case MAP_MSG_CODE_NEWLINE:
                             j++;
-                            D_800C38B4++;
+                            g_MapMsg_WidthIdx++;
                             break;
 
                         case MAP_MSG_CODE_END:
@@ -199,7 +199,7 @@ namespace Silent::Game
                         charCode = '^';
                     }
 
-                    g_MapMsg_WidthTable[D_800C38B4 - 1] += FONT_12X16_GLYPH_WIDTHS[charCode - GLYPH_TABLE_ASCII_OFFSET];
+                    g_MapMsg_Widths[g_MapMsg_WidthIdx - 1] += FONT_12X16_GLYPH_WIDTHS[charCode - GLYPH_TABLE_ASCII_OFFSET];
                     mapMsg++;
                     break;
             }
@@ -239,7 +239,7 @@ namespace Silent::Game
 
         ot                  = (GsOT*)&g_OtTags0[g_ActiveBufferIdx][6];
         color               = STRING_COLORS[g_StringColorId];
-        g_StringPosition.vx = -(g_MapMsg_WidthTable[0] >> 1);
+        g_StringPosition.vx = -(g_MapMsg_Widths[0] >> 1);
 
         if (!g_SysWork.enableHighResGlyphs_2350_0)
         {
@@ -253,7 +253,7 @@ namespace Silent::Game
                 break;
 
             case 1:
-                g_StringPosition.vy = 76 - ((D_800C38B4 - 1) * FONT_12X16_GLYPH_SIZE_Y);
+                g_StringPosition.vy = 76 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
                 break;
 
             case 2:
@@ -261,20 +261,20 @@ namespace Silent::Game
                 break;
 
             case 3:
-                g_StringPosition.vy = 44 - ((D_800C38B4 - 1) * FONT_12X16_GLYPH_SIZE_Y);
+                g_StringPosition.vy = 44 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
                 break;
 
             case 4:
-                g_StringPosition.vy = ((FONT_12X16_LINE_COUNT_MAX - D_800C38B4) * 8) - 76;
+                g_StringPosition.vy = ((FONT_12X16_LINE_COUNT_MAX - g_MapMsg_WidthIdx) * 8) - 76;
                 break;
         }
 
-        longestLineWidth = g_MapMsg_WidthTable[0];
-        for (i = 0; i < D_800C38B4; i++)
+        longestLineWidth = g_MapMsg_Widths[0];
+        for (i = 0; i < g_MapMsg_WidthIdx; i++)
         {
-            if (longestLineWidth < g_MapMsg_WidthTable[i])
+            if (longestLineWidth < g_MapMsg_Widths[i])
             {
-                longestLineWidth = g_MapMsg_WidthTable[i];
+                longestLineWidth = g_MapMsg_Widths[i];
             }
         }
 
@@ -327,7 +327,7 @@ namespace Silent::Game
                             switch (result)
                             {
                                 case MapMsgCode_AlignCenter:
-                                    glyphPosX = -(g_MapMsg_WidthTable[lineIdx] >> 1);
+                                    glyphPosX = -(g_MapMsg_Widths[lineIdx] >> 1);
                                     break;
 
                                 case MapMsgCode_SetByT:
@@ -397,7 +397,7 @@ namespace Silent::Game
 
                         case MAP_MSG_CODE_MIDDLE:
                             result    = MapMsgCode_AlignCenter;
-                            glyphPosX = -(g_MapMsg_WidthTable[lineIdx] >> 1);
+                            glyphPosX = -(g_MapMsg_Widths[lineIdx] >> 1);
                             break;
 
                         case MAP_MSG_CODE_TAB:
@@ -522,15 +522,15 @@ namespace Silent::Game
 
     void func_8004B658() // 0x8004B658
     {
-        D_800C38F8.attribute = 64;
-        D_800C38F8.cx        = 304;
-        D_800C38F8.v         = 240;
-        D_800C38F8.h         = 16;
+        g_MapMsg_GlyphSprite.attribute = 64;
+        g_MapMsg_GlyphSprite.cx        = 304;
+        g_MapMsg_GlyphSprite.v         = 240;
+        g_MapMsg_GlyphSprite.h         = 16;
     }
 
     void Gfx_MapMsg_DefaultStringInfoSet() // 0x8004B684
     {
-        D_800C38B4               = 1;
+        g_MapMsg_WidthIdx               = 1;
         D_800C38B0.field_0                   = 0;
         D_800C38B0.positionIdx_1             = 1;
         g_StringPositionX1                   = SCREEN_POSITION_X(-37.5f);
@@ -542,13 +542,13 @@ namespace Silent::Game
     {
         if (arg0 != NO_VALUE)
         {
-            //D_800C38F8.x = arg0 + (-g_GameWork.gsScreenWidth_588 / 2);
-            D_800C391C   = D_800C38F8.x;
+            //g_MapMsg_GlyphSprite.x = arg0 + (-g_GameWork.gsScreenWidth_588 / 2);
+            D_800C391C   = g_MapMsg_GlyphSprite.x;
         }
 
         if (arg1 != NO_VALUE)
         {
-            //D_800C38F8.y = arg1 + (-g_GameWork.gsScreenHeight_58A / 2);
+            //g_MapMsg_GlyphSprite.y = arg1 + (-g_GameWork.gsScreenHeight_58A / 2);
         }
     }
 
@@ -577,7 +577,7 @@ namespace Silent::Game
         GsSPRITE* glyphSprt;
 
         glyphSprt  = (GsSPRITE*)PSX_SCRATCH_ADDR(0x30);
-        *glyphSprt = D_800C38F8;
+        *glyphSprt = g_MapMsg_GlyphSprite;
         ot         = &g_OrderingTable2[g_ActiveBufferIdx];
 
         // Parse string.
@@ -637,7 +637,7 @@ namespace Silent::Game
             str++;
         }
 
-        D_800C38F8 = *glyphSprt;
+        g_MapMsg_GlyphSprite = *glyphSprt;
 
         #undef GLYPH_SIZE_X
         #undef GLYPH_SIZE_Y
@@ -661,7 +661,7 @@ namespace Silent::Game
         {
             for (i = 0; i < (widthMin - 1); i++)
             {
-                D_800C38F8.x += GLYPH_SIZE_X;
+                g_MapMsg_GlyphSprite.x += GLYPH_SIZE_X;
             }
         }
 
@@ -687,7 +687,7 @@ namespace Silent::Game
 
             if (widthMin > 0)
             {
-                D_800C38F8.x -= GLYPH_SIZE_X;
+                g_MapMsg_GlyphSprite.x -= GLYPH_SIZE_X;
             }
 
             val = quotient;
@@ -700,7 +700,7 @@ namespace Silent::Game
         {
             str--;
             *str          = '-';
-            D_800C38F8.x -= GLYPH_SIZE_X;
+            g_MapMsg_GlyphSprite.x -= GLYPH_SIZE_X;
         }
 
         // Draw numeric string.

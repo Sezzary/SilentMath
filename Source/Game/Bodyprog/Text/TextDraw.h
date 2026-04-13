@@ -28,12 +28,12 @@ namespace Silent::Game
 
     extern s_800C38B0 D_800C38B0;
 
-    extern s32 D_800C38B4;
+    extern s32 g_MapMsg_WidthIdx;
 
-    extern s32 g_MapMsg_WidthTable[12];
+    extern s32 g_MapMsg_Widths[12];
 
     /** String glyph sprite. */
-    extern GsSPRITE D_800C38F8;
+    extern GsSPRITE g_MapMsg_GlyphSprite;
 
     extern s16 D_800C391C;
 
@@ -45,13 +45,9 @@ namespace Silent::Game
     /** String X position. It's unclear why there are two. */
     extern int g_StringPositionX1;
 
-    extern s32 D_800C38B4;
+    extern s32 g_MapMsg_WidthIdx;
 
-    extern s32 g_MapMsg_WidthTable[12];
-
-    extern s16 D_800C391C;
-
-    extern s32 D_800C3920;
+    extern s32 g_MapMsg_Widths[12];
 
     /** Sets the position of the next string to be drawn by `Gfx_StringDraw`. */
     void Gfx_StringSetPosition(int posX, int posY);

@@ -28,6 +28,8 @@ namespace Silent::Renderer::SdlGpu
     {
         static constexpr char NAME[] = "SDL_gpu";
 
+        auto& assets = g_App.GetAssets();
+
         // @todo Make function for common init stuff to call at the start of every backend-specific init function.
 
         _type   = RendererType::SdlGpu;
@@ -133,7 +135,7 @@ namespace Silent::Renderer::SdlGpu
         // Load temp. textures.
         //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
         //GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
-        GetTextures().Upload(*copyPass, "TIM/BG_ETC.TIM");
+        assets.Load("TIM/BG_ETC.TIM");
         GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, DEFAULT_TEXTURE_NAME);
 
         // @todo If atlas textures aren't updated and the texture is missing, for some reason

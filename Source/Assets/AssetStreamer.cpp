@@ -49,12 +49,12 @@ namespace Silent::Assets
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
         { AssetType::Anm, { ParseAnm }                                        },
-        { AssetType::Ilm, { ParseIlm }                                        },
-        { AssetType::Ipd, { ParseIpd }                                        },
-        //{ AssetType::Plm, { ParsePlm } },
+        { AssetType::Ilm, { ParseIlm/*, IlmQueueGpuUpload, IlmQueueGpuRelease*/ }                                        },
+        { AssetType::Ipd, { ParseIpd/*, IpdQueueGpuUpload, IpdQueueGpuRelease*/ } },
+        //{ AssetType::Plm, { ParsePlm, PlmQueueGpuUpload, PlmQueueGpuRelease } },
         { AssetType::Png, { PngParse, PngQueueGpuUpload, PngQueueGpuRelease } },
         { AssetType::Tim, { TimParse, TimQueueGpuUpload, TimQueueGpuRelease } },
-        { AssetType::Tmd, { ParseTmd }                                        }
+        { AssetType::Tmd, { ParseTmd, TmdQueueGpuUpload, TmdQueueGpuRelease } }
     };
 
     const std::string& AssetStreamer::GetName(int assetIdx) const

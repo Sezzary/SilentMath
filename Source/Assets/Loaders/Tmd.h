@@ -7,6 +7,8 @@ using namespace Silent::Renderer;
 
 namespace Silent::Assets
 {
+    struct Asset;
+
     /** @brief TMD indexed vertex. */
     struct TmdVertex
     {
@@ -32,6 +34,15 @@ namespace Silent::Assets
         int                    TPage    = 0;
     };
 
+    struct TmdPsxMesh
+    {
+        std::vector<TmdPrimitive> Primitives  = {};
+        std::vector<Vector3>      Positions   = {};
+        std::vector<Vector3>      Normals     = {};
+        std::vector<Vector2>      Uvs         = {};
+        std::vector<Color>        Colors      = {};
+    };
+
     /** @brief TMD GPU-compatible linear mesh. */
     struct TmdLinearMesh
     {
@@ -42,12 +53,7 @@ namespace Silent::Assets
     /** @brief TMD mesh. */
     struct TmdMesh
     {
-        std::vector<TmdPrimitive> Primitives  = {};
-        std::vector<Vector3>      Positions   = {};
-        std::vector<Vector3>      Normals     = {};
-        std::vector<Vector2>      Uvs         = {};
-        std::vector<Color>        Colors      = {};
-
+        TmdPsxMesh    Psx    = {};
         TmdLinearMesh Linear = {};
     };
 
@@ -63,6 +69,18 @@ namespace Silent::Assets
      * @return Parsed TMD asset data as a `void` pointer.
      */
     std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename);
+
+    /** @brief Queues a TMD asset for upload to the GPU as meshes.
+     *
+     * @param asset TMD asset.
+     */
+    void TmdQueueGpuUpload(const Asset& asset);
+
+    /** @brief Queues a TMD asset to release from the GPU as meshes.
+     *
+     * @param asset TMD asset.
+     */
+    void TmdQueueGpuRelease(const Asset& asset);
 }
 
 namespace std 

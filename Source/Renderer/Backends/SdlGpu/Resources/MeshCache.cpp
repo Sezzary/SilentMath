@@ -115,6 +115,7 @@ namespace Silent::Renderer::SdlGpu
         const auto data = asset.GetData<PlmAsset>();
 
         // @todo
+        Debug::Log("Attempted to load PLM GPU meshes. Unimplemented.", Debug::LogLevel::Warning);
     }
 
     void MeshCache::UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
@@ -122,6 +123,7 @@ namespace Silent::Renderer::SdlGpu
         const auto data = asset.GetData<IpdAsset>();
 
         // @todo
+        Debug::Log("Attempted to load IPD GPU meshes. Unimplemented.", Debug::LogLevel::Warning);
     }
 
     void MeshCache::UploadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)
