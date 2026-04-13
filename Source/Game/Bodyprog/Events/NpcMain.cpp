@@ -6,6 +6,7 @@
 
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/Events/bodyprog_data_800A99B4.h"
+#include "Game/Bodyprog/Events/GameSysStates.h"
 //#include "Game/Bodyprog/player.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Sound/SoundSystem.h"
@@ -432,11 +433,11 @@ namespace Silent::Game
 
                     var_a2_2 = CLAMP(var_v1_3, 0, 0xFF);
 
-                    //Sd_SfxAttributesUpdate(Sfx_RadioInterferenceLoop + l, temp_s0_4, var_a2_2, 0);
+                    Sd_SfxAttributesUpdate(Sfx_RadioInterferenceLoop + l, temp_s0_4, var_a2_2, 0);
                 }
                 else
                 {
-                    //Sd_SfxStop(Sfx_RadioInterferenceLoop + l);
+                    Sd_SfxStop(Sfx_RadioInterferenceLoop + l);
                 }
             }
 

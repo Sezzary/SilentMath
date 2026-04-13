@@ -250,10 +250,10 @@ namespace Silent::Game
 
     typedef struct
     {
-        s32               id_0;
+        s32               id;
         s32               flags_4;
-        s32               modelCount_8;
-        //struct TMD_STRUCT models_c[1];
+        s32               modelCount;
+        //struct TMD_STRUCT models[1];
     } s_TmdFile;
 
     typedef struct
@@ -399,7 +399,7 @@ namespace Silent::Game
     {
         s8      field_0;
         s8      unk_1;
-        DVECTOR field_2; // Q3.12 | XY rotation.
+        DVECTOR field_2; // Q3.12 | Angle constraint. X is min, Y is max. TODO: Don't use `DVECTOR` for this anymore.
     } s_CollisionState_44_0;
 
     typedef struct
@@ -684,15 +684,14 @@ namespace Silent::Game
 
     struct s_LmHeader
     {
-        u8             magic_0;    /** See `LM_HEADER_MAGIC`. */
-        u8             version_1;  /** See `LM_VERSION`. */
-        u8             isLoaded_2; /** `bool` */
-        u8             materialCount_3;
-        s_Material*    materials_4;
-        u8             modelCount_8;
-        u8             unk_9[3];
-        s_ModelHeader* modelHdrs_C;
-        u8*            modelOrder_10;
+        u8             magic;    /** See `LM_HEADER_MAGIC`. */
+        u8             version;  /** See `LM_VERSION`. */
+        u8             isLoaded; /** `bool` */
+        u8             materialCount;
+        s_Material*    materials;
+        u8             modelCount;
+        s_ModelHeader* modelHdrs;
+        u8*            modelOrder;
     };
 
     typedef struct _IpdCollisionData_10
@@ -787,20 +786,19 @@ namespace Silent::Game
 
     typedef struct _IpdModelInfo
     {
-        u8             isGlobalPlm_0; // `false` if loaded from inside `IPD`, `true` if loaded from `*_GLB.PLM`.
-        u8             unk_1[3];
-        u_Filename     modelName_4;
-        s_ModelHeader* modelHdr_C;
+        u8             isGlobalPlm; // `false` if loaded from inside `IPD`, `true` if loaded from `*_GLB.PLM`.
+        u_Filename     modelName;
+        s_ModelHeader* modelHdr;
     } s_IpdModelInfo;
 
     typedef struct _IpdHeader
     {
-        u8                 magic_0;
+        u8                 magic;
         u8                 isLoaded_1; /** `bool` */
         s8                 cellX_2;
         s8                 cellZ_3;
         s_LmHeader*        lmHdr_4;
-        u8                 modelCount_8;
+        u8                 modelCount;
         u8                 modelBufferCount_9;
         u8                 modelOrderCount_A;
         u8                 unk_B[1];
@@ -827,18 +825,17 @@ namespace Silent::Game
 
     struct s_AnmHeader
     {
-        u16           dataOffset_0;
-        u8            rotationBoneCount_2;
-        u8            translationBoneCount_3;
-        u16           keyframeDataSize_4; // Size per keyframe, `(rotationBoneCount_2 * 9) + (translationBoneCount_3 * 3)`?
-        u8            boneCount_6;
-        u8            unk_7;
-        u32           activeBones_8; // Holds bit field of bones to update.
-        u32           fileSize_C;
-        u16           keyframeCount_10;
-        u8            scaleLog2_12;
-        u8            rootYOffset_13;
-        s_AnmBindPose bindPoses_14[0]; // Array size = `boneCount_6`.
+        u16           dataOffset;
+        u8            rotationBoneCount;
+        u8            translationBoneCount;
+        u16           keyframeDataSize; // Size per keyframe, `(rotationBoneCount * 9) + (translationBoneCount * 3)`?
+        u8            boneCount;
+        u32           activeBones; // Holds bit field of bones to update.
+        u32           fileSize;
+        u16           keyframeCount;
+        u8            scaleLog2;
+        u8            rootYOffset;
+        s_AnmBindPose bindPoses[0]; // Array size = `boneCount`.
     };
 
     typedef union
@@ -1035,13 +1032,13 @@ namespace Silent::Game
         s32         field_18; // Count of points in circle?
     } s_CollisionPoint;
 
-    typedef struct
+    struct s_800BCDA8
     {
         s8 field_0;
         s8 field_1;
         s8 field_2;
         s8 field_3;
-    } s_800BCDA8;
+    };
 
     typedef struct _SpeedZone
     {
@@ -2200,19 +2197,6 @@ namespace Silent::Game
 
     extern u8 g_SysState_GameOver_TipIdx;
 
-    extern s_EventData* g_ItemTriggerEvents[];
-
-    extern s_800BCDA8 D_800BCDA8[2];
-
-    extern s_MapPoint2d D_800BCDB0;
-
-    /** Related to special item interactions. */
-    extern s32 g_ItemTriggerItemIds[5];
-
-    extern u8 D_800BCDD4;
-
-    extern s_EventData* g_MapEventData;
-
     /** `e_InventoryItemId` | related to displaying items. */
     extern u8 D_800AE187;
 
@@ -2275,7 +2259,7 @@ namespace Silent::Game
 
     extern u8 D_800AFD05;
 
-    extern const s_AreaLoadSfx SfxPairs[25];
+    extern const s_AreaLoadSfx SFX_PAIRS[25];
 
     extern s32 D_800AFD3C;
 

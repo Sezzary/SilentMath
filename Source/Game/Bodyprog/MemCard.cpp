@@ -1193,8 +1193,8 @@ namespace Silent::Game
 
         bzero(saveBlock, sizeof(s_PsxSaveBlock));
 
-        saveBlock->magic_0[0]        = 'S';
-        saveBlock->magic_0[1]        = 'C';
+        saveBlock->magic[0]        = 'S';
+        saveBlock->magic[1]        = 'C';
         saveBlock->iconDisplayFlag_2 = 0x11; // ICON_HAS_1_STATIC_FRAME
         saveBlock->blockCount_3      = blockCount;
         bzero(saveBlock->titleNameShiftJis_4, 0x40);

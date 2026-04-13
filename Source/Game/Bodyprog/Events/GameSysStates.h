@@ -2,6 +2,23 @@
 
 namespace Silent::Game
 {
+    struct s_800BCDA8;
+    struct s_EventData;
+    struct s_MapPoint2d;
+
+    extern s_EventData* g_ItemTriggerEvents[];
+
+    extern s_800BCDA8 D_800BCDA8[2];
+
+    extern s_MapPoint2d D_800BCDB0;
+
+    /** Related to special item interactions. */
+    extern s32 g_ItemTriggerItemIds[5];
+
+    extern u8 D_800BCDD4;
+
+    extern s_EventData* g_MapEventData;
+
     void GameState_InGame_Update();
 
     void SysState_Gameplay_Update();

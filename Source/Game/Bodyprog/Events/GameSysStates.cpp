@@ -51,7 +51,7 @@ namespace Silent::Game
      */
     static s32 g_DeltaTimeCpy;
 
-    s_EventData* g_ItemTriggerEvents[5]; // Guessed size. Check ddecomp later.
+    s_EventData* g_ItemTriggerEvents[5]; // Guessed size. Check decomp later.
     s_800BCDA8   D_800BCDA8[2];
     s_MapPoint2d D_800BCDB0;
     s32          g_ItemTriggerItemIds[5];
@@ -412,12 +412,12 @@ namespace Silent::Game
                 break;
 
             case MapOverlayId_MAP3_S03:
-                //Sd_SfxStop(Sfx_Unk1525);
-                //Sd_SfxStop(Sfx_Unk1527);
+                Sd_SfxStop(Sfx_Unk1525);
+                Sd_SfxStop(Sfx_Unk1527);
                 break;
 
             case MapOverlayId_MAP0_S00:
-                //Sd_SfxStop(Sfx_Unk1358);
+                Sd_SfxStop(Sfx_Unk1358);
                 break;
         }
     }
@@ -610,12 +610,12 @@ namespace Silent::Game
 
         g_SysWork.field_229C            = 0;
         g_SysWork.loadingScreenIdx_2281 = D_800BCDB0.loadingScreenId_4_9;
-        g_SysWork.field_2283            = g_MapEventData->field_8_19;
+        g_SysWork.sfxPairIdx_2283            = g_MapEventData->sfxPairIdx_8_19;
         g_SysWork.field_2282            = g_MapEventData->flags_8_13;
 
-        SD_Call(SfxPairs[g_SysWork.field_2283].sfx_0);
+        SD_Call(SFX_PAIRS[g_SysWork.sfxPairIdx_2283].sfx_0);
 
-        if (g_SysWork.field_2283 == 7)
+        if (g_SysWork.sfxPairIdx_2283 == SfxPairIdx_7)
         {
             D_800BCDD4            = 0;
             g_SysWork.flags_22A4 |= SysFlag2_10;
@@ -671,7 +671,7 @@ namespace Silent::Game
 
     void AreaLoad_TransitionSound() // 0x80039F54
     {
-        SD_Call(SfxPairs[g_SysWork.field_2283].sfx_2);
+        SD_Call(SFX_PAIRS[g_SysWork.sfxPairIdx_2283].sfx_2);
     }
 
     s8 func_80039F90() // 0x80039F90

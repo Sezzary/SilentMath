@@ -4,6 +4,7 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
+#include "Game/Bodyprog/Events/GameSysStates.h"
 #include "Game/Bodyprog/Sound/SoundSystem.h"
 
 namespace Silent::Game
@@ -12,7 +13,7 @@ namespace Silent::Game
     {
         s32 i;
 
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < ARRAY_SIZE(D_800BCDA8); i++)
         {
             D_800BCDA8[i].field_2 = NO_VALUE;
             D_800BCDA8[i].field_1 = NO_VALUE;
@@ -24,14 +25,14 @@ namespace Silent::Game
     {
         s32 i;
 
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < ARRAY_SIZE(D_800BCDA8); i++)
         {
             D_800BCDA8[i].field_0 = NO_VALUE;
         }
 
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < ARRAY_SIZE(D_800BCDA8); i++)
         {
-            //Sd_SfxStop(Sfx_RadioInterferenceLoop + i);
+            Sd_SfxStop(Sfx_RadioInterferenceLoop + i);
         }
     }
 }
