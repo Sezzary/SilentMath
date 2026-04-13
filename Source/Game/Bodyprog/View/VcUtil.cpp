@@ -101,10 +101,10 @@ namespace Silent::Game
                 g_WorldGfxWork.vcCameraInternalInfo_1BDC.mode = 0;
 
                 first_cam_pos.vy = Q12(-2.2f);
-                first_cam_pos.vx = g_SysWork.playerWork_4C.player_0.position_18.vx + Q12(7.0f);
-                first_cam_pos.vz = g_SysWork.playerWork_4C.player_0.position_18.vz;
+                first_cam_pos.vx = g_SysWork.playerWork_4C.player_0.position.vx + Q12(7.0f);
+                first_cam_pos.vz = g_SysWork.playerWork_4C.player_0.position.vz;
 
-                vcSetFirstCamWork(&first_cam_pos, g_SysWork.playerWork_4C.player_0.rotation_24.vy, false);
+                vcSetFirstCamWork(&first_cam_pos, g_SysWork.playerWork_4C.player_0.rotation.vy, false);
 
             case DebugCameraMode_Collide:
                 hr_p = &g_SysWork.playerWork_4C.player_0;
@@ -113,20 +113,20 @@ namespace Silent::Game
                 {
                     grnd_y = Q12(-2.0f);
 
-                    hr_head_pos.vx = hr_p->position_18.vx;
-                    hr_head_pos.vy = hr_p->position_18.vy - Q12(1.9f);
-                    hr_head_pos.vz = hr_p->position_18.vz;
+                    hr_head_pos.vx = hr_p->position.vx;
+                    hr_head_pos.vy = hr_p->position.vy - Q12(1.9f);
+                    hr_head_pos.vz = hr_p->position.vz;
                 }
                 else
                 {
-                    //Collision_Get(&coll, hr_p->position_18.vx, hr_p->position_18.vz);
+                    //Collision_Get(&coll, hr_p->position.vx, hr_p->position.vz);
                     grnd_y = coll.groundHeight_0;
 
                     vcMakeHeroHeadPos(&hr_head_pos);
                 }
 
-                hero_top_y    = hr_p->position_18.vy + Q12(-1.7f);
-                hero_bottom_y = hr_p->position_18.vy + Q12_MULT(g_WorldGfxWork.vcCameraInternalInfo_1BDC.ev_cam_rate, Q12(-0.5f));
+                hero_top_y    = hr_p->position.vy + Q12(-1.7f);
+                hero_bottom_y = hr_p->position.vy + Q12_MULT(g_WorldGfxWork.vcCameraInternalInfo_1BDC.ev_cam_rate, Q12(-0.5f));
 
                 if (g_WorldGfxWork.vcCameraInternalInfo_1BDC.ev_cam_rate > Q12(0.0f))
                 {
@@ -137,10 +137,10 @@ namespace Silent::Game
                     vcWorkSetFlags(VC_NOFLAG, VC_INHIBIT_FAR_WATCH_F);
                 }
 
-                vcSetSubjChara(&hr_p->position_18, hero_bottom_y, hero_top_y, grnd_y,
+                vcSetSubjChara(&hr_p->position, hero_bottom_y, hero_top_y, grnd_y,
                                &hr_head_pos,
-                               hr_p->moveSpeed_38, hr_p->headingAngle_3C, hr_p->rotationSpeed_2C.vy,
-                               hr_p->rotation_24.vy, Q12_ANGLE(120.0f), Q12(11.0f));
+                               hr_p->moveSpeed, hr_p->headingAngle, hr_p->rotationSpeed.vy,
+                               hr_p->rotation.vy, Q12_ANGLE(120.0f), Q12(11.0f));
 
                 g_WorldGfxWork.vcCameraInternalInfo_1BDC.mv_smooth = vcExecCamera();
                 break;
@@ -229,8 +229,8 @@ namespace Silent::Game
             sys_p->cameraRadiusXz_2380 = RADIUS_MIN;
         }
 
-        vcAddOfsToPos(ref_pos, &g_SysWork.playerWork_4C.player_0.position_18,
-                      Q12(0.5f), g_SysWork.playerWork_4C.player_0.rotation_24.vy, Q12(-1.0f));
+        vcAddOfsToPos(ref_pos, &g_SysWork.playerWork_4C.player_0.position,
+                      Q12(0.5f), g_SysWork.playerWork_4C.player_0.rotation.vy, Q12(-1.0f));
     }
 
     void vcSetRefPosAndCamPosAngByPad(VECTOR3* ref_pos, s_SysWork* sys_p) // 0x800406D4

@@ -371,23 +371,23 @@ namespace Silent::Game
         for (curChara = &g_SysWork.npcs_1A0[0]; curChara < &g_SysWork.npcs_1A0[ARRAY_SIZE(g_SysWork.npcs_1A0)]; curChara++)
         {
             // Continue if invalid character.
-            if (curChara->model_0.charaId_0 == Chara_None)
+            if (curChara->model.charaId_0 == Chara_None)
             {
                 continue;
             }
 
             // Increment and clamp death timer.
-            if (curChara->health_B0 <= Q12(0.0f))
+            if (curChara->health <= Q12(0.0f))
             {
-                curChara->deathTimer_C4 += g_DeltaTime;
+                curChara->deathTimer += g_DeltaTime;
             }
             else
             {
-                curChara->deathTimer_C4 = Q12(0.0f);
+                curChara->deathTimer = Q12(0.0f);
             }
-            if (curChara->deathTimer_C4 > DEATH_TIME_MAX)
+            if (curChara->deathTimer > DEATH_TIME_MAX)
             {
-                curChara->deathTimer_C4 = DEATH_TIME_MAX;
+                curChara->deathTimer = DEATH_TIME_MAX;
             }
         }
     }
@@ -887,13 +887,13 @@ namespace Silent::Game
 
         for (sc_p = &g_SysWork.npcs_1A0[0]; sc_p < &g_SysWork.npcs_1A0[ARRAY_SIZE(g_SysWork.npcs_1A0)]; sc_p++)
         {
-            if (sc_p->model_0.charaId_0 >= Chara_AirScreamer &&
-                sc_p->model_0.charaId_0 <= Chara_MonsterCybil &&
-                (sc_p->deathTimer_C4 <= ENEMY_DEATH_TIME_MAX || sc_p->health_B0 >= Q12(0.0f)) &&
-                !(sc_p->flags_3E & CharaFlag_Unk5)) // `sc_p->battle(ShBattleInfo).status & (1 << 5)` in SH2.
+            if (sc_p->model.charaId_0 >= Chara_AirScreamer &&
+                sc_p->model.charaId_0 <= Chara_MonsterCybil &&
+                (sc_p->deathTimer <= ENEMY_DEATH_TIME_MAX || sc_p->health >= Q12(0.0f)) &&
+                !(sc_p->flags & CharaFlag_Unk5)) // `sc_p->battle(ShBattleInfo).status & (1 << 5)` in SH2.
             {
-                ofs_x = sc_p->position_18.vx - w_p->chara_pos.vx;
-                ofs_z = sc_p->position_18.vz - w_p->chara_pos.vz;
+                ofs_x = sc_p->position.vx - w_p->chara_pos.vx;
+                ofs_z = sc_p->position.vz - w_p->chara_pos.vz;
 
                 if (abs(ofs_x) >= ENEMY_DIST_MAX ||
                     abs(ofs_z) >= ENEMY_DIST_MAX)
@@ -911,11 +911,11 @@ namespace Silent::Game
                 }
 
                 // TODO: Not sure how to move the `set_active_data_f = true` part out of this if.
-                if (sc_p->model_0.charaId_0 >= Chara_HangedScratcher ||
-                    (set_active_data_f = true, (sc_p->model_0.charaId_0 < Chara_Stalker)))
+                if (sc_p->model.charaId_0 >= Chara_HangedScratcher ||
+                    (set_active_data_f = true, (sc_p->model.charaId_0 < Chara_Stalker)))
                 {
                     set_active_data_f = true;
-                    if (sc_p->flags_3E & CharaFlag_Unk2) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
+                    if (sc_p->flags & CharaFlag_Unk2) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
                     {
                         set_active_data_f = false;
                         if (sc_p == &g_SysWork.npcs_1A0[g_SysWork.targetNpcIdx_2353])
@@ -1388,7 +1388,7 @@ namespace Silent::Game
         }
 
         vcMixSelfViewEffectToWatchTgtPos(&w_p->watch_tgt_pos, &w_p->watch_tgt_ang_z, self_view_eff_rate,
-                                         w_p, &g_SysWork.playerBoneCoords_890[HarryBone_Head].workm, player.model_0.anim.status);
+                                         w_p, &g_SysWork.playerBoneCoords_890[HarryBone_Head].workm, player.model.anim.status);
 
         if (w_p->watch_tgt_pos.vy > w_p->watch_tgt_max_y)
         {
@@ -1505,7 +1505,7 @@ namespace Silent::Game
         sys_work = &g_SysWork;
 
         vwMatrixToAngleYXZ(&cam_ang, head_mat);
-        angle_delta_y = Math_AngleNormalize(cam_ang.vy - player.rotation_24.vy);
+        angle_delta_y = Math_AngleNormalize(cam_ang.vy - player.rotation.vy);
 
         // 4-step angle adjustment based on hardcoded anim statuses.
 
@@ -1537,14 +1537,14 @@ namespace Silent::Game
                 break;
 
             default:
-                cam_ang.vy = player.rotation_24.vy;
+                cam_ang.vy = player.rotation.vy;
                 break;
 
             case ANIM_STATUS(HarryAnim_LookAround, false):
             case ANIM_STATUS(HarryAnim_LookAround, true):
                 if (w_p->nearest_enemy != nullptr)
                 {
-                    cam_ang.vy = player.rotation_24.vy;
+                    cam_ang.vy = player.rotation.vy;
                 }
                 else
                 {
@@ -1573,7 +1573,7 @@ namespace Silent::Game
                     corrected_angle_y = angle_delta_y;
                 }
 
-                cam_ang.vy = player.rotation_24.vy + corrected_angle_y;
+                cam_ang.vy = player.rotation.vy + corrected_angle_y;
                 break;
 
             case ANIM_STATUS(HarryAnim_WalkForward, false):
@@ -1598,7 +1598,7 @@ namespace Silent::Game
                     corrected_angle_y = Q12_ANGLE(-10.0f);
                 }
 
-                cam_ang.vy = player.rotation_24.vy + corrected_angle_y;
+                cam_ang.vy = player.rotation.vy + corrected_angle_y;
                 break;
         }
 
@@ -1632,7 +1632,7 @@ namespace Silent::Game
             case ANIM_STATUS(HarryAnim_TurnLeft, true):
             case ANIM_STATUS(HarryAnim_TurnRight, false):
             case ANIM_STATUS(HarryAnim_TurnRight, true):
-                temp_dir = (player.rotation_24.vy >> 7) & 0xF;
+                temp_dir = (player.rotation.vy >> 7) & 0xF;
                 if (temp_dir == 0 || temp_dir == 5)
                 {
                     cam_ang.vx -= Q12_ANGLE(1.0f);
@@ -1730,21 +1730,21 @@ namespace Silent::Game
             }
 
             // Compute look-at Y anchor.
-            ofs_y = Q8_TO_Q12(CHARA_FILE_INFOS[sc_p->model_0.charaId_0].cameraOffsetY_C_2);
-            switch (CHARA_FILE_INFOS[sc_p->model_0.charaId_0].cameraAnchor_C_0)
+            ofs_y = Q8_TO_Q12(CHARA_FILE_INFOS[sc_p->model.charaId_0].cameraOffsetY_C_2);
+            switch (CHARA_FILE_INFOS[sc_p->model.charaId_0].cameraAnchor_C_0)
             {
                 default:
                 case CameraAnchor_Character:
-                    watch_y = sc_p->position_18.vy + ofs_y;
+                    watch_y = sc_p->position.vy + ofs_y;
                     break;
 
                 case CameraAnchor_Ground:
-                    //Collision_Get(&coll, sc_p->position_18.vx, sc_p->position_18.vz);
+                    //Collision_Get(&coll, sc_p->position.vx, sc_p->position.vz);
 
                     // If no valid ground, fall back on character Y position.
                     if (coll.field_8 == 0)
                     {
-                        watch_y = sc_p->position_18.vy + ofs_y;
+                        watch_y = sc_p->position.vy + ofs_y;
                     }
                     // Otherwise, use ground height.
                     else

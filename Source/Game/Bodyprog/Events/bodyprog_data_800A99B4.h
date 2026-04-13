@@ -5,7 +5,7 @@ namespace Silent::Game
     struct s_AreaLoadSfx;
     struct s_FsImageDesc;
 
-    /** @brief SFX pair indices for `SFX_PAIRS`. */
+    /** @brief SFX pair indices. Used for `SFX_PAIRS`. */
     enum e_SfxPairIdx
     {
         SfxPairIdx_0  = 0,

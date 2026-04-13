@@ -224,26 +224,26 @@ namespace Silent::Game
      * if the chunk index will be a positive number. Seems like they forgot to use `ABS`?
      */
     #define PLAYER_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                                        \
-        (__chunkIdx = g_SysWork.playerWork_4C.player_0.position_18.comp / Q12(40.0f),                        \
-        ((g_SysWork.playerWork_4C.player_0.position_18.comp >  Q12(0.0f) && (__chunkIdx + (x0)) == (x1)) || \
-        (g_SysWork.playerWork_4C.player_0.position_18.comp <= Q12(0.0f) && (__chunkIdx + (x2)) == (x3))))
+        (__chunkIdx = g_SysWork.playerWork_4C.player_0.position.comp / Q12(40.0f),                        \
+        ((g_SysWork.playerWork_4C.player_0.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) == (x1)) || \
+        (g_SysWork.playerWork_4C.player_0.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) == (x3))))
 
     #define PLAYER_NOT_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                                    \
-        (__chunkIdx = g_SysWork.playerWork_4C.player_0.position_18.comp / Q12(40.0f),                        \
-        ((g_SysWork.playerWork_4C.player_0.position_18.comp >  Q12(0.0f) && (__chunkIdx + (x0)) != (x1)) || \
-        (g_SysWork.playerWork_4C.player_0.position_18.comp <= Q12(0.0f) && (__chunkIdx + (x2)) != (x3))))
+        (__chunkIdx = g_SysWork.playerWork_4C.player_0.position.comp / Q12(40.0f),                        \
+        ((g_SysWork.playerWork_4C.player_0.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) != (x1)) || \
+        (g_SysWork.playerWork_4C.player_0.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) != (x3))))
 
     #define MAP_CHUNK_CHECK_VARIABLE_DECL_2() \
         s32 __chunkIdx2
 
     #define PLAYER_IN_MAP_CHUNK_2(comp, x0, x1, x2, x3)                                                      \
-        (__chunkIdx2 = g_SysWork.playerWork_4C.player_0.position_18.comp / Q12(40.0f),                       \
-        ((g_SysWork.playerWork_4C.player_0.position_18.comp >  Q12(0.0f) && (__chunkIdx2 + (x0)) < (x1)) || \
-        (g_SysWork.playerWork_4C.player_0.position_18.comp <= Q12(0.0f) && (__chunkIdx2 + (x2)) < (x3))))
+        (__chunkIdx2 = g_SysWork.playerWork_4C.player_0.position.comp / Q12(40.0f),                       \
+        ((g_SysWork.playerWork_4C.player_0.position.comp >  Q12(0.0f) && (__chunkIdx2 + (x0)) < (x1)) || \
+        (g_SysWork.playerWork_4C.player_0.position.comp <= Q12(0.0f) && (__chunkIdx2 + (x2)) < (x3))))
 
     #define PLAYER_NEAR_POS(comp, base, tol)                                                                                                                             \
-        (((g_SysWork.playerWork_4C.player_0.position_18.comp - Q12(base)) >= Q12(0.0f)) ? ((g_SysWork.playerWork_4C.player_0.position_18.comp - Q12(base)) < Q12(tol)) : \
-                                                                                          ((Q12(base) - g_SysWork.playerWork_4C.player_0.position_18.comp) < Q12(tol)))
+        (((g_SysWork.playerWork_4C.player_0.position.comp - Q12(base)) >= Q12(0.0f)) ? ((g_SysWork.playerWork_4C.player_0.position.comp - Q12(base)) < Q12(tol)) : \
+                                                                                          ((Q12(base) - g_SysWork.playerWork_4C.player_0.position.comp) < Q12(tol)))
 
     #define MIN_OFFSET(x, neg, pos) \
         ((((x) + (-neg)) <= ((x) + (pos))) ? ((x) - (neg)) : ((x) + (pos)))
@@ -303,6 +303,14 @@ namespace Silent::Game
      */
     #define INVENTORY_AMMO_WEAPON_ID(ammoId) \
         ((ammoId) - INVENTORY_ITEM_GROUP_SIZE)
+
+    /** @brief Unknown flags used by `s_SysWork::flags_2284`. */
+    typedef enum _Unk2284Flags
+    {
+        Unk2284Flag_None = 0,
+        Unk2284Flag_0    = 1 << 0,
+        Unk2284Flag_1    = 1 << 1
+    } e_Unk2284Flags;
 
     /** @brief Sync modes used by `DrawSync` and `VSync`. */
     enum e_SyncMode
@@ -544,7 +552,7 @@ namespace Silent::Game
         ControllerFlag_LStickLeft   = 1 << 27
     };
 
-    /** @brief Character flags. Used by `s_SubCharacter::flags_3E`. */
+    /** @brief Character flags. Used by `s_SubCharacter::flags`. */
     enum e_CharaFlags
     {
         CharaFlag_None    = 0,
@@ -1280,7 +1288,7 @@ namespace Silent::Game
         q19_12        runTimer_108;
         u8            field_10C;    // Player SFX pitch?
         u8            field_10D;
-        q19_12        timer_110; // Increases when `flags_3E & CharaFlag_Unk4` is set, reset when reaches `D_800C45EC`.
+        q19_12        timer_110; // Increases when `flags & CharaFlag_Unk4` is set, reset when reaches `D_800C45EC`.
         q19_12        gasWeaponPowerTimer_114; // Timer for the rock drill and chainsaw power.
         s16           field_118;
         e_PlayerFlags flags_11C;
@@ -1669,7 +1677,7 @@ namespace Silent::Game
     {
         s16 field_0; // Something dependent on `CharaFlag_Unk8`.
         u8  field_2; // In player: packed weapon attack. See `WEAPON_ATTACK`.
-                    // This is not the same as `attackReceived_41`, as this value only resets when player is aiming.
+                    // This is not the same as `attackReceived`, as this value only resets when player is aiming.
                     // In NPCs: Indicates attack performed on player.
         u8      field_3;
         u8      field_4;
@@ -1704,32 +1712,32 @@ namespace Silent::Game
 
     struct s_SubCharacter
     {
-        s_Model  model_0;          // In player: Manage the half lower part of Harry's body animations (legs and feet).
-        VECTOR3  position_18;      /** Q19.12 */
-        SVECTOR3 rotation_24;      /** Q3.12 */
-        q3_12    field_2A;         // Angle related to `rotation_24`, unknown purpose.
-        SVECTOR3 rotationSpeed_2C; /** Q3.12 | Range: `[Q12_ANGLE(-157.5f), Q12_ANGLE(157.5f)]`. */
-        q3_12    field_32;         // Related to `rotationSpeed_2C`, unknown purpose.
-        q19_12   fallSpeed_34;
-        q19_12   moveSpeed_38;
-        q3_12    headingAngle_3C;
-        s16      flags_3E;     /** `e_CharaFlags` */
-        s8       field_40;     // In player: Index of the NPC attacking the player.
-                            // In NPCs: Unknown.
-                            // Possibly `Game_NpcRoomInitSpawn` may have the answer, indicating
-                            // it's used to indicate the NPC index in `s_Savegame::ovlEnemyStates`.
-        s8  attackReceived_41; // Packed weapon attack indicating what attack has been performed to the character. See `WEAPON_ATTACK`.
-        s_SubCharacter_44  field_44;
-        q19_12  health_B0;
-        s_CharaDamage damage_B4;
-        u16     deathTimer_C4; // Part of `shBattleInfo` struct in SH2, may use something similar here.
-        q3_12   timer_C6;      // Some sort of timer. Written to by `Ai_LarvalStalker_Update`.
+        s_Model           model;          // In player: Manage the half lower part of Harry's body animations (legs and feet).
+        VECTOR3           position;       /** Q19.12 */
+        SVECTOR3          rotation;       /** Q3.12 */
+        q3_12             field_2A;       // Angle related to `rotation`, unknown purpose.
+        SVECTOR3          rotationSpeed;  /** Q3.12 | Range: `[Q12_ANGLE(-157.5f), Q12_ANGLE(157.5f)]`. */
+        q3_12             field_32;       // Related to `rotationSpeed`, unknown purpose.
+        q19_12            fallSpeed;
+        q19_12            moveSpeed;
+        q3_12             headingAngle;
+        s16               flags;          /** `e_CharaFlags` */
+        s8                field_40;       // In player: Index of the NPC attacking the player.
+                                          // In NPCs: Unknown.
+                                          // Possibly `Game_NpcRoomInitSpawn` may have the answer, indicating
+                                          // it's used to indicate the NPC index in `s_Savegame::ovlEnemyStates`.
+        s8                attackReceived; // Packed weapon attack indicating what attack has been performed to the character. See `WEAPON_ATTACK`.
+        s_SubCharacter_44 field_44;
+        q19_12            health;
+        s_CharaDamage     damage;
+        u16               deathTimer;     // Part of `shBattleInfo` struct in SH2, may use something similar here.
+        q3_12             timer_C6;       // Some sort of timer. Written to by `Ai_LarvalStalker_Update`.
 
         // Fields seen used inside maps (eg. `map0_s00` `func_800D923C`)
         s_SubCharacter_C8 field_C8;
-        s_SubCharacter_D4 field_D4; // Contains collision radius and something else.
-        s_SubCharacter_D8 field_D8; // Translation data?
-        u8                field_E0; // Related to collision. If the player collides with the only enemy in memory and the enemy is knocked down, this is set to 1.
+        s_SubCharacter_D4 field_D4;       // Contains collision radius and something else.
+        s_SubCharacter_D8 field_D8;       // Translation data?
+        u8                field_E0;       // Related to collision. If the player collides with the only enemy in memory and the enemy is knocked down, this is set to 1.
         s8                field_E1_0 : 4; // State.
         u8                field_E1_4 : 4; // Index for array of `s_func_8006CF18`.
         s_func_8006CF18*  field_E4;
@@ -1760,12 +1768,12 @@ namespace Silent::Game
             s_PropertiesTwinfeeler      twinfeeler;
 
             _u() {}
-        } properties_E4;
+        } properties;
     };
 
     typedef struct _PlayerExtra
     {
-        s_Model           model_0;              /** Manages upper half body's animations (torso, arms, head). */
+        s_Model           model;              /** Manages upper half body's animations (torso, arms, head). */
         s32               disabledAnimBones_18; /** Bitfield of disabled animation bones. Can be created using the `BITMASK_RANGE` macro. */
         s32               state_1C;             /** `e_PlayerState` */
         s32               upperBodyState_20;    /** `e_PlayerUpperBodyState` */
@@ -1873,7 +1881,7 @@ namespace Silent::Game
         s8              loadingScreenIdx_2281;
         s8              field_2282;                        /** `e_EventDataUnkCutsceneState` */
         s8              sfxPairIdx_2283;                   /** `e_SfxPairIdx` | Index into `SFX_PAIRS`. */
-        u16             flags_2284[GROUP_CHARA_COUNT];     /** Flags for character groups. Only flags 0 and 1 used. */
+        u16             flags_2284[GROUP_CHARA_COUNT];     /** `e_Unk2284Flags` | Flags for character groups. Only flags 0 and 1 used. */
                                                            // Enabling a flag for Larval Stalkers causes them to die.
         s32             field_228C[1];
         s32             npcFlags_2290; // Flags related to NPCs. Each bit corresponds to `npcs_1A0` index.
@@ -2196,14 +2204,14 @@ namespace Silent::Game
     static inline void Character_AnimSet(s_SubCharacter* chara, s32 animStatus, s32 keyframeIdx)
     {
         // TODO: Problem with header includes prevents `Q12` macro use.
-        chara->model_0.anim.status      = animStatus;
-        chara->model_0.anim.time        = keyframeIdx << 12;//Q12(keyframeIdx);
-        chara->model_0.anim.keyframeIdx = keyframeIdx;
+        chara->model.anim.status      = animStatus;
+        chara->model.anim.time        = keyframeIdx << 12;//Q12(keyframeIdx);
+        chara->model.anim.keyframeIdx = keyframeIdx;
     }
 
-    /** @brief Checks if the `s_SubCharacter*` has the given `flags_3E` value set. */
+    /** @brief Checks if the `s_SubCharacter*` has the given `flags` value set. */
     #define Chara_HasFlag(chara, flag) \
-        ((chara)->flags_3E & (flag))
+        ((chara)->flags & (flag))
 
     /** @brief Sets given animation flags for a model.
      *
@@ -2280,11 +2288,11 @@ namespace Silent::Game
     {
         // TODO: This uses `dahlia` part of union, but is most likely either a `human` part shared with all humanoid characters
         // or humanoids only share a small portion early in the union.
-        if (chara->properties_E4.dahlia.resetStateIdx0_F8)
+        if (chara->properties.dahlia.resetStateIdx0_F8)
         {
-            chara->properties_E4.dahlia.stateIdx0         = 0;
-            chara->model_0.stateStep                    = 0;
-            chara->properties_E4.dahlia.resetStateIdx0_F8 = 0;
+            chara->properties.dahlia.stateIdx0         = 0;
+            chara->model.stateStep                    = 0;
+            chara->properties.dahlia.resetStateIdx0_F8 = 0;
         }
     }
 
@@ -2295,7 +2303,7 @@ namespace Silent::Game
     #define Chara_PropertiesClear(chara)                           \
         for (i = 0; i < 16; i++)                                   \
         {                                                          \
-            chara->properties_E4.dummy.properties_E8[i].val32 = 0; \
+            chara->properties.dummy.properties_E8[i].val32 = 0; \
         }
 
     /** @brief Clears a character's damage field.
@@ -2303,10 +2311,10 @@ namespace Silent::Game
      * @param chara Character to update.
      */
     #define Chara_DamageClear(chara)                  \
-        (chara)->damage_B4.amount_C      = Q12(0.0f); \
-        (chara)->damage_B4.position_0.vz = Q12(0.0f); \
-        (chara)->damage_B4.position_0.vy = Q12(0.0f); \
-        (chara)->damage_B4.position_0.vx = Q12(0.0f)
+        (chara)->damage.amount_C      = Q12(0.0f); \
+        (chara)->damage.position_0.vz = Q12(0.0f); \
+        (chara)->damage.position_0.vy = Q12(0.0f); \
+        (chara)->damage.position_0.vx = Q12(0.0f)
 
     /** @brief Sets a character's received attack type.
      *
@@ -2317,12 +2325,12 @@ namespace Silent::Game
      * @param attack Attack type to set.
      */
     #define Chara_AttackReceivedSet(chara, attack) \
-        (chara)->attackReceived_41 = (attack)
+        (chara)->attackReceived = (attack)
 
     /** @brief Gets a character's received attack type.
      *
      * @param chara Character to update.
      */
     #define Chara_AttackReceivedGet(chara) \
-        (chara)->attackReceived_41
+        (chara)->attackReceived
 }
