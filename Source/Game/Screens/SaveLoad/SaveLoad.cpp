@@ -482,7 +482,7 @@ namespace Silent::Game
             case SavegameEntryType_UnformattedMemCard:
                 g_SaveScreen_IsMemCardNotInserted[slotIdx] = false;
 
-                if (g_GameWork.gameState_594 == GameState_SaveScreen)
+                if (g_GameWork.gameState == GameState_SaveScreen)
                 {
                     SaveScreen_SlotStatusMsgShineDraw(slotIdx);
                 }
@@ -681,7 +681,7 @@ namespace Silent::Game
 
                 if (strIdx == 1)
                 {
-                    g_GameWork.gameStateStep_598[2]                      = 0;
+                    g_GameWork.gameStateSteps[2]                      = 0;
                     g_SaveScreen_HiddenSaves[g_SelectedSaveSlotIdx]      = NO_VALUE;
                     g_SaveScreen_VisualElementIdx[g_SelectedSaveSlotIdx] = NO_VALUE;
                 }
@@ -1349,7 +1349,7 @@ namespace Silent::Game
             }
         };
 
-        if (entryType == SavegameEntryType_UnformattedMemCard && g_GameWork.gameState_594 == GameState_SaveScreen)
+        if (entryType == SavegameEntryType_UnformattedMemCard && g_GameWork.gameState == GameState_SaveScreen)
         {
             SaveScreen_SlotStatusMsgStepDraw(&BORDER_LINES, &BORDER_GLOW_QUADS, &COLORED_LINES[1], slotIdx);
         }
@@ -1679,18 +1679,18 @@ namespace Silent::Game
     {
         g_SaveScreen_DisplaySaveInfo = true;
 
-        if (g_GameWork.gameStateStep_598[0] == 0)
+        if (g_GameWork.gameStateSteps[0] == 0)
         {
             g_GameState_SaveScreen_Funcs[0]();
         }
 
-        g_GameState_SaveScreen_Funcs[g_GameWork.gameStateStep_598[0]]();
+        g_GameState_SaveScreen_Funcs[g_GameWork.gameStateSteps[0]]();
 
         SaveScreen_BackgroundAndInfoDraw();
         SaveScreen_MemCardState();
         SaveScreen_ScreenDraw();
 
-        if (g_GameWork.gameState_594 == GameState_SaveScreen)
+        if (g_GameWork.gameState == GameState_SaveScreen)
         {
             //func_800363D0();
         }
@@ -1698,7 +1698,7 @@ namespace Silent::Game
 
     void SaveScreen_Init() // 0x801E63C0
     {
-        if (g_GameWork.gameStatePrev_590 == GameState_MainMenu)
+        if (g_GameWork.gameStatePrev == GameState_MainMenu)
         {
             //VSync(SyncMode_Wait8);
         }
@@ -1706,12 +1706,12 @@ namespace Silent::Game
         g_IntervalVBlanks = 1;
         ScreenFade_Start(true, true, false);
 
-        g_GameWork.background2dColor_58C.r = 0;
-        g_GameWork.background2dColor_58C.g = 0;
-        g_GameWork.background2dColor_58C.b = 0;
+        g_GameWork.background2dColor.r = 0;
+        g_GameWork.background2dColor.g = 0;
+        g_GameWork.background2dColor.b = 0;
 
         D_800BCD39 = false;
-        if (g_GameWork.gameState_594 == GameState_AutoLoadSavegame || g_GameWork.gameState_594 == GameState_LoadSavegameScreen)
+        if (g_GameWork.gameState == GameState_AutoLoadSavegame || g_GameWork.gameState == GameState_LoadSavegameScreen)
         {
             if (D_800A97D8 != 0)
             {
@@ -1720,19 +1720,19 @@ namespace Silent::Game
         }
 
         g_SaveScreen_MemCardStateTextTimer = 0;
-        D_800A97D8              = g_GameWork.gameState_594 == GameState_SaveScreen;
+        D_800A97D8              = g_GameWork.gameState == GameState_SaveScreen;
 
         SaveScreen_ScreenInfoClear();
 
         g_SysWork.counters_1C[1] = 0;
-        g_GameWork.gameStateStep_598[0]++;
-        g_GameWork.gameStateStep_598[1] = 0;
-        g_GameWork.gameStateStep_598[2] = 0;
+        g_GameWork.gameStateSteps[0]++;
+        g_GameWork.gameStateSteps[1] = 0;
+        g_GameWork.gameStateSteps[2] = 0;
     }
 
     void SaveScreen_LogicUpdate() // 0x801E649C
     {
-        s32               gameStateStep = g_GameWork.gameStateStep_598[1];
+        s32               gameStateStep = g_GameWork.gameStateSteps[1];
         s_SaveScreenElement* saveEntry;
         static bool       isSaveWriteOptionSelected;
 
@@ -1803,20 +1803,20 @@ namespace Silent::Game
                     }
 
                     // Overwrite or format savegame entry.
-                    if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.enter_0)
+                    if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0)
                     {
                         if (g_SaveScreen_IsFormatting | g_SaveScreen_IsNewSaveSelected)
                         {
                             isSaveWriteOptionSelected       = false;
-                            g_GameWork.gameStateStep_598[2] = 0;
-                            g_GameWork.gameStateStep_598[1]++;
+                            g_GameWork.gameStateSteps[2] = 0;
+                            g_GameWork.gameStateSteps[1]++;
                         }
                         else
                         {
                             g_SysWork.counters_1C[1]               = 0;
-                            g_GameWork.gameStateStep_598[1]  = 0;
-                            g_GameWork.gameStateStep_598[2]  = 0;
-                            g_GameWork.gameStateStep_598[0] += g_SaveScreen_SaveScreenState;
+                            g_GameWork.gameStateSteps[1]  = 0;
+                            g_GameWork.gameStateSteps[2]  = 0;
+                            g_GameWork.gameStateSteps[0] += g_SaveScreen_SaveScreenState;
                         }
 
                         SD_Call(Sfx_MenuConfirm);
@@ -1824,15 +1824,15 @@ namespace Silent::Game
                 }
 
                 // Exit save screen.
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.cancel_2)
+                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
                 {
                     ScreenFade_Start(false, false, false);
-                    g_GameWork.gameStateStep_598[1] = 2;
-                    g_GameWork.gameStateStep_598[2] = 0;
+                    g_GameWork.gameStateSteps[1] = 2;
+                    g_GameWork.gameStateSteps[2] = 0;
 
                     SD_Call(Sfx_MenuCancel);
 
-                    if (g_GameWork.gameStatePrev_590 == GameState_InventoryScreen)
+                    if (g_GameWork.gameStatePrev == GameState_InventoryScreen)
                     {
                         SD_Call(23);
                         //GameFs_TitleGfxLoad();
@@ -1861,31 +1861,31 @@ namespace Silent::Game
                     SD_Call(Sfx_MenuMove);
                 }
 
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.enter_0)
+                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0)
                 {
                     if (!isSaveWriteOptionSelected)
                     {
-                        g_GameWork.gameStateStep_598[0] = gameStateStep;
+                        g_GameWork.gameStateSteps[0] = gameStateStep;
                         g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateStep_598[1] = 0;
-                        g_GameWork.gameStateStep_598[2] = 0;
+                        g_GameWork.gameStateSteps[1] = 0;
+                        g_GameWork.gameStateSteps[2] = 0;
                     }
                     else
                     {
                         g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateStep_598[1] = 0;
-                        g_GameWork.gameStateStep_598[2] = 0;
-                        g_GameWork.gameStateStep_598[0] = g_SaveScreen_IsNewSaveSelected + 2;
+                        g_GameWork.gameStateSteps[1] = 0;
+                        g_GameWork.gameStateSteps[2] = 0;
+                        g_GameWork.gameStateSteps[0] = g_SaveScreen_IsNewSaveSelected + 2;
                     }
 
                     SD_Call(Sfx_MenuConfirm);
                 }
 
                 // Cancel overwrite.
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config_0.controllerConfig_0.cancel_2)
+                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
                 {
-                    g_GameWork.gameStateStep_598[1] = 0;
-                    g_GameWork.gameStateStep_598[2] = 0;
+                    g_GameWork.gameStateSteps[1] = 0;
+                    g_GameWork.gameStateSteps[2] = 0;
                     SD_Call(Sfx_MenuCancel);
                 }
 
@@ -1895,9 +1895,9 @@ namespace Silent::Game
             case 2:
                 if (ScreenFade_IsFinished())
                 {
-                    g_GameWork.background2dColor_58C.r = 0;
-                    g_GameWork.background2dColor_58C.g = 0;
-                    g_GameWork.background2dColor_58C.b = 0;
+                    g_GameWork.background2dColor.r = 0;
+                    g_GameWork.background2dColor.g = 0;
+                    g_GameWork.background2dColor.b = 0;
 
                     Fs_QueueWaitForEmpty();
 
@@ -1905,9 +1905,9 @@ namespace Silent::Game
                     // This redirects to the status screen/inventory if the user
                     // was in the status screen/inventory before saving.
                     // However, it is impossible to access the save screen from there.
-                    if (g_GameWork.gameStatePrev_590 == GameState_InventoryScreen)
+                    if (g_GameWork.gameStatePrev == GameState_InventoryScreen)
                     {
-                        Game_StateSetNext(g_GameWork.gameStatePrev_590);
+                        Game_StateSetNext(g_GameWork.gameStatePrev);
                     }
                     else
                     {
@@ -1931,24 +1931,24 @@ namespace Silent::Game
         constexpr int STR_TIMER_MAX = TICKS_PER_SECOND / 2;
 
         // Handle memory card format state.
-        switch (g_GameWork.gameStateStep_598[1])
+        switch (g_GameWork.gameStateSteps[1])
         {
             case 0:
                 g_SaveScreen_State                 = SaveScreenState_Format;
                 g_SaveScreen_MemCardStateTextTimer = STR_TIMER_MAX;
-                g_GameWork.gameStateStep_598[1]    = 1;
-                g_GameWork.gameStateStep_598[2]    = 0;
+                g_GameWork.gameStateSteps[1]    = 1;
+                g_GameWork.gameStateSteps[2]    = 0;
 
             case 1:
-                g_GameWork.gameStateStep_598[1]++;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1]++;
+                g_GameWork.gameStateSteps[2] = 0;
                 break;
 
             case 2:
                 MemCard_ProcessSet(MemCardProcess_Format, g_SelectedDeviceId, 0, 0);
 
-                g_GameWork.gameStateStep_598[1]++;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1]++;
+                g_GameWork.gameStateSteps[2] = 0;
                 break;
 
             case 3:
@@ -1956,17 +1956,17 @@ namespace Silent::Game
                 {
                     case MemCardResult_FileIoError:
                         g_SaveScreen_MemCardStateTextTimer = STR_TIMER_MAX;
-                        g_GameWork.gameStateStep_598[0]    = 1;
+                        g_GameWork.gameStateSteps[0]    = 1;
                         g_SysWork.counters_1C[1]                 = 0;
-                        g_GameWork.gameStateStep_598[1]    = 0;
-                        g_GameWork.gameStateStep_598[2]    = 0;
+                        g_GameWork.gameStateSteps[1]    = 0;
+                        g_GameWork.gameStateSteps[2]    = 0;
                         break;
 
                     case MemCardResult_FileIoComplete:
                         g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateStep_598[0]++;
-                        g_GameWork.gameStateStep_598[1] = 0;
-                        g_GameWork.gameStateStep_598[2] = 0;
+                        g_GameWork.gameStateSteps[0]++;
+                        g_GameWork.gameStateSteps[1] = 0;
+                        g_GameWork.gameStateSteps[2] = 0;
                         break;
                 }
                 break;
@@ -1978,7 +1978,7 @@ namespace Silent::Game
         s_MemCard_SaveMetadata* saveEntry;
 
         // Handle save state.
-        switch (g_GameWork.gameStateStep_598[1])
+        switch (g_GameWork.gameStateSteps[1])
         {
             case 0:
                 g_SaveScreen_State = SaveScreenState_Save;
@@ -2004,17 +2004,17 @@ namespace Silent::Game
                 saveEntry->pickedUpSpecialItemCount_B_3 = g_SavegamePtr->pickedUpSpecialItemCount_25C_3;
 
                 MemCard_ProcessSet(MemCardProcess_Save_5, g_SelectedDeviceId, g_SelectedFileIdx, g_Savegame_SelectedElementIdx);
-                g_GameWork.gameStateStep_598[1]++;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1]++;
+                g_GameWork.gameStateSteps[2] = 0;
 
             case 1:
                 switch (MemCard_LastMemCardResultGet())
                 {
                     default:
-                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_GameWork.gameStateSteps[0] = 1;
                         g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateStep_598[1] = 0;
-                        g_GameWork.gameStateStep_598[2] = 0;
+                        g_GameWork.gameStateSteps[1] = 0;
+                        g_GameWork.gameStateSteps[2] = 0;
                         break;
 
                     case MemCardResult_Success:
@@ -2023,8 +2023,8 @@ namespace Silent::Game
 
                     case MemCardResult_FileIoComplete:
                         MemCard_ProcessSet(MemCardProcess_Save_3, g_SelectedDeviceId, g_SelectedFileIdx, 0);
-                        g_GameWork.gameStateStep_598[1]++;
-                        g_GameWork.gameStateStep_598[2] = 0;
+                        g_GameWork.gameStateSteps[1]++;
+                        g_GameWork.gameStateSteps[2] = 0;
                         break;
                 }
                 break;
@@ -2037,13 +2037,13 @@ namespace Silent::Game
                         break;
 
                     case MemCardResult_FileIoComplete:
-                        g_GameWork.autosave_90 = g_GameWork.savegame_30C;
+                        g_GameWork.autosave = g_GameWork.savegame;
 
                     default:
-                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_GameWork.gameStateSteps[0] = 1;
                         g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateStep_598[1] = 0;
-                        g_GameWork.gameStateStep_598[2] = 0;
+                        g_GameWork.gameStateSteps[1] = 0;
+                        g_GameWork.gameStateSteps[2] = 0;
                         break;
                 }
                 break;
@@ -2055,15 +2055,15 @@ namespace Silent::Game
         s32 memCardStateResult;
 
         // Handle load state.
-        switch (g_GameWork.gameStateStep_598[1])
+        switch (g_GameWork.gameStateSteps[1])
         {
             case 0:
                 g_SaveScreen_State = SaveScreenState_Load;
 
                 MemCard_ProcessSet(MemCardProcess_Load_Settings, g_SelectedDeviceId, g_SelectedFileIdx, g_Savegame_SelectedElementIdx);
 
-                g_GameWork.gameStateStep_598[1]++;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1]++;
+                g_GameWork.gameStateSteps[2] = 0;
 
             case 1:
                 memCardStateResult = MemCard_LastMemCardResultGet();
@@ -2072,17 +2072,17 @@ namespace Silent::Game
                     if (memCardStateResult != MemCardResult_FileIoComplete)
                     {
                         D_800BCD39                      = true;
-                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_GameWork.gameStateSteps[0] = 1;
                         g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateStep_598[1] = 0;
-                        g_GameWork.gameStateStep_598[2] = 0;
+                        g_GameWork.gameStateSteps[1] = 0;
+                        g_GameWork.gameStateSteps[2] = 0;
                         break;
                     }
 
                     MemCard_ProcessSet(MemCardProcess_Load_Game, g_SelectedDeviceId, 0, 0);
 
-                    g_GameWork.gameStateStep_598[1]++;
-                    g_GameWork.gameStateStep_598[2] = 0;
+                    g_GameWork.gameStateSteps[1]++;
+                    g_GameWork.gameStateSteps[2] = 0;
                     break;
                 }
 
@@ -2100,18 +2100,18 @@ namespace Silent::Game
                 if (memCardStateResult != MemCardResult_FileIoComplete)
                 {
                     D_800BCD39                      = true;
-                    g_GameWork.gameStateStep_598[0] = 1;
+                    g_GameWork.gameStateSteps[0] = 1;
                     g_SysWork.counters_1C[1]              = 0;
-                    g_GameWork.gameStateStep_598[1] = 0;
-                    g_GameWork.gameStateStep_598[2] = 0;
+                    g_GameWork.gameStateSteps[1] = 0;
+                    g_GameWork.gameStateSteps[2] = 0;
                     break;
                 }
 
                 g_SaveScreen_MemCardStateTextTimer = 300;
                 g_SysWork.counters_1C[1]      = 0;
-                g_GameWork.gameStateStep_598[0]++;
-                g_GameWork.gameStateStep_598[1] = 0;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[0]++;
+                g_GameWork.gameStateSteps[1] = 0;
+                g_GameWork.gameStateSteps[2] = 0;
                 break;
         }
     }
@@ -2119,13 +2119,13 @@ namespace Silent::Game
     void SaveScreen_Continue() // 0x801E6F38
     {
         // Handle continue state.
-        switch (g_GameWork.gameStateStep_598[1])
+        switch (g_GameWork.gameStateSteps[1])
         {
             case 0:
                 MemCard_Disable();
 
                 D_800A97D7             = 1;
-                g_GameWork.autosave_90 = g_GameWork.savegame_30C;
+                g_GameWork.autosave = g_GameWork.savegame;
 
                 //Game_PlayerInit();
 
@@ -2134,8 +2134,8 @@ namespace Silent::Game
                 //GameFs_MapLoad(g_SavegamePtr->mapOverlayId_A4);
 
                 ScreenFade_Start(true, false, false);
-                g_GameWork.gameStateStep_598[1]++;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1]++;
+                g_GameWork.gameStateSteps[2] = 0;
                 break;
 
             case 1:
@@ -2201,7 +2201,7 @@ namespace Silent::Game
                 g_MemCard_ActiveSavegameEntry++;
             }
 
-            if (g_GameWork.gameState_594 == GameState_AutoLoadSavegame)
+            if (g_GameWork.gameState == GameState_AutoLoadSavegame)
             {
                 SaveScreen_SelectedElementIdxUpdate(i, g_MemCard_SavegameCount);
             }
@@ -2242,12 +2242,12 @@ namespace Silent::Game
 
     void GameState_AutoLoadSavegame_Update() // 0x801E72FC
     {
-        if (g_GameWork.gameStateStep_598[0] == 0)
+        if (g_GameWork.gameStateSteps[0] == 0)
         {
             g_GameState_AutoLoadSavegame_Funcs[0]();
         }
 
-        g_GameState_AutoLoadSavegame_Funcs[g_GameWork.gameStateStep_598[0]]();
+        g_GameState_AutoLoadSavegame_Funcs[g_GameWork.gameStateSteps[0]]();
 
         SaveScreen_BackgroundAndInfoDraw();
         SaveScreen_MemCardState();
@@ -2263,12 +2263,12 @@ namespace Silent::Game
 
         if (g_MemCard_SavegameCount == 0 || D_800BCD39)// || !func_80033548())
         {
-            g_GameWork.gameState_594 = GameState_LoadSavegameScreen;
+            g_GameWork.gameState = GameState_LoadSavegameScreen;
 
-            if (g_GameWork.gameStatePrev_590 == GameState_KcetLogo)
+            if (g_GameWork.gameStatePrev == GameState_KcetLogo)
             {
-                g_GameWork.gameStateStep_598[0] = 1;
-                g_GameWork.gameStateStep_598[1] = g_GameWork.gameStatePrev_590;
+                g_GameWork.gameStateSteps[0] = 1;
+                g_GameWork.gameStateSteps[1] = g_GameWork.gameStatePrev;
 
                 ScreenFade_Start(false, false, false);
                 //GameFs_TitleGfxLoad();
@@ -2283,9 +2283,9 @@ namespace Silent::Game
         g_SelectedFileIdx             = g_MemCard_ActiveSavegameEntry->fileIdx_6;
         g_Savegame_SelectedElementIdx = g_MemCard_ActiveSavegameEntry->elementIdx_7;
 
-        g_GameWork.gameStateStep_598[0]++;
+        g_GameWork.gameStateSteps[0]++;
         g_SysWork.counters_1C[1]              = 0;
-        g_GameWork.gameStateStep_598[1] = 0;
-        g_GameWork.gameStateStep_598[2] = 0;
+        g_GameWork.gameStateSteps[1] = 0;
+        g_GameWork.gameStateSteps[2] = 0;
     }
 }

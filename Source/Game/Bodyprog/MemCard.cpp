@@ -739,7 +739,7 @@ namespace Silent::Game
 
                 if (statusPtr->processId_0 == MemCardProcess_Load_Game)
                 {
-                    memcpy(&g_GameWorkConst->config_0, &g_MemCard_SaveWork.userConfig_418.config_0, sizeof(s_SaveUserConfig));
+                    memcpy(&g_GameWorkConst->config, &g_MemCard_SaveWork.userConfig_418.config, sizeof(s_SaveUserConfig));
                 }
                 else
                 {
@@ -892,7 +892,7 @@ namespace Silent::Game
                 break;
 
             case 3: // Copies and saves user configs.
-                MemCard_UserConfigCopy(&g_MemCard_SaveWork.userConfig_418, &g_GameWorkConst->config_0);
+                MemCard_UserConfigCopy(&g_MemCard_SaveWork.userConfig_418, &g_GameWorkConst->config);
                 MemCard_FilenameGenerate(filePath, fileIdxCpy);
 
                 if (MemCard_WorkSet(MemCardIoMode_Write, statusPtr->deviceId_4, nullptr, filePath, 0, 0x300, &g_MemCard_SaveWork.userConfig_418, 0x80))
@@ -1018,8 +1018,8 @@ namespace Silent::Game
     void MemCard_UserConfigCopy(s_Savegame_UserConfigs* dest, s_SaveUserConfig* src) // 0x8002FBB4
     {
         //bzero(dest, sizeof(s_Savegame_UserConfigs));
-        //dest->config_0 = *src;
-        //MemCard_ChecksumUpdate(&dest->footer_7C, &dest->config_0, sizeof(s_Savegame_UserConfigs));
+        //dest->config = *src;
+        //MemCard_ChecksumUpdate(&dest->footer_7C, &dest->config, sizeof(s_Savegame_UserConfigs));
     }
 
     s32 MemCard_BiggestTotalSavegameCountGet(s32 deviceId) // 0x8002FC3C

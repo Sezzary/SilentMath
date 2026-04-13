@@ -45,11 +45,11 @@ namespace Silent::Game
 
             /*g_ActiveBufferIdx = GsGetActiveBuff();
 
-            if (g_GameWork.gameState_594 >= GameState_MainLoadScreen && g_GameWork.gameState_594 < GameState_MapEvent)
+            if (g_GameWork.gameState >= GameState_MainLoadScreen && g_GameWork.gameState < GameState_MapEvent)
             {
                 GsOUT_PACKET_P = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx << 17));
             }
-            else if (g_GameWork.gameState_594 == GameState_InventoryScreen)
+            else if (g_GameWork.gameState == GameState_InventoryScreen)
             {
                 GsOUT_PACKET_P = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx * 40000));
             }
@@ -64,9 +64,9 @@ namespace Silent::Game
             g_SysWork.sysFlags_22A0 = SysFlag_None;
 
             // Call update function for current GameState.
-            if (g_GameStateUpdateFuncs[g_GameWork.gameState_594])
+            if (g_GameStateUpdateFuncs[g_GameWork.gameState])
             {
-                g_GameStateUpdateFuncs[g_GameWork.gameState_594]();
+                g_GameStateUpdateFuncs[g_GameWork.gameState]();
             }
 
             /*Demo_Update();
@@ -162,9 +162,9 @@ namespace Silent::Game
             g_GravitySpeed = Q12_MULT(DELTA_TIME_30_FPS, GRAVITY_SPEED_PER_SEC);
             
             // Set clear color.
-            renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor_58C.r,
-                                                   g_GameWork.background2dColor_58C.g,
-                                                   g_GameWork.background2dColor_58C.b));
+            renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor.r,
+                                                   g_GameWork.background2dColor.g,
+                                                   g_GameWork.background2dColor.b));
         }
         // Initialize engine.
         else

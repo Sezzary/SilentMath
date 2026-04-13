@@ -500,8 +500,8 @@ namespace Silent::Game
             return false;
         }
 
-        screenCenterX = (g_GameWork.gsScreenWidth_588  / 2) + 2;
-        screenCenterY = (g_GameWork.gsScreenHeight_58A / 2) + 2;
+        screenCenterX = (g_GameWork.gsScreenWidth  / 2) + 2;
+        screenCenterY = (g_GameWork.gsScreenHeightx / 2) + 2;
 
         if (screenMaxX < -screenCenterX || screenCenterX < screenMinX ||
             screenMaxY < -screenCenterY || screenCenterY < screenMinY)
@@ -616,9 +616,9 @@ namespace Silent::Game
             {
                 cullData->field_118[cullData->field_114++] = screenPos;
 
-                if (screenPos.vx >= -(g_GameWork.gsScreenWidth_588 >> 1))
+                if (screenPos.vx >= -(g_GameWork.gsScreenWidth >> 1))
                 {
-                    if ((g_GameWork.gsScreenWidth_588 >> 1) < screenPos.vx)
+                    if ((g_GameWork.gsScreenWidth >> 1) < screenPos.vx)
                     {
                         flag0Idx = 2;
                     }
@@ -632,9 +632,9 @@ namespace Silent::Game
                     flag0Idx = 0;
                 }
 
-                if (screenPos.vy >= -(g_GameWork.gsScreenHeight_58A >> 1))
+                if (screenPos.vy >= -(g_GameWork.gsScreenHeightx >> 1))
                 {
-                    if ((g_GameWork.gsScreenHeight_58A >> 1) < screenPos.vy)
+                    if ((g_GameWork.gsScreenHeightx >> 1) < screenPos.vy)
                     {
                         flag1Idx = 2;
                     }
@@ -716,9 +716,9 @@ namespace Silent::Game
             {
                 RotTransPers(&cullData->field_C4[i], (int*)screenPoints, &cullData->field_178, &cullData->field_178);
 
-                if (screenPoints->vx >= -(g_GameWork.gsScreenWidth_588 >> 1))
+                if (screenPoints->vx >= -(g_GameWork.gsScreenWidth >> 1))
                 {
-                    if ((g_GameWork.gsScreenWidth_588 >> 1) < screenPoints->vx)
+                    if ((g_GameWork.gsScreenWidth >> 1) < screenPoints->vx)
                     {
                         flag0Idx = 2;
                     }
@@ -732,9 +732,9 @@ namespace Silent::Game
                     flag0Idx = 0;
                 }
 
-                if (screenPoints->vy >= -(g_GameWork.gsScreenHeight_58A >> 1))
+                if (screenPoints->vy >= -(g_GameWork.gsScreenHeightx >> 1))
                 {
-                    if ((g_GameWork.gsScreenHeight_58A >> 1) < screenPoints->vy)
+                    if ((g_GameWork.gsScreenHeightx >> 1) < screenPoints->vy)
                     {
                         flag1Idx = 2;
                     }

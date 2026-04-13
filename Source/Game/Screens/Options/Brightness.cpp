@@ -13,45 +13,45 @@ namespace Silent::Game
     {
         // @todo
         // Handle menu state.
-        switch (g_GameWork.gameStateStep_598[1])
+        switch (g_GameWork.gameStateSteps[1])
         {
             case BrightnessMenuState_0:
                 // Entry.
-                g_GameWork.gameStateStep_598[1] = BrightnessMenuState_1;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1] = BrightnessMenuState_1;
+                g_GameWork.gameStateSteps[2] = 0;
                 break;
 
             case BrightnessMenuState_1:
                 // Set fade.
                 ScreenFade_Start(true, true, false);
-                g_GameWork.gameStateStep_598[1] = BrightnessMenuState_2;
-                g_GameWork.gameStateStep_598[2] = 0;
+                g_GameWork.gameStateSteps[1] = BrightnessMenuState_2;
+                g_GameWork.gameStateSteps[2] = 0;
                 break;
 
             case BrightnessMenuState_2:
                 // Set config.
                 if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickLeft)
                 {
-                    if (g_GameWork.config_0.optBrightness_22 != 0)
+                    if (g_GameWork.config.optBrightness_22 != 0)
                     {
-                        g_GameWork.config_0.optBrightness_22--;
+                        g_GameWork.config.optBrightness_22--;
                         //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
                 if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickRight)
                 {
-                    if (g_GameWork.config_0.optBrightness_22 < 7)
+                    if (g_GameWork.config.optBrightness_22 < 7)
                     {
-                        g_GameWork.config_0.optBrightness_22++;
+                        g_GameWork.config.optBrightness_22++;
                         //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
 
                 // Fade screen and leave menu.
-                if (g_Controller0->btnsClicked_10 & (g_GameWork.config_0.controllerConfig_0.enter_0 |
-                                                    g_GameWork.config_0.controllerConfig_0.cancel_2))
+                if (g_Controller0->btnsClicked_10 & (g_GameWork.config.controllerConfig_0.enter_0 |
+                                                    g_GameWork.config.controllerConfig_0.cancel_2))
                 {
-                    if (g_Controller0->btnsClicked_10 & g_GameWork.config_0.controllerConfig_0.enter_0)
+                    if (g_Controller0->btnsClicked_10 & g_GameWork.config.controllerConfig_0.enter_0)
                     {
                         //Sd_PlaySfx(Sfx_Confirm, 0, Q8_CLAMPED(0.25f));
                     }
@@ -61,8 +61,8 @@ namespace Silent::Game
                     }
 
                     //ScreenFade_Start(true, false, false);
-                    g_GameWork.gameStateStep_598[1]++;
-                    g_GameWork.gameStateStep_598[2] = 0;
+                    g_GameWork.gameStateSteps[1]++;
+                    g_GameWork.gameStateSteps[2] = 0;
                 }
                 break;
 
@@ -72,20 +72,20 @@ namespace Silent::Game
                 if (g_Screen_FadeStatus & (1 << 2) && !(g_Screen_FadeStatus & (1 << 1)) && g_Screen_FadeStatus & (1 << 0))
                 {
                     ScreenFade_Start(true, true, false);
-                    g_GameWork.gameStateStep_598[0]    = OptionsMenuState_LeaveBrightness;
+                    g_GameWork.gameStateSteps[0]    = OptionsMenuState_LeaveBrightness;
                     g_SysWork.counters_1C[1]                 = 0;
-                    g_GameWork.gameStateStep_598[1]    = 0;
-                    g_GameWork.gameStateStep_598[2]    = 0;
-                    g_GameWork.background2dColor_58C.r = 0;
-                    g_GameWork.background2dColor_58C.g = 0;
-                    g_GameWork.background2dColor_58C.b = 0;
+                    g_GameWork.gameStateSteps[1]    = 0;
+                    g_GameWork.gameStateSteps[2]    = 0;
+                    g_GameWork.background2dColor.r = 0;
+                    g_GameWork.background2dColor.g = 0;
+                    g_GameWork.background2dColor.b = 0;
                 }
                 break;
         }
 
         // @todo
         // Draw graphics.
-        if (g_GameWork.gameStatePrev_590 == GameState_MainMenu)
+        if (g_GameWork.gameStatePrev == GameState_MainMenu)
         {
             //Screen_BackgroundImgDraw(&g_BrightnessScreenImg0);
         }
@@ -94,7 +94,7 @@ namespace Silent::Game
             //Screen_BackgroundImgDraw(&g_BrightnessScreenImg1);
         }
 
-        //func_8003E5E8(g_GameWork.config_0.optBrightness_22);
+        //func_8003E5E8(g_GameWork.config.optBrightness_22);
         Options_BrightnessMenu_ArrowsDraw();
         Options_BrightnessMenu_ConfigDraw();
     }
@@ -105,7 +105,7 @@ namespace Silent::Game
         //Gfx_StringSetColor(StringColorId_White);
         //Gfx_StringSetPosition(SCREEN_POSITION_X(25.0f), SCREEN_POSITION_Y(79.5f));
         //Gfx_StringDraw("LEVEL_________", 20);
-        //Gfx_StringDrawInt(1, g_GameWork.config_0.optBrightness_22);
+        //Gfx_StringDrawInt(1, g_GameWork.config.optBrightness_22);
     }
 
     void Options_BrightnessMenu_ArrowsDraw()

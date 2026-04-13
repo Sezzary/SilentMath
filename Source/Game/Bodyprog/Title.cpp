@@ -61,7 +61,7 @@ namespace Silent::Game
         // is a value divisible by 3, the intro FMV will play. Otherwise, it defaults to a gameplay demo.
         playInGameDemo = ((g_Demo_ReproducedCount + 1) % 3) != 0;
 
-        if (g_GameWork.gameStateStep_598[0] == 0)
+        if (g_GameWork.gameStateSteps[0] == 0)
         {
             g_MainMenuState = 0;
 
@@ -71,16 +71,16 @@ namespace Silent::Game
             }
             else
             {
-                g_GameWork.gameStateStep_598[0] = 1;
+                g_GameWork.gameStateSteps[0] = 1;
             }
         }
 
         switch (g_MainMenuState)
         {
             case MenuState_Start:
-                g_GameWork.background2dColor_58C.r = 0;
-                g_GameWork.background2dColor_58C.g = 0;
-                g_GameWork.background2dColor_58C.b = 0;
+                g_GameWork.background2dColor.r = 0;
+                g_GameWork.background2dColor.g = 0;
+                g_GameWork.background2dColor.b = 0;
 
                 Screen_RectInterlacedClear(0, 32, SCREEN_WIDTH, FRAMEBUFFER_HEIGHT_INTERLACED, 0, 0, 0);
                 Screen_Init(SCREEN_WIDTH, true);
@@ -95,12 +95,12 @@ namespace Silent::Game
                 {
                     //GameFs_MapStartup();
 
-                    if (g_GameWork.gameStateStep_598[0] == 1 && g_SysWork.counters_1C[1] == 0)
+                    if (g_GameWork.gameStateSteps[0] == 1 && g_SysWork.counters_1C[1] == 0)
                     {
                         g_Demo_ReproducedCount++;
                     }
 
-                    if (g_GameWork.gameState_594 == GameState_MainLoadScreen)
+                    if (g_GameWork.gameState == GameState_MainLoadScreen)
                     {
                         g_Demo_ReproducedCount++;
                     }
@@ -108,7 +108,7 @@ namespace Silent::Game
 
                 g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
 
-                if (g_GameWork.autosave_90.playerHealth_240 > Q12(0.0f))
+                if (g_GameWork.autosave.playerHealth_240 > Q12(0.0f))
                 {
                     g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Continue) | (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
                 }
@@ -138,11 +138,11 @@ namespace Silent::Game
                     input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
                     SD_Call(Sfx_MenuMove);
-                    g_GameWork.gameState_594 = GameState_MainMenu;
+                    g_GameWork.gameState = GameState_MainMenu;
 
-                    if (g_GameWork.gameStateStep_598[0] != 1)
+                    if (g_GameWork.gameStateSteps[0] != 1)
                     {
-                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_GameWork.gameStateSteps[0] = 1;
                         Fs_QueueReset();
                     }
                 }
@@ -163,11 +163,11 @@ namespace Silent::Game
 
                 if (input.GetAction(In::Enter).IsClicked())
                 {
-                    g_GameWork.gameState_594 = GameState_MainMenu;
+                    g_GameWork.gameState = GameState_MainMenu;
 
-                    if (g_GameWork.gameStateStep_598[0] != 1)
+                    if (g_GameWork.gameStateSteps[0] != 1)
                     {
-                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_GameWork.gameStateSteps[0] = 1;
                         Fs_QueueReset();
                     }
 
@@ -186,9 +186,9 @@ namespace Silent::Game
                     switch (g_MainMenu_SelectedEntry)
                     {
                         case MainMenuEntry_Continue:
-                            if (g_GameWork.autosave_90.playerHealth_240 > Q12(0.0f))
+                            if (g_GameWork.autosave.playerHealth_240 > Q12(0.0f))
                             {
-                                g_GameWork.savegame_30C = g_GameWork.autosave_90;
+                                g_GameWork.savegame = g_GameWork.autosave;
                             }
                             else
                             {
@@ -228,12 +228,12 @@ namespace Silent::Game
                 {
                     //GameFs_MapStartup();
 
-                    if (g_GameWork.gameStateStep_598[0] == 1 && g_SysWork.counters_1C[1] == 0)
+                    if (g_GameWork.gameStateSteps[0] == 1 && g_SysWork.counters_1C[1] == 0)
                     {
                         g_Demo_ReproducedCount++;
                     }
 
-                    if (g_GameWork.gameState_594 == GameState_MainLoadScreen)
+                    if (g_GameWork.gameState == GameState_MainLoadScreen)
                     {
                         g_Demo_ReproducedCount++;
                     }
@@ -244,11 +244,11 @@ namespace Silent::Game
                     input.GetAction(In::Enter).IsClicked() ||
                     input.GetAction(In::Cancel).IsClicked())
                 {
-                    g_GameWork.gameState_594 = GameState_MainMenu;
+                    g_GameWork.gameState = GameState_MainMenu;
 
-                    if (g_GameWork.gameStateStep_598[0] != 1)
+                    if (g_GameWork.gameStateSteps[0] != 1)
                     {
-                        g_GameWork.gameStateStep_598[0] = 1;
+                        g_GameWork.gameStateSteps[0] = 1;
                         Fs_QueueReset();
                     }
                 }
@@ -310,7 +310,7 @@ namespace Silent::Game
                     Screen_Refresh(SCREEN_WIDTH, 0);
                     Fs_QueueWaitForEmpty();
 
-                    if (g_GameWork.autosave_90.playerHealth_240 > Q12(0.0f))
+                    if (g_GameWork.autosave.playerHealth_240 > Q12(0.0f))
                     {
                         NEXT_GAME_STATES[1] = GameState_MainLoadScreen;
                     }
@@ -322,15 +322,15 @@ namespace Silent::Game
 
                     //MemCard_Disable();
 
-                    prevState                       = g_GameWork.gameState_594;
-                    g_GameWork.gameStateStep_598[0] = prevState;
-                    g_GameWork.gameState_594        = (e_GameState)NEXT_GAME_STATES[g_MainMenu_SelectedEntry];
+                    prevState                       = g_GameWork.gameState;
+                    g_GameWork.gameStateSteps[0] = prevState;
+                    g_GameWork.gameState        = (e_GameState)NEXT_GAME_STATES[g_MainMenu_SelectedEntry];
                     g_SysWork.counters_1C[0]              = 0;
-                    g_GameWork.gameStatePrev_590    = prevState;
-                    g_GameWork.gameStateStep_598[0] = 0;
+                    g_GameWork.gameStatePrev    = prevState;
+                    g_GameWork.gameStateSteps[0] = 0;
                     g_SysWork.counters_1C[1]              = 0;
-                    g_GameWork.gameStateStep_598[1] = 0;
-                    g_GameWork.gameStateStep_598[2] = 0;
+                    g_GameWork.gameStateSteps[1] = 0;
+                    g_GameWork.gameStateSteps[2] = 0;
 
                     SysWork_StateSetNext(SysState_Gameplay);
                 }
@@ -344,13 +344,13 @@ namespace Silent::Game
 
         if (!playInGameDemo)
         {
-            switch (g_GameWork.gameStateStep_598[0])
+            switch (g_GameWork.gameStateSteps[0])
             {
                 case 1:
                     if (g_SysWork.counters_1C[1] > 1740)
                     {
                         GameFs_StreamBinLoad();
-                        g_GameWork.gameStateStep_598[0]++;
+                        g_GameWork.gameStateSteps[0]++;
                     }
                     break;
 
@@ -359,9 +359,9 @@ namespace Silent::Game
                     {
                         g_Demo_ReproducedCount++;
 
-                        g_GameWork.background2dColor_58C.r = 0;
-                        g_GameWork.background2dColor_58C.g = 0;
-                        g_GameWork.background2dColor_58C.b = 0;
+                        g_GameWork.background2dColor.r = 0;
+                        g_GameWork.background2dColor.g = 0;
+                        g_GameWork.background2dColor.b = 0;
 
                         Game_StateSetNext(GameState_MovieIntro);
                     }
@@ -369,7 +369,7 @@ namespace Silent::Game
             }
         }
 
-        if (g_GameWork.gameState_594 == GameState_MainMenu)
+        if (g_GameWork.gameState == GameState_MainMenu)
         {
             MainMenu_BackgroundDraw();
             //func_8003B560();

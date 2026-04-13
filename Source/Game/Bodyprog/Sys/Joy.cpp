@@ -20,8 +20,8 @@ namespace Silent::Game
     {
         s_ControllerData* cont;
 
-        cont = &g_GameWork.controllers_38[0];
-        memcpy(&cont->analogController_0, &g_GameWork.rawController_5B4, sizeof(s_AnalogController));
+        cont = &g_GameWork.controllers[0];
+        memcpy(&cont->analogController_0, &g_GameWork.rawController, sizeof(s_AnalogController));
     }
 
     void Joy_Update() // 0x8003446C
@@ -214,7 +214,7 @@ namespace Silent::Game
                 }
                 else if (val == 0x10)
                 {
-                    if (!(btnsHeld & g_GameWorkPtr->config_0.controllerConfig_0.run_C))
+                    if (!(btnsHeld & g_GameWorkPtr->config.controllerConfig_0.run_C))
                     {
                         processedInputFlags |= 0xE0000000;
                     }

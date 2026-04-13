@@ -18,7 +18,7 @@ namespace Silent::Game
         g_WorldGfxWork.vcCameraInternalInfo_1BDC.mode        = 0;
 
         vcSetCameraUseWarp(chr_pos, g_SysWork.cameraAngleY_237A);
-        //SetGeomScreen(g_GameWork.gsScreenHeight_58A);
+        //SetGeomScreen(g_GameWork.gsScreenHeightx);
         vwInitViewInfo();
         vcInitVCSystem(map_overlay_ptr->roadDataList_3CC);
         vcStartCameraSystem();

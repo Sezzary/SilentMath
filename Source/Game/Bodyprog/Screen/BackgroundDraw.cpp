@@ -37,7 +37,7 @@ namespace Silent::Game
                                                     DEPTH_MAX - 1, AlignMode::Center, scaleMode, BlendMode::Add);
         renderer.SubmitSprite2d(gammaSprite);
 
-        g_SysWork.sysFlags_22A0    |= SysFlag_Freeze;
+        g_SysWork.sysFlags_22A0    |= SysFlag_Pause;
         g_Screen_BackgroundImgGamma = Q8(0.5f);
     }
 
@@ -45,7 +45,7 @@ namespace Silent::Game
     {
         // @stub Use overload above.
 
-        g_SysWork.sysFlags_22A0    |= SysFlag_Freeze;
+        g_SysWork.sysFlags_22A0    |= SysFlag_Pause;
         g_Screen_BackgroundImgGamma = Q8(0.5f);
     }
 
@@ -68,7 +68,7 @@ namespace Silent::Game
             }
         }*/
 
-        g_SysWork.sysFlags_22A0 |= SysFlag_Freeze;
+        g_SysWork.sysFlags_22A0 |= SysFlag_Pause;
         //GsOUT_PACKET_P = (PACKET*)poly;
     }
 
@@ -81,7 +81,7 @@ namespace Silent::Game
         *((u16*)&poly->r0) = g_Screen_BackgroundImgGamma + (g_Screen_BackgroundImgGamma << 8);
         poly->b0           = g_Screen_BackgroundImgGamma;*/
 
-        g_SysWork.sysFlags_22A0    |= SysFlag_Freeze;
+        g_SysWork.sysFlags_22A0    |= SysFlag_Pause;
         g_Screen_BackgroundImgGamma = Q8(0.5f);
     }
 
@@ -134,7 +134,7 @@ namespace Silent::Game
                 setWH(sprt, 256, 224);
                 *((u32*)&sprt->u0) = texOffsetY << 8;
 
-                setXY0Fast(sprt, (-g_GameWork.gsScreenWidth_588 / 2) + (j << 8), offsetY);
+                setXY0Fast(sprt, (-g_GameWork.gsScreenWidth / 2) + (j << 8), offsetY);
 
                 sprt++;
                 tPage = (DR_TPAGE*)sprt;

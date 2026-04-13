@@ -82,7 +82,7 @@ namespace Silent::Game
 
     /** @brief Draws the shine which appears during an unusual
      * state where the memory card is "not formatted" and
-     * `g_GameWork.gameState_594` is `GameState_SaveScreen`.
+     * `g_GameWork.gameState` is `GameState_SaveScreen`.
      *
      * @note Intended to be used alongside `SaveScreen_SlotStatusMsgDraw`.
      */
@@ -122,7 +122,7 @@ namespace Silent::Game
 
     /** Crucial for working with the overlay.
      *
-     * `g_GameWork.gameStateStep_598[1]` defines the state:
+     * `g_GameWork.gameStateSteps[1]` defines the state:
      * 0 - The user can freely move through the save menu.
      * 1 - Triggers the overwrite save.
      * 2 - Player leaves the save screen.

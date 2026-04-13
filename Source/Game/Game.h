@@ -480,15 +480,15 @@ namespace Silent::Game
     // Temp name. Related to music.
     enum e_SysFlags
     {
-        SysFlag_None   = 0,
-        SysFlag_Freeze = 1 << 0,
-        SysFlag_1      = 1 << 1,
-        SysFlag_2      = 1 << 2,
-        SysFlag_3      = 1 << 3,
-        SysFlag_4      = 1 << 4,
-        SysFlag_5      = 1 << 5,
-        SysFlag_6      = 1 << 6,
-        SysFlag_7      = 1 << 7
+        SysFlag_None  = 0,
+        SysFlag_Pause = 1 << 0,
+        SysFlag_1     = 1 << 1,
+        SysFlag_2     = 1 << 2,
+        SysFlag_3     = 1 << 3,
+        SysFlag_4     = 1 << 4,
+        SysFlag_5     = 1 << 5,
+        SysFlag_6     = 1 << 6,
+        SysFlag_Mute  = 1 << 7
     };
 
     // Temp name.
@@ -1151,36 +1151,35 @@ namespace Silent::Game
         u32                palLanguageId_34;
     } s_SaveUserConfig;
 
-    /** @brief Game workspace. Stores miscellaneous gameplay-related data.
-     */
+    /** @brief Game workspace. Stores miscellaneous gameplay-related data. */
     typedef struct _GameWork
     {
-        s_SaveUserConfig   config_0;
-        s_ControllerData   controllers_38[CONTROLLER_COUNT_MAX];
-        s_Savegame         autosave_90;
-        s_Savegame         savegame_30C;
-        u16                gsScreenWidth_588;
-        u16                gsScreenHeight_58A;
-        s_PrimColor        background2dColor_58C;
-        e_GameState        gameStatePrev_590;
-        e_GameState        gameState_594;
-        s32                gameStateStep_598[3]; /** Temp data used by current `gameState`. Can be another state ID or other data.
-                                                * This states could be sub-states for specific events of individual screens
-                                                * because of the way it's normally used in menus. For example: in the settings
-                                                * screen, [0] is used to define what option the player has selected, and [1] is used
-                                                * during specific settings screens, such as the position screen or the brightness screen.
-                                                *
-                                                * [2] is likely rarely used or maybe only used during maps.
-                                                */
-        s8                 unk_5A4[4];
+        s_SaveUserConfig   config;
+        s_ControllerData   controllers[CONTROLLER_COUNT_MAX];
+        s_Savegame         autosave;
+        s_Savegame         savegame;
+        u16                gsScreenWidth;
+        u16                gsScreenHeightx;
+        s_PrimColor        background2dColor;
+        e_GameState        gameStatePrev;
+        e_GameState        gameState;
+        s32                gameStateSteps[3]; /** Sub-state steps used by the current `gameState`. Can other state IDs or data.
+                                               * This states could be sub-states for specific events of individual screens
+                                               * because of the way it's normally used in menus. For example: in the settings
+                                               * screen, [0] is used to define what option the player has selected, and [1] is used
+                                               * during specific settings screens, such as the position screen or the brightness screen.
+                                               *
+                                               * [2] is likely rarely used or maybe only used during maps.
+                                               */
+        s8                 unk_5A4[4];        // Padding?
         s32                field_5A8;
         s32                field_5AC;
-        s8                 unk_5B0;
-        s8                 mapAnimIdx_5B1;
-        s8                 bgmIdx_5B2;   // Index of ``.
-        s8                 ambientIdx_5B4; // Index of `g_AmbientVabTaskLoadCmds`.
-        s_AnalogController rawController_5B4;
-        s8                 unk_5BC[28];
+        s8                 unk_5B0;           // Padding?
+        s8                 mapAnimIdx;
+        s8                 bgmIdx;            /** `BgmTrackIdx` | Currently player background music track. */
+        s8                 ambientIdx;        /** Index of `g_AmbientVabTaskLoadCmds`. */
+        s_AnalogController rawController;
+        s8                 unk_5BC[28];       // @unused Debug data?
     } s_GameWork;
 
     /** @brief Constant character animation info passed to `Anim_Update` functions.
@@ -1188,18 +1187,17 @@ namespace Silent::Game
      */
     struct s_AnimInfo
     {
-        void (*playbackFunc_0)(struct _Model* model, struct _AnmHeader* anmHdr, GsCOORDINATE2* coords, struct _AnimInfo* animInfo);
-        u8 status_4;                      /** Packed anim status. Init base? See `s_ModelAnimData::status`. */
-        s8 hasVariableDuration_5;         /** `bool` | Use `duration_8.variableFunc`: `true`, Use `duration_8.constant`: `false`. */
-        u8 linkStatus_6;                  /** Packed anim status link target. See `s_ModelAnim::status`. */
-        // 1 byte of padding.
+        void (*playbackFunc)(struct _Model* model, struct _AnmHeader* anmHdr, GsCOORDINATE2* coords, struct _AnimInfo* animInfo);
+        u8 status;                        /** Packed anim status. Init base? See `s_ModelAnimData::status`. */
+        s8 hasVariableDuration;           /** `bool` | Use `duration.variableFunc`: `true`, Use `duration.constant`: `false`. */
+        u8 linkStatus;                    /** Packed anim status link target. See `s_ModelAnim::status`. */
         union
         {
             q19_12 constant;              /** Constant duration at 30 FPS. */
             q19_12 (*variableFunc)(void); /** Variable duration at 30 FPS via a function. Allows animations to be sped up or slowed down. */
-        } duration_8;
-        s16 startKeyframeIdx_C;           /** Start keyframe index. Sometimes `NO_VALUE`, unknown why. */
-        s16 endKeyframeIdx_E;             /** End keyframe index. */
+        } duration;
+        s16 startKeyframeIdx;             /** Start keyframe index. Sometimes `NO_VALUE`, unknown why. */
+        s16 endKeyframeIdx;               /** End keyframe index. */
     };
 
     /** @brief Character model animation. */
@@ -1218,7 +1216,7 @@ namespace Silent::Game
     /** @brief Character model. */
     struct s_Model
     {
-        s8          charaId_0;      /** `e_CharacterId` */
+        s8          charaId;      /** `e_CharacterId` */
         u8          paletteIdx;   /** Changes the texture palette index for this model. */
         u8          controlState; /** Active character control state. */
         u8          stateStep;    // Step number or temp data for the current `controlState`? In `s_PlayerExtra` always 1, set to 0 for 1 tick when anim state appears to change.
@@ -2051,21 +2049,21 @@ namespace Silent::Game
     {
         e_GameState prevState;
 
-        prevState = g_GameWork.gameState_594;
+        prevState = g_GameWork.gameState;
 
-        g_GameWork.gameState_594        = gameState;
+        g_GameWork.gameState        = gameState;
         g_SysWork.counters_1C[0]              = 0;
         g_SysWork.counters_1C[1]              = 0;
-        g_GameWork.gameStateStep_598[1] = 0;
-        g_GameWork.gameStateStep_598[2] = 0;
+        g_GameWork.gameStateSteps[1] = 0;
+        g_GameWork.gameStateSteps[2] = 0;
 
         SysWork_StateSetNext(SysState_Gameplay);
 
-        g_GameWork.gameStateStep_598[1] = 0;
-        g_GameWork.gameStateStep_598[2] = 0;
-        g_GameWork.gameStateStep_598[0] = prevState;
-        g_GameWork.gameStatePrev_590    = prevState;
-        g_GameWork.gameStateStep_598[0] = 0;
+        g_GameWork.gameStateSteps[1] = 0;
+        g_GameWork.gameStateSteps[2] = 0;
+        g_GameWork.gameStateSteps[0] = prevState;
+        g_GameWork.gameStatePrev    = prevState;
+        g_GameWork.gameStateSteps[0] = 0;
     }
 
     /** @brief Sets the GameState to be used in the next game update.
@@ -2075,19 +2073,19 @@ namespace Silent::Game
     {
         e_GameState prevState;
 
-        prevState = g_GameWork.gameState_594;
+        prevState = g_GameWork.gameState;
 
-        g_GameWork.gameState_594        = gameState;
+        g_GameWork.gameState        = gameState;
         g_SysWork.counters_1C[0]              = 0;
         g_SysWork.counters_1C[1]              = 0;
-        g_GameWork.gameStateStep_598[1] = 0;
-        g_GameWork.gameStateStep_598[2] = 0;
+        g_GameWork.gameStateSteps[1] = 0;
+        g_GameWork.gameStateSteps[2] = 0;
 
         SysWork_StateSetNext(SysState_Gameplay);
 
-        g_GameWork.gameStateStep_598[0] = prevState;
-        g_GameWork.gameStatePrev_590    = prevState;
-        g_GameWork.gameStateStep_598[0] = 0;
+        g_GameWork.gameStateSteps[0] = prevState;
+        g_GameWork.gameStatePrev    = prevState;
+        g_GameWork.gameStateSteps[0] = 0;
     }
 
     /** @brief Returns the GameState to the previously used state.
@@ -2097,19 +2095,19 @@ namespace Silent::Game
     {
         e_GameState prevState;
 
-        prevState = g_GameWork.gameState_594;
+        prevState = g_GameWork.gameState;
 
         g_SysWork.counters_1C[0]              = 0;
         g_SysWork.counters_1C[1]              = 0;
-        g_GameWork.gameStateStep_598[1] = 0;
-        g_GameWork.gameStateStep_598[2] = 0;
+        g_GameWork.gameStateSteps[1] = 0;
+        g_GameWork.gameStateSteps[2] = 0;
 
         SysWork_StateSetNext(SysState_Gameplay);
 
-        g_GameWork.gameStateStep_598[0] = prevState;
-        g_GameWork.gameState_594        = g_GameWork.gameStatePrev_590;
-        g_GameWork.gameStatePrev_590    = prevState;
-        g_GameWork.gameStateStep_598[0] = 0;
+        g_GameWork.gameStateSteps[0] = prevState;
+        g_GameWork.gameState        = g_GameWork.gameStatePrev;
+        g_GameWork.gameStatePrev    = prevState;
+        g_GameWork.gameStateSteps[0] = 0;
     }
 
     /** @brief Gets an event flag state from the savegame event flags array.
@@ -2276,8 +2274,8 @@ namespace Silent::Game
         {                                                                                                                           \
             (model).anim.status = ANIM_STATUS(animIdx, isActive);                                                               \
             (model).stateStep++;                                                                                                  \
-            (model).anim.time        = Q12((animInfos)[ANIM_STATUS(animIdx, isActive) + (animInfosOffset)].startKeyframeIdx_C); \
-            (model).anim.keyframeIdx = (animInfos)[ANIM_STATUS(animIdx, (isActive) + (animInfosOffset))].startKeyframeIdx_C;    \
+            (model).anim.time        = Q12((animInfos)[ANIM_STATUS(animIdx, isActive) + (animInfosOffset)].startKeyframeIdx); \
+            (model).anim.keyframeIdx = (animInfos)[ANIM_STATUS(animIdx, (isActive) + (animInfosOffset))].startKeyframeIdx;    \
         }
 
     /** @brief Attempts to reset a humanoid NPC's anim state index to 0.

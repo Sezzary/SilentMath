@@ -19,12 +19,12 @@ namespace Silent::Game
 
     void Options_MainOptionsMenu_BgmVolumeBarDraw()
     {
-        Options_MainOptionsMenu_VolumeBarDraw(false, g_GameWork.config_0.optVolumeBgm_1F);
+        Options_MainOptionsMenu_VolumeBarDraw(false, g_GameWork.config.optVolumeBgm_1F);
     }
 
     void Options_MainOptionsMenu_SfxVolumeBarDraw()
     {
-        Options_MainOptionsMenu_VolumeBarDraw(true, g_GameWork.config_0.optVolumeSe_20);
+        Options_MainOptionsMenu_VolumeBarDraw(true, g_GameWork.config.optVolumeSe_20);
     }
 
     void Options_MainOptionsMenu_VolumeBarDraw(bool isSfx, uchar vol)
@@ -393,28 +393,28 @@ namespace Silent::Game
             {
                 case 0:
                 {
-                    int strPosX = (!g_GameWork.config_0.optVibrationEnabled_21 == 0) ? 214 : 216;
+                    int strPosX = (!g_GameWork.config.optVibrationEnabled_21 == 0) ? 214 : 216;
                     //Gfx_StringSetPosition(strPosX, 120);
 
-                    int strIdx = g_GameWork.config_0.optVibrationEnabled_21 == 0;
+                    int strIdx = g_GameWork.config.optVibrationEnabled_21 == 0;
                     //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
                     break;
                 }
                 case 1:
                 {
-                    int strPosX = (!g_GameWork.config_0.optAutoLoad_25 == 0) ? 214 : 216;
+                    int strPosX = (!g_GameWork.config.optAutoLoad_25 == 0) ? 214 : 216;
                     //Gfx_StringSetPosition(strPosX, 136);
 
-                    int strIdx = g_GameWork.config_0.optAutoLoad_25 == 0;
+                    int strIdx = g_GameWork.config.optAutoLoad_25 == 0;
                     //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
                     break;
                 }
                 case 2:
                 {
-                    int strPosX = (g_GameWork.config_0.optSoundType_1E != 0) ? 194 : 206;
+                    int strPosX = (g_GameWork.config.optSoundType_1E != 0) ? 194 : 206;
                     //Gfx_StringSetPosition(strPosX, 152);
 
-                    int strIdx = g_GameWork.config_0.optSoundType_1E + 2;
+                    int strIdx = g_GameWork.config.optSoundType_1E + 2;
                     //Gfx_StringDraw(OPTIONS_MENU_SOUND_ENTRY_CONFIG_STRINGS[strIdx], 10);
                     break;
                 }
@@ -528,9 +528,9 @@ namespace Silent::Game
             {
                 case ExtraOptionsMenuEntry_WeaponCtrl:
                 {
-                    int strPosX = (g_GameWork.config_0.optExtraWeaponCtrl_23 != 0) ? 217 : 212;
+                    int strPosX = (g_GameWork.config.optExtraWeaponCtrl_23 != 0) ? 217 : 212;
                     //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_WeaponCtrl));
-                    //Gfx_StringDraw(CONFIG_STRS[!g_GameWork.config_0.optExtraWeaponCtrl_23], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[!g_GameWork.config.optExtraWeaponCtrl_23], 10);
                     break;
                 }
                 case ExtraOptionsMenuEntry_Blood:
@@ -564,43 +564,43 @@ namespace Silent::Game
                 }
                 case ExtraOptionsMenuEntry_ViewCtrl:
                 {
-                    int strPosX = !g_GameWork.config_0.optExtraViewCtrl_28 ? 210 : 206;
+                    int strPosX = !g_GameWork.config.optExtraViewCtrl_28 ? 210 : 206;
                     //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_ViewCtrl));
-                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraViewCtrl_28 != 0) ? 32 : 28) >> 2], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config.optExtraViewCtrl_28 != 0) ? 32 : 28) >> 2], 10);
                     break;
                 }
                 case ExtraOptionsMenuEntry_RetreatTurn:
                 {
-                    int strPosX = !g_GameWork.config_0.optExtraRetreatTurn_2A ? 210 : 206;
+                    int strPosX = !g_GameWork.config.optExtraRetreatTurn_2A ? 210 : 206;
                     //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_RetreatTurn));
-                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraRetreatTurn_2A != 0) ? 32 : 28) >> 2], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config.optExtraRetreatTurn_2A != 0) ? 32 : 28) >> 2], 10);
                     break;
                 }
                 case ExtraOptionsMenuEntry_MovementCtrl:
                 {
-                    int strPosX = !g_GameWork.config_0.optExtraWalkRunCtrl_2B ? 210 : 206;
+                    int strPosX = !g_GameWork.config.optExtraWalkRunCtrl_2B ? 210 : 206;
                     //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_MovementCtrl));
-                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraWalkRunCtrl_2B != 0) ? 32 : 28) >> 2], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config.optExtraWalkRunCtrl_2B != 0) ? 32 : 28) >> 2], 10);
                     break;
                 }
                 case ExtraOptionsMenuEntry_AutoAiming:
                 {
-                    int strPosX = !g_GameWork.config_0.optExtraAutoAiming_2C ? 228 : 226;
+                    int strPosX = !g_GameWork.config.optExtraAutoAiming_2C ? 228 : 226;
                     //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_AutoAiming));
-                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config_0.optExtraAutoAiming_2C != 0) ? 40 : 36) >> 2], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[((g_GameWork.config.optExtraAutoAiming_2C != 0) ? 40 : 36) >> 2], 10);
                     break;
                 }
                 case ExtraOptionsMenuEntry_ViewMode:
                 {
-                    int strPosX = !g_GameWork.config_0.optExtraViewMode_29 ? 210 : 200;
+                    int strPosX = !g_GameWork.config.optExtraViewMode_29 ? 210 : 200;
                     //Gfx_StringSetPosition(strPosX, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_ViewMode));
-                    //Gfx_StringDraw(CONFIG_STRS[(g_GameWork.config_0.optExtraViewMode_29 ? 48 : 44) >> 2], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[(g_GameWork.config.optExtraViewMode_29 ? 48 : 44) >> 2], 10);
                     break;
                 }
                 case ExtraOptionsMenuEntry_BulletMult:
                 {
                     //Gfx_StringSetPosition(230, STR_BASE_Y + (STR_OFFSET_Y * ExtraOptionsMenuEntry_BulletMult));
-                    //Gfx_StringDraw(CONFIG_STRS[g_GameWork.config_0.optExtraBulletAdjust_2D + 13], 10);
+                    //Gfx_StringDraw(CONFIG_STRS[g_GameWork.config.optExtraBulletAdjust_2D + 13], 10);
                     break;
                 }
             }
