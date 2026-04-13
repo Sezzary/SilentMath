@@ -19,7 +19,6 @@ namespace Silent::Renderer
 
     constexpr int DEPTH_MAX = 1024;
 
-    constexpr char DEFAULT_TEXTURE_NAME[] = "Default";
     constexpr auto DEFAULT_TEXTURE_RES    = Vector2i(1, 1);
     constexpr auto DEFAULT_TEXTURE_PIXELS = std::array<byte, RGBA_COMP_COUNT>
     {

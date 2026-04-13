@@ -136,8 +136,8 @@ namespace Silent::Renderer::SdlGpu
         //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
         //GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
         assets.Load("TIM/BG_ETC.TIM");
-        GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, DEFAULT_TEXTURE_NAME);
-
+        
+        GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, "");
         // @todo If atlas textures aren't updated and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
         // handled as written?
@@ -435,11 +435,10 @@ namespace Silent::Renderer::SdlGpu
 
             // Bind texture.
             auto* tex = GetTextures()[batch.TextureName];
-            if (tex == nullptr)
+            if (tex != nullptr)
             {
-                tex = GetTextures()[DEFAULT_TEXTURE_NAME];
+                tex->Bind(renderPass, GetActiveSampler());
             }
-            tex->Bind(renderPass, GetActiveSampler());
 
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
