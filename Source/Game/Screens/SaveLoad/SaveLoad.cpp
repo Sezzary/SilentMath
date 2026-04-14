@@ -2129,7 +2129,7 @@ namespace Silent::Game
 
                 //Game_PlayerInit();
 
-                g_SysWork.processFlags_2298 = SysWorkProcessFlag_LoadSave;
+                g_SysWork.processFlags = ProcessFlag_LoadSave;
 
                 //GameFs_MapLoad(g_SavegamePtr->mapOverlayId_A4);
 

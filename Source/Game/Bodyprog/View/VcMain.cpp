@@ -368,7 +368,7 @@ namespace Silent::Game
         s_SubCharacter* curChara;
 
         // Run through NPCs.
-        for (curChara = &g_SysWork.npcs_1A0[0]; curChara < &g_SysWork.npcs_1A0[ARRAY_SIZE(g_SysWork.npcs_1A0)]; curChara++)
+        for (curChara = &g_SysWork.npcs[0]; curChara < &g_SysWork.npcs[ARRAY_SIZE(g_SysWork.npcs)]; curChara++)
         {
             // Continue if invalid character.
             if (curChara->model.charaId == Chara_None)
@@ -885,7 +885,7 @@ namespace Silent::Game
             return;
         }
 
-        for (sc_p = &g_SysWork.npcs_1A0[0]; sc_p < &g_SysWork.npcs_1A0[ARRAY_SIZE(g_SysWork.npcs_1A0)]; sc_p++)
+        for (sc_p = &g_SysWork.npcs[0]; sc_p < &g_SysWork.npcs[ARRAY_SIZE(g_SysWork.npcs)]; sc_p++)
         {
             if (sc_p->model.charaId >= Chara_AirScreamer &&
                 sc_p->model.charaId <= Chara_MonsterCybil &&
@@ -918,9 +918,9 @@ namespace Silent::Game
                     if (sc_p->flags & CharaFlag_Unk2) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
                     {
                         set_active_data_f = false;
-                        if (sc_p == &g_SysWork.npcs_1A0[g_SysWork.targetNpcIdx_2353])
+                        if (sc_p == &g_SysWork.npcs[g_SysWork.targetNpcIdx])
                         {
-                            set_active_data_f = g_SysWork.playerCombat_38.isAiming > false;
+                            set_active_data_f = g_SysWork.playerCombat.isAiming > false;
                         }
                     }
                 }
@@ -1388,7 +1388,7 @@ namespace Silent::Game
         }
 
         vcMixSelfViewEffectToWatchTgtPos(&w_p->watch_tgt_pos, &w_p->watch_tgt_ang_z, self_view_eff_rate,
-                                         w_p, &g_SysWork.playerBoneCoords_890[HarryBone_Head].workm, player.model.anim.status);
+                                         w_p, &g_SysWork.playerBoneCoords[HarryBone_Head].workm, player.model.anim.status);
 
         if (w_p->watch_tgt_pos.vy > w_p->watch_tgt_max_y)
         {
@@ -2865,7 +2865,7 @@ namespace Silent::Game
         if (w_p->updateLookAtPoint)
         {
             w_p->updateLookAtPoint = false;
-            vwSetCoordRefAndEntou(&g_SysWork.playerBoneCoords_890[HarryBone_Head],
+            vwSetCoordRefAndEntou(&g_SysWork.playerBoneCoords[HarryBone_Head],
                                   Q12(0.0f), Q12(-0.05f), Q12(0.3f),
                                   Q12_ANGLE(180.0f), Q12_ANGLE(0.0f), Q12(-0.2f), Q12(1.0f));
         }

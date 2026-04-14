@@ -32,11 +32,11 @@ namespace Silent::Game
     /** @brief Initalizes drawing of a loading screen. */
     static void GameBoot_LoadingScreen(void) // 0x80034E58
     {
-        if (g_SysWork.loadingScreenIdx_2281 != LoadingScreenId_None && g_GameWork.gameStateSteps[0] < 10)
+        if (g_SysWork.loadingScreenIdx != LoadingScreenId_None && g_GameWork.gameStateSteps[0] < 10)
         {
             ScreenFade_Start(false, true, false);
             g_ScreenFadeTimestep = Q12(0.8f);
-            g_MapOverlayHeader.loadingScreenFuncs_18[g_SysWork.loadingScreenIdx_2281]();
+            g_MapOverlayHeader.loadingScreenFuncs_18[g_SysWork.loadingScreenIdx]();
         }
 
         Screen_BackgroundMotionBlur(SyncMode_Wait2);
@@ -86,12 +86,12 @@ namespace Silent::Game
                 g_GameWork.background2dColor.g = 0;
                 g_GameWork.background2dColor.b = 0;
 
-                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_RoomTransition)
+                if (g_SysWork.processFlags == ProcessFlag_RoomTransition)
                 {
                     //AreaLoad_UpdatePlayerPosition();
                     g_GameWork.gameStateSteps[0] = 7;
                 }
-                else if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_BootDemo)
+                else if (g_SysWork.processFlags == ProcessFlag_BootDemo)
                 {
                     demoLoadAttempCount             = 0;
                     g_GameWork.gameStateSteps[0] = 1;
@@ -155,14 +155,14 @@ namespace Silent::Game
                 break;
 
             case 4:
-                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_OverlayTransition)
+                if (g_SysWork.processFlags == ProcessFlag_OverlayTransition)
                 {
                     //AreaLoad_UpdatePlayerPosition();
                 }
-                else if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_LoadSave ||
-                        g_SysWork.processFlags_2298 == SysWorkProcessFlag_Continue)
+                else if (g_SysWork.processFlags == ProcessFlag_LoadSave ||
+                        g_SysWork.processFlags == ProcessFlag_Continue)
                 {
-                    g_SysWork.loadingScreenIdx_2281 = LoadingScreenId_PlayerRun;
+                    g_SysWork.loadingScreenIdx = LoadingScreenId_PlayerRun;
                 }
 
                 g_GameWork.gameStateSteps[0]++;
@@ -190,7 +190,7 @@ namespace Silent::Game
                 }
 
                 //Ipd_PlayerChunkInit(&g_MapOverlayHeader, g_SysWork.playerWork.player.position.vx, g_SysWork.playerWork.player.position.vz);
-                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_OverlayTransition)
+                if (g_SysWork.processFlags == ProcessFlag_OverlayTransition)
                 {
                     Game_RadioSoundStop();
                 }
@@ -213,7 +213,7 @@ namespace Silent::Game
                 break;
 
             case 10:
-                if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_BootDemo && !(g_SysWork.flags_22A4 & SysFlag2_1))
+                if (g_SysWork.processFlags == ProcessFlag_BootDemo && !(g_SysWork.flags_22A4 & SysFlag2_1))
                 {
                     Demo_Start();
                     g_SysWork.flags_22A4 |= SysFlag2_1;
@@ -228,7 +228,7 @@ namespace Silent::Game
             case 11:
                 if (g_SysWork.counters_1C[0] >= 60)
                 {
-                    if (g_SysWork.processFlags_2298 == SysWorkProcessFlag_RoomTransition)
+                    if (g_SysWork.processFlags == ProcessFlag_RoomTransition)
                     {
                         //GameBoot_NpcInit();
                     }
@@ -237,7 +237,7 @@ namespace Silent::Game
                         //GameBoot_InGameInit();
                     }
 
-                    if (g_SysWork.processFlags_2298 <= (u32)SysWorkProcessFlag_OverlayTransition)
+                    if (g_SysWork.processFlags <= (u32)ProcessFlag_OverlayTransition)
                     {
                         //AreaLoad_TransitionSound();
                     }

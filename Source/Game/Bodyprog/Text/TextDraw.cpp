@@ -177,7 +177,7 @@ namespace Silent::Game
                             break;
 
                         case MAP_MSG_CODE_HIGH_RES:
-                            g_SysWork.enableHighResGlyphs_2350_0 = true;
+                            g_SysWork.enableHighResGlyphs = true;
                             break;
                     }
 
@@ -241,7 +241,7 @@ namespace Silent::Game
         color               = STRING_COLORS[g_StringColorId];
         g_StringPosition.vx = -(g_MapMsg_Widths[0] >> 1);
 
-        if (!g_SysWork.enableHighResGlyphs_2350_0)
+        if (!g_SysWork.enableHighResGlyphs)
         {
             packet = GsOUT_PACKET_P;
         }
@@ -348,7 +348,7 @@ namespace Silent::Game
                             digit          = 0;
 
                             // Parse time value.
-                            if (g_SysWork.mapMsgTimer_234C == NO_VALUE)
+                            if (g_SysWork.mapMsgTimer == NO_VALUE)
                             {
                                 s32 c;
 
@@ -383,7 +383,7 @@ namespace Silent::Game
                                     digit = digit / 10;
                                 }
 
-                                g_SysWork.mapMsgTimer_234C = digit;
+                                g_SysWork.mapMsgTimer = digit;
                                 mapMsg                     = mapMsg + 1;
                             }
                             else
@@ -426,7 +426,7 @@ namespace Silent::Game
                             break;
 
                         case MAP_MSG_CODE_HIGH_RES:
-                            g_SysWork.enableHighResGlyphs_2350_0 = true;
+                            g_SysWork.enableHighResGlyphs = true;
                             break;
                 }
 
@@ -443,7 +443,7 @@ namespace Silent::Game
             default:
                 strLength--;
 
-                if (g_SysWork.enableHighResGlyphs_2350_0)
+                if (g_SysWork.enableHighResGlyphs)
                 {
                     glyphPoly = (POLY_FT4*)GsOUT_PACKET_P;
 
@@ -498,7 +498,7 @@ namespace Silent::Game
 
                 if (strLength <= 0)
                 {
-                    if (!g_SysWork.enableHighResGlyphs_2350_0)
+                    if (!g_SysWork.enableHighResGlyphs)
                     {
                         GsOUT_PACKET_P = packet;
                     }
@@ -508,7 +508,7 @@ namespace Silent::Game
             }
         }
 
-        if (!g_SysWork.enableHighResGlyphs_2350_0)
+        if (!g_SysWork.enableHighResGlyphs)
         {
             GsOUT_PACKET_P = packet;
         }
@@ -535,7 +535,7 @@ namespace Silent::Game
         D_800C38B0.positionIdx_1             = 1;
         g_StringPositionX1                   = SCREEN_POSITION_X(-37.5f);
         g_StringColorId                      = StringColorId_White;
-        //g_SysWork.enableHighResGlyphs_2350_0 = false;
+        //g_SysWork.enableHighResGlyphs = false;
     }
 
     void func_8004B6D4(s16 arg0, s16 arg1) // 0x8004B6D4

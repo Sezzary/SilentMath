@@ -41,7 +41,7 @@ namespace Silent::Game
         //WorldGfx_MapInit();
         //CharaModel_AllModelsFree();
         //Item_HeldItemModelFree();
-        //Anim_BoneInit(FS_BUFFER_0, g_SysWork.playerBoneCoords_890); // Load player anim file?
+        //Anim_BoneInit(FS_BUFFER_0, g_SysWork.playerBoneCoords); // Load player anim file?
         //WorldGfx_PlayerModelProcessLoad();
 
         g_SysWork.field_229C = NO_VALUE;
@@ -69,12 +69,12 @@ namespace Silent::Game
         // If the player spawns in the map with a weapon equipped (either because it's a demo
         // or because the player saved the game with a weapon equipped), this and the next function
         // make it appear and allocate its data.
-        if (g_SysWork.processFlags_2298 & (SysWorkProcessFlag_NewGame | SysWorkProcessFlag_LoadSave |
-                                           SysWorkProcessFlag_Continue | SysWorkProcessFlag_BootDemo))
+        if (g_SysWork.processFlags & (ProcessFlag_NewGame | ProcessFlag_LoadSave |
+                                           ProcessFlag_Continue | ProcessFlag_BootDemo))
         {
-            //WorldGfx_PlayerPrevHeldItem(&g_SysWork.playerCombat_38);
+            //WorldGfx_PlayerPrevHeldItem(&g_SysWork.playerCombat);
         }
 
-        //Gfx_PlayerHeldItemAttach(g_SysWork.playerCombat_38.weaponAttack);
+        //Gfx_PlayerHeldItemAttach(g_SysWork.playerCombat.weaponAttack);
     }
 }

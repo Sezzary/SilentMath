@@ -123,7 +123,7 @@ namespace Silent::Game
             }
             else
             {
-                if (g_SysWork.sysState_8 != SysState_Gameplay)
+                if (g_SysWork.sysState != SysState_Gameplay)
                 {
                     g_VBlanks     = VSync(-1) - g_PrevVBlanks;
                     g_PrevVBlanks = VSync(-1);

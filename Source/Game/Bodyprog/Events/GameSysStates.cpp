@@ -83,7 +83,7 @@ namespace Silent::Game
                 break;
         }
 
-        if (g_SysWork.sysState_8 != SysState_Gameplay && g_SysWork.playerWork.player.health <= Q12(0.0f))
+        if (g_SysWork.sysState != SysState_Gameplay && g_SysWork.playerWork.player.health <= Q12(0.0f))
         {
             SysWork_StateSetNext(SysState_Gameplay);
         }
@@ -97,17 +97,17 @@ namespace Silent::Game
             g_DeltaTimeCpy = g_DeltaTimeRaw;
         }
 
-        if (g_SysWork.sysState_8 == SysState_Gameplay)
+        if (g_SysWork.sysState == SysState_Gameplay)
         {
-            g_SysWork.isMgsStringSet_18 = false;
+            g_SysWork.isMgsStringSet = false;
             g_SysStateFuncs[SysState_Gameplay]();
         }
         else
         {
             g_DeltaTime = Q12(0.0f);
-            g_SysStateFuncs[g_SysWork.sysState_8]();
+            g_SysStateFuncs[g_SysWork.sysState]();
 
-            if (g_SysWork.sysState_8 == SysState_Gameplay)
+            if (g_SysWork.sysState == SysState_Gameplay)
             {
                 Event_Update(true);
 
@@ -144,7 +144,7 @@ namespace Silent::Game
             Demo_DemoRandSeedRestore();
 
             player = &g_SysWork.playerWork.player;
-            //Player_Update(player, FS_BUFFER_0, g_SysWork.playerBoneCoords_890);
+            //Player_Update(player, FS_BUFFER_0, g_SysWork.playerBoneCoords);
 
             Demo_DemoRandSeedRestore();
             //Gfx_FlashlightUpdate();
@@ -158,9 +158,9 @@ namespace Silent::Game
 
             if (player->model.anim.flags & AnimFlag_Visible)
             {
-                //func_8003DA9C(Chara_Harry, g_SysWork.playerBoneCoords_890, 1, g_SysWork.playerWork.player.timer_C6, 0);
+                //func_8003DA9C(Chara_Harry, g_SysWork.playerBoneCoords, 1, g_SysWork.playerWork.player.timer_C6, 0);
                 //Chara_Flag8Clear(&g_SysWork.playerWork.player);
-                //Player_CombatUpdate(&g_SysWork.playerWork, g_SysWork.playerBoneCoords_890);
+                //Player_CombatUpdate(&g_SysWork.playerWork, g_SysWork.playerBoneCoords);
                 //func_8008A3AC(&g_SysWork.playerWork.player);
             }
 
@@ -241,16 +241,16 @@ namespace Silent::Game
         else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map_18)
         {
             SysWork_StateSetNext(SysState_MapScreen);
-            g_SysWork.isMgsStringSet_18 = false;
+            g_SysWork.isMgsStringSet = false;
         }
         else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.option_1A)
         {
             SysWork_StateSetNext(SysState_OptionsMenu);
         }
 
-        if (g_SysWork.sysState_8 == SysState_OptionsMenu ||
-            g_SysWork.sysState_8 == SysState_StatusMenu ||
-            g_SysWork.sysState_8 == SysState_MapScreen)
+        if (g_SysWork.sysState == SysState_OptionsMenu ||
+            g_SysWork.sysState == SysState_StatusMenu ||
+            g_SysWork.sysState == SysState_MapScreen)
         {
             g_SysWork.flags_22A4 |= SysFlag2_MenuOpen;
         }
@@ -274,10 +274,10 @@ namespace Silent::Game
         //func_80091380();
         //Game_TimerUpdate();
 
-        if (g_SysWork.sysStateStep_C[0] == 0)
+        if (g_SysWork.sysStateSteps[0] == 0)
         {
             SD_Call(3);
-            g_SysWork.sysStateStep_C[0]++;
+            g_SysWork.sysStateSteps[0]++;
         }
 
         // Debug button combo to bring up save screen from pause screen.
@@ -309,12 +309,12 @@ namespace Silent::Game
 
     void SysState_OptionsMenu_Update() // 0x80039344
     {
-        switch (g_SysWork.sysStateStep_C[0])
+        switch (g_SysWork.sysStateSteps[0])
         {
             case 0:
                 ScreenFade_Start(true, false, false);
                 g_ScreenFadeTimestep        = Q12(0.0f);
-                g_SysWork.sysStateStep_C[0] = 1;
+                g_SysWork.sysStateSteps[0] = 1;
 
             case 1:
                 //if (Ipd_ChunkInitCheck() != 0)
@@ -322,7 +322,7 @@ namespace Silent::Game
                     SD_Call(19);
                     //GameFs_OptionBinLoad();
 
-                    g_SysWork.sysStateStep_C[0]++;
+                    g_SysWork.sysStateSteps[0]++;
                 }
                 break;
         }
@@ -340,7 +340,7 @@ namespace Silent::Game
         s32 val0;
         s32 val1;
 
-        bool isRockDrillAttack = g_SysWork.playerCombat_38.weaponAttack == WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap);
+        bool isRockDrillAttack = g_SysWork.playerCombat.weaponAttack == WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap);
 
         //func_8008B3E4(0);
 
@@ -496,7 +496,7 @@ namespace Silent::Game
         }
         else
         {
-            if (g_SysWork.sysStateStep_C[0] == 0)
+            if (g_SysWork.sysStateSteps[0] == 0)
             {
                 if (g_PaperMapMarkingFileIdxs[g_SavegamePtr->paperMapIdx_A9] != NO_VALUE)
                 {
@@ -507,7 +507,7 @@ namespace Silent::Game
 
                 ScreenFade_Start(true, false, false);
                 g_ScreenFadeTimestep = Q12(0.0f);
-                g_SysWork.sysStateStep_C[0]++;
+                g_SysWork.sysStateSteps[0]++;
             }
 
             if (D_800A9A0C != 0)
@@ -550,18 +550,18 @@ namespace Silent::Game
 
         static RECT D_800A9A6C = { 320, 256, 160, 240 };
 
-        switch (g_SysWork.sysStateStep_C[0])
+        switch (g_SysWork.sysStateSteps[0])
         {
             case 0:
                 ScreenFade_Start(false, false, false);
                 D_800A9A0C                  = 0;
-                g_SysWork.sysStateStep_C[0] = 1;
+                g_SysWork.sysStateSteps[0] = 1;
 
             case 1:
                 /*if (Ipd_ChunkInitCheck() != 0)
                 {
                     //GameFs_StreamBinLoad();
-                    g_SysWork.sysStateStep_C[0]++;
+                    g_SysWork.sysStateSteps[0]++;
                 }*/
                 break;
         }
@@ -581,7 +581,7 @@ namespace Silent::Game
 
         // Start playing movie. File to play is based on file ID `BASE_AUDIO_FILE_IDX - g_MapEventParam`.
         // Blocks until movie has finished playback or user has skipped it.
-        //open_main(BASE_AUDIO_FILE_IDX - g_MapEventParam, g_FileTable[BASE_AUDIO_FILE_IDX - g_MapEventParam].blockCount_0_19);
+        //open_main(BASE_AUDIO_FILE_IDX - g_MapEventParam, g_FileTable[BASE_AUDIO_FILE_IDX - g_MapEventParam].blockCount);
 
         //func_800892A4(1);
 
@@ -609,7 +609,7 @@ namespace Silent::Game
         s_MapPoint2d* mapPoint;
 
         g_SysWork.field_229C            = 0;
-        g_SysWork.loadingScreenIdx_2281 = D_800BCDB0.loadingScreenId_4_9;
+        g_SysWork.loadingScreenIdx = D_800BCDB0.loadingScreenId_4_9;
         g_SysWork.sfxPairIdx_2283            = g_MapEventData->sfxPairIdx_8_19;
         g_SysWork.field_2282            = g_MapEventData->flags_8_13;
 
@@ -631,15 +631,15 @@ namespace Silent::Game
             D_800BCDB0.positionZ_8 += offsetZ;
         }
 
-        if (g_SysWork.sysState_8 == SysState_LoadOverlay)
+        if (g_SysWork.sysState == SysState_LoadOverlay)
         {
-            g_SysWork.processFlags_2298    = SysWorkProcessFlag_OverlayTransition;
+            g_SysWork.processFlags    = ProcessFlag_OverlayTransition;
             g_SavegamePtr->mapOverlayId_A4 = g_MapEventData->mapOverlayIdx_8_25;
             GameBoot_MapLoad(g_SavegamePtr->mapOverlayId_A4);
         }
         else
         {
-            g_SysWork.processFlags_2298 = SysWorkProcessFlag_RoomTransition;
+            g_SysWork.processFlags = ProcessFlag_RoomTransition;
             //Bgm_TrackChange(g_MapEventData->mapOverlayIdx_8_25);
 
             if (g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam_8_5].field_4_5 != 0)
@@ -676,7 +676,7 @@ namespace Silent::Game
 
     s8 func_80039F90() // 0x80039F90
     {
-        if (g_SysWork.processFlags_2298 & (SysWorkProcessFlag_RoomTransition | SysWorkProcessFlag_OverlayTransition))
+        if (g_SysWork.processFlags & (ProcessFlag_RoomTransition | ProcessFlag_OverlayTransition))
         {
             return g_SysWork.field_2282;
         }
@@ -696,16 +696,16 @@ namespace Silent::Game
         // - There is no alive enemy.
         if (!(g_MapEventData->flags_8_13 & EventParamUnkState_0) && !(g_SysWork.flags_22A4 & SysFlag2_5))
         {
-            for (i = 0; i < ARRAY_SIZE(g_SysWork.npcs_1A0); i++)
+            for (i = 0; i < ARRAY_SIZE(g_SysWork.npcs); i++)
             {
-                if (g_SysWork.npcs_1A0[i].model.charaId >= Chara_Harry && g_SysWork.npcs_1A0[i].model.charaId <= Chara_MonsterCybil &&
-                    g_SysWork.npcs_1A0[i].health > Q12(0.0f))
+                if (g_SysWork.npcs[i].model.charaId >= Chara_Harry && g_SysWork.npcs[i].model.charaId <= Chara_MonsterCybil &&
+                    g_SysWork.npcs[i].health > Q12(0.0f))
                 {
                     break;
                 }
             }
 
-            if (i == ARRAY_SIZE(g_SysWork.npcs_1A0))
+            if (i == ARRAY_SIZE(g_SysWork.npcs))
             {
                 g_DeltaTime = g_DeltaTimeCpy;
             }
@@ -715,7 +715,7 @@ namespace Silent::Game
             g_DeltaTime = g_DeltaTimeCpy;
         }
 
-        if (!g_SysWork.isMgsStringSet_18)
+        if (!g_SysWork.isMgsStringSet)
         {
             g_MapOverlayHeader.playerControlFreeze_C8();
         }
@@ -778,7 +778,7 @@ namespace Silent::Game
 
         //func_80033548();
 
-        switch (g_SysWork.sysStateStep_C[0])
+        switch (g_SysWork.sysStateSteps[0])
         {
             case 0:
                 SysWork_SavegameUpdatePlayer();
@@ -844,7 +844,7 @@ namespace Silent::Game
     {
         g_DeltaTime = g_DeltaTimeCpy;
         Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
-        g_SysWork.sysState_8 = SysState_Gameplay;
+        g_SysWork.sysState = SysState_Gameplay;
     }
 
     void SysState_EventPlaySound_Update() // 0x8003A4B4
@@ -854,7 +854,7 @@ namespace Silent::Game
         SD_Call(((u16)g_MapEventParam + Sfx_Base) & 0xFFFF);
 
         Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
-        g_SysWork.sysState_8 = SysState_Gameplay;
+        g_SysWork.sysState = SysState_Gameplay;
     }
 
     void SysState_GameOver_Update() // 0x8003A52C
@@ -867,7 +867,7 @@ namespace Silent::Game
         s32       randTipVal;
         u16*      temp_a0;
 
-        switch (g_SysWork.sysStateStep_C[0])
+        switch (g_SysWork.sysStateSteps[0])
         {
             case 0:
                 g_MapOverlayHeader.playerControlFreeze_C8();
@@ -935,7 +935,7 @@ namespace Silent::Game
                     }
                 }
 
-                // Store current shown `tipIdx`, later `sysStateStep_C == 7` will set it inside `seenGameOverTips_2E`.
+                // Store current shown `tipIdx`, later `sysStateSteps == 7` will set it inside `seenGameOverTips_2E`.
                 prevTipIdx = tipIdx;
 
                 Fs_QueueStartReadTim((e_FsFile)((int)FILE_TIM_TIPS_E01_TIM + tipIdx), FS_BUFFER_1, &g_DeathTipImg);
@@ -1019,7 +1019,7 @@ namespace Silent::Game
                 break;
         }
 
-        if (g_SysWork.sysStateStep_C[0] >= 2 || g_GameWork.gameState != GameState_InGame)
+        if (g_SysWork.sysStateSteps[0] >= 2 || g_GameWork.gameState != GameState_InGame)
         {
             g_SysWork.sysFlags_22A0 |= SysFlag_Pause;
         }

@@ -26,7 +26,7 @@ namespace Silent::Game
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 3 0x00 padding.
     };
 
-    s_CharaAnimDataInfo g_CharaTypeAnimInfo[GROUP_CHARA_COUNT] =
+    s_CharaAnimDataInfo g_CharaTypeAnimInfo[CHARA_GROUP_COUNT] =
     {
         {
             .charaId0_0         = Chara_Harry,
@@ -75,7 +75,7 @@ namespace Silent::Game
     {
         s32 i;
 
-        for (i = 1; (i < GROUP_CHARA_COUNT); i++)
+        for (i = 1; (i < CHARA_GROUP_COUNT); i++)
         {
             if (g_CharaTypeAnimInfo[i].charaId1_1 == charaId)
             {
@@ -132,7 +132,7 @@ namespace Silent::Game
             }
         }
 
-        initAnimDataInfo->npcCoords_14       = &g_SysWork.npcCoords_FC0[0];
+        initAnimDataInfo->npcCoords_14       = &g_SysWork.npcCoords[0];
         initAnimDataInfo->charaId1_1         = Chara_None;
         initAnimDataInfo->animFile1_8        = nullptr;
         initAnimDataInfo->animBufferSize2_10 = 0;
@@ -152,7 +152,7 @@ namespace Silent::Game
             Fs_QueueStartReadAnm(idx, charaId, localAnimFile, coord);
         }
 
-        for (i = 1; i < GROUP_CHARA_COUNT; i++)
+        for (i = 1; i < CHARA_GROUP_COUNT; i++)
         {
             if (i != idx && g_CharaTypeAnimInfo[i].charaId1_1 != Chara_None && Fs_CharaAnimDataSizeCheck(idx, i) != false)
             {
@@ -174,7 +174,7 @@ namespace Silent::Game
         {
             if (idx == 1)
             {
-                localCoord = &g_SysWork.npcCoords_FC0[0];
+                localCoord = &g_SysWork.npcCoords[0];
             }
             else if (idx >= 2)
             {
@@ -182,8 +182,8 @@ namespace Silent::Game
                 localCoord  = g_CharaTypeAnimInfo[idx - 1].npcCoords_14;
                 localCoord += idx0 + 1;
 
-                // Check for end of `g_SysWork.npcCoords_FC0` array.
-                if ((&localCoord[animFile->boneCount] + 1) >= &g_SysWork.npcCoords_FC0[NPC_BONE_COUNT_MAX])
+                // Check for end of `g_SysWork.npcCoords` array.
+                if ((&localCoord[animFile->boneCount] + 1) >= &g_SysWork.npcCoords[NPC_BONE_COUNT_MAX])
                 {
                     localCoord = g_MapOverlayHeader.field_28;
                 }
@@ -206,7 +206,7 @@ namespace Silent::Game
         GsCOORDINATE2* coord;
         s_AnmHeader*   animFile;
 
-        for (i = 1; i < GROUP_CHARA_COUNT - 1; i++)
+        for (i = 1; i < CHARA_GROUP_COUNT - 1; i++)
         {
             if (g_MapOverlayHeader.charaGroupIds_248[i] != Chara_None)
             {
@@ -214,8 +214,8 @@ namespace Silent::Game
                 animFile = g_CharaTypeAnimInfo[i + 1].animFile1_8;
                 coord   += g_CharaTypeAnimInfo[i].animFile1_8->boneCount + 1;
 
-                // Check for end of `g_SysWork.npcCoords_FC0` array.
-                if ((&coord[animFile->boneCount] + 1) >= &g_SysWork.npcCoords_FC0[NPC_BONE_COUNT_MAX])
+                // Check for end of `g_SysWork.npcCoords` array.
+                if ((&coord[animFile->boneCount] + 1) >= &g_SysWork.npcCoords[NPC_BONE_COUNT_MAX])
                 {
                     coord = g_MapOverlayHeader.field_28;
                 }

@@ -13,7 +13,7 @@ namespace Silent::Game
     constexpr int NAME_CHAR_MASK   = 0x3F;
     constexpr int NAME_CHAR_OFFSET = 0x20;
 
-    /** Convenience macros to convert constant filenames to `name0123_4_4` and `name4567_8_0`. */
+    /** Convenience macros to convert constant filenames to `name0123` and `name4567`. */
     #define FA2N(c) (((u8)(c) - 0x20) & 0x3f)
     #define FNP(c0, c1, c2, c3) (FA2N(c0) | (FA2N(c1) << 6) | (FA2N(c2) << 12) | (FA2N(c3) << 18))
     #define FN(c0, c1, c2, c3, c4, c5, c6, c7) FNP(c0, c1, c2, c3), FNP(c4, c5, c6, c7)
@@ -112,13 +112,13 @@ namespace Silent::Game
         char  fileType;
         const char* fileExt;
 
-        namePart = fileEntry->name0123_4_4;
+        namePart = fileEntry->name0123;
 
         while (i < FS_NAME_CHAR_MAX)
         {
             if (i == NAME_PART_CHARS)
             {
-                namePart = fileEntry->name4567_8_0;
+                namePart = fileEntry->name4567;
             }
 
             decoded = namePart & NAME_CHAR_MASK;
@@ -133,7 +133,7 @@ namespace Silent::Game
             i++;
         }
 
-        fileType = fileEntry->type_8_24;
+        fileType = fileEntry->type;
 
         if (fileType == FS_INVALID_TYPE)
         {
@@ -216,7 +216,7 @@ namespace Silent::Game
                 currentIdx = (dir < 0) ? (FS_FILE_COUNT - 1) : 0;
             }
 
-            if (g_FileTable[currentIdx].type_8_24 == fileType)
+            if (g_FileTable[currentIdx].type == fileType)
             {
                 return currentIdx;
             }
@@ -241,9 +241,9 @@ namespace Silent::Game
         fileEntry = &g_FileTable[i];
         while (i < FS_FILE_COUNT)
         {
-            if (fileEntry->name4567_8_0 == name4567 &&
-                fileEntry->name0123_4_4 == name0123 &&
-                fileEntry->type_8_24    == fileType)
+            if (fileEntry->name4567 == name4567 &&
+                fileEntry->name0123 == name0123 &&
+                fileEntry->type    == fileType)
             {
                 foundIdx = i;
                 break;

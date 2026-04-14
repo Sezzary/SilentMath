@@ -92,7 +92,7 @@ namespace Silent::Game
     void open_main(s32 file_idx, s16 num_frames) // 0x801E2AA4
     {
         //Fs_QueueWaitForEmpty();
-        //movie_main(nullptr, num_frames, g_FileTable[file_idx].startSector_0_0);
+        //movie_main(nullptr, num_frames, g_FileTable[file_idx].startSector);
     }
 
     bool movie_main(const std::string& file_name, s32 f_size, s32 sector) // 0x801E2B9C

@@ -235,7 +235,7 @@ namespace Silent::Game
         switch (gameState)
         {
             case GameState_InGame:
-                if (g_SysWork.sysState_8 == SysState_GameOver)
+                if (g_SysWork.sysState == SysState_GameOver)
                 {
                     return DemoState_Exit;
                 }

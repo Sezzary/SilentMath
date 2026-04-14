@@ -67,7 +67,7 @@ namespace Silent::Game
 
             if (playInGameDemo)
             {
-                g_SysWork.processFlags_2298 = SysWorkProcessFlag_BootDemo;
+                g_SysWork.processFlags = ProcessFlag_BootDemo;
             }
             else
             {
@@ -196,7 +196,7 @@ namespace Silent::Game
                             }
 
                             //Game_PlayerInit();
-                            g_SysWork.processFlags_2298 = SysWorkProcessFlag_Continue;
+                            g_SysWork.processFlags = ProcessFlag_Continue;
                             //GameFs_MapLoad(g_SavegamePtr->mapOverlayId_A4);
                             break;
 
@@ -286,7 +286,7 @@ namespace Silent::Game
                     //Game_SavegameInitialize(0, newGameSelectedDifficultyIdx - 1);
                     //Game_PlayerInit();
 
-                    g_SysWork.processFlags_2298 = SysWorkProcessFlag_NewGame;
+                    g_SysWork.processFlags = ProcessFlag_NewGame;
 
                     //GameFs_MapLoad(MapOverlayId_MAP0_S00);
                     //GameFs_StreamBinLoad();
@@ -495,7 +495,7 @@ namespace Silent::Game
     {
         auto& renderer = g_App.GetRenderer();
 
-        if (g_SysWork.sysState_8 == SysState_Gameplay)
+        if (g_SysWork.sysState == SysState_Gameplay)
         {
             SysWork_StateSetNext(SysState_OptionsMenu);
             func_8003BCF4();

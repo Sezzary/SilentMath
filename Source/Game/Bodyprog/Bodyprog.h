@@ -344,12 +344,12 @@ namespace Silent::Game
                 s16 field_2;
             } s_0;
         } field_4;
-        s16 vy_8; // Q7.8
+        s16 vy_8; // Q7.8? Usually Q12, need to reevaluate.
         u8  field_A;
         u8  field_B; // Flags?
         union
         {
-            s32 field_0;
+            s32 field_0; // Timer.
             struct
             {
                 q3_12 field_0; // Angle.
@@ -1189,7 +1189,7 @@ namespace Silent::Game
         VECTOR3           ipdSamplePoint_8; /** Used by IPD logic to sample which chunks to load or unload. */
         u8*               charaLmBuffer_14;
         s_CharaModel*     registeredCharaModels_18[Chara_Count];
-        s_CharaModel      charaModels_CC[GROUP_CHARA_COUNT];
+        s_CharaModel      charaModels_CC[CHARA_GROUP_COUNT];
         s_CharaModel      harryModel_164C;
         s_HeldItem        heldItem_1BAC;             /** The item held by the player. */
         s_TriggerZone*    triggerZone_1BD8;
@@ -1649,7 +1649,7 @@ namespace Silent::Game
         s32*                   data_18C;
         s32*                   data_190;
         void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharacterId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
-        s8                     charaGroupIds_248[GROUP_CHARA_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
+        s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
         s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
         VC_ROAD_DATA           roadDataList_3CC[100];
         s_TriggerZone          triggerZones_D2C[200];
@@ -2283,7 +2283,7 @@ namespace Silent::Game
     extern u8 D_800AF220;
 
     /** @brief Last weapon selected. While it is being assigned the value of
-     * `g_SysWork::playerCombat_38::weaponAttack` this time it is used to determine
+     * `g_SysWork::playerCombat::weaponAttack` this time it is used to determine
      * the last weapon used in order to load the required animation data.
      */
     extern s32 g_Player_LastWeaponSelected;

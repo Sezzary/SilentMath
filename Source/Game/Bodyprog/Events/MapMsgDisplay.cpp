@@ -46,17 +46,17 @@ namespace Silent::Game
         }
 
         g_SysWork.playerWork.player.properties.player.gasWeaponPowerTimer_114 = Q12(0.0f);
-        //func_8004C564(g_SysWork.playerCombat_38.weaponAttack, WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap));
+        //func_8004C564(g_SysWork.playerCombat.weaponAttack, WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap));
 
         if (msgIdx != mapMsgIdx)
         {
-            g_SysWork.isMgsStringSet_18 = false;
+            g_SysWork.isMgsStringSet = false;
         }
 
-        switch (g_SysWork.isMgsStringSet_18)
+        switch (g_SysWork.isMgsStringSet)
         {
             case false:
-                g_SysWork.mapMsgTimer_234C         = NO_VALUE;
+                g_SysWork.mapMsgTimer         = NO_VALUE;
                 g_MapMsg_Select.maxIdx_0           = NO_VALUE;
                 g_MapMsg_Select.selectedEntryIdx_1 = 0;
                 g_MapMsg_AudioLoadBlock            = 0;
@@ -71,7 +71,7 @@ namespace Silent::Game
                 //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);
 
                 D_800BCD74 = 1;
-                g_SysWork.isMgsStringSet_18++;
+                g_SysWork.isMgsStringSet++;
                 return MapMsgState_Finish;
 
             case true:
@@ -99,10 +99,10 @@ namespace Silent::Game
                 msgDisplayLength += msgDisplayInc;
                 msgDisplayLength  = CLAMP(msgDisplayLength, 0, MAP_MESSAGE_DISPLAY_ALL_LENGTH);
 
-                if (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer_234C > 0)
+                if (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer > 0)
                 {
-                    g_SysWork.mapMsgTimer_234C -= g_DeltaTimeRaw;
-                    g_SysWork.mapMsgTimer_234C  = CLAMP(g_SysWork.mapMsgTimer_234C, Q12(0.0f), MSG_TIMER_MAX);
+                    g_SysWork.mapMsgTimer -= g_DeltaTimeRaw;
+                    g_SysWork.mapMsgTimer  = CLAMP(g_SysWork.mapMsgTimer, Q12(0.0f), MSG_TIMER_MAX);
                 }
 
                 temp_s1 = stateMachineIdx0;
@@ -119,7 +119,7 @@ namespace Silent::Game
                         if (g_MapMsg_Select.maxIdx_0 == temp)
                         {
                             if (!((g_MapMsg_AudioLoadBlock & (1 << 0)) || !hasInput) ||
-                                (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer_234C == 0))
+                                (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer == 0))
                             {
                                 stateMachineIdx1 = FINISH_MAP_MSG;
 
@@ -137,9 +137,9 @@ namespace Silent::Game
 
                             //Sd_PlaySfx(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
 
-                            if (g_SysWork.silentYesSelection_2350_4)
+                            if (g_SysWork.silentYesSelection)
                             {
-                                g_SysWork.silentYesSelection_2350_4 = false;
+                                g_SysWork.silentYesSelection = false;
                             }
 
                             stateMachineIdx1 = FINISH_MAP_MSG;
@@ -153,14 +153,14 @@ namespace Silent::Game
                             {
                                 //Sd_PlaySfx(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
                             }
-                            else if (!g_SysWork.silentYesSelection_2350_4)
+                            else if (!g_SysWork.silentYesSelection)
                             {
                                 //Sd_PlaySfx(Sfx_MenuConfirm, 0, Q8_CLAMPED(0.25f));
                             }
 
-                            if (g_SysWork.silentYesSelection_2350_4)
+                            if (g_SysWork.silentYesSelection)
                             {
-                                g_SysWork.silentYesSelection_2350_4 = false;
+                                g_SysWork.silentYesSelection = false;
                             }
 
                             stateMachineIdx1 = FINISH_MAP_MSG;
@@ -168,7 +168,7 @@ namespace Silent::Game
                         }
                     }
                     else if ((!(g_MapMsg_AudioLoadBlock & (1 << 0)) && hasInput && g_MapMsg_Select.maxIdx_0 != 0) ||
-                            (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer_234C == 0))
+                            (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer == 0))
                     {
                         if (g_MapMsg_Select.maxIdx_0 != NO_VALUE)
                         {
@@ -178,7 +178,7 @@ namespace Silent::Game
                         }
 
                         g_MapMsg_CurrentIdx++;
-                        g_SysWork.mapMsgTimer_234C = g_MapMsg_Select.maxIdx_0;
+                        g_SysWork.mapMsgTimer = g_MapMsg_Select.maxIdx_0;
 
                         //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);
 
@@ -222,8 +222,8 @@ namespace Silent::Game
             return MapMsgState_Idle;
         }
 
-        g_SysWork.isMgsStringSet_18            = false;
-        g_SysWork.enableHighResGlyphs_2350_0 = false;
+        g_SysWork.isMgsStringSet            = false;
+        g_SysWork.enableHighResGlyphs = false;
         msgDisplayLength               = 0;
 
         if (g_SysWork.sysFlags_22A0 & SysFlag_5)
