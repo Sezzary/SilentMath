@@ -79,7 +79,7 @@ namespace Silent::Game
 
                 g_IntervalVBlanks = 2;
                 g_GameWork.gameStateSteps[0]++;
-                g_SysWork.sysFlags_22A0 |= SysFlag_6;
+                g_SysWork.bgmStatusFlags |= BgmStatusFlag_6;
                 break;
         }
 
@@ -121,7 +121,7 @@ namespace Silent::Game
 
         D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueDoThingWhenEmpty();
 
-        if (!(g_SysWork.sysFlags_22A0 & SysFlag_Pause) && g_MapOverlayHeader.worldObjectsUpdate_40 != nullptr)
+        if (!(g_SysWork.bgmStatusFlags & BgmStatusFlag_Pause) && g_MapOverlayHeader.worldObjectsUpdate_40 != nullptr)
         {
             g_MapOverlayHeader.worldObjectsUpdate_40();
         }
@@ -131,7 +131,7 @@ namespace Silent::Game
         Demo_DemoRandSeedRestore();
         Demo_DemoRandSeedRestore();
 
-        if (!(g_SysWork.sysFlags_22A0 & SysFlag_Pause))
+        if (!(g_SysWork.bgmStatusFlags & BgmStatusFlag_Pause))
         {
             //func_80040014();
             vcMoveAndSetCamera(false, false, false, false, false, false, false, false);
@@ -149,7 +149,7 @@ namespace Silent::Game
             Demo_DemoRandSeedRestore();
             //Gfx_FlashlightUpdate();
 
-            if (g_SavegamePtr->mapOverlayId_A4 != MapOverlayId_MAP7_S03)
+            if (g_SavegamePtr->mapOverlayId_A4 != MapIdx_MAP7_S03)
             {
                 g_MapOverlayHeader.particlesUpdate_168(0, g_SavegamePtr->mapOverlayId_A4, 1);
             }
@@ -252,11 +252,11 @@ namespace Silent::Game
             g_SysWork.sysState == SysState_StatusMenu ||
             g_SysWork.sysState == SysState_MapScreen)
         {
-            g_SysWork.flags_22A4 |= SysFlag2_MenuOpen;
+            g_SysWork.flags_22A4 |= UnkSysFlag_7;
         }
         else if (ScreenFade_IsNone())
         {
-            g_SysWork.flags_22A4 &= ~SysFlag2_MenuOpen;
+            g_SysWork.flags_22A4 &= ~UnkSysFlag_7;
         }
     }
 
@@ -369,54 +369,54 @@ namespace Silent::Game
 
         switch (g_SavegamePtr->mapOverlayId_A4)
         {
-            case MapOverlayId_MAP0_S01:
-            case MapOverlayId_MAP0_S02:
-            case MapOverlayId_MAP1_S00:
-            case MapOverlayId_MAP1_S01:
-            case MapOverlayId_MAP1_S02:
-            case MapOverlayId_MAP1_S03:
-            case MapOverlayId_MAP1_S04:
-            case MapOverlayId_MAP1_S05:
-            case MapOverlayId_MAP1_S06:
-            case MapOverlayId_MAP2_S00:
-            case MapOverlayId_MAP2_S01:
-            case MapOverlayId_MAP2_S02:
-            case MapOverlayId_MAP2_S03:
-            case MapOverlayId_MAP2_S04:
-            case MapOverlayId_MAP3_S00:
-            case MapOverlayId_MAP3_S01:
-            case MapOverlayId_MAP3_S02:
-            case MapOverlayId_MAP3_S04:
-            case MapOverlayId_MAP3_S05:
-            case MapOverlayId_MAP3_S06:
-            case MapOverlayId_MAP4_S00:
-            case MapOverlayId_MAP4_S01:
-            case MapOverlayId_MAP4_S02:
-            case MapOverlayId_MAP4_S03:
-            case MapOverlayId_MAP4_S04:
-            case MapOverlayId_MAP4_S05:
-            case MapOverlayId_MAP4_S06:
-            case MapOverlayId_MAP5_S00:
-            case MapOverlayId_MAP5_S01:
-            case MapOverlayId_MAP5_S02:
-            case MapOverlayId_MAP5_S03:
-            case MapOverlayId_MAP6_S00:
-            case MapOverlayId_MAP6_S01:
-            case MapOverlayId_MAP6_S02:
-            case MapOverlayId_MAP6_S03:
-            case MapOverlayId_MAP6_S04:
-            case MapOverlayId_MAP6_S05:
-            case MapOverlayId_MAP7_S00:
-            case MapOverlayId_MAP7_S01:
-            case MapOverlayId_MAP7_S02:
+            case MapIdx_MAP0_S01:
+            case MapIdx_MAP0_S02:
+            case MapIdx_MAP1_S00:
+            case MapIdx_MAP1_S01:
+            case MapIdx_MAP1_S02:
+            case MapIdx_MAP1_S03:
+            case MapIdx_MAP1_S04:
+            case MapIdx_MAP1_S05:
+            case MapIdx_MAP1_S06:
+            case MapIdx_MAP2_S00:
+            case MapIdx_MAP2_S01:
+            case MapIdx_MAP2_S02:
+            case MapIdx_MAP2_S03:
+            case MapIdx_MAP2_S04:
+            case MapIdx_MAP3_S00:
+            case MapIdx_MAP3_S01:
+            case MapIdx_MAP3_S02:
+            case MapIdx_MAP3_S04:
+            case MapIdx_MAP3_S05:
+            case MapIdx_MAP3_S06:
+            case MapIdx_MAP4_S00:
+            case MapIdx_MAP4_S01:
+            case MapIdx_MAP4_S02:
+            case MapIdx_MAP4_S03:
+            case MapIdx_MAP4_S04:
+            case MapIdx_MAP4_S05:
+            case MapIdx_MAP4_S06:
+            case MapIdx_MAP5_S00:
+            case MapIdx_MAP5_S01:
+            case MapIdx_MAP5_S02:
+            case MapIdx_MAP5_S03:
+            case MapIdx_MAP6_S00:
+            case MapIdx_MAP6_S01:
+            case MapIdx_MAP6_S02:
+            case MapIdx_MAP6_S03:
+            case MapIdx_MAP6_S04:
+            case MapIdx_MAP6_S05:
+            case MapIdx_MAP7_S00:
+            case MapIdx_MAP7_S01:
+            case MapIdx_MAP7_S02:
                 break;
 
-            case MapOverlayId_MAP3_S03:
+            case MapIdx_MAP3_S03:
                 Sd_SfxStop(Sfx_Unk1525);
                 Sd_SfxStop(Sfx_Unk1527);
                 break;
 
-            case MapOverlayId_MAP0_S00:
+            case MapIdx_MAP0_S00:
                 Sd_SfxStop(Sfx_Unk1358);
                 break;
         }
@@ -590,8 +590,8 @@ namespace Silent::Game
         //LoadImage(&D_800A9A6C, (u32*)IMAGE_BUFFER_0);
         //DrawSync(SyncMode_Wait);
 
-        // Set savegame flag based on `g_MapEventData->disabledEventFlag_2` flag ID.
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+        // Set savegame flag based on `g_MapEventData->disabledEventFlag` flag ID.
+        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 
         // Return to game.
         Game_StateSetNext(GameState_InGame);
@@ -618,14 +618,14 @@ namespace Silent::Game
         if (g_SysWork.sfxPairIdx_2283 == SfxPairIdx_7)
         {
             D_800BCDD4            = 0;
-            g_SysWork.flags_22A4 |= SysFlag2_10;
+            g_SysWork.flags_22A4 |= UnkSysFlag_10;
         }
 
-        D_800BCDB0 = g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam_8_5];
+        D_800BCDB0 = g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam];
 
         if (D_800BCDB0.triggerParam1_4_24 == 1)
         {
-            mapPoint                = &g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->pointOfInterestIdx_5];
+            mapPoint                = &g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->pointOfInterestIdx];
             offsetZ                 = g_SysWork.playerWork.player.position.vz - mapPoint->positionZ_8;
             D_800BCDB0.positionX_0 += g_SysWork.playerWork.player.position.vx - mapPoint->positionX_0;
             D_800BCDB0.positionZ_8 += offsetZ;
@@ -634,32 +634,32 @@ namespace Silent::Game
         if (g_SysWork.sysState == SysState_LoadOverlay)
         {
             g_SysWork.processFlags    = ProcessFlag_OverlayTransition;
-            g_SavegamePtr->mapOverlayId_A4 = g_MapEventData->mapOverlayIdx_8_25;
+            g_SavegamePtr->mapOverlayId_A4 = g_MapEventData->mapOverlayIdx;
             GameBoot_MapLoad(g_SavegamePtr->mapOverlayId_A4);
         }
         else
         {
             g_SysWork.processFlags = ProcessFlag_RoomTransition;
-            //Bgm_TrackChange(g_MapEventData->mapOverlayIdx_8_25);
+            //Bgm_TrackChange(g_MapEventData->mapOverlayIdx);
 
-            if (g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam_8_5].field_4_5 != 0)
+            if (g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam].field_4_5 != 0)
             {
-                g_SysWork.field_2349 = g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam_8_5].field_4_5 - 1;
+                g_SysWork.field_2349 = g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam].field_4_5 - 1;
             }
         }
 
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 
         if (g_MapEventData->field_8_24)
         {
-            g_SysWork.flags_22A4 |= SysFlag2_6;
+            g_SysWork.flags_22A4 |= UnkSysFlag_6;
         }
         else
         {
-            g_SysWork.flags_22A4 &= ~SysFlag2_6;
+            g_SysWork.flags_22A4 &= ~UnkSysFlag_6;
         }
 
-        g_SysWork.sysFlags_22A0 |= SysFlag_Pause;
+        g_SysWork.bgmStatusFlags |= BgmStatusFlag_Pause;
         Game_StateSetNext(GameState_MainLoadScreen);
         //Screen_BackgroundMotionBlur(SyncMode_Immediate);
     }
@@ -694,7 +694,7 @@ namespace Silent::Game
         // - A specific event related flag is disenabled.
         // - A specific camera related flag is disenabled.
         // - There is no alive enemy.
-        if (!(g_MapEventData->flags_8_13 & EventParamUnkState_0) && !(g_SysWork.flags_22A4 & SysFlag2_5))
+        if (!(g_MapEventData->flags_8_13 & EventParamUnkState_0) && !(g_SysWork.flags_22A4 & UnkSysFlag_5))
         {
             for (i = 0; i < ARRAY_SIZE(g_SysWork.npcs); i++)
             {
@@ -729,7 +729,7 @@ namespace Silent::Game
                 break;
 
             case MapMsgState_SelectEntry0:
-                Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+                Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 
                 unfreezePlayerFunc = &g_MapOverlayHeader.playerControlUnfreeze_CC;
 
@@ -755,7 +755,7 @@ namespace Silent::Game
 
     void func_8003A16C() // 0x8003A16C
     {
-        if (!(g_SysWork.flags_22A4 & SysFlag2_1))
+        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
         {
             // Update `savegame` with player info.
             SysWork_SavegameUpdatePlayer();
@@ -833,7 +833,7 @@ namespace Silent::Game
     {
         if (g_MapEventData->flags_8_13 != EventParamUnkState_None)
         {
-            Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+            Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
         }
 
         g_DeltaTime = g_DeltaTimeCpy;
@@ -843,7 +843,7 @@ namespace Silent::Game
     void SysState_EventSetFlag_Update() // 0x8003A460
     {
         g_DeltaTime = g_DeltaTimeCpy;
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
         g_SysWork.sysState = SysState_Gameplay;
     }
 
@@ -853,7 +853,7 @@ namespace Silent::Game
 
         SD_Call(((u16)g_MapEventParam + Sfx_Base) & 0xFFFF);
 
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
         g_SysWork.sysState = SysState_Gameplay;
     }
 
@@ -1021,7 +1021,7 @@ namespace Silent::Game
 
         if (g_SysWork.sysStateSteps[0] >= 2 || g_GameWork.gameState != GameState_InGame)
         {
-            g_SysWork.sysFlags_22A0 |= SysFlag_Pause;
+            g_SysWork.bgmStatusFlags |= BgmStatusFlag_Pause;
         }
     }
 
@@ -1036,7 +1036,7 @@ namespace Silent::Game
 
         D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueDoThingWhenEmpty();
 
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag_2);
+        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 
         g_MapOverlayHeader.mapEventFuncs_20[g_MapEventParam]();
 

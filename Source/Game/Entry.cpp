@@ -61,7 +61,7 @@ namespace Silent::Game
             GsClearOt(0, 0, &g_ObjectTable0[g_ActiveBufferIdx]);
             GsClearOt(0, 0, &g_ObjectTable1[g_ActiveBufferIdx]);*/
 
-            g_SysWork.sysFlags_22A0 = SysFlag_None;
+            g_SysWork.bgmStatusFlags = BgmStatusFlag_None;
 
             // Call update function for current GameState.
             if (g_GameStateUpdateFuncs[g_GameWork.gameState])
@@ -91,7 +91,7 @@ namespace Silent::Game
             //DrawSync(0);
 
             // Handle V sync.
-            /*if (g_SysWork.flags_22A4 & SysFlag2_1)
+            /*if (g_SysWork.flags_22A4 & UnkSysFlag_1)
             {
                 vBlanks   = VSync(-1);
                 g_VBlanks = vBlanks - g_PrevVBlanks;

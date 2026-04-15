@@ -85,7 +85,7 @@ def _create_parser():
     """
     Create an argument parser for the script.
 
-    :return: A script argument parser.
+    :return: Script argument parser.
     """
     parser = ArgumentParser()
     parser.add_argument("--vgmstreamExe", "-exe", type=Path, help="Path to the `vgmstream-cli` executable (`VAB` -> `WAV`s tool).")

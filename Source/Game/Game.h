@@ -398,57 +398,57 @@ namespace Silent::Game
                                     // `J2` cutscenes use single audio file for all lines (e.g. video tape cutscene).
     };
 
-    /** @brief Map overlay IDs. */
-    enum e_MapOverlayId
+    /** @brief Playable map indices. Used for binary overlays. */
+    enum e_MapIdx
     {
-        MapOverlayId_MAP0_S00 = 0,
-        MapOverlayId_MAP0_S01 = 1,
-        MapOverlayId_MAP0_S02 = 2,
-        MapOverlayId_MAP1_S00 = 3,
-        MapOverlayId_MAP1_S01 = 4,
-        MapOverlayId_MAP1_S02 = 5,
-        MapOverlayId_MAP1_S03 = 6,
-        MapOverlayId_MAP1_S04 = 7,
-        MapOverlayId_MAP1_S05 = 8,
-        MapOverlayId_MAP1_S06 = 9,
-        MapOverlayId_MAP2_S00 = 10,
-        MapOverlayId_MAP2_S01 = 11,
-        MapOverlayId_MAP2_S02 = 12,
-        MapOverlayId_MAP2_S03 = 13,
-        MapOverlayId_MAP2_S04 = 14,
-        MapOverlayId_MAP3_S00 = 15,
-        MapOverlayId_MAP3_S01 = 16,
-        MapOverlayId_MAP3_S02 = 17,
-        MapOverlayId_MAP3_S03 = 18,
-        MapOverlayId_MAP3_S04 = 19,
-        MapOverlayId_MAP3_S05 = 20,
-        MapOverlayId_MAP3_S06 = 21,
-        MapOverlayId_MAP4_S00 = 22,
-        MapOverlayId_MAP4_S01 = 23,
-        MapOverlayId_MAP4_S02 = 24,
-        MapOverlayId_MAP4_S03 = 25,
-        MapOverlayId_MAP4_S04 = 26,
-        MapOverlayId_MAP4_S05 = 27,
-        MapOverlayId_MAP4_S06 = 28,
-        MapOverlayId_MAP5_S00 = 29,
-        MapOverlayId_MAP5_S01 = 30,
-        MapOverlayId_MAP5_S02 = 31,
-        MapOverlayId_MAP5_S03 = 32,
-        MapOverlayId_MAP6_S00 = 33,
-        MapOverlayId_MAP6_S01 = 34,
-        MapOverlayId_MAP6_S02 = 35,
-        MapOverlayId_MAP6_S03 = 36,
-        MapOverlayId_MAP6_S04 = 37,
-        MapOverlayId_MAP6_S05 = 38,
-        MapOverlayId_MAP7_S00 = 39,
-        MapOverlayId_MAP7_S01 = 40,
-        MapOverlayId_MAP7_S02 = 41,
-        MapOverlayId_MAP7_S03 = 42,
-        MapOverlayId_MAPT_S00 = 43, // } @unused Empty test maps. Only some code references remain and `HB_MTS00.ANM`/`HB_MTX00.ANM` anim files.
-        MapOverlayId_MAPX_S00 = 44  // }
+        MapIdx_MAP0_S00 = 0,
+        MapIdx_MAP0_S01 = 1,
+        MapIdx_MAP0_S02 = 2,
+        MapIdx_MAP1_S00 = 3,
+        MapIdx_MAP1_S01 = 4,
+        MapIdx_MAP1_S02 = 5,
+        MapIdx_MAP1_S03 = 6,
+        MapIdx_MAP1_S04 = 7,
+        MapIdx_MAP1_S05 = 8,
+        MapIdx_MAP1_S06 = 9,
+        MapIdx_MAP2_S00 = 10,
+        MapIdx_MAP2_S01 = 11,
+        MapIdx_MAP2_S02 = 12,
+        MapIdx_MAP2_S03 = 13,
+        MapIdx_MAP2_S04 = 14,
+        MapIdx_MAP3_S00 = 15,
+        MapIdx_MAP3_S01 = 16,
+        MapIdx_MAP3_S02 = 17,
+        MapIdx_MAP3_S03 = 18,
+        MapIdx_MAP3_S04 = 19,
+        MapIdx_MAP3_S05 = 20,
+        MapIdx_MAP3_S06 = 21,
+        MapIdx_MAP4_S00 = 22,
+        MapIdx_MAP4_S01 = 23,
+        MapIdx_MAP4_S02 = 24,
+        MapIdx_MAP4_S03 = 25,
+        MapIdx_MAP4_S04 = 26,
+        MapIdx_MAP4_S05 = 27,
+        MapIdx_MAP4_S06 = 28,
+        MapIdx_MAP5_S00 = 29,
+        MapIdx_MAP5_S01 = 30,
+        MapIdx_MAP5_S02 = 31,
+        MapIdx_MAP5_S03 = 32,
+        MapIdx_MAP6_S00 = 33,
+        MapIdx_MAP6_S01 = 34,
+        MapIdx_MAP6_S02 = 35,
+        MapIdx_MAP6_S03 = 36,
+        MapIdx_MAP6_S04 = 37,
+        MapIdx_MAP6_S05 = 38,
+        MapIdx_MAP7_S00 = 39,
+        MapIdx_MAP7_S01 = 40,
+        MapIdx_MAP7_S02 = 41,
+        MapIdx_MAP7_S03 = 42,
+        MapIdx_MAPT_S00 = 43, // } @unused Empty test maps. Only some code references remain and `HB_MTS00.ANM`/`HB_MTX00.ANM` anim files.
+        MapIdx_MAPX_S00 = 44  // }
     };
 
-    /** @brief Paper map indices. Used for the map screen. */
+    /** @brief Paper map indices. Used for the navigation map screen. */
     enum e_PaperMapIdx
     {
         PaperMapIdx_OtherPlaces    = 0,
@@ -478,34 +478,34 @@ namespace Silent::Game
     };
 
     // Temp name. Related to music.
-    enum e_SysFlags
+    enum _BgmStatusFlags
     {
-        SysFlag_None  = 0,
-        SysFlag_Pause = 1 << 0,
-        SysFlag_1     = 1 << 1,
-        SysFlag_2     = 1 << 2,
-        SysFlag_3     = 1 << 3,
-        SysFlag_4     = 1 << 4,
-        SysFlag_5     = 1 << 5,
-        SysFlag_6     = 1 << 6,
-        SysFlag_Mute  = 1 << 7
+        BgmStatusFlag_None        = 0,
+        BgmStatusFlag_Pause       = 1 << 0,
+        BgmStatusFlag_ApplyMute   = 1 << 1,
+        BgmStatusFlag_RadioActive = 1 << 2,
+        BgmStatusFlag_Duck        = 1 << 3,
+        BgmStatusFlag_4           = 1 << 4,
+        BgmStatusFlag_VoiceDialog = 1 << 5,
+        BgmStatusFlag_6           = 1 << 6, // Something to do with the radio?
+        BgmStatusFlag_RequestMute = 1 << 7
     };
 
     // Temp name.
-    enum e_SysFlags2
+    enum e_UnkSysFlags
     {
-        SysFlag2_None     = 0,
-        SysFlag2_0        = 1 << 0,
-        SysFlag2_1        = 1 << 1,
+        UnkSysFlag_None = 0,
+        UnkSysFlag_0    = 1 << 0,
+        UnkSysFlag_1    = 1 << 1,
 
-        SysFlag2_3        = 1 << 3,
-        SysFlag2_4        = 1 << 4,
-        SysFlag2_5        = 1 << 5, /** Related to camera. */
-        SysFlag2_6        = 1 << 6,
-        SysFlag2_MenuOpen = 1 << 7, /** Set by `SysState_Gameplay_Update` when opening the menu and cleared when returning to `SysState_Gameplay` once screen fade has completed. */
-        SysFlag2_8        = 1 << 8,
-        SysFlag2_9        = 1 << 9,
-        SysFlag2_10       = 1 << 10
+        UnkSysFlag_3    = 1 << 3,
+        UnkSysFlag_4    = 1 << 4,
+        UnkSysFlag_5    = 1 << 5, /** Related to camera. */
+        UnkSysFlag_6    = 1 << 6,
+        UnkSysFlag_7    = 1 << 7, /** Set by `SysState_Gameplay_Update` when opening the menu and cleared when returning to `SysState_Gameplay` once screen fade has completed. */
+        UnkSysFlag_8    = 1 << 8,
+        UnkSysFlag_9    = 1 << 9,
+        UnkSysFlag_10   = 1 << 10
     };
 
     /** @brief System process flags. */
@@ -1043,7 +1043,7 @@ namespace Silent::Game
         s_InventoryItem items_0[INVENTORY_ITEM_COUNT_MAX];
         s8              field_A0;
         s8              field_A1[3];
-        s8              mapOverlayId_A4;          /** `e_MapOverlayId` Index to overlay `.BIN` files. */
+        s8              mapOverlayId_A4;          /** `e_MapIdx` Index to overlay `.BIN` files. */
         s8              mapRoomIdx_A5;            /** Index to local map geometry `.IPD` files. */
         s16             savegameCount_A6;
         s8              locationId_A8;            /** `e_SaveLocationId` */
@@ -1111,19 +1111,19 @@ namespace Silent::Game
     /** TODO: Known as `Trigger` in SilentHillMapExaminer: https://github.com/ItEndsWithTens/SilentHillMapExaminer/blob/master/src/SHME.ExternalTool.Guts/Trigger.cs */
     struct s_EventData
     {
-        s16 requiredEventFlag_0;
-        s16 disabledEventFlag_2;
-        s8  triggerType_4_0    : 4; /** `e_TriggerType` */
-        u8  activationType_4_4 : 4; /** `e_TriggerActivationType` */
-        u8  pointOfInterestIdx_5;   /** Index into `g_MapOverlayHeader.mapPointsOfInterest_1C`. */
-        u8  requiredItemId_6;       /** `e_InventoryItemId` that player must use from item screen. */
-        u32 sysState_0       : 5; /** `e_SysState` used by the event. */
-        u32 eventParam_8_5     : 8; /** Can be an ID of a `MapMsg`, sound effect, index into `mapEventFuncs_20`, or index into `mapPointsOfInterest_1C` for `areaLoad` events. */
-        u32 flags_8_13         : 6; /** `e_EventDataUnkCutsceneState` */
-        u32 sfxPairIdx_8_19    : 5;
-        u32 field_8_24         : 1;
-        u32 mapOverlayIdx_8_25 : 6;
-        u32 field_8_31         : 1;
+        s16 requiredEventFlag;
+        s16 disabledEventFlag;
+        s8  triggerType    : 4;  /** `e_TriggerType` */
+        u8  activationType : 4;  /** `e_TriggerActivationType` */
+        u8  pointOfInterestIdx;  /** Index into `g_MapOverlayHeader.mapPointsOfInterest_1C`. */
+        u8  requiredItemId;      /** `e_InventoryItemId` that player must use from item screen. */
+        u32 sysState        : 5; /** `e_SysState` used by the event. */
+        u32 eventParam      : 8; /** Can be an ID of a `MapMsg`, sound effect, index into `mapEventFuncs_20`, or index into `mapPointsOfInterest_1C` for `areaLoad` events. */
+        u32 flags_8_13      : 6; /** `e_EventDataUnkState` */
+        u32 sfxPairIdx_8_19 : 5;
+        u32 field_8_24      : 1;
+        u32 mapOverlayIdx   : 6;
+        u32 field_8_31      : 1;
     };
 
     /** @brief User options configuration. */
@@ -1872,19 +1872,19 @@ namespace Silent::Game
         GsCOORDINATE2  npcCoords[NPC_BONE_COUNT_MAX]; // Dynamic coord buffer? 10 coords per NPC (given max of 6 NPCs).
         s8             npcFlagsId;                    // NPC ID for `npcFlags`. Not an index, starts at 1.
         s8             loadingScreenIdx;
-        s8             field_2282;                         /** `e_EventDataUnkCutsceneState` */
+        s8             field_2282;                         /** `e_EventDataUnkState` */
         s8             sfxPairIdx_2283;                    /** `e_SfxPairIdx` | Index into `SFX_PAIRS`. */
         u16            charaGroupFlags[CHARA_GROUP_COUNT]; /** `e_CharaGroupFlags` */
                                                            // Enabling a flag for Larval Stalkers causes them to die.
         s32            field_228C[1];
-        s32            npcFlags;       // Flags related to NPCs. Each bit corresponds to `npcs` index.
+        s32            npcFlags;       // Flags related to NPCs. Each bit corresponds to an `npcs` array entry.
         s8             unused_2294[4]; /** @unused */
         e_ProcessFlags processFlags;
-        s32            field_229C;    /** Dead code. It get assigned -1 when the player has been initalized and get 0 assigned when the player changes the area, beyond that, the code do not use this variable. */
-        int            sysFlags_22A0; // `e_SysFlags` | Music related.
-        int            flags_22A4;    // `e_SysFlags2` | `SysFlag2_6` passed as "use through door cam" flag in `vcSetFirstCamWork`. Also `e_SysFlags` or different?
-        GsCOORDINATE2  coord_22A8;    // For particles only?
-        GsCOORDINATE2  coord_22F8;    // Likely related to above.
+        s32            field_229C; /** Dead code. Set to -1 when the player has been initalized and set to 0 when the player changes areas. Beyond that, this variable is unused. */
+        int            bgmStatusFlags;
+        int            flags_22A4; // `e_UnkSysFlags` | `UnkSysFlag_6` passed as "use through door cam" flag in `vcSetFirstCamWork`.
+        GsCOORDINATE2  coord_22A8; // For particles only?
+        GsCOORDINATE2  coord_22F8; // Likely related to above.
         s8             field_2348 : 8;
         s8             field_2349 : 8; // Particle spawn multiplier?
         bool           field_234A;

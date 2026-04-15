@@ -1,3 +1,5 @@
+Assets/**              filter=lfs diff=lfs merge=lfs -text
+Resources/**           filter=lfs diff=lfs merge=lfs -text
 Tools/dumpsxiso/**     filter=lfs diff=lfs merge=lfs -text
 Tools/shadercross/**   filter=lfs diff=lfs merge=lfs -text
 Tools/vgmstream-cli/** filter=lfs diff=lfs merge=lfs -text

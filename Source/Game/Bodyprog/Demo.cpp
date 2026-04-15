@@ -190,7 +190,7 @@ namespace Silent::Game
     void Demo_Start() // 0x8008F398
     {
         g_Demo_Play = true;
-        g_SysWork.flags_22A4 |= SysFlag2_1;
+        g_SysWork.flags_22A4 |= UnkSysFlag_1;
 
         Demo_GameGlobalsUpdate();
         Demo_GameRandSeedUpdate();
@@ -202,7 +202,7 @@ namespace Silent::Game
     void Demo_Stop() // 0x8008f3f0
     {
         g_Demo_Play = false;
-        g_SysWork.flags_22A4 &= ~SysFlag2_1;
+        g_SysWork.flags_22A4 &= ~UnkSysFlag_1;
 
         Demo_GameGlobalsRestore();
         Demo_GameRandSeedRestore();
@@ -262,7 +262,7 @@ namespace Silent::Game
         g_Demo_FrameCount     = 999 * TICKS_PER_SECOND;
         g_Demo_CurFrameData   = nullptr;
         g_Demo_DemoStep       = 0;
-        g_SysWork.flags_22A4 |= SysFlag2_8;
+        g_SysWork.flags_22A4 |= UnkSysFlag_8;
     }
 
     bool func_8008F520() // 0x8008F520
@@ -272,7 +272,7 @@ namespace Silent::Game
 
     void Demo_DemoRandSeedBackup() // 0x8008F528
     {
-        if (g_SysWork.flags_22A4 & SysFlag2_1)
+        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
         {
             g_Demo_RandSeedBackup = Rng_GetSeed();
         }
@@ -280,7 +280,7 @@ namespace Silent::Game
 
     void Demo_DemoRandSeedRestore() // 0x8008F560
     {
-        if (g_SysWork.flags_22A4 & SysFlag2_1)
+        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
         {
             Rng_SetSeed(g_Demo_RandSeedBackup);
         }
@@ -290,7 +290,7 @@ namespace Silent::Game
     {
         #define SEED_OFFSET 0x3C6EF35F
 
-        if (g_SysWork.flags_22A4 & SysFlag2_1)
+        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
         {
             Rng_SetSeed(g_Demo_RandSeedBackup + SEED_OFFSET);
         }
@@ -310,7 +310,7 @@ namespace Silent::Game
         D_800C489C        = false;
         prevScreenFade    = g_Screen_FadeStatus;
 
-        if (!(g_SysWork.flags_22A4 & SysFlag2_1))
+        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
         {
             g_Demo_CurFrameData = nullptr;
             g_Demo_DemoStep     = 0;
@@ -378,7 +378,7 @@ namespace Silent::Game
     {
         u32 btns;
 
-        if (!(g_SysWork.flags_22A4 & SysFlag2_1))
+        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
         {
             return false;
         }
@@ -422,7 +422,7 @@ namespace Silent::Game
 
     bool Demo_GameRandSeedSet() // 0x8008F8A8
     {
-        if (!(g_SysWork.flags_22A4 & SysFlag2_1))
+        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
         {
             return true;
         }
@@ -440,7 +440,7 @@ namespace Silent::Game
 
     bool func_8008F914(q19_12 posX, q19_12 posZ)
     {
-        if (g_SysWork.flags_22A4 & SysFlag2_1)
+        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
         {
             //return func_8004393C(posX, posZ);
         }
