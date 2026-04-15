@@ -1365,19 +1365,19 @@ namespace Silent::Game
     /** @brief Creeper character properties. */
     typedef struct _PropertiesCreeper
     {
-        u16    flags_E8; /** `e_CreeperFlags` */ // TODO: `Ai_Creeper_Control_2` and `Ai_Creeper_Control_5` require `s32`, but changing it breaks matches elsewhere.
-        s8     unk_EA[2];
-        q3_12  offsetX_EC;
-        q3_12  offsetZ_EE;
-        q19_12 timer_F0;                // Timer with unknown purpose.
-        q19_12 targetPositionX_F4;
-        q19_12 targetPositionZ_F8;
-        q19_12 prevTargetPositionX_FC;  // } Unsure. Maybe home position to return to?
-        q19_12 prevTargetPositionZ_100; // }
-        q19_12 timer_104;               // Timer with unknown purpose.
-        q3_12  rotationY_108;
-        s16    animStatus_10A;
-        q4_12  moveSpeed_10C;
+        u16    flags; /** `e_CreeperFlags` */
+        s8     __pad_EA[2];
+        q3_12  collisionOffsetX;
+        q3_12  collisionOffsetZ;
+        q19_12 attackTimer;
+        q19_12 targetPositionX;
+        q19_12 targetPositionZ;
+        q19_12 homePositionX;
+        q19_12 homePositionZ;
+        q19_12 chirpTimer;
+        q3_12  angleToTarget;
+        s16    animStatus_10A; // TODO: Purpose unclear.
+        q4_12  moveSpeed;
     } s_PropertiesCreeper;
 
     /** @brief Dahlia character properties. */
@@ -1899,10 +1899,10 @@ namespace Silent::Game
         s8             npcIdxs[CHARA_GROUP_COUNT];
         bool           enablePlayerMatchAnim; /** Activates the animation performed by Harry when lighting a match at the beginning of the game. */
         u8             playerStopFlags;       /** `e_PlayerStopFlags` */
-        GsCOORDINATE2* field_235C;            // Player torso bone.
-        VECTOR3        pointLightPosition;    //                   } Often gets set from DMS cutscene data.
-        GsCOORDINATE2* field_236C;            // Player root bone. }
-        SVECTOR        pointLightRotation;    //                   }
+        GsCOORDINATE2* field_235C;            // Bone related to pocket light.
+        VECTOR3        pointLightPosition;    //                               } Often gets set from DMS cutscene data.
+        GsCOORDINATE2* field_236C;            // Bone related to pocket light. }
+        SVECTOR        pointLightRotation;    //                               }
         s16            pointLightIntensity;
         q3_12          cameraAngleY;
         q3_12          cameraAngleZ;
