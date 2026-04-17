@@ -57,8 +57,8 @@ namespace Silent::Game
         {
             case false:
                 g_SysWork.mapMsgTimer         = NO_VALUE;
-                g_MapMsg_Select.maxIdx_0           = NO_VALUE;
-                g_MapMsg_Select.selectedEntryIdx_1 = 0;
+                g_MapMsg_Select.maxIdx           = NO_VALUE;
+                g_MapMsg_Select.selectedEntryIdx = 0;
                 g_MapMsg_AudioLoadBlock            = 0;
                 g_MapMsg_CurrentIdx                = mapMsgIdx;
                 stateMachineIdx0          = 0;
@@ -71,7 +71,7 @@ namespace Silent::Game
                 //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);
 
                 D_800BCD74 = 1;
-                g_SysWork.isMgsStringSet++;
+                g_SysWork.isMgsStringSet = true;
                 return MapMsgState_Finish;
 
             case true:
@@ -116,7 +116,7 @@ namespace Silent::Game
                     temp = stateMachineIdx1;
                     if (temp == temp_s1)
                     {
-                        if (g_MapMsg_Select.maxIdx_0 == temp)
+                        if (g_MapMsg_Select.maxIdx == temp)
                         {
                             if (!((g_MapMsg_AudioLoadBlock & (1 << 0)) || !hasInput) ||
                                 (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer == 0))
@@ -132,8 +132,8 @@ namespace Silent::Game
                         }
                         else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
                         {
-                            g_MapMsg_Select.maxIdx_0           = temp;
-                            g_MapMsg_Select.selectedEntryIdx_1 = g_MapMsg_SelectCancelIdx;
+                            g_MapMsg_Select.maxIdx           = temp;
+                            g_MapMsg_Select.selectedEntryIdx = g_MapMsg_SelectCancelIdx;
 
                             //Sd_PlaySfx(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
 
@@ -147,9 +147,9 @@ namespace Silent::Game
                         }
                         else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0)
                         {
-                            g_MapMsg_Select.maxIdx_0 = temp;
+                            g_MapMsg_Select.maxIdx = temp;
 
-                            if (g_MapMsg_Select.selectedEntryIdx_1 == (s8)g_MapMsg_SelectCancelIdx)
+                            if (g_MapMsg_Select.selectedEntryIdx == (s8)g_MapMsg_SelectCancelIdx)
                             {
                                 //Sd_PlaySfx(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
                             }
@@ -167,18 +167,18 @@ namespace Silent::Game
                             break;
                         }
                     }
-                    else if ((!(g_MapMsg_AudioLoadBlock & (1 << 0)) && hasInput && g_MapMsg_Select.maxIdx_0 != 0) ||
+                    else if ((!(g_MapMsg_AudioLoadBlock & (1 << 0)) && hasInput && g_MapMsg_Select.maxIdx != 0) ||
                             (g_MapMsg_AudioLoadBlock != 0 && g_SysWork.mapMsgTimer == 0))
                     {
-                        if (g_MapMsg_Select.maxIdx_0 != NO_VALUE)
+                        if (g_MapMsg_Select.maxIdx != NO_VALUE)
                         {
-                            g_MapMsg_Select.maxIdx_0  = NO_VALUE;
+                            g_MapMsg_Select.maxIdx  = NO_VALUE;
                             stateMachineIdx1 = FINISH_MAP_MSG;
                             break;
                         }
 
                         g_MapMsg_CurrentIdx++;
-                        g_SysWork.mapMsgTimer = g_MapMsg_Select.maxIdx_0;
+                        g_SysWork.mapMsgTimer = g_MapMsg_Select.maxIdx;
 
                         //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);
 
@@ -231,7 +231,7 @@ namespace Silent::Game
             D_800BCD74 = 1;
         }
 
-        return g_MapMsg_Select.selectedEntryIdx_1 + 1;
+        return g_MapMsg_Select.selectedEntryIdx + 1;
     }
 
     s32 Gfx_MapMsg_SelectionUpdate(u8 mapMsgIdx, s32* arg1) // 0x80036B5C
@@ -259,7 +259,7 @@ namespace Silent::Game
             case MapMsgCode_Select2:
             case MapMsgCode_Select3:
             case MapMsgCode_Select4:
-                g_MapMsg_Select.maxIdx_0  = 1;
+                g_MapMsg_Select.maxIdx  = 1;
                 g_MapMsg_SelectCancelIdx = (mapMsgCode == 3) ? 2 : 1;
 
                 if (mapMsgCode == MapMsgCode_Select4)
@@ -268,7 +268,7 @@ namespace Silent::Game
                     // All maps have "Yes" and "No" as messages 0 and 1, respectively.
                     for (i = 0; i < 2; i++)
                     {
-                        if (g_MapMsg_Select.selectedEntryIdx_1 == i)
+                        if (g_MapMsg_Select.selectedEntryIdx == i)
                         {
                             Gfx_StringSetColor((e_StringColorId)(((g_MapMsg_SelectFlashTimer >> 10) * 3) + 4));
                         }
@@ -293,7 +293,7 @@ namespace Silent::Game
                     // `[idx + 3]`: "Option 3"
                     for (i = 0; i < mapMsgCode; i++)
                     {
-                        if (g_MapMsg_Select.selectedEntryIdx_1 == i)
+                        if (g_MapMsg_Select.selectedEntryIdx == i)
                         {
                             Gfx_StringSetColor((e_StringColorId)(((g_MapMsg_SelectFlashTimer >> 10) * 3) + 4));
                         }
@@ -308,19 +308,19 @@ namespace Silent::Game
                 }
 
                 if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickUp &&
-                    g_MapMsg_Select.selectedEntryIdx_1 != 0)
+                    g_MapMsg_Select.selectedEntryIdx != 0)
                 {
                     g_MapMsg_SelectFlashTimer = Q12(0.0f);
-                    g_MapMsg_Select.selectedEntryIdx_1--;
+                    g_MapMsg_Select.selectedEntryIdx--;
 
                     //Sd_PlaySfx(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
                 }
 
                 if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickDown &&
-                    g_MapMsg_Select.selectedEntryIdx_1 != (mapMsgCode - 1))
+                    g_MapMsg_Select.selectedEntryIdx != (mapMsgCode - 1))
                 {
                     g_MapMsg_SelectFlashTimer = Q12(0.0f);
-                    g_MapMsg_Select.selectedEntryIdx_1++;
+                    g_MapMsg_Select.selectedEntryIdx++;
 
                     //Sd_PlaySfx(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
                 }
@@ -374,7 +374,7 @@ namespace Silent::Game
 
     void func_80037124() // 0x80037124
     {
-        g_MapMsg_Select.maxIdx_0 = NO_VALUE;
+        g_MapMsg_Select.maxIdx = NO_VALUE;
         //func_8003652C();
         //DrawSync(SyncMode_Wait);
     }

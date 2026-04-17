@@ -1068,7 +1068,7 @@ namespace Silent::Game
         u8            field_F;  // Keyframe index offset?
         u8            field_10; // State.
         u8            field_11;
-        u8            field_12;
+        u8            field_12; // SFX ID subgroup. Uses values 0-4.
         u8            unk_13;
         u32*          unk_14; // Some pointer. All entries have the same value `D_800AD4C4`.
     } s_800AD4C8;
@@ -1651,14 +1651,14 @@ namespace Silent::Game
         void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharacterId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
         s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
         s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
-        VC_ROAD_DATA           roadDataList_3CC[100];
+        VC_ROAD_DATA           cameraPaths_3CC[100];
         s_TriggerZone          triggerZones_D2C[200];
     };
 
     typedef struct
     {
-        s8 maxIdx_0;
-        u8 selectedEntryIdx_1;
+        s8 maxIdx;
+        u8 selectedEntryIdx;
     } s_MapMsgSelect;
 
     typedef struct
