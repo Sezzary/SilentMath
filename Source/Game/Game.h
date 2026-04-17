@@ -1358,8 +1358,8 @@ namespace Silent::Game
         q19_12 timer_EC;
         q19_12 timer_F0;
         q19_12 timer_F4;
-        s8     unk_F8[36]; // Unused?
-        s32    flags_118; /** `e_BloodsuckerFlags` */
+        s8     unused_F8[36]; /** @unused */
+        s32    flags_118;     /** `e_BloodsuckerFlags` */
     } s_PropertiesBloodsucker;
 
     /** @brief Creeper character properties. */
