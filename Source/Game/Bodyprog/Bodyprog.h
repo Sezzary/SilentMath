@@ -988,9 +988,9 @@ namespace Silent::Game
 
     typedef struct _GlobalLm
     {
-        s_LmHeader* lmHdr_0;
-        s32         fileIdx_4;
-        s32         queueIdx_8;
+        s_LmHeader* lmHdr;
+        s32         fileIdx;
+        s32         queueIdx;
     } s_GlobalLm;
 
     typedef struct
@@ -1132,7 +1132,7 @@ namespace Silent::Game
     {
         u_Filename name_0;
         s8         field_8;
-        s8         lmIdx_9; /** Set to 2 when found in `g_Map.globalLm_138.lmHdr_0` and 3-6 if found in `g_Map.ipdActive_15C[i] (i + 3)`. */
+        s8         lmIdx_9; /** Set to 2 when found in `g_Map.globalLm_138.lmHdr` and 3-6 if found in `g_Map.ipdActive_15C[i] (i + 3)`. */
     } s_WorldObjectMetadata;
 
     // Rough name.

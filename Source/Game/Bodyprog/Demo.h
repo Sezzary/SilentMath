@@ -33,7 +33,7 @@ namespace Silent::Game
     /** Something for demo handling. Set in `Fs_QueueDoThingWhenEmpty`. */
     extern bool D_800C489C;
 
-    bool Demo_SequenceAdvance(s32 incrementAmt);
+    bool Demo_SequenceAdvance(s32 incrementAmount);
 
     void Demo_DemoDataRead();
 

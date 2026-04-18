@@ -517,6 +517,16 @@ namespace Silent::Math
         return x & 0xFFF;
     }
 
+    /** @brief Extracts the fractional part of a value in 32.8 fixed-point.
+     *
+     * @param x Q32.8 fixed-point value.
+     * @return Fractional part of `x` in Q32.8 fixed-point.
+     */
+    constexpr q23_8 Q12_FRACT(q23_8 x)
+    {
+        return x & 0xFF;
+    }
+
     // =======================================
     // Abstract Q Format Conversion and Utils
     // =======================================

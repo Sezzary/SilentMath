@@ -267,7 +267,7 @@ namespace Silent::Game
     typedef struct
     {
         s32 totalSavegameCount_0;
-        s32 fileIdx_4;
+        s32 fileIdx;
         s32 saveIdx_8;
     } s_MemCard_TotalSavesInfo;
 

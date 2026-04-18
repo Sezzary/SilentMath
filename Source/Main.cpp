@@ -1,9 +1,6 @@
 #include "Framework.h"
 
 #include "Application.h"
-#include "Services/Platform.h"
-
-using namespace Silent::Services;
 
 int main()
 {
