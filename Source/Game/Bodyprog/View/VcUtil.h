@@ -93,4 +93,11 @@ namespace Silent::Game
      * @param sys_p System work.
      */
     void vcSetRefPosAndCamPosAngByPad(VECTOR3* ref_pos, s_SysWork* sys_p);
+
+    /** @brief Computes the stereo sound balance based on the relative position to the camera.
+     *
+     * @param soundPos Sound source position.
+     * @return Stereo sound balance in the range [-127, 127], where values affect the left-right channel balance.
+     */
+    s8 Sound_StereoBalanceGet(const VECTOR3* soundPos);
 }
