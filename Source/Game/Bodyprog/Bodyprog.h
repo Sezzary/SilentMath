@@ -1001,13 +1001,14 @@ namespace Silent::Game
         s32            modelIdx_C;
     } s_ModelInfo;
 
+    /** @brief IPD skeleton model bone. */
     typedef struct _Bone
     {
-        s_ModelInfo   modelInfo_0;
-        s8            field_10;
-        s8            unk_11[3];
+        s_ModelInfo modelInfo;
+        s8          boneIdx;
     } s_Bone;
 
+    /** @brief IPD skeleton model bone node. */
     typedef struct _LinkedBone
     {
         s_Bone              bone;
@@ -1048,7 +1049,7 @@ namespace Silent::Game
         s_AnmHeader*   animFile1_8;
         s32            animBufferSize1_C;
         s32            animBufferSize2_10;
-        GsCOORDINATE2* npcCoords_14;
+        GsCOORDINATE2* npcCoords;
     } s_CharaAnimDataInfo;
 
     /** Related to weapon attacks. Stats, SFX IDs, damange values, etc.? */
@@ -1138,7 +1139,7 @@ namespace Silent::Game
     // Rough name.
     typedef struct _WorldObjectModel
     {
-        s_ModelInfo           modelInfo_0;
+        s_ModelInfo           modelInfo;
         s_WorldObjectMetadata metadata_10;
     } s_WorldObjectModel;
 
@@ -1335,12 +1336,12 @@ namespace Silent::Game
     {
         s16            animFileIdx;
         s16            modelFileIdx;
-        s16            textureFileIdx         : 16;
-        q8_8           field_6                : 10;
-        u16            materialBlendMode_6_10 : 6; /** `e_BlendMode` */
-        s_FsImageDesc* field_8;                    // Extra texture pointer? Usually `nullptr` in `CHARA_FILE_INFOS`.
-        u16            cameraAnchor_C_0  : 2;      /** `e_CameraAnchor` */
-        q19_12         cameraOffsetY_C_2 : 14;
+        s16            textureFileIdx    : 16;
+        q8_8           field_6           : 10;
+        u16            materialBlendMode : 6; /** `e_BlendMode` */
+        s_FsImageDesc* field_8;               // Extra texture pointer? Usually `nullptr` in `CHARA_FILE_INFOS`.
+        u16            cameraAnchor  : 2;     /** `e_CameraAnchor` */
+        q19_12         cameraOffsetY : 14;
     } s_CharaFileInfo;
 
     typedef struct

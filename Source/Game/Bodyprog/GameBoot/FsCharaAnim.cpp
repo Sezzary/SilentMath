@@ -35,7 +35,7 @@ namespace Silent::Game
             //.animFile1_8        = (s_AnmHeader*)FS_BUFFER_0,
             .animBufferSize1_C  = 0x2E630,
             .animBufferSize2_10 = 0x2E630,
-            .npcCoords_14       = nullptr
+            .npcCoords       = nullptr
         }, {}, {}, {}
     };
 
@@ -132,7 +132,7 @@ namespace Silent::Game
             }
         }
 
-        initAnimDataInfo->npcCoords_14       = &g_SysWork.npcCoords[0];
+        initAnimDataInfo->npcCoords       = &g_SysWork.npcCoords[0];
         initAnimDataInfo->charaId1_1         = Chara_None;
         initAnimDataInfo->animFile1_8        = nullptr;
         initAnimDataInfo->animBufferSize2_10 = 0;
@@ -179,7 +179,7 @@ namespace Silent::Game
             else if (idx >= 2)
             {
                 idx0        = g_CharaTypeAnimInfo[idx - 1].animFile1_8->boneCount;
-                localCoord  = g_CharaTypeAnimInfo[idx - 1].npcCoords_14;
+                localCoord  = g_CharaTypeAnimInfo[idx - 1].npcCoords;
                 localCoord += idx0 + 1;
 
                 // Check for end of `g_SysWork.npcCoords` array.
@@ -193,7 +193,7 @@ namespace Silent::Game
         animDataInfo->charaId1_1         = charaId;
         animDataInfo->animFile1_8        = animFile;
         animDataInfo->animBufferSize2_10 = Fs_GetFileSectorAlignedSize(CHARA_FILE_INFOS[charaId].animFileIdx);
-        animDataInfo->npcCoords_14       = localCoord;
+        animDataInfo->npcCoords       = localCoord;
 
         //Anim_BoneInit(animFile, localCoord);
 
@@ -210,7 +210,7 @@ namespace Silent::Game
         {
             if (g_MapOverlayHeader.charaGroupIds_248[i] != Chara_None)
             {
-                coord    = g_CharaTypeAnimInfo[i].npcCoords_14;
+                coord    = g_CharaTypeAnimInfo[i].npcCoords;
                 animFile = g_CharaTypeAnimInfo[i + 1].animFile1_8;
                 coord   += g_CharaTypeAnimInfo[i].animFile1_8->boneCount + 1;
 
@@ -220,7 +220,7 @@ namespace Silent::Game
                     coord = g_MapOverlayHeader.field_28;
                 }
 
-                g_CharaTypeAnimInfo[i + 1].npcCoords_14 = coord;
+                g_CharaTypeAnimInfo[i + 1].npcCoords = coord;
                 //Anim_BoneInit(animFile, coord);
             }
         }

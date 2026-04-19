@@ -323,7 +323,7 @@ namespace Silent::Game
                 npc->model.anim.flags |= AnimFlag_Unlocked;
 
                 animDataInfoIdx = g_CharaAnimInfoIdxs[npc->model.charaId];
-                coord           = g_CharaTypeAnimInfo[animDataInfoIdx].npcCoords_14;
+                coord           = g_CharaTypeAnimInfo[animDataInfoIdx].npcCoords;
 
                 //Chara_Flag8Clear(npc);
                 Chara_DamagedFlagUpdate(npc);

@@ -461,13 +461,15 @@ namespace Silent::Math
         return x >> 4;
     }
 
-    /** @brief Converts a fixed-point value from Q*.10 to Q*.12.
+    /** @brief Converts a fixed-point value from Q21.10 to Q19.12.
      *
-     * @param x Q*.10 fixed-point value to convert.
-     * @return `x` converted to Q*.12 fixed-point.
+     * @param x Q21.10 fixed-point value to convert.
+     * @return `x` converted to Q19.12 fixed-point.
      */
-    #define Q10_TO_Q12(x) \
-        ((x) << 2)
+    constexpr q19_12 Q10_TO_Q12(q21_10 x)
+    {
+        return x << 2;
+    }
 
     /** @brief Converts a fixed-point value from Q19.12 to Q27.4.
      *
@@ -499,13 +501,15 @@ namespace Silent::Math
         return x >> 4;
     }
 
-    /** @brief Converts a fixed-point value from Q*.12 to Q*.10.
+    /** @brief Converts a fixed-point value from Q19.12 to Q21.10.
      *
-     * @param x Q*.12 fixed-point value to convert.
-     * @return `x` converted to Q*.10 fixed-point.
+     * @param x Q19.12 fixed-point value to convert.
+     * @return `x` converted to Q21.10 fixed-point.
      */
-    #define Q12_TO_Q10(x) \
-        ((x) >> 2)
+    constexpr q21_10 Q12_TO_Q10(q19_12 x)
+    {
+        return x >> 2;
+    }
 
     /** @brief Extracts the fractional part of a value in Q19.12 fixed-point.
      *
@@ -517,12 +521,12 @@ namespace Silent::Math
         return x & 0xFFF;
     }
 
-    /** @brief Extracts the fractional part of a value in 32.8 fixed-point.
+    /** @brief Extracts the fractional part of a value in 23.8 fixed-point.
      *
-     * @param x Q32.8 fixed-point value.
-     * @return Fractional part of `x` in Q32.8 fixed-point.
+     * @param x Q23.8 fixed-point value.
+     * @return Fractional part of `x` in Q23.8 fixed-point.
      */
-    constexpr q23_8 Q12_FRACT(q23_8 x)
+    constexpr q23_8 Q8_FRACT(q23_8 x)
     {
         return x & 0xFF;
     }
