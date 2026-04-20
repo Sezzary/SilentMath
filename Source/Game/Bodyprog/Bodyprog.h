@@ -1458,7 +1458,7 @@ namespace Silent::Game
     };
 
     /** @brief Chracter spawn info. */
-    struct e_SpawnInfo
+    struct s_SpawnInfo
     {
         q19_12 positionX_0;
 

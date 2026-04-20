@@ -14,13 +14,11 @@ namespace Silent::Game
 
     bool Chara_ProcessLoads();
 
-    void func_80088D34(s32 idx);
+    void Chara_BonesInit(s32 idx);
 
-    //s32 Chara_Spawn(e_CharacterId charaId, s32 arg1, q19_12 posX, q19_12 posZ, q3_12 rotY, u32 stateStep);
+    s32 Chara_Spawn(e_CharacterId charaId, s32 spawnFlags, q19_12 posX, q19_12 posZ, q3_12 rotY, u32 stateStep);
 
-    void func_80088F94(s_MapOverlayHeader mapHdr, s_SubCharacter* chara, s32 unused1, s32 unused2);
+    void Chara_ModelCharaIdClear(s_MapOverlayHeader mapHdr, s_SubCharacter* chara, s32 unused0, s32 unused1);
 
-    void func_80088FF4(s_MapOverlayHeader mapHdr, e_CharacterId charaId, s32 spawnIdx, s32 spawnFlags);
-
-    bool func_8008F434(s32 arg0);
+    void Chara_SpawnFlagsSet(s_MapOverlayHeader mapHdr, e_CharacterId charaId, s32 spawnIdx, s32 spawnFlags);
 }
