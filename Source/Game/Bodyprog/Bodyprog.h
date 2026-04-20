@@ -32,6 +32,17 @@ namespace Silent::Game
         (((u_Filename*)(a))->u32[0] != ((u_Filename*)(b))->u32[0] || \
         ((u_Filename*)(a))->u32[1] != ((u_Filename*)(b))->u32[1])
 
+    /** @brief Character spawn flags. */
+    enum e_SpawnFlags
+    {
+        SpawnFlag_None = 0,
+        SpawnFlag_0    = 1 << 0,
+        SpawnFlag_1    = 1 << 1,
+        SpawnFlag_2    = 1 << 2,
+        SpawnFlag_3    = 1 << 3,
+        SpawnFlag_4    = 1 << 4
+    };
+
     // Used by `func_8006E490` and `func_8006E150`.
     typedef enum _OrientationFlags
     {
@@ -408,7 +419,7 @@ namespace Silent::Game
     typedef struct
     {
         VECTOR3  position_0; // Q19.12
-        SVECTOR3 rotation_C; // Q3.12
+        SVECTOR3 rotation_C; // Q3.12 TODO: Not a rotation? Y position is added to this.
         s8       field_12;
     } s_CollisionQuery;
 
@@ -812,25 +823,26 @@ namespace Silent::Game
         u8                     field_34[256];
     } s_IpdCollisionData;
 
+    // Node of some kind?
     typedef struct _IpdModelBuffer_C
     {
-        s_ModelHeader* modelHdr_0;
-        MATRIX         field_4;
+        s_ModelHeader* modelHdr;
+        MATRIX         mat;
     } s_IpdModelBuffer_C;
 
+    /** @brief IPD model buffer. */
     typedef struct _IpdModelBuffer
     {
         u8                  field_0; // Count of `field_C` entries.
         u8                  field_1;
-        u8                  field_2;
-        s8                  unk_3;
-        s16                 field_4;
-        s16                 field_6;
-        s16                 field_8;
-        s16                 field_A;
+        u8                  subcellCount;
+        q7_8                minX; // } TODO: Cell range or subcell range?
+        q7_8                maxX; // }
+        q7_8                minZ; // }
+        q7_8                maxZ; // }
         s_IpdModelBuffer_C* field_C;
-        SVECTOR*            field_10; // Pointer to unknown collision data, type assumed.
-        SVECTOR*            field_14; // Pointer to unknown collision data, type assumed.
+        SVECTOR*            field_10;         // Pointer to unknown collision data.
+        SVECTOR*            subcellPositions; /** XZ positions. TODO: Use different struct. */
     } s_IpdModelBuffer;
 
     typedef struct _IpdModelInfo
@@ -840,25 +852,24 @@ namespace Silent::Game
         s_ModelHeader* modelHdr;
     } s_IpdModelInfo;
 
+    /** @brief IPD model header. */
     typedef struct _IpdHeader
     {
         u8                 magic;
-        u8                 isLoaded_1; /** `bool` */
+        u8                 isLoaded; /** `bool` */
         s8                 cellX_2;
         s8                 cellZ_3;
         s_LmHeader*        lmHdr_4;
         u8                 modelCount;
         u8                 modelBufferCount_9;
         u8                 modelOrderCount_A;
-        u8                 unk_B[1];
-        u8                 unk_C[8];
+        s8                 unk_B[9];
         s_IpdModelInfo*    modelInfo_14;
         s_IpdModelBuffer*  modelBuffers_18;
         u8                 textureCount_1C; // Should it be `u32`?
                                             // "`u8` - Relative pointer to textures list"
                                             // "`u32` - Relative pointer to object order"
-        u8                 unk_1D[3];
-        u8                 unk_20[48];
+        s8                 unk_1D[51];
         u8*                modelOrderList_50;
         s_IpdCollisionData collisionData_54;
     } s_IpdHeader;
@@ -867,9 +878,9 @@ namespace Silent::Game
     typedef struct _AnmBindPose
     {
         s8 parentBone;
-        s8 rotationDataIdx_1;
-        s8 translationDataIdx_2;
-        s8 translationInitial_3[3];
+        s8 rotationDataIdx;
+        s8 translationDataIdx;
+        s8 translationInitial[3];
     } s_AnmBindPose;
 
     struct s_AnmHeader
@@ -986,6 +997,7 @@ namespace Silent::Game
         // TODO: May be incomplete. Maybe not, added the final padding based on `Collision_Get`.
     } s_CollisionState;
 
+    /** @brief Global LM model. */
     typedef struct _GlobalLm
     {
         s_LmHeader* lmHdr;
@@ -996,9 +1008,9 @@ namespace Silent::Game
     typedef struct
     {
         s32            field_0; // Bone flags?
-        GsCOORDINATE2* coord_4;
-        s_ModelHeader* modelHdr_8;
-        s32            modelIdx_C;
+        GsCOORDINATE2* coord;
+        s_ModelHeader* modelHdr;
+        s32            modelIdx;
     } s_ModelInfo;
 
     /** @brief IPD skeleton model bone. */
@@ -1112,7 +1124,7 @@ namespace Silent::Game
     typedef struct
     {
         u8            charaId;  /** `e_CharacterId` */
-        u8            isLoaded_1; /** `bool` */
+        u8            isLoaded; /** `bool` */
         s32           queueIdx_4;
         s_LmHeader*   lmHdr_8;
         s_FsImageDesc texture_C;
@@ -1221,21 +1233,21 @@ namespace Silent::Game
         s16 idx[16];
     } s_IpdColumn;
 
-    typedef struct _ActiveTextures
+    struct s_ActiveTextures
     {
         s32        count_0;
         s_Texture* textures_4[10];
-    } s_ActiveTextures;
+    };
 
-    typedef struct _IpdTextures
+    struct s_IpdTextures
     {
         s_ActiveTextures fullPage_0;
         s_ActiveTextures halfPage_2C;
         s_Texture        fullPageTextures_58[8];
         s_Texture        halfPageTextures_118[2];
-    } s_IpdTextures;
+    };
 
-    typedef struct _Map
+    typedef struct s_Map
     {
         s_IpdCollisionData collisionData_0; // Default chunk collision data?
         s32                texFileIdx_134;
@@ -1256,7 +1268,7 @@ namespace Silent::Game
         s32                cellX_580;
         s32                cellZ_584;
         bool               isExterior_588;
-    } s_Map;
+    };
 
     typedef struct
     {
@@ -1268,7 +1280,7 @@ namespace Silent::Game
      *  water zone references, and other per-map environmental data
      *  used during world rendering.
      */
-    typedef struct _WorldEnvWork
+    struct s_WorldEnvWork
     {
         u8            field_0;        // `bool`?
         u8            isFogEnabled_1; /** `bool` */
@@ -1299,7 +1311,7 @@ namespace Silent::Game
         s_WorldEnvWork_84 field_84[3];
         u8            fogRamp_CC[128]; // Fog-related values based on `fogNearDistance_C`/`fogFarDistance_10`.
         u16           field_14C;
-    } s_WorldEnvWork;
+    };
 
     typedef struct
     {
@@ -1332,7 +1344,7 @@ namespace Silent::Game
     } s_800C44F0; // Probable size: 8 bytes.
 
     /** Holds file IDs of anim/model/texture for each `e_CharacterId`, along with some data used in VC camera code. */
-    typedef struct
+    struct s_CharaFileInfo
     {
         s16            animFileIdx;
         s16            modelFileIdx;
@@ -1342,53 +1354,53 @@ namespace Silent::Game
         s_FsImageDesc* field_8;               // Extra texture pointer? Usually `nullptr` in `CHARA_FILE_INFOS`.
         u16            cameraAnchor  : 2;     /** `e_CameraAnchor` */
         q19_12         cameraOffsetY : 14;
-    } s_CharaFileInfo;
+    };
 
-    typedef struct
+    struct s_DmsKeyframeCamera
     {
         SVECTOR3 positionTarget_0; /** Q7.8 */
         SVECTOR3 lookAtTarget_6;   /** Q7.8 */
         s16      field_C[2];       // `field_C[1]` gets passed to `vcChangeProjectionValue`.
-    } s_DmsKeyframeCamera;
+    };
 
-    typedef struct
+    struct s_DmsKeyframeCharacter
     {
         SVECTOR3 position_0; /** Q7.8 */
         SVECTOR3 rotation_6; /** Q7.8 */
-    } s_DmsKeyframeCharacter;
+    };
 
-    typedef struct
+    typedef struct s_DmsEntry
     {
         s16       keyframeCount_0;
-        u8        svectorCount_2;
-        u8        field_3;      // Usually 0, but sometimes filled in, possibly junk data left in padding byte.
-        char      name_4[4];    // First 4 chars of name. E.g. Code checks for "DAHLIA", file is "DAHL".
-        SVECTOR3* svectorPtr_8; // Pointer to `SVECTOR3`s. Unknown purpose.
+        u8        svectorCount_2; /** `svectors_8` array size. */
+        u8        field_3;        // Usually 0, but sometimes filled in, possibly junk data left in padding byte.
+        char      name_4[4];      // First 4 chars of name. E.g. Code checks for "DAHLIA", file is "DAHL".
+        SVECTOR3* svectors_8;     // Pointer to `SVECTOR3`s. Unknown purpose.
         union
         {
             s_DmsKeyframeCharacter* character;
             s_DmsKeyframeCamera*    camera;
         } keyframes_C;
-    } s_DmsEntry;
+    };
 
-    typedef struct
+    struct s_DmsInterval
     {
         s16 startKeyframeIdx_0;
         s16 frameCount_2; /** Frame duration at 30 FPS. */
-    } s_DmsInterval;
+    };
 
-    typedef struct
+    struct s_DmsHeader
     {
-        u8             isLoaded_0; /** `bool` */
-        u8             characterCount_1;
+        u8             isLoaded; /** `bool` */
+        u8             characterCount;
         u8             intervalCount_2;
         u8             field_3; // Usually 0, but sometimes filled in.
         u32            field_4; // Unknown, correlates with DMS file size.
-        s_DmsInterval* intervalPtr_8;
+        s_DmsInterval* intervals_8;
         VECTOR3        origin_C; /** Q23.8 | Origin point. Gets added to character positions. */
         s_DmsEntry*    characters_18;
         s_DmsEntry     camera_1C;
-    } s_DmsHeader;
+    };
 
     /** @brief Used for normal credits screen. */
     typedef struct
@@ -1435,25 +1447,28 @@ namespace Silent::Game
         q19_12 positionX_0;
 
         // Optional data.
-        u32   mapIdx_4_0          : 5; /** `e_PaperMapIdx`? */
-        u32   field_4_5           : 4;
-        u32   loadingScreenId_4_9 : 3; /** `e_LoadingScreenId` */
-        u32   field_4_12          : 4;
-        q24_8 triggerParam0_4_16  : 8; // Usually a `Q8_ANGLE`
-        u32   triggerParam1_4_24  : 8;
+        u32    mapIdx_4_0          : 5; /** `e_PaperMapIdx`? */
+        u32    field_4_5           : 4;
+        u32    loadingScreenId_4_9 : 3; /** `e_LoadingScreenId` */
+        u32    field_4_12          : 4;
+        q24_8  triggerParam0_4_16  : 8; // Usually a `Q8_ANGLE`
+        u32    triggerParam1_4_24  : 8;
 
         q19_12 positionZ_8;
     };
 
-    typedef struct _SpawnInfo
+    /** @brief Chracter spawn info. */
+    struct e_SpawnInfo
     {
         q19_12 positionX_0;
-        s8     charaId_4;   /** `e_CharacterId` */
-        u8     rotationY_5; /** Degrees in Q7.8, range [0, 256]. */
-        s8     flags_6;     /** Copied to `stateStep` in `s_Model`, with `controlState = ModelState_Uninitialized`. */
-        s32    gameDifficultyMin_7_0 : 4;
+
+        s8     charaId_4;                 /** `e_CharacterId` */
+        u8     rotationY_5;               /** Degrees in Q7.8, range [0, 256]. */
+        s8     flags_6;                   /** Copied to `stateStep` in `s_Model`, with `controlState = ModelState_Uninitialized`. */
+        s32    gameDifficultyMin_7_0 : 4; /** `e_GameDifficulty` | Minimum difficulty required for successful spawn. */
+
         q19_12 positionZ_8;
-    } s_SpawnInfo;
+    };
 
     /** Special map-specific Harry anim data. */
     typedef struct
