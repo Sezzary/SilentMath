@@ -334,7 +334,7 @@ namespace Silent::Game
     {
         union
         {
-            s32 vx_0; // Q23.8 } Displacement offset. `func_80062708` indicates Q12?
+            q19_12 vx_0; // Displacement offset.
             struct
             {
                 s16 field_0;
@@ -348,16 +348,16 @@ namespace Silent::Game
         } field_0;
         union
         {
-            s32 vz_4; // Q23.8 } `func_80062708` indicates Q12?
+            q19_12 vz_4;
             struct
             {
                 s16 field_0;
                 s16 field_2;
             } s_0;
         } field_4;
-        s16 vy_8; // Q7.8? Usually Q12, need to reevaluate.
-        u8  field_A;
-        u8  field_B; // Flags?
+        q3_12 vy_8;
+        u8    field_A;
+        u8    field_B; // Flags?
         union
         {
             s32 field_0; // Timer.
@@ -426,7 +426,7 @@ namespace Silent::Game
     typedef struct
     {
         s32        field_0;
-        s32        field_4; // `bool`?
+        bool       field_4;
         q19_12     distance_8;
         SVECTOR    offset_C; // Q23.8
         DVECTOR_XZ direction_14;
@@ -562,8 +562,8 @@ namespace Silent::Game
         s32    field_1C; // X }
         s32    field_20; // Z }
         s32    field_24; // Z }
-        q19_12 field_28; // } Maybe XZ position.
-        q19_12 field_2C; // }
+        q19_12 field_28; // Maybe XZ position.
+        q19_12 field_2C; // Base height?
     } s_func_8006F338;
 
     typedef struct
@@ -742,6 +742,7 @@ namespace Silent::Game
         } field_16;
     };
 
+    /** @brief LM file header. */
     struct s_LmHeader
     {
         u8             magic;    /** See `LM_HEADER_MAGIC`. */
@@ -883,19 +884,20 @@ namespace Silent::Game
         s8 translationInitial[3];
     } s_AnmBindPose;
 
+    /** @brief ANM file header. */
     struct s_AnmHeader
     {
         u16           dataOffset;
         u8            rotationBoneCount;
         u8            translationBoneCount;
-        u16           keyframeDataSize; // Size per keyframe, `(rotationBoneCount * 9) + (translationBoneCount * 3)`?
-        u8            boneCount;
-        u32           activeBones; // Holds bit field of bones to update.
+        u16           keyframeDataSize; /** Size per keyframe. `(rotationBoneCount * 9) + (translationBoneCount * 3)`? */
+        u8            boneCount;        /** Size of `bindPoses`. */
+        u32           activeBones;      /** Holds bit field of bones to update. */
         u32           fileSize;
         u16           keyframeCount;
         u8            scaleLog2;
         u8            rootYOffset;
-        s_AnmBindPose bindPoses[0]; // Array size = `boneCount`.
+        s_AnmBindPose bindPoses[0];
     };
 
     typedef union
@@ -1162,7 +1164,7 @@ namespace Silent::Game
         s32                 positionX_4 : 18; /** Q9.8 */
         s32                 positionY_4 : 14; /** Q5.8 */
         s32                 positionZ_8 : 18; /** Q9.8 */
-        s32                 pad_8_18    : 14;
+        s32                 __pad_8_18  : 14;
         s32                 rotationX_C : 10; /** Q0.10 */
         s32                 rotationY_C : 12; /** Q0.12 */
         s32                 rotationZ_C : 10; /** Q0.10 */
@@ -1171,14 +1173,15 @@ namespace Silent::Game
     /** @brief World space trigger zone. */
     typedef struct _TriggerZone
     {
-        u8  endOfArray_0_0 : 1; // End of array marker.
-        s32 positionX_0_1  : 10;
-        s32 positionZ_0_11 : 10;
-        u32 sizeX_0_21     : 4;
-        u32 sizeZ_0_25     : 4;
-        u32 field_0_29     : 3; // Related to ground height? Used to set `s_func_8006F338::field_2C` which then gets copied by `func_8006F250`, that func has only been seen called by AirScreamer?
+        u8  isEndOfArray : 1;  /** `bool` | Marks last entry. */
+        s32 positionX    : 10; /** Meter steps. */
+        s32 positionZ    : 10; /** Meter steps. */
+        u32 sizeX        : 4;  /** Meter steps. */
+        u32 sizeZ        : 4;  /** Meter steps. */
+        u32 height       : 3;  /** Half-meter steps. Used to set `s_func_8006F338::field_2C` which is then copied by `func_8006F250`. */
     } s_TriggerZone;
 
+    /** @brief Hand-held player item. */
     typedef struct _HeldItem
     {
         s32           itemId_0; /** `e_InventoryItemId` */
@@ -1208,7 +1211,7 @@ namespace Silent::Game
         s_TriggerZone*    triggerZone_1BD8;
         VC_CAMERA_INTINFO vcCameraInternalInfo_1BDC; /** Debug camera info. */
         s_LmHeader        itemLmHdr_1BE4;
-        u8                itemLmData_1BF4[4096 - sizeof(s_LmHeader)]; // Retail game uses 2.75kb file, but they allocate 4kb for it.
+        u8                itemLmData_1BF4[4096 - sizeof(s_LmHeader)]; // 4kb allocated for 2.75kb game files.
         s32               itemLmQueueIdx_2BE4;
         s32               objectCount_2BE8;                     /** `objects_2BEC` size. */
         s_WorldObject     objects_2BEC[WORLD_OBJECT_COUNT_MAX]; /** World objects to draw. */
@@ -1512,21 +1515,21 @@ namespace Silent::Game
 
     typedef struct
     {
-        u8  field_0;
-        u8  field_1;
-        u8  field_2;
-        u8  field_3;
-        s16 field_4;
-        s16 field_6;
-        s16 field_8;
-        s16 field_A;
-        s16 field_C;
-        s16 field_E;
-        s16 field_10;
-        s16 field_12;
-        s32 field_14;
-        s32 field_18;
-        s32 field_1C;
+        u8    field_0;
+        u8    field_1;
+        u8    field_2;
+        u8    field_3;
+        s16   field_4;
+        s16   field_6;
+        s16   field_8;
+        s16   field_A;
+        s16   field_C;
+        s16   field_E;
+        q3_12 field_10;
+        s16   field_12;
+        s32   field_14;
+        s32   field_18;
+        s32   field_1C;
     } s_MapOverlayHeader_7C;
 
     typedef struct
@@ -1697,12 +1700,11 @@ namespace Silent::Game
 
     struct s_CollisionResult
     {
-        VECTOR3 offset_0;  // Q19.12
-        s32     field_C;   // Absolute ground height? Might be using `s_Collision` substruct?
+        VECTOR3 offset_0; // Q19.12
+        q19_12  field_C;  // Absolute ground height? Might be using `s_Collision` substruct?
         s16     field_10;
         s16     field_12;
-        s8      field_14;  // Count of something? 12 is significant.
-        s8      unk_15[3]; // Probably padding.
+        s8      field_14; // Count of something? 12 is significant.
         s32     field_18;
     };
 
@@ -1727,9 +1729,9 @@ namespace Silent::Game
         {
             struct
             {
-                DVECTOR  screenPos_3DC;
-                s32      depthP_3E0;
-                MATRIX   field_3E4;
+                DVECTOR screenPos_3DC;
+                s32     depthP_3E0;
+                MATRIX  field_3E4;
             } vertex;
 
             struct
@@ -1868,9 +1870,9 @@ namespace Silent::Game
         MATRIX  field_C;
         s32     field_2C;
         DVECTOR field_30;
-        s16     field_34[24];
-        s16     field_64[24];
-        s16     field_94[24];
+        q3_12   field_34[24];
+        q3_12   field_64[24];
+        q3_12   field_94[24];
         s16     field_C4;
         s16     field_C6;
         s16     field_C8;
@@ -1884,16 +1886,16 @@ namespace Silent::Game
         s16     field_E4[4];
         union
         {
-            DVECTOR field_0[4];
+            DVECTOR field_0[4]; // Q19.12
             s32     raw_0[4];
         } u_field_EC;
         union
         {
             DVECTOR field_0[4];
             s32     raw_0[4];
-        } u_field_FC; // Q3.12 | Positions or offsets.
-        s32     field_10C[4];
-        s32     field_11C[4];
+        } u_field_FC;         // Q3.12 | Positions or offsets.
+        q19_12  field_10C[4]; // X offsets?
+        q19_12  field_11C[4]; // Z offsets?
     } s_func_8005E89C;
 
     typedef struct
@@ -1937,7 +1939,7 @@ namespace Silent::Game
         DVECTOR         field_16C;
         s32             field_170;
         s32             field_174;
-        s32             field_178;
+        q19_12          field_178;
         s32             field_17C;
         s32             field_180;
         s32             field_184;
