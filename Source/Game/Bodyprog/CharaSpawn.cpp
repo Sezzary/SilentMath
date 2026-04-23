@@ -100,7 +100,7 @@ namespace Silent::Game
 
             SET_FLAG(&g_SysWork.npcFlags, i);
 
-            g_SysWork.npcs[i].model.controlState     = ModelState_Uninitialized;
+            g_SysWork.npcs[i].model.controlState     = 0;
             g_SysWork.npcs[i].model.stateStep = stateStep;
 
             g_SysWork.npcs[i].position.vx = posX;

@@ -101,7 +101,7 @@ namespace Silent::Game
             // `TriggerActivationType_Button`: Only continue processing event when action button is pressed and
             // `Player_IsBusy` returns `false`.
             if (mapEvent->activationType == TriggerActivationType_Button &&
-                (!(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.action_6) ||
+                (!(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.action) ||
                 disableButtonEvents /*|| Player_IsBusy()*/))
             {
                 continue;

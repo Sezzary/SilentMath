@@ -799,7 +799,7 @@ namespace Silent::Game
                 vcWork.flags &= ~VC_OLD_PRS_F_VIEW_F;
             }
 
-            if (g_Controller0->btnsHeld_C & g_GameWorkPtr->config.controllerConfig_0.view_E)
+            if (g_Controller0->btnsHeld_C & g_GameWorkPtr->config.controllerConfig_0.view)
             {
                 vcWork.flags |= VC_PRS_F_VIEW_F;
             }

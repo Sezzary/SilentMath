@@ -1803,7 +1803,7 @@ namespace Silent::Game
                     }
 
                     // Overwrite or format savegame entry.
-                    if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0)
+                    if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter)
                     {
                         if (g_SaveScreen_IsFormatting | g_SaveScreen_IsNewSaveSelected)
                         {
@@ -1824,7 +1824,7 @@ namespace Silent::Game
                 }
 
                 // Exit save screen.
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
+                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cance)
                 {
                     ScreenFade_Start(false, false, false);
                     g_GameWork.gameStateSteps[1] = 2;
@@ -1861,7 +1861,7 @@ namespace Silent::Game
                     SD_Call(Sfx_MenuMove);
                 }
 
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0)
+                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter)
                 {
                     if (!isSaveWriteOptionSelected)
                     {
@@ -1882,7 +1882,7 @@ namespace Silent::Game
                 }
 
                 // Cancel overwrite.
-                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
+                if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cance)
                 {
                     g_GameWork.gameStateSteps[1] = 0;
                     g_GameWork.gameStateSteps[2] = 0;

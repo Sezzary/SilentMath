@@ -27,7 +27,7 @@ namespace Silent::Game
         return assets.GetLoadingCount();
     }
 
-    bool Fs_QueueDoThingWhenEmpty()
+    bool Fs_QueueChunksLoad()
     {
         // @todo
         //D_800C489C = true;
@@ -36,7 +36,7 @@ namespace Silent::Game
         if (Fs_QueueGetLength() == 0)
         {
             // @todo
-            //result = Ipd_ChunkInitCheck() != 0;
+            //result = Ipd_ChunkInitCheck() != false;
         }
 
         return result;

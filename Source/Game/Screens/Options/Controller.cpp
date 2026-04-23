@@ -69,8 +69,8 @@ namespace Silent::Game
                 selectedEntries.preset = ControllerMenuState_Exit;
 
                 // Leave menu.
-                if (g_Controller0.btnsClicked_10 & (g_GameWork.config.controllerConfig_0.enter_0 |
-                                                    g_GameWork.config.controllerConfig_0.cancel_2))
+                if (g_Controller0.btnsClicked_10 & (g_GameWork.config.controllerConfig_0.enter |
+                                                    g_GameWork.config.controllerConfig_0.cance))
                 {
                     //Sd_EngineCmd(Sfx_Cancel);
 
@@ -105,13 +105,13 @@ namespace Silent::Game
                 selectedEntries.preset = g_GameWork.gameStateSteps[1];
 
                 // Set binding preset.
-                if (g_Controller0.btnsClicked_10 & g_GameWork.config.controllerConfig_0.enter_0)
+                if (g_Controller0.btnsClicked_10 & g_GameWork.config.controllerConfig_0.enter)
                 {
                     //Sd_EngineCmd(Sfx_Confirm);
                     //Settings_RestoreControlDefaults(g_GameWork.gameStateSteps[1] - 1);
                 }
                 // Reset selection cursor.
-                else if (g_Controller0.btnsClicked_10 & g_GameWork.config.controllerConfig_0.cancel_2)
+                else if (g_Controller0.btnsClicked_10 & g_GameWork.config.controllerConfig_0.cance)
                 {
                     //Sd_EngineCmd(Sfx_Cancel);
                     g_GameWork.gameStateSteps[1] = ControllerMenuState_Exit;

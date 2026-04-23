@@ -48,10 +48,10 @@ namespace Silent::Game
                 }
 
                 // Fade screen and leave menu.
-                if (g_Controller0->btnsClicked_10 & (g_GameWork.config.controllerConfig_0.enter_0 |
-                                                    g_GameWork.config.controllerConfig_0.cancel_2))
+                if (g_Controller0->btnsClicked_10 & (g_GameWork.config.controllerConfig_0.enter |
+                                                    g_GameWork.config.controllerConfig_0.cance))
                 {
-                    if (g_Controller0->btnsClicked_10 & g_GameWork.config.controllerConfig_0.enter_0)
+                    if (g_Controller0->btnsClicked_10 & g_GameWork.config.controllerConfig_0.enter)
                     {
                         //Sd_PlaySfx(Sfx_Confirm, 0, Q8_CLAMPED(0.25f));
                     }

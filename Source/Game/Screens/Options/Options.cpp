@@ -531,8 +531,8 @@ namespace Silent::Game
 
             // Leave to gameplay (if options menu was accessed with `Option` input action).
             if (g_GameWork.gameStatePrev == GameState_InGame && 
-                !(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0) &&
-                (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.option_1A))
+                !(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter) &&
+                (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.option))
             {
                 //Sd_PlaySfx(Sfx_Cancel, 0, 64);
 
@@ -683,11 +683,11 @@ namespace Silent::Game
         }
 
         // Leave menu.
-        if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.cancel_2 |
+        if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.cance |
                                             (ControllerFlag_L2 | ControllerFlag_R2 | ControllerFlag_L1 | ControllerFlag_R1))) &&
             g_GameWork.gameStateSteps[0] != OptionsMenuState_LeaveExtraOptions)
         {
-            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
+            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cance)
             {
                 Sd_PlaySfx(Sfx_Cancel, 0, 64);
             }

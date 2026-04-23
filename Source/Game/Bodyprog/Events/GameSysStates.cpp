@@ -39,7 +39,7 @@ namespace Silent::Game
         SysState_ReadMessage_Update,
         SysState_SaveMenu_Update,
         SysState_SaveMenu_Update,
-        SysState_EventCallFunc_Update,
+        SysState_EventCallback_Update,
         SysState_EventSetFlag_Update,
         SysState_EventPlaySound_Update,
         SysState_GameOver_Update,
@@ -119,7 +119,7 @@ namespace Silent::Game
         }
         Demo_DemoRandSeedRestore();
 
-        D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueDoThingWhenEmpty();
+        D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueChunksLoad();
 
         if (!(g_SysWork.bgmStatusFlags & BgmStatusFlag_Pause) && g_MapOverlayHeader.worldObjectsUpdate_40 != nullptr)
         {
@@ -216,7 +216,7 @@ namespace Silent::Game
             return;
         }
 
-        if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.light_A &&
+        if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.light &&
             g_SysWork.field_2388.field_154.effectsInfo_0.field_0.s_field_0.field_0 & (1 << 1))
         {
             //Game_FlashlightToggle();
@@ -226,7 +226,7 @@ namespace Silent::Game
         {
             SysWork_StateSetNext((e_SysState)g_MapEventSysState);
         }
-        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.pause_14)
+        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.pause)
         {
             SysWork_StateSetNext(SysState_GamePaused);
         }
@@ -234,16 +234,16 @@ namespace Silent::Game
         {
             return;
         }*/
-        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.item_16)
+        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.item)
         {
             SysWork_StateSetNext(SysState_StatusMenu);
         }
-        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map_18)
+        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map)
         {
             SysWork_StateSetNext(SysState_MapScreen);
             g_SysWork.isMgsStringSet = false;
         }
-        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.option_1A)
+        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.option)
         {
             SysWork_StateSetNext(SysState_OptionsMenu);
         }
@@ -298,7 +298,7 @@ namespace Silent::Game
             return;
         }
 
-        if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.pause_14)
+        if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.pause)
         {
             D_800A9A68 = 0;
 
@@ -468,7 +468,7 @@ namespace Silent::Game
 
         //Screen_BackgroundMotionBlur(SyncMode_Wait2);
 
-        if (Fs_QueueDoThingWhenEmpty())
+        if (Fs_QueueChunksLoad())
         {
             Game_StateSetNext(GameState_InventoryScreen);
         }
@@ -478,7 +478,7 @@ namespace Silent::Game
     {
         if (!HAS_MAP(g_SavegamePtr->paperMapIdx_A9))
         {
-            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map_18 ||
+            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map ||
                 Gfx_MapMsg_Draw(MapMsgIdx_NoMap) > MapMsgState_Idle)
             {
                 SysWork_StateSetNext(SysState_Gameplay);
@@ -488,7 +488,7 @@ namespace Silent::Game
                 ((g_SysWork.field_2388.field_1C[0].effectsInfo_0.field_0.s_field_0.field_0 & (1 << 0)) ||
                 (g_SysWork.field_2388.field_1C[1].effectsInfo_0.field_0.s_field_0.field_0 & (1 << 0))))
         {
-            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map_18 ||
+            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.map ||
                 Gfx_MapMsg_Draw(MapMsgIdx_TooDarkForMap) > MapMsgState_Idle)
             {
                 SysWork_StateSetNext(SysState_Gameplay);
@@ -538,7 +538,7 @@ namespace Silent::Game
 
         //Screen_BackgroundMotionBlur(SyncMode_Wait2);
 
-        if (Fs_QueueDoThingWhenEmpty())
+        if (Fs_QueueChunksLoad())
         {
             Game_StateSetNext(GameState_MapScreen);
         }
@@ -829,7 +829,7 @@ namespace Silent::Game
         }
     }
 
-    void SysState_EventCallFunc_Update() // 0x8003A3C8
+    void SysState_EventCallback_Update() // 0x8003A3C8
     {
         if (g_MapEventData->flags_8_13 != EventParamUnkState_None)
         {
@@ -954,8 +954,8 @@ namespace Silent::Game
                 Gfx_StringDraw("\aGAME_OVER", DEFAULT_MAP_MESSAGE_LENGTH);
                 g_SysWork.field_28++;
 
-                if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter_0 |
-                                                    g_GameWorkPtr->config.controllerConfig_0.cancel_2)) ||
+                if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter |
+                                                    g_GameWorkPtr->config.controllerConfig_0.cance)) ||
                     g_SysWork.field_28 > Q12(1.0f / 17.0f))
                 {
                     SysWork_StateStepIncrement(0);
@@ -991,8 +991,8 @@ namespace Silent::Game
                 g_SysWork.field_28++;
                 //Screen_BackgroundImgDraw(&g_DeathTipImg);
 
-                if (!(g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter_0 |
-                                                    g_GameWorkPtr->config.controllerConfig_0.cancel_2)))
+                if (!(g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter |
+                                                    g_GameWorkPtr->config.controllerConfig_0.cance)))
                 {
                     if (g_SysWork.field_28 <= 480)
                     {
@@ -1034,7 +1034,7 @@ namespace Silent::Game
             g_GameWork.gameStateSteps[0] = 1;
         }
 
-        D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueDoThingWhenEmpty();
+        D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueChunksLoad();
 
         Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 

@@ -38,58 +38,58 @@ namespace Silent::Game
         static const s_ControllerConfig DEFAULT_CONTROLLER_CONFIGS[3] =
         {
             {
-                .enter_0      = ControllerFlag_Start | ControllerFlag_Cross,
-                .cancel_2     = ControllerFlag_Triangle | ControllerFlag_Circle | ControllerFlag_Square,
-                .skip_4       = ControllerFlag_Start,
-                .action_6     = ControllerFlag_Cross,
-                .aim_8        = ControllerFlag_R2,
-                .light_A      = ControllerFlag_Circle,
-                .run_C        = ControllerFlag_Square,
-                .view_E       = ControllerFlag_L2,
-                .stepLeft_10  = ControllerFlag_L1,
-                .stepRight_12 = ControllerFlag_R1,
-                .pause_14     = ControllerFlag_Start,
-                .item_16      = ControllerFlag_Select,
-                .map_18       = ControllerFlag_Triangle,
-                .option_1A    = ControllerFlag_None
+                .enter      = ControllerFlag_Start | ControllerFlag_Cross,
+                .cance     = ControllerFlag_Triangle | ControllerFlag_Circle | ControllerFlag_Square,
+                .skip       = ControllerFlag_Start,
+                .action     = ControllerFlag_Cross,
+                .aim        = ControllerFlag_R2,
+                .light      = ControllerFlag_Circle,
+                .run        = ControllerFlag_Square,
+                .view       = ControllerFlag_L2,
+                .stepLeft  = ControllerFlag_L1,
+                .stepRight = ControllerFlag_R1,
+                .pause     = ControllerFlag_Start,
+                .item      = ControllerFlag_Select,
+                .map       = ControllerFlag_Triangle,
+                .option    = ControllerFlag_None
             },
             {
-                .enter_0      = ControllerFlag_Start | ControllerFlag_Cross,
-                .cancel_2     = ControllerFlag_Triangle | ControllerFlag_Circle | ControllerFlag_Square,
-                .skip_4       = ControllerFlag_Start,
-                .action_6     = ControllerFlag_Cross,
-                .aim_8        = ControllerFlag_R1,
-                .light_A      = ControllerFlag_Circle,
-                .run_C        = ControllerFlag_Square,
-                .view_E       = ControllerFlag_L1,
-                .stepLeft_10  = ControllerFlag_L2,
-                .stepRight_12 = ControllerFlag_R2,
-                .pause_14     = ControllerFlag_Start,
-                .item_16      = ControllerFlag_Select,
-                .map_18       = ControllerFlag_Triangle,
-                .option_1A    = ControllerFlag_None
+                .enter      = ControllerFlag_Start | ControllerFlag_Cross,
+                .cance     = ControllerFlag_Triangle | ControllerFlag_Circle | ControllerFlag_Square,
+                .skip       = ControllerFlag_Start,
+                .action     = ControllerFlag_Cross,
+                .aim        = ControllerFlag_R1,
+                .light      = ControllerFlag_Circle,
+                .run        = ControllerFlag_Square,
+                .view       = ControllerFlag_L1,
+                .stepLeft  = ControllerFlag_L2,
+                .stepRight = ControllerFlag_R2,
+                .pause     = ControllerFlag_Start,
+                .item      = ControllerFlag_Select,
+                .map       = ControllerFlag_Triangle,
+                .option    = ControllerFlag_None
             },
             {
-                .enter_0      = ControllerFlag_Start | ControllerFlag_Cross,
-                .cancel_2     = ControllerFlag_Triangle | ControllerFlag_Circle | ControllerFlag_Square,
-                .skip_4       = ControllerFlag_Start,
-                .action_6     = ControllerFlag_Cross,
-                .aim_8        = ControllerFlag_R2,
-                .light_A      = ControllerFlag_Circle,
-                .run_C        = ControllerFlag_Square,
-                .view_E       = ControllerFlag_L2,
-                .stepLeft_10  = ControllerFlag_L1,
-                .stepRight_12 = ControllerFlag_R1,
-                .pause_14     = ControllerFlag_Start,
-                .item_16      = ControllerFlag_Triangle,
-                .map_18       = ControllerFlag_Select,
-                .option_1A    = ControllerFlag_None
+                .enter      = ControllerFlag_Start | ControllerFlag_Cross,
+                .cance     = ControllerFlag_Triangle | ControllerFlag_Circle | ControllerFlag_Square,
+                .skip       = ControllerFlag_Start,
+                .action     = ControllerFlag_Cross,
+                .aim        = ControllerFlag_R2,
+                .light      = ControllerFlag_Circle,
+                .run        = ControllerFlag_Square,
+                .view       = ControllerFlag_L2,
+                .stepLeft  = ControllerFlag_L1,
+                .stepRight = ControllerFlag_R1,
+                .pause     = ControllerFlag_Start,
+                .item      = ControllerFlag_Triangle,
+                .map       = ControllerFlag_Select,
+                .option    = ControllerFlag_None
             }
         };
 
         for (i = 0, ptr = (u16*)&g_GameWorkPtr->config.controllerConfig_0; i < INPUT_ACTION_COUNT; i++, ptr++)
         {
-            *ptr = (&DEFAULT_CONTROLLER_CONFIGS[configIdx].enter_0)[i];
+            *ptr = (&DEFAULT_CONTROLLER_CONFIGS[configIdx].enter)[i];
         }
     }
 }

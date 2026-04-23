@@ -65,7 +65,7 @@ namespace Silent::Game
 
     void SysState_SaveMenu_Update();
 
-    void SysState_EventCallFunc_Update();
+    void SysState_EventCallback_Update();
 
     void SysState_EventSetFlag_Update();
 

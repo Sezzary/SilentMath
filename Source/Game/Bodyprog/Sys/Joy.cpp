@@ -214,7 +214,7 @@ namespace Silent::Game
                 }
                 else if (val == 0x10)
                 {
-                    if (!(btnsHeld & g_GameWorkPtr->config.controllerConfig_0.run_C))
+                    if (!(btnsHeld & g_GameWorkPtr->config.controllerConfig_0.run))
                     {
                         processedInputFlags |= 0xE0000000;
                     }

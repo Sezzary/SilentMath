@@ -7,10 +7,10 @@ namespace Silent::Game
 
     /** @brief Initializes the camera subsystem.
      *
-     * @param map_overlay_ptr Active map overlay header.
+     * @param mapoverlay_ptr Active map overlay header.
      * @param chr_pos Character position.
      */
-    void vcInitCamera(s_MapOverlayHeader* map_overlay_ptr, const VECTOR3* chr_pos);
+    void vcInitCamera(s_MapOverlayHeader* mapoverlay_ptr, const VECTOR3* chr_pos);
 
     /** @brief Warps the camera in relation to a character position.
      *

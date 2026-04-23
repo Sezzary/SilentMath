@@ -201,10 +201,10 @@ namespace Silent::Game
      * @param fadeIn `true` for fade in, `false` for fade out.
      * @param isWhite `true` for white fade, `false` for black fade.
      */
-    #define ScreenFade_Start(reset, fadeIn, isWhite) \
+    #define ScreenFade_Start(reset, fadeIn, isWhite)                                                                \
         g_Screen_FadeStatus = (((((reset) == true) ? ScreenFadeState_FadeOutStart : ScreenFadeState_FadeOutSteps) + \
-                            (((fadeIn) == true) ? 4 : 0)) | \
-                            (((isWhite) == true) ? (1 << 3) : 0))
+                                (((fadeIn) == true) ? 4 : 0)) |                                                     \
+                               (((isWhite) == true) ? (1 << 3) : 0))
 
     /** @brief Resets the screen fade. */
     #define ScreenFade_Reset() \
@@ -223,27 +223,27 @@ namespace Silent::Game
      * @bug Some maps appear to have a bug where the negative position check will never be true because they check
      * if the chunk index will be a positive number. Seems like they forgot to use `ABS`?
      */
-    #define PLAYER_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                                        \
-        (__chunkIdx = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                        \
+    #define PLAYER_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                               \
+        (__chunkIdx = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                       \
         ((g_SysWork.playerWork.player.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) == (x1)) || \
-        (g_SysWork.playerWork.player.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) == (x3))))
+        (g_SysWork.playerWork.player.position.comp  <= Q12(0.0f) && (__chunkIdx + (x2)) == (x3))))
 
-    #define PLAYER_NOT_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                                    \
-        (__chunkIdx = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                        \
+    #define PLAYER_NOT_IN_MAP_CHUNK(comp, x0, x1, x2, x3)                                           \
+        (__chunkIdx = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                       \
         ((g_SysWork.playerWork.player.position.comp >  Q12(0.0f) && (__chunkIdx + (x0)) != (x1)) || \
-        (g_SysWork.playerWork.player.position.comp <= Q12(0.0f) && (__chunkIdx + (x2)) != (x3))))
+        (g_SysWork.playerWork.player.position.comp  <= Q12(0.0f) && (__chunkIdx + (x2)) != (x3))))
 
     #define MAP_CHUNK_CHECK_VARIABLE_DECL_2() \
         s32 __chunkIdx2
 
-    #define PLAYER_IN_MAP_CHUNK_2(comp, x0, x1, x2, x3)                                                      \
-        (__chunkIdx2 = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                       \
+    #define PLAYER_IN_MAP_CHUNK_2(comp, x0, x1, x2, x3)                                             \
+        (__chunkIdx2 = g_SysWork.playerWork.player.position.comp / Q12(40.0f),                      \
         ((g_SysWork.playerWork.player.position.comp >  Q12(0.0f) && (__chunkIdx2 + (x0)) < (x1)) || \
-        (g_SysWork.playerWork.player.position.comp <= Q12(0.0f) && (__chunkIdx2 + (x2)) < (x3))))
+        (g_SysWork.playerWork.player.position.comp  <= Q12(0.0f) && (__chunkIdx2 + (x2)) < (x3))))
 
-    #define PLAYER_NEAR_POS(comp, base, tol)                                                                                                                             \
+    #define PLAYER_NEAR_POS(comp, base, tol)                                                                                                             \
         (((g_SysWork.playerWork.player.position.comp - Q12(base)) >= Q12(0.0f)) ? ((g_SysWork.playerWork.player.position.comp - Q12(base)) < Q12(tol)) : \
-                                                                                          ((Q12(base) - g_SysWork.playerWork.player.position.comp) < Q12(tol)))
+                                                                                  ((Q12(base) - g_SysWork.playerWork.player.position.comp) < Q12(tol)))
 
     #define MIN_OFFSET(x, neg, pos) \
         ((((x) + (-neg)) <= ((x) + (pos))) ? ((x) - (neg)) : ((x) + (pos)))
@@ -622,7 +622,7 @@ namespace Silent::Game
         SysState_ReadMessage    = 7,
         SysState_SaveMenu0      = 8,
         SysState_SaveMenu1      = 9,
-        SysState_EventCallFunc  = 10,
+        SysState_EventCallback  = 10,
         SysState_EventSetFlag   = 11,
         SysState_EventPlaySound = 12,
         SysState_GameOver       = 13,
@@ -869,7 +869,7 @@ namespace Silent::Game
         PlayerFlag_Unk31          = 1 << 31
     };
 
-    /** @brief Character IDs. The `CHARA_FILE_INFOS` array associates each character ID with animimation, model, and texture files. */
+    /** @brief Character IDs. The `CHARA_FILE_INFOS` array associates each character ID with asset files. */
     enum e_CharacterId
     {
         Chara_None             = 0,
@@ -923,13 +923,7 @@ namespace Silent::Game
         Chara_Hack = NO_VALUE, // @hack Force enum to be treated as `s32`.
     };
 
-    /** @brief Character model states. TODO: Remove. Each character should have its own enum of control states. */
-    enum e_ModelState
-    {
-        ModelState_Uninitialized = 0,
-
-    };
-
+    /** @brief Game difficulties. */
     enum e_GameDifficulty
     {
         GameDifficulty_Easy   = -1,
@@ -937,22 +931,24 @@ namespace Silent::Game
         GameDifficulty_Hard   = 1
     };
 
+    /** @brief Event trigger types. */
     enum e_TriggerType
     {
         TriggerType_EndOfArray     = NO_VALUE,
         TriggerType_None           = 0, /** Skips trigger/activation type checks. Always activates if required event flags are set and skips processing later events until flags deactivate it. */
-        TriggerType_TouchAabb      = 1, /** Checks if the player has entered a rectangular area aligned to world axes. */
-        TriggerType_TouchFacing    = 2, /** Checks if the player is within a small area and facing toward the trigger point. */
-        TriggerType_TouchObbFacing = 3, /** Checks if the player has stepped into a shaped area and is facing toward it. */
-        TriggerType_TouchObb       = 4, /** Checks if the player has stepped into a shaped area. No facing requirement. */
+        TriggerType_TouchAabb      = 1, /* Player has collided with an AABB. */
+        TriggerType_TouchFacing    = 2, /* Player collided with a trigger is facing toward it. */
+        TriggerType_TouchObbFacing = 3, /* Player collided with an OBB and is facing toward it. */
+        TriggerType_TouchObb       = 4, /* Player collided with an OBB. No facing requirement. */
     };
 
+    /** @brief Event triger activation types. */
     enum e_TriggerActivationType
     {
         TriggerActivationType_None      = 0, /** No activation conditions other than event flag/trigger checks. */
-        TriggerActivationType_Exclusive = 1, /** Prevents other events from being triggered while this event is active. */
-        TriggerActivationType_Button    = 2, /** Requires a button press to activate. */
-        TriggerActivationType_Item      = 3, /** Requires an inventory item to activate. */
+        TriggerActivationType_Exclusive = 1, /** Prevents other events from being triggered while the event is active. */
+        TriggerActivationType_Button    = 2, /** Requires a button press. */
+        TriggerActivationType_Item      = 3, /** Requires an inventory item. */
     };
 
     /** Some events indicate specific cutscenes behavior via flags. */
@@ -1008,22 +1004,23 @@ namespace Silent::Game
      */
     struct s_ControllerConfig
     {
-        u16 enter_0;
-        u16 cancel_2;
-        u16 skip_4;
-        u16 action_6;
-        u16 aim_8;
-        u16 light_A;
-        u16 run_C;
-        u16 view_E;
-        u16 stepLeft_10;
-        u16 stepRight_12;
-        u16 pause_14;
-        u16 item_16;
-        u16 map_18;
-        u16 option_1A;
+        u16 enter;
+        u16 cance;
+        u16 skip;
+        u16 action;
+        u16 aim;
+        u16 light;
+        u16 run;
+        u16 view;
+        u16 stepLeft;
+        u16 stepRight;
+        u16 pause;
+        u16 item;
+        u16 map;
+        u16 option;
     };
 
+    /** @brief Inventory item entry. */
     struct s_InventoryItem
     {
         u8 id_0;      /** `InventoryItemId` */
@@ -1032,12 +1029,14 @@ namespace Silent::Game
         u8 field_3;   // Some sort of index?
     };
 
-    typedef enum _ItemToggleFlags
+    /** @brief Special inventory item toggle flags. */
+    enum e_ItemToggleFlags
     {
         ItemToggleFlag_RadioOn       = 1 << 0,
         ItemToggleFlag_FlashlightOff = 1 << 1
-    } e_ItemToggleFlags;
+    };
 
+    /** @brief Savegame data. */
     typedef struct _Savegame
     {
         s_InventoryItem items_0[INVENTORY_ITEM_COUNT_MAX];
@@ -1326,7 +1325,7 @@ namespace Silent::Game
         VECTOR3 targetPosition_F8; /** Q19.12 */
         VECTOR3 position_104;      /** Q19.12 | Set to either Air Screamer position with slight offset toward player or player position. */
         VECTOR3 position_110;
-        s32     flags_11C; /** `e_AirScreamerFlags` */
+        s32     flags; /** `e_AirScreamerFlags` */
         q19_12  timer_120;
         q19_12  groundHeight_124;
     } s_PropertiesAirScreamer;

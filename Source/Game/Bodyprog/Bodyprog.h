@@ -1426,7 +1426,7 @@ namespace Silent::Game
 
         s8     charaId_4;                 /** `e_CharacterId` */
         u8     rotationY_5;               /** Degrees in Q7.8, range [0, 256]. */
-        s8     flags_6;                   /** Copied to `stateStep` in `s_Model`, with `controlState = ModelState_Uninitialized`. */
+        s8     flags_6;                   /** Copied to `stateStep` in `s_Model`, with `controlState = 0`. */
         s32    gameDifficultyMin_7_0 : 4; /** `e_GameDifficulty` | Minimum difficulty required for successful spawn. */
 
         q19_12 positionZ_8;

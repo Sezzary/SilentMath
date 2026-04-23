@@ -38,9 +38,9 @@ namespace Silent::Game
 
         // Check for user input.
         hasInput = false;
-        if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter_0 |
-                                            g_GameWorkPtr->config.controllerConfig_0.cancel_2)) ||
-            (g_Controller0->btnsHeld_C & g_GameWorkPtr->config.controllerConfig_0.skip_4))
+        if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter |
+                                            g_GameWorkPtr->config.controllerConfig_0.cance)) ||
+            (g_Controller0->btnsHeld_C & g_GameWorkPtr->config.controllerConfig_0.skip))
         {
             hasInput = true;
         }
@@ -130,7 +130,7 @@ namespace Silent::Game
                                 break;
                             }
                         }
-                        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cancel_2)
+                        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cance)
                         {
                             g_MapMsg_Select.maxIdx           = temp;
                             g_MapMsg_Select.selectedEntryIdx = g_MapMsg_SelectCancelIdx;
@@ -145,7 +145,7 @@ namespace Silent::Game
                             stateMachineIdx1 = FINISH_MAP_MSG;
                             break;
                         }
-                        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter_0)
+                        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter)
                         {
                             g_MapMsg_Select.maxIdx = temp;
 

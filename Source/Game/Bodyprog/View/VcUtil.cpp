@@ -11,7 +11,7 @@ namespace Silent::Game
 {
     constexpr int V_BLANKS_MULT = 11;
 
-    void vcInitCamera(s_MapOverlayHeader* map_overlay_ptr, const VECTOR3* chr_pos) // 0x8004004C
+    void vcInitCamera(s_MapOverlayHeader* mapoverlay_ptr, const VECTOR3* chr_pos) // 0x8004004C
     {
         g_WorldGfxWork.debugCameraInfo.mv_smooth   = VC_MV_CHASE;
         g_WorldGfxWork.debugCameraInfo.ev_cam_rate = Q12(0.0f);
@@ -20,7 +20,7 @@ namespace Silent::Game
         vcSetCameraUseWarp(chr_pos, g_SysWork.cameraAngleY);
         //SetGeomScreen(g_GameWork.gsScreenHeightx);
         vwInitViewInfo();
-        vcInitVCSystem(map_overlay_ptr->cameraPaths_3CC);
+        vcInitVCSystem(mapoverlay_ptr->cameraPaths_3CC);
         vcStartCameraSystem();
 
         g_SysWork.cameraAngleZ   = Q12_ANGLE(0.0f);
