@@ -17,7 +17,7 @@ namespace Silent::Game
         q11_4 max_hz;
     };
 
-    /** @brief Internal camera info. */
+    /** @brief Debug camera info. */
     struct VC_CAMERA_INTINFO
     {
         u32   mode;        /** Mode state step. */

@@ -133,15 +133,15 @@ namespace Silent::Game
         CollisionType_Unk2 = 2
     } e_CollisionType;
 
-    /** Map flags. */
-    typedef enum _MapFlags
+    /** @brief Map flags. */
+    enum e_MapFlags
     {
         MapFlag_FourActiveChunks = 0,      /** Used by exterior maps. */
         MapFlag_OneActiveChunk   = 1 << 0,
         MapFlag_TwoActiveChunks  = 1 << 1,
         MapFlag_Interior         = 1 << 2,
         MapFlag_Unk3             = 1 << 3  /** @unused Unused map type `XXX` has this flag. */
-    } e_MapFlags;
+    };
 
     /** @brief Used as index into `MAP_INFOS` array.
      * TODO: Add descriptions for which areas are included in each type?
@@ -375,8 +375,8 @@ namespace Silent::Game
             } s_1;
             struct
             {
-                u16 field_0;
-                u16 field_2;
+                q4_12 field_0;
+                u16   field_2;
             } s_2;
         } field_C;
         union
@@ -853,7 +853,7 @@ namespace Silent::Game
         s_ModelHeader* modelHdr;
     } s_IpdModelInfo;
 
-    /** @brief IPD model header. */
+    /** @brief IPD model file header. */
     typedef struct _IpdHeader
     {
         u8                 magic;
@@ -1104,43 +1104,47 @@ namespace Silent::Game
         s8 field_3;
     };
 
+    /** @brief Speed zone. Defines a volume used for player speed modulation. */
     typedef struct _SpeedZone
     {
-        s8   type_0; /** `e_SpeedZoneType` */
-        q11_4 minX_2;
-        q11_4 maxX_4;
-        q11_4 minZ_6;
-        q11_4 maxZ_8;
+        s8    type; /** `e_SpeedZoneType` */
+        q11_4 minX;
+        q11_4 maxX;
+        q11_4 minZ;
+        q11_4 maxZ;
     } s_SpeedZone;
 
+    /** @brief Water zone. Defines a volume used for visual water effects. */
     typedef struct _WaterZone
     {
-        u8  isEnabled_0; /** `bool` */
-        s16 illumination_2;
-        q11_4 minX_4;
-        q11_4 maxX_6;
-        q11_4 minZ_8;
-        q11_4 maxZ_A;
+        u8    isEnabled; /** `bool` */
+        s16   illumination;
+        q11_4 minX;
+        q11_4 maxX;
+        q11_4 minZ;
+        q11_4 maxZ;
     } s_WaterZone;
 
+    /** @brief Character model. */
     typedef struct
     {
         u8            charaId;  /** `e_CharacterId` */
         u8            isLoaded; /** `bool` */
-        s32           queueIdx_4;
-        s_LmHeader*   lmHdr_8;
+        s32           queueIdx;
+        s_LmHeader*   lmHdr;
         s_FsImageDesc texture_C;
-        s_Skeleton    skeleton_14;
+        s_Skeleton    skeleton;
     } s_CharaModel;
 
-    typedef struct _MapInfo
+    /** @brief Loaded map info. */
+    struct s_MapInfo
     {
         s16                plmFileIdx_0;
         char               tag_2[4];
         u8                 flags_6; /** `e_MapFlags` */
         const s_WaterZone* waterZones_8;
         const s_SpeedZone* speedZones_C;
-    } s_MapInfo;
+    };
 
     // Rough name.
     typedef struct _WorldObjectMetadata
@@ -1157,7 +1161,7 @@ namespace Silent::Game
         s_WorldObjectMetadata metadata_10;
     } s_WorldObjectModel;
 
-    /** @brief Geometry space world object to draw. */
+    /** @brief Geometry-space world object to draw. */
     typedef struct _WorldObject
     {
         s_WorldObjectModel* model;
@@ -1184,12 +1188,12 @@ namespace Silent::Game
     /** @brief Hand-held player item. */
     typedef struct _HeldItem
     {
-        s32           itemId_0; /** `e_InventoryItemId` */
-        s32           queueIdx_4;
-        char*         textureName_8;
-        s_FsImageDesc imageDesc_C;
-        s_LmHeader*   lmHdr_14;
-        s_Bone        bone_18;
+        s32           itemId; /** `e_InventoryItemId` */
+        s32           queueIdx;
+        char*         textureName;
+        s_FsImageDesc imageDesc;
+        s_LmHeader*   lmHdr;
+        s_Bone        bone;
     } s_HeldItem;
 
     /** @brief World GFX workspace.
@@ -1199,37 +1203,36 @@ namespace Silent::Game
      */
     typedef struct _WorldGfxWork
     {
-        s_MapInfo*        mapInfo_0;
-        u8                useStoredPoint_4; /** `bool` */
-        u8                unk_5[3];
-        VECTOR3           ipdSamplePoint_8; /** Used by IPD logic to sample which chunks to load or unload. */
-        u8*               charaLmBuffer_14;
-        s_CharaModel*     registeredCharaModels_18[Chara_Count];
-        s_CharaModel      charaModels_CC[CHARA_GROUP_COUNT];
-        s_CharaModel      harryModel_164C;
-        s_HeldItem        heldItem_1BAC;             /** The item held by the player. */
-        s_TriggerZone*    triggerZone_1BD8;
-        VC_CAMERA_INTINFO vcCameraInternalInfo_1BDC; /** Debug camera info. */
-        s_LmHeader        itemLmHdr_1BE4;
-        u8                itemLmData_1BF4[4096 - sizeof(s_LmHeader)]; // 4kb allocated for 2.75kb game files.
-        s32               itemLmQueueIdx_2BE4;
-        s32               objectCount_2BE8;                     /** `objects_2BEC` size. */
-        s_WorldObject     objects_2BEC[WORLD_OBJECT_COUNT_MAX]; /** World objects to draw. */
+        s_MapInfo*        mapInfo;
+        u8                useStoredPoint; /** `bool` */
+        VECTOR3           ipdSamplePoint; /** Q19.12 | Used by IPD logic to sample which chunks to load or unload. */
+        u8*               charaLmBuffer;
+        s_CharaModel*     registeredCharaModels[Chara_Count];
+        s_CharaModel      charaModels[CHARA_GROUP_COUNT];
+        s_CharaModel      harryModel;
+        s_HeldItem        heldItem; /** Item held by the player. */
+        s_TriggerZone*    triggerZone;
+        VC_CAMERA_INTINFO debugCameraInfo;
+        s_LmHeader        itemLmHdr;
+        u8                itemLmData[4096 - sizeof(s_LmHeader)]; // 4kb allocated for 2.75kb game files.
+        s32               itemLmQueueIdx;
+        s32               objectCount;                     /** `objects` size. */
+        s_WorldObject     objects[WORLD_OBJECT_COUNT_MAX]; /** World objects to draw. */
     } s_WorldGfxWork;
 
-    // IPD data?
-    typedef struct
+    /** @brief IPD map geometry chunk. */
+    struct s_IpdChunk
     {
-        s_IpdHeader* ipdHdr_0;
-        s32          queueIdx_4;
-        s16          cellX_8;
-        s16          cellZ_A;
-        q19_12       distance0_C;
-        q19_12       distance1_10;
-        u8           materialCount_14;
-        s8           unk_15[3];
-        s32          outsideCount_18;
-    } s_IpdChunk;
+        s_IpdHeader* ipdHdr;
+        s32          queueIdx;
+        s16          cellX;
+        s16          cellZ;
+        q19_12       distance0;
+        q19_12       distance1;
+        u8           materialCount;
+        s8           __pad_15[3];
+        s32          outsideCount;
+    };
 
     typedef struct _IpdRow
     {
@@ -1346,7 +1349,9 @@ namespace Silent::Game
         s16 field_6; // Keyframe index or time.
     } s_800C44F0; // Probable size: 8 bytes.
 
-    /** Holds file IDs of anim/model/texture for each `e_CharacterId`, along with some data used in VC camera code. */
+    /** @brief Character file info.
+     * Holds file IDs of anim/model/texture for each `e_CharacterId` along with some data used in VC camera code.
+     */
     struct s_CharaFileInfo
     {
         s16            animFileIdx;
@@ -1357,52 +1362,6 @@ namespace Silent::Game
         s_FsImageDesc* field_8;               // Extra texture pointer? Usually `nullptr` in `CHARA_FILE_INFOS`.
         u16            cameraAnchor  : 2;     /** `e_CameraAnchor` */
         q19_12         cameraOffsetY : 14;
-    };
-
-    struct s_DmsKeyframeCamera
-    {
-        SVECTOR3 positionTarget_0; /** Q7.8 */
-        SVECTOR3 lookAtTarget_6;   /** Q7.8 */
-        s16      field_C[2];       // `field_C[1]` gets passed to `vcChangeProjectionValue`.
-    };
-
-    struct s_DmsKeyframeCharacter
-    {
-        SVECTOR3 position_0; /** Q7.8 */
-        SVECTOR3 rotation_6; /** Q7.8 */
-    };
-
-    typedef struct s_DmsEntry
-    {
-        s16       keyframeCount_0;
-        u8        svectorCount_2; /** `svectors_8` array size. */
-        u8        field_3;        // Usually 0, but sometimes filled in, possibly junk data left in padding byte.
-        char      name_4[4];      // First 4 chars of name. E.g. Code checks for "DAHLIA", file is "DAHL".
-        SVECTOR3* svectors_8;     // Pointer to `SVECTOR3`s. Unknown purpose.
-        union
-        {
-            s_DmsKeyframeCharacter* character;
-            s_DmsKeyframeCamera*    camera;
-        } keyframes_C;
-    };
-
-    struct s_DmsInterval
-    {
-        s16 startKeyframeIdx_0;
-        s16 frameCount_2; /** Frame duration at 30 FPS. */
-    };
-
-    struct s_DmsHeader
-    {
-        u8             isLoaded; /** `bool` */
-        u8             characterCount;
-        u8             intervalCount_2;
-        u8             field_3; // Usually 0, but sometimes filled in.
-        u32            field_4; // Unknown, correlates with DMS file size.
-        s_DmsInterval* intervals_8;
-        VECTOR3        origin_C; /** Q23.8 | Origin point. Gets added to character positions. */
-        s_DmsEntry*    characters_18;
-        s_DmsEntry     camera_1C;
     };
 
     /** @brief Used for normal credits screen. */
@@ -1536,7 +1495,7 @@ namespace Silent::Game
     {
         s32    field_0[4];
         s16    field_10[4];
-        s32    field_18[4];
+        q19_12 field_18[4];
         u16    field_28[4];
         u8     field_30[4];
         q3_12  field_34[4]; // Y angles.
@@ -1558,7 +1517,7 @@ namespace Silent::Game
      */
     struct s_MapOverlayHeader
     {
-        s_MapInfo*             mapInfo_0;
+        s_MapInfo*             mapInfo;
         u8                     (*getMapRoomIdxFunc_4)(s32 x, s32 y); // Called by `Savegame_MapRoomIdxUpdate`.
         s8                     field_8;
         s32                    (*func_C)();
@@ -2012,7 +1971,7 @@ namespace Silent::Game
         s32             field_1DC;
         s32             field_1E0;
         s32             field_1E4;
-        s32             field_1E8;
+        q19_12          field_1E8;
     } s_func_80063A50;
 
     typedef struct

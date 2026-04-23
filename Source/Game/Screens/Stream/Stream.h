@@ -2,20 +2,23 @@
 
 namespace Silent::Game
 {
-    #define RING_SIZE 23
-    #define MOVIE_WAIT 2000
-    #define PPW 3 / 2
+    /** @brief Updates intro movie fade-in game state. */
+    void GameState_MovieIntroFadeIn_Update(void);
 
-    // Handlers for movie-related GameStates
+    /** @brief Updates intro movie game state. */
+    void GameState_MovieIntro_Update(void);
 
-    void GameState_MovieIntroFadeIn_Update();
-    void GameState_MovieIntro_Update();
-    void GameState_MovieOpening_Update();
-    void GameState_ExitMovie_Update();
-    void GameState_DebugMoviePlayer_Update(); /** @unused debug movie player. Movie to play decided by `LStickLeft`/`LStickRight`. */
-    void GameState_MovieIntroAlternate_Update();
+    /** @brief Updates opening movie game state. */
+    void GameState_MovieOpening_Update(void);
 
-    // MOVIESYS code
+    /** @brief Updates movie exit game state. */
+    void GameState_ExitMovie_Update(void);
+
+    /** @brief @unused Updates debug movie player game state. The movie to play is decided by `LStickLeft`/`LStickRight`. */
+    void GameState_DebugMoviePlayer_Update(void);
+
+    /** @brief Updates alternative intro movie game state. */
+    void GameState_MovieIntroAlternate_Update(void);
 
     void open_main(s32 file_idx, s16 num_frames);
     bool movie_main(const std::string& file_name, s32 f_size, s32 sector);

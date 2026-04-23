@@ -1378,8 +1378,8 @@ namespace Silent::Game
             //setRGB0(borderLine, coloredLine->r_8, coloredLine->g_A, coloredLine->b_C);
 
             //setXY2(borderLine,
-            //    borderLines->lines_0[i].vertex0.x + (slotIdx * SLOT_COLUMN_OFFSET), borderLines->lines_0[i].vertex0.y,
-            //    borderLines->lines_0[i].vertex1.x + (slotIdx * SLOT_COLUMN_OFFSET), borderLines->lines_0[i].vertex1.y);
+            //    borderLines->lines[i].vertex0.x + (slotIdx * SLOT_COLUMN_OFFSET), borderLines->lines[i].vertex0.y,
+            //    borderLines->lines[i].vertex1.x + (slotIdx * SLOT_COLUMN_OFFSET), borderLines->lines[i].vertex1.y);
 
             //addPrim((u8*)ot->org + LAYER_28, borderLine);
             //GsOUT_PACKET_P = (u8*)borderLine + sizeof(LINE_F2);
@@ -1397,11 +1397,11 @@ namespace Silent::Game
             //setRGB2(glowPoly, coloredLine->r_8 / 2, coloredLine->g_A / 2, coloredLine->b_C / 2);
             //setRGB3(glowPoly, 0, 0, 0);
 
-            //glowLine = (s_Line2d*)&borderGlowQuads->quads_0[i].vertex2_8;
+            //glowLine = (s_Line2d*)&borderGlowQuads->quads[i].vertex2_8;
             //setXY4(glowPoly,
-            //    borderGlowQuads->quads_0[i].vertex0.x + (slotIdx * SLOT_COLUMN_OFFSET), borderGlowQuads->quads_0[i].vertex0.y,
-            //    borderGlowQuads->quads_0[i].vertex1.x + (slotIdx * SLOT_COLUMN_OFFSET), borderGlowQuads->quads_0[i].vertex1.y,
-            //    borderGlowQuads->quads_0[i].vertex2_8.x + (slotIdx * SLOT_COLUMN_OFFSET), glowLine->vertex0.y,
+            //    borderGlowQuads->quads[i].vertex0.x + (slotIdx * SLOT_COLUMN_OFFSET), borderGlowQuads->quads[i].vertex0.y,
+            //    borderGlowQuads->quads[i].vertex1.x + (slotIdx * SLOT_COLUMN_OFFSET), borderGlowQuads->quads[i].vertex1.y,
+            //    borderGlowQuads->quads[i].vertex2_8.x + (slotIdx * SLOT_COLUMN_OFFSET), glowLine->vertex0.y,
             //    glowLine->vertex1.x + (slotIdx * SLOT_COLUMN_OFFSET), glowLine->vertex1.y);
 
             //addPrim((u8*)ot->org + LAYER_32, glowPoly);

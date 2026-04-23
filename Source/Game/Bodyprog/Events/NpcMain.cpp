@@ -249,9 +249,9 @@ namespace Silent::Game
                             Q12_SQUARE_PRECISE(Q12_TO_Q6(npc->position.vz) - posZShift6);
                     var_t5 = 0;
 
-                    if (g_MapOverlayHeader.mapInfo_0->flags_6 & MapFlag_Interior)
+                    if (g_MapOverlayHeader.mapInfo->flags_6 & MapFlag_Interior)
                     {
-                        var_t5 = (g_MapOverlayHeader.mapInfo_0->flags_6 & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)) > 0;
+                        var_t5 = (g_MapOverlayHeader.mapInfo->flags_6 & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)) > 0;
                     }
 
                     for (j = 0; j < 3; j++)
@@ -414,8 +414,8 @@ namespace Silent::Game
             else
             {
                 var_s3 = 0;
-                if (!(g_MapOverlayHeader.mapInfo_0->flags_6 & MapFlag_Interior) ||
-                    !(g_MapOverlayHeader.mapInfo_0->flags_6 & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)))
+                if (!(g_MapOverlayHeader.mapInfo->flags_6 & MapFlag_Interior) ||
+                    !(g_MapOverlayHeader.mapInfo->flags_6 & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)))
                 {
                     var_s3 = 1;
                 }
