@@ -2,29 +2,30 @@
 #include "Psx.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 
+#include "Game/Bodyprog/Bodyprog.h"
+
 #include "Application.h"
 #include "Game/Bodyprog/Events/MapMsgDisplay.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
 #include "Renderer/Common/Utils.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Utils;
 
 namespace Silent::Game
 {
-    constexpr int SCREEN_WIDTH  = 320;
-    constexpr int SCREEN_HEIGHT = 240;
-
     /** @brief Converts a floating-point X screen position in percent to a fixed-point X screen coodinate. */
     #define SCREEN_POSITION_X(percent) \
-        (s32)(SCREEN_WIDTH * ((percent) / 100.0f))
+        (s32)((int)RETRO_SCREEN_SPACE_RES.x * ((percent) / 100.0f))
 
     /** @brief Converts a floating-point Y screen position in percent to a fixed-point Y screen coodinate. */
     #define SCREEN_POSITION_Y(percent) \
-        (s32)(SCREEN_HEIGHT * ((percent) / 100.0f))
+        (s32)((int)RETRO_SCREEN_SPACE_RES.y * ((percent) / 100.0f))
 
-    constexpr auto STRING_COLORS = std::array<Color, (int)StringColorId_Count>
+    constexpr auto STRING_COLORS = std::array<Color, StringColorId_Count>
     {
         Color::From8Bit(160, 128, 64),
         Color::From8Bit(32,  32,  32),
@@ -33,6 +34,20 @@ namespace Silent::Game
         Color::From8Bit(128, 0,   0),
         Color::From8Bit(100, 100, 100),
         Color::From8Bit(128, 128, 128)
+    };
+
+    /** @brief Processed message node types. */
+    enum class NodeType
+    {
+        Text,
+        Command
+    };
+
+    /** @brief Processed message node. */
+    struct MsgNode
+    {
+        NodeType    Type  = NodeType::Text;
+        std::string Value = {};
     };
 
     static auto g_StringColorId = StringColorId_White;
@@ -86,7 +101,7 @@ namespace Silent::Game
         g_StringColorId = colorId;
     }
 
-    bool Gfx_StringDraw(const std::string& str, int strLength)
+    float Gfx_StringDraw(const std::string& str, int strLength)
     {
         constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
 
@@ -96,11 +111,14 @@ namespace Silent::Game
         auto fontName = (options->TextQuality == TextQualityType::Original) ? "RetroSerif" : "SmoothSerif";
         auto text     = Text2d::CreateText2d(str, fontName,
                                              ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
-                                             1.0f, TextStyle::Gradient, true,
+                                             STRING_COLORS[g_StringColorId], TextStyle::Gradient, true,
                                              6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
         renderer.SubmitText2d(text);
 
-        return true;
+        // @todo Need to return width in retro resolution space (320x240).
+        float fontScaleFactor = SCREEN_SPACE_RES.x / (float)text.Font->GetPointSize();
+        auto  textWidth       = (text.Shape.Width * fontScaleFactor) * text.Scale;
+        return textWidth;
     }
 
     s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx) // 0x8004ACF4
@@ -206,66 +224,42 @@ namespace Silent::Game
         }*/
     }
 
-    s32 Gfx_MapMsg_StringDraw(char* mapMsg, s32 strLength) // 0x8004AF18
+    s32 Gfx_MapMsg_StringDraw(const std::string& mapMsg, s32 strLength) // 0x8004AF18
     {
-        /*#define LINE_SPACE_SIZE 32
-        #define CHARCODE_OFFSET '\''
+        s32 glyphPosX;
+        s32 glyphPosY;
+        u32 temp_a0;
+        s32 temp_a0_2;
+        s32 i;
+        s32 longestLineWidth;
+        s32 lineIdx;
+        s32 idx;
+        s32 charWidth;
 
-        s32       glyphPosX;
-        s32       glyphPosY;
-        u32       temp_a0;
-        s32       temp_a0_2;
-        s32       digit;
-        s32       i;
-        s32       fractionDigits;
-        s32       longestLineWidth;
-        bool      isFraction;
-        s32       lineIdx;
-        u32       color;
-        u8        codeTag;
-        s32       codeArg;
-        s32       result;
-        s32       charCode;
-        s32       idx;
-        s32       charWidth;
-        GsOT*     ot;
-        PACKET*   packet;
-        DR_TPAGE* tPage;
-        POLY_FT4* glyphPoly;
-        SPRT*     glyphSprt;
+        int result = 0;
 
-        packet = nullptr;
-        result = 0;
-
-        ot                  = (GsOT*)&g_OtTags0[g_ActiveBufferIdx][6];
-        color               = STRING_COLORS[g_StringColorId];
-        g_StringPosition.vx = -(g_MapMsg_Widths[0] >> 1);
-
-        if (!g_SysWork.enableHighResGlyphs)
-        {
-            packet = GsOUT_PACKET_P;
-        }
+        g_StringPosition.x = -(g_MapMsg_Widths[0] / 2);
 
         switch ((u8)D_800C38B0.positionIdx_1)
         {
             case 0:
-                g_StringPosition.vy = -92;
+                g_StringPosition.y = -92;
                 break;
 
             case 1:
-                g_StringPosition.vy = 76 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
+                g_StringPosition.y = 76 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
                 break;
 
             case 2:
-                g_StringPosition.vy = -60;
+                g_StringPosition.y = -60;
                 break;
 
             case 3:
-                g_StringPosition.vy = 44 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
+                g_StringPosition.y = 44 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
                 break;
 
             case 4:
-                g_StringPosition.vy = ((FONT_12X16_LINE_COUNT_MAX - g_MapMsg_WidthIdx) * 8) - 76;
+                g_StringPosition.y = ((FONT_12X16_LINE_COUNT_MAX - g_MapMsg_WidthIdx) * 8) - 76;
                 break;
         }
 
@@ -278,246 +272,181 @@ namespace Silent::Game
             }
         }
 
-        g_StringPosition.vx = -(longestLineWidth >> 1);
-        g_StringPositionX1  = g_StringPosition.vx;
-        glyphPosX           = g_StringPositionX1;
-        glyphPosY           = g_StringPosition.vy;
+        g_StringPosition.x = -(longestLineWidth / 2);
+        g_StringPositionX1 = g_StringPosition.x;
+        glyphPosX          = g_StringPositionX1;
+        glyphPosY          = g_StringPosition.y;
 
-        // Parse string.
-        for (lineIdx = 0; lineIdx < FONT_12X16_LINE_COUNT_MAX;)
+        auto nodes  = std::vector<MsgNode>{};
+        auto buffer = std::string();
+        bool inCmd  = false;
+
+        // Parse message into nodes.
+        for (char c : mapMsg)
         {
-            // Convert literal `!` and `&` into `char`s mappable to representative atlas glyphs.
-            charCode = *mapMsg;
-            if (charCode == '!')
+            // Start collecting command.
+            if (c == '{' && !inCmd)
             {
-                charCode = '\\';
-            }
-            else if (charCode == '&')
-            {
-                charCode = '^';
-            }
-
-            // Process `char`.
-            switch (charCode)
-            {
-                // Space.
-                case '_':
-                    glyphPosX += FONT_12X16_SPACE_SIZE;
-                    mapMsg++;
-                    break;
-
-                // Ignore spaces and tabs.
-                case ' ':
-                case '\t':
-                    mapMsg++;
-                    break;
-
-                case MAP_MSG_CODE_MARKER:
-                    codeTag = *++mapMsg;
-                    codeArg = *++mapMsg - '0';
-
-                    switch (codeTag)
+                if (!buffer.empty())
+                {
+                    nodes.push_back(MsgNode
                     {
-                        default:
-                            break;
+                        .Type  = NodeType::Text,
+                        .Value = buffer
+                    });
 
-                        case MAP_MSG_CODE_NEWLINE:
-                            lineIdx++;
-
-                            switch (result)
-                            {
-                                case MapMsgCode_AlignCenter:
-                                    glyphPosX = -(g_MapMsg_Widths[lineIdx] >> 1);
-                                    break;
-
-                                case MapMsgCode_SetByT:
-                                    glyphPosX = g_StringPositionX1;
-                                    break;
-
-                                default:
-                                    glyphPosX = -(longestLineWidth >> 1);
-                                    break;
-                            }
-
-                            glyphPosY += FONT_12X16_GLYPH_SIZE_Y;
-                            break;
-
-                        case MAP_MSG_CODE_JUMP:
-                            fractionDigits = 0;
-                            isFraction     = 0;
-                            digit          = 0;
-
-                            // Parse time value.
-                            if (g_SysWork.mapMsgTimer == NO_VALUE)
-                            {
-                                s32 c;
-
-                                mapMsg                  = mapMsg + 2;
-                                c                       = *mapMsg;
-                                g_MapMsg_AudioLoadBlock = codeArg + 1;
-
-                                while (c != ')')
-                                {
-                                    if (c == '.')
-                                    {
-                                        isFraction = 1;
-                                    }
-                                    else
-                                    {
-                                        if (isFraction != 0)
-                                        {
-                                            fractionDigits++;
-                                        }
-
-                                        digit *= 10;
-                                        digit -= '0' - c;
-                                    }
-
-                                    mapMsg++;
-                                    c = *mapMsg;
-                                }
-
-                                digit = digit << 12;
-                                for (i = 0; i < fractionDigits; i++)
-                                {
-                                    digit = digit / 10;
-                                }
-
-                                g_SysWork.mapMsgTimer = digit;
-                                mapMsg                     = mapMsg + 1;
-                            }
-                            else
-                            {
-                                while (codeArg != ' ' && codeArg != '\t')
-                                {
-                                    codeArg = *++mapMsg;
-                                }
-                            }
-                            break;
-
-                        case MAP_MSG_CODE_MIDDLE:
-                            result    = MapMsgCode_AlignCenter;
-                            glyphPosX = -(g_MapMsg_Widths[lineIdx] >> 1);
-                            break;
-
-                        case MAP_MSG_CODE_TAB:
-                            result             = MapMsgCode_SetByT;
-                            g_StringPositionX1 = -120;
-                            glyphPosX          = -120;
-                            break;
-
-                        case MAP_MSG_CODE_COLOR:
-                            color           = STRING_COLORS[codeArg];
-                            g_StringColorId = codeArg;
-                            break;
-
-                        case MAP_MSG_CODE_DISPLAY_ALL:
-                            strLength = MAP_MESSAGE_DISPLAY_ALL_LENGTH;
-                            break;
-
-                        case MAP_MSG_CODE_END:
-                            result  = NO_VALUE;
-                            lineIdx = FONT_12X16_LINE_COUNT_MAX;
-                            break;
-
-                        case MAP_MSG_CODE_SELECT:
-                            result  = codeArg;
-                            lineIdx = FONT_12X16_LINE_COUNT_MAX;
-                            break;
-
-                        case MAP_MSG_CODE_HIGH_RES:
-                            g_SysWork.enableHighResGlyphs = true;
-                            break;
+                    buffer.clear();
                 }
 
-                mapMsg++;
-                break;
-
-            // Terminator.
-            case '\0':
-                result  = 1;
-                lineIdx = FONT_12X16_LINE_COUNT_MAX;
-                break;
-
-            // Draw glyph sprite.
-            default:
-                strLength--;
-
-                if (g_SysWork.enableHighResGlyphs)
+                inCmd = true;
+            }
+            // Finish collecting command.
+            else if (c == '}' && inCmd)
+            {
+                nodes.push_back(MsgNode
                 {
-                    glyphPoly = (POLY_FT4*)GsOUT_PACKET_P;
+                    .Type  = NodeType::Command,
+                    .Value = buffer
+                });
 
-                    idx       = charCode - CHARCODE_OFFSET;
-                    charWidth = FONT_12X16_GLYPH_WIDTHS[charCode - CHARCODE_OFFSET];
+                buffer.clear();
+                inCmd = false;
+            }
+            // Collect `char`s.
+            else
+            {
+                buffer += c;
+            }
+        }
 
-                    setPolyFT4(glyphPoly);
-                    setRGB0(glyphPoly, (s8)color, (s8)(color >> 8), (s8)(color >> 16));
-                    setXY4(glyphPoly,
-                        glyphPosX,                             glyphPosY * 2,
-                        glyphPosX,                             (glyphPosY * 2) + 30,
-                        glyphPosX + FONT_12X16_GLYPH_SIZE_X, glyphPosY * 2,
-                        glyphPosX + FONT_12X16_GLYPH_SIZE_X, (glyphPosY * 2) + 30);
+        // Process message nodes.
+        for (const auto& node : nodes)
+        {
+            // Skip invalid node.
+            if (node.Value.empty())
+            {
+                continue;
+            }
 
-                    glyphPosX += charWidth;
+            if (node.Type == NodeType::Command)
+            {
+                char code    = node.Value[0];
+                int  codeArg = code - '0';
 
-                    temp_a0 = (idx % FONT_12X16_ATLAS_COLUMN_COUNT) * FONT_12X16_GLYPH_SIZE_X;
-
-                    *((u32*)&glyphPoly->u0) = temp_a0 + 0xF000 + (0x7FD3 << 16);                                                     // `u0`, `v0`, `clut`.
-                    *((u32*)&glyphPoly->u1) = temp_a0 + (((((idx / FONT_12X16_ATLAS_COLUMN_COUNT) & 0xF) | 0x10) << 16) | 0xFF00); // `u1`, `v1`, `page`.
-                    *((u16*)&glyphPoly->u2) = temp_a0 - 0xFF4;
-                    *((u16*)&glyphPoly->u3) = temp_a0 - 244;
-
-                    addPrim(ot, glyphPoly);
-                    GsOUT_PACKET_P = (PACKET*)glyphPoly + sizeof(POLY_FT4);
-                }
-                else
+                switch (code)
                 {
-                    temp_a0_2 = (u16)glyphPosX;
+                    case MAP_MSG_CODE_COLOR:
+                    {
+                        g_StringColorId = (e_StringColorId)codeArg;
+                        break;
+                    }
+                    case MAP_MSG_CODE_DISPLAY_ALL:
+                    {
+                        strLength = MAP_MESSAGE_DISPLAY_ALL_LENGTH;
+                        break;
+                    }
+                    case MAP_MSG_CODE_END:
+                    {
+                        result  = NO_VALUE;
+                        lineIdx = FONT_12X16_LINE_COUNT_MAX;
+                        break;
+                    }
+                    case MAP_MSG_CODE_JUMP:
+                    {
+                        // Skip if another message already in progress.
+                        if (g_SysWork.mapMsgTimer != NO_VALUE)
+                        {
+                            break;
+                        }
 
-                    glyphSprt              = (SPRT*)packet;
-                    *((u32*)&glyphSprt->w) = 0x10000C;
+                        // Parse time value.
+                        auto timeStr = std::string();
+                        for (char c : node.Value.substr(2, node.Value.size() - 1))
+                        {
+                            // Reached end.
+                            if (c == ')')
+                            {
+                                break;
+                            }
 
-                    idx        = charCode - CHARCODE_OFFSET;
-                    glyphPosX += FONT_12X16_GLYPH_WIDTHS[idx];
+                            timeStr += c;
+                        }
 
-                    addPrimFast(ot, glyphSprt, 4);
-                    *((u32*)&glyphSprt->r0)   = color;
-                    *((u32*)(&glyphSprt->x0)) = temp_a0_2 + ((glyphPosY) << 16);
-                    *((u32*)&glyphSprt->u0)   = (s32)(((idx % FONT_12X16_ATLAS_COLUMN_COUNT) * FONT_12X16_GLYPH_SIZE_X) + 0xF000 + (0x7FD3 << 16)); // `u0`, `v0`, `clut`.
+                        // Set map message timer.
+                        float time            = std::stof(timeStr);
+                        g_SysWork.mapMsgTimer = Q12(time);
+                        break;
+                    }
+                    case MAP_MSG_CODE_LINE_POSITION:
+                    {
+                        break;
+                    }
+                    case MAP_MSG_CODE_MIDDLE:
+                    {
+                        result    = MapMsgCode_AlignCenter;
+                        glyphPosX = -(g_MapMsg_Widths[lineIdx] / 2);
+                        break;
+                    }
+                    case MAP_MSG_CODE_NEWLINE:
+                    {
+                        lineIdx++;
 
-                    packet += sizeof(SPRT);
+                        switch (result)
+                        {
+                            case MapMsgCode_AlignCenter:
+                                glyphPosX = -(g_MapMsg_Widths[lineIdx] / 2);
+                                break;
 
-                    tPage = (DR_TPAGE*)packet;
-                    setDrawTPage(tPage, 0, 1, ((idx / FONT_12X16_ATLAS_COLUMN_COUNT) & 0xF) | 0x10);
-                    addPrim(ot, tPage);
+                            case MapMsgCode_SetByT:
+                                glyphPosX = g_StringPositionX1;
+                                break;
 
-                    packet += sizeof(DR_TPAGE);
+                            default:
+                                glyphPosX = -(longestLineWidth / 2);
+                                break;
+                        }
+
+                        glyphPosY += FONT_12X16_GLYPH_SIZE_Y;
+                        break;
+                    }
+                    case MAP_MSG_CODE_SELECT:
+                    {
+                        result  = codeArg;
+                        lineIdx = FONT_12X16_LINE_COUNT_MAX;
+                        break;
+                    }
+                    case MAP_MSG_CODE_TAB:
+                    {
+                        result             = MapMsgCode_SetByT;
+                        g_StringPositionX1 = -120;
+                        glyphPosX          = -120;
+                        break;
+                    }
+                    default:
+                    {
+                        continue;
+                    }
                 }
+            }
+            else if (node.Type == NodeType::Text)
+            {
+                // Draw text string.
+                int   charCount = GetCodePoints(node.Value).size();
+                auto  text      = node.Value.substr(0, std::min(charCount, strLength - 1));
+                float width     = Gfx_StringDraw(text, 400); // @todo Integrate width.
 
-                mapMsg++;
-
+                // Stop drawing if length exceeded.
+                strLength -= charCount;
                 if (strLength <= 0)
                 {
-                    if (!g_SysWork.enableHighResGlyphs)
-                    {
-                        GsOUT_PACKET_P = packet;
-                    }
-
                     return result;
                 }
             }
         }
 
-        if (!g_SysWork.enableHighResGlyphs)
-        {
-            GsOUT_PACKET_P = packet;
-        }
-
-        *((u32*)&g_StringPosition) = (glyphPosX & 0xFFFF) + (glyphPosY << 16);
+        // @todo Apply offset.
+        g_StringPosition = Vector2i(glyphPosX, glyphPosY);
         return result;
-
-        #undef LINE_SPACE_SIZE
-        #undef CHARCODE_OFFSET*/
     }
 
     void func_8004B658() // 0x8004B658

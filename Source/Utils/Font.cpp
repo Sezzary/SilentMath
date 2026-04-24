@@ -86,6 +86,11 @@ namespace Silent::Utils
         }
     }
 
+    const std::string& Font::GetName() const
+    {
+        return _name;
+    }
+
     int Font::GetPointSize() const
     {
         return _pointSize;
@@ -169,17 +174,6 @@ namespace Silent::Utils
     const std::set<int>& Font::GetDirtyGpuAtlasIdxs() const
     {
         return _dirtyGpuAtlasIdxs;
-    }
-
-    std::vector<char32> Font::GetCodePoints(const std::string& msg) const
-    {
-        // Reserve minimum size.
-        auto codePoints = std::vector<char32>{};
-        codePoints.reserve((msg.size() / 4) + 1);
-
-        // Collect code points.
-        utf8::utf8to32(msg.begin(), msg.end(), std::back_inserter(codePoints));
-        return codePoints;
     }
 
     void Font::ClearDirtyGpuAtlasIdxs()
@@ -357,5 +351,16 @@ namespace Silent::Utils
         {
             Debug::Log(Fmt("Failed to load font chain `{}`: {}", metadata.Name, ex.what()), Debug::LogLevel::Error);
         }
+    }
+
+    std::vector<char32> GetCodePoints(const std::string& msg)
+    {
+        // Reserve minimum size.
+        auto codePoints = std::vector<char32>{};
+        codePoints.reserve((msg.size() / 4) + 1);
+
+        // Collect code points.
+        utf8::utf8to32(msg.begin(), msg.end(), std::back_inserter(codePoints));
+        return codePoints;
     }
 }

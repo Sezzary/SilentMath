@@ -2,19 +2,34 @@
 
 namespace Silent::Game
 {
+
+    constexpr char MAP_MSG_CODE_COLOR         = 'C'; /** Set color. */
+    constexpr char MAP_MSG_CODE_DISPLAY_ALL   = 'D'; /** Display message instantly with no rollout. */
+    constexpr char MAP_MSG_CODE_END           = 'E'; /** End message. */
+    constexpr char MAP_MSG_CODE_JUMP          = 'J'; /** Jump timer. */
+    constexpr char MAP_MSG_CODE_LINE_POSITION = 'L'; /** Set next line position. */
+    constexpr char MAP_MSG_CODE_MIDDLE        = 'M'; /** Align center. */
+    constexpr char MAP_MSG_CODE_NEWLINE       = 'N'; /** Newline. */
+    constexpr char MAP_MSG_CODE_SELECT        = 'S'; /** Display dialog prompt with selectable entries. */
+    constexpr char MAP_MSG_CODE_TAB           = 'T'; /** Inset line. */
+
+    constexpr int FONT_12X16_GLYPH_SIZE_Y   = 16;
+    constexpr int FONT_12X16_LINE_COUNT_MAX = 9;
+
     /** @brief String color IDs for strings displayed in screen space.
      * Used as indices into `STRING_COLORS`.
      */
     enum e_StringColorId
     {
-        StringColorId_Gold,
-        StringColorId_DarkGrey,
-        StringColorId_Green,
-        StringColorId_Nuclear,
-        StringColorId_Red,
-        StringColorId_LightGrey,
-        StringColorId_White,
-        //StringColorId_Black, // @todo Need to add this one for paper maps.
+        StringColorId_Gold        = 0,
+        StringColorId_DarkGrey    = 1,
+        StringColorId_Green       = 2,
+        StringColorId_Nuclear     = 3,
+        StringColorId_Red         = 4,
+        StringColorId_GreenUnused = 5, // @unused Same as `StringColorId_Green`.
+        StringColorId_LightGrey   = 6,
+        StringColorId_White       = 7,
+        //StringColorId_Black   = 8, // @todo Need to add this one for paper maps.
 
         StringColorId_Count
     };
@@ -65,9 +80,10 @@ namespace Silent::Game
     /** Draws a string in screen space using 12x16 glyphs.
      *
      * @param str String to draw.
-     * @param strLength String length for rollout.
+     * @param strLength String length for rollout
+     * @return Length of the string.
      */
-    bool Gfx_StringDraw(const std::string& str, int strLength);
+    float Gfx_StringDraw(const std::string& str, int strLength);
 
     s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx);
 

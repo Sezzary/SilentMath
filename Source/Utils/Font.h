@@ -98,9 +98,15 @@ namespace Silent::Utils
         // Getters
         // ========
 
+        /** @brief Gets the name.
+         *
+         * @return Font name.
+         */
+        const std::string& GetName() const;
+
         /** @brief Gets the point size.
          *
-         * @return Point size.
+         * @return Font point size.
          */
         int GetPointSize() const;
 
@@ -138,13 +144,6 @@ namespace Silent::Utils
         // ========
         // Helpers
         // ========
-
-        /** @brief Gets the code points for the glyphs in a message.
-         *
-         * @param msg Message to parse.
-         * @return Code points for each glyph.
-         */
-        std::vector<char32> GetCodePoints(const std::string& msg) const;
 
         /** @brief Caches a new glyph in the texture atlas.
          *
@@ -218,4 +217,11 @@ namespace Silent::Utils
         void LoadFont(const FontMetadata& metadata, const std::filesystem::path& path,
                       const std::string& precacheGlyphs = {});
     };
+
+    /** @brief Gets the code points in a message.
+     *
+     * @param msg Message to parse.
+     * @return Code points.
+     */
+    std::vector<char32> GetCodePoints(const std::string& msg);
 }

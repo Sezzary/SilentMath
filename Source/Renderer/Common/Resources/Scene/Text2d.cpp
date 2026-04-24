@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
 
+#include "Application.h"
 #include "Renderer/Common/Enums.h"
 #include "Utils/Font.h"
 
@@ -36,26 +37,39 @@ namespace Silent::Renderer
     }
 
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
-                                const Vector2& pos, float rot, float scale, float tracking, float opacity,
-                                TextStyle style, bool hasDropShadow,
+                                const Vector2& pos, float rot, float scale, float tracking,
+                                const Color& color, TextStyle style, bool hasDropShadow,
                                 int depth, AlignMode alignMode, ScaleMode scaleMode,
                                 BlendMode blendMode)
     {
+        auto& fonts = g_App.GetFonts();
+
+        // Get font.
+        auto* font = fonts.GetFont(fontName);
+        if (font == nullptr)
+        {
+            Debug::Log(Fmt("Attempted to create 2D text with missing font `{}`.", fontName),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            return {};
+        }
+
+        // Get shaped text glyphs.
         return Text2d
         {
-            .Message      = msg,
-            .FontName     = fontName,
-            .Position     = pos,
-            .Rotation     = rot,
-            .Scale        = scale,
-            .Tracking     = tracking,
-            .Opacity      = opacity,
-            .Style        = style,
-            .HasShadow    = hasDropShadow,
-            .Depth        = depth,
-            .AlignMd      = alignMode,
-            .ScaleMd      = ScaleMode::HorizontalEdge, // @todo
-            .BlendMd      = blendMode
+            .Shape     = font->GetShapedText(msg),
+            .Message   = msg,
+            .Font      = font,
+            .Position  = pos,
+            .Rotation  = rot,
+            .Scale     = scale,
+            .Tracking  = tracking,
+            .Col       = color,
+            .Style     = style,
+            .HasShadow = hasDropShadow,
+            .Depth     = depth,
+            .AlignMd   = alignMode,
+            .ScaleMd   = ScaleMode::HorizontalEdge, // @todo
+            .BlendMd   = blendMode
         };
     }
 }

@@ -182,31 +182,13 @@ namespace Silent::Renderer
         constexpr auto    SHADOW_COLOR  = Color::From8Bit(16, 16, 16);
         static const auto SHADOW_OFFSET = SCREEN_SPACE_RES / Vector2(RETRO_SCREEN_SPACE_RES.y);
 
-        auto& fonts = g_App.GetFonts();
-
-        // Get font.
-        auto* font = fonts.GetFont(text.FontName);
-        if (font == nullptr)
-        {
-            Debug::Log(Fmt("Attempted to submit 2D text with missing font `{}`.", text.FontName),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return false;
-        }
-
-        // Get shaped text glyphs.
-        auto shapedText = font->GetShapedText(text.Message);
-
         // Compute transformation parameters.
         auto rotMat           = Matrix::CreateRotationZ(text.Rotation);
-        auto fontScaleFactor  = SCREEN_SPACE_RES / (float)font->GetPointSize();
-        auto textSize         = (Vector2(shapedText.Width, (float)font->GetPointSize()) * fontScaleFactor) * text.Scale;
+        auto fontScaleFactor  = SCREEN_SPACE_RES / (float)text.Font->GetPointSize();
+        auto textSize         = (Vector2(text.Shape.Width, (float)text.Font->GetPointSize()) * fontScaleFactor) * text.Scale;
         auto aspectCorrection = GetScreenAspectCorrection(text.ScaleMd);
 
-        // @todo Derive colour from markup.
-        auto color = Color::White;
-        //color.A()  = text.Opacity;
-
-        // Compute text position. @todo Alignment should be in markup.
+        // Compute text position.
         // @todo Use common function for alignment pivots.
         auto textOffset = Vector2::Zero;
         switch (text.AlignMd)
@@ -268,7 +250,7 @@ namespace Silent::Renderer
 
         // Run through shaped glyphs.
         auto pixelOffset = Vector2::Zero;
-        for (const auto& shapedGlyph : shapedText.Glyphs)
+        for (const auto& shapedGlyph : text.Shape.Glyphs)
         {
             // Compute texture atlas UVs.
             auto uvMin = shapedGlyph.Attribs.AtlasPosition.ToVector2() / Vector2(Font::ATLAS_SIZE); 
@@ -289,11 +271,11 @@ namespace Silent::Renderer
 
             // Compute scale.
             auto relScale = Vector2((float)shapedGlyph.Attribs.AtlasSize.x / (float)shapedGlyph.Attribs.AtlasSize.y, 1.0f) *
-                            Vector2((float)shapedGlyph.Attribs.AtlasSize.y / (float)font->GetPointSize());
+                            Vector2((float)shapedGlyph.Attribs.AtlasSize.y / (float)text.Font->GetPointSize());
             auto scale    = relScale * text.Scale;
 
             // Concatenate name for texture atlas containing glyph.
-            auto atlasName = text.FontName + std::to_string(shapedGlyph.Attribs.AtlasIdx);
+            auto atlasName = text.Font->GetName() + std::to_string(shapedGlyph.Attribs.AtlasIdx);
 
             auto AddGlyph = [&](const Vector2& offset, const Color& color, int depth, bool hasGradient)
             {
@@ -314,7 +296,7 @@ namespace Silent::Renderer
             };
 
             // Submit 2D glyph.
-            if (!AddGlyph(Vector2::Zero, color, text.Depth, text.Style == TextStyle::Gradient))
+            if (!AddGlyph(Vector2::Zero, text.Col, text.Depth, text.Style == TextStyle::Gradient))
             {
                 return false;
             }
@@ -322,7 +304,9 @@ namespace Silent::Renderer
             // Submit 2D drop shadow glyph.
             if (text.HasShadow)
             {
-                if (!AddGlyph(adjShadowOffset, SHADOW_COLOR, text.Depth + 1, false))
+                auto shadowColor = SHADOW_COLOR;
+                shadowColor.A()  = text.Col.A();
+                if (!AddGlyph(adjShadowOffset, shadowColor, text.Depth + 1, false))
                 {
                     return false;
                 }
