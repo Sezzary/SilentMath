@@ -107,7 +107,8 @@ namespace Silent::Game
 
         const auto& options  = g_App.GetOptions();
         auto&       renderer = g_App.GetRenderer();
-        
+
+        // Submit text.
         auto fontName = (options->TextQuality == TextQualityType::Original) ? "RetroSerif" : "SmoothSerif";
         auto text     = Text2d::CreateText2d(str, fontName,
                                              ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
