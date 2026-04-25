@@ -418,7 +418,7 @@ namespace Silent::Game
 
     typedef struct
     {
-        VECTOR3  position_0; // Q19.12
+        VECTOR3  position; // Q19.12
         SVECTOR3 rotation_C; // Q3.12 TODO: Not a rotation? Y position is added to this.
         s8       field_12;
     } s_CollisionQuery;
@@ -1071,12 +1071,12 @@ namespace Silent::Game
     {
         q4_12         field_0;
         s16           field_2;
-        u16           field_4;  // Related to damage. Multiplier?
-        s8            field_6;  // Accessed by `func_8008BF84` as `u16`
+        u16           field_4; // Related to damage. Multiplier?
+        s8            field_6; // Accessed by `func_8008BF84` as `u16`
         s8            unk_7;
-        u8            field_8;  // Accessed by `func_8008BF84` as `u16`
+        u8            charaId_8; // Accessed by `func_8008BF84` as `u16`
         e_CharacterId field_9;
-        u8            field_A;  // Accessed by `func_8008BF84` as `u16`
+        u8            field_A; // Accessed by `func_8008BF84` as `u16`
         u8            field_B;
         u16           field_C;
         u8            field_E;  // Keyframe index offset?
@@ -1084,14 +1084,14 @@ namespace Silent::Game
         u8            field_10; // State.
         u8            field_11;
         u8            field_12; // SFX ID subgroup. Uses values 0-4.
-        u8            unk_13;
+        u8            __pad_13;
         u32*          unk_14; // Some pointer. All entries have the same value `D_800AD4C4`.
     } s_800AD4C8;
 
     /** @brief Collision point data. */
     typedef struct
     {
-        VECTOR3     position_0; // Q19.12
+        VECTOR3     position; // Q19.12
         s_Collision collision_C;
         s32         field_18; // Count of points in circle?
     } s_CollisionPoint;

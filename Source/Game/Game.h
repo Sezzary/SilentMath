@@ -1180,7 +1180,7 @@ namespace Silent::Game
      */
     struct s_AnimInfo
     {
-        void (*playbackFunc)(struct _Model* model, struct _AnmHeader* anmHdr, GsCOORDINATE2* coords, struct _AnimInfo* animInfo);
+        void (*playbackFunc)(struct _Model* model, struct _AnmHeader* anmHdr, GsCOORDINATE2* boneCoords, struct _AnimInfo* animInfo);
         u8   status;                      /** Packed anim status. Init base? See `s_ModelAnimData::status`. */
         bool hasVariableDuration;         /** Use `duration.variableFunc`: `true`, Use `duration.constant`: `false`. */
         u8   linkStatus;                  /** Packed anim status link target. See `s_ModelAnim::status`. */
@@ -1237,7 +1237,7 @@ namespace Silent::Game
 
     typedef struct
     {
-        VECTOR3 position_0;
+        VECTOR3 position;
         s16     field_C;
         s16     field_E;
         s16     field_10;
@@ -1247,8 +1247,8 @@ namespace Silent::Game
 
     typedef struct _CharaDamage
     {
-        VECTOR3 position_0;
-        q19_12  amount_C;
+        VECTOR3 position;
+        q19_12  amount;
     } s_CharaDamage;
 
     typedef union
@@ -1661,19 +1661,19 @@ namespace Silent::Game
     typedef struct _PropertiesTwinfeeler
     {
         u_Property    field_E8;
-        s_CharaDamage field_EC;
-        q19_12        field_FC; // Timer?
-        s32           field_100;
-        s32           field_104;
-        s32           field_108;
-        s32           field_10C;
-        s16           field_110;
-        s8            unk_112[2];
-        u32           field_114; // Flags.
-        u16           field_118;
-        s8            unk_11C[2];
-        s32           field_120;
-        u_Property    properties_124[2];
+        s_CharaDamage damage;
+        q19_12        digTimer;
+        q19_12        spawnPositionX; /** @unused */
+        q19_12        spawnPositionZ; /** @unused */
+        q19_12        prevMoveSpeed;
+        q19_12        accumulatedDamage;
+        s16           field_110; /** @unused */
+        s8            __pad_112[2];
+        u32           flags;     /** `e_TwinfeelerFlags` */
+        u16           field_118; /** `bool` */
+        s8            __pad_11C[2];
+        s32           field_120; /** @unused */
+        s8            __pad_124[8];
     } s_PropertiesTwinfeeler;
 
     /** Offsets for translation? */
@@ -2324,10 +2324,10 @@ namespace Silent::Game
      * @param chara Character to update.
      */
     #define Chara_DamageClear(chara)                  \
-        (chara)->damage.amount_C      = Q12(0.0f); \
-        (chara)->damage.position_0.vz = Q12(0.0f); \
-        (chara)->damage.position_0.vy = Q12(0.0f); \
-        (chara)->damage.position_0.vx = Q12(0.0f)
+        (chara)->damage.amount      = Q12(0.0f); \
+        (chara)->damage.position.vz = Q12(0.0f); \
+        (chara)->damage.position.vy = Q12(0.0f); \
+        (chara)->damage.position.vx = Q12(0.0f)
 
     /** @brief Sets a character's received attack type.
      *
