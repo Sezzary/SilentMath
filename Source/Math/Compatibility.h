@@ -44,6 +44,13 @@ namespace Silent::Math
         Vector3 ToVector3(float qScale) const;
     };
 
+    /** @brief World position and rotation. */
+    struct s_Pose
+    {
+        VECTOR3  position; /** Q19.12 */
+        SVECTOR3 rotation; /** Q19.12 */
+    };
+
     /** @brief 2D screen-space line. */
     struct s_Line2d
     {

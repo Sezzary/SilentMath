@@ -35,7 +35,7 @@ namespace Silent::Game
             //.animFile1_8        = (s_AnmHeader*)FS_BUFFER_0,
             .animBufferSize1_C  = 0x2E630,
             .animBufferSize2_10 = 0x2E630,
-            .npcCoords       = nullptr
+            .npcBoneCoords       = nullptr
         }, {}, {}, {}
     };
 
@@ -132,7 +132,7 @@ namespace Silent::Game
             }
         }
 
-        initAnimDataInfo->npcCoords       = &g_SysWork.npcCoords[0];
+        initAnimDataInfo->npcBoneCoords       = &g_SysWork.npcBoneCoords[0];
         initAnimDataInfo->charaId1_1         = Chara_None;
         initAnimDataInfo->animFile1_8        = nullptr;
         initAnimDataInfo->animBufferSize2_10 = 0;
@@ -174,16 +174,16 @@ namespace Silent::Game
         {
             if (idx == 1)
             {
-                localCoord = &g_SysWork.npcCoords[0];
+                localCoord = &g_SysWork.npcBoneCoords[0];
             }
             else if (idx >= 2)
             {
                 idx0        = g_CharaTypeAnimInfo[idx - 1].animFile1_8->boneCount;
-                localCoord  = g_CharaTypeAnimInfo[idx - 1].npcCoords;
+                localCoord  = g_CharaTypeAnimInfo[idx - 1].npcBoneCoords;
                 localCoord += idx0 + 1;
 
-                // Check for end of `g_SysWork.npcCoords` array.
-                if ((&localCoord[animFile->boneCount] + 1) >= &g_SysWork.npcCoords[NPC_BONE_COUNT_MAX])
+                // Check for end of `g_SysWork.npcBoneCoords` array.
+                if ((&localCoord[animFile->boneCount] + 1) >= &g_SysWork.npcBoneCoords[NPC_BONE_COUNT_MAX])
                 {
                     localCoord = g_MapOverlayHeader.field_28;
                 }
@@ -193,7 +193,7 @@ namespace Silent::Game
         animDataInfo->charaId1_1         = charaId;
         animDataInfo->animFile1_8        = animFile;
         animDataInfo->animBufferSize2_10 = Fs_GetFileSectorAlignedSize(CHARA_FILE_INFOS[charaId].animFileIdx);
-        animDataInfo->npcCoords       = localCoord;
+        animDataInfo->npcBoneCoords       = localCoord;
 
         //Anim_BoneInit(animFile, localCoord);
 
@@ -210,17 +210,17 @@ namespace Silent::Game
         {
             if (g_MapOverlayHeader.charaGroupIds_248[i] != Chara_None)
             {
-                coord    = g_CharaTypeAnimInfo[i].npcCoords;
+                coord    = g_CharaTypeAnimInfo[i].npcBoneCoords;
                 animFile = g_CharaTypeAnimInfo[i + 1].animFile1_8;
                 coord   += g_CharaTypeAnimInfo[i].animFile1_8->boneCount + 1;
 
-                // Check for end of `g_SysWork.npcCoords` array.
-                if ((&coord[animFile->boneCount] + 1) >= &g_SysWork.npcCoords[NPC_BONE_COUNT_MAX])
+                // Check for end of `g_SysWork.npcBoneCoords` array.
+                if ((&coord[animFile->boneCount] + 1) >= &g_SysWork.npcBoneCoords[NPC_BONE_COUNT_MAX])
                 {
                     coord = g_MapOverlayHeader.field_28;
                 }
 
-                g_CharaTypeAnimInfo[i + 1].npcCoords = coord;
+                g_CharaTypeAnimInfo[i + 1].npcBoneCoords = coord;
                 //Anim_BoneInit(animFile, coord);
             }
         }

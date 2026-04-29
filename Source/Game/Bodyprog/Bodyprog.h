@@ -79,41 +79,48 @@ namespace Silent::Game
     /** @brief Background music track indices. */
     typedef enum _BgmTrackIdx
     {
-        BgmTrackIdx_0 = 0,
-        BgmTrackIdx_1 = 1,
-        BgmTrackIdx_2 = 2,
-        BgmTrackIdx_3 = 3,
-        BgmTrackIdx_4 = 4,
-        BgmTrackIdx_5 = 5,
-        BgmTrackIdx_6 = 6,
-        BgmTrackIdx_7 = 7,
-        BgmTrackIdx_8 = 8,
-        BgmTrackIdx_9 = 9,
-        BgmTrackIdx_10 = 10,
-        BgmTrackIdx_11 = 11,
-        BgmTrackIdx_12 = 12,
-        BgmTrackIdx_13 = 13,
-        BgmTrackIdx_14 = 14,
-        BgmTrackIdx_15 = 15,
-        BgmTrackIdx_16 = 16,
-        BgmTrackIdx_17 = 17,
-        BgmTrackIdx_18 = 18,
-        BgmTrackIdx_19 = 19,
-        BgmTrackIdx_20 = 20,
-        BgmTrackIdx_21 = 21,
-        BgmTrackIdx_22 = 22,
-        BgmTrackIdx_23 = 23,
-        BgmTrackIdx_24 = 24,
-        BgmTrackIdx_25 = 25,
-        BgmTrackIdx_26 = 26,
-        BgmTrackIdx_27 = 27,
-        BgmTrackIdx_28 = 28,
-        BgmTrackIdx_29 = 29,
-        BgmTrackIdx_30 = 30,
-        BgmTrackIdx_31 = 31,
-        BgmTrackIdx_32 = 32,
-        BgmTrackIdx_33 = 33,
-        BgmTrackIdx_34 = 34
+        BgmTrackIdx_None = 0,
+        BgmTrackIdx_1    = 1,
+        BgmTrackIdx_2    = 2,
+        BgmTrackIdx_3    = 3,
+        BgmTrackIdx_4    = 4,
+        BgmTrackIdx_5    = 5,
+        BgmTrackIdx_6    = 6,
+        BgmTrackIdx_7    = 7,
+        BgmTrackIdx_8    = 8,
+        BgmTrackIdx_9    = 9,
+        BgmTrackIdx_10   = 10,
+        BgmTrackIdx_11   = 11,
+        BgmTrackIdx_12   = 12,
+        BgmTrackIdx_13   = 13,
+        BgmTrackIdx_14   = 14,
+        BgmTrackIdx_15   = 15,
+        BgmTrackIdx_16   = 16,
+        BgmTrackIdx_17   = 17,
+        BgmTrackIdx_18   = 18,
+        BgmTrackIdx_19   = 19,
+        BgmTrackIdx_20   = 20,
+        BgmTrackIdx_21   = 21,
+        BgmTrackIdx_22   = 22,
+        BgmTrackIdx_23   = 23,
+        BgmTrackIdx_24   = 24,
+        BgmTrackIdx_25   = 25,
+        BgmTrackIdx_26   = 26,
+        BgmTrackIdx_27   = 27,
+        BgmTrackIdx_28   = 28,
+        BgmTrackIdx_29   = 29,
+        BgmTrackIdx_30   = 30,
+        BgmTrackIdx_31   = 31,
+        BgmTrackIdx_32   = 32,
+        BgmTrackIdx_33   = 33,
+        BgmTrackIdx_34   = 34,
+        BgmTrackIdx_35   = 35,
+        BgmTrackIdx_36   = 36,
+        BgmTrackIdx_37   = 37,
+        BgmTrackIdx_38   = 38,
+        BgmTrackIdx_39   = 39,
+        BgmTrackIdx_40   = 40,
+        BgmTrackIdx_41   = 41
     } e_BgmTrackIds;
 
     typedef enum _CollisionFlags
@@ -419,7 +426,7 @@ namespace Silent::Game
     typedef struct
     {
         VECTOR3  position; // Q19.12
-        SVECTOR3 rotation_C; // Q3.12 TODO: Not a rotation? Y position is added to this.
+        SVECTOR3 rotation; // Q3.12 TODO: Not a rotation? Y position is added to this.
         s8       field_12;
     } s_CollisionQuery;
 
@@ -434,9 +441,9 @@ namespace Silent::Game
         q23_8      positionZ_1C;
         s32        field_20;
         s32        field_24;
-        s16        field_28; // } `SVECTOR3`, Q8 rotation? Probably not.
-        s16        field_2A; // }
-        s16        field_2C; // }
+        s16        field_28;      // } `SVECTOR3`, Q8 rotation? Probably not.
+        s16        angleToTarget; // }
+        s16        field_2C;      // }
     } s_func_8006ABC0;
 
     typedef struct
@@ -1007,13 +1014,13 @@ namespace Silent::Game
         s32         queueIdx;
     } s_GlobalLm;
 
-    typedef struct
+    struct s_ModelInfo
     {
         s32            field_0; // Bone flags?
         GsCOORDINATE2* coord;
         s_ModelHeader* modelHdr;
         s32            modelIdx;
-    } s_ModelInfo;
+    };
 
     /** @brief IPD skeleton model bone. */
     typedef struct _Bone
@@ -1063,7 +1070,7 @@ namespace Silent::Game
         s_AnmHeader*   animFile1_8;
         s32            animBufferSize1_C;
         s32            animBufferSize2_10;
-        GsCOORDINATE2* npcCoords;
+        GsCOORDINATE2* npcBoneCoords;
     } s_CharaAnimDataInfo;
 
     /** Related to weapon attacks. Stats, SFX IDs, damange values, etc.? */
@@ -1158,7 +1165,7 @@ namespace Silent::Game
     typedef struct _WorldObjectModel
     {
         s_ModelInfo           modelInfo;
-        s_WorldObjectMetadata metadata_10;
+        s_WorldObjectMetadata metadata;
     } s_WorldObjectModel;
 
     /** @brief Geometry-space world object to draw. */
@@ -1296,7 +1303,7 @@ namespace Silent::Game
         s32           screenBrightness_8;
         s32           fogNearDistance_C;
         q23_8         fogFarDistance_10; // "DrawDistanmce" in SHME, "has no effect when fog is disabled".
-        s32           fogDepthShift_14;   // "FogThing1" from SHME. Affects the distance where fog begins.
+        s32           fogDepthShift_14;  // "FogThing1" from SHME. Affects the distance where fog begins.
         s32           fogIntensity_18;   // "FogThing2" from SHME. Affects the distance where fog begins.
         CVECTOR       fogColor_1C;
         s32           field_20;        // Map lighting.
@@ -1306,12 +1313,12 @@ namespace Silent::Game
         s8            unk_27;
         CVECTOR       worldTintColor_28;
         MATRIX        field_2C;
-        s32           field_4C;
-        s16           field_50;
-        s32           field_54;
-        SVECTOR       field_58; // Rotation.
-        VECTOR3       field_60;
-        SVECTOR       field_6C; // Player current angles?
+        s32           field_4C; // Light intensity in Q4?
+        q3_12         lensFlareIntensity;
+        q19_12        lightIntensity;
+        SVECTOR       lightRotation; /** Q3.12 */
+        VECTOR3       lightPosition; /** Q19.12 */
+        SVECTOR       field_6C;      // Player current angles related to light?
         SVECTOR       field_74;
         SVECTOR       field_7C;
         s_WorldEnvWork_84 field_84[3];
@@ -1336,7 +1343,7 @@ namespace Silent::Game
         s8      unk_4[4];
         s16     field_8;
         s16     field_A;
-        VECTOR3 field_C;
+        VECTOR3 field_C; // Q19.12
         s8      unk_18[4];
         s32     field_1C;
         s32     field_20;
@@ -1522,7 +1529,7 @@ namespace Silent::Game
         s8                     field_8;
         s32                    (*func_C)();
         void                   (*bgmEvent_10)(bool);
-        s8                     bgmIdx_14;           // Flags? Music related.
+        s8                     bgmIdx_14;
         u8                     ambientAudioIdx_15; // Ambient file index from `g_AmbientVabTaskLoadCmds`.
         s8                     field_16;           // Set ambient tint and render distance.
                                                 // A value of 3 sets the map to night.
@@ -1535,10 +1542,10 @@ namespace Silent::Game
         s_MapPoint2d*          mapPointsOfInterest_1C;
         void                   (**mapEventFuncs_20)(); /** Points to array of event functions. */
         s_EventData*           mapEvents_24;
-        GsCOORDINATE2*         field_28;
+        GsCOORDINATE2*         field_28; // Bone coords of some kind.
         u8*                    loadableItems_2C;
         const char**           mapMessages_30; // Array of strings.
-        s_AnimInfo*            harryMapAnimInfos_34;   // Map-specific anim infos for Harry (for anims 38+).
+        s_AnimInfo*            harryMapAnimInfos_34; /** Map-specific anim infos for Harry (for anims 38+). */
         s_UnkStruct3_Mo*       field_38; // Array of 40?
         void                   (*worldObjectsInit_3C)(); // func(?).
         void                   (*worldObjectsUpdate_40)();
@@ -1574,21 +1581,21 @@ namespace Silent::Game
         void                   (*func_B8)(s_SubCharacter* chara, s_PlayerExtra* extra, GsCOORDINATE2* coords);
         void                   (*func_BC)(s_SubCharacter* chara, s_PlayerExtra* extra, GsCOORDINATE2* coords);
         void                   (*func_C0)(); // func(?).
-        void                   (*playerMatchArmAnimDisable_C4)(); // func(?).
+        void                   (*playerMatchArmAnimDisable_C4)();
         void                   (*playerControlFreeze_C8)();
         void                   (*playerControlUnfreeze_CC)(bool);
         s32                    (*func_D0)(s32 playerExtraState, VECTOR3* vec, q3_12 angle, s32 vecCount); // 0x800C964C
         s32                    (*func_D4)(s32);                  // Assumed return type.
         void                   (*func_D8)();                     // Assumed return type.
         void                   (*playerAnimLock_DC)();
-        void                   (*func_E0)(); // func(?).
+        void                   (*playerAnimIsLocked_E0)();
         s32                    (*playerAnimUnlock_E4)(s_SubCharacter*, s32); // Assumed return type.
         s64                    (*func_E8)(s_SubCharacter*);      // Is it really `s64`???
         s32                    (*playerMoveDistClear)();
-        void                   (*func_F0)(); // func(?).
+        void                   (*playerMoveDistClear_F0)();
         void                   (*playerFallBackward_F4)();
         void                   (*func_F8)(); // func(?).
-        void                   (*playerDamageFeetFront_FC)(); // func(?).
+        void                   (*playerDamageFeetFront_FC)();
         void                   (*func_100)(); // func(?).
         void                   (*func_104)(); // func(?).
         s32                    (*func_108)();
@@ -1714,22 +1721,17 @@ namespace Silent::Game
         } u;
     } s_GteScratchData2;
 
+    // Something for inventory items.
     typedef struct
     {
-        s16   field_0;
-        s16   field_2; // Move dist?
-        q3_12 field_4; // Angle.
-        s16   field_6;
-        s16   field_8;
-        s16   unk_A;
-        s16   field_C;
-        s16   field_E;
-        s16   field_10;
-        s16   unk_12;
-        s16   field_14;
-        s16   field_16;
-        s16   field_18;
-        s16   unk_1A;
+        q3_12   positionY;
+        q3_12   field_2; // Move dist?
+        q3_12   field_4; // Angle.
+        s16     field_6;
+        s16     field_8;
+        s8      __pad_A[2];
+        SVECTOR field_C;  // Q3.12 | Offset?
+        SVECTOR position; /** Q3.12 */
     } s_800AE204;
 
     typedef struct
@@ -1737,11 +1739,11 @@ namespace Silent::Game
         s_800AE204* ptr_0;
         u8          count_4;
         u8          unk_5;
-        s16         field_6;
-        u8          field_8;
-        u8          field_9;
-        u8          field_A;
-        u8          field_B;
+        q7_8        field_6;
+        u8          field_8; // UV0
+        u8          field_9; // UV1
+        u8          field_A; // UV2
+        u8          field_B; // UV3
     } s_800AE4DC;
 
     typedef struct

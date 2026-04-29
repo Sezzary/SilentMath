@@ -55,28 +55,28 @@ namespace Silent::Game
     // TODO: Name might be wrong, but these have something to do with held item meshes.
     // First index is the mesh variant, second is the container of meshes (not bone index in skeleton)?
     // Data addresses are hardcoded.
-    /** @brief Packs a model bone containing ???
+    /** @brief Packs a model bone containing a mesh variant index and ??? in a single value.
      *
-     * @param idx0 ???
+     * @param variantIdx Mesh variant index.
      * @param idx1 ???
-     * @return Packed model bone containing ???
+     * @return Packed model bone containing a mesh variant index and ???
      */
-    #define MODEL_BONE(idx0, idx1) \
-        (s16)((idx0) | ((idx1) << 4))
+    #define MODEL_BONE(variantIdx, idx1) \
+        (s16)((variantIdx) | ((idx1) << 4))
 
-    // TODO
-    /** @brief Retrieves ???
-     *
-     * @param modelBone Packed model bone containing ???
-     * @return Unknown first index.
-     */
-    #define MODEL_BONE_IDX_0_GET(modelBone) \
+    /** @brief Retrieves the bone mesh variant index from a packed model bone.
+
+    *
+    * @param modelBone Packed model bone containing  a mesh variant index and ???
+    * @return Bone mesh variant index.
+    */
+    #define MODEL_BONE_MESH_VARIANT_IDX_GET(modelBone) \
         ((modelBone) & 0xF)
 
-    // TODO
+
     /** @brief Retrieves ???
      *
-     * @param modelBone Packed model bone containing ???
+     * @param modelBone Packed model bone containing a mesh variant index and ???
      * @return Unknown second index.
      */
     #define MODEL_BONE_IDX_1_GET(modelBone) \
@@ -1042,30 +1042,30 @@ namespace Silent::Game
         s_InventoryItem items_0[INVENTORY_ITEM_COUNT_MAX];
         s8              field_A0;
         s8              field_A1[3];
-        s8              mapOverlayId_A4;          /** `e_MapIdx` Index to overlay `.BIN` files. */
-        s8              mapRoomIdx_A5;            /** Index to local map geometry `.IPD` files. */
+        s8              mapOverlayId_A4;            /** `e_MapIdx` Index to overlay `.BIN` files. */
+        s8              mapRoomIdx_A5;              /** Index to local map geometry `.IPD` files. */
         s16             savegameCount_A6;
-        s8              locationId_A8;            /** `e_SaveLocationId` */
-        u8              paperMapIdx_A9;           /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */
-        u8              equippedWeapon_AA;        /** `e_InventoryItemId` | Affects the visible player weapon model. */
-        u8              inventorySlotCount_AB;    /** Item slots. */
-        u32             itemToggleFlags_AC;       /** `e_ItemToggleFlags` */
-        s32             ovlEnemyStates[45];       /** Flags indicating the enemy states in a given overlay.
-                                                * By default, they are all set to 1. As soon as the player fully kills them,
-                                                * they are set to 0 based on a currently unknown index value.
-                                                */
-        s32             hasMapsFlags_164;         // See Sparagas' `HasMapsFlags` struct for details of every bit.
-        u32             eventFlags_168[27];       // Can be accessed through `Savegame_EventFlagGet` / `Savegame_EventFlagSet`, only tested a few, but seems all are related to events and pick-up flags, grouped by location and not item types.
-        s32             mapMarkingFlags_1D4[25];  // See Sparagas' `MapMarkingsFlags` struct for details of every bit.
-        q19_12          healthSaturation_238;     /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
+        s8              locationId_A8;              /** `e_SaveLocationId` */
+        u8              paperMapIdx_A9;             /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */
+        u8              equippedWeapon_AA;          /** `e_InventoryItemId` | Affects the visible player weapon model. */
+        u8              inventorySlotCount_AB;      /** Item slots. */
+        u32             itemToggleFlags_AC;         /** `e_ItemToggleFlags` */
+        s32             ovlEnemyStates[CharaCount]; /** Flags indicating the enemy states in a given overlay.
+                                                     * By default, they are all set to 1. As soon as the player fully kills them,
+                                                     * they are set to 0 based on a currently unknown index value.
+                                                     */
+        s32             hasMapsFlags_164;           // See Sparagas' `HasMapsFlags` struct for details of every bit.
+        u32             eventFlags_168[27];         // Can be accessed through `Savegame_EventFlagGet` / `Savegame_EventFlagSet`, only tested a few, but seems all are related to events and pick-up flags, grouped by location and not item types.
+        s32             mapMarkingFlags_1D4[25];    // See Sparagas' `MapMarkingsFlags` struct for details of every bit.
+        q19_12          healthSaturation_238;       /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
         s16             pickedUpItemCount_23C;
         s8              field_23E;
         u8              field_23F;
-        q19_12          playerHealth_240;         /** Default: `Q12(100.0f)` */
+        q19_12          playerHealth_240;           /** Default: `Q12(100.0f)` */
         q19_12          playerPositionX_244;
-        q3_12           playerRotationY_248;      /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */
-        u8              clearGameCount_24A;       /** Range [0, 99] */
-        u8              clearGameEndings_24B;     /** `e_GameEndingFlags` */
+        q3_12           playerRotationY_248;        /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */
+        u8              clearGameCount_24A;         /** Range [0, 99] */
+        u8              clearGameEndings_24B;       /** `e_GameEndingFlags` */
         q19_12          playerPositionZ_24C;
         q20_12          gameplayTimer_250;
         q20_12          runDistance_254;
@@ -1365,7 +1365,7 @@ namespace Silent::Game
     // TODO: Needs revision. Copy of Dahlia properties.
     typedef struct _PropertiesCheryl
     {
-        s32        controlState;
+        s32        controlState; /** `e_CherylControl` */
         u_Property properties_EC;
         u_Property properties_F0;
         u_Property properties_F4;
@@ -1454,19 +1454,19 @@ namespace Silent::Game
         q3_12      field_F2;
         q19_12     targetPositionX_F4;
         q19_12     targetPositionZ_F8;
-        q3_12      angle_FC;
+        q3_12      angleToTarget;
         q3_12      field_FE;
         u16        relKeyframeIdx_100;
         s8         unk_102[2];
         q19_12     timer_104;
         u32        field_108;
-        q3_12      timer_10C;
-        u8         field_10E;
-        u8         field_10F;
-        u8         field_110;
-        u8         field_111;
-        s8         unk_112[2];
-        s16        field_114;
+        q3_12      timer_10C; // SFX timer?
+        u8         field_10E; // } Sound states?
+        u8         field_10F; // }
+        u8         field_110; /** `bool` | Play SFX. */
+        u8         field_111; /** `bool` | Play SFX. */
+        s8         __pad_112[2];
+        q3_12      field_114; // Move speed coefficient?
     } e_PropertiesGroaner;
 
     /** @brief Hanged Scratcher character properties. */
@@ -1502,6 +1502,26 @@ namespace Silent::Game
         q19_12 bossFightTimer_F4;
         s8     unk_F8[48];
     } s_PropertiesIncubus;
+
+    /** @brief Kaufmann character properties. TODO: Largely a copy of Dahlia's for now. */
+    typedef struct _PropertiesKaufmann
+    {
+        /* 0x0   */ s32        controlState; /** `e_KaufmannControl` */
+        /* 0xEC  */ u_Property properties_EC;
+        /* 0xF0  */ u_Property properties_F0;
+        /* 0xF4  */ u_Property properties_F4;
+        /* 0xF8  */ s32        resetStateIdx0_F8;
+        /* 0xFC  */ s32        field_FC;
+        /* 0x100 */ s32        field_100;
+        /* 0x104 */ u_Property properties_104;
+        /* 0x108 */ u_Property properties_108;
+        /* 0x10C */ u_Property properties_10C;
+        /* 0x110 */ VECTOR3    field_110;
+        /* 0x11C */ s32        flags_11C;
+        /* 0x120 */ s32        field_120;
+        /* 0x124 */ s16        field_124;
+        /* 0x126 */ q3_12      moveSpeed;
+    } s_PropertiesKaufmann;
 
     /** @brief Larval Stalker character properties. */
     typedef struct _PropertiesLarvalStalker
@@ -1638,15 +1658,15 @@ namespace Silent::Game
     /** @brief Stalker character properties. */
     typedef struct _PropertiesStalker
     {
-        s16    flags_E8; /** `e_StalkerFlags` */
+        s16    flags; /** `e_StalkerFlags` */
         q3_12  offset_EC;
         q3_12  offset_EE;
-        q19_12 targetPositionX_F0;
-        q19_12 targetPositionZ_F4;
+        q19_12 targetPositionX;
+        q19_12 targetPositionZ;
         q19_12 timer_F8;
         s16    keyframeIdx_FC;    // Or anim status?? Seems to be used as both.
         s16    relKeyframeIdx_FE; // Unsure.
-        q3_12  targetHeadingAngle_100;
+        q3_12  targetHeadingAngle;
         s16    sfxId_102;
         q19_12 relAnimTime_104;
         q4_12  timer_108;
@@ -1660,7 +1680,10 @@ namespace Silent::Game
     /** @brief Twinfeeler character properties. */
     typedef struct _PropertiesTwinfeeler
     {
+        // TODO: Weird `field_E8` access.
         u_Property    field_E8;
+        //q3_12         sfxTimer_E8;
+        //q4_12         field_EA;
         s_CharaDamage damage;
         q19_12        digTimer;
         q19_12        spawnPositionX; /** @unused */
@@ -1671,7 +1694,7 @@ namespace Silent::Game
         s8            __pad_112[2];
         u32           flags;     /** `e_TwinfeelerFlags` */
         u16           field_118; /** `bool` */
-        s8            __pad_11C[2];
+        s8            __pad_11C[2]; // TODO: Should be `s32 prevHealth`.
         s32           field_120; /** @unused */
         s8            __pad_124[8];
     } s_PropertiesTwinfeeler;
@@ -1722,22 +1745,21 @@ namespace Silent::Game
         q3_12 field_2;
     } s_SubCharacter_D4;
 
+    /** @brief Character info. */
     struct s_SubCharacter
     {
         s_Model           model;          // In player: Manage the half lower part of Harry's body animations (legs and feet).
         VECTOR3           position;       /** Q19.12 */
         SVECTOR3          rotation;       /** Q3.12 */
-        q3_12             field_2A;       // Angle related to `rotation`, unknown purpose.
-        SVECTOR3          rotationSpeed;  /** Q3.12 | Range: `[Q12_ANGLE(-157.5f), Q12_ANGLE(157.5f)]`. */
-        q3_12             field_32;       // Related to `rotationSpeed`, unknown purpose.
+        q3_12             angleToTarget;
+        SVECTOR3          rotationSpeed;              /** Q3.12 | Rotation speed for `rotation`. */
+        q3_12             angleToTargetRotationSpeed; /** Rotation speed for `angleToTarget`. */
         q19_12            fallSpeed;
         q19_12            moveSpeed;
         q3_12             headingAngle;
         s16               flags;          /** `e_CharaFlags` */
         s8                field_40;       // In player: Index of the NPC attacking the player.
-                                          // In NPCs: Unknown.
-                                          // Possibly `Game_NpcRoomInitSpawn` may have the answer, indicating
-                                          // it's used to indicate the NPC index in `s_Savegame::ovlEnemyStates`.
+                                          // In NPCs: Unknown. `Game_NpcRoomInitSpawn` sugests it indicates the NPC index in `s_Savegame::ovlEnemyStates`.
         s8                attackReceived; // Packed weapon attack indicating what attack has been performed to the character. See `WEAPON_ATTACK`.
         s_SubCharacter_44 field_44;
         q19_12            health;
@@ -1772,6 +1794,7 @@ namespace Silent::Game
             e_PropertiesGroaner         groaner;
             s_PropertiesHangedScratcher hangedScratcher;
             s_PropertiesIncubus         incubus;
+            s_PropertiesKaufmann        kaufmann;
             s_PropertiesLarvalStalker   larvalStalker;
             s_PropertiesMonsterCybil    monsterCybil;
             s_PropertiesPuppetNurse     puppetNurse;
@@ -1784,6 +1807,7 @@ namespace Silent::Game
         } properties;
     };
 
+    /** @brief Extra player character info. */
     struct s_PlayerExtra
     {
         s_Model           model;             /** Manages upper half body's animations (torso, arms, head). */
@@ -1828,6 +1852,7 @@ namespace Silent::Game
         } s_field_0;
     } u_Unk0;
 
+    /** @brief Map effects info. */
     struct s_MapEffectsInfo
     {
         u_Unk0  field_0;
@@ -1865,7 +1890,7 @@ namespace Silent::Game
         u8              field_14;
         bool            isFlashlightOn_15;
         bool            isFlashlightUnavailable_16;
-        q3_12           flashlightIntensity_18;     // Alpha.
+        q3_12           flashlightIntensity_18;
         u16             field_1A;
         s_StructUnk3    field_1C[2];
         s_StructUnk3    field_84[2];
@@ -1889,9 +1914,9 @@ namespace Silent::Game
         s_PlayerWork   playerWork;
         s_SubCharacter npcs[NPC_COUNT_MAX];
         GsCOORDINATE2  playerBoneCoords[HarryBone_Count];
-        GsCOORDINATE2  unkCoords_E30[5];              // Might be part of previous array for 5 extra coords which go unused.
-        GsCOORDINATE2  npcCoords[NPC_BONE_COUNT_MAX]; // Dynamic coord buffer? 10 coords per NPC (given max of 6 NPCs).
-        s8             npcFlagsId;                    // NPC ID for `npcFlags`. Not an index, starts at 1.
+        GsCOORDINATE2  unkCoords_E30[5];                  // Might be part of previous array for 5 extra coords which go unused.
+        GsCOORDINATE2  npcBoneCoords[NPC_BONE_COUNT_MAX]; // Dynamic coord buffer? 10 coords per NPC (given max of 6 NPCs).
+        s8             npcFlagsId;                        // 1-based NPC ID for `npcFlags`.
         s8             loadingScreenIdx;
         s8             field_2282;                         /** `e_EventDataUnkState` */
         s8             sfxPairIdx_2283;                    /** `e_SfxPairIdx` | Index into `SFX_PAIRS`. */
