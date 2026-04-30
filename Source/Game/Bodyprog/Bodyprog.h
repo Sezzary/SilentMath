@@ -480,66 +480,6 @@ namespace Silent::Game
         s16                  field_36;
     } s_CollisionState_44;
 
-    typedef struct
-    {
-        q23_8 field_0; // X position.                } Q8 according to `func_8006EE0C`?
-        q23_8 field_4; // Y position.                }
-        q7_8  field_8; // Z position, but why `s16`? }
-        q7_8  field_A; // Y??
-        q7_8  field_C; // Some kind of bound or threshold?
-        s16   field_E;
-    } s_RayState_6C; // Unknown size;
-
-    typedef struct
-    {
-        s16 field_0;
-        s16 field_2;
-    } s_RayState_8C;
-
-    /** @brief State for an in-progress ray trace. Contains pointers to active characters among other things. */
-    typedef struct
-    {
-        s32              field_0;
-        s16              field_4; // Collision flags.
-        s16              field_6;
-        q7_8             field_8; // Distance X?
-        s8               unk_A[2];
-        q23_8            field_C;  // } Q23.8 `VECTOR3`
-        q23_8            field_10; // }
-        q23_8            field_14; // }
-        s8               unk_18[4];
-        q7_8             field_1C; // Distance Z?
-        s8               unk_1E[2];
-        s_SubCharacter*  field_20;
-        s16              field_24; // X } Q19.12
-        s16              field_26; // Z }
-        s32              field_28;
-        VECTOR3          field_2C; // Q23.8
-        s8               unk_38[4];
-        s32              field_3C; // X  } Q23.8 `VECTOR3`?
-        s32              field_40; // Y? }
-        s32              field_44; // Z  }
-        s8               unk_48[4];
-        q7_8             field_4C; // X?
-        q7_8             field_4E; // Z?
-        SVECTOR          field_50; // Q23.8
-        u16              field_58;
-        s16              field_5A;
-        s16              field_5C;
-        s16              field_5E;
-        s16              field_60;
-        s8               unk_62[2];
-        s_SubCharacter** characters_64; // Active characters?
-        s32              characterCount_68;
-        s_RayState_6C    field_6C;
-        s32              field_7C;
-        s32              field_80;
-        u16              field_84;
-        u8               unk_86[2];
-        s32              field_88;
-        s_RayState_8C    field_8C[1]; // Unknown size.
-    } s_RayState;
-
     // Function from lib_unk
     typedef struct _func_8009ECCC
     {
@@ -808,7 +748,7 @@ namespace Silent::Game
 
     typedef struct _IpdCollisionData
     {
-        s32                    positionX_0;
+        s32                    positionX;
         s32                    positionZ_4;
         u32                    field_8_0  : 8;
         u32                    field_8_8  : 8;
@@ -818,7 +758,7 @@ namespace Silent::Game
         s_IpdCollisionData_10* ptr_10;
         s_IpdCollisionData_14* ptr_14;
         s_IpdCollisionData_18* ptr_18;
-        s16                    field_1C;
+        q7_8                   field_1C;
         u8                     field_1E; // } Used as multipliers for `field_1C` in `func_8006B004`.
         u8                     field_1F; // }
         s_IpdCollisionData_20* ptr_20;
@@ -827,7 +767,7 @@ namespace Silent::Game
         u8*                    ptr_28; // Accessed as array of indices into `field_34` by `func_8006E53C`.
         void*                  ptr_2C;
         u8                     field_30;
-        u8                     unk_31[3];
+        s8                     __pad_31[3];
         u8                     field_34[256];
     } s_IpdCollisionData;
 
@@ -1148,7 +1088,7 @@ namespace Silent::Game
     {
         s16                plmFileIdx_0;
         char               tag_2[4];
-        u8                 flags_6; /** `e_MapFlags` */
+        u8                 spawnFlags; /** `e_MapFlags` */
         const s_WaterZone* waterZones_8;
         const s_SpeedZone* speedZones_C;
     };
@@ -1172,13 +1112,13 @@ namespace Silent::Game
     typedef struct _WorldObject
     {
         s_WorldObjectModel* model;
-        s32                 positionX_4 : 18; /** Q9.8 */
-        s32                 positionY_4 : 14; /** Q5.8 */
-        s32                 positionZ_8 : 18; /** Q9.8 */
-        s32                 __pad_8_18  : 14;
-        s32                 rotationX_C : 10; /** Q0.10 */
-        s32                 rotationY_C : 12; /** Q0.12 */
-        s32                 rotationZ_C : 10; /** Q0.10 */
+        q23_8               positionX  : 18;
+        q23_8               positionY  : 14;
+        q23_8               positionZ : 18;
+        s32                 __pad_8_18 : 14;
+        q21_10              rotationX  : 10;
+        q19_12              rotationY  : 12;
+        q21_10              rotationZ  : 10;
     } s_WorldObject;
 
     /** @brief World space trigger zone. */
@@ -1429,17 +1369,15 @@ namespace Silent::Game
     /** @brief Chracter spawn info. */
     struct s_SpawnInfo
     {
-        q19_12 positionX_0;
-
-        s8     charaId_4;                 /** `e_CharacterId` */
-        u8     rotationY_5;               /** Degrees in Q7.8, range [0, 256]. */
-        s8     flags_6;                   /** Copied to `stateStep` in `s_Model`, with `controlState = 0`. */
-        s32    gameDifficultyMin_7_0 : 4; /** `e_GameDifficulty` | Minimum difficulty required for successful spawn. */
-
-        q19_12 positionZ_8;
+        q19_12 positionX;
+        s8     characterId; /** `e_CharacterId` */
+        q0_8   rotationY;
+        s8     spawnFlags;            /** `e_SpawnFlags` | Copied to `stateStep` in `s_Model`, with `controlState = 0`. */
+        s32    gameDifficultyMin : 4; /** `e_GameDifficulty` | Minimum difficulty required for successful spawn. */
+        q19_12 positionZ;
     };
 
-    /** Special map-specific Harry anim data. */
+    /** @brief Special map-specific Harry anim data. */
     typedef struct
     {
         s16   status; /** Packed anim status. See `s_ModelAnim::status`. */
@@ -1634,8 +1572,8 @@ namespace Silent::Game
         s32*                   data_18C;
         s32*                   data_190;
         void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharacterId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
-        s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::charaId_4 == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
-        s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
+        s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::characterId == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
+        s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `spawnFlags == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
         VC_ROAD_DATA           cameraPaths_3CC[100];
         s_TriggerZone          triggerZones_D2C[200];
     };
@@ -1652,17 +1590,77 @@ namespace Silent::Game
         u8 presetIdx2_1;
     } s_MapEffectsPresetIdxs;
 
-    /** @brief Line of sight data for finished ray trace. TODO: Could rename to `s_Los` to keep "ray" as a generic math term? */
     typedef struct
     {
-        s8              hasHit_0; /** `bool` */
+        q23_8 field_0; // X position.                } Q8 according to `func_8006EE0C`?
+        q23_8 field_4; // Y position.                }
+        q7_8  field_8; // Z position, but why `s16`? }
+        q7_8  field_A; // Y??
+        q7_8  field_C; // Some kind of bound or threshold?
+        s16   field_E;
+    } s_RayState_6C; // Unknown size;
+
+    typedef struct
+    {
+        s16 field_0;
+        s16 field_2;
+    } s_RayState_8C;
+
+    /** @brief State for an in-progress ray trace. Contains pointers to active characters among other things. */
+    typedef struct
+    {
+        s32              field_0;
+        s16              field_4; // Collision flags.
+        s16              field_6;
+        q7_8             field_8; // Hit distance? `SHRT_MAX` if no valid hit.
+        s8               unk_A[2];
+        q19_12           field_C;  // } Q19.12 `VECTOR3`
+        q19_12           field_10; // }
+        q19_12           field_14; // }
+        s8               unk_18[4];
+        q7_8             field_1C; // Distance Z?
+        s8               unk_1E[2];
+        s_SubCharacter*  field_20;
+        s16              field_24; // X } Q19.12
+        s16              field_26; // Z }
+        s32              field_28;
+        VECTOR3          field_2C; // Q23.8
+        s8               unk_38[4];
+        s32              field_3C; // X  } Q23.8 `VECTOR3`?
+        s32              field_40; // Y? }
+        s32              field_44; // Z  }
+        s8               unk_48[4];
+        q7_8             field_4C; // X?
+        q7_8             field_4E; // Z?
+        SVECTOR          field_50; // Q23.8
+        u16              field_58;
+        s16              field_5A;
+        s16              field_5C; // 
+        s16              field_5E;
+        s16              field_60;
+        s8               unk_62[2];
+        s_SubCharacter** characters_64; // Active characters?
+        s32              characterCount_68;
+        s_RayState_6C    field_6C;
+        s32              field_7C;
+        s32              field_80;
+        u16              field_84;
+        u8               unk_86[2];
+        s32              field_88;
+        s_RayState_8C    field_8C[1]; // Unknown size.
+    } s_RayState;
+
+    /** @brief Ray trace line of sight info. */
+    struct s_RayTrace
+    {
+        s8              hasHit; /** `bool` */
         u8              field_1;
-        VECTOR3         field_4;  // Q19.12
-        s_SubCharacter* chara_10;
+        VECTOR3         target; /** Q19.12 */
+        s_SubCharacter* character;
         q19_12          field_14; // Hit distance X?
         q19_12          field_18; // Hit distance Z?
-        q7_8            field_1C; // Angle.
-    } s_RayData;
+        q3_12           field_1C; // Angle? Counter??
+    };
 
     struct s_CollisionResult
     {
@@ -2447,7 +2445,7 @@ namespace Silent::Game
 
     extern VECTOR3 D_800C47E8;
 
-    extern s_RayData D_800C47F8;
+    extern s_RayTrace D_800C47F8;
 
     extern s_800C4818 D_800C4818;
 
