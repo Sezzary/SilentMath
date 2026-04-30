@@ -423,16 +423,16 @@ namespace Silent::Game
         s8     field_8;  // Count of something, maybe valid ground at probed points around center? Set to 0, 7, or 12.
     } s_Collision;
 
-    typedef struct
+    struct s_CollisionQuery
     {
-        VECTOR3  position; // Q19.12
-        SVECTOR3 rotation; // Q3.12 TODO: Not a rotation? Y position is added to this.
-        s8       field_12;
-    } s_CollisionQuery;
+        VECTOR3  position;       // Q19.12
+        SVECTOR3 rotation;       // Q3.12 TODO: Not a rotation? Y position is added to this.
+        s8       collisionState; /** `e_CharaCollisionState` */
+    };
 
     typedef struct
     {
-        s32        field_0;
+        s32        collisionState; /** `e_CharaCollisionState` */
         bool       field_4;
         q19_12     distance_8;
         SVECTOR    offset_C; // Q23.8
@@ -640,16 +640,15 @@ namespace Silent::Game
 
     struct s_MeshHeader
     {
-        u8 primitiveCount_0;
-        u8 vertexCount_1;
-        u8 normalCount_2;
-        u8 unkCount_3;
-
-        s_Primitive* primitives_4;
-        DVECTOR*     verticesXy_8;
-        s16*         verticesZ_C;
-        s_Normal*    normals_10;
-        u8*          unkPtr_14;
+        u8           primitiveCount;
+        u8           vertexCount;
+        u8           normalCount;
+        u8           unkCount;
+        s_Primitive* primitives;
+        DVECTOR*     verticesXy;
+        s16*         verticesZ;
+        s_Normal*    normals;
+        u8*          unkPtr;
     };
 
     struct s_ModelHeader
@@ -665,12 +664,13 @@ namespace Silent::Game
         s_MeshHeader* meshHdrs_C;
     };
 
+    /** @brief Model texture. */
     struct s_Texture
     {
-        s_FsImageDesc imageDesc_0;
-        u_Filename    name_8;
-        u32           queueIdx_10;
-        s8            refCount_14;
+        s_FsImageDesc imageDesc;
+        u_Filename    name;
+        u32           queueIdx;
+        s8            refCount;
     };
 
     struct s_Material

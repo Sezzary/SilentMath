@@ -319,7 +319,8 @@ namespace Silent::Game
         CharaCollisionState_Player = 1,
         CharaCollisionState_2      = 2,
         CharaCollisionState_Npc    = 3,
-        CharaCollisionState_4      = 4
+        CharaCollisionState_4      = 4,
+        CharaCollisionState_5      = 5
     } e_CharaCollisionState;
 
     /** @brief Sync modes used by `DrawSync` and `VSync`. */
@@ -1252,15 +1253,15 @@ namespace Silent::Game
         s16     field_C;
         s16     field_E;
         s16     field_10;
-        s8      field_12;
+        s8      collisionState; /** `e_CharaCollisionState` */
         u8      field_13;
     } s_func_8006CF18;
 
-    typedef struct _CharaDamage
+    struct s_CharaDamage
     {
         VECTOR3 position;
         q19_12  amount;
-    } s_CharaDamage;
+    };
 
     typedef union
     {
@@ -1270,14 +1271,14 @@ namespace Silent::Game
     } u_Property;
 
     /** @brief Temporary struct. */
-    typedef struct _SubCharPropertiesDummy
+    typedef struct _PropsDummy
     {
         u_Property properties_E8[16];
-    } s_PropertiesDummy;
+    } s_PropsDummy;
 
-    // TODO: Re-offset `s_PropertiesPlayer` / `s_PropertiesNpc`.
+    // TODO: Re-offset `s_PropsPlayer` / `s_PropsNpc`.
     // Probably easier to do that after it's merged with rest of code.
-    typedef struct _PropertiesPlayer
+    typedef struct _PropsPlayer
     {
         q19_12        afkTimer_E8; // Increments every tick for 10 seconds before AFK anim starts.
         q19_12        positionY_EC;
@@ -1298,10 +1299,10 @@ namespace Silent::Game
         q3_12         field_122; // Some sort of X angle for the player. Specially used when aiming an enemy.
         q3_12         headingAngle_124;
         q3_12         moveDistance_126; // Used to indicate how much the player should move foward. Seems to be squared.
-    } s_PropertiesPlayer;
+    } s_PropsPlayer;
 
     // TODO: This may be a puppet doctor/nurse specific struct, need to compare with other NPCs.
-    typedef struct _PropertiesNpc
+    typedef struct _PropsNpc
     {
         VECTOR3     position_E8; /** Q19.12 */
         s32         field_F4;
@@ -1320,15 +1321,15 @@ namespace Silent::Game
         s16         field_120;
         s16         field_122;
         s_800D5710* field_124;
-    } s_PropertiesNpc;
+    } s_PropsNpc;
 
     /** @brief Air Screamer or Night Flutter character properties. */
-    typedef struct _PropertiesAirScreamer
+    typedef struct _PropsAirScreamer
     {
         u32     field_E8_0 : 4;
         bool    field_E8_4;
         u32     field_E8_8 : 4;
-        u32     unk_E8_C   : 20;
+        u32     __pad_E8_C : 20;
         s32     field_EC;
         s16     field_F0; // } Maybe 2D offset like in Creeper properties? Must check.
         s16     field_F2; // }
@@ -1339,10 +1340,10 @@ namespace Silent::Game
         s32     flags; /** `e_AirScreamerFlags` */
         q19_12  timer_120;
         q19_12  groundHeight_124;
-    } s_PropertiesAirScreamer;
+    } s_PropsAirScreamer;
 
-    /** @brief Alessa character properties. TODO: Copy of `s_PropertiesDahlia`. Fields not marked "correct" are filler. */
-    typedef struct _PropertiesAlessa
+    /** @brief Alessa character properties. TODO: Copy of `s_PropsDahlia`. Fields not marked "correct" are filler. */
+    typedef struct _PropsAlessa
     {
         s32        stateIdx0;
         u_Property properties_EC;
@@ -1359,10 +1360,10 @@ namespace Silent::Game
         u_Property properties_120;
         s16        field_124;
         q3_12      moveSpeed_126; // Correct
-    } s_PropertiesAlessa;
+    } s_PropsAlessa;
 
     /** @brief Bloodsucker character properties. */
-    typedef struct _PropertiesBloodsucker
+    typedef struct _PropsBloodsucker
     {
         q19_12 timer_E8;
         q19_12 timer_EC;
@@ -1370,11 +1371,11 @@ namespace Silent::Game
         q19_12 timer_F4;
         s8     unused_F8[36]; /** @unused */
         s32    flags_118;     /** `e_BloodsuckerFlags` */
-    } s_PropertiesBloodsucker;
+    } s_PropsBloodsucker;
 
     /** @brief Cheryl character properties. */
     // TODO: Needs revision. Copy of Dahlia properties.
-    typedef struct _PropertiesCheryl
+    typedef struct _PropsCheryl
     {
         s32        controlState; /** `e_CherylControl` */
         u_Property properties_EC;
@@ -1391,10 +1392,10 @@ namespace Silent::Game
         u_Property properties_120;
         q3_12      moveDistance_124;
         q3_12      moveDistance_126;
-    } s_PropertiesCheryl;
+    } s_PropsCheryl;
 
     /** @brief Creeper character properties. */
-    typedef struct _PropertiesCreeper
+    typedef struct _PropsCreeper
     {
         u16    flags; /** `e_CreeperFlags` */
         s8     __pad_EA[2];
@@ -1409,10 +1410,10 @@ namespace Silent::Game
         q3_12  angleToTarget;
         s16    animStatus_10A; // TODO: Purpose unclear.
         q4_12  moveSpeed;
-    } s_PropertiesCreeper;
+    } s_PropsCreeper;
 
     /** @brief Dahlia character properties. */
-    typedef struct _PropertiesDahlia
+    typedef struct _PropsDahlia
     {
         s32        stateIdx0;
         u_Property properties_EC;
@@ -1429,10 +1430,10 @@ namespace Silent::Game
         u_Property properties_120;
         s16        field_124;
         q3_12      moveDistance_126;
-    } s_PropertiesDahlia;
+    } s_PropsDahlia;
 
     /** @brief Floatstinger character properties. */
-    typedef struct _PropertiesFloatstinger
+    typedef struct _PropsFloatstinger
     {
         s16        flags_E8;
         s8         unk_EA[2];
@@ -1453,10 +1454,10 @@ namespace Silent::Game
         s16        field_10C;
         q3_12      field_10E;
         u_Property properties_110[6];
-    } s_PropertiesFloatstinger;
+    } s_PropsFloatstinger;
 
     /** @brief Groaner character properties. */
-    typedef struct _PropertiesGroaner
+    typedef struct _PropsGroaner
     {
         u_Property flags_E8; /** `e_GroanerFlags` TODO: One weird exception where it's accessed as `s32`. */
         q3_12      angle_EC; // Target heading angle?
@@ -1478,10 +1479,10 @@ namespace Silent::Game
         u8         field_111; /** `bool` | Play SFX. */
         s8         __pad_112[2];
         q3_12      field_114; // Move speed coefficient?
-    } e_PropertiesGroaner;
+    } e_PropsGroaner;
 
     /** @brief Hanged Scratcher character properties. */
-    typedef struct _PropertiesHangedScratcher
+    typedef struct _PropsHangedScratcher
     {
         s16    flags_E8; /** `e_HangedScratcherFlags` */
         q4_12  timer_EA;
@@ -1502,20 +1503,20 @@ namespace Silent::Game
         s8     unk_10A[2];
         q4_12  radiusMax_10C; // } Used as `Chara_MoveSpeedUpdate` limit param, TODO: rename?
         q4_12  radiusMin_10E; // }
-    } s_PropertiesHangedScratcher;
+    } s_PropsHangedScratcher;
 
     /** @brief Incubus or Incubator character properties. TODO: Check which one. */
-    typedef struct _PropertiesIncubus
+    typedef struct _PropsIncubus
     {
         q19_12 timer_E8;
         s32    field_EC;
         s32    someState_F0;
         q19_12 bossFightTimer_F4;
         s8     unk_F8[48];
-    } s_PropertiesIncubus;
+    } s_PropsIncubus;
 
     /** @brief Kaufmann character properties. TODO: Largely a copy of Dahlia's for now. */
-    typedef struct _PropertiesKaufmann
+    typedef struct _PropsKaufmann
     {
         /* 0x0   */ s32        controlState; /** `e_KaufmannControl` */
         /* 0xEC  */ u_Property properties_EC;
@@ -1532,10 +1533,10 @@ namespace Silent::Game
         /* 0x120 */ s32        field_120;
         /* 0x124 */ s16        field_124;
         /* 0x126 */ q3_12      moveSpeed;
-    } s_PropertiesKaufmann;
+    } s_PropsKaufmann;
 
     /** @brief Larval Stalker character properties. */
-    typedef struct _PropertiesLarvalStalker
+    typedef struct _PropsLarvalStalker
     {
         u16        flags_E8; /** `e_LarvalStalkerFlags` */
         u8         field_EA;
@@ -1557,10 +1558,10 @@ namespace Silent::Game
         u_Property field_120;
         s16        field_124;
         q3_12      moveDistance_126;
-    } s_PropertiesLarvalStalker;
+    } s_PropsLarvalStalker;
 
     /** @brief Monster Cybil character properties. */
-    typedef struct _PropertiesMonsterCybil
+    typedef struct _PropsMonsterCybil
     {
         s32    field_E8;
         s16    field_EC;
@@ -1588,10 +1589,10 @@ namespace Silent::Game
         s16    field_122;
         s8     unk_124[2];
         s16    field_126;
-    } s_PropertiesMonsterCybil;
+    } s_PropsMonsterCybil;
 
     /** @brief Puppet Nurse or Puppet Doctor character properties. */
-    typedef struct _PropertiesPuppetNurse
+    typedef struct _PropsPuppetNurse
     {
         VECTOR3       position_E8; /** Q19.12 */
         s_CharaDamage damage_F4;
@@ -1608,10 +1609,10 @@ namespace Silent::Game
         s16           field_120;
         u16           flags_122; /** `e_PuppetNurseFlags` */
         s_800D5710*   field_124;
-    } s_PropertiesPuppetNurse;
+    } s_PropsPuppetNurse;
 
     /** @brief Romper character properties. */
-    typedef struct _PropertiesRomper
+    typedef struct _PropsRomper
     {
         s32    flags; /** `e_RomperFlags` */
         q3_12  angle_EC; // Target heading angle?
@@ -1639,10 +1640,10 @@ namespace Silent::Game
         s8     unk_11E[2];
         q19_12 distance_120;
         q19_12 field_124; // Move speed step?
-    } s_PropertiesRomper;
+    } s_PropsRomper;
 
     /** @brief Split Head character properties. */
-    typedef struct _PropertiesSplitHead
+    typedef struct _PropsSplitHead
     {
         u16     flags_E8; /** `e_SplitHeadFlags` */
         u8      field_EA;
@@ -1664,10 +1665,10 @@ namespace Silent::Game
         s8      unk_120[4];
         s16     field_124;
         q3_12   moveDistance_126;
-    } s_PropertiesSplitHead;
+    } s_PropsSplitHead;
 
     /** @brief Stalker character properties. */
-    typedef struct _PropertiesStalker
+    typedef struct _PropsStalker
     {
         s16    flags; /** `e_StalkerFlags` */
         q3_12  offset_EC;
@@ -1686,10 +1687,10 @@ namespace Silent::Game
         q19_12 health_110;
         q3_12  angle_114;
         q4_12  timer_116;
-    } s_PropertiesStalker;
+    } s_PropsStalker;
 
     /** @brief Twinfeeler character properties. */
-    typedef struct _PropertiesTwinfeeler
+    typedef struct _PropsTwinfeeler
     {
         // TODO: Weird `field_E8` access.
         u_Property    field_E8;
@@ -1708,7 +1709,7 @@ namespace Silent::Game
         s8            __pad_11C[2]; // TODO: Should be `s32 prevHealth`.
         s32           field_120; /** @unused */
         s8            __pad_124[8];
-    } s_PropertiesTwinfeeler;
+    } s_PropsTwinfeeler;
 
     typedef struct
     {
@@ -1794,28 +1795,28 @@ namespace Silent::Game
 
         union _u
         {
-            s_PropertiesDummy           dummy;
-            s_PropertiesPlayer          player;
-            s_PropertiesNpc             npc;
+            s_PropsDummy           dummy;
+            s_PropsPlayer          player;
+            s_PropsNpc             npc;
 
-            s_PropertiesAirScreamer     airScreamer;
-            s_PropertiesAlessa          alessa;
-            s_PropertiesBloodsucker     bloodsucker;
-            s_PropertiesCheryl          cheryl;
-            s_PropertiesCreeper         creeper;
-            s_PropertiesDahlia          dahlia;
-            s_PropertiesFloatstinger    floatstinger;
-            e_PropertiesGroaner         groaner;
-            s_PropertiesHangedScratcher hangedScratcher;
-            s_PropertiesIncubus         incubus;
-            s_PropertiesKaufmann        kaufmann;
-            s_PropertiesLarvalStalker   larvalStalker;
-            s_PropertiesMonsterCybil    monsterCybil;
-            s_PropertiesPuppetNurse     puppetNurse;
-            s_PropertiesRomper          romper;
-            s_PropertiesSplitHead       splitHead;
-            s_PropertiesStalker         stalker;
-            s_PropertiesTwinfeeler      twinfeeler;
+            s_PropsAirScreamer     airScreamer;
+            s_PropsAlessa          alessa;
+            s_PropsBloodsucker     bloodsucker;
+            s_PropsCheryl          cheryl;
+            s_PropsCreeper         creeper;
+            s_PropsDahlia          dahlia;
+            s_PropsFloatstinger    floatstinger;
+            e_PropsGroaner         groaner;
+            s_PropsHangedScratcher hangedScratcher;
+            s_PropsIncubus         incubus;
+            s_PropsKaufmann        kaufmann;
+            s_PropsLarvalStalker   larvalStalker;
+            s_PropsMonsterCybil    monsterCybil;
+            s_PropsPuppetNurse     puppetNurse;
+            s_PropsRomper          romper;
+            s_PropsSplitHead       splitHead;
+            s_PropsStalker         stalker;
+            s_PropsTwinfeeler      twinfeeler;
 
             _u() {}
         } properties;
@@ -2352,7 +2353,7 @@ namespace Silent::Game
      *
      * @param chara Character to update.
      */
-    #define Chara_PropertiesClear(chara)                           \
+    #define Chara_PropsClear(chara)                           \
         for (i = 0; i < 16; i++)                                   \
         {                                                          \
             chara->properties.dummy.properties_E8[i].val32 = 0; \
