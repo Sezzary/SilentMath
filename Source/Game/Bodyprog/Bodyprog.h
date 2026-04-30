@@ -533,21 +533,27 @@ namespace Silent::Game
         s_func_8006E490_20 field_20[2];
     } s_func_8006E490;
 
+    /** @brief Axis-aligned bounding box. TODO: Maybe not a separate struct? */
+    typedef struct _BoundingBox
+    {
+        q3_12 bottom; /** Y+ is down. */
+        q3_12 top;    /** Y- is up. */
+        q3_12 height;
+        q3_12 offsetY;
+    } s_BoundingBox;
+
     /** @brief Animation keyframe? Doesn't hold bone data, but something gameplay-related
      * which is derived from here.
      */
     typedef struct _Keyframe
     {
-        q3_12 field_0;
-        q3_12 field_2;
-        q3_12 field_4;
-        q3_12 field_6;
-        q3_12 field_8;
-        q3_12 field_A;
-        q3_12 field_C;
-        q3_12 field_E;
-        q3_12 field_10; // X offset?
-        q3_12 field_12; // Z offset?
+        s_BoundingBox box;
+        q3_12         field_8; // Character collision radius?
+        q3_12         field_A; // Something similar to character collision radius?
+        q3_12         hitboxCenterX;
+        q3_12         hitboxCenterZ;
+        q3_12         collisionCenterX;
+        q3_12         collisionCenterZ;
     } s_Keyframe;
 
     typedef struct _Normal
@@ -939,7 +945,7 @@ namespace Silent::Game
                 s8   unk_C[28];
             } s_1;
         } field_A0;
-        u8                 field_C8;
+        u8                 box;
         u8                 unk_C9[1];
         s16                field_CA;
         s_CollisionState_CC field_CC;
@@ -1834,12 +1840,12 @@ namespace Silent::Game
         q3_12   field_94[24];
         s16     field_C4;
         s16     field_C6;
-        s16     field_C8;
+        s16     box;
         s16     field_CA;
         s16     field_CC;
         s16     field_CE;
         s32     field_D0;
-        s32     field_D4;
+        s32     cylinder;
         s32     field_D8;
         s16     field_DC[4];
         s16     field_E4[4];

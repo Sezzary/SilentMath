@@ -312,6 +312,16 @@ namespace Silent::Game
         CharaGroupFlag_1    = 1 << 1
     } e_CharaGroupFlags;
 
+    /** @brief Character collision states. */
+    typedef enum _CharaCollisionState
+    {
+        CharaCollisionState_Ignore = 0,
+        CharaCollisionState_Player = 1,
+        CharaCollisionState_2      = 2,
+        CharaCollisionState_Npc    = 3,
+        CharaCollisionState_4      = 4
+    } e_CharaCollisionState;
+
     /** @brief Sync modes used by `DrawSync` and `VSync`. */
     enum e_SyncMode
     {
@@ -870,7 +880,7 @@ namespace Silent::Game
     };
 
     /** @brief Character IDs. The `CHARA_FILE_INFOS` array associates each character ID with asset files. */
-    enum e_CharacterId
+    enum e_CharaId
     {
         Chara_None             = 0,
         Chara_Harry            = 1,
@@ -1209,7 +1219,7 @@ namespace Silent::Game
     /** @brief Character model. */
     struct s_Model
     {
-        s8          charaId;      /** `e_CharacterId` */
+        s8          charaId;      /** `e_CharaId` */
         u8          paletteIdx;   /** Changes the texture palette index for this model. */
         u8          controlState; /** Active character control state. */
         u8          stateStep;    // Step number or temp data for the current `controlState`? In `s_PlayerExtra` always 1, set to 0 for 1 tick when anim state appears to change.
@@ -1235,6 +1245,7 @@ namespace Silent::Game
         s8          unk_30[4];
     } s_800D5710;
 
+    // Collision-related.
     typedef struct
     {
         VECTOR3 position;
@@ -1699,15 +1710,6 @@ namespace Silent::Game
         s8            __pad_124[8];
     } s_PropertiesTwinfeeler;
 
-    /** Offsets for translation? */
-    typedef struct
-    {
-        q3_12 offsetX_0;
-        q3_12 offsetZ_2;
-        q3_12 offsetX_4;
-        q3_12 offsetZ_6;
-    } s_SubCharacter_D8;
-
     typedef struct
     {
         s16     field_0; // Something dependent on `CharaFlag_Unk8`.
@@ -1737,20 +1739,40 @@ namespace Silent::Game
         q3_12 field_6; // Some kind of Y offset.
         s16   field_8; // Q3.12? Maybe weapon range?
         s16   field_A;
-    } s_SubCharacter_C8;
+    } s_CharaBox;
 
-    typedef struct _SubCharacter_D4
+    /** @brief Character collision box for current animation frame. */
+    typedef struct s_CharaCylinder
     {
         q3_12 radius_0;
         q3_12 field_2;
-    } s_SubCharacter_D4;
+    } ss_CharaCylinder;
+
+    /* @brief Character shape offsets for `s_CharaBox` and `s_CharaCylinder`. */
+    typedef struct _CharaShapeOffsets
+    {
+        DVECTOR_XZ box;
+        DVECTOR_XZ cylinder;
+    } s_CharaShapeOffsets;
+
+    /** @brief Character collision info. */
+    typedef struct _CharaCollision
+    {
+        s_CharaBox          box;
+        s_CharaCylinder     cylinder;
+        s_CharaShapeOffsets shapeOffsets;   // Translation data?
+        u8                  field_E0;       // Related to collision. If the player collides with the only enemy in memory and the enemy is knocked down, this is set to 1.
+        s8                  state      : 4; /** `e_CharaCollisionState` */
+        u8                  field_E1_4 : 4; // Index for array of `s_func_8006CF18`.
+        s_func_8006CF18*    field_E4;
+    } s_CharaCollision;
 
     /** @brief Character info. */
     struct s_SubCharacter
     {
-        s_Model           model;          // In player: Manage the half lower part of Harry's body animations (legs and feet).
-        VECTOR3           position;       /** Q19.12 */
-        SVECTOR3          rotation;       /** Q3.12 */
+        s_Model           model;    // In player: Manage the half lower part of Harry's body animations (legs and feet).
+        VECTOR3           position; /** Q19.12 */
+        SVECTOR3          rotation; /** Q3.12 */
         q3_12             angleToTarget;
         SVECTOR3          rotationSpeed;              /** Q3.12 | Rotation speed for `rotation`. */
         q3_12             angleToTargetRotationSpeed; /** Rotation speed for `angleToTarget`. */
@@ -1766,15 +1788,7 @@ namespace Silent::Game
         s_CharaDamage     damage;
         u16               deathTimer;     // Part of `shBattleInfo` struct in SH2, may use something similar here.
         q3_12             timer_C6;       // Some sort of timer. Written to by `Ai_LarvalStalker_Update`.
-
-        // Fields seen used inside maps (eg. `map0_s00` `func_800D923C`)
-        s_SubCharacter_C8 field_C8;
-        s_SubCharacter_D4 field_D4;       // Contains collision radius and something else.
-        s_SubCharacter_D8 field_D8;       // Translation data?
-        u8                field_E0;       // Related to collision. If the player collides with the only enemy in memory and the enemy is knocked down, this is set to 1.
-        s8                field_E1_0 : 4; // State.
-        u8                field_E1_4 : 4; // Index for array of `s_func_8006CF18`.
-        s_func_8006CF18*  field_E4;
+        s_CharaCollision  collision;
 
         s_SubCharacter() { memset(this, 0, sizeof(*this)); }
 
