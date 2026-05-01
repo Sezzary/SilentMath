@@ -113,7 +113,7 @@ namespace Silent::Game
 
                     if (Demo_PlayFileBufferSetup() != 0)
                     {
-                        GameBoot_MapLoad(g_SavegamePtr->mapOverlayId_A4);
+                        GameBoot_MapLoad(g_SavegamePtr->mapIdx);
 
                         g_GameWork.gameStateSteps[0] = 2;
                         g_SysWork.counters_1C[1]        = 0;

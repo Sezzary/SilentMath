@@ -50,7 +50,7 @@ namespace Silent::Game
 
     /** @brief Checks if a specified map has been collected. */
     #define HAS_MAP(mapIdx) \
-        ((((u32*)&g_SavegamePtr->hasMapsFlags_164)[(mapIdx) / 32] >> ((mapIdx) % 32)) & (1 << 0))
+        ((((u32*)&g_SavegamePtr->hasMapsFlags)[(mapIdx) / 32] >> ((mapIdx) % 32)) & (1 << 0))
 
     // TODO: Name might be wrong, but these have something to do with held item meshes.
     // First index is the mesh variant, second is the container of meshes (not bone index in skeleton)?
@@ -1052,61 +1052,62 @@ namespace Silent::Game
     {
         s_InventoryItem items_0[INVENTORY_ITEM_COUNT_MAX];
         s8              field_A0;
-        s8              field_A1[3];
-        s8              mapOverlayId_A4;            /** `e_MapIdx` Index to overlay `.BIN` files. */
-        s8              mapRoomIdx_A5;              /** Index to local map geometry `.IPD` files. */
-        s16             savegameCount_A6;
-        s8              locationId_A8;              /** `e_SaveLocationId` */
-        u8              paperMapIdx_A9;             /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */
-        u8              equippedWeapon_AA;          /** `e_InventoryItemId` | Affects the visible player weapon model. */
-        u8              inventorySlotCount_AB;      /** Item slots. */
-        u32             itemToggleFlags_AC;         /** `e_ItemToggleFlags` */
+        s8              unused_A1[3]; /** @unused */
+        s8              mapIdx;       /** `e_MapIdx` Index to overlay `.BIN` files. */
+        s8              mapRoomIdx;   /** Index to local map geometry `.IPD` files. */
+        s16             savegameCount;
+        s8              locationId;                  /** `e_SaveLocationId` */
+        u8              paperMapIdx;                 /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */
+        u8              equippedWeapon;              /** `e_InventoryItemId` | Affects the visible player weapon model. */
+        u8              inventorySlotCount;                /** Item slots. */
+        u32             itemToggleFlags;             /** `e_ItemToggleFlags` */
         s32             ovlEnemyStates[Chara_Count]; /** Flags indicating the enemy states in a given overlay.
                                                      * By default, they are all set to 1. As soon as the player fully kills them,
                                                      * they are set to 0 based on a currently unknown index value.
                                                      */
-        s32             hasMapsFlags_164;           // See Sparagas' `HasMapsFlags` struct for details of every bit.
-        u32             eventFlags_168[27];         // Can be accessed through `Savegame_EventFlagGet` / `Savegame_EventFlagSet`, only tested a few, but seems all are related to events and pick-up flags, grouped by location and not item types.
-        s32             mapMarkingFlags_1D4[25];    // See Sparagas' `MapMarkingsFlags` struct for details of every bit.
-        q19_12          healthSaturation_238;       /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
-        s16             pickedUpItemCount_23C;
-        s8              field_23E;
-        u8              field_23F;
-        q19_12          playerHealth_240;           /** Default: `Q12(100.0f)` */
-        q19_12          playerPositionX_244;
-        q3_12           playerRotationY_248;        /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */
-        u8              clearGameCount_24A;         /** Range [0, 99] */
-        u8              clearGameEndings_24B;       /** `e_GameEndingFlags` */
-        q19_12          playerPositionZ_24C;
-        q20_12          gameplayTimer_250;
-        q20_12          runDistance_254;
-        q20_12          walkDistance_258;
-        u8              isNextFearMode_25C             : 1; /** Makes savegame entry text gold. */
-        u8              add290Hours_25C_1              : 2; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
-        u8              pickedUpSpecialItemCount_25C_3 : 5; /** Red/None: 0?, Yellow: 8, Green: 16, @unused Rainbow: 24. */
-                                                            /** Sparagas' investigations indicate this variable should be
-                                                             * two different variables. However, splitting it causes minor
-                                                             * mismatches in some functions.
-                                                             *
-                                                             * The first 3 bits indicate the number of special items the
-                                                             * player has picked up, and the last 2 bits indicate the color of the Hyper
-                                                             * Blaster beam.
-                                                             *
-                                                             * Belek666 suggests that some functions specifically access this field as 5 bits.
-                                                             *
-                                                             * The the odd access results in a bug where the results screen will count more collected
-                                                             * special items than normal by additionally reading one of the two bits
-                                                             * for the Hyper Blaster beam color.
-                                                             */
-        u8              meleeKillCount_25D;
-        u8              meleeKillCountB_25E; // Can't be packed if used as `u16`.
-        u8              rangedKillCount_25F;
+        s32             hasMapsFlags;                // See Sparagas' `HasMapsFlags` struct for details of every bit.
+        u32             eventFlags[27];              // Can be accessed through `Savegame_EventFlagGet` / `Savegame_EventFlagSet`, only tested a few, but seems all are related to events and pick-up flags
+                                                     // grouped by location and not item types.
+        s32             mapMarkingFlags[25];         // See Sparagas' `MapMarkingsFlags` struct for details of every bit.
+        q19_12          healthSaturation;            /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
+        s16             pickedUpItemCount;
+        s8              unused_23E;         /** @unused */
+        u8              inventoryItemFlags; /** `e_InventoryItemFlags` */
+        q19_12          playerHealth;       /** Default: `Q12(100.0f)` */
+        q19_12          playerPositionX;
+        q3_12           playerRotationY;  /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */
+        u8              clearGameCount;   /** Range [0, 99] */
+        u8              clearGameEndings; /** `e_GameEndingFlags` */
+        q19_12          playerPositionZ;
+        q20_12          gameplayTimer;
+        q20_12          runDistance;
+        q20_12          walkDistance;
+        u8              isNextFearMode           : 1; /** Makes savegame entry text gold. */
+        u8              add290Hours              : 2; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
+        u8              pickedUpSpecialItemCount : 5; /** Red/None: 0?, Yellow: 8, Green: 16, @unused Rainbow: 24. */
+                                                       /** Sparagas' investigations indicate this variable should be
+                                                        * two different variables. However, splitting it causes minor
+                                                        * mismatches in some functions.
+                                                        *
+                                                        * The first 3 bits indicate the number of special items the
+                                                        * player has picked up, and the last 2 bits indicate the color of the Hyper
+                                                        * Blaster beam.
+                                                        *
+                                                        * Belek666 suggests that some functions specifically access this field as 5 bits.
+                                                        *
+                                                        * The the odd access results in a bug where the results screen will count more collected
+                                                        * special items than normal by additionally reading one of the two bits
+                                                        * for the Hyper Blaster beam color.
+                                                        */
+        u8              meleeKillCount;
+        u8              meleeKillCountB; // Can't be packed if used as `u16`.
+        u8              rangedKillCount;
         u32             field_260          : 28;
-        s32             gameDifficulty_260 : 4;  /** `e_GameDifficulty` */
-        u16             firedShotCount_264;      /** Missed shot count = firedShotCount - (closeRangeShotCount + midRangeShotCount + longRangeShotCount). */
-        u16             closeRangeShotCount_266; /** Only hits counted. */
-        u16             midRangeShotCount_268;   /** Only hits counted. */
-        u16             longRangeShotCount_26A;  /** Only hits counted. */
+        s32             gameDifficulty : 4;  /** `e_GameDifficulty` */
+        u16             firedShotCount;      /** Missed shot count = firedShotCount - (closeRangeShotCount + midRangeShotCount + longRangeShotCount). */
+        u16             closeRangeShotCount; /** Only hits counted. */
+        u16             midRangeShotCount;   /** Only hits counted. */
+        u16             longRangeShotCount;  /** Only hits counted. */
         u16             field_26C;
         u16             field_26E; // Related to enemy kills.
         u16             field_270;
@@ -1115,7 +1116,7 @@ namespace Silent::Game
         u16             field_276;
         u16             field_278;
         s8              field_27A; // Flags.
-        u8              continueCount_27B;
+        u8              continueCount;
     } s_Savegame;
 
     /** TODO: Known as `Trigger` in SilentHillMapExaminer: https://github.com/ItEndsWithTens/SilentHillMapExaminer/blob/master/src/SHME.ExternalTool.Guts/Trigger.cs */
@@ -1923,7 +1924,7 @@ namespace Silent::Game
         s32            counters_1C[3];
         q19_12         field_28; // Multi-purpose? Used as alpha to fade between images in `Screen_BackgroundImgTransition`.
         q19_12         timer_2C; // Cutscene message timer?
-        s32            field_30;
+        s32            cutsceneBorderState;
         s8             unused_34[4]; /** @unused */
         s_PlayerCombat playerCombat; // Information related to weapons and attack.
         s_PlayerWork   playerWork;
@@ -2171,7 +2172,7 @@ namespace Silent::Game
      * @return Event flag state (`bool`).
      */
     #define Savegame_EventFlagGet(flagIdx) \
-        (g_SavegamePtr->eventFlags_168[(flagIdx) >> 5] & (1 << ((flagIdx) & 0x1F)))
+        (g_SavegamePtr->eventFlags[(flagIdx) >> 5] & (1 << ((flagIdx) & 0x1F)))
 
     /** @brief Gets an event flag state from the savegame event flags array.
      *
@@ -2182,21 +2183,21 @@ namespace Silent::Game
      * @return Event flag state (`bool`).
      */
     #define Savegame_EventFlagGetAlt(flagIdx) \
-        ((g_SavegamePtr->eventFlags_168[(flagIdx) >> 5] >> ((flagIdx) & 0x1F)) & (1 << 0))
+        ((g_SavegamePtr->eventFlags[(flagIdx) >> 5] >> ((flagIdx) & 0x1F)) & (1 << 0))
 
     /** @brief Clears an event flag state in the savegame event flags array.
      *
      * @param flagIdx Event flag index.
      */
     #define Savegame_EventFlagClear(flagIdx) \
-        (g_SavegamePtr->eventFlags_168[(flagIdx) >> 5] &= ~(1 << ((flagIdx) & 0x1F)))
+        (g_SavegamePtr->eventFlags[(flagIdx) >> 5] &= ~(1 << ((flagIdx) & 0x1F)))
 
     /** @brief Sets an event flag state in the savegame event flags array.
      *
      * @param flagIdx Event flag index.
      */
     #define Savegame_EventFlagSet(flagIdx) \
-        (g_SavegamePtr->eventFlags_168[(flagIdx) >> 5] |= 1 << ((flagIdx) & 0x1F))
+        (g_SavegamePtr->eventFlags[(flagIdx) >> 5] |= 1 << ((flagIdx) & 0x1F))
 
     /** @brief Gets a map marking state from the savegame map marking array.
      *
@@ -2204,21 +2205,21 @@ namespace Silent::Game
      * @return Map marking state (`bool`).
      */
     #define Savegame_MapMarkingGet(flagIdx) \
-        (g_SavegamePtr->mapMarkingFlags_1D4[(flagIdx) >> 5] & (1 << ((flagIdx) & 0x1F)))
+        (g_SavegamePtr->mapMarkingFlags[(flagIdx) >> 5] & (1 << ((flagIdx) & 0x1F)))
 
     /** @brief Clears a map marking state in the savegame map marking array.
      *
      * @param flagIdx Map marking index.
      */
     #define Savegame_MapMarkingClear(flagIdx) \
-        (g_SavegamePtr->mapMarkingFlags_1D4[(flagIdx) >> 5] &= ~(1 << ((flagIdx) & 0x1F)))
+        (g_SavegamePtr->mapMarkingFlags[(flagIdx) >> 5] &= ~(1 << ((flagIdx) & 0x1F)))
 
     /** @brief Sets a map marking in the savegame map marking array.
      *
      * @param flagIdx Map marking index.
      */
     #define Savegame_MapMarkingSet(flagIdx) \
-        (g_SavegamePtr->mapMarkingFlags_1D4[(flagIdx) >> 5] |= 1 << ((flagIdx) & 0x1F))
+        (g_SavegamePtr->mapMarkingFlags[(flagIdx) >> 5] |= 1 << ((flagIdx) & 0x1F))
 
     /** @brief Sets an event flag state in the savegame event flags array.
      *
@@ -2234,7 +2235,7 @@ namespace Silent::Game
         localIdx = flagIdx / 32;
         localBit = flagIdx % 32;
 
-        g_SavegamePtr->eventFlags_168[localIdx] |= 1 << localBit;
+        g_SavegamePtr->eventFlags[localIdx] |= 1 << localBit;
     }
 
     /** @brief Checks a flag state is `true` in the array of 16-bit flags.

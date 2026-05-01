@@ -18,9 +18,9 @@ namespace Silent::Game
 
     void Savegame_EnemyStateUpdate(s_SubCharacter* chara) // 0x80037DC4
     {
-        if (g_SavegamePtr->gameDifficulty_260 <= GameDifficulty_Normal/* || Rng_RandQ12() >= Q12_ANGLE(108.0f)*/)
+        if (g_SavegamePtr->gameDifficulty <= GameDifficulty_Normal/* || Rng_RandQ12() >= Q12_ANGLE(108.0f)*/)
         {
-            g_SavegamePtr->ovlEnemyStates[g_SavegamePtr->mapOverlayId_A4] &= ~(1 << chara->field_40);
+            g_SavegamePtr->ovlEnemyStates[g_SavegamePtr->mapIdx] &= ~(1 << chara->field_40);
         }
     }
 
@@ -69,7 +69,7 @@ namespace Silent::Game
 
         npcIdx             = 0;
         curCharaSpawn      = g_MapOverlayHeader.charaSpawns_24C[0];
-        ovlEnemiesStatePtr = &g_SavegamePtr->ovlEnemyStates[g_SavegamePtr->mapOverlayId_A4];
+        ovlEnemiesStatePtr = &g_SavegamePtr->ovlEnemyStates[g_SavegamePtr->mapIdx];
 
         if (cond == false)
         {
@@ -94,7 +94,7 @@ namespace Silent::Game
             pos = (VECTOR3*)curCharaSpawn;
 
             if (!(g_SysWork.flags_22A4 & UnkSysFlag_4) && HAS_FLAG(ovlEnemiesStatePtr, i) && !HAS_FLAG(g_SysWork.field_228C, i) &&
-                curCharaSpawn->spawnFlags != 0 && g_SavegamePtr->gameDifficulty_260 >= curCharaSpawn->gameDifficultyMin &&
+                curCharaSpawn->spawnFlags != 0 && g_SavegamePtr->gameDifficulty >= curCharaSpawn->gameDifficultyMin &&
                 func_8008F914(curCharaSpawn->positionX, curCharaSpawn->positionZ) &&
                 !Math_Distance2dCheck(&g_SysWork.playerWork.player.position, pos, Q12(22.0f)) &&
                 (!cond || Math_Distance2dCheck(&g_SysWork.playerWork.player.position, pos, Q12(20.0f))))
@@ -352,7 +352,7 @@ namespace Silent::Game
 
         g_RadioPitchState = k + 1;
 
-        if (!(g_SavegamePtr->itemToggleFlags_AC & ItemToggleFlag_RadioOn))
+        if (!(g_SavegamePtr->itemToggleFlags & ItemToggleFlag_RadioOn))
         {
             return;
         }

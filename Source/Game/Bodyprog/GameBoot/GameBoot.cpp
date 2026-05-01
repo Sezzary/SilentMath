@@ -16,14 +16,14 @@ namespace Silent::Game
 
         bzero(g_SavegamePtr, sizeof(s_Savegame));
 
-        g_SavegamePtr->mapOverlayId_A4 = overlayId;
+        g_SavegamePtr->mapIdx = overlayId;
 
         difficulty = CLAMP(difficulty, GameDifficulty_Easy, GameDifficulty_Hard);
 
         ovlEnemyStatesPtr = g_SavegamePtr->ovlEnemyStates;
 
-        g_SavegamePtr->gameDifficulty_260 = difficulty;
-        g_SavegamePtr->paperMapIdx_A9     = PaperMapIdx_OldTown;
+        g_SavegamePtr->gameDifficulty = difficulty;
+        g_SavegamePtr->paperMapIdx     = PaperMapIdx_OldTown;
 
         // Defines all enemies from an overlay as alive.
         // Odd code. Possibly a hack.
@@ -46,7 +46,7 @@ namespace Silent::Game
 
         g_SysWork.field_229C = NO_VALUE;
 
-        if ((g_SavegamePtr->itemToggleFlags_AC >> 1) & (1 << 0)) // `& ItemToggleFlag_FlashlightOff`
+        if ((g_SavegamePtr->itemToggleFlags >> 1) & (1 << 0)) // `& ItemToggleFlag_FlashlightOff`
         {
             //Game_TurnFlashlightOff();
         }

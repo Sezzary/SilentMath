@@ -108,7 +108,7 @@ namespace Silent::Game
 
                 g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
 
-                if (g_GameWork.autosave.playerHealth_240 > Q12(0.0f))
+                if (g_GameWork.autosave.playerHealth > Q12(0.0f))
                 {
                     g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Continue) | (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
                 }
@@ -186,7 +186,7 @@ namespace Silent::Game
                     switch (g_MainMenu_SelectedEntry)
                     {
                         case MainMenuEntry_Continue:
-                            if (g_GameWork.autosave.playerHealth_240 > Q12(0.0f))
+                            if (g_GameWork.autosave.playerHealth > Q12(0.0f))
                             {
                                 g_GameWork.savegame = g_GameWork.autosave;
                             }
@@ -197,7 +197,7 @@ namespace Silent::Game
 
                             //Game_PlayerInit();
                             g_SysWork.processFlags = ProcessFlag_Continue;
-                            //GameFs_MapLoad(g_SavegamePtr->mapOverlayId_A4);
+                            //GameFs_MapLoad(g_SavegamePtr->mapIdx);
                             break;
 
                         case MainMenuEntry_Load:
@@ -310,7 +310,7 @@ namespace Silent::Game
                     Screen_Refresh(SCREEN_WIDTH, 0);
                     Fs_QueueWaitForEmpty();
 
-                    if (g_GameWork.autosave.playerHealth_240 > Q12(0.0f))
+                    if (g_GameWork.autosave.playerHealth > Q12(0.0f))
                     {
                         NEXT_GAME_STATES[1] = GameState_MainLoadScreen;
                     }
