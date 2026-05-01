@@ -31,7 +31,7 @@ namespace Silent::Game
         //Anim_BoneInit(g_CharaTypeAnimInfo[idx].animFile1_8, g_CharaTypeAnimInfo[idx].npcBoneCoords);
     }
 
-    s32 Chara_Spawn(e_CharacterId charaId, s32 spawnFlags, q19_12 posX, q19_12 posZ, q3_12 rotY, u32 stateStep) // 0x80088D78
+    s32 Chara_Spawn(e_CharaId charaId, s32 spawnFlags, q19_12 posX, q19_12 posZ, q3_12 rotY, u32 stateStep) // 0x80088D78
     {
         s_Collision     coll;
         s32             i;
@@ -133,23 +133,23 @@ namespace Silent::Game
         chara->model.charaId = Chara_None;
     }
 
-    void Chara_SpawnFlagsSet(s_MapOverlayHeader mapHdr, e_CharacterId charaId, s32 spawnIdx, s32 spawnFlags) // 0x80088FF4
+    void Chara_SpawnFlagsSet(s_MapOverlayHeader mapHdr, e_CharaId charaId, s32 spawnIdx, s32 spawnFlags) // 0x80088FF4
     {
         s_SpawnInfo* spawnInfo;
 
-        spawnInfo          = &mapHdr.charaSpawns_24C[g_CharaAnimInfoIdxs[charaId] - 1][spawnIdx];
-        spawnInfo->flags_6 = spawnFlags;
+        spawnInfo             = &mapHdr.charaSpawns_24C[g_CharaAnimInfoIdxs[charaId] - 1][spawnIdx];
+        spawnInfo->spawnFlags = spawnFlags;
     }
 
-    void Chara_SpawnPositionSet(s_MapOverlayHeader mapHdr, e_CharacterId charaId, s32 spawnIdx, q19_12 posX, q19_12 posZ) // 0x80089034
+    void Chara_SpawnPositionSet(s_MapOverlayHeader mapHdr, e_CharaId charaId, s32 spawnIdx, q19_12 posX, q19_12 posZ) // 0x80089034
     {
         s_SpawnInfo* spawnInfo0;
         s_SpawnInfo* spawnInfo1;
 
-        spawnInfo0              = &g_MapOverlayHeader.charaSpawns_24C[g_CharaAnimInfoIdxs[charaId] - 1][spawnIdx];
-        spawnInfo0->positionX_0 = posX;
+        spawnInfo0            = &g_MapOverlayHeader.charaSpawns_24C[g_CharaAnimInfoIdxs[charaId] - 1][spawnIdx];
+        spawnInfo0->positionX = posX;
 
-        spawnInfo1              = &g_MapOverlayHeader.charaSpawns_24C[g_CharaAnimInfoIdxs[charaId] - 1][spawnIdx];
-        spawnInfo1->positionZ_8 = posZ;
+        spawnInfo1            = &g_MapOverlayHeader.charaSpawns_24C[g_CharaAnimInfoIdxs[charaId] - 1][spawnIdx];
+        spawnInfo1->positionZ = posZ;
     }
 }

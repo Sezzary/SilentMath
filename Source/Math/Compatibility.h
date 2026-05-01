@@ -51,6 +51,15 @@ namespace Silent::Math
         SVECTOR3 rotation; /** Q19.12 */
     };
 
+    /** @brief Polygon normal. */
+    typedef struct _Normal
+    {
+        s8 nx;
+        s8 ny;
+        s8 nz;
+        u8 count;
+    } s_Normal;
+
     /** @brief 2D screen-space line. */
     struct s_Line2d
     {

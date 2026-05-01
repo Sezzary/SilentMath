@@ -94,8 +94,8 @@ namespace Silent::Game
             pos = (VECTOR3*)curCharaSpawn;
 
             if (!(g_SysWork.flags_22A4 & UnkSysFlag_4) && HAS_FLAG(ovlEnemiesStatePtr, i) && !HAS_FLAG(g_SysWork.field_228C, i) &&
-                curCharaSpawn->flags_6 != 0 && g_SavegamePtr->gameDifficulty_260 >= curCharaSpawn->gameDifficultyMin_7_0 &&
-                func_8008F914(curCharaSpawn->positionX_0, curCharaSpawn->positionZ_8) &&
+                curCharaSpawn->spawnFlags != 0 && g_SavegamePtr->gameDifficulty_260 >= curCharaSpawn->gameDifficultyMin &&
+                func_8008F914(curCharaSpawn->positionX, curCharaSpawn->positionZ) &&
                 !Math_Distance2dCheck(&g_SysWork.playerWork.player.position, pos, Q12(22.0f)) &&
                 (!cond || Math_Distance2dCheck(&g_SysWork.playerWork.player.position, pos, Q12(20.0f))))
             {
@@ -106,9 +106,9 @@ namespace Silent::Game
 
                 bzero(&g_SysWork.npcs[npcIdx], sizeof(s_SubCharacter));
 
-                if (curCharaSpawn->charaId_4 > Chara_None)
+                if (curCharaSpawn->charaId > Chara_None)
                 {
-                    g_SysWork.npcs[npcIdx].model.charaId = curCharaSpawn->charaId_4;
+                    g_SysWork.npcs[npcIdx].model.charaId = curCharaSpawn->charaId;
                 }
                 else
                 {
@@ -117,14 +117,14 @@ namespace Silent::Game
 
                 g_SysWork.npcs[npcIdx].field_40               = i;
                 g_SysWork.npcs[npcIdx].model.controlState = 0;
-                g_SysWork.npcs[npcIdx].model.stateStep    = curCharaSpawn->flags_6;
-                g_SysWork.npcs[npcIdx].position.vx         = curCharaSpawn->positionX_0;
-                g_SysWork.npcs[npcIdx].position.vz         = curCharaSpawn->positionZ_8;
+                g_SysWork.npcs[npcIdx].model.stateStep    = curCharaSpawn->spawnFlags;
+                g_SysWork.npcs[npcIdx].position.vx         = curCharaSpawn->positionX;
+                g_SysWork.npcs[npcIdx].position.vz         = curCharaSpawn->positionZ;
 
                 //Collision_Get(&coll, curCharaSpawn->positionX_0, curCharaSpawn->positionZ_8);
 
                 g_SysWork.npcs[npcIdx].position.vy = coll.groundHeight_0;
-                g_SysWork.npcs[npcIdx].rotation.vy = curCharaSpawn->rotationY_5 * 16;
+                g_SysWork.npcs[npcIdx].rotation.vy = curCharaSpawn->rotationY * 16;
 
                 SET_FLAG(&g_SysWork.npcFlags, npcIdx);
                 SET_FLAG(g_SysWork.field_228C, i);
@@ -249,9 +249,9 @@ namespace Silent::Game
                             Q12_SQUARE_PRECISE(Q12_TO_Q6(npc->position.vz) - posZShift6);
                     var_t5 = 0;
 
-                    if (g_MapOverlayHeader.mapInfo->flags_6 & MapFlag_Interior)
+                    if (g_MapOverlayHeader.mapInfo->spawnFlags & MapFlag_Interior)
                     {
-                        var_t5 = (g_MapOverlayHeader.mapInfo->flags_6 & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)) > 0;
+                        var_t5 = (g_MapOverlayHeader.mapInfo->spawnFlags & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)) > 0;
                     }
 
                     for (j = 0; j < 3; j++)
@@ -414,8 +414,8 @@ namespace Silent::Game
             else
             {
                 var_s3 = 0;
-                if (!(g_MapOverlayHeader.mapInfo->flags_6 & MapFlag_Interior) ||
-                    !(g_MapOverlayHeader.mapInfo->flags_6 & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)))
+                if (!(g_MapOverlayHeader.mapInfo->spawnFlags & MapFlag_Interior) ||
+                    !(g_MapOverlayHeader.mapInfo->spawnFlags & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)))
                 {
                     var_s3 = 1;
                 }

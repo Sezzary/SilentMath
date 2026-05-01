@@ -14,15 +14,15 @@ namespace Silent::Game
      * @param charaId ID of the character for which to find the animation data.
      * @return Animation data index.
      */
-    s32 Fs_CharaAnimDataInfoIdxGet(e_CharacterId charaId);
+    s32 Fs_CharaAnimDataInfoIdxGet(e_CharaId charaId);
 
     /** Allocates and adjust where is animation data allocated. */
-    void Fs_CharaAnimDataAlloc(s32 idx, e_CharacterId charaId, s_AnmHeader* animFile, GsCOORDINATE2* coords);
+    void Fs_CharaAnimDataAlloc(s32 idx, e_CharaId charaId, s_AnmHeader* animFile, GsCOORDINATE2* coords);
 
     /** Called by `Fs_QueuePostLoadAnm`. Assigns information about animation data to `g_CharaTypeAnimInfo`
      * and initializes NPC bones.
      */
-    void Fs_CharaAnimInfoUpdate(s32 idx, e_CharacterId charaId, s_AnmHeader* animFile, GsCOORDINATE2* coord);
+    void Fs_CharaAnimInfoUpdate(s32 idx, e_CharaId charaId, s_AnmHeader* animFile, GsCOORDINATE2* coord);
 
     /** @brief Updates character type bone initialization coordinates and reinitializes them. */
     void Fs_CharaAnimBoneInfoUpdate(void);

@@ -2,7 +2,7 @@
 
 namespace Silent::Game
 {
-    enum   e_CharacterId;
+    enum   e_CharaId;
     struct s_LmHeader;
     struct s_FsImageDesc;
     struct s_MapOverlayHeader;
@@ -16,9 +16,9 @@ namespace Silent::Game
 
     void Chara_BonesInit(s32 idx);
 
-    s32 Chara_Spawn(e_CharacterId charaId, s32 spawnFlags, q19_12 posX, q19_12 posZ, q3_12 rotY, u32 stateStep);
+    s32 Chara_Spawn(e_CharaId charaId, s32 spawnFlags, q19_12 posX, q19_12 posZ, q3_12 rotY, u32 stateStep);
 
     void Chara_ModelCharaIdClear(s_MapOverlayHeader mapHdr, s_SubCharacter* chara, s32 unused0, s32 unused1);
 
-    void Chara_SpawnFlagsSet(s_MapOverlayHeader mapHdr, e_CharacterId charaId, s32 spawnIdx, s32 spawnFlags);
+    void Chara_SpawnFlagsSet(s_MapOverlayHeader mapHdr, e_CharaId charaId, s32 spawnIdx, s32 spawnFlags);
 }

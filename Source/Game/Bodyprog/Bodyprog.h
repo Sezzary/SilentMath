@@ -425,11 +425,13 @@ namespace Silent::Game
 
     struct s_CollisionQuery
     {
-        VECTOR3  position;       // Q19.12
-        SVECTOR3 rotation;       // Q3.12 TODO: Not a rotation? Y position is added to this.
-        s8       collisionState; /** `e_CharaCollisionState` */
+        VECTOR3 position;       // Q19.12    /* 0xC  */ q3_12   bottom;
+        q3_12   top;
+        q3_12   radius;         // Unsure. Set to cylinder radius.
+        s8      collisionState; /** `e_CharaCollisionState` */
     };
 
+    // Collision-related.
     typedef struct
     {
         s32        collisionState; /** `e_CharaCollisionState` */
@@ -441,9 +443,9 @@ namespace Silent::Game
         q23_8      positionZ_1C;
         s32        field_20;
         s32        field_24;
-        s16        field_28;      // } `SVECTOR3`, Q8 rotation? Probably not.
-        s16        angleToTarget; // }
-        s16        field_2C;      // }
+        q7_8       field_28;      // Radius.
+        q7_8       angleToTarget; // Wrong name. Top.
+        q7_8       field_2C;      // Bottom.
     } s_func_8006ABC0;
 
     typedef struct
@@ -533,36 +535,12 @@ namespace Silent::Game
         s_func_8006E490_20 field_20[2];
     } s_func_8006E490;
 
-    /** @brief Axis-aligned bounding box. TODO: Maybe not a separate struct? */
-    typedef struct _BoundingBox
-    {
-        q3_12 bottom; /** Y+ is down. */
-        q3_12 top;    /** Y- is up. */
-        q3_12 height;
-        q3_12 offsetY;
-    } s_BoundingBox;
-
-    /** @brief Animation keyframe? Doesn't hold bone data, but something gameplay-related
-     * which is derived from here.
-     */
+    /** @brief Character keyframe collision info. */
     typedef struct _Keyframe
     {
-        s_BoundingBox box;
-        q3_12         field_8; // Character collision radius?
-        q3_12         field_A; // Something similar to character collision radius?
-        q3_12         hitboxCenterX;
-        q3_12         hitboxCenterZ;
-        q3_12         collisionCenterX;
-        q3_12         collisionCenterZ;
+        s_CharaBox          box;
+        s_CharaShapeOffsets shapeOffsets;
     } s_Keyframe;
-
-    typedef struct _Normal
-    {
-        s8 nx;
-        s8 ny;
-        s8 nz;
-        u8 count;
-    } s_Normal;
 
     /** @brief 8-character string usually used for filenames. Can be compared via the `u32` field. */
     typedef union _Filename
@@ -737,8 +715,8 @@ namespace Silent::Game
 
     typedef struct
     {
-        s16 field_0;
-        s8  unk_2[2];
+        s16 field_0; // Base index into `s_IpdCollisionData::ptr_28`.
+        s8  __pad_2[2];
     } s_IpdCollisionData_20;
 
     typedef struct _IpdCollisionData_18
@@ -937,8 +915,8 @@ namespace Silent::Game
             } s_0;
             struct
             {
-                q7_8 field_0;
-                q7_8 field_2;
+                q7_8 field_0; // Set to absolute character bottom height.
+                q7_8 field_2; // Set to absolute character top height.
                 s16  field_4;
                 u8   field_6;
                 u8*  field_8;
@@ -1010,8 +988,8 @@ namespace Silent::Game
     // or `s_AnimMetadata`?
     typedef struct _CharaAnimDataInfo
     {
-        e_CharacterId  charaId0_0;
-        e_CharacterId  charaId1_1;
+        e_CharaId  charaId0_0;
+        e_CharaId  charaId1_1;
         s_AnmHeader*   animFile0_4;
         s_AnmHeader*   animFile1_8;
         s32            animBufferSize1_C;
@@ -1028,7 +1006,7 @@ namespace Silent::Game
         s8            field_6; // Accessed by `func_8008BF84` as `u16`
         s8            unk_7;
         u8            charaId_8; // Accessed by `func_8008BF84` as `u16`
-        e_CharacterId field_9;
+        e_CharaId field_9;
         u8            field_A; // Accessed by `func_8008BF84` as `u16`
         u8            field_B;
         u16           field_C;
@@ -1081,7 +1059,7 @@ namespace Silent::Game
     /** @brief Character model. */
     typedef struct
     {
-        u8            charaId;  /** `e_CharacterId` */
+        u8            charaId;  /** `e_CharaId` */
         u8            isLoaded; /** `bool` */
         s32           queueIdx;
         s_LmHeader*   lmHdr;
@@ -1303,7 +1281,7 @@ namespace Silent::Game
     } s_800C44F0; // Probable size: 8 bytes.
 
     /** @brief Character file info.
-     * Holds file IDs of anim/model/texture for each `e_CharacterId` along with some data used in VC camera code.
+     * Holds file IDs of anim/model/texture for each `e_CharaId` along with some data used in VC camera code.
      */
     struct s_CharaFileInfo
     {
@@ -1376,7 +1354,7 @@ namespace Silent::Game
     struct s_SpawnInfo
     {
         q19_12 positionX;
-        s8     characterId; /** `e_CharacterId` */
+        s8     charaId; /** `e_CharaId` */
         q0_8   rotationY;
         s8     spawnFlags;            /** `e_SpawnFlags` | Copied to `stateStep` in `s_Model`, with `controlState = 0`. */
         s32    gameDifficultyMin : 4; /** `e_GameDifficulty` | Minimum difficulty required for successful spawn. */
@@ -1577,8 +1555,8 @@ namespace Silent::Game
         s32*                   windSpeedZ_188;
         s32*                   data_18C;
         s32*                   data_190;
-        void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharacterId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
-        s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharacterId` values where if `s_SpawnInfo::characterId == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
+        void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharaId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
+        s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharaId` values where if `s_SpawnInfo::charaId == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
         s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `spawnFlags == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
         VC_ROAD_DATA           cameraPaths_3CC[100];
         s_TriggerZone          triggerZones_D2C[200];
@@ -1813,9 +1791,9 @@ namespace Silent::Game
     {
         u8  field_0;
         u8  field_1;
-        s16 field_2;
-        s32 field_4;
-        s32 field_8;
+        s16 field_2; // } XYZ? X and Y swapped?
+        s32 field_4; // }
+        s32 field_8; // }
     } s_800C42E8;
 
     typedef struct
@@ -2071,7 +2049,7 @@ namespace Silent::Game
 
     extern s_FsImageDesc g_Font24AtlasImg; // 0x800A909C
 
-    /** Array containg file IDs used for each `e_CharacterId`, used in `Fs_QueueStartReadAnm`. */
+    /** Array containg file IDs used for each `e_CharaId`, used in `Fs_QueueStartReadAnm`. */
     extern s_CharaFileInfo CHARA_FILE_INFOS[Chara_Count]; // 0x800A90FC
 
     extern s_StructUnk3 D_800A952C;

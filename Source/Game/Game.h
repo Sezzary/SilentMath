@@ -1061,7 +1061,7 @@ namespace Silent::Game
         u8              equippedWeapon_AA;          /** `e_InventoryItemId` | Affects the visible player weapon model. */
         u8              inventorySlotCount_AB;      /** Item slots. */
         u32             itemToggleFlags_AC;         /** `e_ItemToggleFlags` */
-        s32             ovlEnemyStates[CharaCount]; /** Flags indicating the enemy states in a given overlay.
+        s32             ovlEnemyStates[Chara_Count]; /** Flags indicating the enemy states in a given overlay.
                                                      * By default, they are all set to 1. As soon as the player fully kills them,
                                                      * they are set to 0 based on a currently unknown index value.
                                                      */
@@ -1731,25 +1731,25 @@ namespace Silent::Game
         VECTOR3 field_48[3];
     } s_SubCharacter_44;
 
-    // Maybe AABB, or some basic parameters.
+    /** @brief Character collision box. */
     typedef struct _SubCharacter_C8
     {
-        q3_12 field_0; // Top abs height? Set to player head position in `sharedFunc_800D0828_3_s03`.
-        q3_12 field_2; // Bottom abs height? Computed as Y offsets in `sharedFunc_800D0828_3_s03`.
-        q3_12 field_4; // Height from top to bottom?
-        q3_12 field_6; // Some kind of Y offset.
-        s16   field_8; // Q3.12? Maybe weapon range?
-        s16   field_A;
+        q3_12 bottom;
+        q3_12 top;
+        q3_12 height;
+        q3_12 offsetY;
+        q3_12 field_8; // X extent?? Always negative, but why?
+        q3_12 field_A; // Z extent??
     } s_CharaBox;
 
-    /** @brief Character collision box for current animation frame. */
+    /** @brief Character collision cylinder. */
     typedef struct s_CharaCylinder
     {
         q3_12 radius_0;
-        q3_12 field_2;
+        q3_12 field_2; // Height?
     } ss_CharaCylinder;
 
-    /* @brief Character shape offsets for `s_CharaBox` and `s_CharaCylinder`. */
+    /** @brief Character collision info for the active animation frame. */
     typedef struct _CharaShapeOffsets
     {
         DVECTOR_XZ box;
