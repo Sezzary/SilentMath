@@ -1749,7 +1749,7 @@ namespace Silent::Game
                     // Otherwise, use ground height.
                     else
                     {
-                        watch_y = coll.groundHeight_0 + ofs_y;
+                        watch_y = coll.groundHeight + ofs_y;
                     }
                     break;
 

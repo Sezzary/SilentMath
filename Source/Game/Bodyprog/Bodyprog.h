@@ -417,9 +417,9 @@ namespace Silent::Game
 
     typedef struct _Collision
     {
-        q19_12 groundHeight_0;
-        q3_12  field_4;  // } Angles??
-        q3_12  field_6;  // }
+        q19_12 groundHeight;
+        q3_12  field_4;  // X
+        q3_12  field_6;  // Z
         s8     field_8;  // Count of something, maybe valid ground at probed points around center? Set to 0, 7, or 12.
     } s_Collision;
 
@@ -1648,8 +1648,8 @@ namespace Silent::Game
 
     struct s_CollisionResult
     {
-        VECTOR3 offset_0; // Q19.12
-        q19_12  field_C;  // Absolute ground height? Might be using `s_Collision` substruct?
+        VECTOR3 offset_0; /** Q19.12 */
+        q19_12  groundHeight;
         s16     field_10;
         s16     field_12;
         s8      field_14; // Count of something? 12 is significant.
@@ -2234,7 +2234,7 @@ namespace Silent::Game
     /** `[1]` contains relative paper map file indices. */
     extern u8 D_800AE740[][2];
 
-    extern s32 D_800AE770;
+    extern bool D_800AE770;
 
     extern q3_12 g_Player_FlexRotationY;
 
@@ -2388,7 +2388,7 @@ namespace Silent::Game
 
     extern s_800C4418 D_800C4418;
 
-    extern s16 D_800C4454;
+    extern q3_12 D_800C4454;
 
     // emoose: Also works: `extern u16 D_800C4478[];`, `arg0->field_4 = D_800C4478[0];`.
     // Didn't see any array accesses in Ghidra though, struct might be more likely.

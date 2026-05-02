@@ -123,7 +123,7 @@ namespace Silent::Game
 
                 //Collision_Get(&coll, curCharaSpawn->positionX_0, curCharaSpawn->positionZ_8);
 
-                g_SysWork.npcs[npcIdx].position.vy = coll.groundHeight_0;
+                g_SysWork.npcs[npcIdx].position.vy = coll.groundHeight;
                 g_SysWork.npcs[npcIdx].rotation.vy = curCharaSpawn->rotationY * 16;
 
                 SET_FLAG(&g_SysWork.npcFlags, npcIdx);

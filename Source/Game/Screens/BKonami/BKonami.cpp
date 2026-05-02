@@ -96,8 +96,8 @@ namespace Silent::Game
         // @stub
         return KcetLogoStateStep_HasSavegame;
 
-        /*s32 saveEntryType0;
-        s32 saveEntryType1;
+        /*s32 saveEntryTypeSlot1;
+        s32 saveEntryTypeSlot_2;
 
         // Memory cards not ready yet, rerun this on next frame.
         if (func_80033548() == false)
@@ -105,33 +105,33 @@ namespace Silent::Game
             return KcetLogoStateStep_CheckMemCards;
         }
 
-        g_MemCard_ActiveSavegameEntry = (s_SaveScreenElement*)SAVEGAME_ENTRY_BUFFER_0;
-        saveEntryType0                = g_MemCard_ActiveSavegameEntry->type_4;
+        g_MemCard_ActiveMemCardSlotSaves = (s_SaveScreenElement*)SAVEGAME_ENTRY_BUFFER_0;
+        saveEntryTypeSlot1                = g_MemCard_ActiveMemCardSlotSaves->type_4;
 
-        g_MemCard_ActiveSavegameEntry = (s_SaveScreenElement*)SAVEGAME_ENTRY_BUFFER_1;
-        saveEntryType1                = g_MemCard_ActiveSavegameEntry->type_4;
+        g_MemCard_ActiveMemCardSlotSaves = (s_SaveScreenElement*)SAVEGAME_ENTRY_BUFFER_1;
+        saveEntryTypeSlot_2                = g_MemCard_ActiveMemCardSlotSaves->type_4;
 
         // No memory cards.
-        if (saveEntryType0 == SavegameEntryType_NoMemCard && saveEntryType1 == SavegameEntryType_NoMemCard)
+        if (saveEntryTypeSlot1 == SavegameEntryType_NoMemCard && saveEntryTypeSlot_2 == SavegameEntryType_NoMemCard)
         {
             return KcetLogoStateStep_NoMemCard;
         }
 
         // No free space on any card.
-        if ((saveEntryType0 == SavegameEntryType_OutOfBlocks && (saveEntryType1 == SavegameEntryType_OutOfBlocks || saveEntryType1 == SavegameEntryType_NoMemCard)) ||
-            (saveEntryType0 == SavegameEntryType_NoMemCard && saveEntryType1 == SavegameEntryType_OutOfBlocks))
+        if ((saveEntryTypeSlot1 == SavegameEntryType_OutOfBlocks && (saveEntryTypeSlot_2 == SavegameEntryType_OutOfBlocks || saveEntryTypeSlot_2 == SavegameEntryType_NoMemCard)) ||
+            (saveEntryTypeSlot1 == SavegameEntryType_NoMemCard && saveEntryTypeSlot_2 == SavegameEntryType_OutOfBlocks))
         {
             return KcetLogoStateStep_NoMemCardFreeSpace;
         }
 
-        if (saveEntryType0 == SavegameEntryType_Save || saveEntryType1 == SavegameEntryType_Save)
+        if (saveEntryTypeSlot1 == SavegameEntryType_Save || saveEntryTypeSlot_2 == SavegameEntryType_Save)
         {
-            g_MemCard_ActiveSavegameEntry = MemCard_ActiveSavegameEntryGet(g_SelectedSaveSlotIdx);
-            g_MemCard_ActiveSavegameEntry = &g_MemCard_ActiveSavegameEntry[g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx]];
+            g_MemCard_ActiveMemCardSlotSaves = MemCard_ActiveMemCardSlotGet(g_SelectedSaveSlotIdx);
+            g_MemCard_ActiveMemCardSlotSaves = &g_MemCard_ActiveMemCardSlotSaves[g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx]];
 
-            g_SelectedDeviceId            = g_MemCard_ActiveSavegameEntry->deviceId_5;
-            g_SelectedFileIdx             = g_MemCard_ActiveSavegameEntry->fileIdx_6;
-            g_Savegame_SelectedElementIdx = g_MemCard_ActiveSavegameEntry->elementIdx_7;
+            g_SelectedDeviceId            = g_MemCard_ActiveMemCardSlotSaves->deviceId_5;
+            g_SelectedFileIdx             = g_MemCard_ActiveMemCardSlotSaves->fileIdx_6;
+            g_Savegame_SelectedElementIdx = g_MemCard_ActiveMemCardSlotSaves->elementIdx_7;
 
             return KcetLogoStateStep_HasSavegame;
         }

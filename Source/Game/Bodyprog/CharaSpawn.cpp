@@ -105,7 +105,7 @@ namespace Silent::Game
 
             g_SysWork.npcs[i].position.vx = posX;
             //Collision_Get(&coll, posX, posZ);
-            g_SysWork.npcs[i].position.vy = coll.groundHeight_0;
+            g_SysWork.npcs[i].position.vy = coll.groundHeight;
             g_SysWork.npcs[i].position.vz = posZ;
             g_SysWork.npcs[i].rotation.vy = rotY;
 

@@ -17,7 +17,7 @@ namespace Silent::Game
 
     // @todo Placement guessed. Data not migrated yet in decomp repo.
     u8 g_Savegame_SelectedElementIdx;
-    s_SaveScreenElement* g_MemCard_ActiveSavegameEntry;
+    s_SaveScreenElement* g_MemCard_ActiveMemCardSlotSaves;
     s8 g_SelectedFileIdx;
     s8 g_SelectedDeviceId;
     s8 g_SelectedSaveSlotIdx;
@@ -63,7 +63,7 @@ namespace Silent::Game
 
         for (i = 0; i < MEMCARD_DEVICE_COUNT_MAX; i++)
         {
-            g_MemCard_SaveWork.devices_0[i].status = 0;
+            g_MemCard_SaveWork.devices_0[i].status = MemCardState_Null;
 
             MemCard_FileStatusClear(i);
 
@@ -90,7 +90,7 @@ namespace Silent::Game
 
     void MemCard_RamClear(s32 deviceId) // 0x8002E6E4
     {
-        g_MemCard_SaveWork.devices_0[deviceId].status = 0;
+        g_MemCard_SaveWork.devices_0[deviceId].status = MemCardState_Null;
 
         MemCard_FileStatusClear(deviceId);
         bzero(g_MemCard_SaveWork.devices_0[deviceId].saveHeader_14, sizeof(s_MemCard_SaveHeader) * MEMCARD_FILE_COUNT_MAX);
@@ -126,7 +126,7 @@ namespace Silent::Game
         return result;
     }
 
-    void MemCard_SysInit2() // 0x8002E7BC
+    void MemCard_SysEnable() // 0x8002E7BC
     {
         if (g_MemCard_AvailibityStatus == true)
         {
@@ -141,7 +141,7 @@ namespace Silent::Game
         MemCard_SaveWork_SetParams(&g_MemCard_SaveWork.saveWork_E0[1], 0, 0, 0, 0, 0, MemCardResult_NotConnected);
     }
 
-    void MemCard_Disable() // 0x8002E830
+    void MemCard_SysDisable() // 0x8002E830
     {
         if (g_MemCard_AvailibityStatus != false)
         {
@@ -279,7 +279,7 @@ namespace Silent::Game
 
         for (i = 0; i < MEMCARD_DEVICE_COUNT_MAX; i++)
         {
-            if (g_MemCard_SaveWork.devices_0[i].status == 3)
+            if (g_MemCard_SaveWork.devices_0[i].status == MemCardState_Available)
             {
                 MemCard_SaveWithBiggestTotalSavegameCountGet(i, &saveInfo);
 
@@ -374,7 +374,7 @@ namespace Silent::Game
         {
             statusPtr->lastMemCardResult_14 = MemCardResult_FileIoComplete;
 
-            g_MemCard_SaveWork.devices_0[statusPtr->deviceId_4].status = 3;
+            g_MemCard_SaveWork.devices_0[statusPtr->deviceId_4].status = MemCardState_Available;
 
             MemCard_FileStatusClear(statusPtr->deviceId_4);
 
@@ -420,7 +420,7 @@ namespace Silent::Game
                 {
                     case MemCardResult_NotConnected:
                         MemCard_RamClear(statusPtr->deviceId_4);
-                        deviceInfoPtr->status         = UnkMemCardState1_1;
+                        deviceInfoPtr->status         = MemCardState_Unavailable;
                         statusPtr->lastMemCardResult_14 = memCardResult;
                         break;
 
@@ -431,15 +431,15 @@ namespace Silent::Game
                     case MemCardResult_InitComplete:
                         switch(deviceInfoPtr->status)
                         {
-                            case UnkMemCardState1_3:
+                            case MemCardState_Available:
                                 statusPtr->lastMemCardResult_14 = MemCardResult_FileIoComplete;
                                 break;
 
-                            case UnkMemCardState1_4:
+                            case MemCardState_Format:
                                 statusPtr->lastMemCardResult_14 = MemCardResult_LoadError;
                                 break;
 
-                            case UnkMemCardState1_5:
+                            case MemCardState_Broken:
                                 statusPtr->lastMemCardResult_14 = MemCardResult_FileIoError;
                                 break;
 
@@ -452,7 +452,7 @@ namespace Silent::Game
                 break;
 
             case 2: // Copies memory card directory information.
-                deviceInfoPtr->status = UnkMemCardState1_2;
+                deviceInfoPtr->status = MemCardState_Loading;
                 if (MemCard_WorkSet(MemCardIoMode_DirRead, statusPtr->deviceId_4, &directoryInfoCpy, nullptr, 0, 0, nullptr, 0))
                 {
                     statusPtr->processState_10 = 3;
@@ -466,13 +466,13 @@ namespace Silent::Game
                     case MemCardResult_NotConnected:
                         MemCard_RamClear(statusPtr->deviceId_4);
                         statusPtr->lastMemCardResult_14 = memCardResult;
-                        deviceInfoPtr->status         = UnkMemCardState1_1;
+                        deviceInfoPtr->status         = MemCardState_Unavailable;
                         break;
 
                     case MemCardResult_LoadError:
                         MemCard_RamClear(statusPtr->deviceId_4);
                         statusPtr->lastMemCardResult_14 = memCardResult;
-                        deviceInfoPtr->status         = UnkMemCardState1_4;
+                        deviceInfoPtr->status         = MemCardState_Format;
                         break;
 
                     case MemCardResult_NewDevice:
@@ -531,7 +531,7 @@ namespace Silent::Game
                         MemCard_RamClear(statusPtr->deviceId_4);
 
                         statusPtr->lastMemCardResult_14 = memCardResult;
-                        deviceInfoPtr->status         = UnkMemCardState1_1;
+                        deviceInfoPtr->status         = MemCardState_Unavailable;
                         break;
 
                     case MemCardResult_FileOpenError:
@@ -544,7 +544,7 @@ namespace Silent::Game
                             MemCard_RamClear(statusPtr->deviceId_4);
 
                             statusPtr->lastMemCardResult_14 = MemCardResult_FileIoError;
-                            deviceInfoPtr->status         = UnkMemCardState1_5;
+                            deviceInfoPtr->status         = MemCardState_Broken;
                             break;
                         }
 
@@ -587,7 +587,7 @@ namespace Silent::Game
                 // For some reason also updates the file limit of the memory card.
                 deviceInfoPtr->fileLimit_18     = MemCard_FileLimitUpdate(statusPtr->deviceId_4, &directoryInfoCpy);
                 statusPtr->lastMemCardResult_14 = MemCardResult_FileIoComplete;
-                deviceInfoPtr->status         = UnkMemCardState1_3;
+                deviceInfoPtr->status         = MemCardState_Available;
                 break;
         }
     }
@@ -1271,7 +1271,7 @@ namespace Silent::Game
 
     void MemCard_StateInit() // 0x80030444
     {
-        g_MemCard_Work.state_4       = MemCardCardState_Idle;
+        g_MemCard_Work.state_4       = MemCardWorkState_Idle;
         g_MemCard_Work.stateStep_8   = 0;
         g_MemCard_Work.stateResult_C = 0;
     }
@@ -1370,18 +1370,18 @@ namespace Silent::Game
         {
             case MemCardIoMode_Init:
             case MemCardIoMode_DirRead:
-                g_MemCard_Work.state_4     = MemCardCardState_Init;
+                g_MemCard_Work.state_4     = MemCardWorkState_Init;
                 g_MemCard_Work.stateStep_8 = 0;
                 break;
 
             case MemCardIoMode_Read:
             case MemCardIoMode_Write:
-                g_MemCard_Work.state_4     = MemCardCardState_FileOpen;
+                g_MemCard_Work.state_4     = MemCardWorkState_FileOpen;
                 g_MemCard_Work.stateStep_8 = 0;
                 break;
 
             case MemCardIoMode_Create:
-                g_MemCard_Work.state_4     = MemCardCardState_FileCreate;
+                g_MemCard_Work.state_4     = MemCardWorkState_FileCreate;
                 g_MemCard_Work.stateStep_8 = 0;
                 break;
 
@@ -1405,41 +1405,41 @@ namespace Silent::Game
 
     bool MemCard_MemCardIsIdle() // 0x800309FC
     {
-        return g_MemCard_Work.state_4 == MemCardCardState_Idle;
+        return g_MemCard_Work.state_4 == MemCardWorkState_Idle;
     }
 
     void MemCard_StateUpdate() // 0x80030A0C
     {
         switch (g_MemCard_Work.state_4)
         {
-            case MemCardCardState_Idle:
+            case MemCardWorkState_Idle:
                 break;
 
-            case MemCardCardState_Init:
+            case MemCardWorkState_Init:
                 g_MemCard_Work.stateResult_C = MemCard_State_Init();
                 break;
 
-            case MemCardCardState_Check:
+            case MemCardWorkState_Check:
                 g_MemCard_Work.stateResult_C = MemCard_State_Check();
                 break;
 
-            case MemCardCardState_Load:
+            case MemCardWorkState_Load:
                 g_MemCard_Work.stateResult_C = MemCard_State_Load();
                 break;
 
-            case MemCardCardState_DirRead:
+            case MemCardWorkState_DirRead:
                 g_MemCard_Work.stateResult_C = MemCard_State_DirRead();
                 break;
 
-            case MemCardCardState_FileCreate:
+            case MemCardWorkState_FileCreate:
                 g_MemCard_Work.stateResult_C = MemCard_State_FileCreate();
                 break;
 
-            case MemCardCardState_FileOpen:
+            case MemCardWorkState_FileOpen:
                 g_MemCard_Work.stateResult_C = MemCard_State_FileOpen();
                 break;
 
-            case MemCardCardState_FileReadWrite:
+            case MemCardWorkState_FileReadWrite:
                 g_MemCard_Work.stateResult_C = MemCard_State_FileReadWrite();
                 break;
 
@@ -1483,17 +1483,17 @@ namespace Silent::Game
                         if (g_MemCard_Work.MemCardIoMode_38 == MemCardIoMode_Init)
                         {
                             result                     = MemCardResult_InitComplete;
-                            g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                            g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                             g_MemCard_Work.stateStep_8 = 0;
                         }
                         else if (!((g_MemCard_Work.devicesPending_0 >> g_MemCard_Work.deviceId_3C) & (1 << 0)))
                         {
-                            g_MemCard_Work.state_4     = MemCardCardState_DirRead;
+                            g_MemCard_Work.state_4     = MemCardWorkState_DirRead;
                             g_MemCard_Work.stateStep_8 = 0;
                         }
                         else
                         {
-                            g_MemCard_Work.state_4     = MemCardCardState_Check;
+                            g_MemCard_Work.state_4     = MemCardWorkState_Check;
                             g_MemCard_Work.stateStep_8 = 0;
                         }
                         //break;
@@ -1532,7 +1532,7 @@ namespace Silent::Game
                 //switch (MemCard_HwEventsTest())
                 {
                     //case EvSpIOE: // Completed.
-                        g_MemCard_Work.state_4     = MemCardCardState_Load;
+                        g_MemCard_Work.state_4     = MemCardWorkState_Load;
                         g_MemCard_Work.stateStep_8 = 0;
                         //break;
 
@@ -1582,7 +1582,7 @@ namespace Silent::Game
                 //switch (MemCard_SwEventsTest())
                 {
                     //case EvSpIOE: // Read completed.
-                        g_MemCard_Work.state_4           = MemCardCardState_DirRead;
+                        g_MemCard_Work.state_4           = MemCardWorkState_DirRead;
                         g_MemCard_Work.stateStep_8       = 0;
                         g_MemCard_Work.devicesPending_0 &= ~(1 << g_MemCard_Work.deviceId_3C);
                         //break;
@@ -1630,7 +1630,7 @@ namespace Silent::Game
 
         result = (g_MemCard_Work.hasNewDevice_70 == true) ? MemCardResult_NewDevice : MemCardResult_NoNewDevice;
 
-        g_MemCard_Work.state_4     = MemCardCardState_Idle;
+        g_MemCard_Work.state_4     = MemCardWorkState_Idle;
         g_MemCard_Work.stateStep_8 = 0;
 
         return result;
@@ -1656,7 +1656,7 @@ namespace Silent::Game
                     if (g_MemCard_Work.retryCount_78++ >= 15)
                     {
                         result                 = MemCardResult_FileCreateError;
-                        g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                        g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                         g_MemCard_Work.stateStep_8 = 0;
                         break;
                     }
@@ -1664,7 +1664,7 @@ namespace Silent::Game
                 else
                 {
                     close(g_MemCard_Work.fileHandle_74);
-                    g_MemCard_Work.state_4     = MemCardCardState_FileOpen;
+                    g_MemCard_Work.state_4     = MemCardWorkState_FileOpen;
                     g_MemCard_Work.stateStep_8 = 0;
                 }
                 break;
@@ -1710,14 +1710,14 @@ namespace Silent::Game
                     if (g_MemCard_Work.retryCount_78++ >= 15)
                     {
                         result                 = MemCardResult_FileOpenError;
-                        g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                        g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                         g_MemCard_Work.stateStep_8 = 0;
                         break;
                     }
                 }
                 else
                 {
-                    g_MemCard_Work.state_4     = MemCardCardState_FileReadWrite;
+                    g_MemCard_Work.state_4     = MemCardWorkState_FileReadWrite;
                     g_MemCard_Work.stateStep_8 = 0;
                 }
                 break;
@@ -1746,7 +1746,7 @@ namespace Silent::Game
                     if (g_MemCard_Work.retryCount_78++ >= 15)
                     {
                         result                     = MemCardResult_FileSeekError;
-                        g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                        g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                         g_MemCard_Work.stateStep_8 = 0;
                     }
                 }
@@ -1781,7 +1781,7 @@ namespace Silent::Game
                     if (g_MemCard_Work.retryCount_78++ >= 15)
                     {
                         result                 = MemCardResult_FileIoError;
-                        g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                        g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                         g_MemCard_Work.stateStep_8 = 0;
                         close(g_MemCard_Work.fileHandle_74);
                     }
@@ -1797,14 +1797,14 @@ namespace Silent::Game
                 {
                     //case EvSpIOE: // Completed.
                         result                     = MemCardResult_FileIoComplete;
-                        g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                        g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                         g_MemCard_Work.stateStep_8 = 0;
                         close(g_MemCard_Work.fileHandle_74);
                         //break;
 
                     //case EvSpNEW: // New card detected.
                     //    result                     = MemCardResult_FileIoError;
-                    //    g_MemCard_Work.state_4     = MemCardCardState_Idle;
+                    //    g_MemCard_Work.state_4     = MemCardWorkState_Idle;
                     //    g_MemCard_Work.stateStep_8 = 0;
                     //    close(g_MemCard_Work.fileHandle_74);
                 }

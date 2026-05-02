@@ -1316,7 +1316,7 @@ namespace Silent::Game
         s8          unk_110[4];
         s32         field_114;
         s8          field_118;
-        u8          modelVariation_119;
+        u8          modelVariantIdx;
         s16         field_11A;
         s32         field_11C;
         s16         field_120;
@@ -1346,7 +1346,7 @@ namespace Silent::Game
     /** @brief Alessa character properties. TODO: Copy of `s_PropsDahlia`. Fields not marked "correct" are filler. */
     typedef struct _PropsAlessa
     {
-        s32        stateIdx0;
+        s32        stateIdx0; // Control state?
         u_Property properties_EC;
         s32        field_F0; // Correct
         u_Property properties_F4;
@@ -1416,7 +1416,7 @@ namespace Silent::Game
     /** @brief Dahlia character properties. */
     typedef struct _PropsDahlia
     {
-        s32        stateIdx0;
+        s32        stateIdx0; // Control state?
         u_Property properties_EC;
         u_Property properties_F0;
         u_Property properties_F4;
@@ -1596,14 +1596,14 @@ namespace Silent::Game
     typedef struct _PropsPuppetNurse
     {
         VECTOR3       position_E8; /** Q19.12 */
-        s_CharaDamage damage_F4;
+        s_CharaDamage damage;
         q19_12        field_104;
         s32           field_108;
         s32           field_10C;
-        q19_12        moveSpeed_110;
+        q19_12        moveSpeed;
         s32           field_114;
         u8            field_118;
-        u8            modelVariation_119;
+        u8            modelVariantIdx;
         u16           field_11A;
         q3_12         field_11C; // Angle.
         s16           field_11E;

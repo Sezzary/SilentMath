@@ -242,7 +242,7 @@ namespace Silent::Game
                         //AreaLoad_TransitionSound();
                     }
 
-                    //MemCard_Disable();
+                    //MemCard_SysDisable();
                     g_GameWork.gameStateSteps[0]++;
                 }
                 break;

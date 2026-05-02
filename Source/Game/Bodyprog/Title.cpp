@@ -320,7 +320,7 @@ namespace Silent::Game
                         //Chara_PositionSet(&g_MapOverlayHeader.mapPointsOfInterest_1C[0]);
                     }
 
-                    //MemCard_Disable();
+                    //MemCard_SysDisable();
 
                     prevState                       = g_GameWork.gameState;
                     g_GameWork.gameStateSteps[0] = prevState;
