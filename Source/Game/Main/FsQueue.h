@@ -154,17 +154,6 @@ namespace Silent::Game
         FsQueueOp_Read = 2  /** Read from CD (`Fs_QueueUpdateRead`). */
     };
 
-    /** @brief FS queue entry load statuses.
-     *
-     * See `Fs_QueueEntryLoadStatusGet`.
-     */
-    enum e_FsQueueEntryLoadStatus
-    {
-        FsQueueEntryLoadStatus_Invalid  = 0, /** Entry index is `NO_VALUE`. */
-        FsQueueEntryLoadStatus_Unloaded = 1, /** Not currently loaded. */
-        FsQueueEntryLoadStatus_Loaded   = 2  /** Currently loaded. */
-    };
-
     /** @brief Extra queue entry data describing where to upload a TIM after reading.
      * See `FsQueueExtra`.
      *

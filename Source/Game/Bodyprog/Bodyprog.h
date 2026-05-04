@@ -32,6 +32,27 @@ namespace Silent::Game
         (((u_Filename*)(a))->u32[0] != ((u_Filename*)(b))->u32[0] || \
         ((u_Filename*)(a))->u32[1] != ((u_Filename*)(b))->u32[1])
 
+    /** @brief IPD chunk load states.
+     *
+     * See `Map_ChunkLoadStateGet`.
+     */
+    typedef enum _ChunkLoadState
+    {
+        ChunkLoadState_Invalid  = 0, /** Entry index is `NO_VALUE`. */
+        ChunkLoadState_Unloaded = 1, /** Not currently loaded. */
+        ChunkLoadState_Loaded   = 2  /** Currently loaded. */
+    } e_ChunkLoadState;
+
+    typedef enum _WorldModelLocation
+    {
+        WorldModelLocation_None   = 0,
+        WorldModelLocation_Global = 1,
+        WorldModelLocation_Chunk1 = 2,
+        WorldModelLocation_Chunk2 = 3,
+        WorldModelLocation_Chunk3 = 4,
+        WorldModelLocation_Chunk4 = 5
+    } e_WorldModelLocation;
+
     /** @brief Character spawn flags. */
     enum e_SpawnFlags
     {
@@ -603,12 +624,12 @@ namespace Silent::Game
         {
             struct
             {
-                u8 field_6_0  : 8;
-                s8 field_6_8  : 7;
-                u8 field_6_15 : 1; // `bool`
+                u8 field_6_0     : 8;
+                s8 field_6_8     : 7;
+                u8 isTransparent : 1; /** `bool` */
             } bits;
 
-            u16 flags; // @hack `func_8005AC50` accesses `field_6_15` above with some weird shifts, haven't found how to make it work with bitfield yet.
+            u16 flags; // @hack `func_8005AC50` accesses `isTransparent` above with some weird shifts, haven't found how to make it work with bitfield yet.
         } field_6;
         u16 field_8;
         u16 field_A;
@@ -690,7 +711,7 @@ namespace Silent::Game
     {
         s16 field_0;
         s16 field_2;
-        s16 field_4;
+        s16 field_4; // Q8? Related to ground height?
         u16 field_6_0  : 5; // TODO: Might be using `s_IpdCollisionData_18` substruct here? Won't fit though.
         u16 field_6_5  : 3;
         u16 field_6_8  : 3;
@@ -733,7 +754,7 @@ namespace Silent::Game
     typedef struct _IpdCollisionData
     {
         s32                    positionX;
-        s32                    positionZ_4;
+        s32                    positionZ;
         u32                    field_8_0  : 8;
         u32                    field_8_8  : 8;
         u32                    field_8_16 : 8;
@@ -885,7 +906,7 @@ namespace Silent::Game
         s16                field_3E; // Z?
         s8*                field_40;
         s_CollisionState_44 field_44;
-        s32                field_7C;
+        q23_8              field_7C; // Related to ground height?
         s32                field_80; // X
         s32                field_84; // Z
         s32                field_88; // X
@@ -925,7 +946,7 @@ namespace Silent::Game
         } field_A0;
         u8                 box;
         u8                 unk_C9[1];
-        s16                field_CA;
+        q7_8               groundHeight;
         s_CollisionState_CC field_CC;
         // TODO: May be incomplete. Maybe not, added the final padding based on `Collision_Get`.
     } s_CollisionState;
@@ -1020,12 +1041,12 @@ namespace Silent::Game
     } s_800AD4C8;
 
     /** @brief Collision point data. */
-    typedef struct
+    struct s_CollisionPoint
     {
-        VECTOR3     position; // Q19.12
-        s_Collision collision_C;
+        VECTOR3     position;  /** Q19.12 */
+        s_Collision collision;
         s32         field_18; // Count of points in circle?
-    } s_CollisionPoint;
+    };
 
     struct s_800BCDA8
     {
@@ -1082,7 +1103,7 @@ namespace Silent::Game
     {
         u_Filename name_0;
         s8         field_8;
-        s8         lmIdx_9; /** Set to 2 when found in `g_Map.globalLm_138.lmHdr` and 3-6 if found in `g_Map.ipdActive_15C[i] (i + 3)`. */
+        s8         lmIdx_9; /** Set to 2 when found in `g_Map.globalLm.lmHdr` and 3-6 if found in `g_Map.ipdActive[i] (i + 3)`. */
     } s_WorldObjectMetadata;
 
     // Rough name.
@@ -1172,90 +1193,100 @@ namespace Silent::Game
 
     struct s_ActiveTextures
     {
-        s32        count_0;
-        s_Texture* textures_4[10];
+        s32        count;
+        s_Texture* textures[10];
     };
 
     struct s_IpdTextures
     {
-        s_ActiveTextures fullPage_0;
-        s_ActiveTextures halfPage_2C;
-        s_Texture        fullPageTextures_58[8];
-        s_Texture        halfPageTextures_118[2];
+        s_ActiveTextures fullPage;
+        s_ActiveTextures halfPage;
+        s_Texture        fullPageTextures[8];
+        s_Texture        halfPageTextures_[2];
     };
 
-    typedef struct s_Map
+    struct s_Map
     {
-        s_IpdCollisionData collisionData_0; // Default chunk collision data?
-        s32                texFileIdx_134;
-        s_GlobalLm         globalLm_138;
-        char               mapTag_144[4];
-        s32                mapTagSize_148;
-        s32                ipdFileIdx_14C;
-        s_IpdHeader*       ipdBuffer_150;
-        s32                ipdBufferSize_154;
-        s32                ipdActiveSize_158;
-        s_IpdChunk         ipdActive_15C[4];
-        s_IpdColumn        ipdGrid_1CC[18];
-        s8                 unk_40C[32];     // Could be one extra row in table above.
-        s_IpdColumn*       ipdGridCenter_42C;
-        s_IpdTextures      ipdTextures_430;
-        q19_12             positionX_578;
-        q19_12             positionX_57C;
-        s32                cellX_580;
-        s32                cellZ_584;
-        bool               isExterior_588;
+        s_IpdCollisionData collisionData; // Default chunk collision data?
+        s32                texFileIdx;
+        s_GlobalLm         globalLm;
+        char               mapTag[4];
+        s32                mapTagSize;
+        s32                ipdFileIdx;
+        s_IpdHeader*       ipdBuffer;
+        s32                ipdBufferSize;
+        s32                ipdActiveCount;
+        s_IpdChunk         ipdActive[4];
+        s_IpdColumn        ipdGrid[18];
+        s8                 unk_40C[32]; // Could be one extra row in table above.
+        s_IpdColumn*       ipdGridCenter;
+        s_IpdTextures      ipdTextures;
+        q19_12             positionX;
+        q19_12             positionX;
+        s32                cellX;
+        s32                cellZ;
+        bool               isExterior;
     };
 
+    /** @brief World fog info. */
+    struct s_Fog
+    {
+        s32     nearDistance;
+        q23_8   farDistance; // "DrawDistanmce" in SHME, "has no effect when fog is disabled".
+        s32     depthShift;  // "FogThing1" from SHME. Affects the distance where fog begins.
+        s32     intensity;   // "FogThing2" from SHME. Affects the distance where fog begins.
+        CVECTOR color;
+    };
+
+    // Related to point `s_PointLight`.
     typedef struct
     {
         VECTOR3 field_0[2][1];
     } s_WorldEnvWork_84;
 
+    /** @brief Dynamic point light. */
+    struct s_PointLight
+    {
+        s32     field_0; // Light intensity in Q4?
+        q3_12   lensFlareIntensity;
+        q19_12  intensity;
+        SVECTOR direction; /** Q3.12 */
+        VECTOR3 position;  /** Q19.12 */
+        SVECTOR rotation;
+        SVECTOR field_28; // Q8 light position for matrix?
+        SVECTOR field_32; // Light offset?
+        s_WorldEnvWork_84 field_38[3];
+    };
+
     /** @brief World environment workspace.
-     *  Holds fog distances and ramps, lighting and color parameters,
-     *  water zone references, and other per-map environmental data
-     *  used during world rendering.
+     *
+     * Holds fog distances and ramps, lighting and color parameters, water zone references, and other per-map environmental
+     * data used for world drawing. 
      */
     struct s_WorldEnvWork
     {
-        u8            field_0;        // `bool`?
-        u8            isFogEnabled_1; /** `bool` */
+        u8            field_0;      // `bool`?
+        u8            isFogEnabled; /** `bool` */
         u8            field_2;
-        u8            field_3;        // Enviroment lighting.
-        s_WaterZone*  waterZones_4;
-        s32           screenBrightness_8;
-        s32           fogNearDistance_C;
-        q23_8         fogFarDistance_10; // "DrawDistanmce" in SHME, "has no effect when fog is disabled".
-        s32           fogDepthShift_14;  // "FogThing1" from SHME. Affects the distance where fog begins.
-        s32           fogIntensity_18;   // "FogThing2" from SHME. Affects the distance where fog begins.
-        CVECTOR       fogColor_1C;
-        s32           field_20;        // Map lighting.
-        u8            field_24; // } RGB. Character color lighting.
-        u8            field_25; // }
-        u8            field_26; // }
-        s8            unk_27;
+        u8            field_3; // Enviroment lighting.
+        s_WaterZone*  waterZones;
+        s32           screenBrightness;
+        s_Fog         fog;
+        s32           field_20; // Map lighting.
+        CVECTOR       field_24; // Character color lighting.
         CVECTOR       worldTintColor_28;
-        MATRIX        field_2C;
-        s32           field_4C; // Light intensity in Q4?
-        q3_12         lensFlareIntensity;
-        q19_12        lightIntensity;
-        SVECTOR       lightRotation; /** Q3.12 */
-        VECTOR3       lightPosition; /** Q19.12 */
-        SVECTOR       field_6C;      // Player current angles related to light?
-        SVECTOR       field_74;
-        SVECTOR       field_7C;
-        s_WorldEnvWork_84 field_84[3];
-        u8            fogRamp_CC[128]; // Fog-related values based on `fogNearDistance_C`/`fogFarDistance_10`.
+        MATRIX        colorMat;
+        s_PointLight  light;
+        u8            fogRamp_CC[128]; // Fog-related values based on `fog.nearDistance`/`fog.farDistance`.
         u16           field_14C;
     };
 
     typedef struct
     {
-        u16            flags_0; // Collision flags.
-        u8             triggerZoneCount_2;
-        u8             unk_3;
-        s_TriggerZone* triggerZones_4[20]; // Guessed size.
+        u16            flags; // Collision flags.
+        u8             triggerZoneCount;
+        u8             __pad_3;
+        s_TriggerZone* triggerZones[20]; // Guessed size.
     } s_800C4478;
 
     typedef struct
@@ -1436,7 +1467,7 @@ namespace Silent::Game
         q4_12  field_64[4];
         s16    field_6c[4];
         s16    field_74;
-        s16    unk_76;
+        s8     __pad_76[2];
         u8     field_78;
     } s_MapOverlayHeader_94;
 
@@ -1447,119 +1478,119 @@ namespace Silent::Game
     struct s_MapOverlayHeader
     {
         s_MapInfo*             mapInfo;
-        u8                     (*getMapRoomIdxFunc_4)(s32 x, s32 y); // Called by `Savegame_MapRoomIdxUpdate`.
+        u8                     (*mapRoomIdxGet)(q19_12 posX, q19_12 posY); // Called by `Savegame_MapRoomIdxUpdate`.
         s8                     field_8;
         s32                    (*func_C)();
-        void                   (*bgmEvent_10)(bool);
-        s8                     bgmIdx_14;
-        u8                     ambientAudioIdx_15; // Ambient file index from `g_AmbientVabTaskLoadCmds`.
-        s8                     field_16;           // Set ambient tint and render distance.
+        void                   (*bgmEvent)(bool);
+        s8                     bgmIdx;
+        u8                     ambientAudioIdx; // Ambient file index from `g_AmbientVabTaskLoadCmds`.
+        s8                     field_16;        // Set ambient tint and draw distance.
                                                 // A value of 3 sets the map to night.
                                                 // A value of 2 will sets the map to use a tint used during the hallaway
                                                 // intro.
                                                 // Giving this and next variable a name will require further investigation
                                                 // of `particle.c` code.
-        s8                     field_17;           // Set weather to play. Rain, heavy rain, or snow.
-        void                   (**loadingScreenFuncs_18)();
-        s_MapPoint2d*          mapPointsOfInterest_1C;
-        void                   (**mapEventFuncs_20)(); /** Points to array of event functions. */
-        s_EventData*           mapEvents_24;
+        s8                     field_17;        // Set weather to play. Rain, heavy rain, or snow.
+        void                   (**loadingScreenFuncs)();
+        s_MapPoint2d*          mapPoints;
+        void                   (**mapEventFuncs)(); /** Points to array of event functions. */
+        s_EventData*           mapEvents;
         GsCOORDINATE2*         field_28; // Bone coords of some kind.
-        u8*                    loadableItems_2C;
-        const char**           mapMessages_30; // Array of strings.
-        s_AnimInfo*            harryMapAnimInfos_34; /** Map-specific anim infos for Harry (for anims 38+). */
+        u8*                    loadableItems;
+        const char**           mapMessages;
+        s_AnimInfo*            harryMapAnimInfos; /** Map-specific anim infos for Harry (for anims 38+). */
         s_UnkStruct3_Mo*       field_38; // Array of 40?
-        void                   (*worldObjectsInit_3C)(); // func(?).
-        void                   (*worldObjectsUpdate_40)();
+        void                   (*initWorldObjects)(void);
+        void                   (*updateWorldObjects)(void);
         void                   (*func_44)();
-        void                   (*npcSpawnEvent_48)(); // func(?).
+        void                   (*npcSpawnEvent)();
         s_MapHdr_field_4C*     unkTable1_4C; // Related to collision?
         s16                    unkTable1Count_50;
-        s_BloodSplat*          bloodSplats_54;
-        s16                    bloodSplatCount_58;
+        s_BloodSplat*          bloodSplats;
+        s16                    bloodSplatCount;
         s_MapOverlayHeader_5C* field_5C;
-        void                   (*func_60)(s32, s32);
-        //s32                    (*func_64)(POLY_FT4** poly, s32);
-        //s32                    (*func_68)(POLY_FT4** poly, s32);
-        void                   (*func_6C)(); // func(?).
-        //s32                    (*func_70)(POLY_FT4** poly, s32);
-        void                   (*func_74)(); // func(?).
-        //s32                    (*func_78)(POLY_FT4** poly, s32);
-        s_MapOverlayHeader_7C* field_7C;     // only map1_s01, map6_s04.
-        void                   (*func_80)(); // func(?).
-        //s32                    (*func_84)(POLY_FT4** poly, s32);
-        s32*                   func_88; // only map0_s01, map7_s01.
-        //s32                    (*func_8C)(POLY_FT4** poly, s32); // func(?) only map0_s01, map7_s01.
-        //s32                    (*func_90)(POLY_FT4** poly, s32); // func(?) only map5_s00.
-        s_MapOverlayHeader_94* field_94;                    // only map1_s02, map1_s03.
-        //s32                    (*func_98)(POLY_FT4** poly, s32); // only map1_s02, map1_s03.
-        void                   (*func_9C)();                // only map1_s02, map1_s03.
-        void*                  ptr_A0; // M1S03 only, pointer to `s_800E3A40` array.
-        //s32                    (*func_A4)(POLY_FT4** poly, s32); // func(?) only map1_s03.
-        void                   (*func_A8)(); // func(?) only map6_s02.
-        //s32                    (*func_AC)(POLY_FT4** poly, s32); // func(?) only map4_s03, map4_s05.
-        //s32                    (*func_B0)(POLY_FT4** poly, s32); // func(?) only map4_s03, map4_s05.
-        //s32                    (*func_B4)(POLY_FT4** poly, s32); // func(?) only map1_s03, map4_s05, map6_s01, map6_s02, map5_s01.
+        void                   (*func_60)(s32 idx, bool arg1);
+        s32                    (*func_64)(POLY_FT4** poly, s32);
+        s32                    (*func_68)(POLY_FT4** poly, s32);
+        void                   (*func_6C)();
+        s32                    (*func_70)(POLY_FT4** poly, s32);
+        void                   (*func_74)();
+        s32                    (*func_78)(POLY_FT4** poly, s32);
+        s_MapOverlayHeader_7C* field_7C; // Only map1_s01, map6_s04.
+        void                   (*func_80)();
+        s32                    (*func_84)(POLY_FT4** poly, s32);
+        s32*                   func_88;                          // Only map0_s01, map7_s01.
+        s32                    (*func_8C)(POLY_FT4** poly, s32); // Only map0_s01, map7_s01.
+        s32                    (*func_90)(POLY_FT4** poly, s32); // Only map5_s00.
+        s_MapOverlayHeader_94* field_94;                         // Only map1_s02, map1_s03.
+        s32                    (*func_98)(POLY_FT4** poly, s32); // Only map1_s02, map1_s03.
+        void                   (*func_9C)();                     // Only map1_s02, map1_s03.
+        void*                  ptr_A0;                           // M1S03 only, pointer to `s_800E3A40` array.
+        s32                    (*func_A4)(POLY_FT4** poly, s32); // Only map1_s03.
+        void                   (*func_A8)();                     // Only map6_s02.
+        s32                    (*func_AC)(POLY_FT4** poly, s32); // Only map4_s03, map4_s05.
+        s32                    (*func_B0)(POLY_FT4** poly, s32); // Only map4_s03, map4_s05.
+        s32                    (*func_B4)(POLY_FT4** poly, s32); // Only map1_s03, map4_s05, map6_s01, map6_s02, map5_s01.
         void                   (*func_B8)(s_SubCharacter* chara, s_PlayerExtra* extra, GsCOORDINATE2* coords);
         void                   (*func_BC)(s_SubCharacter* chara, s_PlayerExtra* extra, GsCOORDINATE2* coords);
-        void                   (*func_C0)(); // func(?).
-        void                   (*playerMatchArmAnimDisable_C4)();
-        void                   (*playerControlFreeze_C8)();
-        void                   (*playerControlUnfreeze_CC)(bool);
-        s32                    (*func_D0)(s32 playerExtraState, VECTOR3* vec, q3_12 angle, s32 vecCount); // 0x800C964C
-        s32                    (*func_D4)(s32);                  // Assumed return type.
+        void                   (*func_C0)();
+        void                   (*playerMatchArmAnimDisable)();
+        void                   (*playerControlFreeze)();
+        void                   (*playerControlUnfreeze)(bool setIdle);
+        bool                   (*func_D0)(s32 playerExtraState, VECTOR3* vec, q3_12 angle, s32 vecCount); // 0x800C964C
+        s32                    (*func_D4)(s32 playerExtraState); // Points to `sharedFunc_800D2C7C_0_s00` which has `void` return type, but changing this funcptr causes mismatch in `func_80085EB8`
         void                   (*func_D8)();                     // Assumed return type.
-        void                   (*playerAnimLock_DC)();
-        void                   (*playerAnimIsLocked_E0)();
-        s32                    (*playerAnimUnlock_E4)(s_SubCharacter*, s32); // Assumed return type.
-        s64                    (*func_E8)(s_SubCharacter*);      // Is it really `s64`???
-        s32                    (*playerMoveDistClear)();
-        void                   (*playerMoveDistClear_F0)();
-        void                   (*playerFallBackward_F4)();
-        void                   (*func_F8)(); // func(?).
-        void                   (*playerDamageFeetFront_FC)();
-        void                   (*func_100)(); // func(?).
-        void                   (*func_104)(); // func(?).
+        void                   (*playerAnimLock)(void);
+        void                   (*isPlayerAnimLocked)();
+        s32                    (*playerAnimUnlock)(s_SubCharacter*, s32); // Assumed return type.
+        s64                    (*func_E8)(s_SubCharacter*);               // Is it really `s64`???
+        bool                   (*playerMoveDistIsZero)();
+        void                   (*playerMoveDistClear)();
+        void                   (*playerFallBackward)();
+        void                   (*func_F8)();
+        void                   (*playerDamageFeetFront)();
+        void                   (*func_100)();
+        void                   (*func_104)();
         s32                    (*func_108)();
-        void                   (*func_10C)(); // func(?).
-        void                   (*func_110)(); // func(?).
-        void                   (*func_114)(); // func(?).
-        void                   (*func_118)(); // func(?).
-        void                   (*func_11C)(); // func(?).
-        void                   (*func_120)(); // func(?).
+        void                   (*func_10C)();
+        void                   (*func_110)();
+        void                   (*func_114)();
+        void                   (*func_118)();
+        void                   (*func_11C)();
+        void                   (*func_120)();
         void                   (*func_124)(s_SubCharacter*); // Assumed return type.
-        s32                    (*playerRunTimerReset_128)(s_SubCharacter* player);
-        s32                    (*charaLock_12C)(s_SubCharacter* chara);
+        s32                    (*playerRunTimerReset)(s_SubCharacter* player);
+        s32                    (*charaLock)(s_SubCharacter* chara);
         void                   (*charaIsLockedCheck)(s_SubCharacter* chara);
-        s32                    (*charaUnlock_134)(s_SubCharacter* chara);
-        s32                    (*charaAnimPlaybackStateGet_138)(s_SubCharacter* chara);
-        bool                   (*func_13C)(s_SubCharacter* chara, s32 arg1, VECTOR3* arg2In, s32 angleIn, s32 arg4); // `arg0` is `s_SubCharacter*`.
-        void                   (*charaVisibleSet_140)(s_SubCharacter* chara);
-        void                   (*charaInvisibleSet_144)(s_SubCharacter* chara);
+        s32                    (*charaUnlock)(s_SubCharacter* chara);
+        s32                    (*charaAnimPlaybackStateGet)(s_SubCharacter* chara);
+        bool                   (*func_13C)(s_SubCharacter* chara, s32 arg1, VECTOR3* arg2In, s32 angleIn, s32 arg4);
+        void                   (*charaVisibleSet)(s_SubCharacter* chara);
+        void                   (*charaInvisibleSet)(s_SubCharacter* chara);
         bool                   (*func_148)(s32 animStatus, s_SubCharacter* chara, s32 keyframeIdx0, s32 keyframeIdx1, s32 sfxId, s32 pitch);
         bool                   (*func_14C)(s32 animStatus, s_SubCharacter* chara, s32 keyframeIdx, s32 sfxId);
-        s32                    (*charaAnimStartKeyframeIdxGet_150)(s_SubCharacter* chara);
+        s32                    (*charaAnimStartKeyframeIdxGet)(s_SubCharacter* chara);
         void                   (*func_154)(s_SubCharacter* chara);
-        void                   (*func_158)(q19_12 x, q19_12 z); // only map1_s05, map1_s06.
-        void                   (*func_15C)(); // func(?) only map5_s01.
-        void                   (*func_160)(); // func(?) only map5_s01.
-        void                   (*func_164)(); // func(?) only map5_s01.
-        void                   (*particlesUpdate_168)(s32 unused, s32 mapId, s32);
-        void                   (*enviromentSet_16C)(s8, u32);
-        void                   (*func_170)(); // func(?).
-        void                   (*func_174)(); // func(?).
-        void                   (*particleHyperBlasterBeamDraw_178)(VECTOR3* vec0, q19_12* rotX, q19_12* rotY);
-        void                   (*particleBeamDraw_17C)(const VECTOR3* from, const VECTOR3* to);
-        void                   (*particleSoundStop_17C)();
-        s32*                   windSpeedX_184;
-        s32*                   windSpeedZ_188;
+        void                   (*func_158)(q19_12 x, q19_12 z); // Only map1_s05, map1_s06.
+        void                   (*func_15C)();                   // Only map5_s01.
+        void                   (*func_160)();                   // Only map5_s01.
+        void                   (*func_164)();                   // Only map5_s01.
+        void                   (*particlesUpdate)(s32 unused, s32 mapId, s32);
+        void                   (*enviromentSet)(s8, u32);
+        void                   (*func_170)();
+        void                   (*func_174)();
+        void                   (*particleHyperBlasterBeamDraw)(VECTOR3* vec0, q19_12* rotX, q19_12* rotY);
+        void                   (*particleBeamDraw)(const VECTOR3* from, const VECTOR3* to);
+        void                   (*particleSoundStop)();
+        s32*                   windSpeedX;
+        s32*                   windSpeedZ;
         s32*                   data_18C;
         s32*                   data_190;
-        void                   (*charaUpdateFuncs_194[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharaId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
-        s8                     charaGroupIds_248[CHARA_GROUP_COUNT]; /** `e_CharaId` values where if `s_SpawnInfo::charaId == Chara_None`, `charaGroupIds_248[0]` is used for `charaSpawns_24C[0]` and `charaGroupIds_248[1]` for `charaSpawns_24C[1]`. */
-        s_SpawnInfo            charaSpawns_24C[2][16];               /** Array of character type/position/flags. `spawnFlags == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
-        VC_ROAD_DATA           cameraPaths_3CC[100];
-        s_TriggerZone          triggerZones_D2C[200];
+        void                   (*charaUpdateFuncs[Chara_Count])(s_SubCharacter* chara, s_AnmHeader* anmHdr, GsCOORDINATE2* coords); /** Guessed params. Funcptrs for each `e_CharaId`, set to 0 for IDs not included in the map overlay. Called by `Game_NpcUpdate`. */
+        s8                     charaGroupIds[CHARA_GROUP_COUNT]; /** `e_CharaId` values where if `s_SpawnInfo::charaId == Chara_None`, `charaGroupIds[0]` is used for `charaSpawns[0]` and `charaGroupIds[1]` for `charaSpawns[1]`. */
+        s_SpawnInfo            charaSpawns[2][16];               /** Array of character type/position/flags. `flags_6 == 0` are unused slots? Read by `Game_NpcRoomInitSpawn`. */
+        VC_ROAD_DATA           cameraPaths[100];
+        s_TriggerZone          triggerZones[200];
     };
 
     typedef struct
@@ -2283,8 +2314,6 @@ namespace Silent::Game
 
     extern s32 D_800AFDEC;
 
-    extern PACKET D_800BFBF0[2][0xA10];
-
     extern u8 g_Items_GunsMaxLoadAmmo[36]; // Max loaded ammo that a weapon can hold. 0x800AD4A0
 
     extern const char* INVENTORY_ITEM_NAMES[];
@@ -2345,10 +2374,6 @@ namespace Silent::Game
     extern u16 g_CollisionFlags;
 
     extern s_WorldGfxWork g_WorldGfxWork;
-
-    extern s_IpdCollisionData* D_800C1010[4];
-
-    extern s_Map g_Map;
 
     extern s8* D_800C15B0;
 

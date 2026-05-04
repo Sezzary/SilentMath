@@ -100,7 +100,7 @@ namespace Silent::Game
     {
         FileState_Unused  = 0,
         FileState_Used    = 1,
-        FileState_Unk2    = 2, // @unused See `func_80033548`.
+        FileState_Unk2    = 2, /** @unused See `func_80033548`. */
         FileState_Damaged = 3
     } e_FileState;
 
@@ -123,7 +123,7 @@ namespace Silent::Game
         MemCardIoMode_DirRead = 1, // TODO: Not sure if this is actual purpose yet.
         MemCardIoMode_Read    = 2,
         MemCardIoMode_Write   = 3,
-        MemCardIoMode_Create  = 4,
+        MemCardIoMode_Create  = 4
     } e_MemCardIoMode;
 
     typedef enum _MemCardResult
