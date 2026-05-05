@@ -567,16 +567,16 @@ namespace Silent::Game
     /** @brief Character flags. Used by `s_SubCharacter::flags`. */
     enum e_CharaFlags
     {
-        CharaFlag_None    = 0,
-        CharaFlag_Unk1    = 1 << 0, // Specific to padlock. Maybe used for special handling.
-        CharaFlag_Unk2    = 1 << 1, // Related to being damaged. Maybe to recoil or notify of danger?
-        CharaFlag_Unk3    = 1 << 2,
-        CharaFlag_Unk4    = 1 << 3,
-        CharaFlag_Unk5    = 1 << 4, // Camera-related.
-        CharaFlag_Damaged = 1 << 5,
-        CharaFlag_Dead    = 1 << 6, // Unure.
-        CharaFlag_Unk8    = 1 << 7,
-        CharaFlag_Unk9    = 1 << 8  // Only set for bosses and NPCs in special scenarios.
+        CharaFlag_None          = 0,
+        CharaFlag_PadlockBroken = 1 << 0, /** Only used by Padlock character. */
+        CharaFlag_Unk2          = 1 << 1, // Related to being damaged. Maybe to recoil or notify of danger?
+        CharaFlag_Hit           = 1 << 2, // Associated with recoil-causing hit?
+        CharaFlag_Unk4          = 1 << 3,
+        CharaFlag_Unk5          = 1 << 4, // Camera-related. Only used by Stalker? Maybe only for alley scenario?
+        CharaFlag_Damaged       = 1 << 5,
+        CharaFlag_Dead          = 1 << 6, // Unure.
+        CharaFlag_Unk8          = 1 << 7,
+        CharaFlag_Unk9          = 1 << 8  // Only set for bosses and NPCs in special scenarios.
     };
 
     /** @brief Character animation flags. */
@@ -1224,7 +1224,8 @@ namespace Silent::Game
         s8          charaId;      /** `e_CharaId` */
         u8          paletteIdx;   /** Changes the texture palette index for this model. */
         u8          controlState; /** Active character control state. */
-        u8          stateStep;    // Step number or temp data for the current `controlState`? In `s_PlayerExtra` always 1, set to 0 for 1 tick when anim state appears to change.
+        u8          stateStep;    /** Step for the current `controlState`. */ 
+                                  // In `s_PlayerExtra` always 1, set to 0 for 1 tick when anim state appears to change.
                                   // Used differently in player's `s_SubCharacter`. 0: anim transitioning(?), bit 1: animated, bit 2: turning.
                                   // Sometimes holds actual anim index?
         s_ModelAnim anim;
@@ -1327,7 +1328,7 @@ namespace Silent::Game
     /** @brief Air Screamer or Night Flutter character properties. */
     typedef struct _PropsAirScreamer
     {
-        u32     field_E8_0 : 4;
+        u32     field_E8_0 : 4; // `AirScreamerHit_None` step.
         bool    field_E8_4;
         u32     field_E8_8 : 4;
         u32     __pad_E8_C : 20;
@@ -1343,14 +1344,14 @@ namespace Silent::Game
         q19_12  groundHeight_124;
     } s_PropsAirScreamer;
 
-    /** @brief Alessa character properties. TODO: Copy of `s_PropsDahlia`. Fields not marked "correct" are filler. */
+    /** @brief Alessa character properties. */
     typedef struct _PropsAlessa
     {
-        s32        stateIdx0; // Control state?
-        u_Property properties_EC;
-        s32        field_F0; // Correct
-        u_Property properties_F4;
-        s32        resetStateIdx0_F8;
+        s32        controlState; /** `e_AlessaControl` */
+        u_Property properties_EC; // Unused?
+        s32        field_F0;      // `bool`? If `false`, animation gets updated.
+        u_Property properties_F4; // Unused?
+        bool       resetControlState;
         s32        field_FC;
         s32        field_100;
         u_Property properties_104;
@@ -1360,7 +1361,7 @@ namespace Silent::Game
         s32        flags_11C;
         u_Property properties_120;
         s16        field_124;
-        q3_12      moveSpeed_126; // Correct
+        q3_12      moveSpeed_126;
     } s_PropsAlessa;
 
     /** @brief Bloodsucker character properties. */
@@ -1379,10 +1380,10 @@ namespace Silent::Game
     typedef struct _PropsCheryl
     {
         s32        controlState; /** `e_CherylControl` */
-        u_Property properties_EC;
-        u_Property properties_F0;
-        u_Property properties_F4;
-        s32        resetStateIdx0_F8;
+        u_Property properties_EC; // Unused?
+        s32        field_F0;
+        u_Property properties_F4; // Unused?
+        bool       resetControlState;
         s32        field_FC;
         s32        field_100;
         u_Property properties_104;
@@ -1416,11 +1417,11 @@ namespace Silent::Game
     /** @brief Dahlia character properties. */
     typedef struct _PropsDahlia
     {
-        s32        stateIdx0; // Control state?
+        s32        constolState; /** `e_DahliaControl` */
         u_Property properties_EC;
         u_Property properties_F0;
         u_Property properties_F4;
-        s32        resetStateIdx0_F8;
+        bool       resetControlState;
         s32        field_FC;
         s32        field_100;
         u_Property properties_104;
@@ -1476,8 +1477,8 @@ namespace Silent::Game
         q3_12      timer_10C; // SFX timer?
         u8         field_10E; // } Sound states?
         u8         field_10F; // }
-        u8         field_110; /** `bool` | Play SFX. */
-        u8         field_111; /** `bool` | Play SFX. */
+        u8         playLeftFootstepSfx;  /** `bool` */
+        u8         playRightFootstepSfx; /** `bool` */
         s8         __pad_112[2];
         q3_12      field_114; // Move speed coefficient?
     } e_PropsGroaner;
@@ -1523,7 +1524,7 @@ namespace Silent::Game
         /* 0xEC  */ u_Property properties_EC;
         /* 0xF0  */ u_Property properties_F0;
         /* 0xF4  */ u_Property properties_F4;
-        /* 0xF8  */ s32        resetStateIdx0_F8;
+        /* 0xF8  */ bool       resetControlState;
         /* 0xFC  */ s32        field_FC;
         /* 0x100 */ s32        field_100;
         /* 0x104 */ u_Property properties_104;
@@ -2325,11 +2326,11 @@ namespace Silent::Game
      * @param animInfos Reference anim infos.
      * @param animInfosOffset Anim infos offset.
      */
-    #define Model_AnimStatusKeyframeSet(model, animIdx, isActive, animInfos, animInfosOffset)                                       \
-        if ((model).stateStep == 0)                                                                                               \
-        {                                                                                                                           \
-            (model).anim.status = ANIM_STATUS(animIdx, isActive);                                                               \
-            (model).stateStep++;                                                                                                  \
+    #define Model_AnimStatusKeyframeSet(model, animIdx, isActive, animInfos, animInfosOffset)                                 \
+        if ((model).stateStep == 0)                                                                                           \
+        {                                                                                                                     \
+            (model).anim.status = ANIM_STATUS(animIdx, isActive);                                                             \
+            (model).stateStep++;                                                                                              \
             (model).anim.time        = Q12((animInfos)[ANIM_STATUS(animIdx, isActive) + (animInfosOffset)].startKeyframeIdx); \
             (model).anim.keyframeIdx = (animInfos)[ANIM_STATUS(animIdx, (isActive) + (animInfosOffset))].startKeyframeIdx;    \
         }
@@ -2342,11 +2343,11 @@ namespace Silent::Game
     {
         // TODO: This uses `dahlia` part of union, but is most likely either a `human` part shared with all humanoid characters
         // or humanoids only share a small portion early in the union.
-        if (chara->properties.dahlia.resetStateIdx0_F8)
+        if (chara->properties.dahlia.resetControlState)
         {
             chara->properties.dahlia.stateIdx0         = 0;
-            chara->model.stateStep                    = 0;
-            chara->properties.dahlia.resetStateIdx0_F8 = 0;
+            chara->model.stateStep                     = 0;
+            chara->properties.dahlia.resetControlState = 0;
         }
     }
 
@@ -2354,9 +2355,9 @@ namespace Silent::Game
      *
      * @param chara Character to update.
      */
-    #define Chara_PropsClear(chara)                           \
-        for (i = 0; i < 16; i++)                                   \
-        {                                                          \
+    #define Chara_PropsClear(chara)                             \
+        for (i = 0; i < 16; i++)                                \
+        {                                                       \
             chara->properties.dummy.properties_E8[i].val32 = 0; \
         }
 
@@ -2364,7 +2365,7 @@ namespace Silent::Game
      *
      * @param chara Character to update.
      */
-    #define Chara_DamageClear(chara)                  \
+    #define Chara_DamageClear(chara)             \
         (chara)->damage.amount      = Q12(0.0f); \
         (chara)->damage.position.vz = Q12(0.0f); \
         (chara)->damage.position.vy = Q12(0.0f); \

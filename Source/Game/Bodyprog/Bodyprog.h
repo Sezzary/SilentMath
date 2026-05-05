@@ -1568,9 +1568,9 @@ namespace Silent::Game
         void                   (*charaVisibleSet)(s_SubCharacter* chara);
         void                   (*charaInvisibleSet)(s_SubCharacter* chara);
         bool                   (*func_148)(s32 animStatus, s_SubCharacter* chara, s32 keyframeIdx0, s32 keyframeIdx1, s32 sfxId, s32 pitch);
-        bool                   (*func_14C)(s32 animStatus, s_SubCharacter* chara, s32 keyframeIdx, s32 sfxId);
+        bool                   (*func_14C)(s32 animStatus, s_SubCharacter* chara, s32 keyframeIdx, s32 sfxId); // Play SFX?
         s32                    (*charaAnimStartKeyframeIdxGet)(s_SubCharacter* chara);
-        void                   (*func_154)(s_SubCharacter* chara);
+        void                   (*charaCollisionReset)(s_SubCharacter* chara);
         void                   (*func_158)(q19_12 x, q19_12 z); // Only map1_s05, map1_s06.
         void                   (*func_15C)();                   // Only map5_s01.
         void                   (*func_160)();                   // Only map5_s01.
