@@ -28,9 +28,8 @@ namespace Silent::Utils
         /** @brief Initializes the instance with locales from a path.
          *
          * @param localesPath Path containing locale folders.
-         * @param localeNames Locale names to register.
          */
-        void Initialize(const std::filesystem::path& localesPath, const std::vector<std::string>& localeNames);
+        void Initialize(const std::filesystem::path& localesPath);
 
         // ========
         // Getters

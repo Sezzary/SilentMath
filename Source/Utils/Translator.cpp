@@ -9,13 +9,28 @@ using namespace Silent::Services;
 
 namespace Silent::Utils
 {
-    void TranslationManager::Initialize(const std::filesystem::path& localesPath, const std::vector<std::string>& localeNames)
+    void TranslationManager::Initialize(const std::filesystem::path& localesPath)
     {
         // Set path.
         _localesPath = localesPath;
+        if (!std::filesystem::exists(_localesPath) || !std::filesystem::is_directory(_localesPath))
+        {
+            Debug::Log("Locales path doesn't exist.", Debug::LogLevel::Error);
+            return;
+        }
 
         // Register locale names.
-        _localeNames = localeNames;
+        _localeNames.clear();
+        for (const auto& localeName : std::filesystem::directory_iterator(_localesPath))
+        {
+            if (!localeName.is_directory())
+            {
+                continue;
+            }
+
+            _localeNames.push_back(localeName.path().filename().string());
+        }
+
         if (_localeNames.empty())
         {
             Debug::Log("No translator locales registered.", Debug::LogLevel::Error);

@@ -3,7 +3,6 @@
 
 #include "Assets/AssetStreamer.h"
 #include "Assets/Fonts.h"
-#include "Assets/Locales.h"
 #include "Assets/TranslationKeys.h"
 #include "Audio/Audio.h"
 #include "Game/Entry.h"
@@ -162,7 +161,7 @@ namespace Silent
 
         // Assets.
         _work.Assets.Initialize(_work.Filesystem.GetAssetsDirectory() / ASSETS_PSX_DIR_NAME);
-        _work.Translator.Initialize(_work.Filesystem.GetAssetsDirectory() / ASSETS_LOCALES_DIR_NAME, LOCALE_NAMES);
+        _work.Translator.Initialize(_work.Filesystem.GetAssetsDirectory() / ASSETS_LOCALES_DIR_NAME);
         _work.Video.Initialize(_work.Filesystem.GetAssetsDirectory() / ASSETS_VIDEO_DIR_NAME);
 
         // Fonts.

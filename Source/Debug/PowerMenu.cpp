@@ -3,7 +3,6 @@
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
-#include "Assets/Locales.h"
 #include "Debug/Debug.h"
 #include "Debug/GameData.h"
 #include "Services/Options.h"
@@ -22,7 +21,6 @@ namespace Silent::Debug
             constexpr const char* TEX_FILTER_ITEMS[]        = { "Nearest", "Linear" };
             constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Original", "Smooth" };
             constexpr const char* LIGHTING_ITEMS[]          = { "Per vertex", "Per pixel" };
-            constexpr const char* LANG_ITEMS[]              = { "English (Revised)", "English (US)", "English (EU)" };
             constexpr const char* SOUND_ITEMS[]             = { "Stereo", "Monaural" };
             constexpr const char* BLOOD_COLOR_ITEMS[]       = { "Normal", "Green", "Violet", "Black" };
             constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
@@ -435,12 +433,20 @@ namespace Silent::Debug
                             isOptChanged = true;
                         }
 
+                        const auto& localeNames = translator.GetLocaleNames();
+                        auto        langItems   = std::vector<const char*>{};
+                        langItems.reserve(localeNames.size());
+                        for (const auto& name : localeNames)
+                        {
+                            langItems.push_back(name.c_str());
+                        }
+
                         // `Language` combo.
                         int lang = (int)options->Language;
-                        if (ImGui::Combo("Language", &lang, LANG_ITEMS, IM_ARRAYSIZE(LANG_ITEMS)))
+                        if (ImGui::Combo("Language", &lang, langItems.data(), (int)langItems.size()))
                         {
                             options->Language = (LanguageType)lang;
-                            translator.SetActiveLocale(LOCALE_NAMES[(int)options->Language]);
+                            translator.SetActiveLocale(localeNames[(int)options->Language]);
 
                             isOptChanged = true;
                         }

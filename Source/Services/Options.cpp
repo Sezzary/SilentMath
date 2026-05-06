@@ -76,7 +76,7 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr bool DEFAULT_ENABLE_SUBTITLES                         = true;
-    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishRevised;
+    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishUs;
     constexpr auto DEFAULT_SOUND                                    = SoundType::Stereo;
     constexpr int  DEFAULT_BGM_VOLUME                               = 16;
     constexpr int  DEFAULT_SE_VOLUME                                = 16;

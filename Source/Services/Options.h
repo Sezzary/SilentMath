@@ -61,9 +61,8 @@ namespace Silent::Services
 
     enum class LanguageType
     {
-        EnglishRevised,
         EnglishUs,
-        EnglishEu
+        Japanese
     };
 
     enum class SoundType
