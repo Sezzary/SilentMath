@@ -135,13 +135,6 @@ namespace Silent::Assets
     constexpr char KEY_SAVE_LOC_CHILDS_ROOM[]    = "saveLoc_ChildsRoom";
     constexpr char KEY_SAVE_LOC_NEXT_FEAR[]      = "saveLoc_NextFear";
 
-    // ==================
-    // Item Descriptions
-    // ==================
-
-    constexpr char KEY_ITEM_DESC_KITCHEN_KNIFE[] = "itemDescKitchenKnife";
-    // @todo
-
     // =================
     // Paper Map Labels
     // =================
@@ -200,6 +193,166 @@ namespace Silent::Assets
     constexpr char KEY_PAPER_MAP_LADDER[]      = "paperMap_Ladder";
     // @todo
 
+    // ======
+    // Items
+    // ======
+
+    constexpr char KEY_ITEM_HEALTH_DRINK[]           = "item_HealthDrink";
+    constexpr char KEY_ITEM_FIRST_AID_KIT[]          = "item_FirstAidKit";
+    constexpr char KEY_ITEM_AMPOULE[]                = "item_Ampoule";
+    constexpr char KEY_ITEM_LOBBY_KEY[]              = "item_LobbyKey";
+    constexpr char KEY_ITEM_HOUSE_KEY[]              = "item_HouseKey";
+    constexpr char KEY_ITEM_KEY_OF_LION[]            = "item_KeyOfLion";
+    constexpr char KEY_ITEM_KEY_OF_WOODMAN[]         = "item_KeyOfWoodman";
+    constexpr char KEY_ITEM_KEY_OF_SCARECROW[]       = "item_KeyOfScarecrow";
+    constexpr char KEY_ITEM_LIBRARY_RESERVE_KEY[]    = "item_LibraryReserveKey";
+    constexpr char KEY_ITEM_CLASSROOM_KEY[]          = "item_ClassroomKey";
+    constexpr char KEY_ITEM_K_GORDON_KEY[]           = "item_KGordonKey";
+    constexpr char KEY_ITEM_DRAWBRIDGE_KEY[]         = "item_DrawbridgeKey";
+    constexpr char KEY_ITEM_BASEMENT_KEY[]           = "item_BasementKey";
+    constexpr char KEY_ITEM_BASEMENT_STOREROOM_KEY[] = "item_BasementStoreroomKey";
+    constexpr char KEY_ITEM_EXAMINATION_ROOM_KEY[]   = "item_ExaminationRoomKey";
+    constexpr char KEY_ITEM_ANTIQUE_SHOP_KEY[]       = "item_AntiqueShopKey";
+    constexpr char KEY_ITEM_SEWER_KEY[]              = "item_SewerKey";
+    constexpr char KEY_ITEM_KEY_OF_OPHIEL[]          = "item_KeyOfOphiel";
+    constexpr char KEY_ITEM_KEY_OF_HAGITH[]          = "item_KeyOfHagith";
+    constexpr char KEY_ITEM_KEY_OF_PHALEG[]          = "item_KeyOfPhaleg";
+    constexpr char KEY_ITEM_KEY_OF_BETHOR[]          = "item_KeyOfBethor";
+    constexpr char KEY_ITEM_KEY_OF_ARATRON[]         = "item_KeyOfAratron";
+    constexpr char KEY_ITEM_A_NOTE_TO_SCHOOL[]       = "item_ANoteToSchool";
+    constexpr char KEY_ITEM_A_NOTE_DOGHOUSE[]        = "item_ANoteDoghouse";
+    constexpr char KEY_ITEM_PICTURE_CARD[]           = "item_PictureCard";
+    constexpr char KEY_ITEM_SEWER_EXIT_KEY[]         = "item_SewerExitKey";
+    constexpr char KEY_ITEM_CHANNELING_STONE[]       = "item_ChannelingStone";
+    constexpr char KEY_ITEM_CHEMICAL[]               = "item_Chemical";
+    constexpr char KEY_ITEM_GOLD_MEDALLION[]         = "item_GoldMedallion";
+    constexpr char KEY_ITEM_SILVER_MEDALLION[]       = "item_SilverMedallion";
+    constexpr char KEY_ITEM_RUBBER_BALL[]            = "item_RubberBall";
+    constexpr char KEY_ITEM_FLAUROS[]                = "item_Flauros";
+    constexpr char KEY_ITEM_PLASTIC_BOTTLE[]         = "item_PlasticBottle";
+    constexpr char KEY_ITEM_UNKNOWN_LIQUID[]         = "item_UnknownLiquid";
+    constexpr char KEY_ITEM_PLATE_OF_TURTLE[]        = "item_PlateOfTurtle";
+    constexpr char KEY_ITEM_PLATE_OF_HATTER[]        = "item_PlateOfHatter";
+    constexpr char KEY_ITEM_PLATE_OF_CAT[]           = "item_PlateOfCat";
+    constexpr char KEY_ITEM_PLATE_OF_QUEEN[]         = "item_PlateOfQueen";
+    constexpr char KEY_ITEM_BLOOD_PACK[]             = "item_BloodPack";
+    constexpr char KEY_ITEM_DISINFECTING_ALCOHOL[]   = "item_DisinfectingAlcohol";
+    constexpr char KEY_ITEM_LIGHTER[]                = "item_Lighter";
+    constexpr char KEY_ITEM_VIDEO_TAPE[]             = "item_Video tape";
+    constexpr char KEY_ITEM_KAUFMANN_KEY[]           = "item_KaufmannKey";
+    constexpr char KEY_ITEM_RECEIPT[]                = "item_Receipt";
+    constexpr char KEY_ITEM_SAFE_KEY[]               = "item_SafeKey";
+    constexpr char KEY_ITEM_MAGNET[]                 = "item_Magnet";
+    constexpr char KEY_ITEM_MOTORCYCLE_KEY[]         = "item_MotorcycleKey";
+    constexpr char KEY_ITEM_BIRD_CAGE_KEY[]          = "item_BirdCageKey";
+    constexpr char KEY_ITEM_PLIERS[]                 = "item_Pliers";
+    constexpr char KEY_ITEM_SCREWDRIVER[]            = "item_Screwdriver";
+    constexpr char KEY_ITEM_CAMERA[]                 = "item_Camera";
+    constexpr char KEY_ITEM_RING_OF_CONTRACT[]       = "item_RingOfContract";
+    constexpr char KEY_ITEM_STONE_OF_TIME[]          = "item_StoneOfTime";
+    constexpr char KEY_ITEM_AMULET_OF_SOLOMON[]      = "item_AmuletOfSolomon";
+    constexpr char KEY_ITEM_CREST_OF_MERCURY[]       = "item_CrestOfMercury";
+    constexpr char KEY_ITEM_ANKH[]                   = "item_Ankh";
+    constexpr char KEY_ITEM_DAGGER_OF_MELCHIOR[]     = "item_DaggerOdMelchior";
+    constexpr char KEY_ITEM_DISK_OF_OUROBOROS[]      = "item_DiskOfOuroboros";
+    constexpr char KEY_ITEM_KITCHEN_KNIFE[]          = "item_KitchenKnife";
+    constexpr char KEY_ITEM_STEEL_PIPE[]             = "item_SteelPipe";
+    constexpr char KEY_ITEM_ROCK_DRILL[]             = "item_RockDrill";
+    constexpr char KEY_ITEM_HAMMER[]                 = "item_Hammer";
+    constexpr char KEY_ITEM_CHAINSAW[]               = "item_Chainsaw";
+    constexpr char KEY_ITEM_KATANA[]                 = "item_Katana";
+    constexpr char KEY_ITEM_AXE[]                    = "item_Axe";
+    constexpr char KEY_ITEM_HANDGUN[]                = "item_Handgun";
+    constexpr char KEY_ITEM_HUNTING_RIFLE[]          = "item_HuntingRifle";
+    constexpr char KEY_ITEM_SHOTGUN[]                = "item_Shotgun";
+    constexpr char KEY_ITEM_HYPER_BLASTER[]          = "item_HyperBlaster";
+    constexpr char KEY_ITEM_HANDGUN_BULLETS[]        = "item_HandgunBullets";
+    constexpr char KEY_ITEM_RIFLE_SHELLS[]           = "item_RifleShells";
+    constexpr char KEY_ITEM_SHOTGUN_SHELLS[]         = "item_ShotgunShells";
+    constexpr char KEY_ITEM_FLASHLIGHT[]             = "item_Flashlight";
+    constexpr char KEY_ITEM_POCKET_RADIO[]           = "item_PocketRadio";
+    constexpr char KEY_ITEM_GASOLINE_TANK[]          = "item_GasolineTank";
+
+    // ==================
+    // Item Descriptions
+    // ==================
+
+    constexpr char KEY_ITEM_DESC_HEALTH_DRINK[]        = "itemDesc_HealthDrink";
+    constexpr char KEY_ITEM_DESC_FIRST_AID_KIT[]       = "itemDesc_FirstAidKit";
+    constexpr char KEY_ITEM_DESC_AMPULE[]              = "itemDesc_Ampule";
+    constexpr char KEY_ITEM_DESC_LOBBY_KEY[]           = "itemDesc_LobbyKey";
+    constexpr char KEY_ITEM_DESC_HOUSE_KEY[]           = "itemDesc_HouseKey";
+    constexpr char KEY_ITEM_DESC_KEY_OF_LION[]         = "itemDesc_KeyOfLion";
+    constexpr char KEY_ITEM_DESC_KEY_OF_WOODMAN[]      = "itemDesc_KeyOfWoodman";
+    constexpr char KEY_ITEM_DESC_KEY_OF_SCARECROW[]    = "itemDesc_KeyOfScarecrow";
+    constexpr char KEY_ITEM_DESC_LIBRARY_RESERVE_KEY[] = "itemDesc_LibraryReserveKey";
+    constexpr char KEY_ITEM_DESC_CLASSROOM_KEY[]       = "itemDesc_ClassroomKey";
+    constexpr char KEY_ITEM_DESC_K_GORDON_KEY[]        = "itemDesc_KGordonKey";
+    constexpr char KEY_ITEM_DESC_DRAWBRIDGE_KEY[]      = "itemDesc_DrawbridgeKey";
+    constexpr char KEY_ITEM_DESC_BASEMENT_KEY[]        = "itemDesc_BasementKey";
+    constexpr char KEY_ITEM_DESC_BASEMENT_STOREROOM[]  = "itemDesc_BasementStoreroomKey";
+    constexpr char KEY_ITEM_DESC_EXAMINATION_ROOM[]    = "itemDesc_ExaminationRoomKey";
+    constexpr char KEY_ITEM_DESC_ANTIQUE_SHOP_KEY[]    = "itemDesc_AntiqueShopKey";
+    constexpr char KEY_ITEM_DESC_SEWER_KEY[]           = "itemDesc_SewerKey";
+    constexpr char KEY_ITEM_DESC_KEY_OF_OPHIEL[]       = "itemDesc_KeyOfOphiel";
+    constexpr char KEY_ITEM_DESC_KEY_OF_HAGITH[]       = "itemDesc_KeyOfHagith";
+    constexpr char KEY_ITEM_DESC_KEY_OF_PHALEG[]       = "itemDesc_KeyOfPhaleg";
+    constexpr char KEY_ITEM_DESC_KEY_OF_BETHOR[]       = "itemDesc_KeyOfBethor";
+    constexpr char KEY_ITEM_DESC_KEY_OF_ARATRON[]      = "itemDesc_KeyOfAratron";
+    constexpr char KEY_ITEM_DESC_A_NOTE_TO_SCHOOL[]    = "itemDesc_ANoteToSchool";
+    constexpr char KEY_ITEM_DESC_A_NOTE_DOGHOUSE[]     = "itemDesc_ANoteDoghouse";
+    constexpr char KEY_ITEM_DESC_PICTURE_CARD[]        = "itemDesc_PictureCard";
+    constexpr char KEY_ITEM_DESC_SEWER_EXIT_KEY[]      = "itemDesc_SewerExitKey";
+    constexpr char KEY_ITEM_DESC_CHANNELING_STONE[]    = "itemDesc_ChannelingStone";
+    constexpr char KEY_ITEM_DESC_CHEMICAL[]            = "itemDesc_Chemical";
+    constexpr char KEY_ITEM_DESC_GOLD_MEDALLION[]      = "itemDesc_GoldMedallion";
+    constexpr char KEY_ITEM_DESC_SILVER_MEDALLION[]    = "itemDesc_SilverMedallion";
+    constexpr char KEY_ITEM_DESC_RUBBER_BALL[]         = "itemDesc_RubberBall";
+    constexpr char KEY_ITEM_DESC_FLAUROS[]             = "itemDesc_Flauros";
+    constexpr char KEY_ITEM_DESC_PLASTIC_BOTTLE[]      = "itemDesc_PlasticBottle";
+    constexpr char KEY_ITEM_DESC_UNKNOWN_LIQUID[]      = "itemDesc_UnknownLiquid";
+    constexpr char KEY_ITEM_DESC_PLATE_OF_TURTLE[]     = "itemDesc_PlateOfTurtle";
+    constexpr char KEY_ITEM_DESC_PLATE_OF_HATTER[]     = "itemDesc_PlateOfHatter";
+    constexpr char KEY_ITEM_DESC_PLATE_OF_CAT[]        = "itemDesc_PlateOfCat";
+    constexpr char KEY_ITEM_DESC_PLATE_OF_QUEEN[]      = "itemDesc_PlateOfQueen";
+    constexpr char KEY_ITEM_DESC_BLOOD_PACK[]          = "itemDesc_BloodPack";
+    constexpr char KEY_ITEM_DESC_DISINFECT_ALCOHOL[]   = "itemDesc_DisinfectingAlcohol";
+    constexpr char KEY_ITEM_DESC_LIGHTER[]             = "itemDesc_Lighter";
+    constexpr char KEY_ITEM_DESC_VIDEO_TAPE[]          = "itemDesc_VideoTape";
+    constexpr char KEY_ITEM_DESC_KAUFMANN_KEY[]        = "itemDesc_KaufmannKey";
+    constexpr char KEY_ITEM_DESC_RECEIPT[]             = "itemDesc_Receipt";
+    constexpr char KEY_ITEM_DESC_SAFE_KEY[]            = "itemDesc_SafeKey";
+    constexpr char KEY_ITEM_DESC_MAGNET[]              = "itemDesc_Magnet";
+    constexpr char KEY_ITEM_DESC_MOTORCYCLE_KEY[]      = "itemDesc_MotorcycleKey";
+    constexpr char KEY_ITEM_DESC_BIRD_CAGE_KEY[]       = "itemDesc_BirdCageKey";
+    constexpr char KEY_ITEM_DESC_PLIERS[]              = "itemDesc_Pliers";
+    constexpr char KEY_ITEM_DESC_SCREWDRIVER[]         = "itemDesc_Screwdriver";
+    constexpr char KEY_ITEM_DESC_CAMERA[]              = "itemDesc_Camera";
+    constexpr char KEY_ITEM_DESC_RING_OF_CONTRACT[]    = "itemDesc_RingOfContract";
+    constexpr char KEY_ITEM_DESC_STONE_OF_TIME[]       = "itemDesc_StoneOfTime";
+    constexpr char KEY_ITEM_DESC_AMULET_OF_SOLOMON[]   = "itemDesc_AmuletOfSolomon";
+    constexpr char KEY_ITEM_DESC_CREST_OF_MERCURY[]    = "itemDesc_CrestOfMercury";
+    constexpr char KEY_ITEM_DESC_ANKH[]                = "itemDesc_Ankh";
+    constexpr char KEY_ITEM_DESC_DAGGER_OF_MELCHIOR[]  = "itemDesc_DaggerOfMelchior";
+    constexpr char KEY_ITEM_DESC_DISK_OF_OUROBOROS[]   = "itemDesc_DiskOfOuroboros";
+    constexpr char KEY_ITEM_DESC_KITCHEN_KNIFE[]       = "itemDesc_KitchenKnife";
+    constexpr char KEY_ITEM_DESC_STEEL_PIPE[]          = "itemDesc_SteelPipe";
+    constexpr char KEY_ITEM_DESC_ROCK_DRILL[]          = "itemDesc_RockDrill";
+    constexpr char KEY_ITEM_DESC_HAMMER[]              = "itemDesc_Hammer";
+    constexpr char KEY_ITEM_DESC_CHAINSAW[]            = "itemDesc_Chainsaw";
+    constexpr char KEY_ITEM_DESC_KATANA[]              = "itemDesc_Katana";
+    constexpr char KEY_ITEM_DESC_AXE[]                 = "itemDesc_Axe";
+    constexpr char KEY_ITEM_DESC_HANDGUN[]             = "itemDesc_Handgun";
+    constexpr char KEY_ITEM_DESC_HUNTING_RIFLE[]       = "itemDesc_HuntingRifle";
+    constexpr char KEY_ITEM_DESC_SHOTGUN[]             = "itemDesc_Shotgun";
+    constexpr char KEY_ITEM_DESC_HYPER_BLASTER[]       = "itemDesc_HyperBlaster";
+    constexpr char KEY_ITEM_DESC_HANDGUN_BULLETS[]     = "itemDesc_HandgunBullets";
+    constexpr char KEY_ITEM_DESC_RIFLE_SHELLS[]        = "itemDesc_RifleShells";
+    constexpr char KEY_ITEM_DESC_SHOTGUN_SHELLS[]      = "itemDesc_ShotgunShells";
+    constexpr char KEY_ITEM_DESC_FLASHLIGHT[]          = "itemDesc_Flashlight";
+    constexpr char KEY_ITEM_DESC_POCKET_RADIO[]        = "itemDesc_PocketRadio";
+    constexpr char KEY_ITEM_DESC_GASOLINE_TANK[]       = "itemDesc_GasolineTank";
+
     // ==========
     // Game Over
     // ==========
@@ -246,7 +399,30 @@ namespace Silent::Assets
     // Map 0, Stage 00 Messages
     // =========================
 
-    constexpr char KEY_M0S00_MSG_0[] = "m0s00Msg0";
+    constexpr char KEY_M0S00_MSG_1[]  = "m0s00Msg_1";
+    constexpr char KEY_M0S00_MSG_2[]  = "m0s00Msg_2";
+    constexpr char KEY_M0S00_MSG_3[]  = "m0s00Msg_3";
+    constexpr char KEY_M0S00_MSG_4[]  = "m0s00Msg_4";
+    constexpr char KEY_M0S00_MSG_5[]  = "m0s00Msg_5";
+    constexpr char KEY_M0S00_MSG_6[]  = "m0s00Msg_6";
+    constexpr char KEY_M0S00_MSG_7[]  = "m0s00Msg_7";
+    constexpr char KEY_M0S00_MSG_8[]  = "m0s00Msg_8";
+    constexpr char KEY_M0S00_MSG_9[]  = "m0s00Msg_9";
+    constexpr char KEY_M0S00_MSG_10[] = "m0s00Msg_10";
+    constexpr char KEY_M0S00_MSG_11[] = "m0s00Msg_11";
+    constexpr char KEY_M0S00_MSG_12[] = "m0s00Msg_12";
+    constexpr char KEY_M0S00_MSG_13[] = "m0s00Msg_13";
+    constexpr char KEY_M0S00_MSG_14[] = "m0s00Msg_14";
+    constexpr char KEY_M0S00_MSG_15[] = "m0s00Msg_15";
+    constexpr char KEY_M0S00_MSG_16[] = "m0s00Msg_16";
+    constexpr char KEY_M0S00_MSG_17[] = "m0s00Msg_17";
+    constexpr char KEY_M0S00_MSG_18[] = "m0s00Msg_18";
+    constexpr char KEY_M0S00_MSG_19[] = "m0s00Msg_19";
+    constexpr char KEY_M0S00_MSG_20[] = "m0s00Msg_20";
+    constexpr char KEY_M0S00_MSG_21[] = "m0s00Msg_21";
+    constexpr char KEY_M0S00_MSG_22[] = "m0s00Msg_22";
+    constexpr char KEY_M0S00_MSG_23[] = "m0s00Msg_23";
+    constexpr char KEY_M0S00_MSG_24[] = "m0s00Msg_24";
 
     // @todo
 }
