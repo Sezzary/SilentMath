@@ -227,7 +227,7 @@ namespace Silent::Game
         MainMenuEntry_Continue = 1,
         MainMenuEntry_Start    = 2,
         MainMenuEntry_Option   = 3,
-        MainMenuEntry_Extra    = 4, /** @unused The extra options menu may have been accessible via the main menu. */
+        MainMenuEntry_Quit     = 4,
 
         MainMenuEntry_Count    = 5
     } e_MainMenuEntry;
@@ -1222,7 +1222,7 @@ namespace Silent::Game
         s_IpdColumn*       ipdGridCenter;
         s_IpdTextures      ipdTextures;
         q19_12             positionX;
-        q19_12             positionX;
+        q19_12             positionZ;
         s32                cellX;
         s32                cellZ;
         bool               isExterior;

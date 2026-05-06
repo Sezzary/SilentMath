@@ -24,6 +24,8 @@ namespace Silent::Game
 {
     void GameState_KonamiLogo_Update() // 0x800C95AC
     {
+        const auto& input = g_App.GetInput();
+
         //while (g_GameWork.gameState == GameState_KonamiLogo)
         switch (g_GameWork.gameStateSteps[0])
         {
@@ -88,6 +90,11 @@ namespace Silent::Game
             //GsOUT_PACKET_P   = (PACKET*)(TEMP_MEMORY_ADDR + (g_ActiveBufferIdx << 15));
             //GsClearOt(0, 0, &g_OrderingTable0[g_ActiveBufferIdx]);
             //GsClearOt(0, 0, &g_OrderingTable2[g_ActiveBufferIdx]);
+        }
+
+        if (input.GetAction(In::Enter).IsClicked())
+        {
+            Game_StateSetNext(GameState_KcetLogo);
         }
     }
 

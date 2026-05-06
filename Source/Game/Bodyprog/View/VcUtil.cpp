@@ -20,7 +20,7 @@ namespace Silent::Game
         vcSetCameraUseWarp(chr_pos, g_SysWork.cameraAngleY);
         //SetGeomScreen(g_GameWork.gsScreenHeightx);
         vwInitViewInfo();
-        vcInitVCSystem(mapoverlay_ptr->cameraPaths_3CC);
+        vcInitVCSystem(mapoverlay_ptr->cameraPaths);
         vcStartCameraSystem();
 
         g_SysWork.cameraAngleZ   = Q12_ANGLE(0.0f);

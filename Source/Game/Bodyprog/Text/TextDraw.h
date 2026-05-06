@@ -29,7 +29,7 @@ namespace Silent::Game
         StringColorId_GreenUnused = 5, // @unused Same as `StringColorId_Green`.
         StringColorId_LightGrey   = 6,
         StringColorId_White       = 7,
-        //StringColorId_Black   = 8, // @todo Need to add this one for paper maps.
+        StringColorId_Black       = 8,
 
         StringColorId_Count
     };

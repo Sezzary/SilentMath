@@ -32,8 +32,10 @@ namespace Silent::Game
         Color::From8Bit(24,  128, 40),
         Color::From8Bit(8,   184, 96),
         Color::From8Bit(128, 0,   0),
+        Color::From8Bit(24,  128, 40),
         Color::From8Bit(100, 100, 100),
-        Color::From8Bit(128, 128, 128)
+        Color::From8Bit(255, 255, 255), // @todo Originally `(128, 128, 128)`. Need to adjust the others too?
+        Color::From8Bit(4,   4,   4)
     };
 
     /** @brief Processed message node types. */
@@ -134,12 +136,14 @@ namespace Silent::Game
         g_MapMsg_WidthIdx  = 1;
         g_MapMsg_AudioLoadBlock = 0;
 
+        // @todo Needs rewrite.
+
         /*for (i = (FONT_12X16_LINE_COUNT_MAX - 1); i >= 0; i--)
         {
             g_MapMsg_Widths[i] = 0;
         }
 
-        mapMsg = g_MapOverlayHeader.mapMessages_30[mapMsgIdx];
+        mapMsg = g_MapOverlayHeader.mapMessages[mapMsgIdx];
 
         for (j = 0; j < FONT_12X16_LINE_COUNT_MAX; )
         {

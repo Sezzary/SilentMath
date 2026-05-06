@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Assets/TranslationKeys.h"
 #include "Game/Bodyprog/GameBoot/GameBoot.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
@@ -17,9 +18,12 @@
 #include "Game/Screens/Stream/Stream.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
+#include "Utils/Translator.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Input;
 using namespace Silent::Renderer;
+using namespace Silent::Utils;
 
 namespace Silent::Game
 {
@@ -27,7 +31,9 @@ namespace Silent::Game
 
     static s32 g_MainMenuState              = 0;
     static s32 g_MainMenu_SelectedEntry     = MainMenuEntry_Start;
-    static u32 g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
+    static u32 g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Start)  |
+                                              (1 << MainMenuEntry_Option) |
+                                              (1 << MainMenuEntry_Quit);
 
     s8 g_Demo_ReproducedCount = 0;
     s8* D_800BCDE0;
@@ -85,7 +91,7 @@ namespace Silent::Game
                 Screen_RectInterlacedClear(0, 32, SCREEN_WIDTH, FRAMEBUFFER_HEIGHT_INTERLACED, 0, 0, 0);
                 Screen_Init(SCREEN_WIDTH, true);
 
-                g_IntervalVBlanks    = 1;
+                g_IntervalVBlanks = 1;
                 ScreenFade_Start(true, true, false);
                 g_ScreenFadeTimestep = Q12(2.0f);
                 g_MainMenuState++;
@@ -106,17 +112,23 @@ namespace Silent::Game
                     }
                 }
 
-                g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
+                g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Start)  |
+                                               (1 << MainMenuEntry_Option) |
+                                               (1 << MainMenuEntry_Quit);
 
                 if (g_GameWork.autosave.playerHealth > Q12(0.0f))
                 {
-                    g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Continue) | (1 << MainMenuEntry_Start) | (1 << MainMenuEntry_Option);
+                    g_MainMenu_VisibleEntryFlags = (1 << MainMenuEntry_Continue) |
+                                                   (1 << MainMenuEntry_Start)    |
+                                                   (1 << MainMenuEntry_Option)   |
+                                                   (1 << MainMenuEntry_Quit);
                 }
 
                 // Memory card present and savegames exist.
                 if (true)//(g_MemCard_SavegameCount > 0)
                 {
-                    g_MainMenu_VisibleEntryFlags |= (1 << MainMenuEntry_Load) | (1 << MainMenuEntry_Continue);
+                    g_MainMenu_VisibleEntryFlags |= (1 << MainMenuEntry_Load) |
+                                                    (1 << MainMenuEntry_Continue);
 
                     /*if (prevSavegameCount < g_MemCard_SavegameCount && g_MainMenu_SelectedEntry != MainMenuEntry_Load)
                     {
@@ -126,7 +138,7 @@ namespace Silent::Game
                 // No savegames exist, but did previously (e.g. memory card removed before player death).
                 else if (prevSavegameCount > 0)
                 {
-                    while(!(g_MainMenu_VisibleEntryFlags & (1 << g_MainMenu_SelectedEntry)))
+                    while (!(g_MainMenu_VisibleEntryFlags & (1 << g_MainMenu_SelectedEntry)))
                     {
                         g_MainMenu_SelectedEntry++;
                     }
@@ -150,12 +162,12 @@ namespace Silent::Game
                 if (input.GetAction(In::Up).IsPulsed(0.2f, 0.6f))
                 {
                     g_MainMenu_SelectedEntry += MainMenuEntry_Count;
-                    while(!(g_MainMenu_VisibleEntryFlags & (1 << --g_MainMenu_SelectedEntry)));
+                    while (!(g_MainMenu_VisibleEntryFlags & (1 << --g_MainMenu_SelectedEntry)));
                 }
 
                 if (input.GetAction(In::Down).IsPulsed(0.2f, 0.6f))
                 {
-                    while(!(g_MainMenu_VisibleEntryFlags & (1 << ++g_MainMenu_SelectedEntry)));
+                    while (!(g_MainMenu_VisibleEntryFlags & (1 << ++g_MainMenu_SelectedEntry)));
                 }
 
                 // Wrap selection.
@@ -213,7 +225,9 @@ namespace Silent::Game
                             GameFs_OptionBinLoad();
                             break;
 
-                        case MainMenuEntry_Extra: // @unused See `e_MainMenuEntry`.
+                        case MainMenuEntry_Quit:
+                            // @todo Add "Are you sure?" submenu.
+                            g_App.Quit();
                             break;
                     }
                 }
@@ -317,7 +331,7 @@ namespace Silent::Game
 
                     if (g_MainMenu_SelectedEntry == MainMenuEntry_Start)
                     {
-                        //Chara_PositionSet(&g_MapOverlayHeader.mapPointsOfInterest_1C[0]);
+                        //Chara_PositionSet(&g_MapOverlayHeader.mapPoints[0]);
                     }
 
                     //MemCard_SysDisable();
@@ -400,94 +414,86 @@ namespace Silent::Game
 
     void MainMenu_MainTextDraw() // 0x8003B568
     {
-        constexpr int COLUMN_POS_X = 158;
-        constexpr int COLUMN_POS_Y = 184;
+        constexpr int COLUMN_POS_X = SCREEN_WIDTH / 2;
+        constexpr int COLUMN_POS_Y = 184 - 120; // @todo Original offsets don't make sense. How were they interpreted on PSX?
         constexpr int STR_OFFSET_Y = 20;
 
-        static const char* MAIN_MENU_ENTRY_STRINGS[] =
+        static const char* MAIN_MENU_ENTRY_STRING_KEYS[] =
         {
-            "LOAD",
-            "CONTINUE",
-            "START",
-            "OPTION",
-            "EXTRA" /** @unused See `e_MainMenuEntry`. */
+            KEY_MAIN_MENU_LOAD,
+            KEY_MAIN_MENU_CONTINUE,
+            KEY_MAIN_MENU_START,
+            KEY_MAIN_MENU_OPTION,
+            KEY_MAIN_MENU_QUIT
         };
-        static const u8 STR_OFFSETS_X[] = { 29, 50, 32, 39, 33 }; // @unused Element at index 4. See `g_MainMenu_VisibleEntryFlags`.
 
-        s32 i;
+        const auto& translator = g_App.GetTranslator();
 
         // Draw selection strings.
-        for (i = 0; i < MainMenuEntry_Count; i++)
+        for (int i = 0; i < MainMenuEntry_Count; i++)
         {
-            // Check entry visibility flag.
+            // Check if entry is visible.
             if (!(g_MainMenu_VisibleEntryFlags & (1 << i)))
             {
                 continue;
             }
 
-            Gfx_StringSetPosition(COLUMN_POS_X - STR_OFFSETS_X[i], COLUMN_POS_Y + (i * STR_OFFSET_Y));
+            Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
             Gfx_StringSetColor(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
             {
-                Gfx_StringDraw("[", DEFAULT_MAP_MESSAGE_LENGTH);
+                auto selectedEntryStr = //"{M}" +
+                                        translator(KEY_MENU_OPENING_QUOTE) +
+                                        translator(MAIN_MENU_ENTRY_STRING_KEYS[i]) +
+                                        translator(KEY_MENU_CLOSING_QUOTE);
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
             }
             else
             {
-                Gfx_StringDraw("_", DEFAULT_MAP_MESSAGE_LENGTH);
+                auto unselectedEntryStr = /*"{M}" + */translator(MAIN_MENU_ENTRY_STRING_KEYS[i]);
+                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
             }
-
-            Gfx_StringDraw(MAIN_MENU_ENTRY_STRINGS[i], DEFAULT_MAP_MESSAGE_LENGTH);
-
-            if (i == g_MainMenu_SelectedEntry)
-            {
-                Gfx_StringDraw("]", DEFAULT_MAP_MESSAGE_LENGTH);
-            }
-
-            Gfx_StringDraw("\n", DEFAULT_MAP_MESSAGE_LENGTH);
+            Gfx_StringDraw("", DEFAULT_MAP_MESSAGE_LENGTH);
         }
     }
 
     void MainMenu_DifficultyTextDraw(s32 idx) // 0x8003B678
     {
         constexpr int DIFFICULTY_MENU_SELECTION_COUNT = 3;
-        constexpr int COLUMN_POS_X                    = 158;
+        constexpr int COLUMN_POS_X                    = SCREEN_WIDTH / 2;
         constexpr int COLUMN_POS_Y                    = 204;
         constexpr int STR_OFFSET_Y                    = 20;
 
-        static const char* DIFFICULTY_MENU_ENTRY_STRINGS[] =
+        static const char* DIFFICULTY_MENU_ENTRY_STRING_KEYS[] =
         {
-            "EASY",
-            "NORMAL",
-            "HARD"
+            KEY_DIFF_MENU_EASY,
+            KEY_DIFF_MENU_NORMAL,
+            KEY_DIFF_MENU_HARD
         };
-        static const u8 STR_OFFSETS_X[] = { 28, 43, 30 };
 
-        s32 i;
+        const auto& translator = g_App.GetTranslator();
 
         // Draw selection strings.
-        for (i = 0; i < DIFFICULTY_MENU_SELECTION_COUNT; i++)
+        for (int i = 0; i < DIFFICULTY_MENU_SELECTION_COUNT; i++)
         {
-            Gfx_StringSetPosition(COLUMN_POS_X - STR_OFFSETS_X[i], COLUMN_POS_Y + (i * STR_OFFSET_Y));
+            Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
             Gfx_StringSetColor(StringColorId_White);
 
-            if (i == idx)
+            if (i == g_MainMenu_SelectedEntry)
             {
-                Gfx_StringDraw("[", DEFAULT_MAP_MESSAGE_LENGTH);
+                auto selectedEntryStr = /*"{M}" +*/
+                                        translator(KEY_MENU_OPENING_QUOTE) +
+                                        translator(DIFFICULTY_MENU_ENTRY_STRING_KEYS[i]) +
+                                        translator(KEY_MENU_CLOSING_QUOTE);
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
             }
             else
             {
-                Gfx_StringDraw("_", DEFAULT_MAP_MESSAGE_LENGTH);
+                auto unselectedEntryStr = /*"{M}" + */translator(DIFFICULTY_MENU_ENTRY_STRING_KEYS[i]);
+                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
             }
-
-            Gfx_StringDraw(DIFFICULTY_MENU_ENTRY_STRINGS[i], DEFAULT_MAP_MESSAGE_LENGTH);
-
-            if (i == idx)
-            {
-                Gfx_StringDraw("]", DEFAULT_MAP_MESSAGE_LENGTH);
-            }
-
-            Gfx_StringDraw("\n", DEFAULT_MAP_MESSAGE_LENGTH);
+            Gfx_StringDraw("", DEFAULT_MAP_MESSAGE_LENGTH);
         }
     }
 

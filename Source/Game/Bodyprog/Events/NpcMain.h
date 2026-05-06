@@ -17,7 +17,7 @@ namespace Silent::Game
     /** Responsible for loading NPCs on the map. */
     void Game_NpcRoomInitSpawn(bool cond);
 
-    /** @brief Main NPC update function. Runs through each NPC and calls `g_MapOverlayHeader.charaUpdateFuncs_194` for them. */
+    /** @brief Main NPC update function. Runs through each NPC and calls `g_MapOverlayHeader.charaUpdateFuncs` for them. */
     void Game_NpcUpdate(void);
 
     /** @brief Performs a 2D distance check on the XZ plane between two positions.

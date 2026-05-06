@@ -208,7 +208,7 @@ namespace Silent::Game
 
         for (i = 1; i < CHARA_GROUP_COUNT - 1; i++)
         {
-            if (g_MapOverlayHeader.charaGroupIds_248[i] != Chara_None)
+            if (g_MapOverlayHeader.charaGroupIds[i] != Chara_None)
             {
                 coord    = g_CharaTypeAnimInfo[i].npcBoneCoords;
                 animFile = g_CharaTypeAnimInfo[i + 1].animFile1_8;

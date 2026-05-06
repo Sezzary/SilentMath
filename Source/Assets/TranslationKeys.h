@@ -22,10 +22,18 @@ namespace Silent::Assets
     // Menus
     // ======
 
+    constexpr char KEY_MENU_OPENING_QUOTE[] = "menu_OpeningQuote";
+    constexpr char KEY_MENU_CLOSING_QUOTE[] = "menu_ClosingQuote";
+
     constexpr char KEY_MAIN_MENU_START[]    = "mainMenu_Start";
     constexpr char KEY_MAIN_MENU_CONTINUE[] = "mainMenu_Continue";
     constexpr char KEY_MAIN_MENU_LOAD[]     = "mainMenu_Load";
     constexpr char KEY_MAIN_MENU_OPTION[]   = "mainMenu_Option";
+    constexpr char KEY_MAIN_MENU_QUIT[]     = "mainMenu_Quit";
+
+    constexpr char KEY_DIFF_MENU_EASY[]   = "diffMenu_Easy";
+    constexpr char KEY_DIFF_MENU_NORMAL[] = "diffMenu_Normal";
+    constexpr char KEY_DIFF_MENU_HARD[]   = "diffMenu_Hard";
 
     // @todo Create submenus to better organise new options.
     constexpr char KEY_OPTIONS_MENU_GRAPHICS[] = "optionsMenu_Graphics";
@@ -164,7 +172,7 @@ namespace Silent::Assets
     constexpr char KEY_PAPER_MAP_CRABS[]                = "paperMap_Crabs";
     constexpr char KEY_PAPER_MAP_HIGH_LIFE[]            = "paperMap_HighLife";
     constexpr char KEY_PAPER_MAP_FISH_N_FRIES[]         = "paperMap_FishNFries";
-    constexpr char KEY_PAPER_MAP_PHARMACY[]             = "paperMap_Pharpacy";
+    constexpr char KEY_PAPER_MAP_PHARMACY[]             = "paperMap_Pharmacy";
     constexpr char KEY_PAPER_MAP_BOOK_STORE[]           = "paperMap_BookStore";
     constexpr char KEY_PAPER_MAP_JULIOS_AUTO_PARTS[]    = "paperMap_JuliosAutoParts";
     constexpr char KEY_PAPER_MAP_HORNED_MOON_DANCE[]    = "paperMap_HornedMoonDance";

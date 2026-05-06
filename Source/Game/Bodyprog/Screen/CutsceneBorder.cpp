@@ -117,17 +117,17 @@ namespace Silent::Game
             return;
         }
 
-        switch (g_SysWork.field_30)
+        switch (g_SysWork.cutsceneBorderState)
         {
             case 18:
-                g_SysWork.field_30++;
+                g_SysWork.cutsceneBorderState++;
 
             case 19:
                 g_BlackBorderShade += Q12_MULT_FLOAT_PRECISE(g_DeltaTime, 1.0f);
                 if (g_BlackBorderShade >= Q12_CLAMPED(1.0f))
                 {
                     g_BlackBorderShade = Q12_CLAMPED(1.0f);
-                    g_SysWork.field_30++;
+                    g_SysWork.cutsceneBorderState++;
                 }
 
                 //Screen_BlackBorderDraw(poly, g_BlackBorderShade);
@@ -136,7 +136,7 @@ namespace Silent::Game
             case 20:
             case 22:
                 g_BlackBorderShade = Q12_CLAMPED(1.0f);
-                g_SysWork.field_30++;
+                g_SysWork.cutsceneBorderState++;
 
             case 21:
                 //Screen_BlackBorderDraw(poly, g_BlackBorderShade);
@@ -147,7 +147,7 @@ namespace Silent::Game
                 if (g_BlackBorderShade <= Q12(0.0f))
                 {
                     g_BlackBorderShade = Q12(0.0f);
-                    g_SysWork.field_30 = 0;
+                    g_SysWork.cutsceneBorderState = 0;
                     return;
                 }
 
@@ -156,7 +156,7 @@ namespace Silent::Game
 
             case 0:
                 g_BlackBorderShade    = Q12(0.0f);
-                g_SysWork.field_30    = 1;
+                g_SysWork.cutsceneBorderState    = 1;
                 g_SysWork.flags_22A4 &= ~UnkSysFlag_3;
                 return;
 

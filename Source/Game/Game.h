@@ -1126,10 +1126,10 @@ namespace Silent::Game
         s16 disabledEventFlag;
         s8  triggerType    : 4;  /** `e_TriggerType` */
         u8  activationType : 4;  /** `e_TriggerActivationType` */
-        u8  pointOfInterestIdx;  /** Index into `g_MapOverlayHeader.mapPointsOfInterest_1C`. */
+        u8  pointOfInterestIdx;  /** Index into `g_MapOverlayHeader.mapPoints`. */
         u8  requiredItemId;      /** `e_InventoryItemId` that player must use from item screen. */
         u32 sysState        : 5; /** `e_SysState` used by the event. */
-        u32 eventParam      : 8; /** Can be an ID of a `MapMsg`, sound effect, index into `mapEventFuncs_20`, or index into `mapPointsOfInterest_1C` for `areaLoad` events. */
+        u32 eventParam      : 8; /** Can be an ID of a `MapMsg`, sound effect, index into `mapEventFuncs`, or index into `mapPoints` for `areaLoad` events. */
         u32 flags_8_13      : 6; /** `e_EventDataUnkState` */
         u32 sfxPairIdx_8_19 : 5;
         u32 field_8_24      : 1;
@@ -1417,7 +1417,7 @@ namespace Silent::Game
     /** @brief Dahlia character properties. */
     typedef struct _PropsDahlia
     {
-        s32        constolState; /** `e_DahliaControl` */
+        s32        controlState; /** `e_DahliaControl` */
         u_Property properties_EC;
         u_Property properties_F0;
         u_Property properties_F4;
@@ -2345,7 +2345,7 @@ namespace Silent::Game
         // or humanoids only share a small portion early in the union.
         if (chara->properties.dahlia.resetControlState)
         {
-            chara->properties.dahlia.stateIdx0         = 0;
+            chara->properties.dahlia.controlState      = 0;
             chara->model.stateStep                     = 0;
             chara->properties.dahlia.resetControlState = 0;
         }

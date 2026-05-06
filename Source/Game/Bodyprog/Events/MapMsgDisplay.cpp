@@ -241,7 +241,7 @@ namespace Silent::Game
         s32 i;
         s32 mapMsgCode;
 
-        mapMsgCode = //Gfx_MapMsg_StringDraw(g_MapOverlayHeader.mapMessages_30[mapMsgIdx], *arg1);
+        mapMsgCode = //Gfx_MapMsg_StringDraw(g_MapOverlayHeader.mapMessages[mapMsgIdx], *arg1);
 
         g_MapMsg_SelectFlashTimer += g_DeltaTimeRaw;
         if (g_MapMsg_SelectFlashTimer >= Q12(0.5f))
@@ -278,7 +278,7 @@ namespace Silent::Game
                         }
 
                         Gfx_StringSetPosition(32, (STRING_LINE_OFFSET * i) + 98);
-                        Gfx_StringDraw(g_MapOverlayHeader.mapMessages_30[i], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
+                        Gfx_StringDraw(g_MapOverlayHeader.mapMessages[i], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
                     }
 
                     mapMsgCode = 2;
@@ -303,7 +303,7 @@ namespace Silent::Game
                         }
 
                         Gfx_StringSetPosition(32, (STRING_LINE_OFFSET * i) + 96);
-                        Gfx_StringDraw(g_MapOverlayHeader.mapMessages_30[(mapMsgIdx + i) + 1], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
+                        Gfx_StringDraw(g_MapOverlayHeader.mapMessages[(mapMsgIdx + i) + 1], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
                     }
                 }
 

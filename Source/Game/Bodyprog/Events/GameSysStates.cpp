@@ -121,9 +121,9 @@ namespace Silent::Game
 
         D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueChunksLoad();
 
-        if (!(g_SysWork.bgmStatusFlags & BgmStatusFlag_Pause) && g_MapOverlayHeader.worldObjectsUpdate_40 != nullptr)
+        if (!(g_SysWork.bgmStatusFlags & BgmStatusFlag_Pause) && g_MapOverlayHeader.updateWorldObjects != nullptr)
         {
-            g_MapOverlayHeader.worldObjectsUpdate_40();
+            g_MapOverlayHeader.updateWorldObjects();
         }
 
         Screen_CutsceneCameraStateUpdate();
@@ -151,7 +151,7 @@ namespace Silent::Game
 
             if (g_SavegamePtr->mapIdx != MapIdx_MAP7_S03)
             {
-                g_MapOverlayHeader.particlesUpdate_168(0, g_SavegamePtr->mapIdx, 1);
+                g_MapOverlayHeader.particlesUpdate(0, g_SavegamePtr->mapIdx, 1);
             }
 
             Demo_DemoRandSeedRestore();
@@ -621,11 +621,11 @@ namespace Silent::Game
             g_SysWork.flags_22A4 |= UnkSysFlag_10;
         }
 
-        D_800BCDB0 = g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam];
+        D_800BCDB0 = g_MapOverlayHeader.mapPoints[g_MapEventData->eventParam];
 
         if (D_800BCDB0.triggerParam1_4_24 == 1)
         {
-            mapPoint                = &g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->pointOfInterestIdx];
+            mapPoint                = &g_MapOverlayHeader.mapPoints[g_MapEventData->pointOfInterestIdx];
             offsetZ                 = g_SysWork.playerWork.player.position.vz - mapPoint->positionZ_8;
             D_800BCDB0.positionX_0 += g_SysWork.playerWork.player.position.vx - mapPoint->positionX_0;
             D_800BCDB0.positionZ_8 += offsetZ;
@@ -642,9 +642,9 @@ namespace Silent::Game
             g_SysWork.processFlags = ProcessFlag_RoomTransition;
             //Bgm_TrackChange(g_MapEventData->mapOverlayIdx);
 
-            if (g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam].field_4_5 != 0)
+            if (g_MapOverlayHeader.mapPoints[g_MapEventData->eventParam].field_4_5 != 0)
             {
-                g_SysWork.field_2349 = g_MapOverlayHeader.mapPointsOfInterest_1C[g_MapEventData->eventParam].field_4_5 - 1;
+                g_SysWork.field_2349 = g_MapOverlayHeader.mapPoints[g_MapEventData->eventParam].field_4_5 - 1;
             }
         }
 
@@ -717,7 +717,7 @@ namespace Silent::Game
 
         if (!g_SysWork.isMgsStringSet)
         {
-            g_MapOverlayHeader.playerControlFreeze_C8();
+            g_MapOverlayHeader.playerControlFreeze();
         }
 
         switch (Gfx_MapMsg_Draw(g_MapEventParam))
@@ -731,7 +731,7 @@ namespace Silent::Game
             case MapMsgState_SelectEntry0:
                 Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 
-                unfreezePlayerFunc = &g_MapOverlayHeader.playerControlUnfreeze_CC;
+                unfreezePlayerFunc = &g_MapOverlayHeader.playerControlUnfreeze;
 
                 SysWork_StateSetNext(SysState_Gameplay);
 
@@ -837,7 +837,7 @@ namespace Silent::Game
         }
 
         g_DeltaTime = g_DeltaTimeCpy;
-        g_MapOverlayHeader.mapEventFuncs_20[g_MapEventParam]();
+        g_MapOverlayHeader.mapEventFuncs[g_MapEventParam]();
     }
 
     void SysState_EventSetFlag_Update() // 0x8003A460
@@ -870,7 +870,7 @@ namespace Silent::Game
         switch (g_SysWork.sysStateSteps[0])
         {
             case 0:
-                g_MapOverlayHeader.playerControlFreeze_C8();
+                g_MapOverlayHeader.playerControlFreeze();
                 g_SysWork.field_28 = Q12(0.0f);
 
                 if (g_GameWork.autosave.continueCount < 99)
@@ -1013,7 +1013,7 @@ namespace Silent::Game
                 break;
 
             default:
-                g_MapOverlayHeader.playerControlUnfreeze_CC(0);
+                g_MapOverlayHeader.playerControlUnfreeze(0);
                 SysWork_StateSetNext(SysState_Gameplay);
                 //Game_WarmBoot();
                 break;
@@ -1038,7 +1038,7 @@ namespace Silent::Game
 
         Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
 
-        g_MapOverlayHeader.mapEventFuncs_20[g_MapEventParam]();
+        g_MapOverlayHeader.mapEventFuncs[g_MapEventParam]();
 
         //Screen_BackgroundImgDraw(&g_ItemInspectionImg);
     }

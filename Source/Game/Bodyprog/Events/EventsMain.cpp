@@ -53,7 +53,7 @@ namespace Silent::Game
 
         g_MapEventLastUsedItem = InventoryItemId_Unequipped;
 
-        mapEvent = &g_MapOverlayHeader.mapEvents_24[-1];
+        mapEvent = &g_MapOverlayHeader.mapEvents[-1];
 
         while (true)
         {
@@ -107,7 +107,7 @@ namespace Silent::Game
                 continue;
             }
 
-            mapPoint = &g_MapOverlayHeader.mapPointsOfInterest_1C[mapEvent->pointOfInterestIdx];
+            mapPoint = &g_MapOverlayHeader.mapPoints[mapEvent->pointOfInterestIdx];
 
             switch (mapEvent->triggerType)
             {

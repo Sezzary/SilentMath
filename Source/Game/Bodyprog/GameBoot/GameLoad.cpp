@@ -36,7 +36,7 @@ namespace Silent::Game
         {
             ScreenFade_Start(false, true, false);
             g_ScreenFadeTimestep = Q12(0.8f);
-            g_MapOverlayHeader.loadingScreenFuncs_18[g_SysWork.loadingScreenIdx]();
+            g_MapOverlayHeader.loadingScreenFuncs[g_SysWork.loadingScreenIdx]();
         }
 
         Screen_BackgroundMotionBlur(SyncMode_Wait2);
@@ -169,9 +169,9 @@ namespace Silent::Game
                 break;
 
             case 5:
-                //Fs_CharaAnimDataAlloc(1, g_MapOverlayHeader.charaGroupIds_248[0], nullptr, 0);
-                //Fs_CharaAnimDataAlloc(2, g_MapOverlayHeader.charaGroupIds_248[1], nullptr, 0);
-                //Fs_CharaAnimDataAlloc(3, g_MapOverlayHeader.charaGroupIds_248[2], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(1, g_MapOverlayHeader.charaGroupIds[0], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(2, g_MapOverlayHeader.charaGroupIds[1], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(3, g_MapOverlayHeader.charaGroupIds[2], nullptr, 0);
                 //WorldGfx_MapInitCharaLoad(&g_MapOverlayHeader);
 
                 g_GameWork.gameStateSteps[0]++;
