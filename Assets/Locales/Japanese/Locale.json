@@ -1,29 +1,28 @@
 {
-    "sys_FullscreenHintGeneric": "Ａｌｔ＋ＲｅｔｕｒｎまたはＦ１１キーでフルスクリーン表示を切り替えます",
-    "sys_FullscreenHintMac": "Ｏｐｔｉｏｎ＋ＲｅｔｕｒｎまたはＦ１１キーでフルスクリーン表示を切り替えます",
-    "sys_GamepadConnected": "ゲームパッドが接続されました",
-    "sys_GamepadDisonnected": "ゲームパッドが切断されました",
+    "sys_FullscreenHintGeneric": "［Ａｌｔ］＋［Ｒｅｔｕｒｎ］キーで画面モード切替",
+    "sys_FullscreenHintMac": "［Ｏｐｔｉｏｎ］＋［Ｒｅｔｕｒｎ］キーで画面モード切替",
+    "sys_GamepadConnected": "コントローラを接続しました",
+    "sys_GamepadDisonnected": "コントローラが外れました",
+    "sys_GamepadBatteryIsLow": "コントローラの電池がありません",
 
     "intro_Warning": "{M}このゲームには{N}暴力シーンや{N}グロテスクな表現が{N}含まれています。",
     "intro_FearOfBlood": "{M}血の恐怖は、肉体への恐怖を駆り立てる",
     
-    "menu_OpeningQuote": "「",
-    "menu_ClosingQuote": "」",
-
+    "mainMenu_OpeningQuote": "「",
+    "mainMenu_ClosingQuote": "」",
     "mainMenu_Start": "スタート",
     "mainMenu_Continue": "コンティニュー",
     "mainMenu_Load": "ロード",
     "mainMenu_Option": "オプション",
     "mainMenu_Quit": "終了",
-
-    "diffMenu_Easy": "イージー",
-    "diffMenu_Normal": "ノーマル",
-    "diffMenu_Hard": "ハード",
+    "mainMenu_Easy": "イージー",
+    "mainMenu_Normal": "ノーマル",
+    "mainMenu_Hard": "ハード",
 
 
 
     "contMenu_KeyboardMouse": "キーボード／マウス",
-    "contMenu_Controller": "コントローラー",
+    "contMenu_Controller": "コントローラ",
     "contMenu_GeneralActions": "全般操作",
     "contMenu_MenuActions": "メニュー操作",
     "contMenu_GameplayActions": "ゲームプレイ操作",

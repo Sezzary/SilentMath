@@ -311,10 +311,10 @@ namespace Silent
         _work.Audio.Update();
 
         // @debug
-        if (_work.Input.GetAction(In::Up).IsClicked())
+        /*if (_work.Input.GetAction(In::Up).IsClicked())
         {
             _work.Toaster.Add("Hello I am a toast.");
-        }
+        }*/
 
         // Update debug and toasts.
         Debug::Update();

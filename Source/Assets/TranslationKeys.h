@@ -10,6 +10,7 @@ namespace Silent::Assets
     constexpr char KEY_SYS_FULLSCREEN_HINT_MAC[]     = "sys_FullscreenHintMac";
     constexpr char KEY_SYS_GAMEPAD_CONNECTED[]       = "sys_GamepadConnected";
     constexpr char KEY_SYS_GAMEPAD_DISCONNECTED[]    = "sys_GamepadDisconnected";
+    constexpr char KEY_SYS_GAMEPAD_BATTERY_IS_LOW[]  = "sys_GamepadBatteryIsLow";
 
     // ======
     // Intro
@@ -22,18 +23,16 @@ namespace Silent::Assets
     // Menus
     // ======
 
-    constexpr char KEY_MENU_OPENING_QUOTE[] = "menu_OpeningQuote";
-    constexpr char KEY_MENU_CLOSING_QUOTE[] = "menu_ClosingQuote";
-
-    constexpr char KEY_MAIN_MENU_START[]    = "mainMenu_Start";
-    constexpr char KEY_MAIN_MENU_CONTINUE[] = "mainMenu_Continue";
-    constexpr char KEY_MAIN_MENU_LOAD[]     = "mainMenu_Load";
-    constexpr char KEY_MAIN_MENU_OPTION[]   = "mainMenu_Option";
-    constexpr char KEY_MAIN_MENU_QUIT[]     = "mainMenu_Quit";
-
-    constexpr char KEY_DIFF_MENU_EASY[]   = "diffMenu_Easy";
-    constexpr char KEY_DIFF_MENU_NORMAL[] = "diffMenu_Normal";
-    constexpr char KEY_DIFF_MENU_HARD[]   = "diffMenu_Hard";
+    constexpr char KEY_MAIN_MENU_OPENING_QUOTE[] = "mainMenu_OpeningQuote";
+    constexpr char KEY_MAIN_MENU_CLOSING_QUOTE[] = "mainMenu_ClosingQuote";
+    constexpr char KEY_MAIN_MENU_START[]         = "mainMenu_Start";
+    constexpr char KEY_MAIN_MENU_CONTINUE[]      = "mainMenu_Continue";
+    constexpr char KEY_MAIN_MENU_LOAD[]          = "mainMenu_Load";
+    constexpr char KEY_MAIN_MENU_OPTION[]        = "mainMenu_Option";
+    constexpr char KEY_MAIN_MENU_QUIT[]          = "mainMenu_Quit";
+    constexpr char KEY_DIFF_MENU_EASY[]          = "mainMenu_Easy";
+    constexpr char KEY_MAIN_MENU_NORMAL[]        = "mainMenu_Normal";
+    constexpr char KEY_MAIN_MENU_HARD[]          = "mainMenu_Hard";
 
     // @todo Create submenus to better organise new options.
     constexpr char KEY_OPTIONS_MENU_GRAPHICS[] = "optionsMenu_Graphics";
@@ -51,6 +50,7 @@ namespace Silent::Assets
     constexpr char KEY_OPTIONS_MENU_SOUND[]            = "optionsMenu_Sound";
     constexpr char KEY_OPTIONS_MENU_BGM_VOL[]          = "optionsMenu_BgmVol";
     constexpr char KEY_OPTIONS_MENU_SE_VOL[]           = "optionsMenu_SeVol";
+    constexpr char KEY_OPTIONS_MENU_LANGUAGE[]         = "optionsMenu_Language";
     constexpr char KEY_OPTIONS_MENU_EXTRA_OPTIONS[]    = "optionsMenu_ExtraOptions";
     constexpr char KEY_OPTIONS_MENU_WEAPON_CONTROL[]   = "optionsMenu_WeaponControl";
     constexpr char KEY_OPTIONS_MENU_BLOOD_COLOR[]      = "optionsMenu_BloodColor";
