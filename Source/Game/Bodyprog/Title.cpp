@@ -415,7 +415,7 @@ namespace Silent::Game
     void MainMenu_MainTextDraw() // 0x8003B568
     {
         constexpr int COLUMN_POS_X = SCREEN_WIDTH / 2;
-        constexpr int COLUMN_POS_Y = 184 - 120; // @todo Original offsets don't make sense. How were they interpreted on PSX?
+        constexpr int COLUMN_POS_Y = (SCREEN_HEIGHT / 5) * 2;
         constexpr int STR_OFFSET_Y = 20;
 
         static const char* MAIN_MENU_ENTRY_STRING_KEYS[] =
@@ -462,7 +462,7 @@ namespace Silent::Game
     {
         constexpr int DIFFICULTY_MENU_SELECTION_COUNT = 3;
         constexpr int COLUMN_POS_X                    = SCREEN_WIDTH / 2;
-        constexpr int COLUMN_POS_Y                    = 204;
+        constexpr int COLUMN_POS_Y                    = SCREEN_HEIGHT / 2;
         constexpr int STR_OFFSET_Y                    = 20;
 
         static const char* DIFFICULTY_MENU_ENTRY_STRING_KEYS[] =

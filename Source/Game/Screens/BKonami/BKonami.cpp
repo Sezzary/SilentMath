@@ -59,7 +59,7 @@ namespace Silent::Game
                 if (g_Controller0->btnsHeld_C != 0 || g_SysWork.counters_1C[0] > 180)
                 {
                     ScreenFade_Start(false, false, false);
-                    g_ScreenFadeTimestep            = Q12(0.2f);
+                    g_ScreenFadeTimestep         = Q12(0.2f);
                     g_GameWork.gameStateSteps[0] = KonamiLogoStateStep_FinishAfterFade;
                 }
                 break;
@@ -300,8 +300,8 @@ namespace Silent::Game
                     SysWork_StateSetNext(SysState_Gameplay);
 
                     g_GameWork.gameStateSteps[0] = g_GameWork.gameState;
-                    g_GameWork.gameState        = nextGameState;
-                    g_GameWork.gameStatePrev    = (e_GameState)g_GameWork.gameStateSteps[0];
+                    g_GameWork.gameState         = nextGameState;
+                    g_GameWork.gameStatePrev     = (e_GameState)g_GameWork.gameStateSteps[0];
                     g_GameWork.gameStateSteps[0] = 0;
                 }
                 break;
