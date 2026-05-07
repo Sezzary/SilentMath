@@ -175,7 +175,7 @@ namespace Silent::Assets
     constexpr char KEY_PAPER_MAP_ICHIRONS_DRUGS[]       = "PaperMap_IchironsDrugs";
     constexpr char KEY_PAPER_MAP_GHOUL[]                = "PaperMap_Ghoul";
     constexpr char KEY_PAPER_MAP_JIM_BEAM[]             = "PaperMap_JimBeam";
-    constexpr char KEY_PAPER_MAP_SHOE_REPAIR[]          = "PaperMap_ShoeRapair";
+    constexpr char KEY_PAPER_MAP_SHOE_REPAIR[]          = "PaperMap_ShoeRepair";
     constexpr char KEY_PAPER_MAP_SOUVENIRS[]            = "PaperMap_Souvenirs";
     constexpr char KEY_PAPER_MAP_ROGERS_PASTRY[]        = "PaperMap_RogersPastry";
     constexpr char KEY_PAPER_MAP_LIGHTING_CO[]          = "PaperMap_LightingCo";
