@@ -18,7 +18,7 @@ namespace Silent::Services
         // Constants
         // ==========
 
-        static constexpr int   TOAST_COUNT_MAX       = 8;
+        static constexpr int   TOAST_COUNT_MAX       = 4;
         static constexpr float LIFE_SEC_MAX          = 6.0f;
         static constexpr float LIFE_SEC_START_FADING = LIFE_SEC_MAX * 0.75f;
 

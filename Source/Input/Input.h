@@ -44,9 +44,10 @@ namespace Silent::Input
     /** @brief Connected gamepad data. */
     struct Gamepad
     {
-        int             Id       = NO_VALUE;
-        SDL_Gamepad*    Device   = nullptr;
-        GamepadVendorId VendorId = GamepadVendorId::Generic;
+        int             Id                  = NO_VALUE;
+        SDL_Gamepad*    Device              = nullptr;
+        GamepadVendorId VendorId            = GamepadVendorId::Generic;
+        int             BatteryWarningTicks = 0;
     };
 
     /** @brief Active gamepad rumble data. */
@@ -79,6 +80,13 @@ namespace Silent::Input
     class InputManager
     {
     private:
+        // ==========
+        // Constants
+        // ==========
+
+        static constexpr float LOW_GAMEPAD_BATTERY_WARN_INTERVAL_SEC = 60.0f * 5.0f;
+        static constexpr int   LOW_GAMEPAD_BATTERY_PERCENT           = 20;
+
         // =======
         // Fields
         // =======
@@ -141,6 +149,13 @@ namespace Silent::Input
          * @return Gamepad vendor ID.
          */
         GamepadVendorId GetGamepadVendorId() const;
+
+        /** @brief Gets the battery level of a connected gamepad.
+         *
+         * @return Battery percentage if a gamepad is connected, `NO_VALUE` otherwise or if the battery level cannot be
+         * determined.
+         */
+        int GetGamepadBatteryPercentage() const;
 
         /** @brief Gets a text block from a text buffer.
          *

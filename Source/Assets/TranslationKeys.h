@@ -30,7 +30,7 @@ namespace Silent::Assets
     constexpr char KEY_MAIN_MENU_LOAD[]          = "mainMenu_Load";
     constexpr char KEY_MAIN_MENU_OPTION[]        = "mainMenu_Option";
     constexpr char KEY_MAIN_MENU_QUIT[]          = "mainMenu_Quit";
-    constexpr char KEY_DIFF_MENU_EASY[]          = "mainMenu_Easy";
+    constexpr char KEY_MAIN_MENU_EASY[]          = "mainMenu_Easy";
     constexpr char KEY_MAIN_MENU_NORMAL[]        = "mainMenu_Normal";
     constexpr char KEY_MAIN_MENU_HARD[]          = "mainMenu_Hard";
 

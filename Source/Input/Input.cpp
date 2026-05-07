@@ -49,6 +49,18 @@ namespace Silent::Input
         return _gamepad.VendorId;
     }
 
+    int InputManager::GetGamepadBatteryPercentage() const
+    {
+        if (!IsGamepadConnected())
+        {
+            return NO_VALUE;
+        }
+
+        int percent = 0;
+        SDL_GetGamepadPowerInfo(_gamepad.Device, &percent);
+        return percent;
+    }
+
     const std::string& InputManager::GetText(const std::string& textId) const
     {
         return _text.GetText(textId);
@@ -137,7 +149,10 @@ namespace Silent::Input
 
     void InputManager::Update(SDL_Window& window, const Vector2& mouseWheelAxis)
     {
-        auto& executor = g_App.GetExecutor();
+        const auto& clock      = g_App.GetClock();
+        const auto& translator = g_App.GetTranslator();
+        auto&       executor   = g_App.GetExecutor();
+        auto&       toaster    = g_App.GetToaster();
 
         // Clear data.
         _deviceStates.HasKeyboardInput   =
@@ -180,13 +195,33 @@ namespace Silent::Input
         UpdateAnalogAxes();
         UpdateRumble();
         HandleHotkeyActions();
+
+        // Warn of low gamepad battery.
+        if (IsGamepadConnected())
+        {
+            _gamepad.BatteryWarningTicks += clock.GetTicks();
+            if (TICK_TO_SEC(_gamepad.BatteryWarningTicks) >= LOW_GAMEPAD_BATTERY_WARN_INTERVAL_SEC)
+            {
+                _gamepad.BatteryWarningTicks = 0;
+
+                int percent = GetGamepadBatteryPercentage();
+                if (percent != NO_VALUE && percent <= LOW_GAMEPAD_BATTERY_PERCENT)
+                {
+                    toaster.Add(translator(KEY_SYS_GAMEPAD_BATTERY_IS_LOW));
+                }
+            }
+        }
+        else
+        {
+            _gamepad.BatteryWarningTicks = 0;
+        }
     }
 
     void InputManager::ConnectGamepad(int deviceId)
     {
-        constexpr int XBOX_VENDOR_CODE     = 0x045E;
-        constexpr int NINTENDO_VENDOR_CODE = 0x057E;
-        constexpr int SONY_VENDOR_CODE     = 0x054C;
+        constexpr int XBOX_VENDOR_CODE     = 0x45E;
+        constexpr int NINTENDO_VENDOR_CODE = 0x57E;
+        constexpr int SONY_VENDOR_CODE     = 0x54C;
 
         const auto& translator = g_App.GetTranslator();
         auto&       toaster    = g_App.GetToaster();
@@ -228,6 +263,7 @@ namespace Silent::Input
             }
 
             SetRumble(RumbleMode::Low, 0.0f, 1.0f, 0.1f);
+            _gamepad.BatteryWarningTicks = LOW_GAMEPAD_BATTERY_WARN_INTERVAL_SEC;
             toaster.Add(translator(KEY_SYS_GAMEPAD_CONNECTED));
 
             Debug::Log(Fmt("{} gamepad connected.", GetGamepadVendorName(_gamepad.VendorId)));
