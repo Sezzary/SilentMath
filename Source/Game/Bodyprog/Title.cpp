@@ -444,9 +444,9 @@ namespace Silent::Game
             if (i == g_MainMenu_SelectedEntry)
             {
                 auto selectedEntryStr = //"{M}" +
-                                        translator(KEY_MENU_OPENING_QUOTE) +
+                                        translator(KEY_MAIN_MENU_OPENING_QUOTE) +
                                         translator(MAIN_MENU_ENTRY_STRING_KEYS[i]) +
-                                        translator(KEY_MENU_CLOSING_QUOTE);
+                                        translator(KEY_MAIN_MENU_CLOSING_QUOTE);
                 Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
             }
             else
@@ -467,9 +467,9 @@ namespace Silent::Game
 
         static const char* DIFFICULTY_MENU_ENTRY_STRING_KEYS[] =
         {
-            KEY_DIFF_MENU_EASY,
-            KEY_DIFF_MENU_NORMAL,
-            KEY_DIFF_MENU_HARD
+            KEY_MAIN_MENU_EASY,
+            KEY_MAIN_MENU_NORMAL,
+            KEY_MAIN_MENU_HARD
         };
 
         const auto& translator = g_App.GetTranslator();
@@ -483,9 +483,9 @@ namespace Silent::Game
             if (i == g_MainMenu_SelectedEntry)
             {
                 auto selectedEntryStr = /*"{M}" +*/
-                                        translator(KEY_MENU_OPENING_QUOTE) +
+                                        translator(KEY_MAIN_MENU_OPENING_QUOTE) +
                                         translator(DIFFICULTY_MENU_ENTRY_STRING_KEYS[i]) +
-                                        translator(KEY_MENU_CLOSING_QUOTE);
+                                        translator(KEY_MAIN_MENU_CLOSING_QUOTE);
                 Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
             }
             else
