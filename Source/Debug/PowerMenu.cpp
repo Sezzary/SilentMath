@@ -433,20 +433,29 @@ namespace Silent::Debug
                             isOptChanged = true;
                         }
 
-                        const auto& localeNames = translator.GetLocaleNames();
-                        auto        langItems   = std::vector<const char*>{};
-                        langItems.reserve(localeNames.size());
-                        for (const auto& name : localeNames)
+                        const auto& locales    = translator.GetLocales();
+                        int         langIdx    = 0;
+                        bool        hasLangIdx = false;
+
+                        // Collect languages.
+                        auto langItems = std::vector<const char*>{};
+                        langItems.reserve(locales.size());
+                        for (int i = 0; i < locales.size(); i++)
                         {
-                            langItems.push_back(name.c_str());
+                            const auto& locale = locales[i];
+
+                            langItems.push_back(locale.Name.c_str());
+                            if (locale.Name == translator.GetActiveLocaleName())
+                            {
+                                langIdx = i;
+                            }
                         }
 
                         // `Language` combo.
-                        int lang = (int)options->Language;
-                        if (ImGui::Combo("Language", &lang, langItems.data(), (int)langItems.size()))
+                        if (ImGui::Combo("Language", &langIdx, langItems.data(), (int)langItems.size()))
                         {
-                            options->Language = (LanguageType)lang;
-                            translator.SetActiveLocale(localeNames[(int)options->Language]);
+                            options->Language = locales[langIdx].Name;
+                            translator.SetActiveLocale(options->Language);
 
                             isOptChanged = true;
                         }

@@ -13,9 +13,10 @@ namespace Silent::Services
     constexpr char SAVEGAME_FILE_DIR_NAME_BASE[] = "File ";
     constexpr char SCREENSHOTS_DIR_NAME[]        = "Screenshots";
     
-    constexpr char ASSETS_LOCALE_FILENAME[]   = "Locale";
-    constexpr char OPTIONS_FILENAME[]         = "Options";
-    constexpr char SCREENSHOT_FILENAME_BASE[] = "Screenshot_";
+    constexpr char ASSETS_LOCALE_FILENAME[]          = "Locale";
+    constexpr char ASSETS_LOCALE_METADATA_FILENAME[] = "Metadata";
+    constexpr char OPTIONS_FILENAME[]                = "Options";
+    constexpr char SCREENSHOT_FILENAME_BASE[]        = "Screenshot_";
 
     constexpr char JSON_FILE_EXT[]        = ".json";
     constexpr char PNG_FILE_EXT[]         = ".png";

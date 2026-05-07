@@ -1,5 +1,6 @@
 {
-    "LanguageCode": "es_419",
+    "LanguageCode": "es",
+    "CountryCode":  "419",
     "Label":        "Español (Latinoamérica)",
-    "Comment":      "Latin American Spanish fan retranslation by Traducciones del Tío Víctor. Core team: Giromancy, PacoChan, TheMarkusBoy, Neryko, IlDucci. Translation converted to Silent Engine with permission of IlDucci."
+    "Comment":      "Retraducción hecha por fans al español de Latinoamérica por Traducciones del Tío Víctor. Equipo principal: Giromancy, PacoChan, TheMarkusBoy, Neryko, IlDucci. Traducción convertida a Silent Engine con el permiso de IlDucci."
 }

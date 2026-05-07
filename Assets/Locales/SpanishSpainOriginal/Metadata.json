@@ -1,5 +1,7 @@
 {
-    "LanguageCode": "es_es_original",
+    "LanguageCode": "es",
+    "CountryCode":  "ES",
+    "Variant":      "original",
     "Label":        "Español (España Original)",
-    "Comment":      "Original Spanish translation by Konami. Conversion and translation of additional strings by IlDucci."
+    "Comment":      "Traducción original al español por Konami (traductores desconocidos). Conversión de la traducción a Silent Engine y traducciones adicionales por IlDucci."
 }

@@ -7,6 +7,7 @@
 #include "Services/Filesystem.h"
 #include "Utils/Parallel.h"
 #include "Utils/Stream.h"
+#include "Utils/Translator.h"
 
 using namespace Silent::Input;
 using namespace Silent::Renderer;
@@ -76,7 +77,6 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr bool DEFAULT_ENABLE_SUBTITLES                         = true;
-    constexpr auto DEFAULT_LANGUAGE                                 = LanguageType::EnglishUs;
     constexpr auto DEFAULT_SOUND                                    = SoundType::Stereo;
     constexpr int  DEFAULT_BGM_VOLUME                               = 16;
     constexpr int  DEFAULT_SE_VOLUME                                = 16;
@@ -116,9 +116,13 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultGameplayOptions()
     {
+        const auto& translator = g_App.GetTranslator();
+
+        const auto& locales = translator.GetLocales();
+
         _options.EnableAutoLoad  = DEFAULT_ENABLE_AUTO_LOAD;
         _options.EnableSubtitles = DEFAULT_ENABLE_SUBTITLES;
-        _options.Language        = DEFAULT_LANGUAGE;
+        _options.Language        = !locales.empty() ? locales.front().Name : EMPTY_STRING;
         _options.Sound           = DEFAULT_SOUND;
         _options.BgmVolume       = DEFAULT_BGM_VOLUME;
         _options.SeVolume        = DEFAULT_SE_VOLUME;
@@ -217,6 +221,10 @@ namespace Silent::Services
 
     Options OptionsManager::FromOptionsJson(const json& optionsJson) const
     {
+        const auto& translator = g_App.GetTranslator();
+
+        const auto& locales = translator.GetLocales();
+
         auto options = Options{};
 
         // Load graphics options.
@@ -241,7 +249,8 @@ namespace Silent::Services
         const auto& gameplayJson = optionsJson[KEY_GAMEPLAY];
         options.EnableAutoLoad   = gameplayJson.value(KEY_ENABLE_AUTO_LOAD, DEFAULT_ENABLE_AUTO_LOAD);
         options.EnableSubtitles  = gameplayJson.value(KEY_ENABLE_SUBTITLES, DEFAULT_ENABLE_SUBTITLES);
-        options.Language         = gameplayJson.value(KEY_LANGUAGE,         DEFAULT_LANGUAGE);
+        options.Language         = gameplayJson.value(KEY_LANGUAGE,         !locales.empty() ? locales.front().Name :
+                                                                                               EMPTY_STRING);
         options.Sound            = gameplayJson.value(KEY_SOUND,            DEFAULT_SOUND);
         options.BgmVolume        = gameplayJson.value(KEY_BGM_VOLUME,       DEFAULT_BGM_VOLUME);
         options.SeVolume         = gameplayJson.value(KEY_SE_VOLUME,        DEFAULT_SE_VOLUME);

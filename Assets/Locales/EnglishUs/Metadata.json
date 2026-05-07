@@ -1,5 +1,6 @@
 {
-    "LanguageCode": "en_us",
+    "LanguageCode": "en",
+    "CountryCode":  "US",
     "Label":        "English (US)",
     "Comment":      "Original US English translation by Konami.",
     "Priority":     1

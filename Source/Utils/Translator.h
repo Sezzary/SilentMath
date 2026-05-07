@@ -2,6 +2,25 @@
 
 namespace Silent::Utils
 {
+    /** @brief Language locale code. */
+    struct LocaleCode
+    {
+        std::string Language = {};
+        std::string Country  = {};
+    };
+
+    /** @brief Language locale metadata. */
+    struct LocaleMetadata
+    {
+        std::string Name    = {};
+        std::string Label   = {};
+        std::string Comment = {};
+
+        int         Priority = 0;
+        LocaleCode  Code     = {};
+        std::string Variant  = {};
+    };
+
     /** @brief Translator for internationalized text. */
     class TranslationManager
     {
@@ -9,13 +28,13 @@ namespace Silent::Utils
         // Fields
         // =======
 
-        json        _activeLocale     = {};
+        json        _activeLocaleJson = {};
         std::string _activeLocaleName = {};
         std::string _queuedLocaleName = {};
-        bool        _isLocked         = false;
 
-        std::vector<std::string> _localeNames = {};
-        std::filesystem::path    _localesPath = {};
+        std::vector<LocaleMetadata> _locales       = {};
+        std::filesystem::path       _localesFolder = {};
+        bool                        _isLocked      = false;
 
     public:
         // =============
@@ -27,34 +46,34 @@ namespace Silent::Utils
 
         /** @brief Initializes the instance with locales from a path.
          *
-         * @param localesPath Path containing locale folders.
+         * @param localesFolder Path to folder containing locale folders.
          */
-        void Initialize(const std::filesystem::path& localesPath);
+        void Initialize(const std::filesystem::path& localesFolder);
 
         // ========
         // Getters
         // ========
 
-        /** @brief Gets the name of the active locale.
+        /** @brief Gets the active locale name.
          *
          * @return Active locale name.
          */
         const std::string& GetActiveLocaleName() const;
 
-        /** @brief Gets the registered locale names.
+        /** @brief Gets the registered locales metadata.
          *
-         * @return Registered locale names.
+         * @return Registered locales metadata.
          */
-        const std::vector<std::string>& GetLocaleNames() const;
+        const std::vector<LocaleMetadata>& GetLocales() const;
 
         // ========
         // Setters
         // ========
 
-        /** @brief Sets the active locale. If the translator is unlocked, it's set immediately.
-         * If locked, it queues the new locale to be set on the next `Unlock` call.
+        /** @brief Sets the requested locale as the active one. If the translator is unlocked, it's set immediately.
+         * If locked, the requested locale is queued to be set on the next `Unlock` call.
          *
-         * @param localeName Name of the new locale to set.
+         * @param localeName Name of the requested locale to set.
          */
         void SetActiveLocale(const std::string& localeName);
 
@@ -79,10 +98,29 @@ namespace Silent::Utils
         // Helpers
         // ========
 
+        /** @brief Checks if a locale is registered.
+         *
+         * @param localeName Name of the locale to find.
+         * @return `true` if the locale is registered, `false` otherwise.
+         */
+        bool ContainsLocale(const std::string& localeName) const;
+
+        /** @brief Registers a new locale.
+         *
+         * @param localeFolder Folder of the new locale.
+         */
+        void AddLocale(const std::filesystem::path& localeFolder);
+
         /** @brief Loads and sets a new active locale.
          *
          * @param localeName Name of the new locale.
          */
         void LoadActiveLocale(const std::string& localeName);
     };
+
+    /** @brief Gets the locale codes of the current system in order of preference.
+     *
+     * @return System locale codes.
+     */
+    std::vector<LocaleCode> GetSystemLocaleCodes();
 }

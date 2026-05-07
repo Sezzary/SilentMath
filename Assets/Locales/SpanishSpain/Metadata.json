@@ -1,5 +1,6 @@
 {
-    "LanguageCode": "es_es",
+    "LanguageCode": "es",
+    "CountryCode":  "ES",
     "Label":        "Español (España)",
-    "Comment":      "European Spanish fan retranslation by Traducciones del Tío Víctor with additions for the Spanish fandub by Reviviendo en Castellano. Core team: Giromancy, PacoChan, TheMarkusBoy, Neryko, IlDucci, Salvi Garrido, David Flores. Translation converted to Silent Engine with permission of IlDucci."
+    "Comment":      "Retraducción hecha por fans al español de España por Traducciones del Tío Víctor, con añadidos del doblaje fan de Reviviendo en Castellano. Equipo principal: Giromancy, PacoChan, TheMarkusBoy, Neryko, IlDucci, Salvi Garrido, David Flores. Traducción convertida a Silent Engine con el permiso de IlDucci."
 }
