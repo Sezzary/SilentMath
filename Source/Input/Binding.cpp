@@ -36,48 +36,48 @@ namespace Silent::Input
 
     static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_2 = BindingProfile
     {
-        { In::Up,        { EventId::W                          } },
-        { In::Down,      { EventId::S                          } },
-        { In::Left,      { EventId::A                          } },
-        { In::Right,     { EventId::D                          } },
+        { In::Up,        { EventId::W                  } },
+        { In::Down,      { EventId::S                  } },
+        { In::Left,      { EventId::A                  } },
+        { In::Right,     { EventId::D                  } },
 
-        { In::Enter,     { EventId::Return                     } },
-        { In::Cancel,    { EventId::Escape                     } },
+        { In::Enter,     { EventId::Return             } },
+        { In::Cancel,    { EventId::Escape             } },
 
-        { In::Action,    { EventId::Ctrl                       } },
-        { In::Aim,       { EventId::Space                      } },
-        { In::Light,     { EventId::L                          } },
-        { In::Run,       { EventId::J                          } },
-        { In::View,      { EventId::K                          } },
-        { In::StepLeft,  { EventId::Q                          } },
-        { In::StepRight, { EventId::E                          } },
-        { In::Pause,     { EventId::P                          } },
-        { In::Item,      { EventId::Escape, EventId::I         } },
-        { In::Map,       { EventId::M                          } },
-        { In::Option,    { EventId::O                          } }
+        { In::Action,    { EventId::Ctrl               } },
+        { In::Aim,       { EventId::Space              } },
+        { In::Light,     { EventId::L                  } },
+        { In::Run,       { EventId::J                  } },
+        { In::View,      { EventId::K                  } },
+        { In::StepLeft,  { EventId::Q                  } },
+        { In::StepRight, { EventId::E                  } },
+        { In::Pause,     { EventId::P                  } },
+        { In::Item,      { EventId::Escape, EventId::I } },
+        { In::Map,       { EventId::M                  } },
+        { In::Option,    { EventId::O                  } }
     };
 
     static const auto DEFAULT_KEYBOARD_MOUSE_BINDING_PROFILE_TYPE_3 = BindingProfile
     {
-        { In::Up,        { EventId::Up                            } },
-        { In::Down,      { EventId::Down                          } },
-        { In::Left,      { EventId::Left                          } },
-        { In::Right,     { EventId::Right                         } },
+        { In::Up,        { EventId::Up                   } },
+        { In::Down,      { EventId::Down                 } },
+        { In::Left,      { EventId::Left                 } },
+        { In::Right,     { EventId::Right                } },
 
-        { In::Enter,     { EventId::Return                        } },
-        { In::Cancel,    { EventId::Escape                        } },
+        { In::Enter,     { EventId::Return               } },
+        { In::Cancel,    { EventId::Escape               } },
 
-        { In::Action,    { EventId::Ctrl,                         } },
-        { In::Aim,       { EventId::Space                         } },
-        { In::Light,     { EventId::L                             } },
-        { In::Run,       { EventId::Shift                         } },
-        { In::View,      { EventId::Pad0                          } },
-        { In::StepLeft,  { EventId::Q, EventId::Delete,           } },
-        { In::StepRight, { EventId::E, EventId::PageDown          } },
-        { In::Pause,     { EventId::P                             } },
-        { In::Item,      { EventId::Escape, EventId::I            } },
-        { In::Map,       { EventId::M                             } },
-        { In::Option,    { EventId::O                             } }
+        { In::Action,    { EventId::Ctrl,                } },
+        { In::Aim,       { EventId::Space                } },
+        { In::Light,     { EventId::L                    } },
+        { In::Run,       { EventId::Shift                } },
+        { In::View,      { EventId::Pad0                 } },
+        { In::StepLeft,  { EventId::Q, EventId::Delete,  } },
+        { In::StepRight, { EventId::E, EventId::PageDown } },
+        { In::Pause,     { EventId::P                    } },
+        { In::Item,      { EventId::Escape, EventId::I   } },
+        { In::Map,       { EventId::M                    } },
+        { In::Option,    { EventId::O                    } }
     };
 
     static const auto DEFAULT_GAMEPAD_BINDING_PROFILE_TYPE_1 = BindingProfile
@@ -257,25 +257,25 @@ namespace Silent::Input
 
     const BindingProfile DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE =
     {
-        { In::Up,        { EventId::W                  } },
-        { In::Down,      { EventId::S                  } },
-        { In::Left,      { EventId::A                  } },
-        { In::Right,     { EventId::D                  } },
+        { In::Up,        { EventId::W                } },
+        { In::Down,      { EventId::S                } },
+        { In::Left,      { EventId::A                } },
+        { In::Right,     { EventId::D                } },
 
-        { In::Enter,     { EventId::Return             } },
-        { In::Cancel,    { EventId::Escape             } },
+        { In::Enter,     { EventId::Return           } },
+        { In::Cancel,    { EventId::Escape           } },
 
-        { In::Action,    { EventId::MouseClickLeft     } },
-        { In::Aim,       { EventId::MouseClickRight    } },
-        { In::Light,     { EventId::MouseClickMiddle   } },
-        { In::Run,       { EventId::Shift,             } },
-        { In::View,      { EventId::F                  } },
-        { In::StepLeft,  { EventId::Q                  } },
-        { In::StepRight, { EventId::E                  } },
-        { In::Pause,     { EventId::P                  } },
-        { In::Item,      { EventId::Escape             } },
-        { In::Map,       { EventId::M                  } },
-        { In::Option,    { EventId::O                  } }
+        { In::Action,    { EventId::MouseClickLeft   } },
+        { In::Aim,       { EventId::MouseClickRight  } },
+        { In::Light,     { EventId::MouseClickMiddle } },
+        { In::Run,       { EventId::Shift,           } },
+        { In::View,      { EventId::F                } },
+        { In::StepLeft,  { EventId::Q                } },
+        { In::StepRight, { EventId::E                } },
+        { In::Pause,     { EventId::P                } },
+        { In::Item,      { EventId::Escape           } },
+        { In::Map,       { EventId::M                } },
+        { In::Option,    { EventId::O                } }
     };
 
     const BindingProfile DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE =
@@ -334,7 +334,8 @@ namespace Silent::Input
         // Check if profile is customizable.
         if (!Contains(CUSTOM_BINDING_PROFILE_IDS, profileId))
         {
-            Debug::Log(Fmt("Attempted to set all bindings for non-customizable binding profile {}.", (int)profileId), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to set all bindings for non-customizable binding profile {}.", (int)profileId),
+                       Debug::LogLevel::Warning);
             return;
         }
 
@@ -347,7 +348,8 @@ namespace Silent::Input
         // Check if profile is customizable.
         if (!Contains(CUSTOM_BINDING_PROFILE_IDS, profileId))
         {
-            Debug::Log(Fmt("Attempted to bind event {} to action {} for non-customizable binding profile {}.", (int)eventId, (int)actionId, (int)profileId),
+            Debug::Log(Fmt("Attempted to bind event {} to action {} for non-customizable binding profile {}.",
+                       (int)eventId, (int)actionId, (int)profileId),
                        Debug::LogLevel::Warning);
             return;
         }

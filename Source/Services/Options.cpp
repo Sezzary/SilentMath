@@ -15,53 +15,54 @@ using namespace Silent::Utils;
 
 namespace Silent::Services
 {
-    constexpr char KEY_GRAPHICS[]     = "graphics";
-    constexpr char KEY_GAMEPLAY[]     = "gameplay";
-    constexpr char KEY_INPUT[]        = "input";
-    constexpr char KEY_ENHANCEMENTS[] = "enhancements";
-    constexpr char KEY_SYSTEM[]       = "system";
+    constexpr char KEY_GRAPHICS[]     = "Graphics";
+    constexpr char KEY_GAMEPLAY[]     = "Gameplay";
+    constexpr char KEY_INPUT[]        = "Input";
+    constexpr char KEY_ENHANCEMENTS[] = "Enhancements";
+    constexpr char KEY_SYSTEM[]       = "System";
 
-    constexpr char KEY_WINDOWED_SIZE_X[]                          = "windowedSizeX";
-    constexpr char KEY_WINDOWED_SIZE_Y[]                          = "windowedSizeY";
-    constexpr char KEY_ENABLE_FULLSCREEN[]                        = "enableFullscreen";
-    constexpr char KEY_ENABLE_MAXIMIZED[]                         = "enableMaximized";
-    constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "brightnessLevel";
-    constexpr char KEY_FRAME_RATE[]                               = "frameRate";
-    constexpr char KEY_RENDER_SCALE[]                             = "renderScale";
-    constexpr char KEY_ASPECT_RATIO[]                             = "aspectRatio";
-    constexpr char KEY_TEXTURE_FILTER[]                           = "textureFilter";
-    constexpr char KEY_TEXT_QUALITY[]                             = "textQuality";
-    constexpr char KEY_LIGHTING[]                                 = "lighting";
-    constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "enableVertexJitter";
-    constexpr char KEY_ENABLE_DITHERING[]                         = "enableDithering";
-    constexpr char KEY_ENABLE_VIGNETTE[]                          = "enableVignette";
-    constexpr char KEY_ENABLE_CRT_FILTER[]                        = "enableCrtFilter";
-    constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "enableAutoLoad";
-    constexpr char KEY_ENABLE_SUBTITLES[]                         = "enableSubtitles";
-    constexpr char KEY_LANGUAGE[]                                 = "language";
-    constexpr char KEY_SOUND[]                                    = "sound";
-    constexpr char KEY_BGM_VOLUME[]                               = "bgmVolume";
-    constexpr char KEY_SE_VOLUME[]                                = "seVolume";
-    constexpr char KEY_BLOOD_COLOR[]                              = "bloodColor";
-    constexpr char KEY_BULLET_ADJUST[]                            = "bulletAdjust";
-    constexpr char KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID[] = "activeKeyboardMouseBindingProfileId";
-    constexpr char KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID[]        = "activeGamepadBindingProfileId";
-    constexpr char KEY_KEYBOARD_MOUSE_BINDINGS[]                  = "keyboardMouseBindings";
-    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "gamepadBindings";
-    constexpr char KEY_ENABLE_VIBRATION[]                         = "enableVibration";
-    constexpr char KEY_MOUSE_SENSITIVITY[]                        = "mouseSensitivity";
-    constexpr char KEY_WEAPON_CONTROL[]                           = "weaponControl";
-    constexpr char KEY_VIEW_CONTROL[]                             = "viewControl";
-    constexpr char KEY_RETREAT_TURN_CONTROL[]                     = "retreatTurnControl";
-    constexpr char KEY_WALK_RUN_CONTROL[]                         = "walkRunControl";
-    constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "disableAutoAiming";
-    constexpr char KEY_VIEW_MODE[]                                = "viewMode";
-    constexpr char KEY_PAPER_MAP[]                                = "paperMap";
-    constexpr char KEY_DIALOG_PAUSE[]                             = "dialogPause";
-    constexpr char KEY_ENABLE_TOASTS[]                            = "enableToasts";
-    constexpr char KEY_ENABLE_PARALLELISM[]                       = "enableParallelism";
+    constexpr char KEY_WINDOWED_SIZE_X[]                          = "WindowedSizeX";
+    constexpr char KEY_WINDOWED_SIZE_Y[]                          = "WindowedSizeY";
+    constexpr char KEY_ENABLE_FULLSCREEN[]                        = "EnableFullscreen";
+    constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
+    constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
+    constexpr char KEY_FRAME_RATE[]                               = "FrameRate";
+    constexpr char KEY_RENDER_SCALE[]                             = "RenderScale";
+    constexpr char KEY_ASPECT_RATIO[]                             = "AspectRatio";
+    constexpr char KEY_TEXTURE_FILTER[]                           = "TextureFilter";
+    constexpr char KEY_TEXT_QUALITY[]                             = "TextQuality";
+    constexpr char KEY_LIGHTING[]                                 = "Lighting";
+    constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
+    constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
+    constexpr char KEY_ENABLE_VIGNETTE[]                          = "EnableVignette";
+    constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
+    constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
+    constexpr char KEY_ENABLE_SUBTITLES[]                         = "EnableSubtitles";
+    constexpr char KEY_LANGUAGE[]                                 = "Language";
+    constexpr char KEY_SOUND[]                                    = "Sound";
+    constexpr char KEY_BGM_VOLUME[]                               = "BgmVolume";
+    constexpr char KEY_SE_VOLUME[]                                = "SeVolume";
+    constexpr char KEY_BLOOD_COLOR[]                              = "BloodColor";
+    constexpr char KEY_BULLET_ADJUST[]                            = "BulletAdjust";
+    constexpr char KEY_ACTIVE_KEYBOARD_MOUSE_BINDING_PROFILE_ID[] = "ActiveKeyboardMouseBindingProfileId";
+    constexpr char KEY_ACTIVE_GAMEPAD_BINDING_PROFILE_ID[]        = "ActiveGamepadBindingProfileId";
+    constexpr char KEY_KEYBOARD_MOUSE_BINDINGS[]                  = "KeyboardMouseBindings";
+    constexpr char KEY_GAMEPAD_BINDINGS[]                         = "GamepadBindings";
+    constexpr char KEY_ENABLE_VIBRATION[]                         = "EnableVibration";
+    constexpr char KEY_MOUSE_SENSITIVITY[]                        = "MouseSensitivity";
+    constexpr char KEY_WEAPON_CONTROL[]                           = "WeaponControl";
+    constexpr char KEY_VIEW_CONTROL[]                             = "ViewControl";
+    constexpr char KEY_RETREAT_TURN_CONTROL[]                     = "RetreatTurnControl";
+    constexpr char KEY_WALK_RUN_CONTROL[]                         = "WalkRunControl";
+    constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
+    constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
+    constexpr char KEY_PAPER_MAP[]                                = "PaperMap";
+    constexpr char KEY_DIALOG_PAUSE[]                             = "DialogPause";
+    constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
+    constexpr char KEY_ENABLE_PARALLELISM[]                       = "EnableParallelism";
 
-    constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i((int)RETRO_SCREEN_SPACE_RES.x * 3, (int)RETRO_SCREEN_SPACE_RES.y * 3);
+    constexpr auto DEFAULT_WINDOWED_SIZE                            = Vector2i((int)RETRO_SCREEN_SPACE_RES.x * 3,
+                                                                               (int)RETRO_SCREEN_SPACE_RES.y * 3);
     constexpr bool DEFAULT_ENABLE_MAXIMIZED                         = false;
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = BRIGHTNESS_LEVEL_MAX / 2;
@@ -69,7 +70,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO                             = AspectRatioType::Native;
     constexpr auto DEFAULT_TEXTURE_FILTER                           = TextureFilterType::Nearest;
-    constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Smooth;
+    constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Original;
     constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
     constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
@@ -284,7 +285,8 @@ namespace Silent::Services
                 if (kmBindsJson.contains(actionIdStr))
                 {
                     const auto& eventIdJson                 = kmBindsJson[actionIdStr];
-                    auto        eventId                     = !eventIdJson.empty() ? (EventId)eventIdJson : DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE.at(actionId).front();
+                    auto        eventId                     = !eventIdJson.empty() ? (EventId)eventIdJson :
+                                                                                     DEFAULT_CUSTOM_KEYBOARD_MOUSE_BINDING_PROFILE.at(actionId).front();
                     options.KeyboardMouseBindings[actionId] = { eventId };
                 }
                 else
@@ -296,7 +298,8 @@ namespace Silent::Services
                 if (gamepadBindsJson.contains(actionIdStr))
                 {
                     const auto& eventIdJson           = gamepadBindsJson[actionIdStr];
-                    auto        eventId               = !eventIdJson.empty() ? (EventId)eventIdJson : DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE.at(actionId).front();
+                    auto        eventId               = !eventIdJson.empty() ? (EventId)eventIdJson :
+                                                                               DEFAULT_CUSTOM_GAMEPAD_BINDING_PROFILE.at(actionId).front();
                     options.GamepadBindings[actionId] = { eventId };
                 }
                 else

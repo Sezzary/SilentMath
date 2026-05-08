@@ -120,7 +120,7 @@ namespace Silent::Assets
     constexpr char KEY_SAVE_LOC_GARAGE[]         = "SaveLoc_Garage";
     constexpr char KEY_SAVE_LOC_POLICE[]         = "SaveLoc_Police";
     constexpr char KEY_SAVE_LOC_RECEPTION[]      = "SaveLoc_Reception";
-    constexpr char KEY_SAVE_LOC_ROOM_302[]       = "SaveLoc_RooM302";
+    constexpr char KEY_SAVE_LOC_ROOM_302[]       = "SaveLoc_Room302";
     constexpr char KEY_SAVE_LOC_DIRECTORS[]      = "SaveLoc_Directors";
     constexpr char KEY_SAVE_LOC_JEWELLERY_SHOP[] = "SaveLoc_JewelleryShop";
     constexpr char KEY_SAVE_LOC_POOL_HALL[]      = "SaveLoc_PoolHall";
