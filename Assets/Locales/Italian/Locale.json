@@ -3,8 +3,8 @@
 
     "Sys_FullscreenHintGeneric": "Press Alt+Return or F11 to toggle fullscreen.",
     "Sys_FullscreenHintMac":     "Press Option+Return or F11 to toggle fullscreen.",
-    "Sys_GamepadConnected":      "Gamepad connected.",
-    "Sys_GamepadDisonnected":    "Gamepad disconnected.",
+    "Sys_GamepadConnected":      "Controller connected.",
+    "Sys_GamepadDisonnected":    "Controller disconnected.",
     "Sys_GamepadBatteryIsLow":   "Controller battery is low.",
 
     "Intro_Warning":     "{M}There are violent and disturbing{N}images in this game.",
@@ -923,9 +923,6 @@
     "M3S06Msg_31": "{T}Niente di utile.{E}",
     "M3S06Msg_32": "{T}Il telefono non funziona.{N}Non c'è linea.{E}",
 
-    "M4S00Msg_0_comment": "DO NOT TRANSLATE",
-    "M4S00Msg_0": "@todo No array available.",
-
     "M4S01Msg_1":   "{J0(1.6)}{T}Cos'è questo?!{E}",
     "M4S01Msg_2":   "{J0(1.0)}{T}Harry!",
     "M4S01Msg_3":   "{J0(1.0)}{T}Cybil?{E}",
@@ -1112,9 +1109,6 @@
     "M4S05Msg_2": "{J0(2.5)}{T}Cos'è quella luce?{E}",
     "M4S05Msg_3": "{T}Le scale sono rotte.{N}Non posso fuggire.{E}",
     "M4S05Msg_4": "{T}{C3}Ospedale Alchemilla{E}",
-
-    "M4S06Msg_0_comment": "DO NOT TRANSLATE",
-    "M4S06Msg_0": "@todo No array available.",
 
     "M5S00Msg_1": "{T}Ho usato la {C2}Chiave delle fogne{C7}.{E}",
     "M5S00Msg_2": "{T}Ho usato la {C2}Chiave{N}di uscita delle fogne{C7}.{E}",
@@ -1386,9 +1380,6 @@
     "M6S04Msg_59": "{J0(5.1)}{T}Tutto è pronto.{N}Forza, torniamo a casa.{E}",
     "M6S04Msg_60": "{J0(1.7)}{T}Cosa sta succedendo?{E}",
     "M6S04Msg_61": "{J0(1.2)}{T}{E}",
-
-    "M6S05Msg_0_comment": "DO NOT TRANSLATE",
-    "M6S05Msg_0": "@todo No array available.",
 
     "M7S00Msg_1":  "{J0(1.2)}{T}{E}",
     "M7S00Msg_2":  "{J1(1.2)}{T}Lisa?",

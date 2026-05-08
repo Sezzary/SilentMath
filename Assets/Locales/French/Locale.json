@@ -918,9 +918,6 @@
     "M3S06Msg_31": "{T}Rien qui puisse servir.{E}",
     "M3S06Msg_32": "{T}Le téléphone ne marche pas.{N}Pas de tonalité.{E}",
 
-    "M4S00Msg_0_comment": "DO NOT TRANSLATE",
-    "M4S00Msg_0": "@todo No array available.",
-
     "M4S01Msg_1":   "{J0(1.6)}{T}Qu'est-ce que c'est?{E}",
     "M4S01Msg_2":   "{J0(1.0)}{T}Harry!",
     "M4S01Msg_3":   "{J0(1.0)}{T}Cybil?{E}",
@@ -1107,9 +1104,6 @@
     "M4S05Msg_2": "{J0(2.5)}{T}Cette lumière?{E}",
     "M4S05Msg_3": "{T}Les marches sont démolies.{N}Impossible de fuir.{E}",
     "M4S05Msg_4": "{T}{C3}Hôpital Alchémille{E}",
-
-    "M4S06Msg_0_comment": "DO NOT TRANSLATE",
-    "M4S06Msg_0": "@todo No array available.",
 
     "M5S00Msg_1": "{T}Utilisé la {C2}Clé d'égout{C7}.{E}",
     "M5S00Msg_2": "{T}Utilisé la {C2}Clé se sortie{N}d'égout{C7}.{E}",
@@ -1380,9 +1374,6 @@
     "M6S04Msg_59": "{J0(5.1)}{T}Tout est prêt.{N}Rentrons chez nous maintenant.{E}",
     "M6S04Msg_60": "{J0(1.7)}{T}Qu'est-ce qui se passe{N}ici!?{E}",
     "M6S04Msg_61": "{J0(1.2)}{T}{E}",
-
-    "M6S05Msg_0_comment": "DO NOT TRANSLATE",
-    "M6S05Msg_0": "@todo No array available.",
 
     "M7S00Msg_1":  "{J0(1.2)}{T}{E}",
     "M7S00Msg_2":  "{J1(1.2)}{T}Lisa?",

@@ -917,9 +917,6 @@
     "M3S06Msg_31": "{T}Nada que me sirva.{E}",
     "M3S06Msg_32": "{T}El teléfono no funciona.{N}No hay tono.{E}",
 
-    "M4S00Msg_0_comment": "DO NOT TRANSLATE",
-    "M4S00Msg_0": "@todo No array available.",
-
     "M4S01Msg_1":   "{J0(1.6)}{T}¿Qué es esto?{E}",
     "M4S01Msg_2":   "{J0(1.0)}{T}¡Harry!",
     "M4S01Msg_3":   "{J0(1.0)}{T}¿Cybil?{E}",
@@ -1106,9 +1103,6 @@
     "M4S05Msg_2": "{J0(2.5)}{T}¿Y esa luz...?{E}",
     "M4S05Msg_3": "{T}¡Las escaleras están destrozadas!{E}",
     "M4S05Msg_4": "{T}{C3}Hospital Alchemilla{E}",
-
-    "M4S06Msg_0_comment": "DO NOT TRANSLATE",
-    "M4S06Msg_0": "@todo No array available.",
 
     "M5S00Msg_1": "{T}He usado la {C2}llave{N}del alcantarillado{C7}.{E}",
     "M5S00Msg_2": "{T}He usado la {C2}llave para salir{N}del alcantarillado{C7}.{E}",
@@ -1379,9 +1373,6 @@
     "M6S04Msg_59": "{J0(4.8)}{T}Todo está listo.{N}Vámonos a casa.{E}",
     "M6S04Msg_60": "{J0(1.7)}{T}¿¡Qué está pasando aquí!?{E}",
     "M6S04Msg_61": "{J0(1.2)}{T}{E}",
-
-    "M6S05Msg_0_comment": "DO NOT TRANSLATE",
-    "M6S05Msg_0": "@todo No array available.",
 
     "M7S00Msg_1":  "{J0(1.2)}{T}Harry...{E}",
     "M7S00Msg_2":  "{J1(1.2)}{T}Lisa...",
