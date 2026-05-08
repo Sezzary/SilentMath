@@ -19,7 +19,7 @@
     "MainMenu_Normal":       "ノーマル",
     "MainMenu_Hard":         "ハード",
 
-    "_OptionsMenu_Comment": "@todo Take translations from subtitles found in the Japanese version's special UI.",
+    "_OptionsMenu_Comment":       "@todo Take translations from subtitles found in the Japanese version's special UI.",
     "OptionsMenu_Options":        "{M}オプション",
     "OptionsMenu_ExtraOptions":   "{M}エクストラオプション",
     "OptionsMenu_Exit":           "終了",
@@ -80,7 +80,7 @@
     "ContMenu_Reset":           "リセット",
     "ContMenu_Waiting":         "入力待ち…",
 
-    "_SaveLoc_Comment": "@todo Need to do this section",
+    "_SaveLoc_Comment":      "@todo Need to do this section",
     "SaveLoc_Anywhere":      "Anywhere",
     "SaveLoc_Cafe":          "Cafe",
     "SaveLoc_Bus":           "Bus",
