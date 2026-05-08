@@ -183,10 +183,12 @@ namespace Silent::Renderer
         static const auto SHADOW_OFFSET = SCREEN_SPACE_RES / Vector2(RETRO_SCREEN_SPACE_RES.y);
 
         // Compute transformation parameters.
-        auto rotMat           = Matrix::CreateRotationZ(text.Rotation);
-        auto fontScaleFactor  = SCREEN_SPACE_RES / (float)text.Font->GetPointSize();
-        auto textSize         = (Vector2(text.Shape.Width, (float)text.Font->GetPointSize()) * fontScaleFactor) * text.Scale;
-        auto aspectCorrection = GetScreenAspectCorrection(text.ScaleMd);
+        auto  rotMat           = Matrix::CreateRotationZ(text.Rotation);
+        auto  fontScaleFactor  = SCREEN_SPACE_RES / (float)text.Font->GetPointSize();
+        float heightScale      = (text.StyleFlags & (int)TextStyleFlags::HalfHeight) ? 0.5f : 1.0f;
+        auto  textScale        = Vector2(1.0f, heightScale) * text.Scale;
+        auto  textSize         = (Vector2(text.Shape.Width, (float)text.Font->GetPointSize()) * fontScaleFactor) * textScale;
+        auto  aspectCorrection = GetScreenAspectCorrection(text.ScaleMd);
 
         // Compute text position.
         // @todo Use common function for alignment pivots.
@@ -242,10 +244,10 @@ namespace Silent::Renderer
         auto adjTextPos = text.Position + Vector2::Transform(textOffset, rotMat);
 
         // Compute shadow offset.
-        auto shadowOffset    = SHADOW_OFFSET * aspectCorrection;
+        auto shadowOffset    = (SHADOW_OFFSET * Vector2(1.0f, heightScale)) * aspectCorrection;
         auto adjShadowOffset = Vector2::Transform(shadowOffset, rotMat);
         // @todo This version scales according to the internal pixel size of the font.
-        //auto shadowOffset    = ((SHADOW_RETRO_PIXEL_OFFSET * fontScaleFactor) * text.Scale) * aspectCorrection;
+        //auto shadowOffset    = ((SHADOW_RETRO_PIXEL_OFFSET * fontScaleFactor) * textScale) * aspectCorrection;
         //auto adjShadowOffset = Vector2::Transform(shadowOffset, rotMat);
 
         // Run through shaped glyphs.
@@ -266,13 +268,13 @@ namespace Silent::Renderer
 
             // Compute screen position.
             auto relPixelPos = adjPixelOffset + adjPixelBearing;
-            auto relPos      = (relPixelPos * fontScaleFactor) * text.Scale;
+            auto relPos      = (relPixelPos * fontScaleFactor) * textScale;
             auto pos         = adjTextPos + (relPos * aspectCorrection);
 
             // Compute scale.
             auto relScale = Vector2((float)shapedGlyph.Attribs.AtlasSize.x / (float)shapedGlyph.Attribs.AtlasSize.y, 1.0f) *
                             Vector2((float)shapedGlyph.Attribs.AtlasSize.y / (float)text.Font->GetPointSize());
-            auto scale    = relScale * text.Scale;
+            auto scale    = relScale * textScale;
 
             // Concatenate name for texture atlas containing glyph.
             auto atlasName = text.Font->GetName() + std::to_string(shapedGlyph.Attribs.AtlasIdx);
@@ -296,7 +298,7 @@ namespace Silent::Renderer
             };
 
             // Submit 2D glyph.
-            if (!AddGlyph(Vector2::Zero, text.Col, text.Depth, text.Style == TextStyle::Gradient))
+            if (!AddGlyph(Vector2::Zero, text.Col, text.Depth, text.StyleFlags & (int)TextStyleFlags::Gradient))
             {
                 return false;
             }

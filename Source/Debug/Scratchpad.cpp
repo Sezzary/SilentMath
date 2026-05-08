@@ -82,12 +82,12 @@ namespace Silent::Debug
             // Text.
             auto text = Text2d::CreateText2d("Śliwka", "SmoothSerif",
                                              input.GetCursorPosition(), 0.0f, 1.0f / 14.0f, 1.0f,
-                                             Color::White, TextStyle::Gradient, true,
+                                             Color::White, (int)TextStyleFlags::Gradient, true,
                                              1, AlignMode::BottomLeft);
             renderer.SubmitText2d(text);
             //auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
             //                                  Vector2(10.0f, 20.0f), 0/*DEG_TO_RAD(45.0f)*/, 1.0f / 14.0f, 1.0f, 
-            //                                  Color::White, TextStyle::Gradient, true,
+            //                                  Color::White, (int)TextStyleFlags::Gradient, true,
             //                                  1, AlignMode::CenterLeft);
             //renderer.SubmitText2d(text2);
 

@@ -10,11 +10,12 @@ namespace Silent::Renderer
 {
     constexpr int GLYPH_2D_COUNT_MAX = 1024;
 
-    /** @brief Text embellishment styles. */
-    enum class TextStyle
+    /** @brief Text embellishment style flags. */
+    enum class TextStyleFlags
     {
-        Flat,
-        Gradient
+        None       = 0,
+        Gradient   = 1 << 0,
+        HalfHeight = 1 << 1
     };
 
     /** @brief 2D screen glyph. */
@@ -44,20 +45,20 @@ namespace Silent::Renderer
     /** @brief 2D screen text. */
     struct Text2d
     {
-        ShapedText  Shape     = {};
-        std::string Message   = {};
-        Font*       Font      = nullptr;
-        Vector2     Position  = Vector2::Zero;
-        float       Rotation  = 0.0f;
-        float       Scale     = 0.0f;
-        float       Tracking  = 0.0f;
-        Color       Col       = Color::White;
-        TextStyle   Style     = TextStyle::Flat;
-        bool        HasShadow = false;
-        int         Depth     = 0;
-        AlignMode   AlignMd   = AlignMode::Center;
-        ScaleMode   ScaleMd   = ScaleMode::ShortEdge;
-        BlendMode   BlendMd   = BlendMode::Alpha;
+        ShapedText  Shape      = {};
+        std::string Message    = {};
+        Font*       Font       = nullptr;
+        Vector2     Position   = Vector2::Zero;
+        float       Rotation   = 0.0f;
+        float       Scale      = 0.0f;
+        float       Tracking   = 0.0f;
+        Color       Col        = Color::White;
+        int         StyleFlags = (int)TextStyleFlags::None;
+        bool        HasShadow  = false;
+        int         Depth      = 0;
+        AlignMode   AlignMd    = AlignMode::Center;
+        ScaleMode   ScaleMd    = ScaleMode::ShortEdge;
+        BlendMode   BlendMd    = BlendMode::Alpha;
 
         /** @brief Creates a 2D text message.
          *
@@ -67,7 +68,7 @@ namespace Silent::Renderer
          */
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
                                    const Vector2& pos, float rot, float scale, float tracking,
-                                   const Color& color, TextStyle style, bool hasDropShadow,
+                                   const Color& color, int styleFlags, bool hasDropShadow,
                                    int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                    BlendMode blendMode = BlendMode::Alpha);
     };

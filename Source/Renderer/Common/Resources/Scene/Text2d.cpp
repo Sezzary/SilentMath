@@ -38,7 +38,7 @@ namespace Silent::Renderer
 
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
                                 const Vector2& pos, float rot, float scale, float tracking,
-                                const Color& color, TextStyle style, bool hasDropShadow,
+                                const Color& color, int styleFlags, bool hasDropShadow,
                                 int depth, AlignMode alignMode, ScaleMode scaleMode,
                                 BlendMode blendMode)
     {
@@ -56,20 +56,20 @@ namespace Silent::Renderer
         // Get shaped text glyphs.
         return Text2d
         {
-            .Shape     = font->GetShapedText(msg),
-            .Message   = msg,
-            .Font      = font,
-            .Position  = pos,
-            .Rotation  = rot,
-            .Scale     = scale,
-            .Tracking  = tracking,
-            .Col       = color,
-            .Style     = style,
-            .HasShadow = hasDropShadow,
-            .Depth     = depth,
-            .AlignMd   = alignMode,
-            .ScaleMd   = ScaleMode::HorizontalEdge, // @todo
-            .BlendMd   = blendMode
+            .Shape      = font->GetShapedText(msg),
+            .Message    = msg,
+            .Font       = font,
+            .Position   = pos,
+            .Rotation   = rot,
+            .Scale      = scale,
+            .Tracking   = tracking,
+            .Col        = color,
+            .StyleFlags = styleFlags,
+            .HasShadow  = hasDropShadow,
+            .Depth      = depth,
+            .AlignMd    = alignMode,
+            .ScaleMd    = ScaleMode::HorizontalEdge, // @todo
+            .BlendMd    = blendMode
         };
     }
 }

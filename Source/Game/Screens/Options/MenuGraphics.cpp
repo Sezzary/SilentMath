@@ -96,7 +96,7 @@ namespace Silent::Game
         // Submit heading string.
         Gfx_StringSetColor(StringColorId_White);
         Gfx_StringSetPosition(HEADING_STR_POS.x, HEADING_STR_POS.y);
-        Gfx_StringDraw(translator(KEY_OPTIONS_MENU_OPTIONS), DEFAULT_MAP_MESSAGE_LENGTH);
+        Gfx_StringDraw(translator(KEY_OPTIONS_MENU_HEADING), DEFAULT_MAP_MESSAGE_LENGTH);
 
         // Submit entry strings.
         for (int i = 0; i < MainOptionsMenuEntry_Count; i++)

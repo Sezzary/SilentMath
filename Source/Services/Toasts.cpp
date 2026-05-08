@@ -87,7 +87,7 @@ namespace Silent::Services
         {
             auto text = Text2d::CreateText2d(toast.Message, "RetroSans",
                                              linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
-                                             Color::White, TextStyle::Flat, true,
+                                             Color::White, (int)TextStyleFlags::None, true,
                                              0, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
             renderer.SubmitText2d(text);
 

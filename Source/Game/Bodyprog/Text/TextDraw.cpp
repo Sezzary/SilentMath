@@ -103,7 +103,7 @@ namespace Silent::Game
         g_StringColorId = colorId;
     }
 
-    float Gfx_StringDraw(const std::string& str, int strLength)
+    float Gfx_StringDraw(const std::string& str, int strLength, bool isHalfHeight)
     {
         constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
 
@@ -111,11 +111,13 @@ namespace Silent::Game
         auto&       renderer = g_App.GetRenderer();
 
         // Submit text.
-        auto fontName = (options->TextQuality == TextQualityType::Original) ? "RetroSerif" : "SmoothSerif";
-        auto text     = Text2d::CreateText2d(str, fontName,
-                                             ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
-                                             STRING_COLORS[g_StringColorId], TextStyle::Gradient, true,
-                                             6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+        auto fontName   = (options->TextQuality == TextQualityType::Original) ? "RetroSerif" : "SmoothSerif";
+        int  styleFlags = (int)TextStyleFlags::Gradient | (isHalfHeight ? (int)TextStyleFlags::HalfHeight :
+                                                                          (int)TextStyleFlags::None);
+        auto text       = Text2d::CreateText2d(str, fontName,
+                                               ConvertRetroScreenPixelsToPercent(g_StringPosition), 0.0f, SCALE, 1.0f,
+                                               STRING_COLORS[g_StringColorId], styleFlags, true,
+                                               6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
         renderer.SubmitText2d(text);
 
         // @todo Need to return width in retro resolution space (320x240).

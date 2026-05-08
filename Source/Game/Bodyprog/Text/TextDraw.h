@@ -85,7 +85,7 @@ namespace Silent::Game
      * @param strLength String length for rollout
      * @return Length of the string.
      */
-    float Gfx_StringDraw(const std::string& str, int strLength);
+    float Gfx_StringDraw(const std::string& str, int strLength, bool isHalfHeight = false);
 
     s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx);
 

@@ -415,8 +415,8 @@ namespace Silent::Game
     void MainMenu_MainTextDraw() // 0x8003B568
     {
         constexpr int COLUMN_POS_X = SCREEN_WIDTH / 2;
-        constexpr int COLUMN_POS_Y = (SCREEN_HEIGHT / 5) * 2;
-        constexpr int STR_OFFSET_Y = 20;
+        constexpr int COLUMN_POS_Y = (SCREEN_HEIGHT / 5) * 3;
+        constexpr int STR_OFFSET_Y = 10;
 
         static const char* MAIN_MENU_ENTRY_STRING_KEYS[] =
         {
@@ -447,14 +447,13 @@ namespace Silent::Game
                                         translator(KEY_MAIN_MENU_OPENING_QUOTE) +
                                         translator(MAIN_MENU_ENTRY_STRING_KEYS[i]) +
                                         translator(KEY_MAIN_MENU_CLOSING_QUOTE);
-                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
             }
             else
             {
                 auto unselectedEntryStr = /*"{M}" + */translator(MAIN_MENU_ENTRY_STRING_KEYS[i]);
-                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
+                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
             }
-            Gfx_StringDraw("", DEFAULT_MAP_MESSAGE_LENGTH);
         }
     }
 
@@ -463,7 +462,7 @@ namespace Silent::Game
         constexpr int DIFFICULTY_MENU_SELECTION_COUNT = 3;
         constexpr int COLUMN_POS_X                    = SCREEN_WIDTH / 2;
         constexpr int COLUMN_POS_Y                    = SCREEN_HEIGHT / 2;
-        constexpr int STR_OFFSET_Y                    = 20;
+        constexpr int STR_OFFSET_Y                    = 10;
 
         static const char* DIFFICULTY_MENU_ENTRY_STRING_KEYS[] =
         {
@@ -486,14 +485,13 @@ namespace Silent::Game
                                         translator(KEY_MAIN_MENU_OPENING_QUOTE) +
                                         translator(DIFFICULTY_MENU_ENTRY_STRING_KEYS[i]) +
                                         translator(KEY_MAIN_MENU_CLOSING_QUOTE);
-                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
             }
             else
             {
                 auto unselectedEntryStr = /*"{M}" + */translator(DIFFICULTY_MENU_ENTRY_STRING_KEYS[i]);
-                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH);
+                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
             }
-            Gfx_StringDraw("", DEFAULT_MAP_MESSAGE_LENGTH);
         }
     }
 
