@@ -12,6 +12,7 @@ namespace Silent::Game
     constexpr char MAP_MSG_CODE_NEWLINE       = 'N'; /** Newline. */
     constexpr char MAP_MSG_CODE_SELECT        = 'S'; /** Display dialog prompt with selectable entries. */
     constexpr char MAP_MSG_CODE_TAB           = 'T'; /** Inset line. */
+    constexpr char MAP_MSG_CODE_RIGHT         = 'R'; /** Align right. */
     constexpr char MAP_MSG_CODE_PAGE          = 'P'; /** Split page. */
 
     constexpr int FONT_12X16_GLYPH_SIZE_Y   = 16;

@@ -433,9 +433,8 @@ namespace Silent::Debug
                             isOptChanged = true;
                         }
 
-                        const auto& locales    = translator.GetLocales();
-                        int         langIdx    = 0;
-                        bool        hasLangIdx = false;
+                        const auto& locales = translator.GetLocales();
+                        int         langIdx = 0;
 
                         // Collect languages.
                         auto langItems = std::vector<const char*>{};

@@ -34,14 +34,14 @@ namespace Silent::Assets
     constexpr char KEY_MAIN_MENU_NORMAL[]        = "MainMenu_Normal";
     constexpr char KEY_MAIN_MENU_HARD[]          = "MainMenu_Hard";
 
-    // @todo Create submenus to better organise new options.
-    constexpr char KEY_OPTIONS_MENU_GRAPHICS[] = "OptionsMenu_Graphics";
-    constexpr char KEY_OPTIONS_MENU_GAMEPLAY[] = "OptionsMenu_Gameplay";
-    constexpr char KEY_OPTIONS_MENU_INPUT[] = "OptionsMenu_Input";
-    constexpr char KEY_OPTIONS_MENU_ENHANCEMENTS[] = "OptionsMenu_Enhancements";
-    constexpr char KEY_OPTIONS_MENU_SYSTEM[] = "OptionsMenu_System";
+    constexpr char KEY_OPTIONS_MENU_HEADING[]          = "OptionsMenu_Heading";
+    constexpr char KEY_OPTIONS_MENU_EXTRA_OPTIONS[]    = "OptionsMenu_ExtraOptions";
+    constexpr char KEY_OPTIONS_MENU_GRAPHICS[]         = "OptionsMenu_Graphics";
+    constexpr char KEY_OPTIONS_MENU_GAMEPLAY[]         = "OptionsMenu_Gameplay";
+    constexpr char KEY_OPTIONS_MENU_INPUT[]            = "OptionsMenu_Input";
+    constexpr char KEY_OPTIONS_MENU_ENHANCEMENTS[]     = "OptionsMenu_Enhancements";
+    constexpr char KEY_OPTIONS_MENU_SYSTEM[]           = "OptionsMenu_System";
 
-    constexpr char KEY_OPTIONS_MENU_OPTIONS[]          = "OptionsMenu_Options";
     constexpr char KEY_OPTIONS_MENU_EXIT[]             = "OptionsMenu_Exit";
     constexpr char KEY_OPTIONS_MENU_BRIGHT_LEVEL[]     = "OptionsMenu_BrightLevel";
     constexpr char KEY_OPTIONS_MENU_CONT_CONFIG[]      = "OptionsMenu_ContConfig";
@@ -51,7 +51,7 @@ namespace Silent::Assets
     constexpr char KEY_OPTIONS_MENU_BGM_VOL[]          = "OptionsMenu_BgmVol";
     constexpr char KEY_OPTIONS_MENU_SE_VOL[]           = "OptionsMenu_SeVol";
     constexpr char KEY_OPTIONS_MENU_LANGUAGE[]         = "OptionsMenu_Language";
-    constexpr char KEY_OPTIONS_MENU_EXTRA_OPTIONS[]    = "OptionsMenu_ExtraOptions";
+    
     constexpr char KEY_OPTIONS_MENU_WEAPON_CONTROL[]   = "OptionsMenu_WeaponControl";
     constexpr char KEY_OPTIONS_MENU_BLOOD_COLOR[]      = "OptionsMenu_BloodColor";
     constexpr char KEY_OPTIONS_MENU_VIEW_CONTROL[]     = "OptionsMenu_ViewControl";
@@ -61,6 +61,7 @@ namespace Silent::Assets
     constexpr char KEY_OPTIONS_MENU_AUTO_AIMING[]      = "OptionsMenu_AutoAiming";
     constexpr char KEY_OPTIONS_MENU_VIEW_MODE[]        = "OptionsMenu_ViewMode";
     constexpr char KEY_OPTIONS_MENU_BULLET_ADJUST[]    = "OptionsMenu_BulletAdjust";
+
     constexpr char KEY_OPTIONS_MENU_ON[]               = "OptionsMenu_On";
     constexpr char KEY_OPTIONS_MENU_OFF[]              = "OptionsMenu_Off";
     constexpr char KEY_OPTIONS_MENU_STEREO[]           = "OptionsMenu_Stereo";
@@ -102,6 +103,8 @@ namespace Silent::Assets
     constexpr char KEY_CONT_MENU_RESET[]            = "ContMenu_Reset";
     constexpr char KEY_CONT_MENU_WAITING[]          = "ContMenu_Waiting";
 
+    // @todo Add PAUSE string
+
     constexpr char KEY_INV_MENU_EXIT[] = "invMenu_Exit";
     // @todo
 
@@ -139,58 +142,143 @@ namespace Silent::Assets
     // Paper Map Labels
     // =================
 
-    constexpr char KEY_PAPER_MAP_SILENT_HILL[]          = "PaperMap_SilentHill";
-    constexpr char KEY_PAPER_MAP_OLD_SILENT_HILL[]      = "PaperMap_OldSilentHill";
-    constexpr char KEY_PAPER_MAP_TO_CENTRAL[]           = "PaperMap_ToCentral";
-    constexpr char KEY_PAPER_MAP_BRIDGE_CONTROL[]       = "PaperMap_BridgeControl";
-    constexpr char KEY_PAPER_MAP_MIDWICH_ST[]           = "PaperMap_MidwichSt";
-    constexpr char KEY_PAPER_MAP_BRADBURY_ST[]          = "PaperMap_BradburySt";
-    constexpr char KEY_PAPER_MAP_BLOCH_ST[]             = "PaperMap_BlochSt";
-    constexpr char KEY_PAPER_MAP_MATHESON_ST[]          = "PaperMap_MathesonSt";
-    constexpr char KEY_PAPER_MAP_LEVIN_ST[]             = "PaperMap_LevinSt";
-    constexpr char KEY_PAPER_MAP_FINNEY_ST[]            = "PaperMap_FinneySt";
-    constexpr char KEY_PAPER_MAP_BACHMAN_RD[]           = "PaperMap_BachmanRd";
-    constexpr char KEY_PAPER_MAP_ELLROY_ST[]            = "PaperMap_EllroySt";
-    constexpr char KEY_PAPER_MAP_BALKAN_CHURCH[]        = "PaperMap_BalkanChurch";
-    constexpr char KEY_PAPER_MAP_SCHOOL[]               = "PaperMap_School";
-    constexpr char KEY_PAPER_MAP_CAFE_5TO2[]            = "PaperMap_Cafe5to2";
-    constexpr char KEY_PAPER_MAP_QUEEN_BURGER[]         = "PaperMap_QueenBurger";
-    constexpr char KEY_PAPER_MAP_CHAINSAWS[]            = "PaperMap_Chainsaws";
-    constexpr char KEY_PAPER_MAP_CONVENIENCE_STORE_8[]  = "PaperMap_ConvenienceStore8";
-    constexpr char KEY_PAPER_MAP_GAS_STATION[]          = "PaperMap_GasStation";
-    constexpr char KEY_PAPER_MAP_FOOD_AND_LIQUOR[]      = "PaperMap_FoodAndLiquor";
-    constexpr char KEY_PAPER_MAP_ALGERNON[]             = "PaperMap_Algernon";
-    constexpr char KEY_PAPER_MAP_METROPOL[]             = "PaperMap_Metropol";
-    constexpr char KEY_PAPER_MAP_BLUE_BELLE[]           = "PaperMap_BlueBelle";
-    constexpr char KEY_PAPER_MAP_CRABS[]                = "PaperMap_Crabs";
-    constexpr char KEY_PAPER_MAP_HIGH_LIFE[]            = "PaperMap_HighLife";
-    constexpr char KEY_PAPER_MAP_FISH_N_FRIES[]         = "PaperMap_FishNFries";
-    constexpr char KEY_PAPER_MAP_PHARMACY[]             = "PaperMap_Pharmacy";
-    constexpr char KEY_PAPER_MAP_BOOK_STORE[]           = "PaperMap_BookStore";
-    constexpr char KEY_PAPER_MAP_JULIOS_AUTO_PARTS[]    = "PaperMap_JuliosAutoParts";
-    constexpr char KEY_PAPER_MAP_HORNED_MOON_DANCE[]    = "PaperMap_HornedMoonDance";
-    constexpr char KEY_PAPER_MAP_FRESH_ROASTED_COFFEE[] = "PaperMap_FreshRoastedCoffee";
-    constexpr char KEY_PAPER_MAP_POSTON_MARKET[]        = "PaperMap_PostonMarket";
-    constexpr char KEY_PAPER_MAP_ICE_CREAM_BAR[]        = "PaperMap_IceCreamBar";
-    constexpr char KEY_PAPER_MAP_ICHIRONS_DRUGS[]       = "PaperMap_IchironsDrugs";
-    constexpr char KEY_PAPER_MAP_GHOUL[]                = "PaperMap_Ghoul";
-    constexpr char KEY_PAPER_MAP_JIM_BEAM[]             = "PaperMap_JimBeam";
-    constexpr char KEY_PAPER_MAP_SHOE_REPAIR[]          = "PaperMap_ShoeRepair";
-    constexpr char KEY_PAPER_MAP_SOUVENIRS[]            = "PaperMap_Souvenirs";
-    constexpr char KEY_PAPER_MAP_ROGERS_PASTRY[]        = "PaperMap_RogersPastry";
-    constexpr char KEY_PAPER_MAP_LIGHTING_CO[]          = "PaperMap_LightingCo";
-    constexpr char KEY_PAPER_MAP_SUNDRIES_SHOP[]        = "PaperMap_SundriesShop";
-    constexpr char KEY_PAPER_MAP_MARKET[]               = "PaperMap_Market";
-    constexpr char KEY_PAPER_MAP_TOP_SALES[]            = "PaperMap_TopSales";
+    constexpr char KEY_PAPER_MAP_OSH_SILENT_HILL[]          = "PaperMap_OshSilentHill";
+    constexpr char KEY_PAPER_MAP_OSH_TO_CENTRAL[]           = "PaperMap_OshToCentral";
+    constexpr char KEY_PAPER_MAP_OSH_BACHMAN_RD[]           = "PaperMap_OshBachmanRd";
+    constexpr char KEY_PAPER_MAP_OSH_BLOCH_ST[]             = "PaperMap_OshBlochSt";
+    constexpr char KEY_PAPER_MAP_OSH_BRADBURY_ST[]          = "PaperMap_OshBradburySt";
+    constexpr char KEY_PAPER_MAP_OSH_ELLROY_ST[]            = "PaperMap_OshEllroySt";
+    constexpr char KEY_PAPER_MAP_OSH_FINNEY_ST[]            = "PaperMap_OshFinneySt";
+    constexpr char KEY_PAPER_MAP_OSH_LEVIN_ST[]             = "PaperMap_OshLevinSt";
+    constexpr char KEY_PAPER_MAP_OSH_MATHESON_ST[]          = "PaperMap_OshMathesonSt";
+    constexpr char KEY_PAPER_MAP_OSH_MIDWICH_ST[]           = "PaperMap_OshMidwichSt";
+    constexpr char KEY_PAPER_MAP_OSH_ALGERNON[]             = "PaperMap_OshAlgernon";
+    constexpr char KEY_PAPER_MAP_OSH_BALKAN_CHURCH[]        = "PaperMap_OshBalkanChurch";
+    constexpr char KEY_PAPER_MAP_OSH_BLUE_BELLE[]           = "PaperMap_OshBlueBelle";
+    constexpr char KEY_PAPER_MAP_OSH_BOOK_STORE[]           = "PaperMap_OshBookStore";
+    constexpr char KEY_PAPER_MAP_OSH_BRIDGE_CONTROL[]       = "PaperMap_OshBridgeControl";
+    constexpr char KEY_PAPER_MAP_OSH_CAFE_5TO2[]            = "PaperMap_OshCafe5to2";
+    constexpr char KEY_PAPER_MAP_OSH_CHAINSAWS[]            = "PaperMap_OshChainsaws";
+    constexpr char KEY_PAPER_MAP_OSH_CONV_STORE_8[]         = "PaperMap_OshConvStore8";
+    constexpr char KEY_PAPER_MAP_OSH_CRABS[]                = "PaperMap_OshCrabs";
+    constexpr char KEY_PAPER_MAP_OSH_FISH_N_FRIES[]         = "PaperMap_OshFishNFries";
+    constexpr char KEY_PAPER_MAP_OSH_FOOD_AND_LIQUOR[]      = "PaperMap_OshFoodAndLiquor";
+    constexpr char KEY_PAPER_MAP_OSH_FRESH_ROASTED_COFFEE[] = "PaperMap_OshFreshRoastedCoffee";
+    constexpr char KEY_PAPER_MAP_OSH_GAS_STATION[]          = "PaperMap_OshGasStation";
+    constexpr char KEY_PAPER_MAP_OSH_GHOUL[]                = "PaperMap_OshGhoul";
+    constexpr char KEY_PAPER_MAP_OSH_HIGH_LIFE[]            = "PaperMap_OshHighLife";
+    constexpr char KEY_PAPER_MAP_OSH_HORNED_MOON_DANCE[]    = "PaperMap_OshHornedMoonDance";
+    constexpr char KEY_PAPER_MAP_OSH_ICE_CREAM_BAR[]        = "PaperMap_OshIceCreamBar";
+    constexpr char KEY_PAPER_MAP_OSH_ICHIRONS_DRUGS[]       = "PaperMap_OshIchironsDrugs";
+    constexpr char KEY_PAPER_MAP_OSH_JIM_BEAM[]             = "PaperMap_OshJimBeam";
+    constexpr char KEY_PAPER_MAP_OSH_JULIOS_AUTO_PARTS[]    = "PaperMap_OshJuliosAutoParts";
+    constexpr char KEY_PAPER_MAP_OSH_LIGHTING_CO[]          = "PaperMap_OshLightingCo";
+    constexpr char KEY_PAPER_MAP_OSH_MARKET[]               = "PaperMap_OshMarket";
+    constexpr char KEY_PAPER_MAP_OSH_METROPOL[]             = "PaperMap_OshMetropol";
+    constexpr char KEY_PAPER_MAP_OSH_PHARMACY[]             = "PaperMap_OshPharmacy";
+    constexpr char KEY_PAPER_MAP_OSH_POSTON_MARKET[]        = "PaperMap_OshPostonMarket";
+    constexpr char KEY_PAPER_MAP_OSH_QUEEN_BURGER[]         = "PaperMap_OshQueenBurger";
+    constexpr char KEY_PAPER_MAP_OSH_ROGERS_PASTRY[]        = "PaperMap_OshRogersPastry";
+    constexpr char KEY_PAPER_MAP_OSH_SCHOOL[]               = "PaperMap_OshSchool";
+    constexpr char KEY_PAPER_MAP_OSH_SHOE_REPAIR[]          = "PaperMap_OshShoeRepair";
+    constexpr char KEY_PAPER_MAP_OSH_SOUVENIRS[]            = "PaperMap_OshSouvenirs";
+    constexpr char KEY_PAPER_MAP_OSH_SUNDRIES_SHOP[]        = "PaperMap_OshSundriesShop";
+    constexpr char KEY_PAPER_MAP_OSH_TOP_SALES[]            = "PaperMap_OshTopSales";
 
-    //constexpr char KEY_PAPER_MAP_SCHOOL[]      = "PaperMap_School";
-    constexpr char KEY_PAPER_MAP_HOSPITAL[]    = "PaperMap_Hospital";
-    constexpr char KEY_PAPER_MAP_BASEMENT[]    = "PaperMap_Basement";
-    constexpr char KEY_PAPER_MAP_FLOOR_1[]     = "PaperMap_Floor1";
-    constexpr char KEY_PAPER_MAP_FLOOR_2[]     = "PaperMap_Floor2";
-    constexpr char KEY_PAPER_MAP_FLOOR_3[]     = "PaperMap_Floor3";
-    constexpr char KEY_PAPER_MAP_ROOF[]        = "PaperMap_Roof";
-    constexpr char KEY_PAPER_MAP_LADDER[]      = "PaperMap_Ladder";
+    // @todo Central
+
+    constexpr char KEY_PAPER_MAP_RESORT_HEADING[]            = "PaperMap_ResortHeading";
+    constexpr char KEY_PAPER_MAP_RESORT_TO_LAKE_SIDE[]       = "PaperMap_ResortToLakeSide";
+    constexpr char KEY_PAPER_MAP_RESORT_TO_OLD_SILENT_HILL[] = "PaperMap_ResortToOldSilentHill";
+    constexpr char KEY_PAPER_MAP_RESORT_LAKE_SIDE[]          = "PaperMap_ResortLakeSide";
+    constexpr char KEY_PAPER_MAP_RESORT_SOUTH_PARK[]         = "PaperMap_ResortSouthPark";
+    constexpr char KEY_PAPER_MAP_RESORT_CRAIG_ST[]           = "PaperMap_ResortCraigSt";
+    constexpr char KEY_PAPER_MAP_RESORT_BACHMAN_RD[]         = "PaperMap_ResortBachmanRd";
+    constexpr char KEY_PAPER_MAP_RESORT_SANDFORD_ST[]        = "PaperMap_ResortSandfordSt";
+    constexpr char KEY_PAPER_MAP_RESORT_W_SANDFORD_ST[]      = "PaperMap_ResortWSandfordSt";
+    constexpr char KEY_PAPER_MAP_RESORT_WEAVER_ST[]          = "PaperMap_ResortWeaverSt";
+    constexpr char KEY_PAPER_MAP_RESORT_AEC_BURGER[]         = "PaperMap_ResortAecBurger";
+    constexpr char KEY_PAPER_MAP_RESORT_ANNIES_BAR[]         = "PaperMap_ResortAnniesBar";
+    constexpr char KEY_PAPER_MAP_RESORT_EAST_GARAGE[]        = "PaperMap_ResortEastGarage";
+    constexpr char KEY_PAPER_MAP_RESORT_HAERBEY_INN[]        = "PaperMap_ResortHaerbeyInn";
+    constexpr char KEY_PAPER_MAP_RESORT_INDIAN_RUNNER[]      = "PaperMap_ResortIndianRunner";
+    constexpr char KEY_PAPER_MAP_RESORT_LIGHT_HOUSE[]        = "PaperMap_ResortLightHouse";
+    constexpr char KEY_PAPER_MAP_RESORT_MOTEL[]              = "PaperMap_ResortMotel";
+    constexpr char KEY_PAPER_MAP_RESORT_WEST_GARAGE[]        = "PaperMap_ResortWestGarage";
+
+    constexpr char KEY_PAPER_MAP_SCHOOL_HEADING[]         = "PaperMap_SchoolHeading";
+    constexpr char KEY_PAPER_MAP_SCHOOL_FLOOR_BASEMENT[]  = "PaperMap_SchoolFloorBasement";
+    constexpr char KEY_PAPER_MAP_SCHOOL_FLOOR_1[]         = "PaperMap_SchoolFloor1";
+    constexpr char KEY_PAPER_MAP_SCHOOL_FLOOR_2[]         = "PaperMap_SchoolFloor2";
+    constexpr char KEY_PAPER_MAP_SCHOOL_FLOOR_ROOF[]      = "PaperMap_SchoolFloorRoof";
+    constexpr char KEY_PAPER_MAP_SCHOOL_DOWN[]            = "PaperMap_SchoolDown";
+    constexpr char KEY_PAPER_MAP_SCHOOL_UP[]              = "PaperMap_SchoolUp";
+    constexpr char KEY_PAPER_MAP_SCHOOL_BOILER_ROOM[]     = "PaperMap_SchoolBoilerRoom";
+    constexpr char KEY_PAPER_MAP_SCHOOL_CHEMISTRY_LAB[]   = "PaperMap_SchoolChemistryLab";
+    constexpr char KEY_PAPER_MAP_SCHOOL_CLASS_ROOM[]      = "PaperMap_SchoolClassRoom";
+    constexpr char KEY_PAPER_MAP_SCHOOL_CLOCK_TOWER[]     = "PaperMap_SchoolClockTower";
+    constexpr char KEY_PAPER_MAP_SCHOOL_COURTYARD[]       = "PaperMap_SchoolCourtyard";
+    constexpr char KEY_PAPER_MAP_SCHOOL_ENTRANCE[]        = "PaperMap_SchoolEntrance";
+    constexpr char KEY_PAPER_MAP_SCHOOL_HALL[]            = "PaperMap_SchoolHall";
+    constexpr char KEY_PAPER_MAP_SCHOOL_INFIRMARY[]       = "PaperMap_SchoolInfirmary";
+    constexpr char KEY_PAPER_MAP_SCHOOL_LAB_EQUIP_ROOM[]  = "PaperMap_SchoolLabEquipRoom";
+    constexpr char KEY_PAPER_MAP_SCHOOL_LIBRARY[]         = "PaperMap_SchoolLibrary";
+    constexpr char KEY_PAPER_MAP_SCHOOL_LIBRARY_RESERVE[] = "PaperMap_SchoolLibraryReserve";
+    constexpr char KEY_PAPER_MAP_SCHOOL_LOBBY[]           = "PaperMap_SchoolLobby";
+    constexpr char KEY_PAPER_MAP_SCHOOL_LOCKER_ROOM[]     = "PaperMap_SchoolLockerRoom";
+    constexpr char KEY_PAPER_MAP_SCHOOL_MUSIC_ROOM[]      = "PaperMap_SchoolMusicRoom";
+    constexpr char KEY_PAPER_MAP_SCHOOL_RECEPTION[]       = "PaperMap_SchoolReception";
+    constexpr char KEY_PAPER_MAP_SCHOOL_ROOF[]            = "PaperMap_SchoolRoof";
+    constexpr char KEY_PAPER_MAP_SCHOOL_STORAGE[]         = "PaperMap_SchoolStorage";
+    constexpr char KEY_PAPER_MAP_SCHOOL_TEACHERS_ROOM[]   = "PaperMap_SchoolTeachersRoom";
+
+    constexpr char KEY_PAPER_MAP_HOSPITAL_HEADING[]        = "PaperMap_HospitalHeading";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_FLOOR_BASEMENT[] = "PaperMap_HospitalFloorBasement";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_FLOOR_1[]        = "PaperMap_HospitalFloor1";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_FLOOR_2[]        = "PaperMap_HospitalFloor2";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_FLOOR_3[]        = "PaperMap_HospitalFloor3";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_DOWN[]           = "PaperMap_HospitalDown";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_UP[]             = "PaperMap_HospitalUp";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_BOILER_ROOM[]    = "PaperMap_HospitalBoilerRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_CONF_ROOM[]      = "PaperMap_HospitalConfRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_DIRS_OFFICE[]    = "PaperMap_HospitalDirsOffice";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ELEVATOR[]       = "PaperMap_HospitalElevator";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ENTREANCE[]      = "PaperMap_HospitalEntreance";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_EXAM_ROOM[]      = "PaperMap_HospitalExamRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_GEN_ROOM[]       = "PaperMap_HospitalGenRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_INTENSIVE_CARE[] = "PaperMap_HospitalIntensiveCare";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_KITCHEN[]        = "PaperMap_HospitalKitchen";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_LINEN_ROOM[]     = "PaperMap_HospitalLinenRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_MEDICINE_ROOM[]  = "PaperMap_HospitalMedicineRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_MORGUE[]         = "PaperMap_HospitalMorgue";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_NURSE_CENTER[]   = "PaperMap_HospitalNurseCenter";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_OFFICE[]         = "PaperMap_HospitalOffice";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_OP_PREP_ROOM[]   = "PaperMap_HospitalOpPrepRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_OP_ROOM[]        = "PaperMap_HospitalOpRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_RECEPTION[]      = "PaperMap_HospitalReception";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_201[]       = "PaperMap_HospitalRoom201";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_202[]       = "PaperMap_HospitalRoom202";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_203[]       = "PaperMap_HospitalRoom203";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_204[]       = "PaperMap_HospitalRoom204";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_205[]       = "PaperMap_HospitalRoom205";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_206[]       = "PaperMap_HospitalRoom206";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_301[]       = "PaperMap_HospitalRoom301";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_302[]       = "PaperMap_HospitalRoom302";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_303[]       = "PaperMap_HospitalRoom303";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_304[]       = "PaperMap_HospitalRoom304";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_305[]       = "PaperMap_HospitalRoom305";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_306[]       = "PaperMap_HospitalRoom306";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_ROOM_307[]       = "PaperMap_HospitalRoom307";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_STORAGE_ROOM[]   = "PaperMap_HospitalStorageRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_STORE_ROOM[]     = "PaperMap_HospitalStoreRoom";
+    constexpr char KEY_PAPER_MAP_HOSPITAL_WAITING_ROOM[]   = "PaperMap_HospitalWaitingRoom";
+
+    constexpr char KEY_PAPER_MAP_SEWER_LADDER[] = "PaperMap_SewerLadder";
+
+    // ==============
+    // Puzzle Labels
+    // ==============
+
     // @todo
 
     // ======
@@ -358,7 +446,7 @@ namespace Silent::Assets
     // ==========
 
     constexpr char KEY_GAME_OVER_HEADING[]      = "GameOver_Heading";
-    constexpr char KEY_GAME_OVER_TIPS_HEADING[] = "GameOver_TipsHeading";
+    constexpr char KEY_GAME_OVER_TIPS_HEADING[] = "GameOver_Heading";
     constexpr char KEY_GAME_OVER_TIP_1[]        = "GameOver_Tip1";
     constexpr char KEY_GAME_OVER_TIP_2[]        = "GameOver_Tip2";
     constexpr char KEY_GAME_OVER_TIP_3[]        = "GameOver_Tip3";
@@ -399,30 +487,30 @@ namespace Silent::Assets
     // Map 0, Stage 00 Messages
     // =========================
 
-    constexpr char KEY_M0S00_MSG_1[]  = "m0S00Msg_1";
-    constexpr char KEY_M0S00_MSG_2[]  = "m0S00Msg_2";
-    constexpr char KEY_M0S00_MSG_3[]  = "m0S00Msg_3";
-    constexpr char KEY_M0S00_MSG_4[]  = "m0S00Msg_4";
-    constexpr char KEY_M0S00_MSG_5[]  = "m0S00Msg_5";
-    constexpr char KEY_M0S00_MSG_6[]  = "m0S00Msg_6";
-    constexpr char KEY_M0S00_MSG_7[]  = "m0S00Msg_7";
-    constexpr char KEY_M0S00_MSG_8[]  = "m0S00Msg_8";
-    constexpr char KEY_M0S00_MSG_9[]  = "m0S00Msg_9";
-    constexpr char KEY_M0S00_MSG_10[] = "m0S00Msg_10";
-    constexpr char KEY_M0S00_MSG_11[] = "m0S00Msg_11";
-    constexpr char KEY_M0S00_MSG_12[] = "m0S00Msg_12";
-    constexpr char KEY_M0S00_MSG_13[] = "m0S00Msg_13";
-    constexpr char KEY_M0S00_MSG_14[] = "m0S00Msg_14";
-    constexpr char KEY_M0S00_MSG_15[] = "m0S00Msg_15";
-    constexpr char KEY_M0S00_MSG_16[] = "m0S00Msg_16";
-    constexpr char KEY_M0S00_MSG_17[] = "m0S00Msg_17";
-    constexpr char KEY_M0S00_MSG_18[] = "m0S00Msg_18";
-    constexpr char KEY_M0S00_MSG_19[] = "m0S00Msg_19";
-    constexpr char KEY_M0S00_MSG_20[] = "m0S00Msg_20";
-    constexpr char KEY_M0S00_MSG_21[] = "m0S00Msg_21";
-    constexpr char KEY_M0S00_MSG_22[] = "m0S00Msg_22";
-    constexpr char KEY_M0S00_MSG_23[] = "m0S00Msg_23";
-    constexpr char KEY_M0S00_MSG_24[] = "m0S00Msg_24";
+    constexpr char KEY_M0S00_MSG_1[]  = "M0S00Msg_1";
+    constexpr char KEY_M0S00_MSG_2[]  = "M0S00Msg_2";
+    constexpr char KEY_M0S00_MSG_3[]  = "M0S00Msg_3";
+    constexpr char KEY_M0S00_MSG_4[]  = "M0S00Msg_4";
+    constexpr char KEY_M0S00_MSG_5[]  = "M0S00Msg_5";
+    constexpr char KEY_M0S00_MSG_6[]  = "M0S00Msg_6";
+    constexpr char KEY_M0S00_MSG_7[]  = "M0S00Msg_7";
+    constexpr char KEY_M0S00_MSG_8[]  = "M0S00Msg_8";
+    constexpr char KEY_M0S00_MSG_9[]  = "M0S00Msg_9";
+    constexpr char KEY_M0S00_MSG_10[] = "M0S00Msg_10";
+    constexpr char KEY_M0S00_MSG_11[] = "M0S00Msg_11";
+    constexpr char KEY_M0S00_MSG_12[] = "M0S00Msg_12";
+    constexpr char KEY_M0S00_MSG_13[] = "M0S00Msg_13";
+    constexpr char KEY_M0S00_MSG_14[] = "M0S00Msg_14";
+    constexpr char KEY_M0S00_MSG_15[] = "M0S00Msg_15";
+    constexpr char KEY_M0S00_MSG_16[] = "M0S00Msg_16";
+    constexpr char KEY_M0S00_MSG_17[] = "M0S00Msg_17";
+    constexpr char KEY_M0S00_MSG_18[] = "M0S00Msg_18";
+    constexpr char KEY_M0S00_MSG_19[] = "M0S00Msg_19";
+    constexpr char KEY_M0S00_MSG_20[] = "M0S00Msg_20";
+    constexpr char KEY_M0S00_MSG_21[] = "M0S00Msg_21";
+    constexpr char KEY_M0S00_MSG_22[] = "M0S00Msg_22";
+    constexpr char KEY_M0S00_MSG_23[] = "M0S00Msg_23";
+    constexpr char KEY_M0S00_MSG_24[] = "M0S00Msg_24";
 
     // @todo
 }
