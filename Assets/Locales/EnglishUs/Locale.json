@@ -110,7 +110,8 @@
     "SaveLoc_ChildsRoom":    "Child's room",
     "SaveLoc_NextFear":      "Next fear",
 
-    "PaperMap_OshHeading":            "Silent Hill",
+    "PaperMap_OshHeading":            "SILENT HILL",
+    "PaperMap_OshOldSilentHill":      "OLD SILENT HILL",
     "PaperMap_OshToCentral":          "to CENTRAL SILENT HILL",
     "PaperMap_OshBachmanRd":          "BACHMAN Rd.",
     "PaperMap_OshBlochSt":            "BLOCH St.",
@@ -153,7 +154,7 @@
     "PaperMap_OshSundriesShop":       "SUNDRIES SHOP",
     "PaperMap_OshTopSales":           "TOP SALES",
 
-    "PaperMap_CshHeading":              "Silent Hill",
+    "PaperMap_CshHeading":              "SILENT HILL",
     "PaperMap_CshToOldSilentHill":      "to OLD SILENT HILL",
     "PaperMap_CshCentralSilentHill":    "CENTRAL SILENT HILL",
     "PaperMap_CshCrichtonSt":           "CRICHTON St.",
@@ -213,7 +214,7 @@
     "PaperMap_CshWildAndCool":          "WILD & COOL",
     "PaperMap_CshWind":                 "WIND",
 
-    "PaperMap_ResortHeading":         "Silent Hill",
+    "PaperMap_ResortHeading":         "SILENT HILL",
     "PaperMap_ResortToLakeSide":      "to LAKE SIDE AMUSEMENT PARK",
     "PaperMap_ResortToOldSilentHill": "to OLD SILENT HILL",
     "PaperMap_ResortLakeSide":        "LAKE SIDE",
