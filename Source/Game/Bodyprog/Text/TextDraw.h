@@ -36,6 +36,20 @@ namespace Silent::Game
         StringColorId_Count
     };
 
+    /** @brief Processed message node types. */
+    enum class NodeType
+    {
+        Text,
+        Command
+    };
+
+    /** @brief Processed message node. */
+    struct MsgNode
+    {
+        NodeType    Type  = NodeType::Text;
+        std::string Value = {};
+    };
+
     /** Used in string parsing. */
     struct s_800C38B0
     {
@@ -90,7 +104,7 @@ namespace Silent::Game
     s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx);
 
     /** Draws string and returns map message index. */
-    s32 Gfx_MapMsg_StringDraw(char* mapMsg, s32 strLength);
+    s32 Gfx_MapMsg_StringDraw(char* mapMsg, s32 strLength, bool isHalfHeight = false);
 
     void func_8004B658();
 
