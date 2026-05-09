@@ -25,7 +25,7 @@ namespace Silent::Services
             // Update opacity.
             if (toast.Life <= SEC_TO_TICK(LIFE_SEC_START_FADING))
             {
-                toast.Col.A() = std::clamp(toast.Life / (float)SEC_TO_TICK(LIFE_SEC_START_FADING), 0.0f, 1.0f);
+                toast.Col.A() = std::clamp((float)toast.Life / (float)SEC_TO_TICK(LIFE_SEC_START_FADING), 0.0f, 1.0f);
             }
 
             // Update life.
@@ -45,6 +45,8 @@ namespace Silent::Services
     void ToastManager::Add(const std::string& msg, const Color& color)
     {
         const auto& options = g_App.GetOptions();
+
+        // Check if toasts are enabled.
         if (!options->EnableToasts)
         {
             return;
@@ -85,10 +87,11 @@ namespace Silent::Services
         auto linePos = Vector2(TEXT_MARGIN, LINE_OFFSET);
         for (const auto& toast : _toasts)
         {
-            auto text = Text2d::CreateText2d(toast.Message, "RetroSans",
-                                             linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
-                                             Color::White, (int)TextStyleFlags::None, true,
-                                             0, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+            auto fontName = (options->TextQuality == TextQualityType::Original) ? "RetroSans" : "SmoothSans";
+            auto text     = Text2d::CreateText2d(toast.Message, fontName,
+                                                 linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
+                                                 toast.Col, (int)TextStyleFlags::None, true,
+                                                 0, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
             renderer.SubmitText2d(text);
 
             linePos.y += LINE_OFFSET;

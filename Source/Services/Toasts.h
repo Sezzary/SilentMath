@@ -5,9 +5,9 @@ namespace Silent::Services
     /** @brief Toast data. */
     struct Toast
     {
-        std::string Message  = {};
-        Color       Col      = Color::Clear;
-        int         Life     = 0;
+        std::string Message = {};
+        Color       Col     = Color::Clear;
+        int         Life    = 0;
     };
 
     /** @brief Popup message toaster. */
@@ -20,7 +20,7 @@ namespace Silent::Services
 
         static constexpr int   TOAST_COUNT_MAX       = 4;
         static constexpr float LIFE_SEC_MAX          = 6.0f;
-        static constexpr float LIFE_SEC_START_FADING = LIFE_SEC_MAX * 0.75f;
+        static constexpr float LIFE_SEC_START_FADING = 0.5f;
 
         // =======
         // Fields
