@@ -295,7 +295,7 @@
     "PaperMap_HospitalStoreRoom":     "{M}STORE{N}ROOM",
     "PaperMap_HospitalWaitingRoom":   "{M}WAITING{N}ROOM",
 
-    "PaperMap_SewerLadder": "{M}Ladder",
+    "PaperMap_SewerLadder": "{M}LADDER",
 
     "Item_HealthDrink":          "Boisson(s) vitaminée(s)",
     "Item_FirstAidKit":          "Trousse(s) de Premiers soins",

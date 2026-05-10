@@ -297,7 +297,7 @@
     "PaperMap_HospitalStoreRoom":     "{M}STORE{N}ROOM",
     "PaperMap_HospitalWaitingRoom":   "{M}WAITING{N}ROOM",
 
-    "PaperMap_SewerLadder": "{M}Ladder",
+    "PaperMap_SewerLadder": "{M}LADDER",
 
     "Item_HealthDrink":          "栄養剤",
     "Item_FirstAidKit":          "携帯用救急キット",
