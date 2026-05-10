@@ -38,9 +38,39 @@ namespace Silent::Utils
             return;
         }
 
-        // Sort locales by priority, language code, country code, and variant.
-        Sort(_locales, [](const LocaleMetadata& locale0, const LocaleMetadata& locale1)
+        // Sort locales by system preference, priority, language code, country code, and variant.
+        auto sysCodes = GetSystemLocaleCodes();
+        Sort(_locales, [&](const LocaleMetadata& locale0, const LocaleMetadata& locale1)
         {
+            auto MatchLang = [&](const std::string& lang)
+            {
+                return FindIf(sysCodes, [&](const auto& sysCode)
+                {
+                    return sysCode.Language == lang;
+                });
+            };
+
+            const auto* sysCodeIt0         = MatchLang(locale0.Code.Language);
+            const auto* sysCodeIt1         = MatchLang(locale1.Code.Language);
+            bool        hasSysLang0 = (sysCodeIt0 != nullptr);
+            bool        hasSysLang1 = (sysCodeIt1 != nullptr);
+
+            if (hasSysLang0 != hasSysLang1)
+            {
+                return hasSysLang0;
+            }
+            else if (hasSysLang0 && hasSysLang1)
+            {
+                if (sysCodeIt0->Language != sysCodeIt1->Language)
+                {
+                    return sysCodeIt0->Language < sysCodeIt1->Language;
+                }
+                else if (sysCodeIt0->Country != sysCodeIt1->Country)
+                {
+                    return sysCodeIt0->Country < sysCodeIt1->Country;
+                }
+            }
+
             if (locale0.Priority != locale1.Priority)
             {
                 return locale0.Priority < locale1.Priority;
@@ -127,7 +157,7 @@ namespace Silent::Utils
 
     bool TranslationManager::ContainsLocale(const std::string& localeName) const
     {
-        for (auto& locale : _locales)
+        for (const auto& locale : _locales)
         {
             if (locale.Name != localeName)
             {
@@ -142,11 +172,11 @@ namespace Silent::Utils
 
     void TranslationManager::AddLocale(const std::filesystem::path& localeFolder)
     {
+        constexpr char KEY_LABEL[]        = "Label";
+        constexpr char KEY_COMMENT[]      = "Comment";
         constexpr char KEY_LANG_CODE[]    = "LanguageCode";
         constexpr char KEY_COUNTRY_CODE[] = "CountryCode";
         constexpr char KEY_VARIANT[]      = "Variant";
-        constexpr char KEY_LABEL[]        = "Label";
-        constexpr char KEY_COMMENT[]      = "Comment";
         constexpr char KEY_PRIORITY[]     = "Priority";
 
         auto localeName   = localeFolder.filename().string();
@@ -170,13 +200,13 @@ namespace Silent::Utils
             .Name     = localeName,
             .Label    = metadataJson.value(KEY_LABEL,   ""),
             .Comment  = metadataJson.value(KEY_COMMENT, ""),
-            .Priority = metadataJson.value(KEY_PRIORITY, INT_MAX),
             .Code = LocaleCode
             {
                 .Language = metadataJson.value(KEY_LANG_CODE,    ""),
                 .Country  = metadataJson.value(KEY_COUNTRY_CODE, "")
             },
-            .Variant = metadataJson.value(KEY_VARIANT, "")
+            .Variant = metadataJson.value(KEY_VARIANT, ""),
+            .Priority = metadataJson.value(KEY_PRIORITY, INT_MAX)
         });
     }
 
@@ -206,7 +236,6 @@ namespace Silent::Utils
         auto** locales     = SDL_GetPreferredLocales(&localeCount);
         if (locales == nullptr)
         {
-            SDL_free(locales);
             return {};
         }
 

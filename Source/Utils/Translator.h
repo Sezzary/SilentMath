@@ -16,9 +16,9 @@ namespace Silent::Utils
         std::string Label   = {};
         std::string Comment = {};
 
-        int         Priority = 0;
         LocaleCode  Code     = {};
         std::string Variant  = {};
+        int         Priority = 0;
     };
 
     /** @brief Translator for internationalized text. */
@@ -60,7 +60,7 @@ namespace Silent::Utils
          */
         const std::string& GetActiveLocaleName() const;
 
-        /** @brief Gets the registered locales metadata.
+        /** @brief Gets the registered locales metadata ordered by system preference.
          *
          * @return Registered locales metadata.
          */

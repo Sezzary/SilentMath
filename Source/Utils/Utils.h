@@ -67,6 +67,36 @@ namespace Silent::Utils
         return (it != cont.end()) ? &it->second : nullptr;
     }
 
+    /** @brief Finds a read-only element in a container that matches a predicate.
+     *
+     * @tparam TContainer Container type.
+     * @tparam TPredicate Predicate type.
+     * @param cont Container to search.
+     * @param pred Predicate to evaluate.
+     * @return Read-only pointer to the first matching element, `nullptr` if no match is found.
+     */
+    template <typename TContainer, typename TPredicate>
+    const auto* FindIf(const TContainer& cont, TPredicate pred)
+    {
+        auto it = std::find_if(std::begin(cont), std::end(cont), pred);
+        return (it != end(cont)) ? &(*it) : nullptr;
+    }
+
+    /** @brief Finds a writable element in a container that matches a predicate.
+     *
+     * @tparam TContainer Container type.
+     * @tparam TPredicate Predicate type.
+     * @param cont Container to search.
+     * @param pred Predicate to evaluate.
+     * @return Writable pointer to the first matching element, `nullptr` if no match is found.
+     */
+    template <typename TContainer, typename TPredicate>
+    auto* FindIf(TContainer& cont, TPredicate pred)
+    {
+        auto it = std::find_if(std::begin(cont), std::end(cont), pred);
+        return (it != end(cont)) ? &(*it) : nullptr;
+    }
+
     /** @brief Checks if a container has a matching element.
      *
      * @tparam TContainer Container type.

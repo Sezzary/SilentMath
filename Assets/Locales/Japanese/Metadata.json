@@ -1,5 +1,5 @@
 {
-    "LanguageCode": "ja",
     "Label":        "日本語",
-    "Comment":      "コナミによるオリジナル版。"
+    "Comment":      "コナミによるオリジナル版。",
+    "LanguageCode": "ja"
 }
