@@ -256,7 +256,7 @@ namespace Silent::Game
 
                     for (j = 0; j < 3; j++)
                     {
-                        if (npc->health <= Q12(0.0f) || npc->flags & CharaFlag_Unk9 || temp_t3 >= field_0[j].field_4)
+                        if (npc->health <= Q12(0.0f) || npc->flags & CharaFlag_8 || temp_t3 >= field_0[j].field_4)
                         {
                             continue;
                         }

@@ -569,14 +569,14 @@ namespace Silent::Game
     {
         CharaFlag_None          = 0,
         CharaFlag_PadlockBroken = 1 << 0, /** Only used by Padlock character. */
-        CharaFlag_Unk2          = 1 << 1, // Related to being damaged. Maybe to recoil or notify of danger?
+        CharaFlag_1             = 1 << 1, // Related to being damaged. Maybe to recoil or notify of danger?
         CharaFlag_Hit           = 1 << 2, // Associated with recoil-causing hit?
-        CharaFlag_Unk4          = 1 << 3,
-        CharaFlag_Unk5          = 1 << 4, // Camera-related. Only used by Stalker? Maybe only for alley scenario?
+        CharaFlag_3             = 1 << 3,
+        CharaFlag_4             = 1 << 4, // Camera-related. Only used by Stalker? Maybe only for alley scenario?
         CharaFlag_Damaged       = 1 << 5,
-        CharaFlag_Dead          = 1 << 6, // Unure.
-        CharaFlag_Unk8          = 1 << 7,
-        CharaFlag_Unk9          = 1 << 8  // Only set for bosses and NPCs in special scenarios.
+        CharaFlag_Dead          = 1 << 6, // Unsure.
+        CharaFlag_7             = 1 << 7,
+        CharaFlag_8             = 1 << 8  // Only set for bosses and NPCs in special scenarios.
     };
 
     /** @brief Character animation flags. */
@@ -1282,24 +1282,24 @@ namespace Silent::Game
     // Probably easier to do that after it's merged with rest of code.
     typedef struct _PropsPlayer
     {
-        q19_12        afkTimer_E8; // Increments every tick for 10 seconds before AFK anim starts.
+        q19_12        afkTimer; // Increments every tick for 10 seconds before AFK anim starts.
         q19_12        positionY_EC;
         q19_12        field_F0;
         q19_12        field_F4; // Angle related to X axis flex rotation.
         q19_12        runTimer_F8;
-        q19_12        exhaustionTimer_FC;
+        q19_12        exhaustionTimer;
         q19_12        field_100;    // Angle?
         q19_12        field_104;    // Distance?
         q19_12        runTimer_108;
         u8            field_10C;    // Player SFX pitch?
         u8            field_10D;
-        q19_12        timer_110; // Increases when `flags & CharaFlag_Unk4` is set, reset when reaches `D_800C45EC`.
-        q19_12        gasWeaponPowerTimer_114; // Timer for the rock drill and chainsaw power.
+        q19_12        timer_110; // Increases when `flags & CharaFlag_3` is set, reset when reaches `D_800C45EC`.
+        q19_12        gasWeaponPowerTimer; // Timer for the rock drill and chainsaw power.
         s16           field_118;
         e_PlayerFlags flags_11C;
-        q3_12         quickTurnHeadingAngle_120; /** Target quick turn heading angle. */
+        q3_12         quickTurnHeadingAngle; /** Target quick turn heading angle. */
         q3_12         field_122; // Some sort of X angle for the player. Specially used when aiming an enemy.
-        q3_12         headingAngle_124;
+        q3_12         headingAngle;
         q3_12         moveDistance_126; // Used to indicate how much the player should move foward. Seems to be squared.
     } s_PropsPlayer;
 
@@ -1336,12 +1336,12 @@ namespace Silent::Game
         s16     field_F0; // } Maybe 2D offset like in Creeper properties? Must check.
         s16     field_F2; // }
         s32     field_F4;
-        VECTOR3 targetPosition_F8; /** Q19.12 */
-        VECTOR3 position_104;      /** Q19.12 | Set to either Air Screamer position with slight offset toward player or player position. */
+        VECTOR3 targetPosition; /** Q19.12 */
+        VECTOR3 position_104;   /** Q19.12 | Set to either Air Screamer position with slight offset toward player or player position. */
         VECTOR3 position_110;
         s32     flags; /** `e_AirScreamerFlags` */
         q19_12  timer_120;
-        q19_12  groundHeight_124;
+        q19_12  groundHeight;
     } s_PropsAirScreamer;
 
     /** @brief Alessa character properties. */
@@ -1462,8 +1462,8 @@ namespace Silent::Game
     typedef struct _PropsGroaner
     {
         u_Property flags_E8; /** `e_GroanerFlags` TODO: One weird exception where it's accessed as `s32`. */
-        q3_12      angle_EC; // Target heading angle?
-        q3_12      field_EE; // Angle?
+        q3_12      targetHeadingAngle;
+        q3_12      flexAngle;
         q3_12      field_F0;
         q3_12      field_F2;
         q19_12     targetPositionX_F4;
@@ -1647,7 +1647,7 @@ namespace Silent::Game
     /** @brief Split Head character properties. */
     typedef struct _PropsSplitHead
     {
-        u16     flags_E8; /** `e_SplitHeadFlags` */
+        u16     flags; /** `e_SplitHeadFlags` */
         u8      field_EA;
         s8      unk_EB;
         q3_12   angle_EC;
@@ -1715,7 +1715,7 @@ namespace Silent::Game
 
     typedef struct
     {
-        s16     field_0; // Something dependent on `CharaFlag_Unk8`.
+        s16     field_0; // Something dependent on `CharaFlag_7`.
         u8      field_2; // In player: packed weapon attack. See `WEAPON_ATTACK`.
                          // This is not the same as `attackReceived`, as this value only resets when player is aiming.
                          // In NPCs: Indicates attack performed on player.

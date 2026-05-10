@@ -890,7 +890,7 @@ namespace Silent::Game
             if (sc_p->model.charaId >= Chara_AirScreamer &&
                 sc_p->model.charaId <= Chara_MonsterCybil &&
                 (sc_p->deathTimer <= ENEMY_DEATH_TIME_MAX || sc_p->health >= Q12(0.0f)) &&
-                !(sc_p->flags & CharaFlag_Unk5)) // `sc_p->battle(ShBattleInfo).status & (1 << 5)` in SH2.
+                !(sc_p->flags & CharaFlag_4)) // `sc_p->battle(ShBattleInfo).status & (1 << 5)` in SH2.
             {
                 ofs_x = sc_p->position.vx - w_p->chara_pos.vx;
                 ofs_z = sc_p->position.vz - w_p->chara_pos.vz;
@@ -915,7 +915,7 @@ namespace Silent::Game
                     (set_active_data_f = true, (sc_p->model.charaId < Chara_Stalker)))
                 {
                     set_active_data_f = true;
-                    if (sc_p->flags & CharaFlag_Unk2) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
+                    if (sc_p->flags & CharaFlag_1) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
                     {
                         set_active_data_f = false;
                         if (sc_p == &g_SysWork.npcs[g_SysWork.targetNpcIdx])

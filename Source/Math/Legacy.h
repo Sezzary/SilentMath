@@ -5,6 +5,8 @@
 
 namespace Silent::Math
 {
+    #define SVECTOR3_ZERO (SVECTOR3){ 0, 0, 0 }
+
     /** @brief Constructs a `VECTOR3` in a fixed-point Q19.12 format.
      *
      * @param x X component (`float`).
@@ -53,7 +55,7 @@ namespace Silent::Math
      * @param code Code component.
      * @return Packed RGB + code color.
      */
-    #define PACKED_COLOR(r, g, b, code) \
+    #define COLOR(r, g, b, code) \
         ((r) | ((g) << 8) | ((b) << 16) | ((code) << 24))
 
     /** @brief Checks if a flag in a bitfield is set to a required status.

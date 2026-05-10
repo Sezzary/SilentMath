@@ -144,13 +144,16 @@ namespace Silent::Game
         BgmTrackIdx_41   = 41
     } e_BgmTrackIds;
 
+    /** @brief Global collision flags.
+     * Applies for both NPCs and the player.
+     */
     typedef enum _CollisionFlags
     {
         CollisionFlag_None = 0,
-        CollisionFlag_0    = 1 << 0,
-        CollisionFlag_1    = 1 << 1,
-        CollisionFlag_2    = 1 << 2,
-        CollisionFlag_3    = 1 << 3,
+        CollisionFlag_0    = 1 << 0, // Enables map collisions.
+        CollisionFlag_1    = 1 << 1, // Enables objects collisions.
+        CollisionFlag_2    = 1 << 2, // Enables alternative objects collisions?
+        CollisionFlag_3    = 1 << 3, // @unused Only ever call in `MAP6_S05`.
         CollisionFlag_All  = 0xFFFF
     } e_CollisionFlags;
 
@@ -267,6 +270,23 @@ namespace Silent::Game
         StaticModelLoadState_Corrupted = 2, // Maybe wrong name for this.
         StaticModelLoadState_Loaded    = 3
     } e_StaticModelLoadState;
+
+    typedef enum _GroundType
+    {
+        GroundType_0     = 0,
+        GroundType_1     = 1,
+        GroundType_2     = 2,
+        GroundType_Grass = 3,
+        GroundType_4     = 4,
+        GroundType_5     = 5,
+        GroundType_6     = 6,
+        GroundType_7     = 7,
+        GroundType_8     = 8,
+        GroundType_9     = 9,
+        GroundType_10    = 10,
+        GroundType_11    = 11,
+        GroundType_12    = 12
+    } e_GroundType;
 
     /** SFX pair used for area loading (e.g. door opening and closing). */
     struct s_AreaLoadSfx
@@ -441,7 +461,7 @@ namespace Silent::Game
         q19_12 groundHeight;
         q3_12  field_4;  // X
         q3_12  field_6;  // Z
-        s8     field_8;  // Count of something, maybe valid ground at probed points around center? Set to 0, 7, or 12.
+        s8     field_8;  // Ground type? Set to 0, 7, or 12.
     } s_Collision;
 
     struct s_CollisionQuery
@@ -464,9 +484,9 @@ namespace Silent::Game
         q23_8      positionZ_1C;
         s32        field_20;
         s32        field_24;
-        q7_8       field_28;      // Radius.
-        q7_8       angleToTarget; // Wrong name. Top.
-        q7_8       field_2C;      // Bottom.
+        q7_8       field_28; // Radius.
+        q7_8       field_2A; // Top.
+        q7_8       field_2C; // Bottom.
     } s_func_8006ABC0;
 
     typedef struct
@@ -897,7 +917,7 @@ namespace Silent::Game
         s8                 field_0_9  : 1;
         s8                 field_0_10 : 1;
         s8                 field_0_11 : 5;
-        u16                field_2    : 16; // Collision flags.
+        u16                field_2    : 16; /** `e_CollisionFlags` */
         s_func_8006ABC0    field_4;
         s32                field_34;
         s16                field_38;
@@ -1150,9 +1170,11 @@ namespace Silent::Game
 
     /** @brief World GFX workspace.
      * TODO: Could be `s_RendererWork`? Will depend on where other data resides.
-     * Will: `s_WorldModelWork` fits better, this is mainly responsible for handling model data.
-     * `s_WorldEnvWork` should have this name as it is used for general GFX.
-     */
+    * Will: `s_WorldModelWork` fits better, this is mainly responsible for handling model data.
+    * `s_WorldEnvWork` should have this name as it is used for general GFX.
+    * Will (2): Maybe isn't supposed to be something exclusively graphics-related, but rather a
+    * general in-game world struct, as it also contains triggers and camera information.
+    */
     typedef struct _WorldGfxWork
     {
         s_MapInfo*        mapInfo;
@@ -1683,7 +1705,7 @@ namespace Silent::Game
         q19_12  groundHeight;
         s16     field_10;
         s16     field_12;
-        s8      field_14; // Count of something? 12 is significant.
+        s8      field_14; /** `e_GroundType` */
         s32     field_18;
     };
 
@@ -2414,10 +2436,6 @@ namespace Silent::Game
     extern s_800C4418 D_800C4418;
 
     extern q3_12 D_800C4454;
-
-    // emoose: Also works: `extern u16 D_800C4478[];`, `arg0->field_4 = D_800C4478[0];`.
-    // Didn't see any array accesses in Ghidra though, struct might be more likely.
-    extern s_800C4478 D_800C4478;
 
     extern s8 D_800C447A;
 
