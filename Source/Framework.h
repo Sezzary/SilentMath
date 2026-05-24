@@ -46,6 +46,9 @@
 //#include <assimp/postprocess.h>
 //#include <assimp/scene.h>
 
+// curl
+//#include <curl/curl.h>
+
 // FluidSynth
 //#include <fluidsynth.h>
 

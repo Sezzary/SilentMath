@@ -132,9 +132,9 @@ namespace Silent
         Debug::Initialize();
         Debug::Log(Fmt("Starting {} {}...", APP_NAME, APP_VERSION));
         Debug::Log(Fmt("Platform: {}", GetPlatformName()));
-        Debug::Log(Fmt("Repository: {}", GIT_REPO));
-        Debug::Log(Fmt("Branch: {}", GIT_BRANCH));
-        Debug::Log(Fmt("Commit: {}", GIT_COMMIT));
+        Debug::Log(Fmt("Repository: {}", SILENT_GIT_REPO));
+        Debug::Log(Fmt("Branch: {}", SILENT_GIT_BRANCH));
+        Debug::Log(Fmt("Commit: {}", SILENT_GIT_COMMIT));
 
         // Options.
         _work.Options.Initialize();
