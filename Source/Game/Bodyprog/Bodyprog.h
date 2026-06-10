@@ -271,6 +271,7 @@ namespace Silent::Game
         StaticModelLoadState_Loaded    = 3
     } e_StaticModelLoadState;
 
+    /** @brief Ground material types. */
     typedef enum _GroundType
     {
         GroundType_0     = 0,
@@ -459,9 +460,9 @@ namespace Silent::Game
     typedef struct _Collision
     {
         q19_12 groundHeight;
-        q3_12  field_4;  // X
-        q3_12  field_6;  // Z
-        s8     field_8;  // Ground type? Set to 0, 7, or 12.
+        q3_12  field_4;    // X
+        q3_12  field_6;    // Z
+        s8     groundType; /** `e_GroundType` */
     } s_Collision;
 
     struct s_CollisionQuery
@@ -732,7 +733,7 @@ namespace Silent::Game
         s16 field_0;
         s16 field_2;
         s16 field_4; // Q8? Related to ground height?
-        u16 field_6_0  : 5; // TODO: Might be using `s_IpdCollisionData_18` substruct here? Won't fit though.
+        u16 groundType : 5; /** `e_GroundType` */ 
         u16 field_6_5  : 3;
         u16 field_6_8  : 3;
         u16 field_6_11 : 4;
@@ -762,7 +763,7 @@ namespace Silent::Game
 
     typedef struct _IpdCollisionData_18
     {
-        u16      field_0_0  : 5;
+        u16      groundType : 5; /** `e_GroundType` */
         u16      field_0_5  : 3;
         u16      field_0_8  : 4;
         u16      field_0_12 : 3;
@@ -931,7 +932,7 @@ namespace Silent::Game
         s32                field_84; // Z
         s32                field_88; // X
         s32                field_8C; // Z
-        s32                field_90; // `bool`?
+        s32                groundType; /** `e_GroundType` */
         s32                field_94;
         union
         {
@@ -1063,9 +1064,9 @@ namespace Silent::Game
     /** @brief Collision point data. */
     struct s_CollisionPoint
     {
-        VECTOR3     position;  /** Q19.12 */
+        VECTOR3     position; /** Q19.12 */
         s_Collision collision;
-        s32         field_18; // Count of points in circle?
+        s32         groundType; /** `e_GroundType` */
     };
 
     struct s_800BCDA8
@@ -1654,13 +1655,13 @@ namespace Silent::Game
         q19_12           field_C;  // } Q19.12 `VECTOR3`
         q19_12           field_10; // }
         q19_12           field_14; // }
-        s8               unk_18[4];
+        s8               __pad_A[2];
         q7_8             field_1C; // Distance Z?
-        s8               unk_1E[2];
+        s8               __pad_1E[2];
         s_SubCharacter*  field_20;
         s16              field_24; // X } Q19.12
         s16              field_26; // Z }
-        s32              field_28;
+        s32              groundType; /** `e_GroundType` */
         VECTOR3          field_2C; // Q23.8
         s8               unk_38[4];
         s32              field_3C; // X  } Q23.8 `VECTOR3`?
@@ -1675,14 +1676,14 @@ namespace Silent::Game
         s16              field_5C; // 
         s16              field_5E;
         s16              field_60;
-        s8               unk_62[2];
-        s_SubCharacter** characters_64; // Active characters?
-        s32              characterCount_68;
+        s8               __pad_62[2];
+        s_SubCharacter** characters; // Active characters?
+        s32              characterCount;
         s_RayState_6C    field_6C;
         s32              field_7C;
         s32              field_80;
         u16              field_84;
-        u8               unk_86[2];
+        u8               __pad_86[2];
         s32              field_88;
         s_RayState_8C    field_8C[1]; // Unknown size.
     } s_RayState;
@@ -1690,9 +1691,9 @@ namespace Silent::Game
     /** @brief Ray trace line of sight info. */
     struct s_RayTrace
     {
-        s8              hasHit; /** `bool` */
-        u8              field_1;
-        VECTOR3         target; /** Q19.12 */
+        s8              hasHit;     /** `bool` */
+        u8              groundType; /** `e_GroundType` */
+        VECTOR3         target;     /** Q19.12 */
         s_SubCharacter* character;
         q19_12          field_14; // Hit distance X?
         q19_12          field_18; // Hit distance Z?
@@ -1705,7 +1706,7 @@ namespace Silent::Game
         q19_12  groundHeight;
         s16     field_10;
         s16     field_12;
-        s8      field_14; /** `e_GroundType` */
+        s8      groundType; /** `e_GroundType` */
         s32     field_18;
     };
 

@@ -45,7 +45,7 @@ namespace Silent::Game
             hasInput = true;
         }
 
-        g_SysWork.playerWork.player.properties.player.gasWeaponPowerTimer_114 = Q12(0.0f);
+        g_SysWork.playerWork.player.properties.player.gasWeaponPowerTimer = Q12(0.0f);
         //func_8004C564(g_SysWork.playerCombat.weaponAttack, WEAPON_ATTACK(EquippedWeaponId_RockDrill, AttackInputType_Tap));
 
         if (msgIdx != mapMsgIdx)
@@ -56,16 +56,16 @@ namespace Silent::Game
         switch (g_SysWork.isMgsStringSet)
         {
             case false:
-                g_SysWork.mapMsgTimer         = NO_VALUE;
+                g_SysWork.mapMsgTimer            = NO_VALUE;
                 g_MapMsg_Select.maxIdx           = NO_VALUE;
                 g_MapMsg_Select.selectedEntryIdx = 0;
-                g_MapMsg_AudioLoadBlock            = 0;
-                g_MapMsg_CurrentIdx                = mapMsgIdx;
-                stateMachineIdx0          = 0;
-                stateMachineIdx1          = 0;
-                msgIdx                   = mapMsgIdx;
-                msgDisplayLength             = 0;
-                msgDisplayInc                = 2; // Advance 2 glyphs at a time.
+                g_MapMsg_AudioLoadBlock          = 0;
+                g_MapMsg_CurrentIdx              = mapMsgIdx;
+                stateMachineIdx0                 = 0;
+                stateMachineIdx1                 = 0;
+                msgIdx                           = mapMsgIdx;
+                msgDisplayLength                 = 0;
+                msgDisplayInc                    = 2; // Advance 2 glyphs at a time.
 
                 //Gfx_MapMsg_DefaultStringInfoSet();
                 //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);

@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.28.3)
 
 # @todo
 # - Modules don't work.
-# - Assimp doesn't work.
-# - If FluidSynth ever gets used, add this to build steps in the `README.md`:
+# - Integrate Assimp library for more standard asset format support if it makes sense later.
+# - Integrate curl library for auto updates later.
+# - Integrate ImGuizmo library for potential debug interactivily later.
+# - If FluidSynth is ever used, add this to build steps in the `README.md`:
 # Build the FluidSynth dependency locally.
 # ```
 # cd Libraries/fluidsynth && mkdir build && cd build && cmake .. && cd ../../..
@@ -37,29 +39,29 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     add_compile_options(-Wno-conversion)      # Suppress type conversion warnings.
 endif()
 
-# Set `GIT_REPO` definition.
+# Set `SILENT_GIT_REPO` definition.
 execute_process(
     COMMAND git remote get-url origin
-    OUTPUT_VARIABLE GIT_REPO
+    OUTPUT_VARIABLE SILENT_GIT_REPO
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-add_definitions(-DGIT_REPO="${GIT_REPO}")
+add_definitions(-DSILENT_GIT_REPO="${SILENT_GIT_REPO}")
 
-# Set `GIT_BRANCH` definition.
+# Set `SILENT_GIT_BRANCH` definition.
 execute_process(
     COMMAND git rev-parse --abbrev-ref HEAD
-    OUTPUT_VARIABLE GIT_BRANCH
+    OUTPUT_VARIABLE SILENT_GIT_BRANCH
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-add_definitions(-DGIT_BRANCH="${GIT_BRANCH}")
+add_definitions(-DSILENT_GIT_BRANCH="${SILENT_GIT_BRANCH}")
 
-# Set `GIT_COMMIT` definition.
+# Set `SILENT_GIT_COMMIT` definition.
 execute_process(
     COMMAND git rev-parse HEAD
-    OUTPUT_VARIABLE GIT_COMMIT
+    OUTPUT_VARIABLE SILENT_GIT_COMMIT
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-add_definitions(-DGIT_COMMIT="${GIT_COMMIT}")
+add_definitions(-DSILENT_GIT_COMMIT="${SILENT_GIT_COMMIT}")
 
 # Add executable.
 file(GLOB_RECURSE SOURCES
@@ -125,6 +127,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add library directories.
 #add_subdirectory(Libraries/assimp)
+#add_subdirectory(Libraries/curl)
 #add_subdirectory(Libraries/fluidsynth)
 add_subdirectory(Libraries/freetype)
 add_subdirectory(Libraries/glm)
@@ -139,6 +142,7 @@ add_subdirectory(Libraries/yalantinglibs)
 # Add library header paths.
 target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/assimp/include
+    #${CMAKE_CURRENT_LIST_DIR}/Libraries/curl/include
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/build/include
     #${CMAKE_CURRENT_LIST_DIR}/Libraries/fluidsynth/include
     ${CMAKE_CURRENT_LIST_DIR}/Libraries/freetype/include
@@ -169,6 +173,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE __psyz)
 # Add libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     #assimp
+    #libcurl
     #libfluidsynth
     freetype
     glm

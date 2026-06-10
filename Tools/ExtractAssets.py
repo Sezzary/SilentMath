@@ -1,4 +1,7 @@
 """
+Source: https://github.com/Vatuu/silent-hill-decomp/tree/master/tools/silentassets
+Modified by Sezz, 2026
+
 Silent Hill Asset Extractor
 
 Extracts assets from a Silent Hill PSX ROM.

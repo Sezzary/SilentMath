@@ -1,5 +1,5 @@
 """
-Platform-Specific Shader Generator
+Shader Generator
 
 Generates shaders from .HLSL sources to be used by a platform-specific engine executable at runtime.
 If generated shaders already exist and are outdated, they will be overwritten.

@@ -2,6 +2,10 @@
 #    path = Libraries/assimp
 #    url = https://github.com/assimp/assimp.git
 
+#[submodule "Libraries/curl"]
+#    path = Libraries/curl
+#    url = https://github.com/curl/curl
+
 #[submodule "Libraries/fluidsynth"]
 #    path = Libraries/fluidsynth
 #    url = https://github.com/fluidsynth/fluidsynth.git
