@@ -1,6 +1,6 @@
 #include "Framework.h"
 #include "Psx.h"
-#include "Game/Bodyprog/Events/MapMsgDisplay.h"
+#include "Game/Bodyprog/Events/MapMsg.h"
 
 #include "Game/Bodyprog/Bodyprog.h"
 
@@ -38,9 +38,9 @@ namespace Silent::Game
 
         // Check for user input.
         hasInput = false;
-        if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.enter |
-                                            g_GameWorkPtr->config.controllerConfig_0.cance)) ||
-            (g_Controller0->btnsHeld_C & g_GameWorkPtr->config.controllerConfig_0.skip))
+        if ((g_Controller0->clickedBtnFlags & (g_GameWorkPtr->config.controllerConfig.enter |
+                                               g_GameWorkPtr->config.controllerConfig.cancel)) ||
+            (g_Controller0->heldBtnFlags & g_GameWorkPtr->config.controllerConfig.skip))
         {
             hasInput = true;
         }
@@ -130,7 +130,7 @@ namespace Silent::Game
                                 break;
                             }
                         }
-                        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cance)
+                        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.cancel)
                         {
                             g_MapMsg_Select.maxIdx           = temp;
                             g_MapMsg_Select.selectedEntryIdx = g_MapMsg_SelectCancelIdx;
@@ -145,7 +145,7 @@ namespace Silent::Game
                             stateMachineIdx1 = FINISH_MAP_MSG;
                             break;
                         }
-                        else if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter)
+                        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.enter)
                         {
                             g_MapMsg_Select.maxIdx = temp;
 
@@ -241,7 +241,7 @@ namespace Silent::Game
         s32 i;
         s32 mapMsgCode;
 
-        mapMsgCode = //Gfx_MapMsg_StringDraw(g_MapOverlayHeader.mapMessages[mapMsgIdx], *arg1);
+        mapMsgCode = //Gfx_MapMsg_StringDraw(g_MapOverlayHdr.mapMessages[mapMsgIdx], *arg1);
 
         g_MapMsg_SelectFlashTimer += g_DeltaTimeRaw;
         if (g_MapMsg_SelectFlashTimer >= Q12(0.5f))
@@ -278,7 +278,7 @@ namespace Silent::Game
                         }
 
                         Gfx_StringSetPosition(32, (STRING_LINE_OFFSET * i) + 98);
-                        Gfx_StringDraw(g_MapOverlayHeader.mapMessages[i], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
+                        Gfx_StringDraw(g_MapOverlayHdr.mapMessages[i], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
                     }
 
                     mapMsgCode = 2;
@@ -303,11 +303,11 @@ namespace Silent::Game
                         }
 
                         Gfx_StringSetPosition(32, (STRING_LINE_OFFSET * i) + 96);
-                        Gfx_StringDraw(g_MapOverlayHeader.mapMessages[(mapMsgIdx + i) + 1], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
+                        Gfx_StringDraw(g_MapOverlayHdr.mapMessages[(mapMsgIdx + i) + 1], MAP_MESSAGE_DISPLAY_ALL_LENGTH);
                     }
                 }
 
-                if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickUp &&
+                if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickUp &&
                     g_MapMsg_Select.selectedEntryIdx != 0)
                 {
                     g_MapMsg_SelectFlashTimer = Q12(0.0f);
@@ -316,7 +316,7 @@ namespace Silent::Game
                     //Sd_PlaySfx(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
                 }
 
-                if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickDown &&
+                if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickDown &&
                     g_MapMsg_Select.selectedEntryIdx != (mapMsgCode - 1))
                 {
                     g_MapMsg_SelectFlashTimer = Q12(0.0f);

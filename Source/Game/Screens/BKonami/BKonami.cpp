@@ -8,6 +8,7 @@
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/BackgroundDraw.h"
+#include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
 #include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
@@ -56,7 +57,7 @@ namespace Silent::Game
                 break;
 
             case KonamiLogoStateStep_LogoDelay:
-                if (g_Controller0->btnsHeld_C != 0 || g_SysWork.counters_1C[0] > 180)
+                if (g_Controller0->heldBtnFlags != 0 || g_SysWork.counters_1C[0] > 180)
                 {
                     ScreenFade_Start(false, false, false);
                     g_ScreenFadeTimestep         = Q12(0.2f);
@@ -230,7 +231,7 @@ namespace Silent::Game
                             break;
 
                         case 2:
-                            if (g_GameWorkConst->config.optAutoLoad_25)
+                            if (g_GameWorkConst->config.autoLoad)
                             {
                                 Fs_QueueStartRead(FILE_VIN_SAVELOAD_BIN, FS_BUFFER_1);
                                 Fs_QueueStartSeek(FILE_TIM_SAVELOAD_TIM);
@@ -258,7 +259,7 @@ namespace Silent::Game
                 break;
 
             case KcetLogoStateStep_LogoDelay:
-                if (g_Controller0->btnsHeld_C != 0 || g_SysWork.counters_1C[0] > 180)
+                if (g_Controller0->heldBtnFlags != 0 || g_SysWork.counters_1C[0] > 180)
                 {
                     ScreenFade_Start(false, false, false);
                     g_ScreenFadeTimestep = Q12(0.2f);

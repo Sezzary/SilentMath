@@ -3,6 +3,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 #include "Game/Bodyprog/Demo.h"
 
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Main/Rng.h"
@@ -20,36 +21,38 @@ namespace Silent::Game
     /** @brief Initial demo game state data, stored inside `MISC/DEMO****.DAT` files. */
     struct s_DemoWork
     {
-        s_SaveUserConfig config;
-        u8               unk_38[200];
-        s_Savegame       savegame_100;
-        u8               unk_37C[1148];
-        u32              frameCount_7F8;
-        u16              randSeed_7FC;
+        s_OptionsConfig config;
+        u8              unk_38[200];
+        s_Savegame      savegame;
+        u8              unk_37C[1148];
+        u32             frameCount;
+        u16             randSeed;
     };
 
     /** @brief Per-frame demo data, stored inside `MISC/PLAY****.DAT` files. */
     struct s_DemoFrameData
     {
-        s_AnalogController analogController_0;
-        s8                 gameStateExpected_8; /** Expected value of `g_GameWork.gameState` before `analogController_0` is processed, if it doesn't match `Demo_Update` will display `STEP ERROR` and stop reading demo. */
-        u8                 videoPresentInterval_9;
+        s_AnalogController analogController;
+        s8                 gameStateExpected; /** Expected value of `g_GameWork.gameState` before `analogController` is processed.
+                                               * If it doesn't match,`Demo_Update` displays `STEP ERROR` and stops reading the demo.
+                                               */
+        u8                 videoPresentInterval;
         s8                 unk_A[2];
-        u32                randSeed_C;
+        u32                randSeed;
     };
 
     /** @brief Associates a demo number/ID with `PLAY****.DAT/DEMO****.DAT` file IDs. */
     struct s_DemoFileInfo
     {
-        e_FsFile demoFileId_0;           /** `MISC/DEMO****.DAT`, initial gamestate for the demo and user config override. */
-        e_FsFile playFileId_2;           /** `MISC/PLAY****.DAT`, data of button presses/randseed for each frame. */
-        bool     (*canPlayDemo_4)(); /** Optional funcptr, returns whether this demo is eligible to be played (unused in retail demos). */
+        e_FsFile demoFileId;       /** `MISC/DEMO****.DAT`, initial gamestate for the demo and user config override. */
+        e_FsFile playFileId;       /** `MISC/PLAY****.DAT`, data of button presses/randseed for each frame. */
+        bool     (*canPlayDemo)(); /** Optional funcptr, returns whether this demo is eligible to be played (unused in retail demos). */
     };
 
     s_DemoWork       g_DemoWork = {};
     e_FsFile         g_Demo_DemoFileIdx;
     e_FsFile         g_Demo_PlayFileIdx;
-    s_SaveUserConfig g_Demo_UserConfigBackup;
+    s_OptionsConfig  g_Demo_UserConfigBackup;
     u32              g_Demo_PrevRandSeed;
     u32              g_Demo_RandSeedBackup;
     s_DemoFrameData* g_Demo_CurFrameData;
@@ -68,11 +71,11 @@ namespace Silent::Game
 
         static auto DEMO_FILE_INFOS = std::array<s_DemoFileInfo, DEMO_FILE_COUNT_MAX>
         {
-            //s_DemoFileInfo{ .demoFileId_0 = FILE_MISC_DEMO0009_DAT, .playFileId_2 = FILE_MISC_PLAY0009_DAT, .canPlayDemo_4 = nullptr },
-            //s_DemoFileInfo{ .demoFileId_0 = FILE_MISC_DEMO000A_DAT, .playFileId_2 = FILE_MISC_PLAY000A_DAT, .canPlayDemo_4 = nullptr },
-            //s_DemoFileInfo{ .demoFileId_0 = FILE_MISC_DEMO0003_DAT, .playFileId_2 = FILE_MISC_PLAY0003_DAT, .canPlayDemo_4 = nullptr },
-            //s_DemoFileInfo{ .demoFileId_0 = FILE_MISC_DEMO000B_DAT, .playFileId_2 = FILE_MISC_PLAY000B_DAT, .canPlayDemo_4 = nullptr },
-            //s_DemoFileInfo{ .demoFileId_0 = FILE_MISC_DEMO0005_DAT, .playFileId_2 = FILE_MISC_PLAY0005_DAT, .canPlayDemo_4 = nullptr }
+            //s_DemoFileInfo{ .demoFileId = FILE_MISC_DEMO0009_DAT, .playFileId = FILE_MISC_PLAY0009_DAT, .canPlayDemo = nullptr },
+            //s_DemoFileInfo{ .demoFileId = FILE_MISC_DEMO000A_DAT, .playFileId = FILE_MISC_PLAY000A_DAT, .canPlayDemo = nullptr },
+            //s_DemoFileInfo{ .demoFileId = FILE_MISC_DEMO0003_DAT, .playFileId = FILE_MISC_PLAY0003_DAT, .canPlayDemo = nullptr },
+            //s_DemoFileInfo{ .demoFileId = FILE_MISC_DEMO000B_DAT, .playFileId = FILE_MISC_PLAY000B_DAT, .canPlayDemo = nullptr },
+            //s_DemoFileInfo{ .demoFileId = FILE_MISC_DEMO0005_DAT, .playFileId = FILE_MISC_PLAY0005_DAT, .canPlayDemo = nullptr }
         };
 
         g_Demo_DemoId += incrementAmount;
@@ -92,8 +95,8 @@ namespace Silent::Game
             // Call optional funcptr associated with this demo.
             // If funcptr is set, return whether demo is eligible to play, possibly based on game progress or other conditions.
             // In retail demos this pointer is always `nullptr`.
-            if (DEMO_FILE_INFOS[g_Demo_DemoId].canPlayDemo_4 == nullptr ||
-                DEMO_FILE_INFOS[g_Demo_DemoId].canPlayDemo_4())
+            if (DEMO_FILE_INFOS[g_Demo_DemoId].canPlayDemo == nullptr ||
+                DEMO_FILE_INFOS[g_Demo_DemoId].canPlayDemo())
             {
                 break;
             }
@@ -110,8 +113,8 @@ namespace Silent::Game
             }
         }
 
-        g_Demo_DemoFileIdx = DEMO_FILE_INFOS[g_Demo_DemoId].demoFileId_0;
-        g_Demo_PlayFileIdx = DEMO_FILE_INFOS[g_Demo_DemoId].playFileId_2;
+        g_Demo_DemoFileIdx = DEMO_FILE_INFOS[g_Demo_DemoId].demoFileId;
+        g_Demo_PlayFileIdx = DEMO_FILE_INFOS[g_Demo_DemoId].playFileId;
         return true;
     }
 
@@ -141,7 +144,7 @@ namespace Silent::Game
 
     void Demo_DemoFileSavegameUpdate() // 0x8008F13C
     {
-        g_GameWork.savegame = g_DemoWork.savegame_100;
+        g_GameWork.savegame = g_DemoWork.savegame;
     }
 
     void Demo_GameGlobalsUpdate() // 0x8008F1A0
@@ -150,28 +153,28 @@ namespace Silent::Game
         g_Demo_UserConfigBackup = g_GameWork.config;
 
         // Update `Demo_RandSeed`.
-        g_Demo_RandSeed = g_DemoWork.randSeed_7FC;
+        g_Demo_RandSeed = g_DemoWork.randSeed;
 
         // Replace user config with config from demo file.
         g_GameWork.config = g_DemoWork.config;
 
         // Restore user system settings over demo values.
-        g_GameWork.config.optScreenPosX_1C       = g_Demo_UserConfigBackup.optScreenPosX_1C;
-        g_GameWork.config.optScreenPosY_1D       = g_Demo_UserConfigBackup.optScreenPosY_1D;
-        g_GameWork.config.optSoundType_1E        = g_Demo_UserConfigBackup.optSoundType_1E;
-        g_GameWork.config.optVolumeBgm_1F        = OPT_SOUND_VOLUME_MIN; // Disable BGM during demo.
-        g_GameWork.config.optVolumeSe_20         = g_Demo_UserConfigBackup.optVolumeSe_20;
-        g_GameWork.config.optVibrationEnabled_21 = OPT_VIBRATION_DISABLED; // Disable vibration during demo.
-        g_GameWork.config.optBrightness_22       = g_Demo_UserConfigBackup.optBrightness_22;
+        g_GameWork.config.screenPositionX  = g_Demo_UserConfigBackup.screenPositionX;
+        g_GameWork.config.screenPositionY  = g_Demo_UserConfigBackup.screenPositionY;
+        g_GameWork.config.soundType        = g_Demo_UserConfigBackup.soundType;
+        g_GameWork.config.volumeBgm        = OPT_SOUND_VOLUME_MIN; // Disable BGM during demo.
+        g_GameWork.config.volumeSe         = g_Demo_UserConfigBackup.volumeSe;
+        g_GameWork.config.vibrationEnabled = OPT_VIBRATION_DISABLED; // Disable vibration during demo.
+        g_GameWork.config.brightness       = g_Demo_UserConfigBackup.brightness;
 
-        //Sd_SetVolume(OPT_SOUND_VOLUME_MIN, OPT_SOUND_VOLUME_MIN, g_GameWork.config.optVolumeSe_20);
+        //Sd_SetVolume(OPT_SOUND_VOLUME_MIN, OPT_SOUND_VOLUME_MIN, g_GameWork.config.volumeSe);
     }
 
     void Demo_GameGlobalsRestore() // 0x8008F2BC
     {
         g_GameWork.config = g_Demo_UserConfigBackup;
 
-        //Sd_SetVolume(OPT_SOUND_VOLUME_MAX, g_GameWork.config.optVolumeBgm_1F, g_GameWork.config.optVolumeSe_20);
+        //Sd_SetVolume(OPT_SOUND_VOLUME_MAX, g_GameWork.config.volumeBgm, g_GameWork.config.volumeSe);
     }
 
     void Demo_GameRandSeedUpdate() // 0x8008F33C
@@ -190,7 +193,7 @@ namespace Silent::Game
     void Demo_Start() // 0x8008F398
     {
         g_Demo_Play = true;
-        g_SysWork.flags_22A4 |= UnkSysFlag_1;
+        g_SysWork.sysFlags |= SysFlag_DemoActive;
 
         Demo_GameGlobalsUpdate();
         Demo_GameRandSeedUpdate();
@@ -202,7 +205,7 @@ namespace Silent::Game
     void Demo_Stop() // 0x8008f3f0
     {
         g_Demo_Play = false;
-        g_SysWork.flags_22A4 &= ~UnkSysFlag_1;
+    g_SysWork.sysFlags &= ~SysFlag_DemoActive;
 
         Demo_GameGlobalsRestore();
         Demo_GameRandSeedRestore();
@@ -247,7 +250,7 @@ namespace Silent::Game
             case GameState_MapEvent:
             case GameState_ExitMovie:
             case GameState_InventoryScreen:
-            case GameState_MapScreen:
+            case GameState_PaperMapScreen:
                 return DemoState_Step;
 
             case GameState_OptionScreen:
@@ -262,7 +265,7 @@ namespace Silent::Game
         g_Demo_FrameCount     = 999 * TICKS_PER_SECOND;
         g_Demo_CurFrameData   = nullptr;
         g_Demo_DemoStep       = 0;
-        g_SysWork.flags_22A4 |= UnkSysFlag_8;
+        g_SysWork.sysFlags |= SysFlag_DoWarmReset;
     }
 
     bool func_8008F520() // 0x8008F520
@@ -272,7 +275,7 @@ namespace Silent::Game
 
     void Demo_DemoRandSeedBackup() // 0x8008F528
     {
-        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
+        if (g_SysWork.sysFlags & SysFlag_DemoActive)
         {
             g_Demo_RandSeedBackup = Rng_GetSeed();
         }
@@ -280,7 +283,7 @@ namespace Silent::Game
 
     void Demo_DemoRandSeedRestore() // 0x8008F560
     {
-        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
+        if (g_SysWork.sysFlags & SysFlag_DemoActive)
         {
             Rng_SetSeed(g_Demo_RandSeedBackup);
         }
@@ -290,7 +293,7 @@ namespace Silent::Game
     {
         #define SEED_OFFSET 0x3C6EF35F
 
-        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
+        if (g_SysWork.sysFlags & SysFlag_DemoActive)
         {
             Rng_SetSeed(g_Demo_RandSeedBackup + SEED_OFFSET);
         }
@@ -310,7 +313,7 @@ namespace Silent::Game
         D_800C489C        = false;
         prevScreenFade    = g_Screen_FadeStatus;
 
-        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
+        if (!(g_SysWork.sysFlags & SysFlag_DemoActive))
         {
             g_Demo_CurFrameData = nullptr;
             g_Demo_DemoStep     = 0;
@@ -325,7 +328,7 @@ namespace Silent::Game
 
         demoStep = g_Demo_DemoStep;
 
-        if (g_DemoWork.frameCount_7F8 <= demoStep)
+        if (g_DemoWork.frameCount <= demoStep)
         {
             Demo_ExitDemo();
             return false;
@@ -345,7 +348,7 @@ namespace Silent::Game
             case DemoState_Step:
                 g_Demo_CurFrameData = &g_Demo_PlayFileBufferPtr[g_Demo_DemoStep];
 
-                if (g_Demo_CurFrameData->gameStateExpected_8 != gameWork->gameState)
+                if (g_Demo_CurFrameData->gameStateExpected != gameWork->gameState)
                 {
                     //Text_Debug_PositionSet(8, 80);
                     //Text_Debug_Draw("STEP ERROR:[H:");
@@ -378,12 +381,12 @@ namespace Silent::Game
     {
         u32 btns;
 
-        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
+        if (!(g_SysWork.sysFlags & SysFlag_DemoActive))
         {
             return false;
         }
 
-        btns = g_Controller0->analogController_0.digitalButtons;
+        btns = g_Controller0->analogController.digitalButtons;
         if (btns != 0xFFFF)
         {
             Demo_ExitDemo();
@@ -394,16 +397,16 @@ namespace Silent::Game
 
         if (g_Demo_CurFrameData != nullptr)
         {
-            g_Controller0->analogController_0 = g_Demo_CurFrameData->analogController_0;
+            g_Controller0->analogController = g_Demo_CurFrameData->analogController;
             return true;
         }
 
-        *(u16*)&g_Controller0->analogController_0.status = 0x7300;
-        g_Controller0->analogController_0.digitalButtons = btns;
-        g_Controller0->analogController_0.rightX = 128;
-        g_Controller0->analogController_0.rightY = 128;
-        g_Controller0->analogController_0.leftX  = 128;
-        g_Controller0->analogController_0.leftY  = 128;
+        *(u16*)&g_Controller0->analogController.status = 0x7300;
+        g_Controller0->analogController.digitalButtons = btns;
+        g_Controller0->analogController.rightX = 128;
+        g_Controller0->analogController.rightY = 128;
+        g_Controller0->analogController.leftX  = 128;
+        g_Controller0->analogController.leftY  = 128;
         return true;
     }
 
@@ -416,13 +419,13 @@ namespace Silent::Game
             return false;
         }
 
-        g_Demo_VideoPresentInterval = g_Demo_CurFrameData->videoPresentInterval_9;
+        g_Demo_VideoPresentInterval = g_Demo_CurFrameData->videoPresentInterval;
         return true;
     }
 
     bool Demo_GameRandSeedSet() // 0x8008F8A8
     {
-        if (!(g_SysWork.flags_22A4 & UnkSysFlag_1))
+        if (!(g_SysWork.sysFlags & SysFlag_DemoActive))
         {
             return true;
         }
@@ -433,14 +436,14 @@ namespace Silent::Game
         }
         else
         {
-            Rng_SetSeed(g_Demo_CurFrameData->randSeed_C);
+            Rng_SetSeed(g_Demo_CurFrameData->randSeed);
             return true;
         }
     }
 
     bool func_8008F914(q19_12 posX, q19_12 posZ)
     {
-        if (g_SysWork.flags_22A4 & UnkSysFlag_1)
+        if (g_SysWork.sysFlags & SysFlag_DemoActive)
         {
             //return func_8004393C(posX, posZ);
         }

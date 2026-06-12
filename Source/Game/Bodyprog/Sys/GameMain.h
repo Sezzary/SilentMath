@@ -32,7 +32,7 @@ namespace Silent::Game
     void GameState_MapEvent_Update();
     void GameState_ExitMovie_Update();
     void GameState_ItemScreens_Update();
-    void GameState_MapScreen_Update();
+    void GameState_PaperMapScreen_Update();
     void GameState_LoadSavegameScreen_Update();
     void GameState_DebugMoviePlayer_Update();
     void GameState_Options_Update();

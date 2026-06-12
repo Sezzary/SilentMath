@@ -14,6 +14,7 @@
 #include "Game/Bodyprog/Screen/BackgroundDraw.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 //#include "Game/Bodyprog/sound_background.h"
 #include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
@@ -26,7 +27,7 @@ namespace Silent::Game
 {
     void Anim_CharaTypeAnimInfoClear(void) // 0x800348C0
     {
-        bzero(&g_CharaTypeAnimInfo[1], 72);
+        //bzero(&g_CharaModelAnimsData[1], 72);
     }
 
     /** @brief Initalizes drawing of a loading screen. */
@@ -36,7 +37,7 @@ namespace Silent::Game
         {
             ScreenFade_Start(false, true, false);
             g_ScreenFadeTimestep = Q12(0.8f);
-            g_MapOverlayHeader.loadingScreenFuncs[g_SysWork.loadingScreenIdx]();
+            g_MapOverlayHdr.loadingScreenFuncs[g_SysWork.loadingScreenIdx]();
         }
 
         Screen_BackgroundMotionBlur(SyncMode_Wait2);
@@ -47,13 +48,13 @@ namespace Silent::Game
         GameBoot_LoadingScreen();
         GameBoot_GameStartup();
 
-        if (g_SysWork.flags_22A4 & UnkSysFlag_10)
+        if (g_SysWork.sysState & SysFlag_LoadActive)
         {
             D_800BCDD4++;
 
             if (D_800BCDD4 >= 21)
             {
-                g_SysWork.flags_22A4 &= ~UnkSysFlag_10;
+                g_SysWork.sysState &= ~SysFlag_LoadActive;
 
                 SD_Call(Sfx_Unk1502);
                 SD_Call(Sfx_Unk1501);
@@ -169,10 +170,10 @@ namespace Silent::Game
                 break;
 
             case 5:
-                //Fs_CharaAnimDataAlloc(1, g_MapOverlayHeader.charaGroupIds[0], nullptr, 0);
-                //Fs_CharaAnimDataAlloc(2, g_MapOverlayHeader.charaGroupIds[1], nullptr, 0);
-                //Fs_CharaAnimDataAlloc(3, g_MapOverlayHeader.charaGroupIds[2], nullptr, 0);
-                //WorldGfx_MapInitCharaLoad(&g_MapOverlayHeader);
+                //Fs_CharaAnimDataAlloc(1, g_MapOverlayHdr.charaGroupIds[0], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(2, g_MapOverlayHdr.charaGroupIds[1], nullptr, 0);
+                //Fs_CharaAnimDataAlloc(3, g_MapOverlayHdr.charaGroupIds[2], nullptr, 0);
+                //WorldGfx_MapInitCharaLoad(&g_MapOverlayHdr);
 
                 g_GameWork.gameStateSteps[0]++;
 
@@ -189,7 +190,7 @@ namespace Silent::Game
                     //Map_WorldClear();
                 }
 
-                //Ipd_PlayerChunkInit(&g_MapOverlayHeader, g_SysWork.playerWork.player.position.vx, g_SysWork.playerWork.player.position.vz);
+                //Ipd_PlayerChunkInit(&g_MapOverlayHdr, g_SysWork.playerWork.player.position.vx, g_SysWork.playerWork.player.position.vz);
                 if (g_SysWork.processFlags == ProcessFlag_OverlayTransition)
                 {
                     Game_RadioSoundStop();
@@ -213,10 +214,10 @@ namespace Silent::Game
                 break;
 
             case 10:
-                if (g_SysWork.processFlags == ProcessFlag_BootDemo && !(g_SysWork.flags_22A4 & UnkSysFlag_1))
+                if (g_SysWork.processFlags == ProcessFlag_BootDemo && !(g_SysWork.sysState & SysFlag_DemoActive))
                 {
                     Demo_Start();
-                    g_SysWork.flags_22A4 |= UnkSysFlag_1;
+                    g_SysWork.sysState |= SysFlag_DemoActive;
                 }
 
                 //if (func_80039F90() & EventParamUnkState_2 || Sd_AmbientSfxInit() == 0)
@@ -255,7 +256,7 @@ namespace Silent::Game
                     //if (func_80039F90() & EventParamUnkState_1)
                     {
                         g_GameWork.gameStateSteps[0] = 1;
-                        g_Screen_FadeStatus             = SCREEN_FADE_STATUS(ScreenFadeState_ResetTimestep, IS_SCREEN_FADE_WHITE(g_Screen_FadeStatus));
+                        g_Screen_FadeStatus          = SCREEN_FADE_STATUS(ScreenFadeState_ResetTimestep, IS_SCREEN_FADE_WHITE(g_Screen_FadeStatus));
                     }
                 }
                 break;

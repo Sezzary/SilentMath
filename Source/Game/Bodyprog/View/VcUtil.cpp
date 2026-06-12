@@ -11,14 +11,14 @@ namespace Silent::Game
 {
     constexpr int V_BLANKS_MULT = 11;
 
-    void vcInitCamera(s_MapOverlayHeader* mapoverlay_ptr, const VECTOR3* chr_pos) // 0x8004004C
+    void vcInitCamera(s_MapOverlayHdr* mapoverlay_ptr, const VECTOR3* chr_pos) // 0x8004004C
     {
-        g_WorldGfxWork.debugCameraInfo.mv_smooth   = VC_MV_CHASE;
-        g_WorldGfxWork.debugCameraInfo.ev_cam_rate = Q12(0.0f);
-        g_WorldGfxWork.debugCameraInfo.mode        = 0;
+        g_WorldGfxWork.vcCameraInternalInfo.mv_smooth   = VC_MV_CHASE;
+        g_WorldGfxWork.vcCameraInternalInfo.ev_cam_rate = Q12(0.0f);
+        g_WorldGfxWork.vcCameraInternalInfo.mode        = 0;
 
         vcSetCameraUseWarp(chr_pos, g_SysWork.cameraAngleY);
-        //SetGeomScreen(g_GameWork.gsScreenHeightx);
+        //SetGeomScreen(g_GameWork.gsScreenHeight);
         vwInitViewInfo();
         vcInitVCSystem(mapoverlay_ptr->cameraPaths);
         vcStartCameraSystem();
@@ -46,30 +46,30 @@ namespace Silent::Game
         cam_pos.vy = chr_pos->vy - HEIGHT;
         cam_pos.vz = chr_pos->vz - Q12_MULT(Math_Cos(chr_ang_y), RADIUS);
 
-        vcSetFirstCamWork(&cam_pos, chr_ang_y, g_SysWork.flags_22A4 & UnkSysFlag_6);
-        g_SysWork.flags_22A4 &= ~UnkSysFlag_6;
+        vcSetFirstCamWork(&cam_pos, chr_ang_y, g_SysWork.sysState & SysFlag_OnCameraRail);
+        g_SysWork.sysState &= ~SysFlag_OnCameraRail;
     }
 
     s32 vcRetCamMvSmoothF() // 0x80040190
     {
-        return g_WorldGfxWork.debugCameraInfo.mv_smooth;
+        return g_WorldGfxWork.vcCameraInternalInfo.mv_smooth;
     }
 
     void Vc_CameraElevationRateLockSet(bool isUnlocked) // 0x800401A0
     {
         if (isUnlocked)
         {
-            g_WorldGfxWork.debugCameraInfo.ev_cam_rate = Q12(1.0f);
+            g_WorldGfxWork.vcCameraInternalInfo.ev_cam_rate = Q12(1.0f);
         }
         else
         {
-            g_WorldGfxWork.debugCameraInfo.ev_cam_rate = Q12(0.0f);
+            g_WorldGfxWork.vcCameraInternalInfo.ev_cam_rate = Q12(0.0f);
         }
     }
 
     void vcSetEvCamRate(q3_12 ev_cam_rate) // 0x800401C0
     {
-        g_WorldGfxWork.debugCameraInfo.ev_cam_rate = ev_cam_rate;
+        g_WorldGfxWork.vcCameraInternalInfo.ev_cam_rate = ev_cam_rate;
     }
 
     void Vc_UpdateLookAtPointSetAlt() // 0x800401CC
@@ -80,25 +80,25 @@ namespace Silent::Game
     void vcMoveAndSetCamera(bool in_connect_f, bool change_debug_mode,
                             bool for_f, bool back_f, bool right_f, bool left_f, bool up_f, bool down_f) // 0x800401EC
     {
-        VECTOR3         first_cam_pos; // Q19.12
-        VECTOR3         hr_head_pos;   // Q19.12
-        s_Collision     coll;
-        q19_12          hero_bottom_y; // Player bottom height.
-        q19_12          hero_top_y;    // Player top height.
-        q19_12          grnd_y;        // Absolute ground height.
-        s_SubCharacter* hr_p;          // Player character.
+        VECTOR3            first_cam_pos; // Q19.12
+        VECTOR3            hr_head_pos;   // Q19.12
+        s_CollisionSurface surface;
+        q19_12             hero_bottom_y; // Player bottom height.
+        q19_12             hero_top_y;    // Player top height.
+        q19_12             grnd_y;        // Absolute ground height.
+        s_SubCharacter*    hr_p;          // Player character.
 
         // Step to next debug mode.
         if (change_debug_mode)
         {
-            g_WorldGfxWork.debugCameraInfo.mode++;
+            g_WorldGfxWork.vcCameraInternalInfo.mode++;
         }
 
         // Handle debug mode.
-        switch (g_WorldGfxWork.debugCameraInfo.mode)
+        switch (g_WorldGfxWork.vcCameraInternalInfo.mode)
         {
             default: // `DebugCameraMode_Init`
-                g_WorldGfxWork.debugCameraInfo.mode = 0;
+                g_WorldGfxWork.vcCameraInternalInfo.mode = 0;
 
                 first_cam_pos.vy = Q12(-2.2f);
                 first_cam_pos.vx = g_SysWork.playerWork.player.position.vx + Q12(7.0f);
@@ -119,16 +119,16 @@ namespace Silent::Game
                 }
                 else
                 {
-                    //Collision_Get(&coll, hr_p->position.vx, hr_p->position.vz);
-                    grnd_y = coll.groundHeight;
+                    //Collision_SurfaceGet(&coll, hr_p->position.vx, hr_p->position.vz);
+                    grnd_y = surface.groundHeight;
 
                     vcMakeHeroHeadPos(&hr_head_pos);
                 }
 
                 hero_top_y    = hr_p->position.vy + Q12(-1.7f);
-                hero_bottom_y = hr_p->position.vy + Q12_MULT(g_WorldGfxWork.debugCameraInfo.ev_cam_rate, Q12(-0.5f));
+                hero_bottom_y = hr_p->position.vy + Q12_MULT(g_WorldGfxWork.vcCameraInternalInfo.ev_cam_rate, Q12(-0.5f));
 
-                if (g_WorldGfxWork.debugCameraInfo.ev_cam_rate > Q12(0.0f))
+                if (g_WorldGfxWork.vcCameraInternalInfo.ev_cam_rate > Q12(0.0f))
                 {
                     vcWorkSetFlags(VC_INHIBIT_FAR_WATCH_F, VC_NOFLAG);
                 }
@@ -142,7 +142,7 @@ namespace Silent::Game
                                hr_p->moveSpeed, hr_p->headingAngle, hr_p->rotationSpeed.vy,
                                hr_p->rotation.vy, Q12_ANGLE(120.0f), Q12(11.0f));
 
-                g_WorldGfxWork.debugCameraInfo.mv_smooth = vcExecCamera();
+                g_WorldGfxWork.vcCameraInternalInfo.mv_smooth = vcExecCamera();
                 break;
 
             case DebugCameraMode_SetReference:
@@ -251,36 +251,36 @@ namespace Silent::Game
 
         vwGetViewAngle(&cam_ang);
 
-        if (!(g_Controller1->btnsHeld_C & ControllerFlag_Circle))
+        if (!(g_Controller1->heldBtnFlags & ControllerFlag_Circle))
         {
-            if (g_Controller1->btnsHeld_C & ControllerFlag_LStickDown)
+            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickDown)
             {
                 cam_ang.vx = cam_ang.vx - (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->btnsHeld_C & ControllerFlag_LStickUp)
+            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickUp)
             {
                 cam_ang.vx = cam_ang.vx + (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->btnsHeld_C & ControllerFlag_LStickRight)
+            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickRight)
             {
                 cam_ang.vy = cam_ang.vy + (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->btnsHeld_C & ControllerFlag_LStickLeft)
+            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickLeft)
             {
                 cam_ang.vy = cam_ang.vy - (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->btnsHeld_C & (ControllerFlag_Triangle | ControllerFlag_Cross))
+            if (g_Controller1->heldBtnFlags & (ControllerFlag_Triangle | ControllerFlag_Cross))
             {
                 moveStep = Q8(0.0f);
-                if (g_Controller1->btnsHeld_C & ControllerFlag_Triangle)
+                if (g_Controller1->heldBtnFlags & ControllerFlag_Triangle)
                 {
                     moveStep = MOVE_DIST;
                 }
-                if (g_Controller1->btnsHeld_C & ControllerFlag_Cross)
+                if (g_Controller1->heldBtnFlags & ControllerFlag_Cross)
                 {
                     moveStep = -MOVE_DIST - 1; // TODO: `- 1` enforces a rounded down result, but `Q8` truncates toward 0.
                 }
@@ -292,23 +292,23 @@ namespace Silent::Game
         }
         else
         {
-            if (g_Controller1->btnsHeld_C & ControllerFlag_LStickUp)
+            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickUp)
             {
                 newCamPos.vy -= MOVE_DIST;
             }
-            if (g_Controller1->btnsHeld_C & ControllerFlag_LStickDown)
+            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickDown)
             {
                 newCamPos.vy += MOVE_DIST;
             }
 
-            if (g_Controller1->btnsHeld_C & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+            if (g_Controller1->heldBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
             {
                 moveStep = Q8(0.0f);
-                if (g_Controller1->btnsHeld_C & ControllerFlag_LStickRight)
+                if (g_Controller1->heldBtnFlags & ControllerFlag_LStickRight)
                 {
                     moveStep = MOVE_DIST;
                 }
-                if (g_Controller1->btnsHeld_C & ControllerFlag_LStickLeft)
+                if (g_Controller1->heldBtnFlags & ControllerFlag_LStickLeft)
                 {
                     moveStep = -MOVE_DIST - 1; // TODO: `- 1` enforces a rounded down result, but `Q8` truncates toward 0.
                 }
@@ -326,7 +326,7 @@ namespace Silent::Game
         lookAtMat.t[2] = newCamPos.vz;
         vwSetViewInfoDirectMatrix(nullptr, &lookAtMat);
 
-        if (g_Controller1->btnsHeld_C & (ControllerFlag_LStickUp    |
+        if (g_Controller1->heldBtnFlags & (ControllerFlag_LStickUp    |
                                          ControllerFlag_LStickRight |
                                          ControllerFlag_LStickDown  |
                                          ControllerFlag_LStickLeft  |
@@ -358,7 +358,7 @@ namespace Silent::Game
         s32     balance;
 
         // If monoural sound type, default to balance of 0.
-        if (g_GameWork.config.optSoundType_1E)
+        if (g_GameWork.config.soundType)
         {
             return 0;
         }

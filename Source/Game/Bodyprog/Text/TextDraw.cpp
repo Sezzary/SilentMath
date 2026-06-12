@@ -5,7 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
-#include "Game/Bodyprog/Events/MapMsgDisplay.h"
+#include "Game/Bodyprog/Events/MapMsg.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
@@ -131,7 +131,7 @@ namespace Silent::Game
             g_MapMsg_Widths[i] = 0;
         }
 
-        mapMsg = g_MapOverlayHeader.mapMessages[mapMsgIdx];
+        mapMsg = g_MapOverlayHdr.mapMessages[mapMsgIdx];
 
         for (j = 0; j < FONT_12X16_LINE_COUNT_MAX; )
         {
@@ -483,7 +483,7 @@ namespace Silent::Game
 
         if (arg1 != NO_VALUE)
         {
-            //g_MapMsg_GlyphSprite.y = arg1 + (-g_GameWork.gsScreenHeightx / 2);
+            //g_MapMsg_GlyphSprite.y = arg1 + (-g_GameWork.gsScreenHeight / 2);
         }
     }
 

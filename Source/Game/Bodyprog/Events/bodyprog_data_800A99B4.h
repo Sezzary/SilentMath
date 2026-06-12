@@ -2,38 +2,14 @@
 
 namespace Silent::Game
 {
-    struct s_AreaLoadSfx;
     struct s_FsImageDesc;
 
-    /** @brief SFX pair indices. Used for `SFX_PAIRS`. */
-    enum e_SfxPairIdx
+    /** @brief SFX pair used for area transitions (e.g. door opening and closing). */
+    typedef struct _AreaLoadSfx
     {
-        SfxPairIdx_0  = 0,
-        SfxPairIdx_1  = 1,
-        SfxPairIdx_2  = 2,
-        SfxPairIdx_3  = 3,
-        SfxPairIdx_4  = 4,
-        SfxPairIdx_5  = 5,
-        SfxPairIdx_6  = 6,
-        SfxPairIdx_7  = 7,
-        SfxPairIdx_8  = 8,
-        SfxPairIdx_9  = 9,
-        SfxPairIdx_10 = 10,
-        SfxPairIdx_11 = 11,
-        SfxPairIdx_12 = 12,
-        SfxPairIdx_13 = 13,
-        SfxPairIdx_14 = 14,
-        SfxPairIdx_15 = 15,
-        SfxPairIdx_16 = 16,
-        SfxPairIdx_17 = 17,
-        SfxPairIdx_18 = 18,
-        SfxPairIdx_19 = 19,
-        SfxPairIdx_20 = 20,
-        SfxPairIdx_21 = 21,
-        SfxPairIdx_22 = 22,
-        SfxPairIdx_23 = 23,
-        SfxPairIdx_24 = 24
-    };
+        u16 sfx_0;
+        u16 sfx_2;
+    } s_AreaLoadSfx;
 
     extern const s_AreaLoadSfx SFX_PAIRS[25];
 

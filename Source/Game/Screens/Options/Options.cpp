@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Main/FsQueue.h"
 #include "Game/Screens/Options/MenuGraphics.h"
 #include "Input/Input.h"
@@ -72,7 +73,7 @@ namespace Silent::Game
                 g_ExtraOptionsMenu_PrevSelectedEntry = 0;
                 g_Options_SelectionHighlightTimer    = 0;
                 g_ExtraOptionsMenu_BulletMultMax     = 1;
-                unlockedOptFlags                     = g_GameWork.config.optExtraOptionsEnabled_27;
+                unlockedOptFlags                     = g_GameWork.config.extraOptionsEnabled;
                 
                 // Set available bullet multiplier.
                 for (int i = 0; i < 5; i++)
@@ -84,7 +85,7 @@ namespace Silent::Game
                 }
 
                 // Set selected blood color.
-                switch (g_GameWork.config.optExtraBloodColor_24)
+                switch (g_GameWork.config.extraBloodColor)
                 {
                     case BloodColor_Normal:
                         //g_ExtraOptionsMenu_SelectedBloodColorEntry = BloodColorMenuEntry_Normal;
@@ -103,7 +104,7 @@ namespace Silent::Game
                         break;
                 }
 
-                //g_ExtraOptionsMenu_EntryCount   = (g_GameWork.config.optExtraOptionsEnabled_27) ? 8 : 6;
+                //g_ExtraOptionsMenu_EntryCount   = (g_GameWork.config.extraOptionsEnabled) ? 8 : 6;
                 g_GameWork.gameStateSteps[0] = OptionsMenuState_MainOptions;
                 g_SysWork.counters_1C[1]              = 0;
                 g_GameWork.gameStateSteps[1] = 0;
@@ -379,7 +380,7 @@ namespace Silent::Game
                 if (input.GetAction(In::Left).IsClicked() || input.GetAction(In::Right).IsClicked())
                 {
                     //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
-                    g_GameWork.config.optVibrationEnabled_21 = !g_GameWork.config.optVibrationEnabled_21 << 7;
+                    g_GameWork.config.vibrationEnabled = !g_GameWork.config.vibrationEnabled << 7;
                 }
                 break;
 
@@ -387,7 +388,7 @@ namespace Silent::Game
                 if (input.GetAction(In::Left).IsClicked() || input.GetAction(In::Right).IsClicked())
                 {
                     //Sd_PlaySfx(Sfx_MenuMove, 0, 64);
-                    g_GameWork.config.optAutoLoad_25 = (s8)g_GameWork.config.optAutoLoad_25 == 0;
+                    g_GameWork.config.autoLoad = (s8)g_GameWork.config.autoLoad == 0;
                 }
                 break;
 
@@ -398,8 +399,8 @@ namespace Silent::Game
 
                     // Set config.
                     /*int audioType                           = AudioMode_Stereo;
-                    g_GameWork.config.optSoundType_1E = !g_GameWork.config.optSoundType_1E;
-                    if (g_GameWork.config.optSoundType_1E)
+                    g_GameWork.config.soundType = !g_GameWork.config.soundType;
+                    if (g_GameWork.config.soundType)
                     {
                         audioType = AudioMode_Mono;
                     }
@@ -408,7 +409,7 @@ namespace Silent::Game
                 break;
 
             case MainOptionsMenuEntry_BgmVolume:
-                vol = g_GameWork.config.optVolumeBgm_1F;
+                vol = g_GameWork.config.volumeBgm;
 
                 /*if ((vol < OPT_SOUND_VOLUME_MAX && input.GetAction(In::Right).IsPulsed(0.2f, 0.4f)) ||
                     (vol > 0                    && input.GetAction(In::Left).IsPulsed(0.2f, 0.4f)))
@@ -433,12 +434,12 @@ namespace Silent::Game
 
                 // Set config.
                 //vol = CLAMP(vol, 0, OPT_SOUND_VOLUME_MAX);
-                //Sd_SetVolume(OPT_SOUND_VOLUME_MAX, vol, g_GameWork.config.optVolumeSe_20);
-                g_GameWork.config.optVolumeBgm_1F = vol;
+                //Sd_SetVolume(OPT_SOUND_VOLUME_MAX, vol, g_GameWork.config.volumeSe);
+                g_GameWork.config.volumeBgm = vol;
                 break;
 
             case MainOptionsMenuEntry_SfxVolume:
-                vol = g_GameWork.config.optVolumeSe_20;
+                vol = g_GameWork.config.volumeSe;
 
                 /*if ((vol < OPT_SOUND_VOLUME_MAX && input.GetAction(In::Right).IsPulsed(0.2f, 0.4f)) ||
                     (vol > 0                    && input.GetAction(In::Left).IsPulsed(0.2f, 0.4f)))
@@ -462,8 +463,8 @@ namespace Silent::Game
 
                 /*vol = CLAMP(vol, 0, OPT_SOUND_VOLUME_MAX);
 
-                Sd_SetVolume(OPT_SOUND_VOLUME_MAX, vol, g_GameWork.config.optVolumeSe_20);*/
-                g_GameWork.config.optVolumeSe_20 = vol;
+                Sd_SetVolume(OPT_SOUND_VOLUME_MAX, vol, g_GameWork.config.volumeSe);*/
+                g_GameWork.config.volumeSe = vol;
                 break;
 
             default:
@@ -531,8 +532,8 @@ namespace Silent::Game
 
             // Leave to gameplay (if options menu was accessed with `Option` input action).
             if (g_GameWork.gameStatePrev == GameState_InGame && 
-                !(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.enter) &&
-                (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.option))
+                !(g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.enter) &&
+                (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.option))
             {
                 //Sd_PlaySfx(Sfx_Cancel, 0, 64);
 
@@ -544,14 +545,14 @@ namespace Silent::Game
             }
 
             // Move selection cursor up/down.
-            if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickUp)
+            if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickUp)
             {
                 s32 var = 1;
                 //Sd_PlaySfx(Sfx_Back, 0, 64);
                 g_ExtraOptionsMenu_SelectedEntry  = ((g_ExtraOptionsMenu_SelectedEntry - var) + g_ExtraOptionsMenu_EntryCount) % g_ExtraOptionsMenu_EntryCount;
                 g_Options_SelectionHighlightTimer = 0;
             }
-            if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickDown)
+            if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickDown)
             {
                 Sd_PlaySfx(Sfx_Back, 0, 64);
                 g_ExtraOptionsMenu_SelectedEntry++;
@@ -564,21 +565,21 @@ namespace Silent::Game
             {
                 case ExtraOptionsMenuEntry_WeaponCtrl:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+                    if (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
-                        g_GameWork.config.optExtraWeaponCtrl_23 = !g_GameWork.config.optExtraWeaponCtrl_23;
+                        g_GameWork.config.extraWeaponCtrl = !g_GameWork.config.extraWeaponCtrl;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_Blood:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickRight)
+                    if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickRight)
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
                         g_ExtraOptionsMenu_SelectedBloodColorEntry++;
                     }
-                    if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickLeft)
+                    if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickLeft)
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
                         g_ExtraOptionsMenu_SelectedBloodColorEntry += 3;
@@ -589,105 +590,105 @@ namespace Silent::Game
                     switch (g_ExtraOptionsMenu_SelectedBloodColorEntry)
                     {
                         case BloodColorMenuEntry_Normal:
-                            g_GameWork.config.optExtraBloodColor_24 = BloodColor_Normal;
+                            g_GameWork.config.extraBloodColor = BloodColor_Normal;
                             break;
 
                         case BloodColorMenuEntry_Green:
-                            g_GameWork.config.optExtraBloodColor_24 = BloodColor_Green;
+                            g_GameWork.config.extraBloodColor = BloodColor_Green;
                             break;
 
                         case BloodColorMenuEntry_Violet:
-                            g_GameWork.config.optExtraBloodColor_24 = BloodColor_Violet;
+                            g_GameWork.config.extraBloodColor = BloodColor_Violet;
                             break;
 
                         case BloodColorMenuEntry_Black:
-                            g_GameWork.config.optExtraBloodColor_24 = BloodColor_Black;
+                            g_GameWork.config.extraBloodColor = BloodColor_Black;
                             break;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_ViewCtrl:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+                    if (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraViewCtrl_28 = !g_GameWork.config.optExtraViewCtrl_28;
+                        g_GameWork.config.extraViewCtrl = !g_GameWork.config.extraViewCtrl;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_RetreatTurn:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+                    if (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraRetreatTurn_2A = (s8)g_GameWork.config.optExtraRetreatTurn_2A == 0;
+                        g_GameWork.config.extraRetreatTurn = (s8)g_GameWork.config.extraRetreatTurn == 0;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_MovementCtrl:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+                    if (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraWalkRunCtrl_2B = (s8)g_GameWork.config.optExtraWalkRunCtrl_2B == 0;
+                        g_GameWork.config.extraWalkRunCtrl = (s8)g_GameWork.config.extraWalkRunCtrl == 0;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_AutoAiming:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+                    if (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraAutoAiming_2C = (s8)g_GameWork.config.optExtraAutoAiming_2C == 0;
+                        g_GameWork.config.extraAutoAiming = (s8)g_GameWork.config.extraAutoAiming == 0;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_ViewMode:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+                    if (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraViewMode_29 = !g_GameWork.config.optExtraViewMode_29;
+                        g_GameWork.config.extraViewMode = !g_GameWork.config.extraViewMode;
                     }
                     break;
 
                 case ExtraOptionsMenuEntry_BulletMult:
                     // Scroll left/right.
-                    if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickRight)
+                    if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickRight)
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraBulletAdjust_2D++;
+                        g_GameWork.config.extraBulletAdjust++;
                     }
-                    if (g_Controller0->btnsClicked_10 & ControllerFlag_LStickLeft)
+                    if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickLeft)
                     {
                         Sd_PlaySfx(Sfx_Back, 0, 64);
 
                         // Set config.
-                        g_GameWork.config.optExtraBulletAdjust_2D = g_GameWork.config.optExtraBulletAdjust_2D + (g_ExtraOptionsMenu_BulletMultMax - 1);
+                        g_GameWork.config.extraBulletAdjust = g_GameWork.config.extraBulletAdjust + (g_ExtraOptionsMenu_BulletMultMax - 1);
                     }
-                    g_GameWork.config.optExtraBulletAdjust_2D = g_GameWork.config.optExtraBulletAdjust_2D % g_ExtraOptionsMenu_BulletMultMax;
+                    g_GameWork.config.extraBulletAdjust = g_GameWork.config.extraBulletAdjust % g_ExtraOptionsMenu_BulletMultMax;
                     break;
             }
         }
 
         // Leave menu.
-        if ((g_Controller0->btnsClicked_10 & (g_GameWorkPtr->config.controllerConfig_0.cance |
+        if ((g_Controller0->clickedBtnFlags & (g_GameWorkPtr->config.controllerConfig.cance |
                                             (ControllerFlag_L2 | ControllerFlag_R2 | ControllerFlag_L1 | ControllerFlag_R1))) &&
             g_GameWork.gameStateSteps[0] != OptionsMenuState_LeaveExtraOptions)
         {
-            if (g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.cance)
+            if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.cancel)
             {
                 Sd_PlaySfx(Sfx_Cancel, 0, 64);
             }

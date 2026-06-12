@@ -91,7 +91,7 @@ namespace Silent::Game
             //DrawSync(0);
 
             // Handle V sync.
-            /*if (g_SysWork.flags_22A4 & UnkSysFlag_1)
+            /*if (g_SysWork.sysState & SysFlag_DemoActive)
             {
                 vBlanks   = VSync(-1);
                 g_VBlanks = vBlanks - g_PrevVBlanks;

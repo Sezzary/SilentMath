@@ -11,6 +11,7 @@
 #include "Game/Bodyprog/Events/GameSysStates.h"
 #include "Game/Bodyprog/GameBoot/GameLoad.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
@@ -54,7 +55,7 @@ namespace Silent::Game
         GameState_MapEvent_Update,
         GameState_ExitMovie_Update,
         nullptr,//GameState_ItemScreens_Update,
-        nullptr,//GameState_MapScreen_Update,
+        nullptr,//GameState_PaperMapScreen_Update,
         GameState_LoadSavegameScreen_Update,
         GameState_DebugMoviePlayer_Update,
         GameState_Options_Update,

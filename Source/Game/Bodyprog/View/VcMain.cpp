@@ -98,7 +98,7 @@ namespace Silent::Game
         vcWork.view_cam_active_f = true;
         vcWork.updateLookAtPoint = false;
         vcWork.updateLookAtMat   = false;
-        vcWork.geom_screen_dist  = g_GameWork.gsScreenHeightx;
+        vcWork.geom_screen_dist  = g_GameWork.gsScreenHeight;
     }
 
     void vcEndCameraSystem() // 0x80080A04
@@ -266,7 +266,7 @@ namespace Silent::Game
         }
 
         vcWork.flags            &= ~(VC_USER_CAM_F | VC_USER_WATCH_F);
-        vcWork.geom_screen_dist = g_GameWork.gsScreenHeightx;
+        vcWork.geom_screen_dist = g_GameWork.gsScreenHeight;
     }
 
     void vcSetSubjChara(VECTOR3* chara_pos, q19_12 chara_bottom_y, q19_12 chara_top_y, q19_12 chara_grnd_y,
@@ -318,7 +318,7 @@ namespace Silent::Game
         cur_rd_area_size = vcWork.cur_near_road.road_p->area_size_type;
         cur_cam_mv_type  = vcRetCurCamMvType(&vcWork);
 
-        far_watch_rate     = vcRetFarWatchRate(CHECK_FLAG(vcWork.flags, VC_PRS_F_VIEW_F, !g_GameWorkConst->config.optExtraViewCtrl_28), cur_cam_mv_type, &vcWork);
+        far_watch_rate     = vcRetFarWatchRate(CHECK_FLAG(vcWork.flags, VC_PRS_F_VIEW_F, !g_GameWorkConst->config.extraViewCtrl), cur_cam_mv_type, &vcWork);
         self_view_eff_rate = vcRetSelfViewEffectRate(cur_cam_mv_type, far_watch_rate, &vcWork);
 
         if (!(vcWork.flags & (VC_USER_CAM_F | VC_USER_WATCH_F)))
@@ -438,13 +438,13 @@ namespace Silent::Game
     {
         bool hasViewFlag;
 
-        if (g_GameWorkConst->config.optExtraViewMode_29)
+        if (g_GameWorkConst->config.extraViewMode)
         {
             hasViewFlag = (vcWork.flags & VC_PRS_F_VIEW_F) == VC_PRS_F_VIEW_F;
 
             // TODO: Can this weird XOR be removed? (XOR 1) should be same as `!hasViewFlag`?
-            if ((g_GameWorkConst->config.optExtraViewCtrl_28 && (hasViewFlag ^ 1) != 0) ||
-                (!g_GameWorkConst->config.optExtraViewCtrl_28 && hasViewFlag))
+            if ((g_GameWorkConst->config.extraViewCtrl && (hasViewFlag ^ 1) != 0) ||
+                (!g_GameWorkConst->config.extraViewCtrl && hasViewFlag))
             {
                 if (!(w_p->flags & (VC_USER_CAM_F | VC_USER_WATCH_F | VC_INHIBIT_FAR_WATCH_F)) &&
                     !func_8008150C(w_p->chara_pos.vx, w_p->chara_pos.vz))
@@ -616,14 +616,14 @@ namespace Silent::Game
             }
         }
 
-        if (g_GameWorkConst->config.optExtraViewMode_29)
+        if (g_GameWorkConst->config.extraViewMode)
         {
             // Awkward `VC_PRS_F_VIEW_F` flag check. TODO: Use `CHECK_FLAG`? It's possible this was originally typed manually.
             prsFViewFlag = vcWork.flags >> 9;
             prsFViewFlag = prsFViewFlag & (1 << 0);
 
-            if ((g_GameWorkConst->config.optExtraViewCtrl_28 && (prsFViewFlag ^ 1) != 0) ||
-                (!g_GameWorkConst->config.optExtraViewCtrl_28 && prsFViewFlag))
+            if ((g_GameWorkConst->config.extraViewCtrl && (prsFViewFlag ^ 1) != 0) ||
+                (!g_GameWorkConst->config.extraViewCtrl && prsFViewFlag))
             {
                 if (!(w_p->flags & (VC_USER_CAM_F | VC_USER_WATCH_F | VC_INHIBIT_FAR_WATCH_F)) &&
                     func_8008150C(w_p->chara_pos.vx, w_p->chara_pos.vz))
@@ -755,8 +755,8 @@ namespace Silent::Game
 
             // `optExtraViewCtrl && !vcPrsFViewFlag` ||
             // `!optExtraViewCtrl && vcPrsFViewFlag`
-            if ((g_GameWorkConst->config.optExtraViewCtrl_28 && (vcPrsFViewFlag ^ 1) != 0) ||
-                (!g_GameWorkConst->config.optExtraViewCtrl_28 && vcPrsFViewFlag))
+            if (( g_GameWorkConst->config.extraViewCtrl && (vcPrsFViewFlag ^ 1) != 0) ||
+                (!g_GameWorkConst->config.extraViewCtrl && vcPrsFViewFlag))
             {
                 // Awkward `VC_OLD_PRS_F_VIEW_F` flag check.
                 vcOldPrsFViewFlag = vcWork.flags >> 10;
@@ -764,10 +764,10 @@ namespace Silent::Game
 
                 // `!(optExtraViewCtrl && !vcOldPrsFViewFlag)` &&
                 // `!(!optExtraViewCtrl && vcOldPrsFViewFlag)`
-                if (!(g_GameWorkConst->config.optExtraViewCtrl_28 && (vcOldPrsFViewFlag ^ 1) != 0) &&
-                    !(!g_GameWorkConst->config.optExtraViewCtrl_28 && vcOldPrsFViewFlag))
+                if (!( g_GameWorkConst->config.extraViewCtrl && (vcOldPrsFViewFlag ^ 1) != 0) &&
+                    !(!g_GameWorkConst->config.extraViewCtrl && vcOldPrsFViewFlag))
                 {
-                    if (g_GameWorkConst->config.optExtraViewMode_29)
+                    if (g_GameWorkConst->config.extraViewMode)
                     {
                         Vc_FlagSet(VC_WARP_WATCH_F);
                     }
@@ -799,7 +799,7 @@ namespace Silent::Game
                 vcWork.flags &= ~VC_OLD_PRS_F_VIEW_F;
             }
 
-            if (g_Controller0->btnsHeld_C & g_GameWorkPtr->config.controllerConfig_0.view)
+            if (g_Controller0->heldBtnFlags & g_GameWorkPtr->config.controllerConfig.view)
             {
                 vcWork.flags |= VC_PRS_F_VIEW_F;
             }
@@ -810,7 +810,7 @@ namespace Silent::Game
         }
 
         vcWork.scr_half_ang_wx = (s16)(Math_Ratan2(g_GameWork.gsScreenWidth,  vcWork.geom_screen_dist) >> 1);
-        vcWork.scr_half_ang_wy = (s16)(Math_Ratan2(g_GameWork.gsScreenHeightx, vcWork.geom_screen_dist) >> 1);
+        vcWork.scr_half_ang_wy = (s16)(Math_Ratan2(g_GameWork.gsScreenHeight, vcWork.geom_screen_dist) >> 1);
 
         if (vcWork.through_door_activate_init_f)
         {
@@ -878,7 +878,7 @@ namespace Silent::Game
         all_min_dist    = ENEMY_DIST_MAX;
         active_min_dist = ENEMY_DIST_MAX;
 
-        if (g_SysWork.flags_22A4 & UnkSysFlag_5) // `sh2jms->player.battle(ShBattleInfo).status & (1 << 4)` in SH2.
+        if (g_SysWork.sysState & SysFlag_5) // `sh2jms->player.battle(ShBattleInfo).status & (1 << 4)` in SH2.
         {
             w_p->nearest_enemy         = nullptr;
             w_p->nearest_enemy_xz_dist = ENEMY_DIST_MAX;
@@ -890,7 +890,7 @@ namespace Silent::Game
             if (sc_p->model.charaId >= Chara_AirScreamer &&
                 sc_p->model.charaId <= Chara_MonsterCybil &&
                 (sc_p->deathTimer <= ENEMY_DEATH_TIME_MAX || sc_p->health >= Q12(0.0f)) &&
-                !(sc_p->flags & CharaFlag_4)) // `sc_p->battle(ShBattleInfo).status & (1 << 5)` in SH2.
+                !(sc_p->flags & CharaFlag_Unk5)) // `sc_p->battle(ShBattleInfo).status & (1 << 5)` in SH2.
             {
                 ofs_x = sc_p->position.vx - w_p->chara_pos.vx;
                 ofs_z = sc_p->position.vz - w_p->chara_pos.vz;
@@ -915,7 +915,7 @@ namespace Silent::Game
                     (set_active_data_f = true, (sc_p->model.charaId < Chara_Stalker)))
                 {
                     set_active_data_f = true;
-                    if (sc_p->flags & CharaFlag_1) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
+                    if (sc_p->flags & CharaFlag_Unk2) // `sc_p->battle(ShBattleInfo).status & (1 << 2)` in SH2.
                     {
                         set_active_data_f = false;
                         if (sc_p == &g_SysWork.npcs[g_SysWork.targetNpcIdx])
@@ -1679,14 +1679,14 @@ namespace Silent::Game
 
     void vcMakeFarWatchTgtPos(VECTOR3* watch_tgt_pos, VC_WORK* w_p, VC_AREA_SIZE_TYPE cur_rd_area_size) // 0x800832B4
     {
-        s_Collision     coll;
-        q19_12          dist;
-        q19_12          ofs_y;
-        q19_12          lim_y;
-        q19_12          watch_y;
-        q19_12          use_dist;
-        q19_12          adj_dist;
-        s_SubCharacter* sc_p;
+        s_CollisionSurface surface;
+        q19_12             dist;
+        q19_12             ofs_y;
+        q19_12             lim_y;
+        q19_12             watch_y;
+        q19_12             use_dist;
+        q19_12             adj_dist;
+        s_SubCharacter*    sc_p;
 
         if (cur_rd_area_size == VC_AREA_TINY)
         {
@@ -1739,17 +1739,17 @@ namespace Silent::Game
                     break;
 
                 case CameraAnchor_Ground:
-                    //Collision_Get(&coll, sc_p->position.vx, sc_p->position.vz);
+                    //Collision_SurfaceGet(&coll, sc_p->position.vx, sc_p->position.vz);
 
                     // If no valid ground, fall back on character Y position.
-                    if (coll.groundType == GroundType_0)
+                    if (surface.groundType == GroundType_Default)
                     {
                         watch_y = sc_p->position.vy + ofs_y;
                     }
                     // Otherwise, use ground height.
                     else
                     {
-                        watch_y = coll.groundHeight + ofs_y;
+                        watch_y = surface.groundHeight + ofs_y;
                     }
                     break;
 
@@ -1805,7 +1805,7 @@ namespace Silent::Game
         q19_12 dist;
         q3_12  cam_ang_x;
 
-        max_cam_ang_x = Math_Ratan2(cam_pos->vy + Q12(5.0f), Q12(13.0f)) - Math_Ratan2(g_GameWork.gsScreenHeightx / 2, sy);
+        max_cam_ang_x = Math_Ratan2(cam_pos->vy + Q12(5.0f), Q12(13.0f)) - Math_Ratan2(g_GameWork.gsScreenHeight / 2, sy);
         dist          = Vc_VectorMagnitudeCalc(watch_pos->vx - cam_pos->vx, 0, watch_pos->vz - cam_pos->vz);
         cam_ang_x     = Math_Ratan2(-watch_pos->vy + cam_pos->vy, dist);
 
@@ -1916,7 +1916,7 @@ namespace Silent::Game
             return;
         }
 
-        if (g_GameWorkConst->config.optExtraViewMode_29)
+        if (g_GameWorkConst->config.extraViewMode)
         {
             chara2cam_ang_y = w_p->chara_eye_ang_y   + Q12_ANGLE(140.0f);
             ideal_pos->vy   = w_p->chara_head_pos.vy + Q12(0.07f);

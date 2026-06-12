@@ -5,7 +5,7 @@ namespace Silent::Game
     /** @brief Indices for game event flags stored in the savegame.
      * Accessed via `Savegame_EventFlagGet`/`Savegame_EventFlagSet`.
      */
-    typedef enum _EventFlag
+    enum e_EventFlag
     {
         EventFlag_None = 0,
 
@@ -366,6 +366,8 @@ namespace Silent::Game
         EventFlag_360                  = 360,
         EventFlag_M5S00_PickupMap      = 361,
         EventFlag_362                  = 362,
+
+        EventFlag_368             = 368,
 
         EventFlag_M5S01_PickupMap = 370,
         EventFlag_371             = 371,
@@ -1196,5 +1198,5 @@ namespace Silent::Game
         EventFlag_1642 = 1642,
 
         EventFlag_Hack = -1, // @hack Force enum to be treated as `s32`.
-    } e_EventFlag;
+    };
 }

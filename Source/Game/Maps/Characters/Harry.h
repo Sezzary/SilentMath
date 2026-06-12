@@ -3,7 +3,7 @@
 namespace Silent::Game
 {
     /** @brief Harry character animation indices. */
-    enum s_HarryAnim
+    enum e_HarryAnim
     {
         HarryAnim_Still                   = 0,
         HarryAnim_TransitionToStill       = 1,
@@ -77,7 +77,7 @@ namespace Silent::Game
     };
 
     /** @brief Harry character model bone indices. */
-    enum s_HarryBone
+    enum e_HarryBone
     {
         HarryBone_Root          = 0,
         HarryBone_Torso         = 1,
@@ -99,5 +99,16 @@ namespace Silent::Game
         HarryBone_RightFoot     = 17,
 
         HarryBone_Count         = 18
+    };
+
+    /** @brief Harry character hand mesh variant indices. */
+    enum e_HarryHandMesh
+    {
+        HarryHandMesh_0 = 0,
+        HarryHandMesh_1 = 1,
+        HarryHandMesh_2 = 2,
+        HarryHandMesh_3 = 3,
+        HarryHandMesh_4 = 4,
+        HarryHandMesh_5 = 5
     };
 }
