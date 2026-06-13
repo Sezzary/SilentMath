@@ -740,7 +740,7 @@ namespace Silent::Input
         auto& options = g_App.GetOptions();
         if (options->EnablePowerMode)
         {
-            // Toggle power menu.
+            // Toggle debug menu.
             static bool dbDebugGui = true;
             if (GetRawEventState(EventId::Grave) && dbDebugGui)
             {

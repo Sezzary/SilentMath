@@ -2,7 +2,7 @@
 #include "Debug/Debug.h"
 
 #include "Application.h"
-#include "Debug/PowerMenu.h"
+#include "Debug/Menu/Main.h"
 #include "Debug/Scratchpad.h"
 #include "Renderer/Renderer.h"
 #include "Services/Clock.h"
@@ -67,7 +67,7 @@ namespace Silent::Debug
     {
         Scratchpad();
 
-        // Check if power menu is enabled.
+        // Check if debug menu is enabled.
         if (!g_Work.EnablePowerMenu)
         {
             g_Work.Messages.clear();
@@ -114,14 +114,14 @@ namespace Silent::Debug
             g_Work.PrevTime   = now;
         }
 
-        CreatePowerMenu();
+        CreateMenu();
     }
 
     void Msg(const char* msg, ...)
     {
         constexpr int BUFFER_SIZE = 255;
 
-        // Check if power menu is enabled.
+        // Check if debug menu is enabled.
         if (!g_Work.EnablePowerMenu)
         {
             return;
