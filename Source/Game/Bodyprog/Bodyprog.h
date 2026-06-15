@@ -226,44 +226,6 @@ namespace Silent::Game
         s16 field_6; // Keyframe index or time.
     } s_800C44F0; // Probable size: 8 bytes.
 
-    /** @brief Used for normal credits screen. */
-    typedef struct
-    {
-        s16  field_0;  /** Prim vertex X. */
-        s16  field_2;  /** Prim vertex Y. */
-        s16  field_4;  /** Width? */
-        s8   field_6;  /** Height? */
-        s8   field_7;  /** `bool` | Blend flag. */
-        s32  field_8;  /** Rgb24 color + code. */
-        s16* field_C;  /** Points to 0x801E5C24, data size 400. */
-        s32* field_10; /** Points to 0x801E5E24, data size 28, rgb24 + code. */
-        u16  field_14; /** Tpage for `setDrawTPage`, calculated from `field_18` with `func_801E434C`. */
-        s16  field_16; /** Clut XY. */
-        u32  field_18; /** Texture UV. */
-    } s_800AFE08;
-
-    /** @brief Used for UFO ending credits screen. */
-    typedef struct
-    {
-        s_800AFE08 sub_0;
-        s32        field_1C;
-        s16        field_20;
-        s16        field_22;
-        s32        field_24;
-        s32        field_28;
-        s32        field_2C;
-        s32        field_30;
-        s32        field_34;
-        s32        field_38;
-        s32        field_3C;
-        s32        field_40;
-        s32        field_44;
-        s32        field_48;
-        s32        field_4C;
-        s32        field_50;
-        s32        field_54;
-    } s_800AFE24; // Size: 85
-
     struct s_MapEnvPresetIdxs
     {
         u8 presetIdx0;

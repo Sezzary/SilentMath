@@ -69,9 +69,11 @@ namespace Silent::Game
      */
     struct s_WorldEnvWork
     {
-        u8           field_0;      // `bool`?
-        u8           isFogEnabled; /** `bool` */
-        u8           field_2;
+        u8           field_0;                // `bool`?
+        u8           isFogEnabled;           /** `bool` */
+        u8           enableTintLightOverlap; /** `bool`. Allows overlapping the world tint and volumetric light color.
+                                              * @note Specifically modifies the volumetric light color that the point light generates,
+                                              * the color it applies to the enviroment doesn't change. */
         u8           field_3; // Enviroment lighting.
         s_WaterZone* waterZones;
         s32          screenBrightness;

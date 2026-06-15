@@ -10,7 +10,7 @@ namespace Silent::Game
     /** Angle getter. Something to do with the direction from a character to a target position, probably for NPC AI.
      * Unsure if `spanAngle` is an angle.
      */
-    q19_12 Chara_HeadingAngleGet(s_SubCharacter* chara, q19_12 dist, q19_12 toX, q19_12 toZ, q3_12 spanAngle, bool cond);
+    q19_12 Los_CharaHeadingAngleGet(s_SubCharacter* chara, q19_12 dist, q19_12 toX, q19_12 toZ, q3_12 spanAngle, bool cond);
 
     bool func_8006FD90(s_SubCharacter* chara, s32 count, q19_12 baseDistMax, q19_12 distStep);
 

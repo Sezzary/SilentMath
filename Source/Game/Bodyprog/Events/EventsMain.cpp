@@ -58,8 +58,8 @@ namespace Silent::Game
 
         while (true)
         {
-            s32 disabledEventFlag_temp;
-            s16 disabledEventFlag;
+            s32 completeEventFlag_temp;
+            s16 completeEventFlag;
             s16 requiredEventFlag;
 
             mapEvent++;
@@ -70,28 +70,28 @@ namespace Silent::Game
             }
 
             // `requiredEventFlag`: if set, EventFlag that must be set for event to trigger?
-            // `disabledEventFlag`: if set, EventFlag that must not be set for event to trigger?
-            // TODO: Can this s32 temp be removed? Trying to set `disabledEventFlag` directly results in `lhu` instead?
+            // `completeEventFlag`: if set, EventFlag that must not be set for event to trigger?
+            // TODO: Can this s32 temp be removed? Trying to set `completeEventFlag` directly results in `lhu` instead?
             requiredEventFlag      = mapEvent->requiredEventFlag;
-            disabledEventFlag_temp = mapEvent->disabledEventFlag;
-            disabledEventFlag      = disabledEventFlag_temp;
+            completeEventFlag_temp = mapEvent->completeEventFlag;
+            completeEventFlag      = completeEventFlag_temp;
 
             if (requiredEventFlag != EventFlag_None && !Savegame_EventFlagGet(requiredEventFlag))
             {
                 continue;
             }
 
-            if (disabledEventFlag != EventFlag_None && Savegame_EventFlagGet(disabledEventFlag) &&
-                (disabledEventFlag < 867 || mapEvent->activationType == TriggerActivationType_Exclusive ||
+            if (completeEventFlag != EventFlag_None && Savegame_EventFlagGet(completeEventFlag) &&
+                (completeEventFlag < 867 || mapEvent->activationType == TriggerActivationType_Exclusive ||
                  mapEvent->sysState == SysState_EventSetFlag))
             {
                 continue;
             }
 
-            // `TriggerType_None` skips any trigger/activation check and always executes.
+            // `TriggerType_Tick` skips trigger/activation checks and executes every tick if flag checks are satisfied.
             // Maybe used for map-load events, and events that should run every frame?
-            // Returns before processing other events until flag checks above disable it.
-            if (mapEvent->triggerType == TriggerType_None)
+            // Will skip processing any later events until flag checks above disable it.
+            if (mapEvent->triggerType == TriggerType_Tick)
             {
                 g_MapEventData     = mapEvent;
                 g_MapEventSysState = mapEvent->sysState;
@@ -108,7 +108,7 @@ namespace Silent::Game
                 continue;
             }
 
-            mapPoint = &g_MapOverlayHdr.mapPoints[mapEvent->pointOfInterestIdx];
+            mapPoint = &g_MapOverlayHdr.mapPoints[mapEvent->mapPointIdx];
 
             switch (mapEvent->triggerType)
             {
@@ -194,7 +194,7 @@ namespace Silent::Game
             // (Same as `SysState_EventSetFlag_Update`.)
             if (mapEvent->sysState == SysState_EventSetFlag)
             {
-                Savegame_EventFlagSetAlt(mapEvent->disabledEventFlag);
+                Savegame_EventFlagSetAlt(mapEvent->completeEventFlag);
                 break;
             }
 

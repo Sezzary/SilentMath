@@ -37,5 +37,5 @@ namespace Silent::Game
     void GameState_DebugMoviePlayer_Update();
     void GameState_Options_Update();
     void GameState_LoadMapScreen_Update();
-    void GameState_Unk15_Update();
+    void GameState_Credits_Update();
 }

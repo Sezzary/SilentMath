@@ -592,14 +592,14 @@ namespace Silent::Game
         //LoadImage(&D_800A9A6C, (u32*)IMAGE_BUFFER_0);
         //DrawSync(SyncMode_Wait);
 
-        // Set savegame flag based on `g_MapEventData->disabledEventFlag` flag ID.
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+        // Set savegame flag based on `g_MapEventData->completeEventFlag` flag ID.
+        Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
 
         // Return to game.
         Game_StateSetNext(GameState_InGame);
 
         // If flag is set, returns to `GameState_InGame` with `gameStateStep[0]` = 1.
-        if (g_MapEventData->flags_8_13 & EventParamUnkState_1)
+        if (g_MapEventData->transitionFlags & AreaTransitionFlag_SkipFadeIn)
         {
             g_GameWork.gameStateSteps[0] = 1;
         }
@@ -613,7 +613,7 @@ namespace Silent::Game
         g_SysWork.unused_229C       = 0;
         g_SysWork.loadingScreenIdx = D_800BCDB0.loadingScreenId;
         g_SysWork.sfxPairIdx       = g_MapEventData->sfxPairIdx_8_19;
-        g_SysWork.field_2282       = g_MapEventData->flags_8_13;
+        g_SysWork.areaTransitionFlags       = g_MapEventData->transitionFlags;
 
         SD_Call(SFX_PAIRS[g_SysWork.sfxPairIdx].sfx_0);
 
@@ -627,7 +627,7 @@ namespace Silent::Game
 
         if (D_800BCDB0.triggerParam1 == 1)
         {
-            mapPoint              = &g_MapOverlayHdr.mapPoints[g_MapEventData->pointOfInterestIdx];
+            mapPoint              = &g_MapOverlayHdr.mapPoints[g_MapEventData->mapPointIdx];
             offsetZ               = g_SysWork.playerWork.player.position.vz - mapPoint->positionZ;
             D_800BCDB0.positionX += g_SysWork.playerWork.player.position.vx - mapPoint->positionX;
             D_800BCDB0.positionZ += offsetZ;
@@ -650,7 +650,7 @@ namespace Silent::Game
             }
         }
 
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+        Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
 
         if (g_MapEventData->field_8_24)
         {
@@ -676,11 +676,11 @@ namespace Silent::Game
         SD_Call(SFX_PAIRS[g_SysWork.sfxPairIdx].sfx_2);
     }
 
-    s8 func_80039F90() // 0x80039F90
+    s8 AreaLoad_TransitionFlags() // 0x80039F90
     {
         if (g_SysWork.processFlags & (ProcessFlag_RoomTransition | ProcessFlag_OverlayTransition))
         {
-            return g_SysWork.field_2282;
+            return g_SysWork.areaTransitionFlags;
         }
 
         return 0;
@@ -696,7 +696,8 @@ namespace Silent::Game
         // - A specific event related flag is disenabled.
         // - A specific camera related flag is disenabled.
         // - There is no alive enemy.
-        if (!(g_MapEventData->flags_8_13 & EventParamUnkState_0) && !(g_SysWork.sysState & SysFlag_5))
+        if (!(g_MapEventData->transitionFlags & AreaTransitionFlag_UnfreezeWorld) &&
+            !(g_SysWork.sysState & SysFlag_5))
         {
             for (i = 0; i < ARRAY_SIZE(g_SysWork.npcs); i++)
             {
@@ -731,7 +732,7 @@ namespace Silent::Game
                 break;
 
             case MapMsgState_SelectEntry0:
-                Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+                Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
 
                 //unfreezePlayerFunc = &g_MapOverlayHdr.playerControlUnfreeze;
 
@@ -833,9 +834,9 @@ namespace Silent::Game
 
     void SysState_EventCallback_Update() // 0x8003A3C8
     {
-        if (g_MapEventData->flags_8_13 != EventParamUnkState_None)
+        if (g_MapEventData->transitionFlags != AreaTransitionFlag_None)
         {
-            Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+            Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
         }
 
         g_DeltaTime = g_DeltaTimeCpy;
@@ -845,7 +846,7 @@ namespace Silent::Game
     void SysState_EventSetFlag_Update() // 0x8003A460
     {
         g_DeltaTime = g_DeltaTimeCpy;
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+        Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
         g_SysWork.sysState = SysState_Gameplay;
     }
 
@@ -855,7 +856,7 @@ namespace Silent::Game
 
         SD_Call(((u16)g_MapEventParam + Sfx_Base) & 0xFFFF);
 
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+        Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
         g_SysWork.sysState = SysState_Gameplay;
     }
 
@@ -1050,7 +1051,7 @@ namespace Silent::Game
 
         D_800A9A0C = ScreenFade_IsFinished() && Fs_QueueChunksLoad();
 
-        Savegame_EventFlagSetAlt(g_MapEventData->disabledEventFlag);
+        Savegame_EventFlagSetAlt(g_MapEventData->completeEventFlag);
 
         g_MapOverlayHdr.mapEventFuncs[g_MapEventParam]();
 

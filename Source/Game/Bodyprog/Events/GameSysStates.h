@@ -49,7 +49,7 @@ namespace Silent::Game
      */
     void AreaLoad_TransitionSound();
 
-    s8 func_80039F90();
+    s8 AreaLoad_TransitionFlags();
 
     void SysState_ReadMessage_Update();
 

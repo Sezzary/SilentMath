@@ -61,7 +61,7 @@ namespace Silent::Game
         GameState_Options_Update,
         GameState_LoadStatusScreen_Update,
         GameState_LoadMapScreen_Update,
-        nullptr,//GameState_Unk15_Update
+        nullptr,//GameState_Credits_Update
     };
 
     void GameState_Boot_Update() // 0x80032D1C

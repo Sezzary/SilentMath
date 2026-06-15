@@ -74,7 +74,10 @@ namespace Silent::Game
         u16             field_274;
         u16             field_276;
         u16             field_278;
-        s8              field_27A; // Flags.
+        s8              field_27A; /** `e_GameEndingFlags` | Ending reached in the current session.
+                                    * Similar to `clearGameEndings`, but the value is replaced with the current ending instead of ORed.
+                                    * Used to identify the latest ending for the ranking screen.
+                                    */
         u8              continueCount;
     };
 

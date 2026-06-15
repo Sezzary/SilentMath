@@ -330,7 +330,7 @@ namespace Silent::Game
         q3_12  targetHeadingAngle_EC;
         u8     field_EE;
         s8     __pad_EF;
-        q3_12  offsetX_F0; // } Offsets passed to `func_8005CB20`
+        q3_12  offsetX_F0; // } Offsets passed to `Chara_MovementUpdate1`
         q3_12  offsetZ_F2; // }
         q19_12 positionX_F4;
         q19_12 positionZ_F8;

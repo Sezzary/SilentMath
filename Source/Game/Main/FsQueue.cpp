@@ -13,6 +13,14 @@ using namespace Silent::Assets;
 
 namespace Silent::Game
 {
+    /** @brief Wraps a filesystem queue entry index to `FS_QUEUE_LENGTH`.
+     *
+     * @param idx Index to wrap.
+     * @return Wrapped `idx`.
+     */
+    #define FSQUEUE_IDX_WRAP(idx) \
+        ((u32)(idx) % FS_QUEUE_LENGTH)
+
     s_FsQueue g_FsQueue;
 
     bool Fs_QueueIsEntryLoaded(s32 queueIdx)

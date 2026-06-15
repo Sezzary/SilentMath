@@ -86,5 +86,5 @@ namespace Silent::Game
 
     s32 func_8003FEC0(const s_MapEffectsInfo* arg0);
 
-    void func_8003FF2C(s_StructUnk3* arg0);
+    void WorldEnv_FogLightingParamsUpdate(s_StructUnk3* arg0);
 }

@@ -46,7 +46,7 @@ namespace Silent::Game
     void GameState_LoadScreen_Update(void) // 0x800348E8
     {
         GameBoot_LoadingScreen();
-        GameBoot_GameStartup();
+        GameBoot_WorldStartup();
 
         if (g_SysWork.sysState & SysFlag_LoadActive)
         {
@@ -72,7 +72,7 @@ namespace Silent::Game
         g_GameWork.gameStateSteps[0] = gameStateStep0 + 1;
     }
 
-    void GameBoot_GameStartup(void) // 0x80034964
+    void GameBoot_WorldStartup(void) // 0x80034964
     {
         // It makes up to 5 attemps. If the load fails, it restarts
         // the entire process by restarting the timer used to check if a demo
@@ -185,7 +185,7 @@ namespace Silent::Game
                 break;
 
             case 7:
-                //if (func_80039F90() & EventParamUnkState_0)
+                //if (AreaLoad_TransitionFlags() & AreaTransitionFlag_UnfreezeWorld)
                 {
                     //Map_WorldClear();
                 }
@@ -220,7 +220,7 @@ namespace Silent::Game
                     g_SysWork.sysState |= SysFlag_DemoActive;
                 }
 
-                //if (func_80039F90() & EventParamUnkState_2 || Sd_AmbientSfxInit() == 0)
+                //if (AreaLoad_TransitionFlags() & EventParamUnkState_2 || Sd_AmbientSfxInit() == 0)
                 {
                     Game_StateStepIncrement();
                 }
@@ -253,7 +253,7 @@ namespace Silent::Game
                 {
                     Game_StateSetNext(GameState_InGame);
 
-                    //if (func_80039F90() & EventParamUnkState_1)
+                    //if (AreaLoad_TransitionFlags() & AreaTransitionFlag_SkipFadeIn)
                     {
                         g_GameWork.gameStateSteps[0] = 1;
                         g_Screen_FadeStatus          = SCREEN_FADE_STATUS(ScreenFadeState_ResetTimestep, IS_SCREEN_FADE_WHITE(g_Screen_FadeStatus));

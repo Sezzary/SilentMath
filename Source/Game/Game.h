@@ -215,7 +215,7 @@ namespace Silent::Game
         GameState_OptionScreen        = 18,
         GameState_LoadStatusScreen    = 19,
         GameState_LoadMapScreen       = 20,
-        GameState_Unk15               = 21, // TODO: Some kind of special screen fade?
+        GameState_Credits             = 21,
         GameState_Unk16               = 22, /** Removed debug menu? Doesn't exist in function array, but `DebugMoviePlayer` state tries to switch to it. */
 
         GameState_Hack                = NO_VALUE // @hack Force enum to be treated as s32.
@@ -260,6 +260,32 @@ namespace Silent::Game
         GameDifficulty_Normal = 0,
         GameDifficulty_Hard   = 1
     };
+
+    /** @brief Game ending types. */
+    typedef enum _GameEnding
+    {
+        GameEnding_0        = 0, // @unused? Credits has parameters set up for it, but nothing sets this.
+        GameEnding_GoodPlus = 1,
+        GameEnding_Good     = 2,
+        GameEnding_BadPlus  = 3,
+        GameEnding_Bad      = 4,
+        GameEnding_Ufo      = 5
+    } e_GameEnding;
+
+    /** @brief Game ending flags. */
+    typedef enum _GameEndingFlags
+    {
+        GameEndingFlag_GoodPlus = 1 << 0,
+        GameEndingFlag_Good     = 1 << 1,
+        GameEndingFlag_BadPlus  = 1 << 2,
+        GameEndingFlag_Bad      = 1 << 3,
+        GameEndingFlag_Ufo      = 1 << 4,
+
+        // The following are only used in `currentEndingFlags`.
+        GameEndingFlag_5        = 1 << 5, // Unknown purpose, `Ranking_PrepareSavegame` sets `g_SavegamePtr->currentEndingFlags |= 1 << 5`, nothing checks it?
+        GameEndingFlag_6        = 1 << 6, // Set the first time ranking has been seen?
+        GameEndingFlag_7        = 1 << 7  // Set if ranking has been seen and ending was UFO?
+    } e_GameEndingFlags;
 
     /** @brief Game workspace. Stores miscellaneous gameplay-related data. */
     struct s_GameWork
@@ -323,7 +349,7 @@ namespace Silent::Game
         s32 field_0; // Flags?
         struct
         {
-            u8 field_0; // Flags.
+            u8 field_0; // Flags. (1 << 0) Might be flashlight enabled.
             u8 field_1;
             u8 field_2;
             s8 __pad_3;
@@ -343,12 +369,11 @@ namespace Silent::Game
                          // Sets the transparent grey layer overlaid on characters and the enviroment.
         q19_12  fogDistance;
         CVECTOR fogColor;
-        u8      field_18; // `bool`?
-        CVECTOR field_19;
-        CVECTOR screenTint; // Subtractive screen tint.
-        CVECTOR field_21;   // Particle effect related. Only the first value affects snow transparency.
+        u8      enableTintLightOverlap; /** `bool` */
+        CVECTOR pointLightTint;         /** Volumetric point light color. */
+        CVECTOR worldTint;              /** Subtractive. */
+        CVECTOR field_21;               // Particle effect related. Only the first value affects snow transparency.
         CVECTOR field_25;
-        s8      __pad_29[3];
     };
 
     typedef struct
@@ -400,7 +425,7 @@ namespace Silent::Game
         GsCOORDINATE2    npcBoneCoordBuffer[NPC_BONE_COUNT_MAX]; /** Contiguous NPC bone coord buffer. */
         s8               npcFlagsId;                             // 1-based NPC ID for `npcFlags`.
         s8               loadingScreenIdx;
-        s8               field_2282;                         /** `e_EventDataUnkState` */
+        s8               areaTransitionFlags;                /** `e_AreaTransitionFlags` */
         s8               sfxPairIdx;                         /** `e_SfxPairIdx` | Index into `SFX_PAIRS`. */
         u16              charaGroupFlags[CHARA_GROUP_COUNT]; /** `e_CharaGroupFlags` */
                                                              // Enabling a flag for Larval Stalkers causes them to die.
