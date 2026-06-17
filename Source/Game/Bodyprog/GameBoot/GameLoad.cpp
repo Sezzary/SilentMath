@@ -82,7 +82,7 @@ namespace Silent::Game
         switch (g_GameWork.gameStateSteps[0])
         {
             case 0:
-                g_IntervalVBlanks                  = 1;
+                g_IntervalVBlanks              = 1;
                 g_GameWork.background2dColor.r = 0;
                 g_GameWork.background2dColor.g = 0;
                 g_GameWork.background2dColor.b = 0;
@@ -94,7 +94,7 @@ namespace Silent::Game
                 }
                 else if (g_SysWork.processFlags == ProcessFlag_BootDemo)
                 {
-                    demoLoadAttempCount             = 0;
+                    demoLoadAttempCount          = 0;
                     g_GameWork.gameStateSteps[0] = 1;
                     g_SysWork.counters_1C[1]        = 1;
                 }
@@ -115,11 +115,7 @@ namespace Silent::Game
                     if (Demo_PlayFileBufferSetup() != 0)
                     {
                         GameBoot_MapLoad(g_SavegamePtr->mapIdx);
-
-                        g_GameWork.gameStateSteps[0] = 2;
-                        g_SysWork.counters_1C[1]        = 0;
-                        g_GameWork.gameStateSteps[1] = 0;
-                        g_GameWork.gameStateSteps[2] = 0;
+                        Game_StateStepSet(0, 2);
                         break;
                     }
 
@@ -140,11 +136,7 @@ namespace Silent::Game
                 if (Fs_QueueGetLength() == 0/* && !Sd_AudioStreamingCheck()*/)
                 {
                     Demo_PlayDataRead();
-
-                    g_GameWork.gameStateSteps[0] = 3;
-                    g_SysWork.counters_1C[1]              = 0;
-                    g_GameWork.gameStateSteps[1] = 0;
-                    g_GameWork.gameStateSteps[2] = 0;
+                    Game_StateStepSet(0, 3);
                 }
                 break;
 
@@ -201,7 +193,7 @@ namespace Silent::Game
             case 8:
                 //if (Ipd_ChunkInitCheck() != false)
                 {
-                    Game_StateStepIncrement();
+                    Game_StateStepIncrement(0);
                 }
                 break;
 
@@ -209,7 +201,7 @@ namespace Silent::Game
                 //if (Bgm_Init() == 0)
                 {
                     g_GameWork.gameState = GameState_MainLoadScreen;
-                    Game_StateStepIncrement();
+                    Game_StateStepIncrement(0);
                 }
                 break;
 
@@ -222,7 +214,7 @@ namespace Silent::Game
 
                 //if (AreaLoad_TransitionFlags() & EventParamUnkState_2 || Sd_AmbientSfxInit() == 0)
                 {
-                    Game_StateStepIncrement();
+                    Game_StateStepIncrement(0);
                 }
                 break;
 

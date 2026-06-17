@@ -59,7 +59,7 @@ namespace Silent::Game
     /* @brief Pointer to the data of the VAB loading to be used for music. */
     static s_AudioItemData* g_Sd_VabTargetLoad;
     static s_AudioItemData* g_Sd_KdtTargetLoad;
-    static u8               D_800C37DC; // Boolean.
+    static u8               g_Sd_XaTaskPending; // Boolean.
     static u8               g_Sd_CurrentTask;
 
     // ========================================
@@ -132,7 +132,7 @@ namespace Silent::Game
                 return 3;
             }
 
-            if (D_800C37DC == false)
+            if (g_Sd_XaTaskPending == false)
             {
                 if (g_Sd_CurrentTask == 0)
                 {
@@ -328,7 +328,7 @@ namespace Silent::Game
 
         SdSetMVol(127, 127);
 
-        D_800C37DC                                 = false;
+        g_Sd_XaTaskPending                                 = false;
         g_Sd_AudioWork.field_E                     = 0;
         g_Sd_AudioWork.field_10                    = 0;
         g_Sd_AudioStreamingStates.audioLoadState_0 = AudioLoadState_Reset;
@@ -791,7 +791,7 @@ namespace Silent::Game
 
         if (g_XaItemData[g_Sd_AudioWork.xaAudioIdxCheck_2].xaFileIdx_0 != 0)
         {
-            D_800C37DC         = true;
+            g_Sd_XaTaskPending         = true;
             D_800C1688.field_8 = VSync(SyncMode_Count);
             D_800C1688.field_4 = 0;
 
@@ -919,7 +919,7 @@ namespace Silent::Game
                 //if (!Sd_CdPrimitiveCmdTry(CdlReadN, nullptr, nullptr))
                 {
                     g_Sd_AudioWork.cdErrorCount_0           = 0;
-                    D_800C37DC                              = false;
+                    g_Sd_XaTaskPending                              = false;
                     g_Sd_AudioStreamingStates.xaLoadState_1 = XaLoadState_EnableAudio;
                 }
                 break;
@@ -949,7 +949,7 @@ namespace Silent::Game
     void Sd_XaPreLoadAudioTaskAdd(s32 xaIdx) // 0x800472BC
     {
         g_Sd_AudioWork.xaAudioIdxCheck_2 = xaIdx & 0xFFF;
-        D_800C37DC                       = true;
+        g_Sd_XaTaskPending                       = true;
 
         if (g_Sd_AudioWork.xaAudioIdx_4 != 0)
         {
@@ -1028,7 +1028,7 @@ namespace Silent::Game
                 //if (!Sd_CdPrimitiveCmdTry(CdlPause, nullptr, nullptr))
                 {
                     g_Sd_AudioStreamingStates.xaPreLoadState_3 = 0;
-                    D_800C37DC                                 = false;
+                    g_Sd_XaTaskPending                                 = false;
                     Sd_TaskPoolUpdate();
                     g_Sd_AudioWork.cdErrorCount_0              = 0;
                 }
@@ -1159,7 +1159,7 @@ namespace Silent::Game
                     }
 
                     g_Sd_TaskPool[31] = 0;
-                    D_800C37DC        = false;
+                    g_Sd_XaTaskPending        = false;
                 }
             }
         }

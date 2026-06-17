@@ -43,16 +43,16 @@ namespace Silent::Game
         s32                data_4;
     } s_SysWork_2514_C;
 
-    typedef struct _s_SysWork_2514_18
+    typedef struct _SysWork_2514_18
     {
-        struct _s_SysWork_2514_18* next_0;
-        struct _s_SysWork_2514_18* prev_4;
-        u_SysWork_2514_C_0         key_8;
-        s32                        field_C;
-        u8                         unk_10[8];
-        struct _s_SysWork_2514_18* unk_18;
-        u16                        field_1C;
-        u16                        field_1E;
+        struct _SysWork_2514_18* next_0;
+        struct _SysWork_2514_18* prev_4;
+        u_SysWork_2514_C_0       key_8;
+        s32                      field_C;
+        u8                       unk_10[8];
+        struct _SysWork_2514_18* unk_18;
+        u16                      field_1C;
+        u16                      field_1E;
     } s_SysWork_2514_18;
 
     typedef struct
@@ -86,10 +86,10 @@ namespace Silent::Game
     typedef struct s_SysWork_2510
     {
         s_SysWork_2510* next_0;
-        u8                      key_4;
-        s8                      pad_5[3];
-        s32                     field_8;
-        s32                     (*func_C)(s_SysWork_2514* ptr, s32 padState, s32 padInfoCurId, s32 padInfoCurExId);
+        u8              key_4;
+        s8              pad_5[3];
+        s32             field_8;
+        s32             (*func_C)(s_SysWork_2514* ptr, s32 padState, s32 padInfoCurId, s32 padInfoCurExId);
     };
 
     // Exception, as one of the unidentified structs uses this.

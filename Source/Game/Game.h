@@ -592,7 +592,17 @@ namespace Silent::Game
         CLEAR_FLAG(&g_SysWork.npcFlags, flagIdx);
     }
 
-    /** @brief Clears state steps twice for some reason? Only used once below, others use regular `Game_StateSetNext`. */
+    /** @brief Sets the game state to be used for the next tick all resets all state steps.
+     *
+     * Records the outgoing state as `gameStatePrev`, sets `gameState` as the new 
+     * state, and clears all state steps for the new state to have a clean slate.
+     *
+     * `gameStateCounter` and `gameStateStepCounter` are also cleared and the sys state is changed to `SysState_Gameplay`.
+     *
+     * @note Changed from inline to macro to fix some stubborn functions.
+     *
+     * @param gameState New game state to enter.
+     */
     static inline void Game_StateSetNext_ClearStateSteps(e_GameState gameState)
     {
         e_GameState prevState;
@@ -636,8 +646,12 @@ namespace Silent::Game
         g_GameWork.gameStateSteps[0] = 0;
     }
 
-    /** @brief Returns the GameState to the previously used state.
-     * Inlined into credits.
+    /** @brief Returns the GameState to the previously used state and resets all state steps.
+     *
+     * Records the outgoing state as `gameStatePrev`, sets `gameState` to the previous 
+     * `gameStatePrev` value, and clears all state-steps for the new state to have a clean slate.
+     *
+     * @note `gameStateCounter` and `gameStateStepCounter` are also cleared, and SysState is changed to `SysState_Gameplay`.
      */
     static inline void Game_StateSetPrevious()
     {
@@ -656,5 +670,68 @@ namespace Silent::Game
         g_GameWork.gameState         = g_GameWork.gameStatePrev;
         g_GameWork.gameStatePrev     = prevState;
         g_GameWork.gameStateSteps[0] = 0;
+    }
+
+    /** @brief Sets one of the three game state step counters.
+     *
+     * The steps form a hierarchy used by the game's game state state machines:
+     * - [0] = state step
+     * - [1] = sub-step,
+     * - [2] = sub-sub-step.
+     *
+     * @note Writing a step cascades a reset downward: changing a higher
+     * level invalidates the steps nested beneath it, so all levels lower
+     * than `stepIdx` are reset to 0.
+     * Setting [0] additionally clears the `gameStateStepCounter` frame counter.
+     *
+     * @param stepIdx Step index to set (0, 1, or 2).
+     * @param stateStep New value for the index.
+     * @return Value written (`== stateStep`).
+     */
+    static inline s32 Game_StateStepSet(s32 stepIdx, s32 stateStep)
+    {
+        s32 step;
+
+        if (stepIdx == 0)
+        {
+            step                         = 
+            g_GameWork.gameStateSteps[0] = stateStep;
+            g_SysWork.counters_1C[1]     = 0;
+            g_GameWork.gameStateSteps[1] = 0;
+            g_GameWork.gameStateSteps[2] = 0;
+        }
+        else if (stepIdx == 1)
+        {
+            step = g_GameWork.gameStateSteps[1] = stateStep;
+            g_GameWork.gameStateSteps[2] = 0;
+        }
+        else
+        {
+            step = g_GameWork.gameStateSteps[2] = stateStep;
+        }
+
+        return step;
+    }
+
+    static inline void Game_StateStepIncrement(s32 stepIdx)
+    {    
+        if(stepIdx == 0)
+        {
+            s32 step = g_GameWork.gameStateSteps[0];
+
+            g_SysWork.counters_1C[1]     = 0;
+            g_GameWork.gameStateSteps[1] = 0;
+            g_GameWork.gameStateSteps[2] = 0;
+            g_GameWork.gameStateSteps[0] = step + 1;
+        }
+        else if(stepIdx == 1)
+        {
+            g_GameWork.gameStateSteps[1]++;
+            g_GameWork.gameStateSteps[2] = 0;
+        }
+        else
+        {
+            g_GameWork.gameStateSteps[2]++;
+        }
     }
 }

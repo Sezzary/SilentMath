@@ -80,10 +80,7 @@ namespace Silent::Game
                 g_GameWork.background2dColor.b = 0;
 
                 Screen_Init(SCREEN_WIDTH, false);
-                g_SysWork.counters_1C[1]              = 0;
-                g_GameWork.gameStateSteps[1] = 0;
-                g_GameWork.gameStateSteps[2] = 0;
-                g_GameWork.gameStateSteps[0]++;
+                Game_StateStepIncrement(0);
                 break;
 
             case 1:
@@ -97,10 +94,7 @@ namespace Silent::Game
                     }
                     else
                     {
-                        g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateSteps[1] = 0;
-                        g_GameWork.gameStateSteps[2] = 0;
-                        g_GameWork.gameStateSteps[0]++;
+                        Game_StateStepIncrement(0);
                     }
                 }
                 break;

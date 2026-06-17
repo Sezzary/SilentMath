@@ -186,30 +186,21 @@ namespace Silent::Game
                 Fs_QueueStartReadTim(FILE_1ST_NO_MCD_E_TIM, FS_BUFFER_1, &D_800A900C);
                 nextGameState = GameState_MovieIntroFadeIn;
 
-                g_GameWork.gameStateSteps[0] = KcetLogoStateStep_LogoDelay;
-                g_SysWork.counters_1C[1]        = 0;
-                g_GameWork.gameStateSteps[1] = 0;
-                g_GameWork.gameStateSteps[2] = 0;
+                Game_StateStepSet(0, KcetLogoStateStep_LogoDelay);
                 break;
 
             case KcetLogoStateStep_NoMemCardFreeSpace:
                 Fs_QueueStartReadTim(FILE_1ST_NO_BLK_E_TIM, FS_BUFFER_1, &D_800A900C);
                 nextGameState = GameState_MovieIntroFadeIn;
 
-                g_GameWork.gameStateSteps[0] = KcetLogoStateStep_LogoDelay;
-                g_SysWork.counters_1C[1]        = 0;
-                g_GameWork.gameStateSteps[1] = 0;
-                g_GameWork.gameStateSteps[2] = 0;
+                Game_StateStepSet(0, KcetLogoStateStep_LogoDelay);
                 break;
 
             case KcetLogoStateStep_NoSaveGame:
                 GameFs_TitleGfxSeek();
                 nextGameState = GameState_MovieIntro;
 
-                g_GameWork.gameStateSteps[0] = KcetLogoStateStep_LogoDelay;
-                g_SysWork.counters_1C[1]        = 0;
-                g_GameWork.gameStateSteps[1] = 0;
-                g_GameWork.gameStateSteps[2] = 0;
+                Game_StateStepSet(0, KcetLogoStateStep_LogoDelay);
                 break;
 
             case KcetLogoStateStep_HasSavegame:
@@ -219,14 +210,12 @@ namespace Silent::Game
                     {
                         case 0:
                             //MemCard_ProcessSet(MemCardProcess_Load_Game, g_SelectedDeviceId, 0, 0);
-                            g_GameWork.gameStateSteps[2] = 0;
-                            g_GameWork.gameStateSteps[1]++;
+                            Game_StateStepIncrement(1);
 
                         case 1:
                             //if (MemCard_LastMemCardResultGet() != MemCardResult_Success)
                             //{
-                                g_GameWork.gameStateSteps[2] = 0;
-                                g_GameWork.gameStateSteps[1]++;
+                                Game_StateStepIncrement(1);
                             //}
                             break;
 
@@ -243,8 +232,7 @@ namespace Silent::Game
                                 nextGameState = GameState_MovieIntro;
                             }
 
-                            g_GameWork.gameStateSteps[2] = 0;
-                            g_GameWork.gameStateSteps[1]++;
+                            Game_StateStepIncrement(1);
                             break;
                     }
 
@@ -252,10 +240,7 @@ namespace Silent::Game
                     //MemCard_Update();
                 }
 
-                g_GameWork.gameStateSteps[0] = KcetLogoStateStep_LogoDelay;
-                g_SysWork.counters_1C[1]        = 0;
-                g_GameWork.gameStateSteps[1] = 0;
-                g_GameWork.gameStateSteps[2] = 0;
+                Game_StateStepSet(0, KcetLogoStateStep_LogoDelay);
                 break;
 
             case KcetLogoStateStep_LogoDelay:
@@ -291,19 +276,7 @@ namespace Silent::Game
                     Demo_SequenceAdvance(0);
                     Demo_DemoDataRead();
                     Fs_QueueWaitForEmpty();
-
-                    g_SysWork.counters_1C[0] = 0;
-                    g_SysWork.counters_1C[1] = 0;
-
-                    g_GameWork.gameStateSteps[1] = 0;
-                    g_GameWork.gameStateSteps[2] = 0;
-
-                    SysWork_StateSetNext(SysState_Gameplay);
-
-                    g_GameWork.gameStateSteps[0] = g_GameWork.gameState;
-                    g_GameWork.gameState         = nextGameState;
-                    g_GameWork.gameStatePrev     = (e_GameState)g_GameWork.gameStateSteps[0];
-                    g_GameWork.gameStateSteps[0] = 0;
+                    Game_StateSetNext(nextGameState);
                 }
                 break;
         }

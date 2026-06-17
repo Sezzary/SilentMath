@@ -39,7 +39,7 @@ namespace Silent::Game
 
     void vcSetFirstCamWork(VECTOR3* cam_pos, q3_12 chara_eye_ang_y, bool use_through_door_cam_f);
 
-    void func_80080B58(GsCOORDINATE2* arg0, SVECTOR* rot, VECTOR3* pos);
+    void Vc_SetLookAtMatFromBoneCoord(GsCOORDINATE2* arg0, SVECTOR* rot, VECTOR3* pos);
 
     void vcWorkSetFlags(VC_FLAGS enable, VC_FLAGS disable);
 
@@ -85,7 +85,7 @@ namespace Silent::Game
 
     VC_CAM_MV_TYPE vcRetCurCamMvType(VC_WORK* w_p);
 
-    bool func_8008150C(q19_12 posX, q19_12 posZ);
+    bool Vc_IsInSelfViewRestrictedZone(q19_12 posX, q19_12 posZ);
 
     bool vcRetThroughDoorCamEndF(VC_WORK* w_p);
 

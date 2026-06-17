@@ -147,7 +147,7 @@ namespace Silent::Game
         vcSetTHROUGH_DOOR_CAM_PARAM_in_VC_WORK(&vcWork, VC_TDSC_END);
     }
 
-    void func_80080B58(GsCOORDINATE2* arg0, SVECTOR* rot, VECTOR3* pos) // 0x80080B58
+    void Vc_SetLookAtMatFromBoneCoord(GsCOORDINATE2* arg0, SVECTOR* rot, VECTOR3* pos) // 0x80080B58
     {
         MATRIX rotMat;
 
@@ -447,7 +447,7 @@ namespace Silent::Game
                 (!g_GameWorkConst->config.extraViewCtrl && hasViewFlag))
             {
                 if (!(w_p->flags & (VC_USER_CAM_F | VC_USER_WATCH_F | VC_INHIBIT_FAR_WATCH_F)) &&
-                    !func_8008150C(w_p->chara_pos.vx, w_p->chara_pos.vz))
+                    !Vc_IsInSelfViewRestrictedZone(w_p->chara_pos.vx, w_p->chara_pos.vz))
                 {
                     return VC_MV_SELF_VIEW;
                 }
@@ -467,12 +467,12 @@ namespace Silent::Game
         return (VC_CAM_MV_TYPE)w_p->cur_near_road.road_p->cam_mv_type;
     }
 
-    bool func_8008150C(q19_12 posX, q19_12 posZ)
+    bool Vc_IsInSelfViewRestrictedZone(q19_12 posX, q19_12 posZ) // 8008150C
     {
         /*switch (Map_TypeGet())
         {
-            case 0:
-                if ((posX - Q12(201.8f)) > (u32)(Q12(28.2f) + 1))
+            case MapType_THR:
+                if (posX < Q12(201.8f) || posX > Q12(230.0f))
                 {
                     return false;
                 }
@@ -486,8 +486,8 @@ namespace Silent::Game
                 }
                 break;
 
-            case 3:
-                if ((posX + Q12(230.0f)) > (u32)Q12(29.0f))
+            case MapType_SPR:
+                if (posX < Q12(-230.0f) || posX > Q12(-201.0f)) // Mirror of the `THR` check above?
                 {
                     return false;
                 }
@@ -626,7 +626,7 @@ namespace Silent::Game
                 (!g_GameWorkConst->config.extraViewCtrl && prsFViewFlag))
             {
                 if (!(w_p->flags & (VC_USER_CAM_F | VC_USER_WATCH_F | VC_INHIBIT_FAR_WATCH_F)) &&
-                    func_8008150C(w_p->chara_pos.vx, w_p->chara_pos.vz))
+                    Vc_IsInSelfViewRestrictedZone(w_p->chara_pos.vx, w_p->chara_pos.vz))
                 {
                     far_watch_rate = Q12(0.0f);
                 }
