@@ -247,7 +247,7 @@ namespace Silent::Debug
                 if (ImGui::Combo("View control", &viewCtrl, CONTROL_INVERSION_ITEMS, IM_ARRAYSIZE(CONTROL_INVERSION_ITEMS)))
                 {
                     options->ViewControl = (ControlInversionType)viewCtrl;
-                    isOptChanged           = true;
+                    isOptChanged         = true;
                 }
 
                 // `Retreat turn control` combo.

@@ -18,7 +18,7 @@ namespace Silent::Debug
         {
             ImGui::Begin("Debug Menu");
 
-            // Tab section.
+            // Tabs section.
             if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll))
             {
                 AddGeneralTab();

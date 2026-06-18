@@ -3,8 +3,10 @@
 
 #include "Application.h"
 #include "Renderer/Common/Constants.h"
+#include "Utils/Parallel.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Utils;
 
 namespace Silent::Utils
 {
@@ -103,7 +105,7 @@ namespace Silent::Utils
 
         // @lock Restrict audio buffer access.
         {
-            auto lock = std::lock_guard(_audioMutex);
+            auto lock = ParallelLock(_audioMutex);
 
             auto data = _audioBuffer;
             _audioBuffer.clear();
@@ -205,7 +207,7 @@ namespace Silent::Utils
     {
         // @lock Restrict audio buffer access.
         {
-            auto lock = std::lock_guard(_audioMutex);
+            auto lock = ParallelLock(_audioMutex);
 
             _audioBuffer.insert(_audioBuffer.end(), samples, samples + count);
         }

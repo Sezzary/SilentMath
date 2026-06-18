@@ -98,7 +98,7 @@ namespace Silent::Utils
         void HandleTask(const ParallelTask& task, std::atomic<int>& counter, std::promise<void>& promise);
     };
 
-    /** @brief Parallel mutex lock. */
+    /** @brief Parallel mutex lock. Behaves like `std::lock_guard`. */
     class ParallelLock
     {
     private:

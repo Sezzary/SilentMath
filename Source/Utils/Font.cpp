@@ -282,8 +282,7 @@ namespace Silent::Utils
             {
                 byte pixel = pixelsFrom[(bitmap.width * y) + x];
                 pixel      = _enableAntialiasing ? pixel :
-                                                   ((uchar)pixel >= Q8_COLOR(0.5f)) ? Q8_COLOR(1.0f) :
-                                                                                      Q8_COLOR(0.0f);
+                                                   Q8_COLOR(((uchar)pixel >= Q8_COLOR(0.5f)) ? 1.0f : 0.0f);
 
                 int pixelBaseIdx           = ((ATLAS_SIZE * y) * RGBA_COMP_COUNT) + (x * RGBA_COMP_COUNT);
                 pixelsTo[pixelBaseIdx + 0] =

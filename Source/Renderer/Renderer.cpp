@@ -344,7 +344,7 @@ namespace Silent::Renderer
         }
 
         const auto& options = g_App.GetOptions();
-        if (!options->EnablePowerMode)
+        if (!options->EnableDebugMode)
         {
             return;
         }

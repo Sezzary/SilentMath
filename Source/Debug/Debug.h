@@ -4,10 +4,11 @@ namespace Silent::Renderer{ enum class ScaleMode; }
 
 namespace Silent::Debug
 {
+    constexpr bool IS_DEBUG_BUILD =
 #ifdef _DEBUG
-    constexpr bool IS_DEBUG_BUILD = true;
+                                    true;
 #else
-    constexpr bool IS_DEBUG_BUILD = false;
+                                    false;
 #endif
 
     /** @brief Log severity levels. */

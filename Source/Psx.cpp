@@ -13,7 +13,7 @@ q19_12 Compat_SquareRoot12(q19_12 x)
     return (q19_12)(sqrt((float)x) * 64.0); // `sqrt(Q12) = sqrt(x / 4096) * 4096 = sqrt(x) * 64`
 }
 
-void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat)
+void Math_RotMatrixZxyNeg(const SVECTOR* rot, MATRIX* mat)
 {
     float rx = (((float)rot->vx / 4096.0f) * 2.0f) * PI;
     float ry = (((float)rot->vy / 4096.0f) * 2.0f) * PI;
@@ -38,7 +38,7 @@ void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat)
     mat->m[2][2] = (short)(( cy * cx) * 4096.0f);
 }
 
-void Math_RotMatrixZxyNegGte(SVECTOR* rot, MATRIX* mat)
+void Math_RotMatrixZxyNegGte(const SVECTOR* rot, MATRIX* mat)
 {
     Math_RotMatrixZxyNeg(rot, mat);
 }
@@ -85,15 +85,15 @@ void Math_RotMatrixZxy(SVECTOR* rot, MATRIX* mat)
 
     // ZXY rotation order: `Ry * Rx * Rz`/
     mat->m[0][0] = (short)(( (cosY * cosZ) + (sinY * sinX * sinZ)) * 4096.0f);
-    mat->m[0][1] = (short)((  cosX * sinZ)                   * 4096.0f);
+    mat->m[0][1] = (short)((  cosX * sinZ)                         * 4096.0f);
     mat->m[0][2] = (short)(((-sinY * cosZ) + (cosY * sinX * sinZ)) * 4096.0f);
 
     mat->m[1][0] = (short)(((-cosY * sinZ) + (sinY * sinX * cosZ)) * 4096.0f);
-    mat->m[1][1] = (short)((  cosX * cosZ)                   * 4096.0f);
+    mat->m[1][1] = (short)((  cosX * cosZ)                         * 4096.0f);
     mat->m[1][2] = (short)(( (sinY * sinZ) + (cosY * sinX * cosZ)) * 4096.0f);
 
     mat->m[2][0] = (short)(( sinY * cosX) * 4096.0f);
-    mat->m[2][1] = (short)((-sinX)      * 4096.0f);
+    mat->m[2][1] = (short)((-sinX)        * 4096.0f);
     mat->m[2][2] = (short)(( cosY * cosX) * 4096.0f);
 }
 
@@ -129,9 +129,9 @@ void Math_MatrixTransform(MATRIX* mat, VECTOR3* in, VECTOR3* out)
     s32 y = in->vy;
     s32 z = in->vz;
 
-    out->vx = ((s32)mat->m[0][0] * x + (s32)mat->m[0][1] * y + (s32)mat->m[0][2] * z) >> 12;
-    out->vy = ((s32)mat->m[1][0] * x + (s32)mat->m[1][1] * y + (s32)mat->m[1][2] * z) >> 12;
-    out->vz = ((s32)mat->m[2][0] * x + (s32)mat->m[2][1] * y + (s32)mat->m[2][2] * z) >> 12;
+    out->vx = (((s32)mat->m[0][0] * x) + ((s32)mat->m[0][1] * y) + ((s32)mat->m[0][2] * z)) >> 12;
+    out->vy = (((s32)mat->m[1][0] * x) + ((s32)mat->m[1][1] * y) + ((s32)mat->m[1][2] * z)) >> 12;
+    out->vz = (((s32)mat->m[2][0] * x) + ((s32)mat->m[2][1] * y) + ((s32)mat->m[2][2] * z)) >> 12;
 
     out->vx += mat->t[0];
     out->vy += mat->t[1];

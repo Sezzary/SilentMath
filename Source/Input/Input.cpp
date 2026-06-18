@@ -738,7 +738,7 @@ namespace Silent::Input
                          GetRawEventState(EventId::F11));
 
         auto& options = g_App.GetOptions();
-        if (options->EnablePowerMode)
+        if (options->EnableDebugMode)
         {
             // Toggle debug menu.
             static bool dbDebugGui = true;

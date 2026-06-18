@@ -27,7 +27,8 @@ namespace Silent::Services
         if (offsetTicks >= intervalTicks)
         {
             offsetTicks = 0;
-            Debug::Log("Attempted to test time interval with offset greater than or equal to interval.", Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            Debug::Log("Attempted to test time interval with offset greater than or equal to interval.",
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
         }
         
         uint64 ticks = SDL_GetPerformanceCounter() / TICK_INTERVAL_DURATION;
@@ -75,9 +76,9 @@ namespace Silent::Services
 
     std::string GetCurrentDateString()
     {
-        auto now      = std::chrono::system_clock::now();
-        auto nowClock = std::chrono::system_clock::to_time_t(now);
-        auto tm       = *std::localtime(&nowClock);
+        auto  now      = std::chrono::system_clock::now();
+        auto  nowClock = std::chrono::system_clock::to_time_t(now);
+        auto& tm       = *std::localtime(&nowClock);
 
         // Format: YYYY-MM-DD.
         auto strStream = std::ostringstream();
@@ -87,10 +88,10 @@ namespace Silent::Services
 
     std::string GetCurrentTimeString()
     {
-        auto now      = std::chrono::system_clock::now();
-        auto nowClock = std::chrono::system_clock::to_time_t(now);
-        auto tm       = *std::localtime(&nowClock);
-        auto millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+        auto  now      = std::chrono::system_clock::now();
+        auto  nowClock = std::chrono::system_clock::to_time_t(now);
+        auto& tm       = *std::localtime(&nowClock);
+        auto  millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
 
         // Format: HH-MM-SS_mmm.
         auto strStream = std::ostringstream();

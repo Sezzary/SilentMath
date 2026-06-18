@@ -14,6 +14,15 @@ namespace Silent::Services
 {
     void ToastManager::Update()
     {
+        const auto& options = g_App.GetOptions();
+
+        // Check if toasts are enabled.
+        if (!options->EnableToasts)
+        {
+            _toasts.clear();
+            return;
+        }
+
         // Update toasts.
         for (auto& toast : _toasts)
         {

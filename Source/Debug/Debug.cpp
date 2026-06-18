@@ -8,6 +8,7 @@
 #include "Services/Clock.h"
 #include "Services/Filesystem.h"
 #include "Services/Options.h"
+#include "Utils/Parallel.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Assets;
@@ -25,7 +26,7 @@ namespace Silent::Debug
     bool CheckPage(Page page)
     {
         const auto& options = g_App.GetOptions();
-        return options->EnablePowerMode && (page == g_Work.Page || page == Page::None);
+        return options->EnableDebugMode && (page == g_Work.Page || page == Page::None);
     }
 
     void Initialize()
@@ -115,6 +116,7 @@ namespace Silent::Debug
         }
 
         CreateMenu();
+        //ImGui::ShowDemoWindow();
     }
 
     void Msg(const char* msg, ...)
@@ -147,7 +149,7 @@ namespace Silent::Debug
         // @lock Restrict `Messages` access.
         static auto mutex = std::mutex();
         {
-            auto lock = std::lock_guard(mutex);
+            auto lock = ParallelLock(mutex);
 
             // Add message.
             g_Work.Messages.push_back(buffer);
@@ -168,7 +170,7 @@ namespace Silent::Debug
         // @lock Restrict logger access.
         static auto mutex = std::mutex();
         {
-            auto lock = std::lock_guard(mutex);
+            auto lock = ParallelLock(mutex);
 
             static auto prevMsg = std::string();
             if (prevMsg == msg && !repeat)
@@ -209,6 +211,7 @@ namespace Silent::Debug
                     break;
                 }
             }
+
             logger->flush();
         }
     }

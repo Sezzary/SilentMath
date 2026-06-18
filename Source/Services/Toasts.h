@@ -10,7 +10,7 @@ namespace Silent::Services
         int         Life    = 0;
     };
 
-    /** @brief Popup message toaster. */
+    /** @brief Pop-up message toaster. */
     class ToastManager
     {
     private:

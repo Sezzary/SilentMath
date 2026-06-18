@@ -283,13 +283,13 @@ namespace Silent
 
     void ApplicationManager::TogglePowerMenu()
     {
-        if (!_work.Options->EnablePowerMode)
+        if (!_work.Options->EnableDebugMode)
         {
             return;
         }
 
         Debug::g_Work.EnablePowerMenu = !Debug::g_Work.EnablePowerMenu;
-        Debug::g_Work.Page            = Debug::g_Work.EnablePowerMenu ? Debug::Page::Renderer : Debug::Page::None;
+        Debug::g_Work.Page            =  Debug::g_Work.EnablePowerMenu ? Debug::Page::Renderer : Debug::Page::None;
         ToggleCursor();
 
         Debug::Log("Toggled debug menu.", Debug::LogLevel::Info, Debug::LogMode::All, true);

@@ -147,14 +147,14 @@ namespace Silent::Game
         vcSetTHROUGH_DOOR_CAM_PARAM_in_VC_WORK(&vcWork, VC_TDSC_END);
     }
 
-    void Vc_SetLookAtMatFromBoneCoord(GsCOORDINATE2* arg0, SVECTOR* rot, VECTOR3* pos) // 0x80080B58
+    void Vc_SetLookAtMatFromBoneCoord(GsCOORDINATE2* boneCoord, const SVECTOR* rotOffset, const VECTOR3* pos) // 0x80080B58
     {
         MATRIX rotMat;
 
         vcWork.updateLookAtMat = true;
 
-        Vw_CoordHierarchyMatrixCompute(arg0, &vcWork.lookAtMat);
-        Math_RotMatrixZxyNeg(rot, &rotMat);
+        Vw_CoordHierarchyMatrixCompute(boneCoord, &vcWork.lookAtMat);
+        Math_RotMatrixZxyNeg(rotOffset, &rotMat);
         MulMatrix(&vcWork.lookAtMat, &rotMat);
 
         vcWork.lookAtMat.t[0] = Q12_TO_Q8(pos->vx);
