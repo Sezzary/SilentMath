@@ -334,14 +334,7 @@ namespace Silent
         _work.Renderer->PrepareFrameResources();
 
         // Render frame asynchronously.
-        if (_work.Options->EnableParallelism)
-        {
-            _prevFrameFuture = std::async(std::launch::async, TASK(_work.Renderer->Update()));
-        }
-        else
-        {
-            _work.Renderer->Update();
-        }
+        _prevFrameFuture = _frameWorker.AddTask(TASK(_work.Renderer->Update()));
     }
 
     void ApplicationManager::PollEvents()

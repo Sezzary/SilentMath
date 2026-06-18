@@ -33,7 +33,7 @@ namespace Silent::Utils
         // =============
 
         /** @brief Creates a default instance. */
-        ParallelExecutor();
+        ParallelExecutor(int threadCount = NO_VALUE);
 
         /** @brief Gracefully destroys the instance, notifying threads to shut down. */
         ~ParallelExecutor();
