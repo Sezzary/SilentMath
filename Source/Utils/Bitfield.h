@@ -25,7 +25,7 @@ namespace Silent::Utils
         // =======
 
         int                    _size   = 0;  /** Number of bits. */
-        std::vector<ChunkType> _chunks = {}; /** Integers containing the bits. */
+        std::vector<ChunkType> _chunks = {}; /** Integer chunks containing the bits. */
 
     public:
         // ========
@@ -56,10 +56,10 @@ namespace Silent::Utils
 
         /** @brief Creates an instance from specified chunks with a size.
          *
-         * @param bitChunks Chunks containing bits.
+         * @param chunks Chunks containing bits.
          * @param size Number of bits.
          */
-        Bitfield(const std::vector<ChunkType>& bitChunks, int size);
+        Bitfield(const std::vector<ChunkType>& chunks, int size);
 
         /** @brief Creates an instance from a string of `1`s (`true`) and `0`s (`false`).
          *
@@ -105,14 +105,6 @@ namespace Silent::Utils
          */
         void Set(const std::vector<int>& bitIdxs);
 
-        /** @brief Sets the states of specified bits to `true`.
-         *
-         * @param bitIdxs Indices of the bits to set.
-         */
-        template <typename... Args>
-        requires (std::is_integral_v<Args> && ...)
-        void Set(Args... bitIdxs);
-
         /** @brief Sets the states of all bits to `true`. */
         void SetAll();
 
@@ -127,14 +119,6 @@ namespace Silent::Utils
          * @param bitIdxs Indices of the bits to clear.
          */
         void Clear(const std::vector<int>& bitIdxs);
-
-        /** @brief Sets the states of specified bits to `false`.
-         *
-         * @param bitIdxs Indices of the bits to clear.
-         */
-        template <typename... Args>
-        requires (std::is_integral_v<Args> && ...)
-        void Clear(Args... bitIdxs);
 
         /** @brief Sets the states of all bits to `false`. */
         void ClearAll();
@@ -151,14 +135,6 @@ namespace Silent::Utils
          */
         void Flip(const std::vector<int>& bitIdxs);
 
-        /** @brief Flips the states of specified bits.
-         *
-         * @param bitIdxs Indices of the bits to flip.
-         */
-        template <typename... Args>
-        requires (std::is_integral_v<Args> && ...)
-        void Flip(Args... bitIdxs);
-
         /** @brief Flips the states of all bits. */
         void FlipAll();
 
@@ -172,7 +148,8 @@ namespace Silent::Utils
          */
         bool IsEmpty() const;
 
-        /** @brief Checks if specified bits are set to `true`. If `testAny` is passed as `true`, any set bit will satisfy the condition.
+        /** @brief Checks if specified bits are set to `true`. If `testAny` is passed as `true`, any set bit will
+         * satisfy the condition.
          *
          * @param bitIdxs Indices of the bits to check.
          * @param testAny If any set bit will satisfy the condition.
@@ -253,25 +230,36 @@ namespace Silent::Utils
         bool IsBitIdxValid(int bitIdx) const;
     };
 
-    template <typename... Args>
-    requires (std::is_integral_v<Args> && ...)
-    void Bitfield::Set(Args... bitIdxs)
+    /** @brief Custom `Bitfield` size getter for `struct_pack`. */
+    [[nodiscard]] constexpr size_t sp_get_needed_size(const Bitfield& bitfield) 
     {
-        (Set(bitIdxs), ...);
+        return struct_pack::get_needed_size(bitfield.GetSize(), bitfield.GetChunks());
     }
 
-    template <typename... Args>
-    requires (std::is_integral_v<Args> && ...)
-    void Bitfield::Clear(Args... bitIdxs)
+    /** @brief Custom `Bitfield` serializer for `struct_pack`. */
+    template <typename Writer>
+    void sp_serialize_to(Writer& writer, const Bitfield& bitfield) 
     {
-        (Clear(bitIdxs), ...);
+        struct_pack::serialize_to(writer, bitfield.GetSize(), bitfield.GetChunks());
     }
 
-    template <typename... Args>
-    requires (std::is_integral_v<Args> && ...)
-    void Bitfield::Flip(Args... bitIdxs)
+    /** @brief Custom `Bitfield` deserializer for `struct_pack`. */
+    template <typename Reader>
+    [[nodiscard]] struct_pack::err_code sp_deserialize_to(Reader& reader, Bitfield& bitfield) 
     {
-        (Flip(bitIdxs), ...);
+        int  size   = 0;
+        auto chunks = std::vector<Bitfield::ChunkType>{};
+
+        // Deserialize components from buffer.
+        auto errorCode = struct_pack::deserialize_to(reader, size, chunks);
+        if (errorCode != 0) 
+        {
+            return errorCode;
+        }
+
+        // Recreate object.
+        bitfield = Bitfield(size, std::move(chunks));
+        return {};
     }
 }
 

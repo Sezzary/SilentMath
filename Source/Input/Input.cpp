@@ -432,11 +432,19 @@ namespace Silent::Input
         // Set move axis.
         if (stickLeftAxis != Vector2::Zero)
         {
+            // Analog.
             moveAxis = stickLeftAxis;
         }
         else
         {
-            if (GetAction(In::Up).IsHeld())
+            // Discrete `Up`/`Down`.
+            if (( GetAction(In::Up).IsHeld() &&  GetAction(In::Down).IsHeld()) ||
+                (!GetAction(In::Up).IsHeld() && !GetAction(In::Down).IsHeld()))
+            {
+                moveAxis.y = 0.0f;
+
+            }
+            else if (GetAction(In::Up).IsHeld())
             {
                 moveAxis.y = 1.0f;
             }
@@ -444,22 +452,21 @@ namespace Silent::Input
             {
                 moveAxis.y = -1.0f;
             }
-            else
-            {
-                moveAxis.y = 0.0f;
-            }
 
-            if (GetAction(In::Left).IsHeld())
+            // Discrete `Left`/`Right`.
+            if (( GetAction(In::Left).IsHeld() &&  GetAction(In::Right).IsHeld()) ||
+                (!GetAction(In::Left).IsHeld() && !GetAction(In::Right).IsHeld()))
+            {
+                moveAxis.x = 0.0f;
+
+            }
+            else if (GetAction(In::Left).IsHeld())
             {
                 moveAxis.x = -1.0f;
             }
             else if (GetAction(In::Right).IsHeld())
             {
                 moveAxis.x = 1.0f;
-            }
-            else
-            {
-                moveAxis.x = 0.0f;
             }
         }
 

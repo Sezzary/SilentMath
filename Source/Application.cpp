@@ -407,7 +407,8 @@ namespace Silent
                 }
                 case SDL_EVENT_MOUSE_WHEEL:
                 {
-                    // Update mouse wheel axis input state. Cannot be done by input subsystem due to SDL limitations.
+                    // Update mouse wheel axis input state.
+                    // @note Cannot be done by input subsystem due to SDL limitations.
                     _mouseWheelAxis = Vector2(event.wheel.x, event.wheel.y);
                     break;
                 }

@@ -5,6 +5,7 @@
 #include "Assets/TranslationKeys.h"
 #include "Savegame/Schemas.h"
 #include "Services/Filesystem.h"
+#include "Utils/Bitfield.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 

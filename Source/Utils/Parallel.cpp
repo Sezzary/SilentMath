@@ -10,7 +10,7 @@ namespace Silent::Utils
         constexpr int THREAD_COUNT_MIN = 2;
 
         // Reserve threads.
-        int threadCount = (threadCount == NO_VALUE) ? std::max(GetCoreCount(), THREAD_COUNT_MIN) : threadCount;
+        threadCount = (threadCount == NO_VALUE) ? std::max(GetCoreCount(), THREAD_COUNT_MIN) : threadCount;
         _threads.reserve(threadCount);
 
         // Create threads.

@@ -1,13 +1,63 @@
 #pragma once
 
+#include "Utils/Bitfield.h"
+
+using namespace Silent::Utils;
+
 namespace Silent::Savegame
 {
-    constexpr int SAVEGAME_COUNT_MAX = 165; // Max savegames per file.
+    constexpr int SAVEGAME_COUNT_MAX = 165; /** Max savegames per file. */
+
+    /** @brief Savegame inventory item entry. */
+    struct SavegameInvItem
+    {
+        int id;      /** `e_InvItemId` */
+        int count;
+        int command; /** `e_InvCmdId` */
+    };
 
     /** @brief Savegame info. */
     struct Savegame
     {
-        int Dummy = 0;
+        std::vector<SavegameInvItem> items = {};
+        int             mapIdx;                      /** `e_MapIdx` */
+        int             mapRoomIdx;                  /** Index to local map geometry `.IPD` files. */
+        int             savegameCount;
+        int             locationId;                  /** `e_SaveLocationId` */
+        int             paperMapIdx;                 /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */
+        int             equippedWeapon;              /** `e_InvItemId` | Affects the visible player weapon model. */
+        int             inventorySlotCount;          /** Item slots. */
+        int             itemToggleFlags;             /** `e_ItemToggleFlags` */
+        int             ovlEnemyStates[45];          /** Flags indicating the enemy states in a given overlay.
+                                                     * All set to 1 by default. As soon as they are killed (not just stunned),
+                                                     * set to 0 based on a currently unknown index value.
+                                                     */
+        int             paperMapFlags;               // See Sparagas' `HasMapsFlags` struct for details of every bit.
+        Bitfield        eventFlags = Bitfield(1664);
+        q19_12          healthSaturation;            /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
+        int             pickedUpItemCount;
+        int             inventoryItemFlags; /** `e_InventoryItemFlags` */
+        q19_12          playerHealth;       /** Default: `Q12(100.0f)` */
+        q19_12          playerPositionX;
+        q3_12           playerRotationY;  /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */
+        int             clearGameCount;   /** Range [0, 99] */
+        int             clearGameEndings; /** `e_GameEndingFlags` */
+        q19_12          playerPositionZ;
+        q20_12          gameplayTimer;
+        q20_12          runDistance;
+        q20_12          walkDistance;
+        bool            isNextFearMode;
+        u8              add290Hours : 2; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
+        int             pickedUpSpecialItemCount; 
+        int             meleeKillCount;
+        int             meleeKillCountB;
+        int             rangedKillCount;
+        int             gameDifficulty; /** `e_GameDifficulty` */
+        int             firedShotCount;
+        int             closeRangeShotCount;
+        int             midRangeShotCount;
+        int             longRangeShotCount;
+        int             continueCount;
     };
 
     /** @brief Savegame metadata. */
