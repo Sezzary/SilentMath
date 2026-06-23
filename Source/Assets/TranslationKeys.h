@@ -108,35 +108,31 @@ namespace Silent::Assets
     constexpr char KEY_INV_MENU_EXIT[] = "invMenu_Exit";
     // @todo
 
-    // ===============
-    // Save Locations
-    // ===============
-
-    constexpr char KEY_SAVE_LOC_ANYWHERE[]       = "SaveLoc_Anywhere";
-    constexpr char KEY_SAVE_LOC_CAFE[]           = "SaveLoc_Cafe";
-    constexpr char KEY_SAVE_LOC_BUS[]            = "SaveLoc_Bus";
-    constexpr char KEY_SAVE_LOC_STORE[]          = "SaveLoc_Store";
-    constexpr char KEY_SAVE_LOC_INFIRMARY[]      = "SaveLoc_Infirmary";
-    constexpr char KEY_SAVE_LOC_DOGHOUSE[]       = "SaveLoc_Doghouse";
-    constexpr char KEY_SAVE_LOC_GORDON[]         = "SaveLoc_Gordon";
-    constexpr char KEY_SAVE_LOC_CHURCH[]         = "SaveLoc_Church";
-    constexpr char KEY_SAVE_LOC_GARAGE[]         = "SaveLoc_Garage";
-    constexpr char KEY_SAVE_LOC_POLICE[]         = "SaveLoc_Police";
-    constexpr char KEY_SAVE_LOC_RECEPTION[]      = "SaveLoc_Reception";
-    constexpr char KEY_SAVE_LOC_ROOM_302[]       = "SaveLoc_Room302";
-    constexpr char KEY_SAVE_LOC_DIRECTORS[]      = "SaveLoc_Directors";
-    constexpr char KEY_SAVE_LOC_JEWELLERY_SHOP[] = "SaveLoc_JewelleryShop";
-    constexpr char KEY_SAVE_LOC_POOL_HALL[]      = "SaveLoc_PoolHall";
-    constexpr char KEY_SAVE_LOC_ANTIQUE_SHOP[]   = "SaveLoc_AntiqueShop";
-    constexpr char KEY_SAVE_LOC_THEME_PARK[]     = "SaveLoc_ThemePark";
-    constexpr char KEY_SAVE_LOC_BOAT[]           = "SaveLoc_Boat";
-    constexpr char KEY_SAVE_LOC_BRIDGE[]         = "SaveLoc_Bridge";
-    constexpr char KEY_SAVE_LOC_MOTEL[]          = "SaveLoc_Motel";
-    constexpr char KEY_SAVE_LOC_LIGHTHOUSE[]     = "SaveLoc_Lighthouse";
-    constexpr char KEY_SAVE_LOC_SEWER[]          = "SaveLoc_Sewer";
-    constexpr char KEY_SAVE_LOC_NOWHERE[]        = "SaveLoc_Nowhere";
-    constexpr char KEY_SAVE_LOC_CHILDS_ROOM[]    = "SaveLoc_ChildsRoom";
-    constexpr char KEY_SAVE_LOC_NEXT_FEAR[]      = "SaveLoc_NextFear";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_ANYWHERE[]       = "SaveLoad_LocAnywhere";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_CAFE[]           = "SaveLoad_LocCafe";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_BUS[]            = "SaveLoad_LocBus";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_STORE[]          = "SaveLoad_LocStore";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_INFIRMARY[]      = "SaveLoad_LocInfirmary";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_DOGHOUSE[]       = "SaveLoad_LocDoghouse";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_GORDON[]         = "SaveLoad_LocGordon";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_CHURCH[]         = "SaveLoad_LocChurch";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_GARAGE[]         = "SaveLoad_LocGarage";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_POLICE[]         = "SaveLoad_LocPolice";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_RECEPTION[]      = "SaveLoad_LocReception";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_ROOM_302[]       = "SaveLoad_LocRoom302";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_DIRECTORS[]      = "SaveLoad_LocDirectors";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_JEWELLERY_SHOP[] = "SaveLoad_LocJewelleryShop";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_POOL_HALL[]      = "SaveLoad_LocPoolHall";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_ANTIQUE_SHOP[]   = "SaveLoad_LocAntiqueShop";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_THEME_PARK[]     = "SaveLoad_LocThemePark";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_BOAT[]           = "SaveLoad_LocBoat";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_BRIDGE[]         = "SaveLoad_LocBridge";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_MOTEL[]          = "SaveLoad_LocMotel";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_LIGHTHOUSE[]     = "SaveLoad_LocLighthouse";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_SEWER[]          = "SaveLoad_LocSewer";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_NOWHERE[]        = "SaveLoad_LocNowhere";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_CHILDS_ROOM[]    = "SaveLoad_LocChildsRoom";
+    constexpr char KEY_SAVE_LOAD_MENU_LOC_NEXT_FEAR[]      = "SaveLoad_LocNextFear";
 
     // =================
     // Paper Map Labels
