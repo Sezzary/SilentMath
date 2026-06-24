@@ -34,23 +34,23 @@ namespace Silent::Assets
     constexpr char KEY_MAIN_MENU_NORMAL[]        = "MainMenu_Normal";
     constexpr char KEY_MAIN_MENU_HARD[]          = "MainMenu_Hard";
 
-    constexpr char KEY_OPTIONS_MENU_HEADING[]          = "OptionsMenu_Heading";
-    constexpr char KEY_OPTIONS_MENU_EXTRA_OPTIONS[]    = "OptionsMenu_ExtraOptions";
-    constexpr char KEY_OPTIONS_MENU_GRAPHICS[]         = "OptionsMenu_Graphics";
-    constexpr char KEY_OPTIONS_MENU_GAMEPLAY[]         = "OptionsMenu_Gameplay";
-    constexpr char KEY_OPTIONS_MENU_INPUT[]            = "OptionsMenu_Input";
-    constexpr char KEY_OPTIONS_MENU_ENHANCEMENTS[]     = "OptionsMenu_Enhancements";
-    constexpr char KEY_OPTIONS_MENU_SYSTEM[]           = "OptionsMenu_System";
+    constexpr char KEY_OPTIONS_MENU_HEADING[]       = "OptionsMenu_Heading";
+    constexpr char KEY_OPTIONS_MENU_EXTRA_OPTIONS[] = "OptionsMenu_ExtraOptions";
+    constexpr char KEY_OPTIONS_MENU_GRAPHICS[]      = "OptionsMenu_Graphics";
+    constexpr char KEY_OPTIONS_MENU_GAMEPLAY[]      = "OptionsMenu_Gameplay";
+    constexpr char KEY_OPTIONS_MENU_INPUT[]         = "OptionsMenu_Input";
+    constexpr char KEY_OPTIONS_MENU_ENHANCEMENTS[]  = "OptionsMenu_Enhancements";
+    constexpr char KEY_OPTIONS_MENU_SYSTEM[]        = "OptionsMenu_System";
 
-    constexpr char KEY_OPTIONS_MENU_EXIT[]             = "OptionsMenu_Exit";
-    constexpr char KEY_OPTIONS_MENU_BRIGHT_LEVEL[]     = "OptionsMenu_BrightLevel";
-    constexpr char KEY_OPTIONS_MENU_CONT_CONFIG[]      = "OptionsMenu_ContConfig";
-    constexpr char KEY_OPTIONS_MENU_VIBRATION[]        = "OptionsMenu_Vibration";
-    constexpr char KEY_OPTIONS_MENU_AUTO_LOAD[]        = "OptionsMenu_AutoLoad";
-    constexpr char KEY_OPTIONS_MENU_SOUND[]            = "OptionsMenu_Sound";
-    constexpr char KEY_OPTIONS_MENU_BGM_VOL[]          = "OptionsMenu_BgmVol";
-    constexpr char KEY_OPTIONS_MENU_SE_VOL[]           = "OptionsMenu_SeVol";
-    constexpr char KEY_OPTIONS_MENU_LANGUAGE[]         = "OptionsMenu_Language";
+    constexpr char KEY_OPTIONS_MENU_EXIT[]         = "OptionsMenu_Exit";
+    constexpr char KEY_OPTIONS_MENU_BRIGHT_LEVEL[] = "OptionsMenu_BrightLevel";
+    constexpr char KEY_OPTIONS_MENU_CONT_CONFIG[]  = "OptionsMenu_ContConfig";
+    constexpr char KEY_OPTIONS_MENU_VIBRATION[]    = "OptionsMenu_Vibration";
+    constexpr char KEY_OPTIONS_MENU_AUTO_LOAD[]    = "OptionsMenu_AutoLoad";
+    constexpr char KEY_OPTIONS_MENU_SOUND[]        = "OptionsMenu_Sound";
+    constexpr char KEY_OPTIONS_MENU_BGM_VOL[]      = "OptionsMenu_BgmVol";
+    constexpr char KEY_OPTIONS_MENU_SE_VOL[]       = "OptionsMenu_SeVol";
+    constexpr char KEY_OPTIONS_MENU_LANGUAGE[]     = "OptionsMenu_Language";
     
     constexpr char KEY_OPTIONS_MENU_WEAPON_CONTROL[]   = "OptionsMenu_WeaponControl";
     constexpr char KEY_OPTIONS_MENU_BLOOD_COLOR[]      = "OptionsMenu_BloodColor";
@@ -62,18 +62,18 @@ namespace Silent::Assets
     constexpr char KEY_OPTIONS_MENU_VIEW_MODE[]        = "OptionsMenu_ViewMode";
     constexpr char KEY_OPTIONS_MENU_BULLET_ADJUST[]    = "OptionsMenu_BulletAdjust";
 
-    constexpr char KEY_OPTIONS_MENU_ON[]               = "OptionsMenu_On";
-    constexpr char KEY_OPTIONS_MENU_OFF[]              = "OptionsMenu_Off";
-    constexpr char KEY_OPTIONS_MENU_STEREO[]           = "OptionsMenu_Stereo";
-    constexpr char KEY_OPTIONS_MENU_MONAURAL[]         = "OptionsMenu_Monaural";
-    constexpr char KEY_OPTIONS_MENU_PRESS[]            = "OptionsMenu_Press";
-    constexpr char KEY_OPTIONS_MENU_SWITCH[]           = "OptionsMenu_Switch";
-    constexpr char KEY_OPTIONS_MENU_NORMAL[]           = "OptionsMenu_Normal";
-    constexpr char KEY_OPTIONS_MENU_GREEN[]            = "OptionsMenu_Green";
-    constexpr char KEY_OPTIONS_MENU_VIOLET[]           = "OptionsMenu_Violet";
-    constexpr char KEY_OPTIONS_MENU_BLACK[]            = "OptionsMenu_Black";
-    constexpr char KEY_OPTIONS_MENU_REVERSE[]          = "OptionsMenu_Reverse";
-    constexpr char KEY_OPTIONS_MENU_SELF_VIEW[]        = "OptionsMenu_SelfView";
+    constexpr char KEY_OPTIONS_MENU_ON[]        = "OptionsMenu_On";
+    constexpr char KEY_OPTIONS_MENU_OFF[]       = "OptionsMenu_Off";
+    constexpr char KEY_OPTIONS_MENU_STEREO[]    = "OptionsMenu_Stereo";
+    constexpr char KEY_OPTIONS_MENU_MONAURAL[]  = "OptionsMenu_Monaural";
+    constexpr char KEY_OPTIONS_MENU_PRESS[]     = "OptionsMenu_Press";
+    constexpr char KEY_OPTIONS_MENU_SWITCH[]    = "OptionsMenu_Switch";
+    constexpr char KEY_OPTIONS_MENU_NORMAL[]    = "OptionsMenu_Normal";
+    constexpr char KEY_OPTIONS_MENU_GREEN[]     = "OptionsMenu_Green";
+    constexpr char KEY_OPTIONS_MENU_VIOLET[]    = "OptionsMenu_Violet";
+    constexpr char KEY_OPTIONS_MENU_BLACK[]     = "OptionsMenu_Black";
+    constexpr char KEY_OPTIONS_MENU_REVERSE[]   = "OptionsMenu_Reverse";
+    constexpr char KEY_OPTIONS_MENU_SELF_VIEW[] = "OptionsMenu_SelfView";
 
     constexpr char KEY_BRIGHT_MENU_PROMPT[] = "BrightMenu_Prompt";
     constexpr char KEY_BRIGHT_MENU_LEVEL[]  = "BrightMenu_Level";
