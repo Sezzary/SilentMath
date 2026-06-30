@@ -186,7 +186,7 @@ namespace Silent
         void ToggleCursor();
 
         /** @brief Toggles the debug menu on and off. */
-        void TogglePowerMenu();
+        void ToggleDebugMenu();
 
     private:
         // ========

@@ -281,7 +281,7 @@ namespace Silent
         }
     }
 
-    void ApplicationManager::TogglePowerMenu()
+    void ApplicationManager::ToggleDebugMenu()
     {
         if (!_work.Options->EnableDebugMode)
         {
@@ -323,7 +323,7 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
-        // Wait for previous frame to finish rendering.
+        // Wait for previous frame to finish.
         if (_prevFrameFuture.valid())
         {
             _prevFrameFuture.wait();

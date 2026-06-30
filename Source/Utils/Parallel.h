@@ -32,7 +32,10 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Creates a default instance. */
+        /** @brief Creates an instance with a specified thread count.
+         *
+         * @param threadCount Worker thread count. If `NO_VALUE`, determined automatically by hardware availability.
+         */
         ParallelExecutor(int threadCount = NO_VALUE);
 
         /** @brief Gracefully destroys the instance, notifying threads to shut down. */

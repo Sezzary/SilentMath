@@ -252,14 +252,14 @@ namespace Silent::Utils
 
         // Deserialize components from buffer.
         auto errorCode = struct_pack::deserialize_to(reader, size, chunks);
-        if (errorCode != 0) 
+        if (errorCode != struct_pack::errc::ok) 
         {
             return errorCode;
         }
 
         // Recreate object.
         bitfield = Bitfield(size, std::move(chunks));
-        return {};
+        return struct_pack::errc::ok;
     }
 }
 

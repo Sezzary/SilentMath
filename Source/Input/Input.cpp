@@ -751,7 +751,7 @@ namespace Silent::Input
             static bool dbDebugGui = true;
             if (GetRawEventState(EventId::Grave) && dbDebugGui)
             {
-                g_App.TogglePowerMenu();
+                g_App.ToggleDebugMenu();
             }
             dbDebugGui = !GetRawEventState(EventId::Grave);
         }
