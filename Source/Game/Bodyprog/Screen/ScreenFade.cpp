@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Game/Bodyprog/Screen/ScreenData.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Main/FsQueue.h"
 
 namespace Silent::Game

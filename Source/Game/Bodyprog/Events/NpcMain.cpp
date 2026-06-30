@@ -57,7 +57,7 @@ namespace Silent::Game
 
     void Game_NpcRoomInitSpawn(bool cond) // 0x80037F24
     {
-        s_Collision     coll;
+        s_CollisionSurface surface;
         s32             charaId0;
         s32             charaId1;
         s32             npcIdx;
@@ -68,21 +68,21 @@ namespace Silent::Game
         VECTOR3*        pos;
 
         npcIdx             = 0;
-        curCharaSpawn      = g_MapOverlayHeader.charaSpawns[0];
+        curCharaSpawn      = g_MapOverlayHdr.charaSpawnInfos[0];
         ovlEnemiesStatePtr = &g_SavegamePtr->ovlEnemyStates[g_SavegamePtr->mapIdx];
 
         if (cond == false)
         {
             //func_80037154();
 
-            if (g_MapOverlayHeader.npcSpawnEvent != NULL)
+            if (g_MapOverlayHdr.npcSpawnEvent != NULL)
             {
-                g_MapOverlayHeader.npcSpawnEvent();
+                g_MapOverlayHdr.npcSpawnEvent();
             }
         }
 
-        charaId0 = g_MapOverlayHeader.charaGroupIds[0];
-        charaId1 = g_MapOverlayHeader.charaGroupIds[1];
+        charaId0 = g_MapOverlayHdr.charaGroupIds[0];
+        charaId1 = g_MapOverlayHdr.charaGroupIds[1];
 
         for (i = 0; i < 32 && g_VBlanks < 4; i++, curCharaSpawn++)
         {
@@ -93,8 +93,9 @@ namespace Silent::Game
 
             pos = (VECTOR3*)curCharaSpawn;
 
-            if (!(g_SysWork.flags_22A4 & UnkSysFlag_4) && HAS_FLAG(ovlEnemiesStatePtr, i) && !HAS_FLAG(g_SysWork.field_228C, i) &&
-                curCharaSpawn->spawnFlags != 0 && g_SavegamePtr->gameDifficulty >= curCharaSpawn->gameDifficultyMin &&
+            if (!(g_SysWork.sysState & SysFlag_NoEnemySpawn) &&
+                HAS_FLAG(ovlEnemiesStatePtr, i) && !HAS_FLAG(g_SysWork.field_228C, i) &&
+                curCharaSpawn->flags != 0 && g_SavegamePtr->gameDifficulty >= curCharaSpawn->gameDifficultyMin &&
                 func_8008F914(curCharaSpawn->positionX, curCharaSpawn->positionZ) &&
                 !Math_Distance2dCheck(&g_SysWork.playerWork.player.position, pos, Q12(22.0f)) &&
                 (!cond || Math_Distance2dCheck(&g_SysWork.playerWork.player.position, pos, Q12(20.0f))))
@@ -117,13 +118,13 @@ namespace Silent::Game
 
                 g_SysWork.npcs[npcIdx].field_40               = i;
                 g_SysWork.npcs[npcIdx].model.controlState = 0;
-                g_SysWork.npcs[npcIdx].model.stateStep    = curCharaSpawn->spawnFlags;
+                g_SysWork.npcs[npcIdx].model.stateStep    = curCharaSpawn->flags;
                 g_SysWork.npcs[npcIdx].position.vx         = curCharaSpawn->positionX;
                 g_SysWork.npcs[npcIdx].position.vz         = curCharaSpawn->positionZ;
 
-                //Collision_Get(&coll, curCharaSpawn->positionX_0, curCharaSpawn->positionZ_8);
+                //Collision_SurfaceGet(&surface, curCharaSpawn->positionX, curCharaSpawn->positionZ);
 
-                g_SysWork.npcs[npcIdx].position.vy = coll.groundHeight;
+                g_SysWork.npcs[npcIdx].position.vy = surface.groundHeight;
                 g_SysWork.npcs[npcIdx].rotation.vy = curCharaSpawn->rotationY * 16;
 
                 SET_FLAG(&g_SysWork.npcFlags, npcIdx);
@@ -152,13 +153,13 @@ namespace Silent::Game
         return Q12_MULT_PRECISE(deltaX, deltaX) + Q12_MULT_PRECISE(deltaZ, deltaZ);
     }
 
-    /*static s32 func_800382B0(s32 arg0)
+    /*s32 func_800382B0(s32 bitIdx)
     {
         s32 i;
 
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < (ARRAY_SIZE(closestNpcInfos) - 1); i++)
         {
-            if (arg0 == field_0[i].bitIdx_0)
+            if (bitIdx == closestNpcInfos[i].bitIdx)
             {
                 return i;
             }
@@ -167,20 +168,21 @@ namespace Silent::Game
         return NO_VALUE;
     }
 
+    // Gets close NPC info index.
     static s32 func_800382EC()
     {
         s32 i;
 
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < (ARRAY_SIZE(closestNpcInfos) - 1); i++)
         {
-            if (field_0[i].bitIdx_0 == NO_VALUE)
+            if (closestNpcInfos[i].bitIdx == NO_VALUE)
             {
                 break;
             }
 
-            if ((field_40 & (1 << field_0[i].bitIdx_0)) == 0)
+            if ((idxBits & (1 << closestNpcInfos[i].bitIdx)) == 0)
             {
-                field_40 |= (1 << field_0[i].bitIdx_0);
+                idxBits |= 1 << closestNpcInfos[i].bitIdx;
                 return i;
             }
         }
@@ -190,41 +192,42 @@ namespace Silent::Game
 
     void Game_NpcUpdate(void) // 0x80038354
     {
-        typedef struct
+        /** @brief Close NPC info for radio interference. */
+        typedef struct _CloseNpcInfo
         {
-            s8      bitIdx_0;
-            u8      unk_1[3];
-            s32     field_4;
-            VECTOR3 field_8;
-        } s_func_800382EC_0;
+            s8      bitIdx;
+            // 3 bytes of padding.
+            q19_12  distanceToNpc;
+            VECTOR3 position; /** Q19.12 */
+        } s_CloseNpcInfo;
 
-        s_func_800382EC_0  field_0[3];
-        u32                field_40;
-        s32                posZShift6;
-        s32                posXShift6;
-        s32                temp_t1;
-        s32                m;
-        u8                 var_a2_2;
-        s32                j;
-        s32                var_s3;
-        s32                k;
-        s32                var_t5;
-        s32                var_v0_4;
-        s32                var_v1_3;
-        s32                temp_s0_2;
-        s32                temp_s0_4;
-        s8                 temp_s1;
-        s32                temp_v0_4;
-        s32                var_v0_5;
-        u32                temp_t3;
-        u8                 temp_a2;
-        u32                new_var;
-        s32                l;
-        s32                animDataInfoIdx;
-        s32                temp2;
-        GsCOORDINATE2*     coord;
-        s_SubCharacter*    npc;
-        s_func_800382EC_0* temp_s0_3;
+        s_CloseNpcInfo  closestNpcInfos[3];
+        u32             idxBits;
+        s32             posZShift6;
+        s32             posXShift6;
+        s32             temp_t1;
+        s32             m;
+        u8              vol;
+        s32             j;
+        s32             var_s3;
+        s32             k;
+        bool            isLowVisInterior;
+        s32             closeNpcInfoIdx0;
+        s32             var_v1_3;
+        s32             closeNpcInfoIdx1;
+        s32             balance;
+        s8              temp_s1;
+        s32             closeNpcInfoIdx;
+        s32             bitIdx;
+        q20_12          curDistToNpc;
+        u8              temp_a2;
+        q20_12          distToNpcCpy;
+        s32             l;
+        s32             animDataIdx;
+        s32             temp2;
+        GsCOORDINATE2*  boneCoords;
+        s_SubCharacter* curNpc;
+        s_CloseNpcInfo* closeNpcInfo;
 
         posXShift6 = Q12_TO_Q6(g_SysWork.playerWork.player.position.vx);
         posZShift6 = Q12_TO_Q6(g_SysWork.playerWork.player.position.vz);
@@ -232,216 +235,137 @@ namespace Silent::Game
         Demo_DemoRandSeedBackup();
         Demo_DemoRandSeedRestore();
 
-        for (j = 0; j < ARRAY_SIZE(field_0); j++)
+        for (j = 0; j < ARRAY_SIZE(closestNpcInfos); j++)
         {
-            field_0[j].bitIdx_0   = NO_VALUE;
-            field_0[j].field_4    = Q12(0.25f);
-            field_0[j].field_8.vy = 0;
+            closestNpcInfos[j].bitIdx        = NO_VALUE;
+            closestNpcInfos[j].distanceToNpc = Q12(0.25f);
+            closestNpcInfos[j].position.vy   = Q12(0.0f);
         }
 
-        for (k = 0, npc = g_SysWork.npcs; k < ARRAY_SIZE(g_SysWork.npcs); k++, npc++)
+        // Run through NPCs.
+        for (k = 0, curNpc = g_SysWork.npcs;
+            k < ARRAY_SIZE(g_SysWork.npcs);
+            k++, curNpc++)
         {
-            if (npc->model.charaId != Chara_None && npc->model.charaId != Chara_Padlock)
+            // Ignore invalid or special NPC.
+            if (curNpc->model.charaId == Chara_None ||
+                curNpc->model.charaId == Chara_Padlock)
             {
-                if (npc->model.charaId <= Chara_MonsterCybil)
-                {
-                    temp_t3 = Q12_SQUARE_PRECISE(Q12_TO_Q6(npc->position.vx) - posXShift6) +
-                            Q12_SQUARE_PRECISE(Q12_TO_Q6(npc->position.vz) - posZShift6);
-                    var_t5 = 0;
+                continue;
+            }
 
-                    if (g_MapOverlayHeader.mapInfo->spawnFlags & MapFlag_Interior)
+            // Only process enemy NPC for radio interference.
+            if (curNpc->model.charaId <= Chara_MonsterCybil)
+            {
+                // Compute distance from player to NPC.
+                curDistToNpc = Q12_SQUARE_PRECISE(Q12_TO_Q6(curNpc->position.vx) - posXShift6) +
+                            Q12_SQUARE_PRECISE(Q12_TO_Q6(curNpc->position.vz) - posZShift6);
+
+                // Check if map is low-visibility interior.
+                isLowVisInterior = false;
+                if (g_MapOverlayHdr.mapInfo->flags & MapFlag_Interior)
+                {
+                    isLowVisInterior = (g_MapOverlayHdr.mapInfo->flags & (MapFlag_OneActiveChunk |
+                                                                            MapFlag_TwoActiveChunks)) > 0;
+                }
+
+                // Run through ???
+                for (j = 0; j < 3; j++)
+                {
+                    // Check if NPC is detectable by radio.
+                    if (curNpc->health <= Q12(0.0f)             ||
+                        curNpc->flags & CharaFlag_NoRadioStatic ||
+                        curDistToNpc >= closestNpcInfos[j].distanceToNpc)
                     {
-                        var_t5 = (g_MapOverlayHeader.mapInfo->spawnFlags & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)) > 0;
+                        continue;
                     }
 
-                    for (j = 0; j < 3; j++)
+                    // Check if player and NPC occupy the same 4x4 chunk region in low-visibility interior map.
+                    if (isLowVisInterior)
                     {
-                        if (npc->health <= Q12(0.0f) || npc->flags & CharaFlag_8 || temp_t3 >= field_0[j].field_4)
+                        // Check X axis.
+                        s32 playerCell = (g_SysWork.playerWork.player.position.vx + (Q12(CHUNK_CELL_SIZE) * 4)) / Q12(CHUNK_CELL_SIZE);
+                        s32 npcCell    = (curNpc->position.vx                     + (Q12(CHUNK_CELL_SIZE) * 4)) / Q12(CHUNK_CELL_SIZE);
+                        if (npcCell != playerCell)
                         {
                             continue;
                         }
 
-                        if (var_t5 != 0)
+                        // Check Z axis.
+                        playerCell = (g_SysWork.playerWork.player.position.vz + (Q12(CHUNK_CELL_SIZE) * 4)) / Q12(CHUNK_CELL_SIZE);
+                        npcCell    = (curNpc->position.vz                     + (Q12(CHUNK_CELL_SIZE) * 4)) / Q12(CHUNK_CELL_SIZE);
+                        if (npcCell != playerCell)
                         {
-                            s32 playerCell = (g_SysWork.playerWork.player.position.vx + (CHUNK_CELL_SIZE * 4)) / CHUNK_CELL_SIZE;
-                            s32 npcCell    = (npc->position.vx                        + (CHUNK_CELL_SIZE * 4)) / CHUNK_CELL_SIZE;
-                            if (npcCell != playerCell)
-                            {
-                                continue;
-                            }
-
-                            // TODO: Unique vars for these.
-                            playerCell = (g_SysWork.playerWork.player.position.vz + (CHUNK_CELL_SIZE * 4)) / CHUNK_CELL_SIZE;
-                            npcCell    = (npc->position.vz                        + (CHUNK_CELL_SIZE * 4)) / CHUNK_CELL_SIZE;
-                            if (npcCell != playerCell)
-                            {
-                                continue;
-                            }
+                            continue;
                         }
-
-                        for (m = 2; j < m; m--)
-                        {
-                            field_0[m].bitIdx_0   = field_0[m - 1].bitIdx_0;
-                            field_0[m].field_4    = field_0[m - 1].field_4;
-                            field_0[m].field_8.vx = field_0[m - 1].field_8.vx;
-                            field_0[m].field_8.vz = field_0[m - 1].field_8.vz;
-                        }
-
-                        //temp_t1 = (u32)npc - (u32)g_SysWork.npcs;
-                        temp2   = ((((temp_t1 * 0x7E8) - (temp_t1 * 0xFD)) * 4) + temp_t1) * -0x3FFFF;
-
-                        field_0[j].bitIdx_0   = temp2 >> 3;
-                        field_0[j].field_4    = temp_t3;
-                        field_0[j].field_8.vx = npc->position.vx;
-                        field_0[j].field_8.vz = npc->position.vz;
-                        break;
                     }
 
-                    new_var = temp_t3;
-
-                    if (new_var > ((var_t5 == 0 && npc->health < Q12(0.0f)) ? SQUARE(24) : SQUARE(40)))
+                    for (m = ARRAY_SIZE(closestNpcInfos) - 1; j < m; m--)
                     {
-                        npc->model.charaId = Chara_None;
-                        SysWork_NpcFlagClear(k);
-                        CLEAR_FLAG(g_SysWork.field_228C, npc->field_40);
-                        continue;
+                        closestNpcInfos[m].bitIdx        = closestNpcInfos[m - 1].bitIdx;
+                        closestNpcInfos[m].distanceToNpc = closestNpcInfos[m - 1].distanceToNpc;
+                        closestNpcInfos[m].position.vx   = closestNpcInfos[m - 1].position.vx;
+                        closestNpcInfos[m].position.vz   = closestNpcInfos[m - 1].position.vz;
                     }
 
-                    if ((g_SysWork.field_2388.field_154.effectsInfo_0.field_0.s_field_0.field_0 & 0x2 && temp_t3 > SQUARE(15)) ||
-                        (!(g_SysWork.field_2388.field_154.effectsInfo_0.field_0.s_field_0.field_0 & 0x2) &&
-                        Camera_Distance2dGet(&npc->position) > SQUARE(15)))
-                    {
-                        npc->model.anim.flags &= ~AnimFlag_Visible;
-                    }
-                    else
-                    {
-
-                        npc->model.anim.flags |= AnimFlag_Visible;
-                    }
+                    // TODO: Demangle this pointer math.
+                    //temp_t1 = (u32)curNpc - (u32)g_SysWork.npcs;
+                    //temp2   = ((((temp_t1 * 0x7E8) - (temp_t1 * 0xFD)) * 4) + temp_t1) * -0x3FFFF;
+//
+                    //closestNpcInfos[j].bitIdx        = temp2 >> 3;
+                    //closestNpcInfos[j].distanceToNpc = curDistToNpc;
+                    //closestNpcInfos[j].position.vx   = curNpc->position.vx;
+                    //closestNpcInfos[j].position.vz   = curNpc->position.vz;
+                    break;
                 }
 
-                npc->model.anim.flags |= AnimFlag_Unlocked;
+                // TODO: Approximate Q12 values don't seem right.
 
-                animDataInfoIdx = g_CharaAnimInfoIdxs[npc->model.charaId];
-                coord           = g_CharaTypeAnimInfo[animDataInfoIdx].npcBoneCoords;
-
-                //Chara_Flag8Clear(npc);
-                Chara_DamagedFlagUpdate(npc);
-                //func_8003BD48(npc);
-
-                g_MapOverlayHeader.charaUpdateFuncs[npc->model.charaId](npc, g_CharaTypeAnimInfo[animDataInfoIdx].animFile1_8, coord);
-
-                //func_8003BE28();
-                func_80037E78(npc);
-                //func_8008A3AC(npc);
-
-                if (npc->model.anim.flags & AnimFlag_Visible)
+                // Unload distant NPC to avoid drawing.
+                distToNpcCpy = curDistToNpc;
+                if (distToNpcCpy > ((!isLowVisInterior && curNpc->health < Q12(0.0f)) ? SQUARE(24) : // Approx. `Q12(0.15f)`.
+                                                                                        SQUARE(40))) // Approx. `Q12(0.4f)`.
                 {
-                    //func_8003DA9C(npc->model.charaId, coord, 1, npc->timer_C6, (s8)npc->model.paletteIdx);
+                    curNpc->model.charaId = Chara_None;
+
+                    SysWork_NpcFlagClear(k);
+                    CLEAR_FLAG(g_SysWork.field_228C, curNpc->field_40);
+                    continue;
                 }
-            }
-        }
 
-        for (k = 2; k >= 0; k--)
-        {
-            if (field_0[k].bitIdx_0 != NO_VALUE)
-            {
-                break;
-            }
-        }
-
-        g_RadioPitchState = k + 1;
-
-        if (!(g_SavegamePtr->itemToggleFlags & ItemToggleFlag_RadioOn))
-        {
-            return;
-        }
-
-        field_40 = 0;
-
-        for (l = 0; l < ARRAY_SIZE(D_800BCDA8); l++)
-        {
-            temp_s0_2 = D_800BCDA8[l].field_1;
-            if (temp_s0_2 == NO_VALUE)
-            {
-                var_v0_4 = NO_VALUE;
-            }
-            else
-            {
-                //var_v0_4 = func_800382B0(temp_s0_2);
-            }
-
-            if (var_v0_4 >= 0)
-            {
-                D_800BCDA8[l].field_2 = var_v0_4;
-                field_40             |= 1 << temp_s0_2;
-            }
-            else
-            {
-                D_800BCDA8[l].field_1 = NO_VALUE;
-            }
-        }
-
-        for (l = 0; l < ARRAY_SIZE(D_800BCDA8); l++)
-        {
-            temp_s1 = D_800BCDA8[l].field_1;
-            if (temp_s1 == NO_VALUE)
-            {
-                //temp_v0_4 = func_800382EC();
-                if (temp_v0_4 != temp_s1)
+                // Set NPC visibility.
+                if ((g_SysWork.field_2388.field_154.effectsInfo.field_0.s_field_0.field_0 & 0x2 && curDistToNpc > SQUARE(15)) || // Approx. `Q12(0.055f)`.
+                    (!(g_SysWork.field_2388.field_154.effectsInfo.field_0.s_field_0.field_0 & 0x2) &&
+                        Camera_Distance2dGet(&curNpc->position) > SQUARE(15))) // Approx. `Q12(0.055f)`.
                 {
-                    var_v0_5 = field_0[temp_v0_4].bitIdx_0;
+                    curNpc->model.anim.flags &= ~AnimFlag_Visible;
                 }
                 else
                 {
-                    var_v0_5 = NO_VALUE;
+
+                    curNpc->model.anim.flags |= AnimFlag_Visible;
                 }
-
-                D_800BCDA8[l].field_2 = temp_v0_4;
-                D_800BCDA8[l].field_1 = var_v0_5;
             }
-        }
 
-        for (l = 0; l < ARRAY_SIZE(D_800BCDA8); l++)
-        {
-            if (D_800BCDA8[l].field_0 == NO_VALUE)
+            curNpc->model.anim.flags |= AnimFlag_Unlocked;
+
+            //animDataIdx = g_CharaAnimDataIdxs[curNpc->model.charaId];
+            //boneCoords  = g_CharaModelAnimsData[animDataIdx].boneCoords;
+
+            //Chara_Flag8Clear(curNpc);
+            //Chara_DamagedFlagUpdate(curNpc);
+            //Collision_FlagsLocationUpdate(curNpc);
+
+            //g_MapOverlayHdr.charaUpdateFuncs[curNpc->model.charaId](curNpc, g_CharaModelAnimsData[animDataIdx].activeAnmHdr, boneCoords);
+
+            //Collision_FlagsUpdate();
+            //func_80037E78(curNpc);
+            //func_8008A3AC(curNpc);
+
+            if (curNpc->model.anim.flags & AnimFlag_Visible)
             {
-                if (D_800BCDA8[l].field_1 >= 0)
-                {
-                    SD_Call((u16)(Sfx_RadioInterferenceLoop + l));
-                }
+                //func_8003DA9C(curNpc->model.charaId, boneCoords, 1, curNpc->timer_C6, (s8)curNpc->model.paletteIdx);
             }
-            else
-            {
-                var_s3 = 0;
-                if (!(g_MapOverlayHeader.mapInfo->spawnFlags & MapFlag_Interior) ||
-                    !(g_MapOverlayHeader.mapInfo->spawnFlags & (MapFlag_OneActiveChunk | MapFlag_TwoActiveChunks)))
-                {
-                    var_s3 = 1;
-                }
-
-                if (D_800BCDA8[l].field_1 >= 0)
-                {
-                    temp_s0_3 = &field_0[D_800BCDA8[l].field_2];
-                    //temp_s0_4 = Sound_StereoBalanceGet(&temp_s0_3->field_8);
-
-                    var_v1_3 = SquareRoot12(temp_s0_3->field_4 << Q12_SHIFT) >> 8;
-                    if (var_s3 != 0)
-                    {
-                        var_v1_3 >>= 1;
-                    }
-
-                    var_a2_2 = CLAMP(var_v1_3, 0, 0xFF);
-
-                    Sd_SfxAttributesUpdate(Sfx_RadioInterferenceLoop + l, temp_s0_4, var_a2_2, 0);
-                }
-                else
-                {
-                    Sd_SfxStop(Sfx_RadioInterferenceLoop + l);
-                }
-            }
-
-            D_800BCDA8[l].field_0 = D_800BCDA8[l].field_1;
         }
     }
 

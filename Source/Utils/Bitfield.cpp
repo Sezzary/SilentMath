@@ -39,10 +39,10 @@ namespace Silent::Utils
         }
     }
 
-    Bitfield::Bitfield(const std::vector<ChunkType>& bitChunks, int size)
+    Bitfield::Bitfield(const std::vector<ChunkType>& chunks, int size)
     {
-        _chunks = bitChunks;
-        _size   = std::min(size, (int)bitChunks.size() * CHUNK_SIZE);
+        _chunks = chunks;
+        _size   = std::min(size, (int)chunks.size() * CHUNK_SIZE);
     }
 
     Bitfield::Bitfield(const std::string& bitStr)

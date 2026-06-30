@@ -501,7 +501,7 @@ namespace Silent::Game
         }
 
         screenCenterX = (g_GameWork.gsScreenWidth  / 2) + 2;
-        screenCenterY = (g_GameWork.gsScreenHeightx / 2) + 2;
+        screenCenterY = (g_GameWork.gsScreenHeight / 2) + 2;
 
         if (screenMaxX < -screenCenterX || screenCenterX < screenMinX ||
             screenMaxY < -screenCenterY || screenCenterY < screenMinY)
@@ -632,9 +632,9 @@ namespace Silent::Game
                     flag0Idx = 0;
                 }
 
-                if (screenPos.vy >= -(g_GameWork.gsScreenHeightx >> 1))
+                if (screenPos.vy >= -(g_GameWork.gsScreenHeight >> 1))
                 {
-                    if ((g_GameWork.gsScreenHeightx >> 1) < screenPos.vy)
+                    if ((g_GameWork.gsScreenHeight >> 1) < screenPos.vy)
                     {
                         flag1Idx = 2;
                     }
@@ -732,9 +732,9 @@ namespace Silent::Game
                     flag0Idx = 0;
                 }
 
-                if (screenPoints->vy >= -(g_GameWork.gsScreenHeightx >> 1))
+                if (screenPoints->vy >= -(g_GameWork.gsScreenHeight >> 1))
                 {
-                    if ((g_GameWork.gsScreenHeightx >> 1) < screenPoints->vy)
+                    if ((g_GameWork.gsScreenHeight >> 1) < screenPoints->vy)
                     {
                         flag1Idx = 2;
                     }

@@ -52,13 +52,14 @@ namespace Silent
         // Fields
         // =======
 
-        SDL_Window*       _window          = nullptr;
+        SDL_Window* _window   = nullptr;
+        bool        _isPaused = false;
+        bool        _quit     = false;
+        
+        ApplicationWork   _work            = {};
+        ParallelExecutor  _frameWorker     = ParallelExecutor(1);
         std::future<void> _prevFrameFuture = std::future<void>();
-        bool              _isPaused        = false;
-        bool              _quit            = false;
-
-        ApplicationWork _work           = {};
-        Vector2         _mouseWheelAxis = Vector2::Zero;
+        Vector2           _mouseWheelAxis  = Vector2::Zero;
 
     public:
         // =============
@@ -184,8 +185,8 @@ namespace Silent
         /** @brief Toggles the mouse cursor on and off. */
         void ToggleCursor();
 
-        /** @brief Toggles the power menu on and off. */
-        void TogglePowerMenu();
+        /** @brief Toggles the debug menu on and off. */
+        void ToggleDebugMenu();
 
     private:
         // ========

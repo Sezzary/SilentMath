@@ -4,6 +4,8 @@
 
 namespace Silent::Game
 {
+    extern s_FsImageDesc D_800A900C;
+
     extern s32  g_ActiveBufferIdx;
     extern GsOT g_OrderingTable0[2];
     extern GsOT g_OrderingTable1[2];

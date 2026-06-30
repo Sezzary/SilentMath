@@ -56,6 +56,16 @@ namespace Silent::Math
         return (a < b) ? a : b;
     };
 
+    /** @brief Computes the minimum of two values and subtracts a base offset.
+     *
+     * @param a First value.
+     * @param b Second value.
+     * @param base Base value to subtract.
+     * @return Minimum of `a` and `b`, minus `base`.
+     */
+    #define MIN_EXTENT_OFFSET(a, b, base) \
+        (((a) < (b)) ? ((a) - (base)) : ((b) - (base)))
+
     /** @brief Determines the larger of two values.
      *
      * @param a First value.

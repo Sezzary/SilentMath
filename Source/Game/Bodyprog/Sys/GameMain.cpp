@@ -11,6 +11,7 @@
 #include "Game/Bodyprog/Events/GameSysStates.h"
 #include "Game/Bodyprog/GameBoot/GameLoad.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
@@ -54,13 +55,13 @@ namespace Silent::Game
         GameState_MapEvent_Update,
         GameState_ExitMovie_Update,
         nullptr,//GameState_ItemScreens_Update,
-        nullptr,//GameState_MapScreen_Update,
+        nullptr,//GameState_PaperMapScreen_Update,
         GameState_LoadSavegameScreen_Update,
         GameState_DebugMoviePlayer_Update,
         GameState_Options_Update,
         GameState_LoadStatusScreen_Update,
         GameState_LoadMapScreen_Update,
-        nullptr,//GameState_Unk15_Update
+        nullptr,//GameState_Credits_Update
     };
 
     void GameState_Boot_Update() // 0x80032D1C
@@ -79,10 +80,7 @@ namespace Silent::Game
                 g_GameWork.background2dColor.b = 0;
 
                 Screen_Init(SCREEN_WIDTH, false);
-                g_SysWork.counters_1C[1]              = 0;
-                g_GameWork.gameStateSteps[1] = 0;
-                g_GameWork.gameStateSteps[2] = 0;
-                g_GameWork.gameStateSteps[0]++;
+                Game_StateStepIncrement(0);
                 break;
 
             case 1:
@@ -96,10 +94,7 @@ namespace Silent::Game
                     }
                     else
                     {
-                        g_SysWork.counters_1C[1]              = 0;
-                        g_GameWork.gameStateSteps[1] = 0;
-                        g_GameWork.gameStateSteps[2] = 0;
-                        g_GameWork.gameStateSteps[0]++;
+                        Game_StateStepIncrement(0);
                     }
                 }
                 break;

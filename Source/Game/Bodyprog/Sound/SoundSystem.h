@@ -54,6 +54,17 @@ namespace Silent::Game
         AudioLoadState_Finalize  = 9
     };
 
+    /** @brief Audio streaming states. Returned by `Sd_AudioStreamingCheck`. */
+    enum e_AudioStreamingState
+    {
+        AudioStreamingState_None          = 0,
+        AudioStreamingState_XaPlaying     = 1,
+        AudioStreamingState_VabPlaying    = 2,
+        AudioStreamingState_XaLoading     = 3,
+        AudioStreamingState_XaLoadPending = 4,
+        AudioStreamingState_5             = 5 // TODO: Maybe `VabLoadPending`?
+    };
+
     /** @brief XA load states. */
     enum e_XaLoadState
     {
@@ -255,11 +266,9 @@ namespace Silent::Game
     /** @brief Checks if an audio file is loading, is going to be loaded, or an XA file is playing.
      * Depending of the audio file, it marks different numbers.
      *
-     * 0 = Nothing currently loading.
-     * 1 = XA file playing.
-     * 2 = VAB file loading.
-     * 3 = XA file loading.
-     * 4 and 5 = TODO: Unknown. Requires further investigation about `D_800C37DC` functionallity.
+     * TODO: Unknown `AudioStreamingState_5` state, maybe VAB load is pending?
+     *
+     * @return `e_AudioStreamingState` with the current state.
      */
     u8 Sd_AudioStreamingCheck(void);
 

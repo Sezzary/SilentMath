@@ -6,10 +6,12 @@
 
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
+#include "Game/Bodyprog/Events/MapMsg.h"
 #include "Game/Bodyprog/GameBoot/GameBoot.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sound/SoundSystem.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
@@ -331,7 +333,7 @@ namespace Silent::Game
 
                     if (g_MainMenu_SelectedEntry == MainMenuEntry_Start)
                     {
-                        //Chara_PositionSet(&g_MapOverlayHeader.mapPoints[0]);
+                        //Chara_PositionSet(&g_MapOverlayHdr.mapPoints[0]);
                     }
 
                     //MemCard_SysDisable();

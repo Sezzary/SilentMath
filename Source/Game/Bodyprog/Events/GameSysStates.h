@@ -2,13 +2,13 @@
 
 namespace Silent::Game
 {
-    struct s_800BCDA8;
     struct s_EventData;
     struct s_MapPoint2d;
+    struct s_RadioNpcInfo;
 
     extern s_EventData* g_ItemTriggerEvents[];
 
-    extern s_800BCDA8 D_800BCDA8[2];
+    extern s_RadioNpcInfo g_RadioNpcInfos[2];
 
     extern s_MapPoint2d D_800BCDB0;
 
@@ -49,7 +49,7 @@ namespace Silent::Game
      */
     void AreaLoad_TransitionSound();
 
-    s8 func_80039F90();
+    s8 AreaLoad_TransitionFlags();
 
     void SysState_ReadMessage_Update();
 

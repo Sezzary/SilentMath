@@ -739,7 +739,7 @@ namespace Silent::Game
 
                 if (statusPtr->processId_0 == MemCardProcess_Load_Game)
                 {
-                    memcpy(&g_GameWorkConst->config, &g_MemCard_SaveWork.userConfig_418.config, sizeof(s_SaveUserConfig));
+                    memcpy(&g_GameWorkConst->config, &g_MemCard_SaveWork.userConfig_418.config, sizeof(s_OptionsConfig));
                 }
                 else
                 {
@@ -1015,7 +1015,7 @@ namespace Silent::Game
         MemCard_ChecksumUpdate(&saveInfo->footer_FC, (s8*)saveInfo, sizeof(s_MemCard_SaveHeader));
     }
 
-    void MemCard_UserConfigCopy(s_Savegame_UserConfigs* dest, s_SaveUserConfig* src) // 0x8002FBB4
+    void MemCard_UserConfigCopy(s_Savegame_UserConfigs* dest, s_OptionsConfig* src) // 0x8002FBB4
     {
         //bzero(dest, sizeof(s_Savegame_UserConfigs));
         //dest->config = *src;

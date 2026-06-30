@@ -2,7 +2,7 @@
 
 namespace Silent::Game
 {
-    struct s_MapOverlayHeader;
+    struct s_MapOverlayHdr;
     struct s_SysWork;
 
     /** @brief Initializes the camera subsystem.
@@ -10,7 +10,7 @@ namespace Silent::Game
      * @param mapoverlay_ptr Active map overlay header.
      * @param chr_pos Character position.
      */
-    void vcInitCamera(s_MapOverlayHeader* mapoverlay_ptr, const VECTOR3* chr_pos);
+    void vcInitCamera(s_MapOverlayHdr* mapoverlay_ptr, const VECTOR3* chr_pos);
 
     /** @brief Warps the camera in relation to a character position.
      *
@@ -99,5 +99,5 @@ namespace Silent::Game
      * @param soundPos Sound source position.
      * @return Stereo sound balance in the range [-127, 127], where values affect the left-right channel balance.
      */
-    s8 Sound_StereoBalanceGet(const VECTOR3* soundPos);
+    s8 Vc_StereoBalanceGet(const VECTOR3* soundPos);
 }

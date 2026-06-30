@@ -4,6 +4,7 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Screens/Options/Options.h"
 #include "Game/Screens/Options/SelectionGraphics.h"
 
@@ -30,28 +31,28 @@ namespace Silent::Game
 
             case BrightnessMenuState_2:
                 // Set config.
-                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickLeft)
+                if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickLeft)
                 {
-                    if (g_GameWork.config.optBrightness_22 != 0)
+                    if (g_GameWork.config.brightness != 0)
                     {
-                        g_GameWork.config.optBrightness_22--;
+                        g_GameWork.config.brightness--;
                         //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
-                if (g_Controller0->btnsPulsed_18 & ControllerFlag_LStickRight)
+                if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickRight)
                 {
-                    if (g_GameWork.config.optBrightness_22 < 7)
+                    if (g_GameWork.config.brightness < 7)
                     {
-                        g_GameWork.config.optBrightness_22++;
+                        g_GameWork.config.brightness++;
                         //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
 
                 // Fade screen and leave menu.
-                if (g_Controller0->btnsClicked_10 & (g_GameWork.config.controllerConfig_0.enter |
-                                                    g_GameWork.config.controllerConfig_0.cance))
+                if (g_Controller0->clickedBtnFlags & (g_GameWork.config.controllerConfig.enter |
+                                                    g_GameWork.config.controllerConfig.cancel))
                 {
-                    if (g_Controller0->btnsClicked_10 & g_GameWork.config.controllerConfig_0.enter)
+                    if (g_Controller0->clickedBtnFlags & g_GameWork.config.controllerConfig.enter)
                     {
                         //Sd_PlaySfx(Sfx_Confirm, 0, Q8_CLAMPED(0.25f));
                     }
@@ -94,7 +95,7 @@ namespace Silent::Game
             //Screen_BackgroundImgDraw(&g_BrightnessScreenImg1);
         }
 
-        //func_8003E5E8(g_GameWork.config.optBrightness_22);
+        //func_8003E5E8(g_GameWork.config.brightness);
         Options_BrightnessMenu_ArrowsDraw();
         Options_BrightnessMenu_ConfigDraw();
     }
@@ -105,7 +106,7 @@ namespace Silent::Game
         //Gfx_StringSetColor(StringColorId_White);
         //Gfx_StringSetPosition(SCREEN_POSITION_X(25.0f), SCREEN_POSITION_Y(79.5f));
         //Gfx_StringDraw("LEVEL_________", 20);
-        //Gfx_StringDrawInt(1, g_GameWork.config.optBrightness_22);
+        //Gfx_StringDrawInt(1, g_GameWork.config.brightness);
     }
 
     void Options_BrightnessMenu_ArrowsDraw()
@@ -124,11 +125,11 @@ namespace Silent::Game
 
         // Determine UI movement direction.
         int dir      = 0;
-        if (g_Controller0->btnsHeld_C & ControllerFlag_LStickLeft)
+        if (g_Controller0->heldBtnFlags & ControllerFlag_LStickLeft)
         {
             dir = 1;
         }
-        else if (g_Controller0->btnsHeld_C & ControllerFlag_LStickRight)
+        else if (g_Controller0->heldBtnFlags & ControllerFlag_LStickRight)
         {
             dir = 2;
         }

@@ -32,8 +32,11 @@ namespace Silent::Utils
         // Constructors
         // =============
 
-        /** @brief Creates a default instance. */
-        ParallelExecutor();
+        /** @brief Creates an instance with a specified thread count.
+         *
+         * @param threadCount Worker thread count. If `NO_VALUE`, determined automatically by hardware availability.
+         */
+        ParallelExecutor(int threadCount = NO_VALUE);
 
         /** @brief Gracefully destroys the instance, notifying threads to shut down. */
         ~ParallelExecutor();
@@ -98,7 +101,7 @@ namespace Silent::Utils
         void HandleTask(const ParallelTask& task, std::atomic<int>& counter, std::promise<void>& promise);
     };
 
-    /** @brief Parallel mutex lock. */
+    /** @brief Parallel mutex lock. Behaves like `std::lock_guard`. */
     class ParallelLock
     {
     private:

@@ -281,18 +281,18 @@ namespace Silent
         }
     }
 
-    void ApplicationManager::TogglePowerMenu()
+    void ApplicationManager::ToggleDebugMenu()
     {
-        if (!_work.Options->EnablePowerMode)
+        if (!_work.Options->EnableDebugMode)
         {
             return;
         }
 
         Debug::g_Work.EnablePowerMenu = !Debug::g_Work.EnablePowerMenu;
-        Debug::g_Work.Page            = Debug::g_Work.EnablePowerMenu ? Debug::Page::Renderer : Debug::Page::None;
+        Debug::g_Work.Page            =  Debug::g_Work.EnablePowerMenu ? Debug::Page::Renderer : Debug::Page::None;
         ToggleCursor();
 
-        Debug::Log("Toggled power menu.", Debug::LogLevel::Info, Debug::LogMode::All, true);
+        Debug::Log("Toggled debug menu.", Debug::LogLevel::Info, Debug::LogMode::All, true);
     }
 
     void ApplicationManager::Update()
@@ -304,7 +304,7 @@ namespace Silent
         //if (_work.Clock.GetTicks() > 0)
         for (int i = 0; i < _work.Clock.GetTicks(); i++)
         {
-            Entry();
+            //Entry();
         }
 
         // Update audio.
@@ -323,7 +323,7 @@ namespace Silent
 
     void ApplicationManager::Render()
     {
-        // Wait for previous frame to finish rendering.
+        // Wait for previous frame to finish.
         if (_prevFrameFuture.valid())
         {
             _prevFrameFuture.wait();
@@ -334,14 +334,7 @@ namespace Silent
         _work.Renderer->PrepareFrameResources();
 
         // Render frame asynchronously.
-        if (_work.Options->EnableParallelism)
-        {
-            _prevFrameFuture = std::async(std::launch::async, TASK(_work.Renderer->Update()));
-        }
-        else
-        {
-            _work.Renderer->Update();
-        }
+        _prevFrameFuture = _frameWorker.AddTask(TASK(_work.Renderer->Update()));
     }
 
     void ApplicationManager::PollEvents()
@@ -414,7 +407,8 @@ namespace Silent
                 }
                 case SDL_EVENT_MOUSE_WHEEL:
                 {
-                    // Update mouse wheel axis input state. Cannot be done by input subsystem due to SDL limitations.
+                    // Update mouse wheel axis input state.
+                    // @note Cannot be done by input subsystem due to SDL limitations.
                     _mouseWheelAxis = Vector2(event.wheel.x, event.wheel.y);
                     break;
                 }

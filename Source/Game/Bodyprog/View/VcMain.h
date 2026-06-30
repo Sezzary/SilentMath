@@ -39,7 +39,20 @@ namespace Silent::Game
 
     void vcSetFirstCamWork(VECTOR3* cam_pos, q3_12 chara_eye_ang_y, bool use_through_door_cam_f);
 
-    void func_80080B58(GsCOORDINATE2* arg0, SVECTOR* rot, VECTOR3* pos);
+    /** @brief Builds the cutscene view matrix from a bone's orientation, anchored at an explicit camera position.
+     *
+     * @note
+     * - Uses `boneCoord`'s world orientation as the view direction (optionally tweaked by `rotOffset`).
+     * - Overwrites the translation with `camPos`, so the view tracks the animated bone while the
+     *   camera stays pinned to a scripted position.
+     * - Sets `updateLookAtMat` so `vcSetDataToVwSystem` applies the matrix directly, bypassing
+     *   normal camera logic.
+     *
+     * @param boneCoord Bone coord whose orientation drives the view direction.
+     * @param rotOffset Extra rotation offset on the bone orientation (ZXY, negated). Typically `SVECTOR_Zero`.
+     * @param camPos World-space camera position (Q19.12). Replaces the bone's translation.
+     */
+    void Vc_SetLookAtMatFromBoneCoord(GsCOORDINATE2* boneCoord, const SVECTOR* rotOffset, const VECTOR3* pos);
 
     void vcWorkSetFlags(VC_FLAGS enable, VC_FLAGS disable);
 
@@ -85,7 +98,7 @@ namespace Silent::Game
 
     VC_CAM_MV_TYPE vcRetCurCamMvType(VC_WORK* w_p);
 
-    bool func_8008150C(q19_12 posX, q19_12 posZ);
+    bool Vc_IsInSelfViewRestrictedZone(q19_12 posX, q19_12 posZ);
 
     bool vcRetThroughDoorCamEndF(VC_WORK* w_p);
 

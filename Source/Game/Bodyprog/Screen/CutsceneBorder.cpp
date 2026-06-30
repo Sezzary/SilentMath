@@ -146,7 +146,7 @@ namespace Silent::Game
                 g_BlackBorderShade -= Q12_MULT_FLOAT_PRECISE(g_DeltaTime, 1.0f);
                 if (g_BlackBorderShade <= Q12(0.0f))
                 {
-                    g_BlackBorderShade = Q12(0.0f);
+                    g_BlackBorderShade            = Q12(0.0f);
                     g_SysWork.cutsceneBorderState = 0;
                     return;
                 }
@@ -155,9 +155,9 @@ namespace Silent::Game
                 break;
 
             case 0:
-                g_BlackBorderShade    = Q12(0.0f);
-                g_SysWork.cutsceneBorderState    = 1;
-                g_SysWork.flags_22A4 &= ~UnkSysFlag_3;
+                g_BlackBorderShade            = Q12(0.0f);
+                g_SysWork.cutsceneBorderState = 1;
+                g_SysWork.sysState           &= ~SysFlag_CutsceneActive;
                 return;
 
             case 1:
@@ -169,9 +169,9 @@ namespace Silent::Game
         //AddPrim(ot, &poly[2]);
         //AddPrim(ot, drMode);
 
-        if (!(g_SysWork.flags_22A4 & UnkSysFlag_3))
+        if (!(g_SysWork.sysState & SysFlag_CutsceneActive))
         {
-            vcChangeProjectionValue(g_GameWork.gsScreenHeightx + Q12_MULT(377 - g_GameWork.gsScreenHeightx, g_BlackBorderShade));
+            vcChangeProjectionValue(g_GameWork.gsScreenHeight + Q12_MULT(377 - g_GameWork.gsScreenHeight, g_BlackBorderShade));
         }
     }
 }

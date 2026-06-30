@@ -4,10 +4,11 @@ namespace Silent::Renderer{ enum class ScaleMode; }
 
 namespace Silent::Debug
 {
+    constexpr bool IS_DEBUG_BUILD =
 #ifdef _DEBUG
-    constexpr bool IS_DEBUG_BUILD = true;
+                                    true;
 #else
-    constexpr bool IS_DEBUG_BUILD = false;
+                                    false;
 #endif
 
     /** @brief Log severity levels. */
@@ -72,10 +73,10 @@ namespace Silent::Debug
     /** @brief Gracefully shuts down the logger. */
     void Deinitialize();
 
-    /** @brief Updates the power menu. */
+    /** @brief Updates the debug menu. */
     void Update();
 
-    /** @brief Displays a message in the power menu.
+    /** @brief Displays a message in the debug menu.
      *
      * @param msg Message to display.
      */
@@ -104,7 +105,7 @@ namespace Silent::Debug
     /** @brief Stops the debug timer and prints the execution time in microseconds via a `Message` call. Placed after the relevant code block. */
     void EndTimer();
 
-    /** @brief Creates a power menu and submits it to the renderer for drawing.
+    /** @brief Creates a debug menu and submits it to the renderer for drawing.
      *
      * @param drawFunc Function defining the GUI to construct.
      */

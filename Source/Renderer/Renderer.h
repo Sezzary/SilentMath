@@ -203,9 +203,9 @@ namespace Silent::Renderer
         // Debug
         // ======
 
-        /** @brief Submits a function used to construct an ImGui power menu for drawing.
+        /** @brief Submits a function used to construct an ImGui debug menu for drawing.
          *
-         * @param drawFunc Function defining a power menu.
+         * @param drawFunc Function defining a debug menu.
          */
         void SubmitDebugGui(std::function<void()> drawFunc);
 
@@ -308,7 +308,7 @@ namespace Silent::Renderer
          */
         virtual void DrawViewport() = 0 ;
 
-        /** @brief Draws a power menu on top of the viewport to the swapchain.
+        /** @brief Draws a debug menu on top of the viewport to the swapchain.
          * Called after `DrawViewport`.
          */
         virtual void DrawPowerMenu() = 0;

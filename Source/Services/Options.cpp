@@ -167,7 +167,7 @@ namespace Silent::Services
 
     void OptionsManager::Initialize()
     {
-        _options.EnablePowerMode = Debug::IS_DEBUG_BUILD;
+        _options.EnableDebugMode = Debug::IS_DEBUG_BUILD;
         SetDefaultOptions();
     }
 

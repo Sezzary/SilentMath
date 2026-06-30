@@ -114,7 +114,7 @@ namespace Silent::Utils
         // Debug
         // ======
 
-        /** @brief Displays debug information in the power menu. */
+        /** @brief Displays debug information in the debug menu. */
         void Debug() const;
 
     private:

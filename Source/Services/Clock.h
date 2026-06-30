@@ -85,7 +85,6 @@ namespace Silent::Services
          * @return Current uptime in microseconds.
          */
         uint64 GetUptimeMicroseconds() const;
-
     };
 
     /** @brief Converts seconds to ticks.

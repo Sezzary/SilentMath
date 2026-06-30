@@ -47,7 +47,7 @@ namespace Silent::Game
 
     /** @brief Camera path data.
      *
-     * @note In SH2, the `.cam` files contain this struct, while in SH1 this is part of `s_MapOverlayHeader`.
+     * @note In SH2, the `.cam` files contain this struct, while in SH1 this is part of `s_MapOverlayHdr`.
      */
     struct VC_ROAD_DATA
     {

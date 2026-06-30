@@ -258,10 +258,10 @@ namespace Silent::Game
         s_Savegame_Footer footer_27C;
     } s_Savegame_Container;
 
-    /** @brief Contains `s_SaveUserConfig` data padded to 128 bytes with a footer at the end containing checksum + magic. */
+    /** @brief Contains `s_OptionsConfig` data padded to 128 bytes with a footer at the end containing checksum + magic. */
     typedef struct _SaveUserConfigContainer
     {
-        s_SaveUserConfig config;
+        s_OptionsConfig config;
         u8                pad_38[68];
         s_Savegame_Footer footer_7C;
     } s_Savegame_UserConfigs;
@@ -451,7 +451,7 @@ namespace Silent::Game
     void MemCard_SaveInfoClear(s_MemCard_SaveHeader* saveInfo);
 
     /** Copies user config into an `s_Savegame_UserConfigs` and calculates footer checksum. */
-    void MemCard_UserConfigCopy(s_Savegame_UserConfigs* dest, s_SaveUserConfig* src);
+    void MemCard_UserConfigCopy(s_Savegame_UserConfigs* dest, s_OptionsConfig* src);
 
     s32 MemCard_BiggestTotalSavegameCountGet(s32 deviceId);
 

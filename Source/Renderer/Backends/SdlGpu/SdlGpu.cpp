@@ -668,7 +668,7 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawPowerMenu()
     {
-        // If power menu is disabled, return early.
+        // If debug menu is disabled, return early.
         if (!Debug::g_Work.EnablePowerMenu)
         {
             return;

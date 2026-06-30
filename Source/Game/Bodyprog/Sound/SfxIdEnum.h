@@ -3,7 +3,7 @@
 namespace Silent::Game
 {
     // TODO: Rename to `SfxId`. There's a name clash with an SFX struct.
-    typedef enum _SfxId
+    enum e_SfxId
     {
         Sfx_Base = 1280,                  // Base SFX (not valid in itself).
 
@@ -30,7 +30,7 @@ namespace Silent::Game
         Sfx_DoorClose0       = Sfx_Base + 0x1E, // 1310
         Sfx_FootstepConcrete = Sfx_Base + 0x1F, // 1311
         Sfx_FootstepGrass    = Sfx_Base + 0x20, // 1312
-        Sfx_Unk1313          = 1313,
+        Sfx_Unk1313          = 1313, // Harry footstep for unknown material.
         Sfx_Stumble0         = Sfx_Base + 0x22, // 1314
 
         Sfx_Unk1316               = 1316,
@@ -48,8 +48,8 @@ namespace Silent::Game
         Sfx_Unk1328               = 1328,
         Sfx_Unk1329               = 1329,
 
-        Sfx_Unk1330       = 1330,
-        Sfx_Unk1331       = 1331,
+        Sfx_Unk1330       = 1330, // Harry footstep for unknown material.
+        Sfx_Unk1331       = 1331, // Harry footstep for unknown material.
         Sfx_FootstepMetal = Sfx_Base + 0x34, // 1332
         Sfx_Stumble1      = Sfx_Base + 0x35, // 1333
         Sfx_DoorJammed    = Sfx_Base + 0x36, // 1334
@@ -70,7 +70,7 @@ namespace Silent::Game
         Sfx_Unk1350 = 1350,
         Sfx_Unk1351 = 1351, // } Pair.
         Sfx_Unk1352 = 1352, // }
-        Sfx_Unk1353 = 1353,
+        Sfx_CherylFootstep = 1353,
         Sfx_Unk1354 = 1354,
         Sfx_Unk1355 = 1355,
         Sfx_Unk1356 = 1356,
@@ -97,7 +97,7 @@ namespace Silent::Game
         Sfx_Unk1385 = 1385,
         Sfx_Unk1386 = 1386,
         Sfx_Unk1387 = 1387,
-        Sfx_Unk1388 = 1388,
+        Sfx_Unk1388 = 1388, // Harry footstep for unknown material.
         Sfx_Unk1389 = 1389,
 
         Sfx_Unk1390 = 1390,
@@ -116,14 +116,14 @@ namespace Silent::Game
         Sfx_Unk1403 = 1403,
         Sfx_Unk1404 = 1404,
         Sfx_RomperFootstep = 1405,
-        Sfx_Unk1406 = 1406,
+        Sfx_Unk1406 = 1406, // Groaner.
 
-        Sfx_Unk1409 = 1409,
-        Sfx_Unk1410 = 1410,
+        Sfx_Unk1409 = 1409, // Groaner.
+        Sfx_Unk1410 = 1410, // Groaner.
         Sfx_Unk1411 = 1411, // Groaner.
 
-        Sfx_Unk1413 = 1413, // Groaner footstep?
-        Sfx_Unk1414 = 1414,
+        Sfx_GroanerFootstep = 1413,
+        Sfx_Unk1414 = 1414, // Groaner.
 
         Sfx_Unk1416 = 1416,
         Sfx_Unk1417 = 1417,
@@ -157,10 +157,10 @@ namespace Silent::Game
         Sfx_Unk1444 = 1444, // }
         Sfx_Unk1445 = 1445, // }
         Sfx_Unk1446 = 1446,
-
+        Sfx_CatMeow = 1447,
         Sfx_Unk1448 = 1448,
         Sfx_Unk1449 = 1449,
-
+        Sfx_Unk1450 = 1450,
         Sfx_Unk1451 = 1451,
         Sfx_Unk1452 = 1452,
         Sfx_Unk1453 = 1453,
@@ -172,20 +172,20 @@ namespace Silent::Game
         Sfx_Unk1459 = 1459, // }
         Sfx_Unk1460 = 1460,
         Sfx_Unk1461 = 1461,
-
+        Sfx_Unk1462 = 1462,
+        Sfx_Unk1463 = 1463,
         Sfx_Unk1464 = 1464,
         Sfx_Unk1465 = 1465,
         Sfx_Unk1466 = 1466,
         Sfx_Unk1467 = 1467,
+        Sfx_Unk1468 = 1468,
 
         Sfx_Unk1471 = 1471,
         Sfx_Unk1472 = 1472,
-
         Sfx_Unk1473 = 1473,
-
         Sfx_Unk1474 = 1474,
         Sfx_Unk1475 = 1475,
-
+        Sfx_Unk1476 = 1476,
         Sfx_Unk1477 = 1477,
         Sfx_Unk1478 = 1478,
         Sfx_Unk1479 = 1479,
@@ -210,8 +210,8 @@ namespace Silent::Game
         Sfx_Unk1498 = 1498,
         Sfx_Unk1499 = 1499,
         Sfx_Unk1500 = 1500,
-        Sfx_Unk1501 = 1501,
-        Sfx_Unk1502 = 1502,
+        Sfx_Unk1501 = 1501, // } Played when opening the load screen.
+        Sfx_Unk1502 = 1502, // }
         Sfx_Unk1503 = 1503,
         Sfx_Unk1504 = 1504, // } Pair.
         Sfx_Unk1505 = 1505, // }
@@ -222,7 +222,7 @@ namespace Silent::Game
         Sfx_Unk1523 = 1523,
         Sfx_Unk1524 = 1524,
 
-        Sfx_Unk1525 = 1525,
+        Sfx_Unk1525 = 1525, // Bloodsucker.
         Sfx_Unk1526 = 1526,
         Sfx_Unk1527 = 1527,
         Sfx_Unk1528 = 1528,
@@ -240,14 +240,14 @@ namespace Silent::Game
         Sfx_Unk1540 = 1540,
         Sfx_Unk1541 = 1541, // Door jammed alt.
         Sfx_Unk1542 = 1542,
-        Sfx_Unk1543 = 1543,
+        Sfx_Unk1543 = 1543, // Harry footstep for unknown material.
 
         Sfx_Unk1552 = 1552,
         Sfx_Unk1553 = 1553,
         Sfx_Unk1554 = 1554,
         Sfx_Unk1555 = 1555,
         Sfx_Unk1556 = 1556,
-        Sfx_Unk1557 = 1557,
+        Sfx_Unk1557 = 1557, // Harry footstep for unknown material.
 
         Sfx_Unk1559 = 1559,
 
@@ -256,7 +256,7 @@ namespace Silent::Game
         Sfx_Unk1565 = 1565,
 
         Sfx_Unk1567 = 1567,
-
+        Sfx_Unk1568 = 1568,
         Sfx_Unk1569 = 1569,
         Sfx_Unk1570 = 1570,
         Sfx_Unk1571 = 1571,
@@ -265,14 +265,14 @@ namespace Silent::Game
         Sfx_Unk1574 = 1574,
         Sfx_Unk1575 = 1575,
         Sfx_Unk1576 = 1576,
-        Sfx_Unk1577 = 1577,
-        Sfx_Unk1578 = 1578,
-        Sfx_Unk1579 = 1579,
-        Sfx_Unk1580 = 1580,
-        Sfx_Unk1581 = 1581,
-        Sfx_Unk1582 = 1582,
-        Sfx_Unk1583 = 1583,
-        Sfx_Unk1584 = 1584,
+        Sfx_Unk1577 = 1577, // } Hanged Scratcher.
+        Sfx_Unk1578 = 1578, // }
+        Sfx_Unk1579 = 1579, // }
+        Sfx_Unk1580 = 1580, // }
+        Sfx_Unk1581 = 1581, // }
+        Sfx_Unk1582 = 1582, // }
+        Sfx_Unk1583 = 1583, // }
+        Sfx_Unk1584 = 1584, // }
         Sfx_Unk1585 = 1585,
         Sfx_Unk1586 = 1586,
         Sfx_Unk1587 = 1587,
@@ -376,11 +376,6 @@ namespace Silent::Game
 
         Sfx_Unk1699 = 1699,
 
-        Sfx_Unk1840 = 1840,
-        Sfx_Unk1841 = 1841,
-        Sfx_Unk1842 = 1842,
-        Sfx_Unk1843 = 1843,
-
         Sfx_Unk1916 = 1916,
 
         /** Values starting from `4096` are XA files defined in `g_XaItemData` struct.
@@ -419,6 +414,11 @@ namespace Silent::Game
 
         Sfx_XaAudio657 = 4753,
 
+        Sfx_XaAudio723 = 4819,
+        Sfx_XaAudio724 = 4820,
+        Sfx_XaAudio725 = 4821,
+        Sfx_XaAudio726 = 4822,
+
         Sfx_Hack = NO_VALUE, // @hack Force enum to be treated as `s32`.
-    } e_SfxId;
+    };
 }

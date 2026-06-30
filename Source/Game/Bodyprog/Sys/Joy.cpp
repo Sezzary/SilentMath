@@ -21,7 +21,7 @@ namespace Silent::Game
         s_ControllerData* cont;
 
         cont = &g_GameWork.controllers[0];
-        memcpy(&cont->analogController_0, &g_GameWork.rawController, sizeof(s_AnalogController));
+        memcpy(&cont->analogController, &g_GameWork.rawController, sizeof(s_AnalogController));
     }
 
     void Joy_Update() // 0x8003446C
@@ -45,44 +45,44 @@ namespace Silent::Game
         // Update controller button flags.
         for (i = CONTROLLER_COUNT, cont = g_Controller0; i > 0; i--, cont++)
         {
-            prevBtnsHeld = cont->btnsHeld_C;
+            prevBtnsHeld = cont->heldBtnFlags;
 
             // Update held button flags.
-            if (cont->analogController_0.status == 0xFF)
+            if (cont->analogController.status == 0xFF)
             {
-                cont->btnsHeld_C = ControllerFlag_None;
+                cont->heldBtnFlags = ControllerFlag_None;
             }
             else
             {
-                cont->btnsHeld_C = ~cont->analogController_0.digitalButtons & 0xFFFF;
+                cont->heldBtnFlags = ~cont->analogController.digitalButtons & 0xFFFF;
             }
 
             // TODO: Demagic hex values.
-            //ControllerData_AnalogToDigital(cont, (*(u16*)&cont->analogController_0.status & 0x5300) == 0x5300);
+            //ControllerData_AnalogToDigital(cont, (*(u16*)&cont->analogController.status & 0x5300) == 0x5300);
 
             // Directional held flag sanitation? TODO: Find out what it's doing.
-            cont->btnsHeld_C = cont->btnsHeld_C | (((cont->btnsHeld_C << 20) | (cont->btnsHeld_C << 8)) &
+            cont->heldBtnFlags = cont->heldBtnFlags | (((cont->heldBtnFlags << 20) | (cont->heldBtnFlags << 8)) &
                                                     (ControllerFlag_LStickUp | ControllerFlag_LStickRight | ControllerFlag_LStickDown | ControllerFlag_LStickLeft));
 
             // Clear up/down held flags if concurrent.
-            if ((cont->btnsHeld_C & (ControllerFlag_LStickUp | ControllerFlag_LStickDown)) == (ControllerFlag_LStickUp | ControllerFlag_LStickDown))
+            if ((cont->heldBtnFlags & (ControllerFlag_LStickUp | ControllerFlag_LStickDown)) == (ControllerFlag_LStickUp | ControllerFlag_LStickDown))
             {
-                cont->btnsHeld_C &= ~(ControllerFlag_LStickUp | ControllerFlag_LStickDown);
+                cont->heldBtnFlags &= ~(ControllerFlag_LStickUp | ControllerFlag_LStickDown);
             }
 
             // Clear left/right held flags if concurrent.
-            if ((cont->btnsHeld_C & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft)) == (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+            if ((cont->heldBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft)) == (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
             {
-                cont->btnsHeld_C = cont->btnsHeld_C & ~(ControllerFlag_LStickRight | ControllerFlag_LStickLeft);
+                cont->heldBtnFlags = cont->heldBtnFlags & ~(ControllerFlag_LStickRight | ControllerFlag_LStickLeft);
             }
 
             // Update clicked and released button flags.
-            cont->btnsClicked_10  = ~prevBtnsHeld & cont->btnsHeld_C;
-            cont->btnsReleased_14 =  prevBtnsHeld & ~cont->btnsHeld_C;
+            cont->clickedBtnFlags  = ~prevBtnsHeld & cont->heldBtnFlags;
+            cont->releasedBtnFlags =  prevBtnsHeld & ~cont->heldBtnFlags;
 
             // Update pulse ticks.
-            pulseTicks = cont->pulseTicks_8;
-            if (cont->btnsHeld_C != prevBtnsHeld)
+            pulseTicks = cont->pulseTicks;
+            if (cont->heldBtnFlags != prevBtnsHeld)
             {
                 pulseTicks = 0;
             }
@@ -94,34 +94,34 @@ namespace Silent::Game
             // Update pulsed button flags.
             if (pulseTicks >= PULSE_INITIAL_INTERVAL_TICKS)
             {
-                cont->btnsPulsed_18 = cont->btnsHeld_C;
-                pulseTicks          = PULSE_INITIAL_INTERVAL_TICKS - PULSE_INTERVAL_TICKS;
+                cont->pulsedBtnFlags = cont->heldBtnFlags;
+                pulseTicks           = PULSE_INITIAL_INTERVAL_TICKS - PULSE_INTERVAL_TICKS;
             }
             else
             {
-                cont->btnsPulsed_18 = cont->btnsClicked_10;
+                cont->pulsedBtnFlags = cont->clickedBtnFlags;
             }
 
-            btnsPulsed             = cont->btnsPulsed_18;
-            cont->pulseTicks_8     = pulseTicks;
-            cont->btnsPulsedGui_1C = btnsPulsed;
+            btnsPulsed              = cont->pulsedBtnFlags;
+            cont->pulseTicks        = pulseTicks;
+            cont->pulsedGuiBtnFlags = btnsPulsed;
 
             // Clear left/right pulse flags if concurrent.
             if ((btnsPulsed & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft)) == (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
             {
-                cont->btnsPulsedGui_1C &= ~(ControllerFlag_LStickRight | ControllerFlag_LStickLeft);
+                cont->pulsedGuiBtnFlags &= ~(ControllerFlag_LStickRight | ControllerFlag_LStickLeft);
             }
 
             // Clear up/down pulse flags if concurrent.
-            if ((cont->btnsPulsedGui_1C & (ControllerFlag_LStickUp | ControllerFlag_LStickDown)) == (ControllerFlag_LStickUp | ControllerFlag_LStickDown))
+            if ((cont->pulsedGuiBtnFlags & (ControllerFlag_LStickUp | ControllerFlag_LStickDown)) == (ControllerFlag_LStickUp | ControllerFlag_LStickDown))
             {
-                cont->btnsPulsedGui_1C &= ~(ControllerFlag_LStickUp | ControllerFlag_LStickDown);
+                cont->pulsedGuiBtnFlags &= ~(ControllerFlag_LStickUp | ControllerFlag_LStickDown);
             }
 
             // Clear left/right pulse flags if up/down is concurrent.
-            if ((cont->btnsPulsedGui_1C & (ControllerFlag_LStickUp | ControllerFlag_LStickDown)))
+            if ((cont->pulsedGuiBtnFlags & (ControllerFlag_LStickUp | ControllerFlag_LStickDown)))
             {
-                cont->btnsPulsedGui_1C &= ~(ControllerFlag_LStickRight | ControllerFlag_LStickLeft);
+                cont->pulsedGuiBtnFlags &= ~(ControllerFlag_LStickRight | ControllerFlag_LStickLeft);
             }
         }
     }
@@ -138,11 +138,11 @@ namespace Silent::Game
         s32 negativeDirBitIdx;
         s32 positiveDirBitIdx;
 
-        btnsHeld = cont->btnsHeld_C;
+        btnsHeld = cont->heldBtnFlags;
 
         if (arg1)
         {
-            signedRawAnalog     = *(u32*)&cont->analogController_0.rightX ^ 0x80808080;
+            signedRawAnalog     = *(u32*)&cont->analogController.rightX ^ 0x80808080;
             xorShiftedRawAnalog = signedRawAnalog;
 
             for (normalizedAnalogData = 0, axisIdx = 3;
@@ -167,7 +167,7 @@ namespace Silent::Game
                 }
             }
 
-            cont->btnsHeld_C = btnsHeld;
+            cont->heldBtnFlags = btnsHeld;
         }
         else
         {
@@ -214,7 +214,7 @@ namespace Silent::Game
                 }
                 else if (val == 0x10)
                 {
-                    if (!(btnsHeld & g_GameWorkPtr->config.controllerConfig_0.run))
+                    if (!(btnsHeld & g_GameWorkPtr->config.controllerConfig.run))
                     {
                         processedInputFlags |= 0xE0000000;
                     }

@@ -76,7 +76,7 @@ q19_12 Compat_SquareRoot12(q19_12 x);
  * @param rot Q3.12 Euler rotation.
  * @param mat Output rotation matrix.
  */
-void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat);
+void Math_RotMatrixZxyNeg(const SVECTOR* rot, MATRIX* mat);
 
 /** @brief Computes a negated rotation matrix from ZXY Euler angles.
  * Wraps `Math_RotMatrixZxyNeg`.
@@ -84,7 +84,7 @@ void Math_RotMatrixZxyNeg(SVECTOR* rot, MATRIX* mat);
  * @param rot Q3.12 Euler rotation.
  * @param mat Output rotation matrix.
  */
-void Math_RotMatrixZxyNegGte(SVECTOR* rot, MATRIX* mat);
+void Math_RotMatrixZxyNegGte(const SVECTOR* rot, MATRIX* mat);
 
 /** @brief Computes a rotation matrix from XYZ Euler angles.
  *

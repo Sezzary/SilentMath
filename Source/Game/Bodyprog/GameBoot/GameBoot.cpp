@@ -44,7 +44,7 @@ namespace Silent::Game
         //Anim_BoneInit(FS_BUFFER_0, g_SysWork.playerBoneCoords); // Load player anim file?
         //WorldGfx_PlayerModelProcessLoad();
 
-        g_SysWork.field_229C = NO_VALUE;
+        g_SysWork.unused_229C = NO_VALUE;
 
         if ((g_SavegamePtr->itemToggleFlags >> 1) & (1 << 0)) // `& ItemToggleFlag_FlashlightOff`
         {

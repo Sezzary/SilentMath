@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
 #include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Screen/ScreenFade.h"
 #include "Game/Bodyprog/Sys/FsScreens.h"
 #include "Game/Bodyprog/Sys/Joy.h"
 #include "Game/Bodyprog/Text/TextDraw.h"
@@ -53,8 +54,8 @@ namespace Silent::Game
 
     void GameState_MovieIntro_Update() // 0x801E279C
     {
-        const char* videoName = (g_GameWorkConst->config.optExtraOptionsEnabled_27 & (1 << 0)) ? "C1_20670.MPG" :
-                                                                                                   "C2_20670.MPG";
+        const char* videoName = (g_GameWorkConst->config.extraOptionsEnabled & (1 << 0)) ? "C1_20670.MPG" :
+                                                                                           "C2_20670.MPG";
         if (!movie_main(std::string(videoName), 0, 0))
         {
             Game_StateSetNext(GameState_MainMenu);

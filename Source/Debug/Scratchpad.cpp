@@ -153,7 +153,7 @@ namespace Silent::Debug
                                      []() { Debug::Log("Holding!"); },
                                      []() { Debug::Log("Releasing!"); });
 
-            // Check if power menu is enabled.
+            // Check if debug menu is enabled.
             if (!Debug::g_Work.EnablePowerMenu)
             {
                 but.Update(input.GetCursorPosition());

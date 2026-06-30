@@ -4,6 +4,7 @@
 
 #include "Game/Bodyprog/Bodyprog.h"
 
+#include "Game/Bodyprog/EventFlags.h"
 #include "Game/Bodyprog/Events/bodyprog_data_800A99B4.h"
 #include "Game/Bodyprog/Events/GameSysStates.h"
 #include "Game/Bodyprog/Screen/ScreenData.h"
@@ -35,7 +36,7 @@ namespace Silent::Game
         // If it's set, find its index in `g_ItemTriggerItemIds` and use that to get the corresponding `s_EventData` from `g_ItemTriggerEvents`.
         // After processing, the field is cleared and item trigger IDs are reset.
         // (Multi-item events likely repopulate the trigger IDs below based on whichever events are still active?)
-        if (g_SysWork.playerWork.extra.lastUsedItem != InventoryItemId_Unequipped)
+        if (g_SysWork.playerWork.extra.lastUsedItem != InvItemId_Unequipped)
         {
             for (i = 0; g_SysWork.playerWork.extra.lastUsedItem != g_ItemTriggerItemIds[i]; i++);
 
@@ -44,21 +45,21 @@ namespace Silent::Game
             g_MapEventSysState     = g_MapEventData->sysState;
             g_MapEventParam        = g_MapEventData->eventParam;
 
-            g_SysWork.playerWork.extra.lastUsedItem = InventoryItemId_Unequipped;
+            g_SysWork.playerWork.extra.lastUsedItem = InvItemId_Unequipped;
             Event_ItemTriggersClear();
             return;
         }
 
         Event_ItemTriggersClear();
 
-        g_MapEventLastUsedItem = InventoryItemId_Unequipped;
+        g_MapEventLastUsedItem = InvItemId_Unequipped;
 
-        mapEvent = &g_MapOverlayHeader.mapEvents[-1];
+        mapEvent = &g_MapOverlayHdr.mapEvents[-1];
 
         while (true)
         {
-            s32 disabledEventFlag_temp;
-            s16 disabledEventFlag;
+            s32 completeEventFlag_temp;
+            s16 completeEventFlag;
             s16 requiredEventFlag;
 
             mapEvent++;
@@ -69,28 +70,28 @@ namespace Silent::Game
             }
 
             // `requiredEventFlag`: if set, EventFlag that must be set for event to trigger?
-            // `disabledEventFlag`: if set, EventFlag that must not be set for event to trigger?
-            // TODO: Can this s32 temp be removed? Trying to set `disabledEventFlag` directly results in `lhu` instead?
+            // `completeEventFlag`: if set, EventFlag that must not be set for event to trigger?
+            // TODO: Can this s32 temp be removed? Trying to set `completeEventFlag` directly results in `lhu` instead?
             requiredEventFlag      = mapEvent->requiredEventFlag;
-            disabledEventFlag_temp = mapEvent->disabledEventFlag;
-            disabledEventFlag      = disabledEventFlag_temp;
+            completeEventFlag_temp = mapEvent->completeEventFlag;
+            completeEventFlag      = completeEventFlag_temp;
 
             if (requiredEventFlag != EventFlag_None && !Savegame_EventFlagGet(requiredEventFlag))
             {
                 continue;
             }
 
-            if (disabledEventFlag != EventFlag_None && Savegame_EventFlagGet(disabledEventFlag) &&
-                (disabledEventFlag < 867 || mapEvent->activationType == TriggerActivationType_Exclusive ||
+            if (completeEventFlag != EventFlag_None && Savegame_EventFlagGet(completeEventFlag) &&
+                (completeEventFlag < 867 || mapEvent->activationType == TriggerActivationType_Exclusive ||
                  mapEvent->sysState == SysState_EventSetFlag))
             {
                 continue;
             }
 
-            // `TriggerType_None` skips any trigger/activation check and always executes.
+            // `TriggerType_Tick` skips trigger/activation checks and executes every tick if flag checks are satisfied.
             // Maybe used for map-load events, and events that should run every frame?
-            // Returns before processing other events until flag checks above disable it.
-            if (mapEvent->triggerType == TriggerType_None)
+            // Will skip processing any later events until flag checks above disable it.
+            if (mapEvent->triggerType == TriggerType_Tick)
             {
                 g_MapEventData     = mapEvent;
                 g_MapEventSysState = mapEvent->sysState;
@@ -101,21 +102,21 @@ namespace Silent::Game
             // `TriggerActivationType_Button`: Only continue processing event when action button is pressed and
             // `Player_IsBusy` returns `false`.
             if (mapEvent->activationType == TriggerActivationType_Button &&
-                (!(g_Controller0->btnsClicked_10 & g_GameWorkPtr->config.controllerConfig_0.action) ||
+                (!(g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.action) ||
                 disableButtonEvents /*|| Player_IsBusy()*/))
             {
                 continue;
             }
 
-            mapPoint = &g_MapOverlayHeader.mapPoints[mapEvent->pointOfInterestIdx];
+            mapPoint = &g_MapOverlayHdr.mapPoints[mapEvent->mapPointIdx];
 
             switch (mapEvent->triggerType)
             {
                 case TriggerType_TouchAabb:
-                    pointPosX    = mapPoint->positionX_0;
-                    pointPosZ    = mapPoint->positionZ_8;
-                    pointRadiusX = mapPoint->triggerParam0_4_16 * Q12(0.25f);
-                    pointRadiusZ = mapPoint->triggerParam1_4_24 * Q12(0.25f);
+                    pointPosX    = mapPoint->positionX;
+                    pointPosZ    = mapPoint->positionZ;
+                    pointRadiusX = mapPoint->triggerParam0 * Q12(0.25f);
+                    pointRadiusZ = mapPoint->triggerParam1 * Q12(0.25f);
 
                     if (ABS(g_SysWork.playerWork.player.position.vx - pointPosX) > pointRadiusX)
                     {
@@ -176,8 +177,8 @@ namespace Silent::Game
             // `TriggerActivationType_Button`: Only allow button activated events when area is lit up?
             if (mapEvent->activationType == TriggerActivationType_Button)
             {
-                if ((g_SysWork.field_2388.field_154.effectsInfo_0.field_0.s_field_0.field_0 & 2) && !g_SysWork.field_2388.isFlashlightOn_15 &&
-                    ((g_SysWork.field_2388.field_1C[0].effectsInfo_0.field_0.s_field_0.field_0 & 1) || (g_SysWork.field_2388.field_1C[1].effectsInfo_0.field_0.s_field_0.field_0 & 1)))
+                if ((g_SysWork.field_2388.field_154.effectsInfo.field_0.s_field_0.field_0 & 2) && !g_SysWork.field_2388.isFlashlightOn &&
+                    ((g_SysWork.field_2388.field_1C[0].effectsInfo.field_0.s_field_0.field_0 & 1) || (g_SysWork.field_2388.field_1C[1].effectsInfo.field_0.s_field_0.field_0 & 1)))
                 {
                     if (mapEvent->sysState != SysState_LoadOverlay &&
                         (mapEvent->sysState != SysState_LoadRoom && mapEvent->eventParam > 1))
@@ -193,7 +194,7 @@ namespace Silent::Game
             // (Same as `SysState_EventSetFlag_Update`.)
             if (mapEvent->sysState == SysState_EventSetFlag)
             {
-                Savegame_EventFlagSetAlt(mapEvent->disabledEventFlag);
+                Savegame_EventFlagSetAlt(mapEvent->completeEventFlag);
                 break;
             }
 
@@ -227,13 +228,13 @@ namespace Silent::Game
             D_800A9A20 = g_TickCount;
         }
 
-        deltaX = mapPoint->positionX_0 - D_800A9A24;
+        deltaX = mapPoint->positionX - D_800A9A24;
         if (ABS(deltaX) > Q12(0.8f))
         {
             return false;
         }
 
-        deltaZ = mapPoint->positionZ_8 - D_800A9A28;
+        deltaZ = mapPoint->positionZ - D_800A9A28;
         if (ABS(deltaZ) > Q12(0.8f))
         {
             return false;
@@ -277,12 +278,12 @@ namespace Silent::Game
         s32    scaledCosRotY;
 
         halfSinRotY   = Math_Sin(g_SysWork.playerWork.player.rotation.vy) >> 1; // `/ 2`.
-        scaledCosRotY = -Math_Cos(Q12_ANGLE_FROM_Q8(mapPoint->triggerParam0_4_16)) * mapPoint->triggerParam1_4_24;
+        scaledCosRotY = -Math_Cos(Q12_ANGLE_FROM_Q8(mapPoint->triggerParam0)) * mapPoint->triggerParam1;
 
         clampedHalfCosPlayerRotY = halfSinRotY;
 
         temp_a0_2 = scaledCosRotY >> 4; // `/ 16`.
-        deltaX    = mapPoint->positionX_0 - g_SysWork.playerWork.player.position.vx;
+        deltaX    = mapPoint->positionX - g_SysWork.playerWork.player.position.vx;
         temp_s2   = deltaX - temp_a0_2;
         temp_s4   = deltaX + temp_a0_2;
 
@@ -302,13 +303,13 @@ namespace Silent::Game
             if (MIN(halfSinRotY, 0) <= MAX(temp_s2, temp_s4))
             {
                 halfCosPlayerRotY   = Math_Cos(g_SysWork.playerWork.player.rotation.vy) >> 1; // `/ 2`.
-                scaledSinPlayerRotY = Math_Sin(Q12_ANGLE_FROM_Q8(mapPoint->triggerParam0_4_16)) *
-                                    mapPoint->triggerParam1_4_24;
+                scaledSinPlayerRotY = Math_Sin(Q12_ANGLE_FROM_Q8(mapPoint->triggerParam0)) *
+                                    mapPoint->triggerParam1;
 
                 clampedHalfCosPlayerRotY = halfCosPlayerRotY;
 
                 temp_a0_2 = scaledSinPlayerRotY >> 4; // `/ 16`.
-                deltaZ    = mapPoint->positionZ_8 - g_SysWork.playerWork.player.position.vz;
+                deltaZ    = mapPoint->positionZ - g_SysWork.playerWork.player.position.vz;
                 temp_v1   = deltaZ - temp_a0_2;
                 temp_a2   = deltaZ + temp_a0_2;
 
@@ -351,15 +352,15 @@ namespace Silent::Game
         s32    scale;
         u32    temp;
 
-        shift8Field_7 = mapPoint->triggerParam1_4_24 << 8;
+        shift8Field_7 = mapPoint->triggerParam1 << 8;
 
-        deltaX = g_SysWork.playerWork.player.position.vx - mapPoint->positionX_0;
-        if (mapPoint->triggerParam1_4_24 << 9 < ABS(deltaX))
+        deltaX = g_SysWork.playerWork.player.position.vx - mapPoint->positionX;
+        if (mapPoint->triggerParam1 << 9 < ABS(deltaX))
         {
             return false;
         }
 
-        deltaZ = g_SysWork.playerWork.player.position.vz - mapPoint->positionZ_8;
+        deltaZ = g_SysWork.playerWork.player.position.vz - mapPoint->positionZ;
         scale  = 2;
         if ((shift8Field_7 * scale) < ABS(deltaZ))
         {
@@ -367,7 +368,7 @@ namespace Silent::Game
         }
 
         // TODO: Odd packed angle conversion method. `Q12_ANGLE_FROM_Q8` doesn't match here.
-        angle    = -(mapPoint->triggerParam0_4_16 << 20) >> 16;
+        angle    = -(mapPoint->triggerParam0 << 20) >> 16;
         sinAngle = Math_Sin(angle);
 
         temp = FP_FROM((-deltaX * sinAngle) + (deltaZ * Math_Cos(angle)), Q12_SHIFT);
