@@ -180,8 +180,13 @@ namespace Silent::Services
 
         // Write options JSON file.
         auto stream = Stream(fs.GetWorkDirectory() / Fmt("{}{}", OPTIONS_FILENAME, JSON_FILE_EXT), false, true);
-        stream.WriteJson(optionsJson);
-        stream.Close();
+        if (stream.WriteJson(optionsJson))
+        {
+            Debug::Log("Saved user options.");
+            return;
+        }
+
+        Debug::Log("Failed to save user options.", Debug::LogLevel::Warning);
     }
 
     void OptionsManager::Load()

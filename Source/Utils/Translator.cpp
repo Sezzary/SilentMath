@@ -15,7 +15,7 @@ namespace Silent::Utils
         _localesFolder = localesFolder;
         if (!stdfs::exists(_localesFolder) || !stdfs::is_directory(_localesFolder))
         {
-            Debug::Log("Locales folder doesn't exist.", Debug::LogLevel::Error);
+            Debug::Log("Locales folder is missing.", Debug::LogLevel::Error);
             return;
         }
 
@@ -197,15 +197,15 @@ namespace Silent::Utils
         // Create and return metadata.
         _locales.push_back(LocaleMetadata
         {
-            .Name     = localeName,
-            .Label    = metadataJson.value(KEY_LABEL,   ""),
-            .Comment  = metadataJson.value(KEY_COMMENT, ""),
-            .Code = LocaleCode
+            .Name    = localeName,
+            .Label   = metadataJson.value(KEY_LABEL,   ""),
+            .Comment = metadataJson.value(KEY_COMMENT, ""),
+            .Code    = LocaleCode
             {
                 .Language = metadataJson.value(KEY_LANG_CODE,    ""),
                 .Country  = metadataJson.value(KEY_COUNTRY_CODE, "")
             },
-            .Variant = metadataJson.value(KEY_VARIANT, ""),
+            .Variant  = metadataJson.value(KEY_VARIANT,  ""),
             .Priority = metadataJson.value(KEY_PRIORITY, INT_MAX)
         });
     }
@@ -226,7 +226,6 @@ namespace Silent::Utils
         }
 
         _activeLocaleName = localeName;
-        stream.Close();
     }
 
     std::vector<LocaleCode> GetSystemLocaleCodes()
@@ -248,7 +247,7 @@ namespace Silent::Utils
             codes.push_back(LocaleCode
             {
                 .Language = locale.language,
-                .Country  = (locale.country != nullptr) ? locale.country : ""
+                .Country  = (locale.country != nullptr) ? locale.country : EMPTY_STRING
             });
         }
 

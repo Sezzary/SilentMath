@@ -272,102 +272,113 @@ namespace Silent::Utils
         }
     }
 
-    void Stream::Write(const void* buffer, int size)
+    bool Stream::Write(const void* buffer, int size)
     {
         if (!_stream.good() && !(_flags & std::fstream::out))
         {
             Debug::Log("Failed to write to binary file data stream.", Debug::LogLevel::Warning);
-            return;
+            return false;
         }
 
         _stream.write((const byte*)buffer, size);
+        return !_stream.fail();
     }
 
-    void Stream::WriteBool(bool val)
+    bool Stream::WriteBool(bool val)
     {
-        Write((byte*)&val, sizeof(bool));
+        return Write((byte*)&val, sizeof(bool));
     }
 
-    void Stream::WriteByte(byte val)
+    bool Stream::WriteByte(byte val)
     {
-        Write((byte*)&val, sizeof(byte));
+        return Write((byte*)&val, sizeof(byte));
     }
 
-    void Stream::WriteInt16(int16 val)
+    bool Stream::WriteInt16(int16 val)
     {
-        Write((byte*)&val, sizeof(int16));
+        return Write((byte*)&val, sizeof(int16));
     }
 
-    void Stream::WriteInt32(int32 val)
+    bool Stream::WriteInt32(int32 val)
     {
-        Write((byte*)&val, sizeof(int32));
+        return Write((byte*)&val, sizeof(int32));
     }
 
-    void Stream::WriteInt64(int64 val)
+    bool Stream::WriteInt64(int64 val)
     {
-        Write((byte*)&val, sizeof(int64));
+        return Write((byte*)&val, sizeof(int64));
     }
 
-    void Stream::WriteUint16(uint16 val)
+    bool Stream::WriteUint16(uint16 val)
     {
-        Write((byte*)&val, sizeof(uint16));
+        return Write((byte*)&val, sizeof(uint16));
     }
 
-    void Stream::WriteUint32(uint32 val)
+    bool Stream::WriteUint32(uint32 val)
     {
-        Write((byte*)&val, sizeof(uint32));
+        return Write((byte*)&val, sizeof(uint32));
     }
 
-    void Stream::WriteUint64(uint64 val)
+    bool Stream::WriteUint64(uint64 val)
     {
-        Write((byte*)&val, sizeof(uint64));
+        return Write((byte*)&val, sizeof(uint64));
     }
 
-    void Stream::WriteFloat(float val)
+    bool Stream::WriteFloat(float val)
     {
-        Write((byte*)&val, sizeof(float));
+        return Write((byte*)&val, sizeof(float));
     }
 
-    void Stream::WriteString(const std::string& val)
+    bool Stream::WriteString(const std::string& val)
     {
-        Write((byte*)val.data(), val.size());
+        return Write((byte*)val.data(), val.size());
     }
 
-    void Stream::WriteBitfield(const Bitfield& val)
+    bool Stream::WriteBitfield(const Bitfield& val)
     {
-        WriteInt32(val.GetSize());
-        WriteArray(ToSpan(val.GetChunks()));
+        if (!WriteInt32(val.GetSize()))
+        {
+            return false;
+        }
+
+        if (!WriteArray(ToSpan(val.GetChunks())))
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    void Stream::WriteVector2i(const Vector2i& val)
+    bool Stream::WriteVector2i(const Vector2i& val)
     {
-        Write((byte*)&val, sizeof(Vector2i));
+        return Write((byte*)&val, sizeof(Vector2i));
     }
     
-    void Stream::WriteVector2(const Vector2& val)
+    bool Stream::WriteVector2(const Vector2& val)
     {
-        Write((byte*)&val, sizeof(Vector2));
+        return Write((byte*)&val, sizeof(Vector2));
     }
     
-    void Stream::WriteVector3i(const Vector3i& val)
+    bool Stream::WriteVector3i(const Vector3i& val)
     {
-        Write((byte*)&val, sizeof(Vector3i));
+        return Write((byte*)&val, sizeof(Vector3i));
     }
     
-    void Stream::WriteVector3(const Vector3& val)
+    bool Stream::WriteVector3(const Vector3& val)
     {
-        Write((byte*)&val, sizeof(Vector3));
+        return Write((byte*)&val, sizeof(Vector3));
     }
 
-    void Stream::WriteJson(const json& val)
+    bool Stream::WriteJson(const json& val)
     {
         if (!TestWrite())
         {
-            return;
+            return false;
         }
 
         _stream << val.dump(JSON_INDENT_SIZE);
         _stream.seekg(0, std::fstream::end);
+        return !_stream.fail();
     }
 
     bool Stream::TestRead() const

@@ -11,9 +11,9 @@ namespace Silent::Savegame
     /** @brief Savegame inventory item entry. */
     struct SavegameInvItem
     {
-        int id      = 0; /** `e_InvItemId` */
-        int count   = 0;
-        int command = 0; /** `e_InvCmdId` */
+        int Id      = 0; /** `e_InvItemId` */
+        int Count   = 0;
+        int Command = 0; /** `e_InvCmdId` */
     };
 
     /** @brief Savegame info. */
@@ -102,8 +102,9 @@ namespace Silent::Savegame
          *
          * @param slotIdx Index of the slot containing savegame blocks.
          * @param blockIdx Index of the savegame block in the slot.
+         * @return `true` if the save succeeded, `false` otherwise.
          */
-        void Save(int slotIdx, int blockIdx);
+        bool Save(int slotIdx, int blockIdx);
 
         /** @brief Loads active savegame data from a block on the disk.
          *

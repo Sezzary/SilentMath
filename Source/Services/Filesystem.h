@@ -18,6 +18,7 @@ namespace Silent::Services
     constexpr char OPTIONS_FILENAME[]                = "Options";
     constexpr char SCREENSHOT_FILENAME_BASE[]        = "Screenshot_";
 
+    constexpr char BAK_FILE_EXT[]         = ".bak";
     constexpr char JSON_FILE_EXT[]        = ".json";
     constexpr char PNG_FILE_EXT[]         = ".png";
     constexpr char SAVEGAME_FILE_EXT[]    = ".save";

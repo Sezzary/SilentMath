@@ -77,7 +77,10 @@ namespace Silent::Utils
         // Utilities
         // ==========
 
-        /** @brief Closes the file. */
+        /** @brief Closes the file.
+         *
+         * @note Calling this function is unnecessary if the instance is expected to go out of scope.
+         */
         void Close();
 
         /** @brief Skips the file pointer of the data stream ahead a given number of bytes.
@@ -220,112 +223,130 @@ namespace Silent::Utils
          *
          * @param buffer Input buffer.
          * @param size Buffer size in bytes.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void Write(const void* buffer, int size);
+        bool Write(const void* buffer, int size);
 
         /** @brief Writes a boolean to the data stream and increments the file pointer.
          *
          * @param val `bool` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteBool(bool val);
+        bool WriteBool(bool val);
 
         /** @brief Writes a byte to the data stream and increments the file pointer.
          *
          * @param val `byte` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteByte(byte val);
+        bool WriteByte(byte val);
 
         /** @brief Writes a 16-bit integer to the data stream and increments the file pointer.
          *
          * @param val `int16` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteInt16(int16 val);
+        bool WriteInt16(int16 val);
 
         /** @brief Writes a 32-bit integer to the data stream and increments the file pointer.
          *
          * @param val `int32` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteInt32(int32 val);
+        bool WriteInt32(int32 val);
 
         /** @brief Writes a 64-bit integer to the data stream and increments the file pointer.
          *
          * @param val `int64` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteInt64(int64 val);
+        bool WriteInt64(int64 val);
 
         /** @brief Writes a 16-bit unsigned integer to the data stream and increments the file pointer.
          *
          * @param val `uint16` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteUint16(uint16 val);
+        bool WriteUint16(uint16 val);
 
         /** @brief Writes a 32-bit unsigned integer to the data stream and increments the file pointer.
          *
          * @param val `uint32` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteUint32(uint32 val);
+        bool WriteUint32(uint32 val);
 
         /** @brief Writes a 64-bit unsigned integer to the data stream and increments the file pointer.
          *
          * @param val `uint64` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteUint64(uint64 val);
+        bool WriteUint64(uint64 val);
 
         /** @brief Writes a 32-bit float to the data stream and increments the file pointer.
          *
          * @param val `float` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteFloat(float val);
+        bool WriteFloat(float val);
 
         /** @brief Writes a string to the data stream and increments the file pointer.
          *
          * @param val `std::string` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteString(const std::string& val);
+        bool WriteString(const std::string& val);
 
         /** @brief Writes a bitfield to the data stream and increments the file pointer.
          *
          * @param val `Bitfield` data to write.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteBitfield(const Bitfield& val);
+        bool WriteBitfield(const Bitfield& val);
 
         /** @brief Writes an integer-based XY vector to the data stream and increments the file pointer.
          *
          * @param val `Vector2i` data.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteVector2i(const Vector2i& val);
+        bool WriteVector2i(const Vector2i& val);
         
         /** @brief Writes a float-based XY vector to the data stream and increments the file pointer.
          *
          * @param val `Vector2` data.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteVector2(const Vector2& val);
+        bool WriteVector2(const Vector2& val);
         
         /** @brief Writes an integer-based XYZ vector to the data stream and increments the file pointer.
          *
          * @param val `Vector3i` data.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteVector3i(const Vector3i& val);
+        bool WriteVector3i(const Vector3i& val);
         
         /** @brief Writes a float-based XYZ vector to the data stream and increments the file pointer.
          *
          * @param val `Vector3` data.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteVector3(const Vector3& val);
+        bool WriteVector3(const Vector3& val);
 
         /** @brief Writes a JSON to the data stream and increments the file pointer.
          *
          * @param val `json` data.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
-        void WriteJson(const json& val);
+        bool WriteJson(const json& val);
         
         /** @brief Writes an array to the data stream and increments the file pointer.
          *
          * @tparam T Array data type.
          * @param val Array data.
+         * @return `true` if the write succeeded, `false` otherwise.
          */
         template <typename T>
-        void WriteArray(std::span<const T> val);
+        bool WriteArray(std::span<const T> val);
 
     private:
         // ========
@@ -352,8 +373,8 @@ namespace Silent::Utils
     }
 
     template <typename T>
-    void Stream::WriteArray(std::span<const T> val)
+    bool Stream::WriteArray(std::span<const T> val)
     {
-        Write((byte*)val.data(), val.size() * sizeof(T));
+        return Write((byte*)val.data(), val.size() * sizeof(T));
     }
 }
