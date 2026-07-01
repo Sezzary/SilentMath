@@ -61,7 +61,7 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed ILM asset data as a `void` pointer.
      */
-    std::shared_ptr<void> ParseIlm(const std::filesystem::path& filename);
+    std::shared_ptr<void> ParseIlm(const stdfs::path& filename);
 }
 
 namespace std 

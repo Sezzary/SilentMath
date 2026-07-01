@@ -212,7 +212,7 @@ namespace Silent::Renderer::SdlGpu
         }
         else if (_usageFlags & SDL_GPU_BUFFERUSAGE_INDIRECT)
         {
-            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name), Debug::LogLevel::Info);
+            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name));
         }
     }
 

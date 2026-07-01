@@ -31,7 +31,7 @@ namespace Silent::Game
         q19_12          healthSaturation;            /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
         s16             pickedUpItemCount;
         s8              unused_23E;         /** @unused */
-        u8              inventoryItemFlags; /** `e_InventoryItemFlags` */
+        u8              inventoryItemFlags; /** `e_InvItemFlags` */
         q19_12          playerHealth;       /** Default: `Q12(100.0f)` */
         q19_12          playerPositionX;
         q3_12           playerRotationY;  /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */

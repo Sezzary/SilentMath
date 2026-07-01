@@ -42,10 +42,10 @@ namespace Silent::Assets
     /** @brief Streamable asset. */
     struct Asset
     {
-        std::string             Name = {};                    /** Filename relative to assets folder. */
-        AssetType               Type = AssetType::Tim;        /** File type. */
-        std::filesystem::path   File = {};                    /** Absolute system file path. */
-        uint64                  Size = 0;                     /** Raw file size in bytes. */
+        std::string             Name  = {};                   /** Filename relative to assets folder. */
+        AssetType               Type  = AssetType::Tim;       /** File type. */
+        stdfs::path             File  = {};                   /** Absolute system file path. */
+        uint64                  Size  = 0;                    /** Raw file size in bytes. */
         std::atomic<AssetState> State = AssetState::Unloaded; /** Thread-safe load state. */
         std::shared_ptr<void>   Data  = nullptr;              /** Thread-safe parsed data. */
 
@@ -143,7 +143,7 @@ namespace Silent::Assets
          *
          * @param assetsPath Assets folder path on the system.
          */
-        void Initialize(const std::filesystem::path& assetsPath);
+        void Initialize(const stdfs::path& assetsPath);
 
         /** @brief Loads an asset by index.
          *

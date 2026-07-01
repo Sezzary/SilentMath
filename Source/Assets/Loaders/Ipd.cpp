@@ -16,7 +16,7 @@ namespace Silent::Assets
         uint32      ModelHeaderOffset = 0;
     };
 
-    std::shared_ptr<void> ParseIpd(const std::filesystem::path& filename)
+    std::shared_ptr<void> ParseIpd(const stdfs::path& filename)
     {
         constexpr uint8 IPD_HEADER_MAGIC = 0x14;
         constexpr uint8 LM_HEADER_MAGIC  = 0x30;
@@ -30,7 +30,7 @@ namespace Silent::Assets
         if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open IPD `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header magic.
@@ -38,7 +38,7 @@ namespace Silent::Assets
         if (magic != IPD_HEADER_MAGIC)
         {
             throw std::runtime_error(Fmt("Failed to parse invalid IPD `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header.
@@ -64,7 +64,7 @@ namespace Silent::Assets
         if (lmMagic != LM_HEADER_MAGIC)
         {
             throw std::runtime_error(Fmt("Failed to parse invalid IPD `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read model infos.

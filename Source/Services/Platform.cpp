@@ -24,7 +24,7 @@ namespace Silent::Services
         return "Unknown";
     }
 
-    std::filesystem::path GetHomeDirectory()
+    stdfs::path GetHomeDirectory()
     {
 #if defined(_WIN32) || defined(_WIN64)
         char*  buffer = nullptr;
@@ -34,12 +34,12 @@ namespace Silent::Services
         {
             auto home = std::string(buffer);
             free(buffer);
-            return std::filesystem::path(home);
+            return stdfs::path(home);
         }
 
         return {};
 #elif defined(__APPLE__) || defined(__linux__)
-        return std::filesystem::path(getenv("HOME"));
+        return stdfs::path(getenv("HOME"));
 #else
         return {};
 #endif

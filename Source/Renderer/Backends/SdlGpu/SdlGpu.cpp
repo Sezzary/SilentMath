@@ -233,7 +233,7 @@ namespace Silent::Renderer::SdlGpu
         auto timestamp = GetCurrentDateString() + "_" + GetCurrentTimeString();
         auto filename  = (SCREENSHOT_FILENAME_BASE + timestamp) + PNG_FILE_EXT;
         auto path      = fs.GetScreenshotsDirectory() / filename;
-        std::filesystem::create_directories(path.parent_path());
+        stdfs::create_directories(path.parent_path());
 
         // Get window surface.
         auto* surface = SDL_GetWindowSurface(_window);

@@ -11,64 +11,63 @@ namespace Silent::Savegame
     /** @brief Savegame inventory item entry. */
     struct SavegameInvItem
     {
-        int id;      /** `e_InvItemId` */
-        int count;
-        int command; /** `e_InvCmdId` */
+        int id      = 0; /** `e_InvItemId` */
+        int count   = 0;
+        int command = 0; /** `e_InvCmdId` */
     };
 
     /** @brief Savegame info. */
     struct Savegame
     {
-        std::vector<SavegameInvItem> items = {};
-        int             mapIdx;                      /** `e_MapIdx` */
-        int             mapRoomIdx;                  /** Index to local map geometry `.IPD` files. */
-        int             savegameCount;
-        int             locationId;                  /** `e_SaveLocationId` */
-        int             paperMapIdx;                 /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */
-        int             equippedWeapon;              /** `e_InvItemId` | Affects the visible player weapon model. */
-        int             inventorySlotCount;          /** Item slots. */
-        int             itemToggleFlags;             /** `e_ItemToggleFlags` */
-        int             ovlEnemyStates[45];          /** Flags indicating the enemy states in a given overlay.
-                                                     * All set to 1 by default. As soon as they are killed (not just stunned),
-                                                     * set to 0 based on a currently unknown index value.
-                                                     */
-        int             paperMapFlags;               // See Sparagas' `HasMapsFlags` struct for details of every bit.
-        Bitfield        eventFlags = Bitfield(1664);
-        q19_12          healthSaturation;            /** Range: [0, 300]. Ampoules give extra stored health. If the player loses health, it will be slowly restored. */
-        int             pickedUpItemCount;
-        int             inventoryItemFlags; /** `e_InventoryItemFlags` */
-        q19_12          playerHealth;       /** Default: `Q12(100.0f)` */
-        q19_12          playerPositionX;
-        q3_12           playerRotationY;  /** Range [0, 0.999755859375], positive Z: 0, clockwise rotation. It can be multiplied by 360 to get degrees. */
-        int             clearGameCount;   /** Range [0, 99] */
-        int             clearGameEndings; /** `e_GameEndingFlags` */
-        q19_12          playerPositionZ;
-        q20_12          gameplayTimer;
-        q20_12          runDistance;
-        q20_12          walkDistance;
-        bool            isNextFearMode;
-        u8              add290Hours : 2; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
-        int             pickedUpSpecialItemCount; 
-        int             meleeKillCount;
-        int             meleeKillCountB;
-        int             rangedKillCount;
-        int             gameDifficulty; /** `e_GameDifficulty` */
-        int             firedShotCount;
-        int             closeRangeShotCount;
-        int             midRangeShotCount;
-        int             longRangeShotCount;
-        int             continueCount;
+        int    SavegameCount  = 0;
+        int    LocationId     = 0; /** `e_SaveLocationId` */
+        q20_12 GameplayTimer  = Q12(0.0f);
+        bool   IsNextFearMode = false;
+
+        int      ContinueCount = 0;
+        int      MapIdx        = 0; /** `e_MapIdx` */
+        int      MapRoomIdx    = 0; /** Index to local map geometry `.IPD` files. */
+        int      PaperMapIdx   = 0; /** `e_PaperMapIdx` | Index of the paper map displayed in the map screen. */
+        int      PaperMapFlags = 0;
+        Bitfield EventFlags    = Bitfield(1664);
+        int      MapEnemyStates[45]; /** Flags indicating enemy states in the map. */
+
+        q19_12 PlayerPositionX  = Q12(0.0f);
+        q19_12 PlayerPositionZ  = Q12(0.0f);
+        q3_12  PlayerRotationY  = Q12_ANGLE(0.0f);
+        q19_12 PlayerHealth     = Q12(0.0f);
+        q19_12 HealthSaturation = Q12(0.0f);
+        q20_12 RunDistance      = Q12(0.0f);
+        q20_12 WalkDistance     = Q12(0.0f);
+
+        std::vector<SavegameInvItem> Items                    = {};
+        int                          InventorySlotCount       = 0; /** Item slots. */
+        int                          PickedUpItemCount        = 0;
+        int                          PickedUpSpecialItemCount = 0;
+        int                          InventoryItemFlags       = 0; /** `e_InvItemFlags` */
+        int                          ItemToggleFlags          = 0; /** `e_ItemToggleFlags` */
+        int                          EquippedWeapon           = 0; /** `e_InvItemId` | Affects the visible player weapon model. */
+
+        int GameDifficulty      = 0; /** `e_GameDifficulty` */
+        int MeleeKillCount      = 0;
+        int MeleeKillCountB     = 0;
+        int RangedKillCount     = 0;
+        int firedShotCount      = 0;
+        int CloseRangeShotCount = 0;
+        int MidRangeShotCount   = 0;
+        int LongRangeShotCount  = 0;
+        int ClearGameCount      = 0;
+        int ClearGameEndings    = 0; /** `e_GameEndingFlags` */
+        u8  Add290Hours : 2     = 0; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
     };
 
-    /** @brief Savegame metadata. */
+    /** @brief Savegame metadata to display. */
     struct SavegameMetadata
     {
-        int FileIdx       = 0;
-        int DataIdx       = 0;
-        int SaveCount     = 0;
-        int LocationId    = 0;
-        int GameplayTimer = 0;
-
+        int  DataIdx        = 0;
+        int  SaveCount      = 0;
+        int  LocationId     = 0;
+        int  GameplayTimer  = 0;
         bool IsNextFearMode = false;
         int  Flags          = 0;
     };
@@ -81,21 +80,16 @@ namespace Silent::Savegame
         // Fields
         // =======
 
-        Savegame                      _savegame     = {};
-        std::vector<SavegameMetadata> _slotMetadata = {};
+        Savegame                                   _savegame      = {};
+        std::vector<std::vector<SavegameMetadata>> _filesMetadata = {};
 
     public:
         // =============
         // Constructors
         // =============
 
+        /** @brief Constructs a default uninitialized instance. */
         SavegameManager() = default;
-
-        // ========
-        // Getters
-        // ========
-
-        const std::vector<SavegameMetadata>& GetSlotMetadata();
 
         // ==========
         // Utilities
@@ -104,19 +98,19 @@ namespace Silent::Savegame
         /** @brief Initializes the `SavegameManager`. */
         void Initialize();
 
-        /** @brief Saves the active savegame to a file.
+        /** @brief Saves the active savegame data to a block on the disk.
          *
-         * @param fileIdx Index of a file containing savegames.
-         * @param saveIdx Index of a savegame within the file.
+         * @param slotIdx Index of the slot containing savegame blocks.
+         * @param blockIdx Index of the savegame block in the slot.
          */
-        void Save(int fileIdx, int saveIdx);
+        void Save(int slotIdx, int blockIdx);
 
-        /** @brief Loads an active savegame from a file.
+        /** @brief Loads active savegame data from a block on the disk.
          *
-         * @param fileIdx Index of a file containing savegames.
-         * @param saveIdx Index of a savegame within the file.
+         * @param slotIdx Index of the slot containing savegame blocks.
+         * @param blockIdx Index of the savegame block in the slot.
          */
-        void Load(int fileIdx, int saveIdx);
+        void Load(int slotIdx, int blockIdx);
 
         // ==========
         // Operators
@@ -130,28 +124,37 @@ namespace Silent::Savegame
         // Helpers
         // ========
 
-        /** @brief Gets the path of a savegame file.
+        /** @brief Gets the path to a savegame block on the disk.
          *
-         * @param fileIdx Index of a file containing savegames.
-         * @param saveIdx Index of a savegame within the file.
-         * @return Savegame path.
+         * @param slotIdx Index of the slot containing savegame blocks.
+         * @param blockIdx Index of the savegame block in the slot.
+         * @return Savegame block path.
          */
-        std::filesystem::path GetSavegamePath(int fileIdx, int saveIdx) const;
+        stdfs::path GetSavegameBlockPath(int slotIdx, int blockIdx) const;
 
-        SavegameMetadata GetMetadata(const std::filesystem::path& saveFile) const;
-        
-        void PopulateSlotMetadata();
+        /** @brief Gets slot metadata from a savegame file.
+         *
+         * @param saveFile Savegame buffer file path.
+         * @return Savegame file metadata.
+         */
+        SavegameMetadata GetMetadata(const stdfs::path& saveFile) const;
 
-        /** @brief Converts a savegame serialized buffer to a savegame.
+        /** @brief Organizes the savegame file structure on the disk. */
+        void Cleanup();
+
+        /** @brief Repopulates metadata for all savegame blocks. */
+        void RefreshMetadata();
+
+        /** @brief Converts a serialized savegame buffer to an engine savegame.
          *
          * @param saveBuffer Serialized savegame buffer.
-         * @return Savegame.
+         * @return Engine savegame.
          */
         std::unique_ptr<Savegame> FromSavegameBuffer(const std::vector<byte>& saveBuffer) const;
 
-        /** @brief Converts a savegame to a serialized savegame buffer.
+        /** @brief Converts an engine savegame to a serialized savegame buffer.
          *
-         * @param save Savegame.
+         * @param save Engine savegame.
          * @return Serialized savegame buffer.
          */
         std::unique_ptr<std::vector<byte>> ToSavegameBuffer(const Savegame& save) const;

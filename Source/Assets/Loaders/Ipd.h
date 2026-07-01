@@ -25,5 +25,5 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed IPD asset data as a `void` pointer.
      */
-    std::shared_ptr<void> ParseIpd(const std::filesystem::path& filename);
+    std::shared_ptr<void> ParseIpd(const stdfs::path& filename);
 }

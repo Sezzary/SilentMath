@@ -11,7 +11,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    std::shared_ptr<void> ParseIlm(const std::filesystem::path& filename)
+    std::shared_ptr<void> ParseIlm(const stdfs::path& filename)
     {
         constexpr int16  HEADER_MAGIC       = 0x630;
         constexpr uint32 HEADER_NAME_OFFSET = 0x14;
@@ -25,7 +25,7 @@ namespace Silent::Assets
         if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open ILM `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header magic.
@@ -33,7 +33,7 @@ namespace Silent::Assets
         if (magic != HEADER_MAGIC)
         {
             throw std::runtime_error(Fmt("Failed to parse invalid ILM `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         uint8 isInitialized = stream.ReadUint8(); // Unused.
@@ -44,7 +44,7 @@ namespace Silent::Assets
         if (nameOffset != HEADER_NAME_OFFSET)
         {
             throw std::runtime_error(Fmt("Attempted to parse ILM `{}` with incongruent name offset.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header attributes.

@@ -9,7 +9,7 @@ using namespace Silent::Services;
 
 namespace Silent::Utils
 {
-    Stream::Stream(const std::filesystem::path& filename, bool read, bool write)
+    Stream::Stream(const stdfs::path& filename, bool read, bool write)
     {
         if (read)
         {
@@ -19,7 +19,7 @@ namespace Silent::Utils
         if (write)
         {
             _flags |= (int)std::fstream::out | (int)std::fstream::trunc;
-            std::filesystem::create_directories(filename.parent_path());
+            stdfs::create_directories(filename.parent_path());
         }
 
         _stream.open(filename, (std::ios_base::openmode)_flags);

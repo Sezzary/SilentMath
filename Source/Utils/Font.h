@@ -88,7 +88,7 @@ namespace Silent::Utils
          * @param path Path containing font files.
          * @param precacheGlyphs Glyphs to precache.
          */
-        Font(FT_Library& fontLib, const FontMetadata& metadata, const std::filesystem::path& path,
+        Font(FT_Library& fontLib, const FontMetadata& metadata, const stdfs::path& path,
              const std::string& precacheGlyphs);
 
         /** @brief Gracefully destroys the instance and frees resources. */
@@ -214,7 +214,7 @@ namespace Silent::Utils
          * @param path Path containing font files.
          * @param precacheGlyphs Glyphs to precache in the atlas on font initialization.
          */
-        void LoadFont(const FontMetadata& metadata, const std::filesystem::path& path,
+        void LoadFont(const FontMetadata& metadata, const stdfs::path& path,
                       const std::string& precacheGlyphs = {});
     };
 

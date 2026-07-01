@@ -13,5 +13,5 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed PLM asset data as a `void` pointer.
      */
-    std::shared_ptr<void> ParsePlm(const std::filesystem::path& filename);
+    std::shared_ptr<void> ParsePlm(const stdfs::path& filename);
 }

@@ -14,7 +14,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    using ParseFunc           = std::function<std::shared_ptr<void>(const std::filesystem::path& file)>;
+    using ParseFunc           = std::function<std::shared_ptr<void>(const stdfs::path& file)>;
     using QueueGpuUploadFunc  = std::function<void(const Asset& asset)>;
     using QueueGpuReleaseFunc = std::function<void(const Asset& asset)>;
 
@@ -49,7 +49,7 @@ namespace Silent::Assets
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
         { AssetType::Anm, { ParseAnm }                                        },
-        { AssetType::Ilm, { ParseIlm/*, IlmQueueGpuUpload, IlmQueueGpuRelease*/ }                                        },
+        { AssetType::Ilm, { ParseIlm/*, IlmQueueGpuUpload, IlmQueueGpuRelease*/ } },
         { AssetType::Ipd, { ParseIpd/*, IpdQueueGpuUpload, IpdQueueGpuRelease*/ } },
         //{ AssetType::Plm, { ParsePlm, PlmQueueGpuUpload, PlmQueueGpuRelease } },
         { AssetType::Png, { PngParse, PngQueueGpuUpload, PngQueueGpuRelease } },
@@ -141,11 +141,11 @@ namespace Silent::Assets
         return _loadingCount > 0;
     }
 
-    void AssetStreamer::Initialize(const std::filesystem::path& assetsPath)
+    void AssetStreamer::Initialize(const stdfs::path& assetsPath)
     {
         // Collect files sorted alphabetically.
-        auto files = std::vector<std::filesystem::path>{};
-        for (auto& entry : std::filesystem::recursive_directory_iterator(assetsPath))
+        auto files = std::vector<stdfs::path>{};
+        for (auto& entry : stdfs::recursive_directory_iterator(assetsPath))
         {
             if (entry.is_regular_file())
             {
@@ -174,10 +174,10 @@ namespace Silent::Assets
 
             // Define asset entry.
             auto& asset = *_assets.back();
-            asset.Name  = std::filesystem::relative(file, assetsPath).generic_string();
+            asset.Name  = stdfs::relative(file, assetsPath).generic_string();
             asset.Type  = ASSET_TYPES.at(ext);
             asset.File  = file;
-            asset.Size  = std::filesystem::file_size(file);
+            asset.Size  = stdfs::file_size(file);
             asset.State = AssetState::Unloaded;
             asset.Data  = nullptr;
 
@@ -213,7 +213,7 @@ namespace Silent::Assets
         }
 
         // Check if file is valid.
-        if (!std::filesystem::exists(asset.File))
+        if (!stdfs::exists(asset.File))
         {
             Debug::Log(Fmt("Attempted to load streamable asset `{}` from missing file `{}`.",
                            asset.Name, asset.File.string()),

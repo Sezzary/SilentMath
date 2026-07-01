@@ -6,7 +6,7 @@
 
 namespace Silent::Utils
 {
-    Font::Font(FT_Library& fontLib, const FontMetadata& metadata, const std::filesystem::path& path,
+    Font::Font(FT_Library& fontLib, const FontMetadata& metadata, const stdfs::path& path,
                const std::string& precacheGlyphs)
     {
         constexpr int POINT_SIZE_MAX = ATLAS_SIZE / 8;
@@ -243,6 +243,7 @@ namespace Silent::Utils
 
         // Rasterize in texture atlas.
         RasterizeGlyph(ftFont, glyph);
+        Debug::Log(Fmt("Cached glyph U+{:X} for font chain `{}`.", (int)codePoint, _name));
     }
 
     smol_atlas_item_t& Font::InsertGlyphRect(const Vector2i& size, char32 codePoint)
@@ -251,8 +252,7 @@ namespace Silent::Utils
         auto* rect = sma_item_add(_rectAtlases[_activeAtlasIdx], size.x, size.y);
         if (rect == nullptr)
         {
-            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name),
-                       Debug::LogLevel::Info);
+            Debug::Log(Fmt("Active atlas {} for font chain `{}` is full. Creating new atlas.", _activeAtlasIdx, _name));
             AddAtlas();
 
             // Attempt insertion into new active atlas.
@@ -329,7 +329,7 @@ namespace Silent::Utils
         return font;
     }
 
-    void FontManager::LoadFont(const FontMetadata& metadata, const std::filesystem::path& path,
+    void FontManager::LoadFont(const FontMetadata& metadata, const stdfs::path& path,
                                const std::string& glyphPrecache)
     {
         if (metadata.Filenames.empty())

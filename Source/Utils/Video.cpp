@@ -128,7 +128,7 @@ namespace Silent::Utils
         return plm_has_ended(_plm) == 0;
     }
 
-    void VideoPlayer::Initialize(const std::filesystem::path& videosPath)
+    void VideoPlayer::Initialize(const stdfs::path& videosPath)
     {
         _videosPath = videosPath;
     }

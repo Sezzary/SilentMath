@@ -9,11 +9,11 @@ using namespace Silent::Services;
 
 namespace Silent::Utils
 {
-    void TranslationManager::Initialize(const std::filesystem::path& localesFolder)
+    void TranslationManager::Initialize(const stdfs::path& localesFolder)
     {
         // Set folder path.
         _localesFolder = localesFolder;
-        if (!std::filesystem::exists(_localesFolder) || !std::filesystem::is_directory(_localesFolder))
+        if (!stdfs::exists(_localesFolder) || !stdfs::is_directory(_localesFolder))
         {
             Debug::Log("Locales folder doesn't exist.", Debug::LogLevel::Error);
             return;
@@ -21,7 +21,7 @@ namespace Silent::Utils
 
         // Register new locales.
         _locales.clear();
-        for (const auto& localeFolder : std::filesystem::directory_iterator(_localesFolder))
+        for (const auto& localeFolder : stdfs::directory_iterator(_localesFolder))
         {
             if (!localeFolder.is_directory())
             {
@@ -50,8 +50,8 @@ namespace Silent::Utils
                 });
             };
 
-            const auto* sysCodeIt0         = MatchLang(locale0.Code.Language);
-            const auto* sysCodeIt1         = MatchLang(locale1.Code.Language);
+            const auto* sysCodeIt0  = MatchLang(locale0.Code.Language);
+            const auto* sysCodeIt1  = MatchLang(locale1.Code.Language);
             bool        hasSysLang0 = (sysCodeIt0 != nullptr);
             bool        hasSysLang1 = (sysCodeIt1 != nullptr);
 
@@ -170,7 +170,7 @@ namespace Silent::Utils
         return false;
     }
 
-    void TranslationManager::AddLocale(const std::filesystem::path& localeFolder)
+    void TranslationManager::AddLocale(const stdfs::path& localeFolder)
     {
         constexpr char KEY_LABEL[]        = "Label";
         constexpr char KEY_COMMENT[]      = "Comment";

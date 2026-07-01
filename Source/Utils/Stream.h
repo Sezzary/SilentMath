@@ -26,7 +26,7 @@ namespace Silent::Utils
          * @param read Allow reading from the file.
          * @param write Allow writing to the file.
          */
-        Stream(const std::filesystem::path& filename, bool read, bool write);
+        Stream(const stdfs::path& filename, bool read, bool write);
 
         /** @brief Gracefully destroys the instance and closes the file. */
         ~Stream();

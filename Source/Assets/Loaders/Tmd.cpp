@@ -143,7 +143,7 @@ namespace Silent::Assets
         }
     }
 
-    std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename)
+    std::shared_ptr<void> ParseTmd(const stdfs::path& filename)
     {
         const auto& fs = g_App.GetFilesystem();
 
@@ -152,7 +152,7 @@ namespace Silent::Assets
         if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open TMD `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header.

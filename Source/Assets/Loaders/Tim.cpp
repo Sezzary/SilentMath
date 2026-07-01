@@ -29,7 +29,7 @@ namespace Silent::Assets
         HasClut = 1 << 3
     };
 
-    std::shared_ptr<void> TimParse(const std::filesystem::path& filename)
+    std::shared_ptr<void> TimParse(const stdfs::path& filename)
     {
         constexpr int HEADER_MAGIC           = 0x10;
         constexpr int BPP_MASK               = 0x7;
@@ -42,7 +42,7 @@ namespace Silent::Assets
         if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open TIM `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Confirm TIM format magic.
@@ -50,7 +50,7 @@ namespace Silent::Assets
         if (magic != HEADER_MAGIC)
         {
             throw std::runtime_error(Fmt("Failed to parse invalid TIM `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read CLUT and BPP flags.

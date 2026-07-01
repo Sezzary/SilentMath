@@ -15,8 +15,8 @@ namespace Silent::Utils
         std::vector<float> _audioBuffer = {};
         std::mutex         _audioMutex  = {};
 
-        std::string           _activeVideoName = {};
-        std::filesystem::path _videosPath      = {};
+        std::string _activeVideoName = {};
+        stdfs::path _videosPath      = {};
 
     public:
         // =============
@@ -99,7 +99,7 @@ namespace Silent::Utils
          *
          * @param videosPath Folder path containing videos.
          */
-        void Initialize(const std::filesystem::path& videosPath);
+        void Initialize(const stdfs::path& videosPath);
 
         /** @brief Starts a new active video.
          *

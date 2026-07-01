@@ -31,5 +31,5 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed ANM asset data as a `void` pointer.
      */
-    std::shared_ptr<void> ParseAnm(const std::filesystem::path& filename);
+    std::shared_ptr<void> ParseAnm(const stdfs::path& filename);
 }
