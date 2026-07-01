@@ -20,8 +20,8 @@ namespace Silent::Game
     /*#define SECTION(x) \
         __attribute__((section(x)))*/
 
-    #define STATIC_ASSERT(cond, msg) \
-        typedef char static_assertion_##msg[(cond) ? 1 : -1]
+    //#define STATIC_ASSERT(cond, msg) \
+    //    typedef char static_assertion_##msg[(cond) ? 1 : -1]
 
     #define STATIC_ASSERT_SIZEOF(type, size) \
         typedef char static_assertion_sizeof_##type[(sizeof(type) == (size)) ? 1 : -1]
