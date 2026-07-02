@@ -52,14 +52,13 @@ namespace Silent::Savegame
         auto saveFile = GetSavegameBlockPath(slotIdx, blockIdx);
         stdfs::create_directories(saveFile.parent_path());
 
-        // @todo
         // Write savegame buffer file.
         auto stream = Stream(saveFile, false, true);
-        //if (stream.WriteArray(ToSpan(*ToSavegameBuffer(_savegame))))
-        //{
-        //    Debug::Log(Fmt("Saved game to slot {}, block {}.", slotIdx + 1, blockIdx + 1));
-        //    return true;
-        //}
+        if (stream.WriteArray(ToSpan(ToSavegameBuffer(_savegame))))
+        {
+            Debug::Log(Fmt("Saved game to slot {}, block {}.", slotIdx + 1, blockIdx + 1));
+            return true;
+        }
 
         Debug::Log(Fmt("Failed to save game to slot {}, block {}.", slotIdx + 1, blockIdx + 1),
                    Debug::LogLevel::Warning);
@@ -79,14 +78,20 @@ namespace Silent::Savegame
             return;
         }
 
-        // Get buffer size.
-        auto bufferSize = stream.GetSize();
-
         // Read buffer.
-        auto buffer = std::vector<byte>(bufferSize);
+        auto buffer = std::vector<byte>(stream.GetSize());
         stream.ReadArray(ToSpan(buffer));
-        _savegame = std::move(*FromSavegameBuffer(buffer));
 
+        // Deserialize to engine savegame.
+        auto save = FromSavegameBuffer(buffer);
+        if (!save.has_value())
+        {
+            Debug::Log(Fmt("Failed to load savegame from slot {}, block {}.", slotIdx + 1, blockIdx + 1));
+            return;
+        }
+
+        // Set engine savegame.
+        _savegame = std::move(*save);
         Debug::Log(Fmt("Loaded savegame from slot {}, block {}.", slotIdx + 1, blockIdx + 1));
     }
 
@@ -128,13 +133,10 @@ namespace Silent::Savegame
             };
         }
 
-        // Get buffer size.
-        auto bufferSize = stream.GetSize();
-
         // Read buffer.
-        auto buffer = std::vector<byte>(bufferSize);
+        auto buffer = std::vector<byte>(stream.GetSize());
         stream.ReadArray(ToSpan(buffer));
-        auto save = std::move(*FromSavegameBuffer(buffer));
+        auto save = FromSavegameBuffer(buffer);
         
         // @todo Read metadata.
         auto metadata = SavegameMetadata{};
@@ -209,6 +211,8 @@ namespace Silent::Savegame
                 }
             }
             Sort(saveFiles);
+
+            // @todo Deal with any `.bak` files resulting from interrupted filesystem I/O to avoid potential corruption.
 
             // Rename savegame files to follow sequential order.
             for (int i = 0; i < saveFiles.size(); i++)
@@ -314,29 +318,29 @@ namespace Silent::Savegame
         }
     }
 
-    std::unique_ptr<Savegame> SavegameManager::FromSavegameBuffer(const std::vector<byte>& saveBuffer) const
+    std::optional<Savegame> SavegameManager::FromSavegameBuffer(const std::vector<byte>& buffer) const
     {
         // @heapalloc
-        auto save = std::make_unique<Savegame>();
+        auto save = Savegame{};
 
         // Deserialize buffer.
-        //auto errorCode = struct_pack::deserialize_to(*save, saveBuffer);
-        //if (errorCode != struct_pack::errc::ok)
-        //{
-        //    Debug::Log("Failed to deserialize savegame buffer.", Debug::LogLevel::Warning);
-        //    return nullptr;
-        //}
+        auto errorCode = struct_pack::deserialize_to(save, buffer);
+        if (errorCode != struct_pack::errc::ok)
+        {
+            Debug::Log("Failed to deserialize savegame buffer.", Debug::LogLevel::Warning);
+            return std::nullopt;
+        }
 
         return save;
     }
 
-    std::unique_ptr<std::vector<byte>> SavegameManager::ToSavegameBuffer(const Savegame& save) const
+    std::vector<byte> SavegameManager::ToSavegameBuffer(const Savegame& save) const
     {
         // @heapalloc
-        auto saveBuffer = std::make_unique<std::vector<byte>>();
+        auto buffer = std::vector<byte>();
 
         // Serialize buffer.
-        //struct_pack::serialize_to(*saveBuffer, save);
-        return saveBuffer;
+        struct_pack::serialize_to(buffer, save);
+        return buffer;
     }
 }

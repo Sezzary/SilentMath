@@ -58,7 +58,7 @@ namespace Silent::Savegame
         int LongRangeShotCount  = 0;
         int ClearGameCount      = 0;
         int ClearGameEndings    = 0; /** `e_GameEndingFlags` */
-        u8  Add290Hours : 2     = 0; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
+        u8  Add290Hours/* : 2*/     = 0; /** Adds 290 hours per 1 bit, i.e. 290, 580, 870. */
     };
 
     /** @brief Savegame metadata to display. */
@@ -148,16 +148,16 @@ namespace Silent::Savegame
 
         /** @brief Converts a serialized savegame buffer to an engine savegame.
          *
-         * @param saveBuffer Serialized savegame buffer.
+         * @param buffer Serialized savegame buffer.
          * @return Engine savegame.
          */
-        std::unique_ptr<Savegame> FromSavegameBuffer(const std::vector<byte>& saveBuffer) const;
+        std::optional<Savegame> FromSavegameBuffer(const std::vector<byte>& buffer) const;
 
         /** @brief Converts an engine savegame to a serialized savegame buffer.
          *
          * @param save Engine savegame.
          * @return Serialized savegame buffer.
          */
-        std::unique_ptr<std::vector<byte>> ToSavegameBuffer(const Savegame& save) const;
+        std::vector<byte> ToSavegameBuffer(const Savegame& save) const;
     };
 }

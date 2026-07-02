@@ -219,7 +219,7 @@ namespace Silent::Utils
         int  size   = ReadInt32();
         auto chunks = std::vector<Bitfield::ChunkType>((size + (Bitfield::CHUNK_SIZE - 1)) / Bitfield::CHUNK_SIZE);
         ReadArray(ToSpan(chunks));
-        return Bitfield(chunks, size);
+        return Bitfield(size, chunks);
     }
 
     Vector2i Stream::ReadVector2i()

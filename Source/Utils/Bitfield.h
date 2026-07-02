@@ -56,10 +56,10 @@ namespace Silent::Utils
 
         /** @brief Creates an instance from specified chunks with a size.
          *
-         * @param chunks Chunks containing bits.
          * @param size Number of bits.
+         * @param chunks Chunks containing bits.
          */
-        Bitfield(const std::vector<ChunkType>& chunks, int size);
+        Bitfield(int size, const std::vector<ChunkType>& chunks);
 
         /** @brief Creates an instance from a string of `1`s (`true`) and `0`s (`false`).
          *
@@ -250,12 +250,28 @@ namespace Silent::Utils
         int  size   = 0;
         auto chunks = std::vector<Bitfield::ChunkType>{};
 
-        // Deserialize components from buffer.
-        auto errorCode = struct_pack::deserialize_to(reader, size, chunks);
+        #ifdef read
+            #undef read
+            #define HAS_PSYQ_READ
+        #endif
+
+        // Read size.
+        auto errorCode = struct_pack::read(reader, size);
         if (errorCode != struct_pack::errc::ok) 
         {
             return errorCode;
         }
+
+        // Read chunks.
+        errorCode = struct_pack::read(reader, chunks);
+        if (errorCode != struct_pack::errc::ok) 
+        {
+            return errorCode;
+        }
+
+        #ifdef HAS_PSYQ_READ
+            #define read psyz_read
+        #endif
 
         // Recreate object.
         bitfield = Bitfield(size, std::move(chunks));

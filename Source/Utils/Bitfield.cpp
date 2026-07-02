@@ -10,20 +10,20 @@ namespace Silent::Utils
 
     Bitfield::Bitfield()
     {
-        _chunks.resize((DEFAULT_SIZE + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = DEFAULT_SIZE;
+        _chunks.resize((DEFAULT_SIZE + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
     }
 
     Bitfield::Bitfield(int size)
     {
-        _chunks.resize((size + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = size;
+        _chunks.resize((size + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
     }
 
     Bitfield::Bitfield(const std::initializer_list<bool>& bits)
     {
-        _chunks.resize((bits.size() + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = (int)bits.size();
+        _chunks.resize((bits.size() + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
 
         int bitIdx = 0;
         for (auto it = bits.begin(); it != bits.end(); it++, bitIdx++)
@@ -39,16 +39,16 @@ namespace Silent::Utils
         }
     }
 
-    Bitfield::Bitfield(const std::vector<ChunkType>& chunks, int size)
+    Bitfield::Bitfield(int size, const std::vector<ChunkType>& chunks)
     {
-        _chunks = chunks;
         _size   = std::min(size, (int)chunks.size() * CHUNK_SIZE);
+        _chunks = chunks;
     }
 
     Bitfield::Bitfield(const std::string& bitStr)
     {
-        _chunks.resize((bitStr.size() + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = (int)bitStr.size();
+        _chunks.resize((bitStr.size() + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
 
         int bitIdx = 0;
         for (char bit : bitStr)
@@ -282,8 +282,8 @@ namespace Silent::Utils
 
     void Bitfield::Resize(int size)
     {
-        _chunks.resize((size + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
         _size = size;
+        _chunks.resize((size + (CHUNK_SIZE - 1)) / CHUNK_SIZE);
 
         int endBitCount = size % CHUNK_SIZE;
         if (endBitCount > 0)
@@ -347,15 +347,15 @@ namespace Silent::Utils
             _chunks[chunkIdx] &= bitField.GetChunks()[chunkIdx];
         }
 
-        _chunks.resize(std::min((int)_chunks.size(), bitField.GetSize()));
         _size = std::min(_size, bitField.GetSize());
+        _chunks.resize(std::min((int)_chunks.size(), bitField.GetSize()));
         return *this;
     }
 
     Bitfield& Bitfield::operator|=(const Bitfield& bitField)
     {
-        _chunks.resize(std::max(_chunks.size(), bitField.GetChunks().size()));
         _size = std::max(_size, bitField.GetSize());
+        _chunks.resize(std::max(_chunks.size(), bitField.GetChunks().size()));
 
         for (int chunkIdx = 0; chunkIdx < bitField.GetChunks().size(); chunkIdx++)
         {
@@ -367,8 +367,8 @@ namespace Silent::Utils
 
     Bitfield& Bitfield::operator^=(const Bitfield& bitField)
     {
-        _chunks.resize(std::max(_chunks.size(), bitField.GetChunks().size()));
         _size = std::max(_size, bitField.GetSize());
+        _chunks.resize(std::max(_chunks.size(), bitField.GetChunks().size()));
 
         for (int chunkIdx = 0; chunkIdx < std::min(_chunks.size(), bitField.GetChunks().size()); chunkIdx++)
         {
@@ -387,7 +387,7 @@ namespace Silent::Utils
             chunks[chunkIdx] = _chunks[chunkIdx] & bitField.GetChunks()[chunkIdx];
         }
 
-        return Bitfield(chunks, std::min(_size, bitField.GetSize()));
+        return Bitfield(std::min(_size, bitField.GetSize()), chunks);
     }
 
     Bitfield Bitfield::operator|(const Bitfield& bitField) const
@@ -404,7 +404,7 @@ namespace Silent::Utils
             chunks[chunkIdx] |= bitField.GetChunks()[chunkIdx];
         }
 
-        return Bitfield(chunks, std::max(_size, bitField.GetSize()));
+        return Bitfield(std::max(_size, bitField.GetSize()), chunks);
     }
 
     Bitfield Bitfield::operator^(const Bitfield& bitField) const
@@ -427,7 +427,7 @@ namespace Silent::Utils
             }
         }
 
-        return Bitfield(chunks, std::max(_size, bitField.GetSize()));
+        return Bitfield(std::max(_size, bitField.GetSize()), chunks);
     }
 
     Bitfield Bitfield::operator~() const
