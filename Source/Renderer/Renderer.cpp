@@ -109,7 +109,7 @@ namespace Silent::Renderer
         _doubleBuffer.Active.MeshUploadQueue.clear();
         _doubleBuffer.Active.MeshReleaseQueue.clear();
 
-        // Swap debug messages.
+        // @debug Swap debug messages.
         Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
         Debug::g_Work.Messages.clear();
     }

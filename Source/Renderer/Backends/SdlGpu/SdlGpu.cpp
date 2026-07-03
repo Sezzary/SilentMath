@@ -582,6 +582,7 @@ namespace Silent::Renderer::SdlGpu
             _doubleBuffer.Active.DrawCallCount++;
         };
 
+        // @debug Luma fade test.
         if (Debug::g_Work.BlendAlpha > 0.0f)
         {
             RunPostProcessPass(RenderStage::Fade, [&]()
@@ -595,6 +596,7 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
+        // CRT filter.
         if (options->EnableCrtFilter)
         {
             RunPostProcessPass(RenderStage::Crt, [&]()
@@ -608,6 +610,7 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
+        // Screen vignette.
         if (options->EnableVignette)
         {
             RunPostProcessPass(RenderStage::Vignette, [&]()

@@ -122,7 +122,7 @@ namespace Silent::Game
         }
 
         // Submit fullscreen video sprite.
-        float aspect = 4.0f / 3.0f;//video.GetAspectRatio(); // @todo PL_MPEG returns wrong info.
+        float aspect = video.GetAspectRatio();
         auto  scale  = Vector2(std::max(aspect, 1.0f), std::min(aspect, 1.0f));
         auto  sprite = Sprite2d::CreateSprite2d(video.GetName(), Vector2::Zero, Vector2::One,
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), scale, Color::White,

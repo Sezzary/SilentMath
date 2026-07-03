@@ -41,7 +41,7 @@ namespace Silent::Utils
 
     Vector2i VideoPlayer::GetResolution() const
     {
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log("Attempted to get video resolution with no video playing.", Debug::LogLevel::Warning);
             return Vector2i::Zero;
@@ -54,16 +54,19 @@ namespace Silent::Utils
     {
         if (!IsLoaded())
         {
+            Debug::Log("Attempted to get video aspect ratio with no video playing.", Debug::LogLevel::Warning);
             return 1.0f;
         }
 
-        return plm_get_pixel_aspect_ratio(_plm);
+        auto res = GetResolution().ToVector2();
+        return res.x / res.y;
     }
 
     float VideoPlayer::GetTime() const
     {
         if (!IsLoaded())
         {
+            Debug::Log("Attempted to get video time with no video playing.", Debug::LogLevel::Warning);
             return 0.0f;
         }
 
@@ -74,6 +77,7 @@ namespace Silent::Utils
     {
         if (!IsLoaded())
         {
+            Debug::Log("Attempted to get video duration with no video playing.", Debug::LogLevel::Warning);
             return 0.0f;
         }
 
@@ -87,7 +91,7 @@ namespace Silent::Utils
 
     const std::vector<byte>& VideoPlayer::GetVideoFrame() const
     {
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log("Attempted to get video frame with no video playing.", Debug::LogLevel::Warning);
         }
@@ -97,7 +101,7 @@ namespace Silent::Utils
 
     std::vector<float> VideoPlayer::GetAudioFrame()
     {
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log("Attempted to get audio frame with no video playing.", Debug::LogLevel::Warning);
             return {};
@@ -158,7 +162,7 @@ namespace Silent::Utils
         // Open video file.
         auto videoPath = fs.GetAssetsDirectory() / ASSETS_VIDEO_DIR_NAME / filename;
         _plm           = plm_create_with_filename(videoPath.string().c_str());
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log(Fmt("Failed to play video `{}`.", filename), Debug::LogLevel::Warning);
             return;
@@ -187,8 +191,8 @@ namespace Silent::Utils
             _plm = nullptr;
         }
 
-        _frameBuffer     = {};
-        _audioBuffer     = {};
+        _frameBuffer.clear();
+        _audioBuffer.clear();
         _activeVideoName = {};
     }
 
@@ -196,7 +200,7 @@ namespace Silent::Utils
     {
         if (!IsLoaded())
         {
-            Debug::Log("Attempted to update video with no video playing.", Debug::LogLevel::Warning);
+            Debug::Log("Attempted to update video with none playing.", Debug::LogLevel::Warning);
             return;
         }
 
