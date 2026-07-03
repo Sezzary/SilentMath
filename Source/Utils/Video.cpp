@@ -149,7 +149,7 @@ namespace Silent::Utils
             return;
         }
 
-        // Check is same video is already playing.
+        // Check if same video is already playing.
         if (filename == _activeVideoName)
         {
             Debug::Log(Fmt("Video `{}` is already playing.", filename), Debug::LogLevel::Warning);
