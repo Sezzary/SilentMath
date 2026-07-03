@@ -353,17 +353,17 @@ namespace Silent::Utils
     {
         return Write((byte*)&val, sizeof(Vector2i));
     }
-    
+
     bool Stream::WriteVector2(const Vector2& val)
     {
         return Write((byte*)&val, sizeof(Vector2));
     }
-    
+
     bool Stream::WriteVector3i(const Vector3i& val)
     {
         return Write((byte*)&val, sizeof(Vector3i));
     }
-    
+
     bool Stream::WriteVector3(const Vector3& val)
     {
         return Write((byte*)&val, sizeof(Vector3));

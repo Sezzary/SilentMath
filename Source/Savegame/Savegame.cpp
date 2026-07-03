@@ -52,12 +52,33 @@ namespace Silent::Savegame
         auto saveFile = GetSavegameBlockPath(slotIdx, blockIdx);
         stdfs::create_directories(saveFile.parent_path());
 
+        // Create backup.
+        auto bakFile = stdfs::path(std::string(saveFile) + BAK_FILE_EXT);
+        if (stdfs::exists(saveFile) && !stdfs::exists(bakFile))
+        {
+            stdfs::copy_file(saveFile, bakFile);
+        }
+
         // Write savegame buffer file.
         auto stream = Stream(saveFile, false, true);
         if (stream.WriteArray(ToSpan(ToSavegameBuffer(_savegame))))
         {
+            // Delete backup.
+            if (stdfs::exists(bakFile))
+            {
+                stdfs::remove(bakFile);
+            }
+
             Debug::Log(Fmt("Saved game to slot {}, block {}.", slotIdx + 1, blockIdx + 1));
             return true;
+        }
+        stream.Close();
+
+        // Restore backup.
+        if (stdfs::exists(bakFile))
+        {
+            stdfs::remove(saveFile);
+            stdfs::rename(bakFile, saveFile);
         }
 
         Debug::Log(Fmt("Failed to save game to slot {}, block {}.", slotIdx + 1, blockIdx + 1),
@@ -124,7 +145,6 @@ namespace Silent::Savegame
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return SavegameMetadata
             {
-                .DataIdx        = NO_VALUE,
                 .SaveCount      = NO_VALUE,
                 .LocationId     = NO_VALUE,
                 .GameplayTimer  = 0,
@@ -305,15 +325,15 @@ namespace Silent::Savegame
         });
 
         // Populate savegame metadata.
-        _filesMetadata.clear();
+        _slotsMetadata.clear();
         for (int i = 0; i < slotDirs.size(); i++)
         {
-            _filesMetadata.push_back({});
+            _slotsMetadata.push_back({});
 
             for (const auto& saveFile : blockFiles)
             {
                 auto metadata = GetMetadata(saveFile);
-                _filesMetadata.back().push_back(metadata);
+                _slotsMetadata.back().push_back(metadata);
             }
         }
     }

@@ -263,7 +263,7 @@ namespace Silent::Utils
                                              (int)codePoint, _name));
             }
         }
-        
+
         return *rect;
     }
 

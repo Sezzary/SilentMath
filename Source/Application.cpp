@@ -304,7 +304,7 @@ namespace Silent
         //if (_work.Clock.GetTicks() > 0)
         for (int i = 0; i < _work.Clock.GetTicks(); i++)
         {
-            //Entry();
+            Entry();
         }
 
         // Update audio.

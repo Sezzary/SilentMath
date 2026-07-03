@@ -19,7 +19,7 @@ namespace Silent::Savegame
     /** @brief Savegame info. */
     struct Savegame
     {
-        int    SavegameCount  = 0;
+        int    SaveCount      = 0;
         int    LocationId     = 0; /** `e_SaveLocationId` */
         q20_12 GameplayTimer  = Q12(0.0f);
         bool   IsNextFearMode = false;
@@ -64,7 +64,6 @@ namespace Silent::Savegame
     /** @brief Savegame metadata to display. */
     struct SavegameMetadata
     {
-        int  DataIdx        = 0;
         int  SaveCount      = 0;
         int  LocationId     = 0;
         int  GameplayTimer  = 0;
@@ -81,7 +80,7 @@ namespace Silent::Savegame
         // =======
 
         Savegame                                   _savegame      = {};
-        std::vector<std::vector<SavegameMetadata>> _filesMetadata = {};
+        std::vector<std::vector<SavegameMetadata>> _slotsMetadata = {};
 
     public:
         // =============
