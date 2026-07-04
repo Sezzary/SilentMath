@@ -56,7 +56,8 @@ namespace Silent::Renderer::SdlGpu
          * @param capacity Max number of elements.
          * @param name Buffer name.
          */
-        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity, const std::string& name = {});
+        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity,
+                        const std::string& name = {});
 
         /** @brief Uploads data to the GPU buffer.
          *
@@ -111,7 +112,8 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity, const std::string& name)
+    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity,
+                               const std::string& name)
     {
         if (IsValid())
         {
@@ -120,7 +122,7 @@ namespace Silent::Renderer::SdlGpu
         }
 
         _usageFlags = usageFlags;
-        if (!(_usageFlags & (SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX | SDL_GPU_BUFFERUSAGE_INDIRECT)))
+        if (!(usageFlags & (SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX | SDL_GPU_BUFFERUSAGE_INDIRECT)))
         {
             throw std::runtime_error("Attempted to create GPU buffer with invalid usage flags.");
         }
@@ -131,7 +133,7 @@ namespace Silent::Renderer::SdlGpu
 
         auto bufferInfo = SDL_GPUBufferCreateInfo
         {
-            .usage = _usageFlags,
+            .usage = usageFlags,
             .size  = capacity * sizeof(T)
         };
 

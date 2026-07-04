@@ -95,7 +95,7 @@ namespace Silent::Renderer::SdlGpu
          */
         MeshCache& GetMeshes();
 
-        /** @brief Gets the offscreen render texture.
+        /** @brief Updates the offscreen render texture.
          *
          * @return Offscreen render texture.
          */
@@ -113,12 +113,9 @@ namespace Silent::Renderer::SdlGpu
          */
         SDL_GPUSampler& GetActiveSampler();
 
-        void Draw3dScene() override;
-        void DrawDither() override;
-        void Draw2dScene() override;
-        void DrawPostProcess() override;
-        void DrawViewport() override;
-        void DrawPowerMenu() override;
+        // ==================================================================
+        // GPU Transfer Helpers | `Renderer/Backends/SdlGpu/GpuTransfer.cpp`
+        // ==================================================================
 
         /** @brief Allocates memory pools for draw batches and GPU buffers. */
         void InitializeGpuBuffers();
@@ -169,5 +166,16 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
+
+        // ===================================================
+        // Draw Helpers | `Renderer/Backends/SdlGpu/Draw.cpp`
+        // ===================================================
+
+        void Draw3dScene() override;
+        void DrawDither() override;
+        void Draw2dScene() override;
+        void DrawPostProcess() override;
+        void DrawViewport() override;
+        void DrawDebugMenu() override;
     };
 }

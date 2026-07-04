@@ -293,9 +293,9 @@ namespace Silent::Renderer
         /** @brief Draws the current frame according to a hardcoded render graph. */
         void DrawFrame();
 
-        // ================
-        // Virtual Helpers
-        // ================
+        // =====================
+        // Virtual Draw Helpers
+        // =====================
 
         /** @brief Draws a 3D scene to a cleared off-screen render texture.
          * Called before `Draw2dScene`.
@@ -318,14 +318,14 @@ namespace Silent::Renderer
         virtual void DrawPostProcess() = 0;
 
         /** @brief Draws the viewport containing post-procesed, combined 3D and 2D scenes to the swapchain.
-         * Called after `DrawPostProcess` and before `DrawPowerMenu`.
+         * Called after `DrawPostProcess` and before `DrawDebugMenu`.
          */
         virtual void DrawViewport() = 0;
 
         /** @brief Draws a debug menu on top of the viewport to the swapchain.
          * Called after `DrawViewport`.
          */
-        virtual void DrawPowerMenu() = 0;
+        virtual void DrawDebugMenu() = 0;
     };
 
     /** @brief Creates a renderer of a specified backend type.

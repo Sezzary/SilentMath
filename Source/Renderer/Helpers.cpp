@@ -342,6 +342,6 @@ namespace Silent::Renderer
         Draw2dScene();
         DrawPostProcess();
         DrawViewport();
-        DrawPowerMenu();
+        DrawDebugMenu();
     }
 }
