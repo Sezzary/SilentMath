@@ -125,9 +125,9 @@ namespace Silent::Renderer::SdlGpu
          */
         void Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
-        /** @brief Releases a texture from the GPU.
+        /** @brief Releases a cached texture from the GPU.
          *
-         * @param name Texture name.
+         * @param name Texture to unload.
          */
         void Release(const std::string& name);
 

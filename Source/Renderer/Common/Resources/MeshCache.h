@@ -37,7 +37,7 @@ namespace Silent::Renderer
 
         /** @brief Releases a cached mesh from the GPU.
          *
-         * @param name Name of the GPU mesh to unload.
+         * @param name Mesh name.
          */
         void Release(const std::string& name);
 

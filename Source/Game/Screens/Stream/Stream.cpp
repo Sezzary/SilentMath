@@ -117,6 +117,7 @@ namespace Silent::Game
             }
             else
             {
+                // @todo Use real delta time.
                 video.Update(1.0f / 30.0f);//Q12_TO_FLT(g_DeltaTime));
             }
         }

@@ -194,6 +194,12 @@ namespace Silent
         }
         _work.Renderer->Initialize(*_window);
 
+        // Set "on stop" video callback to gracefully release GPU texture resource when necessary.
+        _work.Video.SetOnStopCallback([this](const std::string& videoName)
+        {
+            _work.Renderer->QueueTextureRelease(videoName);
+        });
+
         // Audio.
         _work.Audio.Initialize();
 

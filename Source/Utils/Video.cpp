@@ -117,6 +117,11 @@ namespace Silent::Utils
         }
     }
 
+    void VideoPlayer::SetOnStopCallback(OnStopCallback onStop)
+    {
+        _onStop = std::move(onStop);
+    }
+
     bool VideoPlayer::IsLoaded() const
     {
         return _plm != nullptr;
@@ -157,7 +162,10 @@ namespace Silent::Utils
         }
 
         // Interrupt previous active video.
-        Stop();
+        if (IsLoaded())
+        {
+            Stop();
+        }
 
         // Open video file.
         auto videoPath = fs.GetAssetsDirectory() / ASSETS_VIDEO_DIR_NAME / filename;
@@ -180,16 +188,28 @@ namespace Silent::Utils
         plm_set_video_decode_callback(_plm, OnVideoFrame, _frameBuffer.data());
         plm_set_audio_decode_callback(_plm, OnAudioFrame, this);
 
+        plm_decode(_plm, 0.0f);
         Debug::Log(Fmt("Playing video `{}`.", filename));
     }
 
     void VideoPlayer::Stop()
     {
-        if (IsLoaded())
+        if (!IsLoaded())
         {
-            plm_destroy(_plm);
-            _plm = nullptr;
+            Debug::Log("Attempted to stop video with none playing.", Debug::LogLevel::Warning);
+            return;
         }
+
+        // Execute `_onStop` callback.
+        if (_onStop)
+        {
+            _onStop(_activeVideoName);
+        }
+
+        plm_destroy(_plm);
+        _plm = nullptr;
+
+        Debug::Log(Fmt("Stopped video `{}`.", _activeVideoName));
 
         _frameBuffer.clear();
         _audioBuffer.clear();

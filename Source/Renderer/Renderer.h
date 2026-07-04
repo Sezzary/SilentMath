@@ -32,9 +32,9 @@ namespace Silent::Renderer
             std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
 
             std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
-            std::vector<std::string> TextureReleaseQueue = {}; /** Asset names. */
+            std::vector<std::string> TextureReleaseQueue = {}; /** GPU texture names. */
             std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
-            std::vector<std::string> MeshReleaseQueue    = {}; /** Asset names. */
+            std::vector<std::string> MeshReleaseQueue    = {}; /** GPU mesh names. */
         };
 
         Data Active = {};

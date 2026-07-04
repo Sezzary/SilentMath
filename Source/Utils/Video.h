@@ -6,6 +6,12 @@ namespace Silent::Utils
     class VideoPlayer
     {
     private:
+        // ========
+        // Aliases
+        // ========
+
+        using OnStopCallback = std::function<void(const std::string& videoName)>;
+
         // =======
         // Fields
         // =======
@@ -15,8 +21,9 @@ namespace Silent::Utils
         std::vector<float> _audioBuffer = {};
         std::mutex         _audioMutex  = {};
 
-        std::string _activeVideoName = {};
-        stdfs::path _videosPath      = {};
+        std::string    _activeVideoName = {};
+        stdfs::path    _videosPath      = {};
+        OnStopCallback _onStop          = nullptr;
 
     public:
         // =============
@@ -75,6 +82,16 @@ namespace Silent::Utils
          */
         std::vector<float> GetAudioFrame();
 
+        // ========
+        // Setters
+        // ========
+
+        /** @brief Sets a callback to execute on video stop.
+         *
+         * @param onStop Callback on video stop.
+         */
+        void SetOnStopCallback(OnStopCallback onStop);
+
         // ==========
         // Inquirers
         // ==========
@@ -108,7 +125,7 @@ namespace Silent::Utils
          */
         void Play(const std::string& filename);
 
-        /** @brief Stops the active video and frees resources. */
+        /** @brief Stops the active video and frees resources, additionally queuing a GPU texture release. */
         void Stop();
 
         /** @brief Progresses the active video.

@@ -11,7 +11,7 @@ namespace Silent::Utils
     {
         constexpr int POINT_SIZE_MAX = ATLAS_SIZE / 8;
 
-        // @todo check if counts are equal for fonts and trackings.
+        // @todo Check if counts are equal for fonts and trackings.
 
         _name               = metadata.Name;
         _tracking           = metadata.Trackings[0]; // @todo Unique tracking for each font.
@@ -243,7 +243,8 @@ namespace Silent::Utils
 
         // Rasterize in texture atlas.
         RasterizeGlyph(ftFont, glyph);
-        Debug::Log(Fmt("Cached glyph U+{:X} for font chain `{}`.", (int)codePoint, _name));
+        Debug::Log(Fmt("Cached glyph U+{:X} for font chain `{}`.", (int)codePoint, _name),
+                   Debug::LogLevel::Info, Debug::LogMode::Debug);
     }
 
     smol_atlas_item_t& Font::InsertGlyphRect(const Vector2i& size, char32 codePoint)

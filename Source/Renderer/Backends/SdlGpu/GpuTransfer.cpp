@@ -61,9 +61,9 @@ namespace Silent::Renderer::SdlGpu
 
         // Release/upload textures.
         auto& texs = GetTextures();
-        for (const auto& assetName : _doubleBuffer.Render.TextureReleaseQueue)
+        for (const auto& name : _doubleBuffer.Render.TextureReleaseQueue)
         {
-            texs.Release(assetName);
+            texs.Release(name);
         }
         for (const auto& assetName : _doubleBuffer.Render.TextureUploadQueue)
         {
@@ -72,9 +72,9 @@ namespace Silent::Renderer::SdlGpu
 
         // Release/upload meshes.
         auto& meshes = GetMeshes();
-        for (const auto& assetName : _doubleBuffer.Render.MeshReleaseQueue)
+        for (const auto& name : _doubleBuffer.Render.MeshReleaseQueue)
         {
-            meshes.Release(assetName);
+            meshes.Release(name);
         }
         for (const auto& assetName : _doubleBuffer.Render.MeshUploadQueue)
         {
@@ -124,11 +124,6 @@ namespace Silent::Renderer::SdlGpu
             {
                 GetTextures().Upload(copyPass, ToSpan(video.GetVideoFrame()), video.GetResolution(), video.GetName());
             }
-        }
-        // Release video texture.
-        else if (video.IsLoaded())
-        {
-            GetTextures().Release(videoName);
         }
     }
 
