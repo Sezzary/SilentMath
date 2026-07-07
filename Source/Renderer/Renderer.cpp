@@ -83,7 +83,7 @@ namespace Silent::Renderer
     {
         auto& executor = g_App.GetExecutor();
 
-        // @todo Using parallelism here causes flickering. Why if lock guards are in place?
+        // @todo Using parallelism here causes flickering. Why if lock guards are in place??
         // Generate active buffer data.
         //auto tasks = ParallelTasks
         //{
@@ -100,6 +100,7 @@ namespace Silent::Renderer
 
         // Swap double buffer.
         std::swap(_doubleBuffer.Render, _doubleBuffer.Active);
+        _doubleBuffer.Active.IsResized     = false;
         _doubleBuffer.Active.DrawCallCount = 0;
         _doubleBuffer.Active.ImmediatePrimitives2d.clear();
         _doubleBuffer.Active.ImmediatePrimitives3d.clear();
@@ -116,7 +117,7 @@ namespace Silent::Renderer
 
     void RendererBase::SignalResize()
     {
-        _isResized = true;
+        _doubleBuffer.Active.IsResized = true;
     }
 
     void RendererBase::QueueTextureUpload(const std::string& assetName)

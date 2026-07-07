@@ -210,9 +210,6 @@ namespace Silent::Renderer::SdlGpu
 
         // Submit command buffer to GPU.
         SDL_SubmitGPUCommandBuffer(_commandBuffer);
-
-        // Reset resized signal.
-        _isResized = false;
     }
 
     void Renderer::SaveScreenshot() const
@@ -277,7 +274,7 @@ namespace Silent::Renderer::SdlGpu
     {
         if (_renderTexture.Read()  != nullptr &&
             _renderTexture.Write() != nullptr &&
-            !_isResized)
+            !_doubleBuffer.Render.IsResized)
         {
             return;
         }
@@ -301,7 +298,7 @@ namespace Silent::Renderer::SdlGpu
 
     SDL_GPUTexture* Renderer::GetDepthTexture()
     {
-        if (_depthTexture != nullptr && !_isResized)
+        if (_depthTexture != nullptr && !_doubleBuffer.Render.IsResized)
         {
             return _depthTexture;
         }

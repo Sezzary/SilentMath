@@ -340,7 +340,7 @@ namespace Silent
         _work.Renderer->PrepareFrameResources();
 
         // Render frame asynchronously.
-        _prevFrameFuture = _frameWorker.AddTask(TASK(_work.Renderer->Update()));
+        _prevFrameFuture = _renderExecutor.AddTask(TASK(_work.Renderer->Update()));
     }
 
     void ApplicationManager::PollEvents()
@@ -431,13 +431,10 @@ namespace Silent
                     break;
                 }
                 case SDL_EVENT_WINDOW_MOUSE_ENTER:
-                {
-                    // @todo
-                    break;
-                }
                 case SDL_EVENT_WINDOW_MOUSE_LEAVE:
                 {
-                    // @todo
+                    // @todo Toggle cursor.
+                    auto windowFlags = SDL_GetWindowFlags(_window);
                     break;
                 }
                 case SDL_EVENT_WINDOW_FOCUS_GAINED:

@@ -25,7 +25,8 @@ namespace Silent::Renderer
     {
         struct Data
         {
-            int DrawCallCount = 0;
+            bool IsResized     = false;
+            int  DrawCallCount = 0;
 
             std::vector<Primitive2d>           ImmediatePrimitives2d = {};
             std::vector<Primitive3d>           ImmediatePrimitives3d = {};
@@ -63,7 +64,6 @@ namespace Silent::Renderer
 
         RendererType _type       = RendererType::SdlGpu;
         SDL_Window*  _window     = nullptr;
-        bool         _isResized  = false;
         Color        _clearColor = Color::Clear;
         View         _view       = View();
 
