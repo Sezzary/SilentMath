@@ -43,6 +43,8 @@ namespace Silent::Renderer
 
         std::mutex Primitives2dMutex = {};
         std::mutex Primitives3dMutex = {};
+
+        void Swap();
     };
 
     /** @brief Unprocessed scene objects. */

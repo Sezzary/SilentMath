@@ -19,6 +19,25 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
+    void DoubleBuffer::Swap()
+    {
+        std::swap(Render, Active);
+
+        Active.IsResized     = false;
+        Active.DrawCallCount = 0;
+
+        Active.ImmediatePrimitives2d.clear();
+        Active.ImmediatePrimitives3d.clear();
+        Active.DebugGuiDrawCalls.clear();
+        Active.TextureUploadQueue.clear();
+        Active.TextureReleaseQueue.clear();
+        Active.MeshUploadQueue.clear();
+        Active.MeshReleaseQueue.clear();
+
+        Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
+        Debug::g_Work.Messages.clear();
+    }
+
     RendererType RendererBase::GetType() const
     {
         return _type;
@@ -98,21 +117,7 @@ namespace Silent::Renderer
         ProcessGlyphs2d();
         ProcessTriangles3d();
 
-        // Swap double buffer.
-        std::swap(_doubleBuffer.Render, _doubleBuffer.Active);
-        _doubleBuffer.Active.IsResized     = false;
-        _doubleBuffer.Active.DrawCallCount = 0;
-        _doubleBuffer.Active.ImmediatePrimitives2d.clear();
-        _doubleBuffer.Active.ImmediatePrimitives3d.clear();
-        _doubleBuffer.Active.DebugGuiDrawCalls.clear();
-        _doubleBuffer.Active.TextureUploadQueue.clear();
-        _doubleBuffer.Active.TextureReleaseQueue.clear();
-        _doubleBuffer.Active.MeshUploadQueue.clear();
-        _doubleBuffer.Active.MeshReleaseQueue.clear();
-
-        // @debug Swap debug messages.
-        Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
-        Debug::g_Work.Messages.clear();
+        _doubleBuffer.Swap();
     }
 
     void RendererBase::SignalResize()
