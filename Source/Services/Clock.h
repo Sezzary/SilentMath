@@ -7,12 +7,16 @@ namespace Silent::Services
     /** @brief Game clock manager. */
     class ClockManager
     {
-    private:
+    public:
         // ==========
         // Constants
         // ==========
 
-        static constexpr int TICK_INTERVAL_DURATION = 1000000 / TICKS_PER_SECOND;
+        static constexpr int MICROSEC_PER_SEC = 1000000;
+
+    private:
+        static constexpr int TICK_INTERVAL_DURATION = MICROSEC_PER_SEC / TICKS_PER_SECOND;
+        static constexpr int TICKS_MAX              = 5;
 
         // =======
         // Fields
