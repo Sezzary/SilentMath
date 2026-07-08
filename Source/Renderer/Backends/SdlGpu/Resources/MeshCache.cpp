@@ -36,6 +36,23 @@ namespace Silent::Renderer::SdlGpu
         int vertOffset = _vertexAllocator.Allocate(verts.size());
         int idxOffset  = _idxAllocator.Allocate(idxs.size());
 
+        // Check for invalid block allocation.
+        if (vertOffset == NO_VALUE || idxOffset == NO_VALUE)
+        {
+            // Cleanup.
+            if (vertOffset != NO_VALUE)
+            {
+                _vertexAllocator.Deallocate(verts.size());
+            }
+            if (idxOffset != NO_VALUE)
+            {
+                _idxAllocator.Deallocate(idxs.size());
+            }
+
+            Debug::Log(Fmt("Failed to upload GPU mesh `{}`: out of memory.", name), Debug::LogLevel::Warning);
+            return;
+        }
+
         // Insert mesh.
         _meshes.try_emplace(name, Mesh
         {
