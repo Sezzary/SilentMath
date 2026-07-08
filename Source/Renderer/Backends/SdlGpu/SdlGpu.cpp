@@ -21,6 +21,13 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer::SdlGpu
 {
+    void GpuBuffers::Release()
+    {
+        ViewportVertices.Release();
+        ImmediateVertices2d.Release();
+        ImmediateVertices3d.Release();
+    }
+
     void Renderer::Initialize(SDL_Window& window)
     {
         static constexpr char NAME[] = "SDL_gpu";
@@ -154,8 +161,25 @@ namespace Silent::Renderer::SdlGpu
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        _gpuBuffers = {};
+        _gpuBuffers.Release();
         _pipelines.Deinitialize();
+
+        for (auto* sampler : _samplers)
+        {
+            SDL_ReleaseGPUSampler(_device, sampler);
+        }
+        _samplers.clear();
+
+        _renderTexture.Release();
+
+        if (_depthTexture != nullptr)
+        {
+            SDL_ReleaseGPUTexture(_device, _depthTexture);
+            _depthTexture = nullptr;
+        }
+
+        GetTextures().Release();
+        GetMeshes().ReleaseAll();
 
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);

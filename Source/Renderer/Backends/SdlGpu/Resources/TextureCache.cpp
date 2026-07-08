@@ -184,6 +184,11 @@ namespace Silent::Renderer::SdlGpu
         _textures.erase(name);
     }
 
+    void TextureCache::Release()
+    {
+        _textures.clear();
+    }
+
     void TextureCache::Clear()
     {
         _textures.clear();

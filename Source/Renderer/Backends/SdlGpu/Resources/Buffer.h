@@ -26,9 +26,6 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Creates a default uninitialized instance. */
         Buffer() = default;
 
-        /** @brief Gracefully destroys the instance and releases GPU resources. */
-        ~Buffer();
-
         // ========
         // Getters
         // ========
@@ -58,6 +55,9 @@ namespace Silent::Renderer::SdlGpu
          */
         void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity,
                         const std::string& name = {});
+
+        /** @brief Releases the buffer from the GPU. */
+        void Release();
 
         /** @brief Uploads data to the GPU buffer.
          *
@@ -95,20 +95,6 @@ namespace Silent::Renderer::SdlGpu
     int Buffer<T>::GetCapacity() const
     {
         return _capacity;
-    }
-
-    template <typename T>
-    Buffer<T>::~Buffer()
-    {
-        if (_resourceBuffer != nullptr)
-        {
-            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
-        }
-
-        if (_transferBuffer != nullptr)
-        {
-            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
-        }
     }
 
     template <typename T>
@@ -159,6 +145,25 @@ namespace Silent::Renderer::SdlGpu
         {
             Debug::Log(Fmt("Failed to create transfer buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
         }
+    }
+
+    template <typename T>
+    void Buffer<T>::Release()
+    {
+        if (_resourceBuffer != nullptr)
+        {
+            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
+            _resourceBuffer = nullptr;
+        }
+
+        if (_transferBuffer != nullptr)
+        {
+            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
+            _transferBuffer = nullptr;
+        }
+
+        _capacity = 0;
+        _device   = nullptr;
     }
 
     template <typename T>

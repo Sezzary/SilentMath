@@ -111,6 +111,19 @@ namespace Silent::Renderer::SdlGpu
         }
     }
 
+    void MeshCache::ReleaseAll()
+    {
+        auto names = std::vector<std::string>{};
+        names.reserve(_meshes.size());
+
+        for (const auto& name : names)
+        {
+            Release(name);
+        }
+
+        _vertexBuffer.Release();
+    }
+
     void MeshCache::Bind(SDL_GPURenderPass& renderPass)
     {
         _vertexBuffer.Bind(renderPass, 0, 0);

@@ -58,6 +58,9 @@ namespace Silent::Renderer::SdlGpu
          */
         void Initialize(SDL_GPUDevice& device, int vertCount, int idxCount, const std::string& name = {});
 
+        /** @brief Releases the vertex buffer from the GPU. */
+        void Release();
+
         /** @brief Uploads vertices to the internal GPU vertex buffer.
          *
          * @param verts New vertices to transfer to the vertex buffer.
@@ -104,6 +107,13 @@ namespace Silent::Renderer::SdlGpu
     {
         _vertexBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_VERTEX, vertCount, name);
         _idxBuffer.Initialize(device, SDL_GPU_BUFFERUSAGE_INDEX, idxCount, name + " (indices)");
+    }
+
+    template <typename T>
+    void VertexBuffer<T>::Release()
+    {
+        _vertexBuffer.Release();
+        _idxBuffer.Release();
     }
 
     template <typename T>

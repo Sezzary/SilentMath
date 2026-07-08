@@ -33,7 +33,7 @@ namespace Silent::Utils
         std::string _queuedLocaleName = {};
 
         std::vector<LocaleMetadata> _locales       = {};
-        stdfs::path       _localesFolder = {};
+        stdfs::path                 _localesFolder = {};
         bool                        _isLocked      = false;
 
     public:

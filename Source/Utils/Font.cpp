@@ -243,8 +243,8 @@ namespace Silent::Utils
 
         // Rasterize in texture atlas.
         RasterizeGlyph(ftFont, glyph);
-        Debug::Log(Fmt("Cached glyph U+{:X} for font chain `{}`.", (int)codePoint, _name),
-                   Debug::LogLevel::Info, Debug::LogMode::Debug);
+        //Debug::Log(Fmt("Cached glyph U+{:X} for font chain `{}`.", (int)codePoint, _name),
+        //           Debug::LogLevel::Info, Debug::LogMode::Debug);
     }
 
     smol_atlas_item_t& Font::InsertGlyphRect(const Vector2i& size, char32 codePoint)

@@ -40,6 +40,7 @@ namespace Silent::Renderer::SdlGpu
                 SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res, 
                 const std::string& name);
 
+        // @todo Move to method?
         /** @brief Gracefully destroys the instance and frees GPU resources. */
         ~Texture();
 
@@ -130,6 +131,8 @@ namespace Silent::Renderer::SdlGpu
          * @param name Texture to unload.
          */
         void Release(const std::string& name);
+
+        void Release();
 
         /** @brief Releases all cached textures from the GPU. */
         void Clear();

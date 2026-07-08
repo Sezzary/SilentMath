@@ -23,6 +23,7 @@ namespace Silent::Renderer
         /** @brief Creates a default uninitialized instance. */
         PingPongTexture() = default;
 
+        /** @brief Gracefully destroys the instance and frees GPU resources. */
         ~PingPongTexture() override;
 
         // ========

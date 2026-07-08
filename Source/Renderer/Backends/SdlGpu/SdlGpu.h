@@ -39,6 +39,8 @@ namespace Silent::Renderer::SdlGpu
         VertexBuffer<BufferVertex2d> ViewportVertices    = {};
         VertexBuffer<BufferVertex2d> ImmediateVertices2d = {};
         VertexBuffer<BufferVertex3d> ImmediateVertices3d = {};
+
+        void Release();
     };
 
     /** @brief SDL_gpu renderer backend. */
