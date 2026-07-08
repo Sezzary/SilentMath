@@ -52,13 +52,18 @@ namespace Silent::Renderer::SdlGpu
          */
         void Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
-        void ReleaseAll();
-
         /** @brief Binds the cached meshes GPU buffer for drawing.
          *
          * @param renderPass Render pass.
          */
         void Bind(SDL_GPURenderPass& renderPass);
+
+        // ==================
+        // Utility Overrides
+        // ==================
+
+        /** @copydoc MeshCacheBase::ReleaseAll */
+        void ReleaseAll() override;
 
     private:
         // ========

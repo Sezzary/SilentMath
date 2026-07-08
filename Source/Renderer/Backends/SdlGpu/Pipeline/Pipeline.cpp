@@ -22,12 +22,13 @@ namespace Silent::Renderer::SdlGpu
         }
     }
 
-    void PipelineManager::Deinitialize()
+    void PipelineManager::Release()
     {
         for (auto [keyHash, pipeline] : _pipelines)
         {
             SDL_ReleaseGPUGraphicsPipeline(_device, pipeline);
         }
+        _pipelines.clear();
     }
 
     void PipelineManager::Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode)

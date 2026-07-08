@@ -64,16 +64,15 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        RendererType _type       = RendererType::SdlGpu;
-        SDL_Window*  _window     = nullptr;
-        Color        _clearColor = Color::Clear;
-        View         _view       = View();
+        SDL_Window*  _window       = nullptr;
+        RendererType _type         = RendererType::SdlGpu;
+        Color        _clearColor   = Color::Clear;
+        View         _view         = View();
+        SceneObjects _sceneObjects = {};
 
         DoubleBuffer                      _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
         std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
-
-        SceneObjects _sceneObjects = {};
 
     public:
         // =============

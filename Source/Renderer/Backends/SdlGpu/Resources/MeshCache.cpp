@@ -74,7 +74,7 @@ namespace Silent::Renderer::SdlGpu
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load GPU meshes from invalid asset `{}`.", asset->Name),
+            Debug::Log(Fmt("Attempted to upload GPU meshes from invalid asset `{}`.", asset->Name),
                        Debug::LogLevel::Error);
             return;
         }
@@ -104,29 +104,24 @@ namespace Silent::Renderer::SdlGpu
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load GPU meshes from non-model asset `{}`.", asset->Name),
+                Debug::Log(Fmt("Attempted to upload GPU meshes from non-model asset `{}`.", asset->Name),
                            Debug::LogLevel::Error);
                 break;
             }
         }
     }
 
-    void MeshCache::ReleaseAll()
-    {
-        auto names = std::vector<std::string>{};
-        names.reserve(_meshes.size());
-
-        for (const auto& name : names)
-        {
-            Release(name);
-        }
-
-        _vertexBuffer.Release();
-    }
-
     void MeshCache::Bind(SDL_GPURenderPass& renderPass)
     {
         _vertexBuffer.Bind(renderPass, 0, 0);
+    }
+
+    void MeshCache::ReleaseAll()
+    {
+        _meshes.clear();
+        _vertexAllocator.Clear();
+        _idxAllocator.Clear();
+        _vertexBuffer.Release();
     }
 
     void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
@@ -145,7 +140,7 @@ namespace Silent::Renderer::SdlGpu
         const auto data = asset.GetData<PlmAsset>();
 
         // @todo
-        Debug::Log("Attempted to load PLM GPU meshes. Unimplemented.", Debug::LogLevel::Warning);
+        Debug::Log("Attempted to upload PLM GPU meshes: Unimplemented.", Debug::LogLevel::Warning);
     }
 
     void MeshCache::UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
@@ -153,7 +148,7 @@ namespace Silent::Renderer::SdlGpu
         const auto data = asset.GetData<IpdAsset>();
 
         // @todo
-        Debug::Log("Attempted to load IPD GPU meshes. Unimplemented.", Debug::LogLevel::Warning);
+        Debug::Log("Attempted to upload IPD GPU meshes: Unimplemented.", Debug::LogLevel::Warning);
     }
 
     void MeshCache::UploadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)

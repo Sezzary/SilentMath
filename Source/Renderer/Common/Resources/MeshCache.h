@@ -39,14 +39,21 @@ namespace Silent::Renderer
          */
         void Release(const std::string& name);
 
-        /** @brief Releases meshes of a streamable model asset from the GPU.
+        /** @brief Releases cached meshes of a streamable model asset from the GPU.
          *
          * @param assetName Streamable model asset name.
          */
         void ReleaseModel(const std::string& assetName);
 
-        /** @brief Releases all cached meshes from the GPU. */
-        void Clear();
+        // ==================
+        // Virtual Utilities
+        // ==================
+
+        /** @brief Releases all cached meshes from the GPU.
+         *
+         * @note Due to C++ inheritance quirks, this cannot simply be named `Release`.
+         */
+        virtual void ReleaseAll() = 0;
 
         // ==========
         // Operators

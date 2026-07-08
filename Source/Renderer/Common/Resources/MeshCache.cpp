@@ -24,7 +24,7 @@ namespace Silent::Renderer
         _vertexAllocator.Deallocate(mesh->VertexOffset);
         _idxAllocator.Deallocate(mesh->IdxOffset);
 
-        // Remove mesh.
+        // Remove mesh allocation.
         _meshes.erase(name);
     }
 
@@ -65,13 +65,6 @@ namespace Silent::Renderer
                 break;
             }
         }
-    }
-
-    void MeshCacheBase::Clear()
-    {
-        _meshes.clear();
-        _vertexAllocator.Clear();
-        _idxAllocator.Clear();
     }
 
     const Mesh* MeshCacheBase::operator[](const std::string& name) const

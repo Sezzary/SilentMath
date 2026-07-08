@@ -150,20 +150,21 @@ namespace Silent::Renderer::SdlGpu
     template <typename T>
     void Buffer<T>::Release()
     {
+        if (_device == nullptr)
+        {
+            return;
+        }
+
         if (_resourceBuffer != nullptr)
         {
             SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
             _resourceBuffer = nullptr;
         }
-
         if (_transferBuffer != nullptr)
         {
             SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
             _transferBuffer = nullptr;
         }
-
-        _capacity = 0;
-        _device   = nullptr;
     }
 
     template <typename T>

@@ -58,9 +58,6 @@ namespace Silent::Renderer::SdlGpu
          */
         void Initialize(SDL_GPUDevice& device, int vertCount, int idxCount, const std::string& name = {});
 
-        /** @brief Releases the vertex buffer from the GPU. */
-        void Release();
-
         /** @brief Uploads vertices to the internal GPU vertex buffer.
          *
          * @param verts New vertices to transfer to the vertex buffer.
@@ -82,6 +79,9 @@ namespace Silent::Renderer::SdlGpu
          * @param idxOffset Indices start index.
          */
         void Bind(SDL_GPURenderPass& renderPass, int vertOffset, int idxOffset);
+
+        /** @brief Releases the vertex buffer from the GPU. */
+        void Release();
     };
 
     template <typename T>
@@ -110,13 +110,6 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    void VertexBuffer<T>::Release()
-    {
-        _vertexBuffer.Release();
-        _idxBuffer.Release();
-    }
-
-    template <typename T>
     void VertexBuffer<T>::UpdateVertices(SDL_GPUCopyPass& copyPass, std::span<const T> verts, int offset)
     {
         _vertexBuffer.Update(copyPass, verts, offset);
@@ -133,5 +126,12 @@ namespace Silent::Renderer::SdlGpu
     {
         _vertexBuffer.Bind(renderPass, vertOffset);
         _idxBuffer.Bind(renderPass, idxOffset);
+    }
+
+    template <typename T>
+    void VertexBuffer<T>::Release()
+    {
+        _vertexBuffer.Release();
+        _idxBuffer.Release();
     }
 }

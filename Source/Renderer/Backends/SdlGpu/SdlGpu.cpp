@@ -153,16 +153,14 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Deinitialize()
     {
-        // @todo Errors.
-
         SDL_WaitForGPUIdle(_device);
 
         ImGui_ImplSDL3_Shutdown();
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
-        _gpuBuffers.Release();
-        _pipelines.Deinitialize();
+        GetTextures().Release();
+        GetMeshes().ReleaseAll();
 
         for (auto* sampler : _samplers)
         {
@@ -178,9 +176,8 @@ namespace Silent::Renderer::SdlGpu
             _depthTexture = nullptr;
         }
 
-        GetTextures().Release();
-        GetMeshes().ReleaseAll();
-
+        _pipelines.Release();
+        _gpuBuffers.Release();
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
     }

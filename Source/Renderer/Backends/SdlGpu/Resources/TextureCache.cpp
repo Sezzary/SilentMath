@@ -66,7 +66,10 @@ namespace Silent::Renderer::SdlGpu
 
     Texture::~Texture()
     {
-        SDL_ReleaseGPUTexture(_device, _texture);
+        if (_device != nullptr && _texture != nullptr)
+        {
+            SDL_ReleaseGPUTexture(_device, _texture);
+        }
     }
 
     SDL_GPUTexture* Texture::GetHandle()
@@ -82,6 +85,13 @@ namespace Silent::Renderer::SdlGpu
     void Texture::Update(SDL_GPUCopyPass& copyPass,
                          std::span<const byte> pixels, const Vector2i& region, const Vector2i& size)
     {
+        // Check if texture was released.
+        if (_texture == nullptr)
+        {
+            Debug::Log("Attempted to update released GPU texture.", Debug::LogLevel::Error);
+            return;
+        }
+
         // Create transfer buffer.
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
         {
@@ -117,6 +127,13 @@ namespace Silent::Renderer::SdlGpu
 
     void Texture::Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler, int slotIdx)
     {
+        // Check if texture was released.
+        if (_texture == nullptr)
+        {
+            Debug::Log("Attempted to bind released GPU texture.", Debug::LogLevel::Error);
+            return;
+        }
+
         auto texSamplerBinding = SDL_GPUTextureSamplerBinding
         {
             .texture = _texture,
@@ -179,19 +196,14 @@ namespace Silent::Renderer::SdlGpu
         }
     }
 
-    void TextureCache::Release(const std::string& name)
-    {
-        _textures.erase(name);
-    }
-
     void TextureCache::Release()
     {
         _textures.clear();
     }
 
-    void TextureCache::Clear()
+    void TextureCache::Release(const std::string& name)
     {
-        _textures.clear();
+        _textures.erase(name);
     }
 
     Texture* TextureCache::operator[](const std::string& name)

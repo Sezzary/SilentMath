@@ -51,16 +51,16 @@ namespace Silent::Renderer::SdlGpu
         // Fields
         // =======
 
-        SDL_GPUDevice*               _device    = nullptr;
-        std::vector<SDL_GPUSampler*> _samplers  = {};
-        PipelineManager              _pipelines = PipelineManager();
+        SDL_GPUDevice*        _device        = nullptr;
+        SDL_GPUCommandBuffer* _commandBuffer = nullptr;
+        PipelineManager       _pipelines     = PipelineManager();
+        GpuBuffers            _gpuBuffers    = {};
+        DrawBatches           _drawBatches   = {};
 
-        PingPongTexture       _renderTexture    = PingPongTexture();
-        SDL_GPUTexture*       _depthTexture     = nullptr;
-        SDL_GPUTexture*       _swapchainTexture = nullptr;
-        SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
-        DrawBatches           _drawBatches      = {};
-        GpuBuffers            _gpuBuffers       = {};
+        std::vector<SDL_GPUSampler*> _samplers         = {};
+        PingPongTexture              _renderTexture    = PingPongTexture();
+        SDL_GPUTexture*              _depthTexture     = nullptr;
+        SDL_GPUTexture*              _swapchainTexture = nullptr;
 
     public:
         // =============
@@ -70,9 +70,9 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Creates a default uninitialized instance. */
         Renderer() = default;
 
-        // ==========
-        // Utilities
-        // ==========
+        // ==================
+        // Utility Overrides
+        // ==================
 
         void Initialize(SDL_Window& window) override;
         void Deinitialize() override;
@@ -169,9 +169,9 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
 
-        // ===================================================
-        // Draw Helpers | `Renderer/Backends/SdlGpu/Draw.cpp`
-        // ===================================================
+        // ============================================================
+        // Draw Helper Overrides | `Renderer/Backends/SdlGpu/Draw.cpp`
+        // ============================================================
 
         void Draw3dScene() override;
         void DrawDither() override;
