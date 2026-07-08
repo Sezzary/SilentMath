@@ -83,7 +83,7 @@ namespace Silent::Renderer::SdlGpu
 
             // Draw.
             //const auto* mesh = GetMeshes()["TestCube"];
-            //if (mesh != nullptr && mesh->IsValid())
+            //if (mesh != nullptr)
             //{
             //    SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
             //    _doubleBuffer.Active.DrawCallCount++;

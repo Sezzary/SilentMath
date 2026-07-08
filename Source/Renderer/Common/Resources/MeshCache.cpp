@@ -11,11 +11,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    bool Mesh::IsValid() const
-    {
-        return VertexOffset != NO_VALUE && IdxOffset != NO_VALUE;
-    }
-
     void MeshCacheBase::Release(const std::string& name)
     {
         // Check if mesh name exists.
