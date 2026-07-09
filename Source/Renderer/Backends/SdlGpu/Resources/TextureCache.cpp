@@ -12,10 +12,17 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer::SdlGpu
 {
-    Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
-                     SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res,
-                     const std::string& name)
+    Texture::Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, SDL_GPUTextureUsageFlags usageFlags,
+                     std::span<const byte> pixels, const Vector2i& res, const std::string& name)
     {
+        // Check data validity.
+        if (pixels.size() != ((res.x * res.y) * RGBA_COMP_COUNT))
+        {
+            Debug::Log(Fmt("Attempted to upload GPU texture `{}` with incongruent data.", name),
+                       Debug::LogLevel::Error);
+            return;
+        }
+
         _device     = &device;
         _resolution = res;
 
@@ -37,12 +44,12 @@ namespace Silent::Renderer::SdlGpu
         auto transferBufferInfo = SDL_GPUTransferBufferCreateInfo
         {
             .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-            .size  = (uint)((res.x * res.y) * RGBA_COMP_COUNT)
+            .size  = (uint)pixels.size()
         };
         auto* transferBuffer = SDL_CreateGPUTransferBuffer(_device, &transferBufferInfo);
 
         byte* mappedTransferData = (byte*)SDL_MapGPUTransferBuffer(_device, transferBuffer, false);
-        memcpy(mappedTransferData, pixels.data(), (res.x * res.y) * RGBA_COMP_COUNT);
+        memcpy(mappedTransferData, pixels.data(), pixels.size());
         SDL_UnmapGPUTransferBuffer(_device, transferBuffer);
 
         // Upload texture data.
@@ -157,9 +164,8 @@ namespace Silent::Renderer::SdlGpu
             return;
         }
 
-        _textures[name] = std::make_unique<Texture>(*_device, copyPass,
-                                                    SDL_GPU_TEXTUREUSAGE_SAMPLER, pixels, res,
-                                                    name);
+        _textures[name] = std::make_unique<Texture>(*_device, copyPass, SDL_GPU_TEXTUREUSAGE_SAMPLER,
+                                                    pixels, res, name);
     }
 
     void TextureCache::Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName)
@@ -170,7 +176,7 @@ namespace Silent::Renderer::SdlGpu
         const auto* asset = assets.GetAsset(assetName);
         if (asset == nullptr)
         {
-            Debug::Log(Fmt("Attempted to load invalid asset `{}` as GPU texture.", asset->Name),
+            Debug::Log(Fmt("Attempted to upload invalid asset `{}` as GPU texture.", asset->Name),
                        Debug::LogLevel::Error);
         }
 
@@ -189,7 +195,7 @@ namespace Silent::Renderer::SdlGpu
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to load non-image asset `{}` as GPU texture.", asset->Name),
+                Debug::Log(Fmt("Attempted to upload non-image asset `{}` as GPU texture.", asset->Name),
                            Debug::LogLevel::Error);
                 break;
             }

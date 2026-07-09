@@ -253,6 +253,7 @@ namespace Silent::Renderer::SdlGpu
                 curVertCount = LINE_VERTEX_COUNT;
                 curIdxCount  = LINE_IDX_COUNT;
             }
+            // Triangle.
             else */if (prim.Vertices.size() == TRI_VERTEX_COUNT)
             {
                 // Add indices.

@@ -62,7 +62,6 @@ namespace Silent::Renderer::SdlGpu
         // Utility Overrides
         // ==================
 
-        /** @copydoc MeshCacheBase::ReleaseAll */
         void ReleaseAll() override;
 
     private:

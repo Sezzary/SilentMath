@@ -178,6 +178,7 @@ namespace Silent::Renderer::SdlGpu
 
         _pipelines.Release();
         _gpuBuffers.Release();
+
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
     }
