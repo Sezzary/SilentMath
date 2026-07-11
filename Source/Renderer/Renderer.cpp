@@ -19,13 +19,11 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    void DoubleBuffer::Swap()
+    void SceneDoubleBuffer::Swap()
     {
         std::swap(Render, Active);
-
         Active.IsResized     = false;
         Active.DrawCallCount = 0;
-
         Active.ImmediatePrimitives2d.clear();
         Active.ImmediatePrimitives3d.clear();
         Active.DebugGuiDrawCalls.clear();
@@ -33,9 +31,6 @@ namespace Silent::Renderer
         Active.TextureReleaseQueue.clear();
         Active.MeshUploadQueue.clear();
         Active.MeshReleaseQueue.clear();
-
-        Debug::g_Work.PrevMessages = Debug::g_Work.Messages;
-        Debug::g_Work.Messages.clear();
     }
 
     RendererType RendererBase::GetType() const
@@ -100,6 +95,7 @@ namespace Silent::Renderer
 
     void RendererBase::PrepareFrameData()
     {
+        auto& video    = g_App.GetVideo();
         auto& executor = g_App.GetExecutor();
 
         // @todo Using parallelism here causes flickering. Why if lock guards are in place??
@@ -118,6 +114,7 @@ namespace Silent::Renderer
         ProcessTriangles3d();
 
         _doubleBuffer.Swap();
+        video.SwapFrameBuffer();
     }
 
     void RendererBase::SignalResize()

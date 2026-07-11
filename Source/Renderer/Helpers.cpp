@@ -12,7 +12,7 @@ namespace Silent::Renderer
 {
     void RendererBase::InitializeDoubleBuffer()
     {
-        auto ReserveMemory = [](DoubleBuffer::Data& data)
+        auto ReserveMemory = [](SceneDoubleBuffer::Data& data)
         {
             data.DebugGuiDrawCalls.reserve(DEBUG_GUI_COUNT_MAX);
             data.ImmediatePrimitives2d.reserve(SHAPE_2D_COUNT_MAX + 

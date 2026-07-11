@@ -43,9 +43,8 @@ namespace Silent::Debug
     {
         float BlendAlpha = 0.0f; // @temp
 
-        std::vector<std::string> Messages     = {};
-        std::vector<std::string> PrevMessages = {};
-        uint64                   StartTime    = 0;
+        std::vector<std::string> Messages  = {};
+        uint64                   StartTime = 0;
 
         float  Fps        = 0.0f;
         int    FrameTime  = 0;

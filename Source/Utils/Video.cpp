@@ -3,10 +3,10 @@
 
 #include "Application.h"
 #include "Renderer/Common/Constants.h"
+#include "Utils/DoubleBuffer.h"
 #include "Utils/Parallel.h"
 
 using namespace Silent::Renderer;
-using namespace Silent::Utils;
 
 namespace Silent::Utils
 {
@@ -14,12 +14,12 @@ namespace Silent::Utils
      *
      * @param plm PLM context.
      * @param samples Interleaved samples.
-     * @param user User data for the RGBA video frame buffer.
+     * @param user User data for the RGBA video frame double buffer.
      */
     static void OnVideoFrame(plm_t* plm, plm_frame_t* frame, void* user)
     {
-        uint8* frameBuffer = (uint8*)user;
-        plm_frame_to_rgba(frame, frameBuffer, frame->width * RGBA_COMP_COUNT);
+        auto* frameBuffer = (DoubleBuffer<byte>*)user;
+        plm_frame_to_rgba(frame, (uint8*)frameBuffer->Active.data(), frame->width * RGBA_COMP_COUNT);
     }
 
     /** @brief Callback to decode audio samples from an MPEG1 stream.
@@ -96,7 +96,7 @@ namespace Silent::Utils
             Debug::Log("Attempted to get video frame with no video playing.", Debug::LogLevel::Warning);
         }
 
-        return _frameBuffer;
+        return _frameBuffer.Render;
     }
 
     std::vector<float> VideoPlayer::GetAudioFrame()
@@ -176,19 +176,19 @@ namespace Silent::Utils
             return;
         }
 
-        // Set active video name.
+        // Set active video parameters.
         _activeVideoName = filename;
-
-        // Allocate frame buffer.
-        auto res     = GetResolution();
-        _frameBuffer = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT);
-
+        
         // Register callbacks.
         plm_set_audio_enabled(_plm, true);
-        plm_set_video_decode_callback(_plm, OnVideoFrame, _frameBuffer.data());
+        plm_set_video_decode_callback(_plm, OnVideoFrame, &_frameBuffer);
         plm_set_audio_decode_callback(_plm, OnAudioFrame, this);
 
+        // Decode frame.
+        auto res = GetResolution();
+        _frameBuffer.Active.resize((res.x * res.y) * RGBA_COMP_COUNT);
         plm_decode(_plm, 0.0f);
+
         Debug::Log(Fmt("Playing video `{}`.", filename));
     }
 
@@ -211,7 +211,7 @@ namespace Silent::Utils
 
         Debug::Log(Fmt("Stopped video `{}`.", _activeVideoName));
 
-        _frameBuffer.clear();
+        _frameBuffer.Active.clear();
         _audioBuffer.clear();
         _activeVideoName = {};
     }
@@ -224,7 +224,15 @@ namespace Silent::Utils
             return;
         }
 
+        // Decode frame.
+        auto res = GetResolution();
+        _frameBuffer.Active.resize((res.x * res.y) * RGBA_COMP_COUNT);
         plm_decode(_plm, deltaTime);
+    }
+
+    void VideoPlayer::SwapFrameBuffer()
+    {
+        _frameBuffer.Swap();
     }
 
     void VideoPlayer::AppendAudio(const float* samples, int count)

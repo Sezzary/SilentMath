@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utils/DoubleBuffer.h"
+
 namespace Silent::Utils
 {
     /** @brief MPEG1 video player. */
@@ -17,7 +19,7 @@ namespace Silent::Utils
         // =======
 
         plm_t*             _plm         = nullptr;
-        std::vector<byte>  _frameBuffer = {};
+        DoubleBuffer<byte> _frameBuffer = {};
         std::vector<float> _audioBuffer = {};
         std::mutex         _audioMutex  = {};
 
@@ -70,7 +72,7 @@ namespace Silent::Utils
          */
         const std::string& GetName() const;
 
-        /** @brief Gets the RGBA video frame image for the current time in the active video.
+        /** @brief Gets the double-buffered RGBA frame image for the current time in the active video.
          *
          * @return RGBA video frame image.
          */
@@ -133,6 +135,9 @@ namespace Silent::Utils
          * @param deltaTime Progression time in seconds.
          */
         void Update(float deltaTime);
+
+        /** @brief Swaps the video frame double buffer used for asynchronous rendering. */
+        void SwapFrameBuffer();
 
         /** @brief Appends interleaved audio samples to the internal playback buffer.
          * Called by the `OnAudioFrame` callback.

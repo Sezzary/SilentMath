@@ -4,8 +4,10 @@
 // https://github.com/erincatto/box2d/blob/28adacf82377d4113f2ed00586141463244b9d10/src/dynamic_tree.c
 // https://www.gdcvault.com/play/1025909/Math-for-Game-Developers-Dynamic
 
-// @note `_leafIdMap` is a hash map for convenience. If performance suffers with too many `Move` and `Remove` calls, a method with faster access can be implemented.
-// However, it requires maintaining an odd index variable outside the BVH instance, so a hash map is preferred for the benefit of cleaner code.
+// @note `_leafIdMap` is a hash map for convenience. If performance suffers with too many `Move` and `Remove` calls,
+// a method with faster access can be implemented.
+// However, it requires maintaining an odd index variable outside the BVH instance,
+// so a hash map is preferred for the benefit of cleaner code.
 
 namespace Silent::Utils
 {
@@ -57,7 +59,8 @@ namespace Silent::Utils
          * @param aabbs AABBs containing the object IDs.
          * @param strategy Build strategy.
          */
-        BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy = BvhBuildStrategy::Balanced);
+        BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs,
+                                BvhBuildStrategy strategy = BvhBuildStrategy::Balanced);
 
         // ========
         // Getters
@@ -193,7 +196,8 @@ namespace Silent::Utils
          */
         void RemoveNode(int nodeId);
 
-        /** @brief Performs a left or right tree rotation if the input node is imbalanced and returns new subtree root ID.
+        /** @brief Performs a left or right tree rotation if the input node is imbalanced and returns new subtree
+         * root ID.
          *
          * @param nodeId Node ID to balance.
          * @return New subtree root ID.
@@ -210,7 +214,8 @@ namespace Silent::Utils
          * @param aabbs AABBs encompassing the objects.
          * @param strategy Tree build strategy.
          */
-        void Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy);
+        void Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs,
+                   BvhBuildStrategy strategy);
 
         /** @brief Recursively builds an optimally balanced tree. Called by the other `Build` overload.
          *
@@ -221,7 +226,8 @@ namespace Silent::Utils
          * @param strategy Tree build strategy.
          * @return New inner node.
          */
-        int Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, int start, int end, BvhBuildStrategy strategy);
+        int Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs,
+                  int start, int end, BvhBuildStrategy strategy);
 
         // ==============
         // Debug Helpers
@@ -232,7 +238,8 @@ namespace Silent::Utils
          */
         void Validate() const;
 
-        /** @brief Recursively validates the correctness of the tree from the given node. Called by the other `Validate` overload.
+        /** @brief Recursively validates the correctness of the tree from the given node. Called by the other
+         * `Validate` overload.
          * Used for debugging.
          *
          * @param nodeId Node ID to validate.

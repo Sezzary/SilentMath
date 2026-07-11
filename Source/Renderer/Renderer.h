@@ -21,7 +21,7 @@ namespace Silent::Renderer
     };
 
     /** @brief Double-buffered scene data. */
-    struct DoubleBuffer
+    struct SceneDoubleBuffer
     {
         struct Data
         {
@@ -70,7 +70,7 @@ namespace Silent::Renderer
         View         _view         = View();
         SceneObjects _sceneObjects = {};
 
-        DoubleBuffer                      _doubleBuffer = {};
+        SceneDoubleBuffer                 _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
         std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
 

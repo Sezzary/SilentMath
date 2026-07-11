@@ -10,7 +10,8 @@ namespace Silent::Utils
         return LeftChildId == NO_VALUE && RightChildId == NO_VALUE;
     }
 
-    BoundingVolumeHierarchy::BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy)
+    BoundingVolumeHierarchy::BoundingVolumeHierarchy(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs,
+                                                     BvhBuildStrategy strategy)
     {
         Debug::Assert(objectIds.size() == aabbs.size(), "BVH object ID and AABB counts unequal in static constructor.");
 
@@ -96,7 +97,8 @@ namespace Silent::Utils
         // Find leaf containing object ID.
         if (Find(_leafIdMap, objectId) != nullptr)
         {
-            Debug::Log(Fmt("BVH attempted to insert leaf with existing object ID {}.", objectId), Debug::LogLevel::Warning, Debug::LogMode::Debug, true);
+            Debug::Log(Fmt("BVH attempted to insert leaf with existing object ID {}.", objectId),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug, true);
             return;
         }
 
@@ -119,7 +121,8 @@ namespace Silent::Utils
         const int* leafId = Find(_leafIdMap, objectId);
         if (leafId == nullptr)
         {
-            Debug::Log(Fmt("BVH attempted to move missing leaf with object ID {}.", objectId), Debug::LogLevel::Warning, Debug::LogMode::Debug, true);
+            Debug::Log(Fmt("BVH attempted to move missing leaf with object ID {}.", objectId),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug, true);
             return;
         }
 
@@ -152,7 +155,8 @@ namespace Silent::Utils
         const int* leafId = Find(_leafIdMap, objectId);
         if (leafId == nullptr)
         {
-            Debug::Log(Fmt("BVH attempted to remove missing leaf with object ID {}.", objectId), Debug::LogLevel::Warning, Debug::LogMode::Debug, true);
+            Debug::Log(Fmt("BVH attempted to remove missing leaf with object ID {}.", objectId),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug, true);
             return;
         }
 
@@ -260,7 +264,8 @@ namespace Silent::Utils
                 auto        aabb      = AxisAlignedBoundingBox::Merge(leftChild.Aabb, leaf.Aabb);
                 float       newArea   = aabb.GetSurfaceArea();
 
-                leftCost = leftChild.IsLeaf() ? (newArea + inheritCost) : ((newArea - leftChild.Aabb.GetSurfaceArea()) + inheritCost);
+                leftCost = leftChild.IsLeaf() ? (newArea + inheritCost) :
+                                                ((newArea - leftChild.Aabb.GetSurfaceArea()) + inheritCost);
             }
 
             // Calculate cost of descending into right child.
@@ -271,7 +276,8 @@ namespace Silent::Utils
                 auto        aabb       = AxisAlignedBoundingBox::Merge(rightChild.Aabb, leaf.Aabb);
                 float       newArea    = aabb.GetSurfaceArea();
 
-                rightCost = rightChild.IsLeaf() ? (newArea + inheritCost) : ((newArea - rightChild.Aabb.GetSurfaceArea()) + inheritCost);
+                rightCost = rightChild.IsLeaf() ? (newArea + inheritCost) :
+                                                  ((newArea - rightChild.Aabb.GetSurfaceArea()) + inheritCost);
             }
 
             // Test if descent is worthwhile according to minimum cost.
@@ -628,7 +634,8 @@ namespace Silent::Utils
         return nodeId;
     }
 
-    void BoundingVolumeHierarchy::Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, BvhBuildStrategy strategy)
+    void BoundingVolumeHierarchy::Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs,
+                                        BvhBuildStrategy strategy)
     {
         // Reserve enough memory for optimally balanced tree.
         _nodes.reserve((objectIds.size() * 2) - 1);
@@ -640,7 +647,8 @@ namespace Silent::Utils
         //Validate();
     }
 
-    int BoundingVolumeHierarchy::Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs, int start, int end, BvhBuildStrategy strategy)
+    int BoundingVolumeHierarchy::Build(const std::vector<int>& objectIds, const std::vector<AxisAlignedBoundingBox>& aabbs,
+                                       int start, int end, BvhBuildStrategy strategy)
     {
         constexpr auto BALANCED_STRAT_SPLIT_RANGE_MAX = 10;
 

@@ -56,7 +56,6 @@ namespace Silent::Debug
 
         // Reserve `Messages` size.
         g_Work.Messages.reserve(MESSAGE_COUNT_MAX);
-        g_Work.PrevMessages.reserve(MESSAGE_COUNT_MAX);
     }
 
     void Deinitialize()
@@ -117,6 +116,8 @@ namespace Silent::Debug
 
         CreateMenu();
         //ImGui::ShowDemoWindow();
+
+        g_Work.Messages.clear();
     }
 
     void Msg(const char* msg, ...)
