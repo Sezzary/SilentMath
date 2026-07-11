@@ -9,13 +9,17 @@ namespace Silent::Utils
         std::vector<T> Active = {};
         std::vector<T> Render = {};
 
-        void Swap();
+        void Swap(bool clearActive = true);
     };
 
     template <typename T>
-    void DoubleBuffer<T>::Swap()
+    void DoubleBuffer<T>::Swap(bool clearActive)
     {
         std::swap(Render, Active);
-        Active.clear();
+
+        if (clearActive)
+        {
+            Active.clear();
+        }
     }
 }

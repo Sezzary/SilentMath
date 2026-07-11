@@ -184,11 +184,12 @@ namespace Silent::Utils
         plm_set_video_decode_callback(_plm, OnVideoFrame, &_frameBuffer);
         plm_set_audio_decode_callback(_plm, OnAudioFrame, this);
 
-        // Decode frame.
+        // Resize buffer.
         auto res = GetResolution();
         _frameBuffer.Active.resize((res.x * res.y) * RGBA_COMP_COUNT);
-        plm_decode(_plm, 0.0f);
 
+        // Decode frame.
+        plm_decode(_plm, 0.0f);
         Debug::Log(Fmt("Playing video `{}`.", filename));
     }
 
@@ -224,15 +225,21 @@ namespace Silent::Utils
             return;
         }
 
+        // Resize buffer if required.
+        auto res          = GetResolution();
+        int  requiredSize = (res.x * res.y) * RGBA_COMP_COUNT;
+        if (_frameBuffer.Active.size() != requiredSize)
+        {
+            _frameBuffer.Active.resize(requiredSize);
+        }
+
         // Decode frame.
-        auto res = GetResolution();
-        _frameBuffer.Active.resize((res.x * res.y) * RGBA_COMP_COUNT);
         plm_decode(_plm, deltaTime);
     }
 
     void VideoPlayer::SwapFrameBuffer()
     {
-        _frameBuffer.Swap();
+        _frameBuffer.Swap(false);
     }
 
     void VideoPlayer::AppendAudio(const float* samples, int count)
