@@ -34,8 +34,6 @@ namespace Silent::Renderer::SdlGpu
 
         auto& assets = g_App.GetAssets();
 
-        // @todo Make function for common init stuff to call at the start of every backend-specific init function.
-
         _type   = RendererType::SdlGpu;
         _window = &window;
 
@@ -133,14 +131,19 @@ namespace Silent::Renderer::SdlGpu
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
         // @temp
-        //GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
+        GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
         //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
 
+        for (const auto& name : GetMeshes().GetNames())
+        {
+            
+        }
+
         // Load temp. textures.
-        //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
+        GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
         //GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
         assets.Load("TIM/BG_ETC.TIM");
-        
+
         GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, "");
         // @todo If atlas textures aren't updated and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error

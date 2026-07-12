@@ -105,8 +105,8 @@ namespace Silent::Assets
         // Load if not preloaded.
         if (asset.State != AssetState::Loaded)
         {
-            Debug::Log(Fmt("Getting non-preloaded streamable asset `{}`. Loading in place.", GetName(assetIdx)),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            //Debug::Log(Fmt("Getting non-preloaded streamable asset `{}`. Loading in place.", GetName(assetIdx)),
+            //           Debug::LogLevel::Warning, Debug::LogMode::Debug);
 
             Load(assetIdx).wait();
         }

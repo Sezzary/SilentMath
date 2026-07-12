@@ -29,6 +29,16 @@ namespace Silent::Renderer
         BlockAllocator                        _idxAllocator    = BlockAllocator();
 
     public:
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the names of meshes cached on the GPU, sorted in alphanumerically.
+         *
+         * @return Mesh names.
+         */
+        std::vector<std::string> GetNames() const;
+
         // ==========
         // Utilities
         // ==========

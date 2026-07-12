@@ -11,6 +11,20 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
+    std::vector<std::string> MeshCacheBase::GetNames() const
+    {
+        // Collect sorted mesh names.
+        auto names = std::vector<std::string>{};
+        names.reserve(_meshes.size());
+        for (const auto& [name, mesh] : _meshes)
+        {
+            names.push_back(name);
+        }
+        Sort(names);
+
+        return names;
+    }
+
     void MeshCacheBase::Release(const std::string& name)
     {
         // Check if mesh name exists.
@@ -87,7 +101,7 @@ namespace Silent::Renderer
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Release(asset.Name + "_" + mesh.BoneName); // @todo Append bone variant index.
+            Release(asset.Name + "_" + mesh.BoneName + "_" + std::to_string(mesh.BoneIdx));
         }
     }
 

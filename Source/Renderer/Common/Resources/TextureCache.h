@@ -36,5 +36,15 @@ namespace Silent::Renderer
         // =============
 
         virtual ~TextureCacheBase() = default;
+
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the names of textures cached on the GPU, sorted in alphanumerically.
+         *
+         * @return Texture names.
+         */
+        std::vector<std::string> GetNames() const;
     };
 }

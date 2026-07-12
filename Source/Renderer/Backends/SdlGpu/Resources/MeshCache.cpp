@@ -131,7 +131,8 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
+            Upload(copyPass, mesh.Linear.Vertices,
+                   mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName + "_" + std::to_string(mesh.BoneIdx));
         }
     }
 

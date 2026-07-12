@@ -20,6 +20,59 @@ namespace Silent::Assets
 
         const auto& fs = g_App.GetFilesystem();
 
+        // @debug 2 green test triangles.
+        /*float s = 0.5f;
+        auto asset1 = IlmAsset
+        {
+            .Name = filename.stem(),
+            .Meshes =
+            {
+                IlmMesh
+                {
+                    .BoneIdx    = 0,
+                    .BoneName   = "TEST",
+                    .Linear = IlmLinearMesh
+                    {
+                        .Vertices =
+                        {
+                            BufferVertex3d
+                            {
+                                .Position = {-s, -s, 0},
+                                .Normal   = Vector3::One,
+                                .Uv       = Vector2::Zero,
+                                .Col      = Color::Green
+                            },
+                            BufferVertex3d
+                            {
+                                .Position = { s, -s, 0},
+                                .Normal   = Vector3::One,
+                                .Uv       = Vector2::Zero,
+                                .Col      = Color::Green
+                            },
+                            BufferVertex3d
+                            {
+                                .Position = {-s,  s, -s},
+                                .Normal   = Vector3::One,
+                                .Uv       = Vector2::Zero,
+                                .Col      = Color::Green
+                            },
+                            BufferVertex3d
+                            {
+                                .Position = { s,  s, 0},
+                                .Normal   = Vector3::One,
+                                .Uv       = Vector2::Zero,
+                                .Col      = Color::Green
+                            }
+                        },
+                        .Idxs = { 0, 1, 2, 1, 3, 2 }
+                    }
+                }
+            }
+        };
+
+        return std::make_shared<IlmAsset>(std::move(asset1));*/
+
+
         // Read file.
         auto stream = Stream(filename, true, false);
         if (!stream.IsOpen())
