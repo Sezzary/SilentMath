@@ -266,7 +266,7 @@ namespace Silent::Services
          * @note By convention, custom input bindings contain one input event per input action.
          *
          * @param optionsJson Options JSON to parse.
-         * @return Internal `Options` object.
+         * @return Internal options object.
          */
         Options FromOptionsJson(const json& optionsJson) const;
 
@@ -274,7 +274,7 @@ namespace Silent::Services
          *
          * @note By convention, custom input bindings contain one input event per input action.
          *
-         * @param options Internal `Options` object to parse.
+         * @param options Internal options object to parse.
          * @return Options JSON.
          */
         json ToOptionsJson(const Options& options) const;

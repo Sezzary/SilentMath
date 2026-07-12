@@ -13,9 +13,9 @@ namespace Silent::Scripting
         return *_state;
     };
 
-    void LuaManager::ExecuteScript(const std::filesystem::path& file)
+    void LuaManager::ExecuteScript(const stdfs::path& file)
     {
-        /*if (!std::filesystem::is_regular_file(file))
+        /*if (!stdfs::is_regular_file(file))
         {
             return;
         }

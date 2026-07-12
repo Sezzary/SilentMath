@@ -21,24 +21,39 @@ namespace Silent::Renderer
     };
 
     /** @brief Double-buffered scene data. */
-    struct DoubleBuffer
+    struct SceneDoubleBuffer
     {
         struct Data
         {
-            int DrawCallCount = 0;
+            bool IsResized     = false;
+            int  DrawCallCount = 0;
 
             std::vector<Primitive2d>           ImmediatePrimitives2d = {};
             std::vector<Primitive3d>           ImmediatePrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
 
             std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
-            std::vector<std::string> TextureReleaseQueue = {}; /** Asset names. */
+            std::vector<std::string> TextureReleaseQueue = {}; /** GPU texture names. */
             std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
-            std::vector<std::string> MeshReleaseQueue    = {}; /** Asset names. */
+            std::vector<std::string> MeshReleaseQueue    = {}; /** GPU mesh names. */
         };
 
         Data Active = {};
         Data Render = {};
+
+        std::mutex Primitives2dMutex = {};
+        std::mutex Primitives3dMutex = {};
+
+        void Swap();
+    };
+
+    /** @brief Unprocessed scene objects. */
+    struct SceneObjects
+    {
+        std::vector<Shape2d>    Shapes2d    = {};
+        std::vector<Sprite2d>   Sprites2d   = {};
+        std::vector<Glyph2d>    Glyphs2d    = {};
+        std::vector<Triangle3d> Triangles3d = {};
     };
 
     /** @brief Renderer base. */
@@ -49,23 +64,15 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        RendererType _type       = RendererType::SdlGpu;
-        SDL_Window*  _window     = nullptr;
-        bool         _isResized  = false;
-        Color        _clearColor = Color::Clear;
-        View         _view       = View();
+        SDL_Window*  _window       = nullptr;
+        RendererType _type         = RendererType::SdlGpu;
+        Color        _clearColor   = Color::Clear;
+        View         _view         = View();
+        SceneObjects _sceneObjects = {};
 
-        DoubleBuffer                      _doubleBuffer = {};
+        SceneDoubleBuffer                 _doubleBuffer = {};
         std::unique_ptr<TextureCacheBase> _textures     = nullptr;
         std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
-
-        std::mutex _primitives2dMutex = {};
-        std::mutex _primitives3dMutex = {};
-
-        std::vector<Shape2d>    _shapes2d    = {}; // } @todo Not really renderer objects. Should be part of an external system.
-        std::vector<Sprite2d>   _sprites2d   = {}; // }
-        std::vector<Glyph2d>    _glyphs2d    = {}; // }
-        std::vector<Triangle3d> _triangles3d = {}; // }
 
     public:
         // =============
@@ -181,6 +188,10 @@ namespace Silent::Renderer
          */
         bool SubmitTriangle3d(const Triangle3d& tri);
 
+        // ==================
+        // Virtual Utilities
+        // ==================
+
         /** @brief Initializes the renderer and its subsystems.
          *
          * @param window Window to claim as the render surface.
@@ -199,9 +210,9 @@ namespace Silent::Renderer
         /** @brief Saves a screenshot of the active render surface to the designated `Screenshots` folder on the system. */
         virtual void SaveScreenshot() const = 0;
 
-        // ======
-        // Debug
-        // ======
+        // =============================
+        // Debug | `Renderer/Debug.cpp`
+        // =============================
 
         /** @brief Submits a function used to construct an ImGui debug menu for drawing.
          *
@@ -256,23 +267,23 @@ namespace Silent::Renderer
                                  const Color& color, Debug::Page page);
 
     protected:
-        // ========
-        // Helpers
-        // ========
+        // =================================
+        // Helpers | `Renderer/Helpers.cpp`
+        // =================================
 
         /** @brief Initializes the double buffer. */
         void InitializeDoubleBuffer();
 
-        /** @brief Processes immediate-mode 2D sprites into 2D primitives. */
+        /** @brief Processes immediate-mode 2D scene sprites into 2D primitives. */
         void ProcessSprites2d();
 
-        /** @brief Processes immediate-mode 2D shapes into 2D primitives. */
+        /** @brief Processes immediate-mode 2D scene shapes into 2D primitives. */
         void ProcessShapes2d();
 
-        /** @brief Processes immediate-mode 2D glyphs into 2D primitives. */
+        /** @brief Processes immediate-mode 2D scene glyphs into 2D primitives. */
         void ProcessGlyphs2d();
 
-        /** @brief Processes immediate-mode 3D triangles into 3D primitives. */
+        /** @brief Processes immediate-mode 3D scene triangles into 3D primitives. */
         void ProcessTriangles3d();
 
         /** @brief Sorts render buffer data in the double buffer.
@@ -282,6 +293,10 @@ namespace Silent::Renderer
 
         /** @brief Draws the current frame according to a hardcoded render graph. */
         void DrawFrame();
+
+        // =====================
+        // Virtual Draw Helpers
+        // =====================
 
         /** @brief Draws a 3D scene to a cleared off-screen render texture.
          * Called before `Draw2dScene`.
@@ -304,14 +319,14 @@ namespace Silent::Renderer
         virtual void DrawPostProcess() = 0;
 
         /** @brief Draws the viewport containing post-procesed, combined 3D and 2D scenes to the swapchain.
-         * Called after `DrawPostProcess` and before `DrawPowerMenu`.
+         * Called after `DrawPostProcess` and before `DrawDebugMenu`.
          */
-        virtual void DrawViewport() = 0 ;
+        virtual void DrawViewport() = 0;
 
         /** @brief Draws a debug menu on top of the viewport to the swapchain.
          * Called after `DrawViewport`.
          */
-        virtual void DrawPowerMenu() = 0;
+        virtual void DrawDebugMenu() = 0;
     };
 
     /** @brief Creates a renderer of a specified backend type.

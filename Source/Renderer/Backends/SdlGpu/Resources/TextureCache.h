@@ -23,10 +23,6 @@ namespace Silent::Renderer::SdlGpu
         // Constructors
         // =============
 
-        // @todo Deprecated.
-        /** @brief Creates a default uninitialized instance. */
-        Texture() = default;
-
         /** @brief Creates an instance and uploads data to the GPU.
          *
          * @param device GPU device.
@@ -36,9 +32,8 @@ namespace Silent::Renderer::SdlGpu
          * @param res Texture image resolution.
          * @param name Texture image name.
          */
-        Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass,
-                SDL_GPUTextureUsageFlags usageFlags, std::span<const byte> pixels, const Vector2i& res, 
-                const std::string& name);
+        Texture(SDL_GPUDevice& device, SDL_GPUCopyPass& copyPass, SDL_GPUTextureUsageFlags usageFlags,
+                std::span<const byte> pixels, const Vector2i& res, const std::string& name);
 
         /** @brief Gracefully destroys the instance and frees GPU resources. */
         ~Texture();
@@ -125,14 +120,18 @@ namespace Silent::Renderer::SdlGpu
          */
         void Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName);
 
-        /** @brief Releases a texture from the GPU.
+        /** @brief Releases all cached textures from the GPU. */
+        void Release();
+
+        /** @brief Releases a cached texture from the GPU.
          *
-         * @param name Texture name.
+         * @param name Name of the texture to release.
          */
         void Release(const std::string& name);
 
-        /** @brief Releases all cached textures from the GPU. */
-        void Clear();
+        // ==========
+        // Operators
+        // ==========
 
         Texture* operator[](const std::string& name);
 

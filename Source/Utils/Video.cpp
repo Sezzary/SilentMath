@@ -3,10 +3,10 @@
 
 #include "Application.h"
 #include "Renderer/Common/Constants.h"
+#include "Utils/DoubleBuffer.h"
 #include "Utils/Parallel.h"
 
 using namespace Silent::Renderer;
-using namespace Silent::Utils;
 
 namespace Silent::Utils
 {
@@ -14,12 +14,12 @@ namespace Silent::Utils
      *
      * @param plm PLM context.
      * @param samples Interleaved samples.
-     * @param user User data for the RGBA video frame buffer.
+     * @param user User data for the RGBA video frame double buffer.
      */
     static void OnVideoFrame(plm_t* plm, plm_frame_t* frame, void* user)
     {
-        uint8* frameBuffer = (uint8*)user;
-        plm_frame_to_rgba(frame, frameBuffer, frame->width * RGBA_COMP_COUNT);
+        auto* frameBuffer = (DoubleBuffer<byte>*)user;
+        plm_frame_to_rgba(frame, (uint8*)frameBuffer->Active.data(), frame->width * RGBA_COMP_COUNT);
     }
 
     /** @brief Callback to decode audio samples from an MPEG1 stream.
@@ -41,7 +41,7 @@ namespace Silent::Utils
 
     Vector2i VideoPlayer::GetResolution() const
     {
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log("Attempted to get video resolution with no video playing.", Debug::LogLevel::Warning);
             return Vector2i::Zero;
@@ -54,16 +54,19 @@ namespace Silent::Utils
     {
         if (!IsLoaded())
         {
+            Debug::Log("Attempted to get video aspect ratio with no video playing.", Debug::LogLevel::Warning);
             return 1.0f;
         }
 
-        return plm_get_pixel_aspect_ratio(_plm);
+        auto res = GetResolution().ToVector2();
+        return res.x / res.y;
     }
 
     float VideoPlayer::GetTime() const
     {
         if (!IsLoaded())
         {
+            Debug::Log("Attempted to get video time with no video playing.", Debug::LogLevel::Warning);
             return 0.0f;
         }
 
@@ -74,6 +77,7 @@ namespace Silent::Utils
     {
         if (!IsLoaded())
         {
+            Debug::Log("Attempted to get video duration with no video playing.", Debug::LogLevel::Warning);
             return 0.0f;
         }
 
@@ -87,17 +91,17 @@ namespace Silent::Utils
 
     const std::vector<byte>& VideoPlayer::GetVideoFrame() const
     {
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log("Attempted to get video frame with no video playing.", Debug::LogLevel::Warning);
         }
 
-        return _frameBuffer;
+        return _frameBuffer.Render;
     }
 
     std::vector<float> VideoPlayer::GetAudioFrame()
     {
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log("Attempted to get audio frame with no video playing.", Debug::LogLevel::Warning);
             return {};
@@ -111,6 +115,11 @@ namespace Silent::Utils
             _audioBuffer.clear();
             return data;
         }
+    }
+
+    void VideoPlayer::SetOnStopCallback(OnStopCallback onStop)
+    {
+        _onStop = std::move(onStop);
     }
 
     bool VideoPlayer::IsLoaded() const
@@ -128,7 +137,7 @@ namespace Silent::Utils
         return plm_has_ended(_plm) == 0;
     }
 
-    void VideoPlayer::Initialize(const std::filesystem::path& videosPath)
+    void VideoPlayer::Initialize(const stdfs::path& videosPath)
     {
         _videosPath = videosPath;
     }
@@ -145,7 +154,7 @@ namespace Silent::Utils
             return;
         }
 
-        // Check is same video is already playing.
+        // Check if same video is already playing.
         if (filename == _activeVideoName)
         {
             Debug::Log(Fmt("Video `{}` is already playing.", filename), Debug::LogLevel::Warning);
@@ -153,42 +162,58 @@ namespace Silent::Utils
         }
 
         // Interrupt previous active video.
-        Stop();
+        if (IsLoaded())
+        {
+            Stop();
+        }
 
         // Open video file.
         auto videoPath = fs.GetAssetsDirectory() / ASSETS_VIDEO_DIR_NAME / filename;
         _plm           = plm_create_with_filename(videoPath.string().c_str());
-        if (_plm == nullptr)
+        if (!IsLoaded())
         {
             Debug::Log(Fmt("Failed to play video `{}`.", filename), Debug::LogLevel::Warning);
             return;
         }
 
-        // Set active video name.
+        // Set active video parameters.
         _activeVideoName = filename;
-
-        // Allocate frame buffer.
-        auto res     = GetResolution();
-        _frameBuffer = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT);
-
+        
         // Register callbacks.
         plm_set_audio_enabled(_plm, true);
-        plm_set_video_decode_callback(_plm, OnVideoFrame, _frameBuffer.data());
+        plm_set_video_decode_callback(_plm, OnVideoFrame, &_frameBuffer);
         plm_set_audio_decode_callback(_plm, OnAudioFrame, this);
 
+        // Resize buffer.
+        auto res = GetResolution();
+        _frameBuffer.Active.resize((res.x * res.y) * RGBA_COMP_COUNT);
+
+        // Decode frame.
+        plm_decode(_plm, 0.0f);
         Debug::Log(Fmt("Playing video `{}`.", filename));
     }
 
     void VideoPlayer::Stop()
     {
-        if (IsLoaded())
+        if (!IsLoaded())
         {
-            plm_destroy(_plm);
-            _plm = nullptr;
+            Debug::Log("Attempted to stop video with none playing.", Debug::LogLevel::Warning);
+            return;
         }
 
-        _frameBuffer     = {};
-        _audioBuffer     = {};
+        // Execute `_onStop` callback.
+        if (_onStop)
+        {
+            _onStop(_activeVideoName);
+        }
+
+        plm_destroy(_plm);
+        _plm = nullptr;
+
+        Debug::Log(Fmt("Stopped video `{}`.", _activeVideoName));
+
+        _frameBuffer.Active.clear();
+        _audioBuffer.clear();
         _activeVideoName = {};
     }
 
@@ -196,11 +221,25 @@ namespace Silent::Utils
     {
         if (!IsLoaded())
         {
-            Debug::Log("Attempted to update video with no video playing.", Debug::LogLevel::Warning);
+            Debug::Log("Attempted to update video with none playing.", Debug::LogLevel::Warning);
             return;
         }
 
+        // Resize buffer if required.
+        auto res          = GetResolution();
+        int  requiredSize = (res.x * res.y) * RGBA_COMP_COUNT;
+        if (_frameBuffer.Active.size() != requiredSize)
+        {
+            _frameBuffer.Active.resize(requiredSize);
+        }
+
+        // Decode frame.
         plm_decode(_plm, deltaTime);
+    }
+
+    void VideoPlayer::SwapFrameBuffer()
+    {
+        _frameBuffer.Swap(false);
     }
 
     void VideoPlayer::AppendAudio(const float* samples, int count)

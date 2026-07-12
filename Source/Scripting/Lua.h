@@ -29,7 +29,7 @@ namespace Silent::Scripting
         // Utilities
         // ==========
 
-        void ExecuteScript(const std::filesystem::path& filename);
+        void ExecuteScript(const stdfs::path& filename);
 
         template <typename T>
         void CreateReadOnlyTable(sol::table parent, const std::string& tableName, const T& cont);

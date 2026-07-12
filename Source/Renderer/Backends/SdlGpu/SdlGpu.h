@@ -39,6 +39,8 @@ namespace Silent::Renderer::SdlGpu
         VertexBuffer<BufferVertex2d> ViewportVertices    = {};
         VertexBuffer<BufferVertex2d> ImmediateVertices2d = {};
         VertexBuffer<BufferVertex3d> ImmediateVertices3d = {};
+
+        void Release();
     };
 
     /** @brief SDL_gpu renderer backend. */
@@ -49,16 +51,16 @@ namespace Silent::Renderer::SdlGpu
         // Fields
         // =======
 
-        SDL_GPUDevice*               _device    = nullptr;
-        std::vector<SDL_GPUSampler*> _samplers  = {};
-        PipelineManager              _pipelines = PipelineManager();
+        SDL_GPUDevice*        _device        = nullptr;
+        SDL_GPUCommandBuffer* _commandBuffer = nullptr;
+        PipelineManager       _pipelines     = PipelineManager();
+        GpuBuffers            _gpuBuffers    = {};
+        DrawBatches           _drawBatches   = {};
 
-        PingPongTexture       _renderTexture    = PingPongTexture();
-        SDL_GPUTexture*       _depthTexture     = nullptr;
-        SDL_GPUTexture*       _swapchainTexture = nullptr;
-        SDL_GPUCommandBuffer* _commandBuffer    = nullptr;
-        DrawBatches           _drawBatches      = {};
-        GpuBuffers            _gpuBuffers       = {};
+        std::vector<SDL_GPUSampler*> _samplers         = {};
+        PingPongTexture              _renderTexture    = PingPongTexture();
+        SDL_GPUTexture*              _depthTexture     = nullptr;
+        SDL_GPUTexture*              _swapchainTexture = nullptr;
 
     public:
         // =============
@@ -68,9 +70,9 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Creates a default uninitialized instance. */
         Renderer() = default;
 
-        // ==========
-        // Utilities
-        // ==========
+        // ==================
+        // Utility Overrides
+        // ==================
 
         void Initialize(SDL_Window& window) override;
         void Deinitialize() override;
@@ -95,7 +97,7 @@ namespace Silent::Renderer::SdlGpu
          */
         MeshCache& GetMeshes();
 
-        /** @brief Gets the offscreen render texture.
+        /** @brief Updates the offscreen render texture.
          *
          * @return Offscreen render texture.
          */
@@ -113,12 +115,9 @@ namespace Silent::Renderer::SdlGpu
          */
         SDL_GPUSampler& GetActiveSampler();
 
-        void Draw3dScene() override;
-        void DrawDither() override;
-        void Draw2dScene() override;
-        void DrawPostProcess() override;
-        void DrawViewport() override;
-        void DrawPowerMenu() override;
+        // ==================================================================
+        // GPU Transfer Helpers | `Renderer/Backends/SdlGpu/GpuTransfer.cpp`
+        // ==================================================================
 
         /** @brief Allocates memory pools for draw batches and GPU buffers. */
         void InitializeGpuBuffers();
@@ -169,5 +168,16 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Clears draw batches for reuse. */
         void ClearDrawBatches();
+
+        // ============================================================
+        // Draw Helper Overrides | `Renderer/Backends/SdlGpu/Draw.cpp`
+        // ============================================================
+
+        void Draw3dScene() override;
+        void DrawDither() override;
+        void Draw2dScene() override;
+        void DrawPostProcess() override;
+        void DrawViewport() override;
+        void DrawDebugMenu() override;
     };
 }

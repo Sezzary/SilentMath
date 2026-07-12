@@ -12,7 +12,7 @@ using namespace Silent::Services;
 
 namespace Silent::Assets
 {
-    std::shared_ptr<void> PngParse(const std::filesystem::path& filename)
+    std::shared_ptr<void> PngParse(const stdfs::path& filename)
     {
         const auto& fs = g_App.GetFilesystem();
 
@@ -25,7 +25,7 @@ namespace Silent::Assets
         if (pixels == nullptr) 
         {
             throw std::runtime_error(Fmt("Failed to open PNG `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Copy pixels.

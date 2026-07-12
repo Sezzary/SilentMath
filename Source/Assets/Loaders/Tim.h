@@ -18,7 +18,7 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed TIM asset data as a `void` pointer.
      */
-    std::shared_ptr<void> TimParse(const std::filesystem::path& filename);
+    std::shared_ptr<void> TimParse(const stdfs::path& filename);
 
     /** @brief Queues a TIM asset for upload to the GPU as a texture.
      *

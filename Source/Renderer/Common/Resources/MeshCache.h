@@ -14,8 +14,6 @@ namespace Silent::Renderer
         int VertexOffset = 0;
         int IdxOffset    = 0;
         int IdxCount     = 0;
-
-        bool IsValid() const;
     };
 
     /** @brief GPU mesh cache base. */
@@ -37,18 +35,25 @@ namespace Silent::Renderer
 
         /** @brief Releases a cached mesh from the GPU.
          *
-         * @param name Name of the GPU mesh to unload.
+         * @param name Mesh name.
          */
         void Release(const std::string& name);
 
-        /** @brief Releases meshes of a streamable model asset from the GPU.
+        /** @brief Releases cached meshes of a streamable model asset from the GPU.
          *
          * @param assetName Streamable model asset name.
          */
         void ReleaseModel(const std::string& assetName);
 
-        /** @brief Releases all cached meshes from the GPU. */
-        void Clear();
+        // ==================
+        // Virtual Utilities
+        // ==================
+
+        /** @brief Releases all cached meshes from the GPU.
+         *
+         * @note Due to C++ inheritance quirks, this cannot simply be named `Release`.
+         */
+        virtual void ReleaseAll() = 0;
 
         // ==========
         // Operators
@@ -59,7 +64,7 @@ namespace Silent::Renderer
     private:
         /** @brief Releases meshes of an ILM model asset from the GPU.
          *
-         * @note By convention, each GPUmesh is named as follows:
+         * @note By convention, GPU meshes use the following naming pattern:
          * `[ILM asset name]_[bone name]_[bone mesh variant index]`.
          *
          * @param asset ILM asset.
@@ -76,7 +81,7 @@ namespace Silent::Renderer
 
         /** @brief Releases meshes of a TMD model asset from the GPU.
          *
-         * @note Each GPU mesh uses the following naming convention:
+         * @note By convention, GPU meshes use the following naming pattern:
          * `[TMD asset name]_[mesh index]`.
          *
          * @param asset TMD asset.

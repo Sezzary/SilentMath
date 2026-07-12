@@ -22,16 +22,16 @@ namespace Silent::Gui
         // Fields
         // =======
 
-        bool _prevState  = false;
+        bool      _prevState = false;
+        ScaleMode _scaleMode = ScaleMode::ShortEdge;
 
-        ScaleMode               _scaleMode = ScaleMode::ShortEdge;
-        std::optional<Callback> _onEnter   = std::nullopt;
-        std::optional<Callback> _onInside  = std::nullopt;
-        std::optional<Callback> _onLeave   = std::nullopt;
-        std::optional<Callback> _onOutside = std::nullopt;
-        std::optional<Callback> _onClick   = std::nullopt;
-        std::optional<Callback> _onHold    = std::nullopt;
-        std::optional<Callback> _onRelease = std::nullopt;
+        Callback _onEnter   = nullptr;
+        Callback _onInside  = nullptr;
+        Callback _onLeave   = nullptr;
+        Callback _onOutside = nullptr;
+        Callback _onClick   = nullptr;
+        Callback _onHold    = nullptr;
+        Callback _onRelease = nullptr;
 
     public:
         Vector2 Center  = Vector2::Zero;
@@ -55,13 +55,13 @@ namespace Silent::Gui
          * @param onRelease Interaction callback to execute when input is released.
          */
         Button(const Vector2& center, const Vector2& extents, ScaleMode scaleMode,
-               const std::optional<Callback>& onEnter,
-               const std::optional<Callback>& onInside,
-               const std::optional<Callback>& onLeave,
-               const std::optional<Callback>& onOutside,
-               const std::optional<Callback>& onClick,
-               const std::optional<Callback>& onHold,
-               const std::optional<Callback>& onRelease);
+               Callback onEnter,
+               Callback onInside,
+               Callback onLeave,
+               Callback onOutside,
+               Callback onClick,
+               Callback onHold,
+               Callback onRelease);
 
         /** @brief Creates an instance from a center and extents in retro screen coordinates with callbacks.
          *
@@ -77,13 +77,13 @@ namespace Silent::Gui
          * @param onRelease Interaction callback to execute when input is released.
          */
         Button(const Vector2i& center, const Vector2i& extents, ScaleMode scaleMode,
-               const std::optional<Callback>& onEnter,
-               const std::optional<Callback>& onInside,
-               const std::optional<Callback>& onLeave,
-               const std::optional<Callback>& onOutside,
-               const std::optional<Callback>& onClick,
-               const std::optional<Callback>& onHold,
-               const std::optional<Callback>& onRelease);
+               Callback onEnter,
+               Callback onInside,
+               Callback onLeave,
+               Callback onOutside,
+               Callback onClick,
+               Callback onHold,
+               Callback onRelease);
 
         // ==========
         // Utilities
@@ -141,6 +141,6 @@ namespace Silent::Gui
          *
          * @param callback Interaction callback.
          */
-        void ExecuteCallback(const std::optional<Callback>& callback) const;
+        void ExecuteCallback(const Callback& callback) const;
     };
 }

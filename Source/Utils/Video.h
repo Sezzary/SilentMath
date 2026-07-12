@@ -1,22 +1,31 @@
 #pragma once
 
+#include "Utils/DoubleBuffer.h"
+
 namespace Silent::Utils
 {
     /** @brief MPEG1 video player. */
     class VideoPlayer
     {
     private:
+        // ========
+        // Aliases
+        // ========
+
+        using OnStopCallback = std::function<void(const std::string& videoName)>;
+
         // =======
         // Fields
         // =======
 
         plm_t*             _plm         = nullptr;
-        std::vector<byte>  _frameBuffer = {};
+        DoubleBuffer<byte> _frameBuffer = {};
         std::vector<float> _audioBuffer = {};
         std::mutex         _audioMutex  = {};
 
-        std::string           _activeVideoName = {};
-        std::filesystem::path _videosPath      = {};
+        std::string    _activeVideoName = {};
+        stdfs::path    _videosPath      = {};
+        OnStopCallback _onStop          = nullptr;
 
     public:
         // =============
@@ -63,7 +72,7 @@ namespace Silent::Utils
          */
         const std::string& GetName() const;
 
-        /** @brief Gets the RGBA video frame image for the current time in the active video.
+        /** @brief Gets the double-buffered RGBA frame image for the current time in the active video.
          *
          * @return RGBA video frame image.
          */
@@ -74,6 +83,16 @@ namespace Silent::Utils
          * @return Audio frame samples.
          */
         std::vector<float> GetAudioFrame();
+
+        // ========
+        // Setters
+        // ========
+
+        /** @brief Sets a callback to execute on video stop.
+         *
+         * @param onStop Callback on video stop.
+         */
+        void SetOnStopCallback(OnStopCallback onStop);
 
         // ==========
         // Inquirers
@@ -99,7 +118,7 @@ namespace Silent::Utils
          *
          * @param videosPath Folder path containing videos.
          */
-        void Initialize(const std::filesystem::path& videosPath);
+        void Initialize(const stdfs::path& videosPath);
 
         /** @brief Starts a new active video.
          *
@@ -108,7 +127,7 @@ namespace Silent::Utils
          */
         void Play(const std::string& filename);
 
-        /** @brief Stops the active video and frees resources. */
+        /** @brief Stops the active video and frees resources, additionally queuing a GPU texture release. */
         void Stop();
 
         /** @brief Progresses the active video.
@@ -116,6 +135,9 @@ namespace Silent::Utils
          * @param deltaTime Progression time in seconds.
          */
         void Update(float deltaTime);
+
+        /** @brief Swaps the video frame double buffer used for asynchronous rendering. */
+        void SwapFrameBuffer();
 
         /** @brief Appends interleaved audio samples to the internal playback buffer.
          * Called by the `OnAudioFrame` callback.

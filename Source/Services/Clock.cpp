@@ -11,12 +11,13 @@ namespace Silent::Services
     {
         uint64 uptimeDur  = GetUptimeMicroseconds();
         uint64 elapsedDur = uptimeDur - _prevUptimeDuration;
-        return std::min((float)elapsedDur / 1000000.0f, ((float)TICKS_PER_SECOND / 6.0f) / (float)TICKS_PER_SECOND);
+        return std::min((float)elapsedDur / (float)MICROSEC_PER_SEC,
+                        ((float)TICKS_PER_SECOND / (float)TICKS_MAX) / (float)TICKS_PER_SECOND);
     }
 
     int ClockManager::GetTicks() const
     {
-        return std::min(_ticks, TICKS_PER_SECOND / 6);
+        return std::min(_ticks, TICKS_MAX);
     }
 
     bool ClockManager::TestInterval(int intervalTicks, int offsetTicks) const
@@ -71,7 +72,7 @@ namespace Silent::Services
 
     uint64 ClockManager::GetUptimeMicroseconds() const
     {
-        return (SDL_GetPerformanceCounter() * 1000000) / SDL_GetPerformanceFrequency();
+        return (SDL_GetPerformanceCounter() * MICROSEC_PER_SEC) / SDL_GetPerformanceFrequency();
     }
 
     std::string GetCurrentDateString()

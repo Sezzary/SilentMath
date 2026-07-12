@@ -9,7 +9,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    std::shared_ptr<void> ParseAnm(const std::filesystem::path& filename)
+    std::shared_ptr<void> ParseAnm(const stdfs::path& filename)
     {
         constexpr int ROT_MAT_COMP_COUNT = 9;
 
@@ -20,7 +20,7 @@ namespace Silent::Assets
         if (!stream.IsOpen())
         {
             throw std::runtime_error(Fmt("Failed to open ANM `{}`.",
-                                         std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
         // Read header.
@@ -39,7 +39,7 @@ namespace Silent::Assets
         int rotsSize         = rotCount * ROT_MAT_COMP_COUNT;
         Debug::Assert((translationsSize + rotsSize) == keyframeSize,
                       Fmt("Attempted to parse ANM `{}` with incongruent number of translations and rotations.",
-                          std::filesystem::relative(filename, fs.GetAssetsDirectory()).string()));
+                          stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
 
         // Create asset.
         auto asset = AnmAsset

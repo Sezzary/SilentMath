@@ -68,7 +68,7 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed TMD asset data as a `void` pointer.
      */
-    std::shared_ptr<void> ParseTmd(const std::filesystem::path& filename);
+    std::shared_ptr<void> ParseTmd(const stdfs::path& filename);
 
     /** @brief Queues a TMD asset for upload to the GPU as meshes.
      *

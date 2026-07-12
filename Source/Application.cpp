@@ -194,6 +194,12 @@ namespace Silent
         }
         _work.Renderer->Initialize(*_window);
 
+        // Set "on stop" video callback to gracefully release GPU texture resource when necessary.
+        _work.Video.SetOnStopCallback([this](const std::string& videoName)
+        {
+            _work.Renderer->QueueTextureRelease(videoName);
+        });
+
         // Audio.
         _work.Audio.Initialize();
 
@@ -304,7 +310,7 @@ namespace Silent
         //if (_work.Clock.GetTicks() > 0)
         for (int i = 0; i < _work.Clock.GetTicks(); i++)
         {
-            //Entry();
+            Entry();
         }
 
         // Update audio.
@@ -334,7 +340,7 @@ namespace Silent
         _work.Renderer->PrepareFrameResources();
 
         // Render frame asynchronously.
-        _prevFrameFuture = _frameWorker.AddTask(TASK(_work.Renderer->Update()));
+        _prevFrameFuture = _renderExecutor.AddTask(TASK(_work.Renderer->Update()));
     }
 
     void ApplicationManager::PollEvents()
@@ -425,13 +431,10 @@ namespace Silent
                     break;
                 }
                 case SDL_EVENT_WINDOW_MOUSE_ENTER:
-                {
-                    // @todo
-                    break;
-                }
                 case SDL_EVENT_WINDOW_MOUSE_LEAVE:
                 {
-                    // @todo
+                    // @todo Toggle cursor.
+                    auto windowFlags = SDL_GetWindowFlags(_window);
                     break;
                 }
                 case SDL_EVENT_WINDOW_FOCUS_GAINED:

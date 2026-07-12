@@ -56,7 +56,6 @@ namespace Silent::Debug
 
         // Reserve `Messages` size.
         g_Work.Messages.reserve(MESSAGE_COUNT_MAX);
-        g_Work.PrevMessages.reserve(MESSAGE_COUNT_MAX);
     }
 
     void Deinitialize()
@@ -83,10 +82,10 @@ namespace Silent::Debug
         // Update render stats. @todo Move this elsewhere. Maybe time class could handle it?
         g_Work.FrameCount++;
         uint64 now      = SDL_GetPerformanceCounter();
-        uint64 duration = ((now - g_Work.PrevTime) * 1000000) / SDL_GetPerformanceFrequency();
-        if (duration >= (1000000 / TICKS_PER_SECOND))
+        uint64 duration = ((now - g_Work.PrevTime) * ClockManager::MICROSEC_PER_SEC) / SDL_GetPerformanceFrequency();
+        if (duration >= (ClockManager::MICROSEC_PER_SEC / TICKS_PER_SECOND))
         {
-            fpses.push_back((float)g_Work.FrameCount / (float)(duration / 1000000.0f));
+            fpses.push_back((float)g_Work.FrameCount / (float)(duration / (float)ClockManager::MICROSEC_PER_SEC));
             durations.push_back(duration);
 
             if (fpses.size() >= TICKS_PER_SECOND)
@@ -109,7 +108,7 @@ namespace Silent::Debug
                 durations.clear();
             }
 
-            //g_Work.Fps        = (float)g_Work.FrameCount / (float)(duration / 1000000.0f);
+            //g_Work.Fps        = (float)g_Work.FrameCount / (float)(duration / (float)ClockManager::MICROSEC_PER_SEC);
             //g_Work.FrameTime  = duration;
             g_Work.FrameCount = 0;
             g_Work.PrevTime   = now;
@@ -117,6 +116,8 @@ namespace Silent::Debug
 
         CreateMenu();
         //ImGui::ShowDemoWindow();
+
+        g_Work.Messages.clear();
     }
 
     void Msg(const char* msg, ...)

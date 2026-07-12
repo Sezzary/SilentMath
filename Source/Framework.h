@@ -41,6 +41,8 @@
 #include <variant>
 #include <vector>
 
+namespace stdfs = std::filesystem;
+
 // assimp
 //#include <assimp/Importer.hpp>
 //#include <assimp/postprocess.h>

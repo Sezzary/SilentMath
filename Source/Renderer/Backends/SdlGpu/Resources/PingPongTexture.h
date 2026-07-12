@@ -23,8 +23,6 @@ namespace Silent::Renderer
         /** @brief Creates a default uninitialized instance. */
         PingPongTexture() = default;
 
-        ~PingPongTexture() override;
-
         // ========
         // Getters
         // ========
@@ -52,6 +50,10 @@ namespace Silent::Renderer
          * @param device GPU device.
          */
         void Initialize(SDL_GPUDevice& device);
+
+        // ===================
+        // Override Utilities
+        // ===================
 
         void Release() override;
     };

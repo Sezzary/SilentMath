@@ -33,7 +33,7 @@ namespace Silent::Utils
         std::string _queuedLocaleName = {};
 
         std::vector<LocaleMetadata> _locales       = {};
-        std::filesystem::path       _localesFolder = {};
+        stdfs::path                 _localesFolder = {};
         bool                        _isLocked      = false;
 
     public:
@@ -48,7 +48,7 @@ namespace Silent::Utils
          *
          * @param localesFolder Path to folder containing locale folders.
          */
-        void Initialize(const std::filesystem::path& localesFolder);
+        void Initialize(const stdfs::path& localesFolder);
 
         // ========
         // Getters
@@ -109,7 +109,7 @@ namespace Silent::Utils
          *
          * @param localeFolder Folder of the new locale.
          */
-        void AddLocale(const std::filesystem::path& localeFolder);
+        void AddLocale(const stdfs::path& localeFolder);
 
         /** @brief Loads and sets a new active locale.
          *

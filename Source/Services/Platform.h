@@ -32,5 +32,5 @@ namespace Silent::Services
      *
      * @return Home directory.
      */
-    std::filesystem::path GetHomeDirectory();
+    stdfs::path GetHomeDirectory();
 }

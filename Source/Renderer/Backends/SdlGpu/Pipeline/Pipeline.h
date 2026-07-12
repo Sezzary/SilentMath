@@ -30,20 +30,21 @@ namespace Silent::Renderer::SdlGpu
         // Utilities
         // ==========
 
-        /** @brief Initializes all pipelines.
+        /** @brief Initializes all GPU pipelines.
          *
          * @param window App window.
          * @param device GPU device.
          */
         void Initialize(SDL_Window& window, SDL_GPUDevice& device);
 
-        /** @brief Deinitializes all pipelines and frees GPU resources. */
-        void Deinitialize();
+        /** @brief Releases all pipelines from the GPU. */
+        void Release();
 
-        /** @brief Binds the graphics pipeline render stage for use in rendering.
+        /** @brief Binds a GPU pipeline for use in rendering.
          *
          * @param renderPass Render pass to bind the pipeline to.
-         * @param renderStage Pipeline render stage to bind.
+         * @param renderStage Pipeline render stage.
+         * @param blendMode Pipeline blend mode.
          * @throws `std::runtime_error` if the pipeline is invalid.
          */
         void Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode);
@@ -53,7 +54,7 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        /** @brief Initializes the graphics pipeline with vertex and fragment shaders.
+        /** @brief Initializes a GPU pipeline with vertex and fragment shaders.
          *
          * @param window App window.
          * @param config Pipeline configuration details.
@@ -72,7 +73,7 @@ namespace Silent::Renderer::SdlGpu
         SDL_GPUShader* LoadShader(const std::string& filename,
                                   int samplerCount, int storageTexCount, int storageBufferCount, int uniBufferCount);
 
-        /** @brief Computes a pipeline hash from a render stage and blend mode.
+        /** @brief Computes a GPU pipeline hash from a render stage and blend mode.
          *
          * @note This produces perfect hashing.
          *

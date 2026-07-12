@@ -14,37 +14,37 @@ using namespace Silent::Utils;
 namespace Silent::Gui
 {
     Button::Button(const Vector2& center, const Vector2& extents, ScaleMode scaleMode,
-                   const std::optional<Callback>& onEnter,
-                   const std::optional<Callback>& onInside,
-                   const std::optional<Callback>& onLeave,
-                   const std::optional<Callback>& onOutside,
-                   const std::optional<Callback>& onClick,
-                   const std::optional<Callback>& onHold,
-                   const std::optional<Callback>& onRelease)
+                   Callback onEnter,
+                   Callback onInside,
+                   Callback onLeave,
+                   Callback onOutside,
+                   Callback onClick,
+                   Callback onHold,
+                   Callback onRelease)
     {
         _prevState = false;
 
         _scaleMode = scaleMode;
-        _onEnter   = onEnter;
-        _onInside  = onInside;
-        _onLeave   = onLeave;
-        _onOutside = onOutside;
-        _onClick   = onClick;
-        _onHold    = onHold;
-        _onRelease = onRelease;
+        _onEnter   = std::move(onEnter);
+        _onInside  = std::move(onInside);
+        _onLeave   = std::move(onLeave);
+        _onOutside = std::move(onOutside);
+        _onClick   = std::move(onClick);
+        _onHold    = std::move(onHold);
+        _onRelease = std::move(onRelease);
 
         Center  = center;
         Extents = extents;
     }
 
     Button::Button(const Vector2i& center, const Vector2i& extents, ScaleMode scaleMode,
-                   const std::optional<Callback>& onEnter,
-                   const std::optional<Callback>& onInside,
-                   const std::optional<Callback>& onLeave,
-                   const std::optional<Callback>& onOutside,
-                   const std::optional<Callback>& onClick,
-                   const std::optional<Callback>& onHold,
-                   const std::optional<Callback>& onRelease)
+                   Callback onEnter,
+                   Callback onInside,
+                   Callback onLeave,
+                   Callback onOutside,
+                   Callback onClick,
+                   Callback onHold,
+                   Callback onRelease)
     {
         *this = Button(ConvertRetroScreenPixelsToPercent(center),
                        ConvertRetroScreenPixelsToPercent(extents),
@@ -178,11 +178,11 @@ namespace Silent::Gui
         _prevState = state;
     }
 
-    void Button::ExecuteCallback(const std::optional<Callback>& callback) const
+    void Button::ExecuteCallback(const Callback& callback) const
     {
-        if (callback.has_value())
+        if (callback)
         {
-            (*callback)();
+            callback();
         }
     }
 }

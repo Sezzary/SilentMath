@@ -33,6 +33,10 @@ namespace Silent::Renderer
         /** @brief Swaps the internal texture targets. */
         void Swap();
 
+        // ==================
+        // Virutal Utilities
+        // ==================
+
         /** @brief Releases GPU texture resources. */
         virtual void Release() = 0;
     };

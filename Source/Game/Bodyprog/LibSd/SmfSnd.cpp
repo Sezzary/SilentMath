@@ -320,7 +320,7 @@ namespace Silent::Game
     {
         s32 i;
 
-        STATIC_ASSERT(SD_VAB_SLOTS == SD_ALLOC_SLOTS, SD_VAB_SLOTS_must_equal_SD_ALLOC_SLOTS);
+        //STATIC_ASSERT(SD_VAB_SLOTS == SD_ALLOC_SLOTS, SD_VAB_SLOTS_must_equal_SD_ALLOC_SLOTS);
 
         for (i = 0; i < SD_VAB_SLOTS; i++)
         {

@@ -26,9 +26,6 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Creates a default uninitialized instance. */
         Buffer() = default;
 
-        /** @brief Gracefully destroys the instance and releases GPU resources. */
-        ~Buffer();
-
         // ========
         // Getters
         // ========
@@ -56,7 +53,11 @@ namespace Silent::Renderer::SdlGpu
          * @param capacity Max number of elements.
          * @param name Buffer name.
          */
-        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity, const std::string& name = {});
+        void Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity,
+                        const std::string& name = {});
+
+        /** @brief Releases the buffer from the GPU. */
+        void Release();
 
         /** @brief Uploads data to the GPU buffer.
          *
@@ -97,21 +98,8 @@ namespace Silent::Renderer::SdlGpu
     }
 
     template <typename T>
-    Buffer<T>::~Buffer()
-    {
-        if (_resourceBuffer != nullptr)
-        {
-            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
-        }
-
-        if (_transferBuffer != nullptr)
-        {
-            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
-        }
-    }
-
-    template <typename T>
-    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity, const std::string& name)
+    void Buffer<T>::Initialize(SDL_GPUDevice& device, SDL_GPUBufferUsageFlags usageFlags, int capacity,
+                               const std::string& name)
     {
         if (IsValid())
         {
@@ -120,7 +108,7 @@ namespace Silent::Renderer::SdlGpu
         }
 
         _usageFlags = usageFlags;
-        if (!(_usageFlags & (SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX | SDL_GPU_BUFFERUSAGE_INDIRECT)))
+        if (!(usageFlags & (SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX | SDL_GPU_BUFFERUSAGE_INDIRECT)))
         {
             throw std::runtime_error("Attempted to create GPU buffer with invalid usage flags.");
         }
@@ -131,7 +119,7 @@ namespace Silent::Renderer::SdlGpu
 
         auto bufferInfo = SDL_GPUBufferCreateInfo
         {
-            .usage = _usageFlags,
+            .usage = usageFlags,
             .size  = capacity * sizeof(T)
         };
 
@@ -156,6 +144,26 @@ namespace Silent::Renderer::SdlGpu
         if (_transferBuffer == nullptr)
         {
             Debug::Log(Fmt("Failed to create transfer buffer `{}`: {}", name, SDL_GetError()), Debug::LogLevel::Error);
+        }
+    }
+
+    template <typename T>
+    void Buffer<T>::Release()
+    {
+        if (_device == nullptr)
+        {
+            return;
+        }
+
+        if (_resourceBuffer != nullptr)
+        {
+            SDL_ReleaseGPUBuffer(_device, _resourceBuffer);
+            _resourceBuffer = nullptr;
+        }
+        if (_transferBuffer != nullptr)
+        {
+            SDL_ReleaseGPUTransferBuffer(_device, _transferBuffer);
+            _transferBuffer = nullptr;
         }
     }
 
@@ -212,7 +220,7 @@ namespace Silent::Renderer::SdlGpu
         }
         else if (_usageFlags & SDL_GPU_BUFFERUSAGE_INDIRECT)
         {
-            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name), Debug::LogLevel::Info);
+            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name));
         }
     }
 
