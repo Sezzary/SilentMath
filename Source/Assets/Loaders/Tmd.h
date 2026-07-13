@@ -34,7 +34,8 @@ namespace Silent::Assets
         int                    TPage    = 0;
     };
 
-    struct TmdPsxMesh
+    /** @brief TMD native format mesh. */
+    struct TmdNativeMesh
     {
         std::vector<TmdPrimitive> Primitives  = {};
         std::vector<Vector3>      Positions   = {};
@@ -53,7 +54,7 @@ namespace Silent::Assets
     /** @brief TMD mesh. */
     struct TmdMesh
     {
-        TmdPsxMesh    Psx    = {};
+        TmdNativeMesh Native = {};
         TmdLinearMesh Linear = {};
     };
 

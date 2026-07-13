@@ -56,9 +56,9 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler());
 
             auto model = Matrix::Identity;
-            model.Rotate(DEG_TO_RAD(45.0f), Vector3::UnitX);
+            model.Rotate(DEG_TO_RAD(0.0f), Vector3::UnitX);
 
-            auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
+            auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
             auto uni0 = UniformView{};
             memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
@@ -75,9 +75,19 @@ namespace Silent::Renderer::SdlGpu
             };
             PushFragmentUniform(uni, 0);
 
+            static bool a = false;
+            if (!a)
+            {
+                for (const auto& name : GetMeshes().GetNames())
+                {
+                    Debug::Log(name);
+                }
+                a = true;
+            }
+
             // Draw.
             //const auto* mesh = GetMeshes()["CHARA/DOC.ILM_TEST_0"];
-            const auto* mesh = GetMeshes()["CHARA/DOC.ILM_HEAD1_0"];
+            const auto* mesh = GetMeshes()["CHARA/DOC.ILM_HEAD1_2"];
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);

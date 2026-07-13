@@ -221,7 +221,7 @@ namespace Silent::Assets
 
             // Read vertex positions.
             stream.SetPosition(baseAddr + meshDesc.PositionOffset);
-            mesh.Psx.Positions.reserve(meshDesc.PositionCount);
+            mesh.Native.Positions.reserve(meshDesc.PositionCount);
             for (int j = 0; j < meshDesc.PositionCount; j++)
             {
                 // Read components.
@@ -231,12 +231,12 @@ namespace Silent::Assets
                 stream.Skip(2);
 
                 // Collect position.
-                mesh.Psx.Positions.push_back(Vector3(x, y, z));
+                mesh.Native.Positions.push_back(Vector3(x, y, z));
             }
 
             // Read vertex normals.
             stream.SetPosition(baseAddr + meshDesc.NormalOffset);
-            mesh.Psx.Normals.reserve(meshDesc.NormalCount);
+            mesh.Native.Normals.reserve(meshDesc.NormalCount);
             for (int j = 0; j < meshDesc.NormalCount; j++)
             {
                 // Read components.
@@ -247,12 +247,12 @@ namespace Silent::Assets
 
                 // Collect normal.
                 auto normal = Vector3::Normalize(Vector3(x, y, z));
-                mesh.Psx.Normals.push_back(normal);
+                mesh.Native.Normals.push_back(normal);
             }
 
             // Read primitives.
             stream.SetPosition(baseAddr + meshDesc.PrimitiveOffset);
-            mesh.Psx.Primitives.reserve(meshDesc.PrimitiveCount);
+            mesh.Native.Primitives.reserve(meshDesc.PrimitiveCount);
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
@@ -393,7 +393,7 @@ namespace Silent::Assets
                                 .ColorIdx    = GetLookupIdx(colorLookup, colors[i])
                             });
                         }
-                        mesh.Psx.Primitives.push_back(prim);
+                        mesh.Native.Primitives.push_back(prim);
                         break;
                     }
                     case TmdPrimitiveType::Line:
@@ -410,17 +410,17 @@ namespace Silent::Assets
             }
 
             // Collect indexed UVs.
-            mesh.Psx.Uvs.resize(uvLookup.size());
+            mesh.Native.Uvs.resize(uvLookup.size());
             for (const auto& [keyUv, uvIdx] : uvLookup)
             {
-                mesh.Psx.Uvs[uvIdx] = keyUv;
+                mesh.Native.Uvs[uvIdx] = keyUv;
             }
 
             // Collect indexed colors.
-            mesh.Psx.Colors.resize(colorLookup.size());
+            mesh.Native.Colors.resize(colorLookup.size());
             for (const auto& [keyColor, colorIdx] : colorLookup)
             {
-                mesh.Psx.Colors[colorIdx] = keyColor;
+                mesh.Native.Colors[colorIdx] = keyColor;
             }
 
             // Collect mesh.
@@ -431,14 +431,14 @@ namespace Silent::Assets
         {
             float radius = 0.0f;
             int i = 0;
-            for (const auto& prim : mesh.Psx.Primitives)
+            for (const auto& prim : mesh.Native.Primitives)
             {
                 for (const auto& vert : prim.Vertices)
                 {
-                    auto pos = mesh.Psx.Positions[vert.PositionIdx];
-                    auto normal = mesh.Psx.Normals[std::min<int>(vert.Psx.NormalIdx, mesh.Psx.Normals.size() - 1)];
-                    auto uv = mesh.Psx.Uvs[vert.UvIdx];
-                    auto color = mesh.Psx.Colors[vert.ColorIdx];
+                    auto pos = mesh.Native.Positions[vert.PositionIdx];
+                    auto normal = mesh.Native.Normals[std::min<int>(vert.Native.NormalIdx, mesh.Native.Normals.size() - 1)];
+                    auto uv = mesh.Native.Uvs[vert.UvIdx];
+                    auto color = mesh.Native.Colors[vert.ColorIdx];
                     mesh.Linear.Vertices.push_back(BufferVertex3d
                     {
                         .Position = pos / 5792.61865f,
@@ -475,7 +475,7 @@ namespace Silent::Assets
         {
             // Run through primitives.
             auto vertLookup = std::unordered_map<TmdVertex, int>{};
-            for (const auto& prim : mesh.Psx.Primitives)
+            for (const auto& prim : mesh.Native.Primitives)
             {
                 // Collect primitive vertex indices.
                 auto primIdxs = std::vector<uint16>{};
@@ -509,10 +509,10 @@ namespace Silent::Assets
             {
                 mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
-                    .Position = mesh.Psx.Positions[keyVert.PositionIdx] / 4096.0f,
-                    .Normal   = mesh.Psx.Normals[std::min<int>(keyVert.NormalIdx, mesh.Psx.Normals.size() - 1)],
-                    .Uv       = mesh.Psx.Uvs[keyVert.UvIdx],
-                    .Col      = mesh.Psx.Colors[keyVert.ColorIdx]
+                    .Position = mesh.Native.Positions[keyVert.PositionIdx] / 4096.0f,
+                    .Normal   = mesh.Native.Normals[std::min<int>(keyVert.NormalIdx, mesh.Native.Normals.size() - 1)],
+                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx],
+                    .Col      = mesh.Native.Colors[keyVert.ColorIdx]
                 };
             }
         }

@@ -28,6 +28,15 @@ namespace Silent::Assets
         int                    TPage    = 0;
     };
 
+    /** @brief ILM native format mesh. */
+    struct IlmNativeMesh
+    {
+        std::vector<IlmPrimitive> Primitives = {};
+        std::vector<Vector3i>     Positions  = {}; /* Q23.8 */
+        std::vector<Vector3i>     Normals    = {}; /* Q23.8 */
+        std::vector<Vector2i>     Uvs        = {}; /* Q23.8 */
+    };
+
     /** @brief ILM GPU-compatible linear mesh. */
     struct IlmLinearMesh
     {
@@ -38,22 +47,18 @@ namespace Silent::Assets
     /** @brief ILM mesh. */
     struct IlmMesh
     {
-        int                       BoneIdx    = 0;
-        std::string               BoneName   = {};
-        std::vector<IlmPrimitive> Primitives = {};
-        std::vector<Vector3>      Positions  = {};
-        std::vector<Vector3>      Normals    = {};
-        std::vector<Vector2>      Uvs        = {};
-
-        IlmLinearMesh Linear = {};
+        int           BoneIdx  = 0;
+        std::string   BoneName = {};
+        IlmNativeMesh Native   = {};
+        IlmLinearMesh Linear   = {};
     };
 
     /** @brief ILM asset data. */
     struct IlmAsset
     {
-        std::string          Name   = {};
-        std::vector<IlmMesh> Meshes = {};
-        std::vector<int>     Ids    = {};
+        std::string          Name    = {};
+        std::vector<IlmMesh> Meshes  = {};
+        std::vector<int>     MeshIds = {};
     };
 
     /** @brief Parses an ILM asset file.

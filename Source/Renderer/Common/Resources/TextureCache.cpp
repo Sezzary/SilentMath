@@ -12,9 +12,9 @@ namespace Silent::Renderer
         // Collect sorted texture names.
         auto names = std::vector<std::string>{};
         names.reserve(_textures.size());
-        for (const auto& [name, tex] : _textures)
+        for (const auto& [keyName, tex] : _textures)
         {
-            names.push_back(name);
+            names.push_back(keyName);
         }
         Sort(names);
 

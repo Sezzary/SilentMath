@@ -341,16 +341,16 @@ namespace Silent::Services
     {
         // Create keyboard/mouse bindings JSON.
         auto kmBindsJson = json();
-        for (const auto& [actionId, eventIds] : options.KeyboardMouseBindings)
+        for (const auto& [keyActionId, eventIds] : options.KeyboardMouseBindings)
         {
-            kmBindsJson[std::to_string((int)actionId)] = eventIds.front();
+            kmBindsJson[std::to_string((int)keyActionId)] = eventIds.front();
         }
 
         // Create gamepad bindings JSON.
         auto gamepadBindsJson = json();
-        for (const auto& [actionId, eventIds] : options.KeyboardMouseBindings)
+        for (const auto& [keyActionId, eventIds] : options.KeyboardMouseBindings)
         {
-            gamepadBindsJson[std::to_string((int)actionId)] = eventIds.front();
+            gamepadBindsJson[std::to_string((int)keyActionId)] = eventIds.front();
         }
 
         // Create options JSON.

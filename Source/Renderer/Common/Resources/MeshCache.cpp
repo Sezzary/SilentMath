@@ -16,9 +16,9 @@ namespace Silent::Renderer
         // Collect sorted mesh names.
         auto names = std::vector<std::string>{};
         names.reserve(_meshes.size());
-        for (const auto& [name, mesh] : _meshes)
+        for (const auto& [keyName, mesh] : _meshes)
         {
-            names.push_back(name);
+            names.push_back(keyName);
         }
         Sort(names);
 
