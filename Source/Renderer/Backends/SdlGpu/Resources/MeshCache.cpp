@@ -28,7 +28,7 @@ namespace Silent::Renderer::SdlGpu
         // Check if mesh with same name already exists.
         if (Find(_meshes, name) != nullptr)
         {
-            Debug::Log(Fmt("Attempted to overwrite existing GPU mesh `{}`.", name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to upload existing GPU mesh `{}`.", name), Debug::LogLevel::Warning);
             return;
         }
 
@@ -49,7 +49,7 @@ namespace Silent::Renderer::SdlGpu
                 _idxAllocator.Deallocate(idxs.size());
             }
 
-            Debug::Log(Fmt("Failed to upload GPU mesh `{}`: out of memory.", name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to upload GPU mesh `{}` with not enough memory.", name), Debug::LogLevel::Error);
             return;
         }
 
@@ -131,8 +131,7 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Upload(copyPass, mesh.Linear.Vertices,
-                   mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName + "_" + std::to_string(mesh.BoneIdx));
+            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
         }
     }
 

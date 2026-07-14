@@ -85,9 +85,17 @@ namespace Silent::Renderer::SdlGpu
                 a = true;
             }
 
+            const auto& assett = g_App.GetAssets().GetAsset("CHARA/PRSD.ILM");
+            const auto& tytas = assett->GetData<IlmAsset>();
+
             // Draw.
-            //const auto* mesh = GetMeshes()["CHARA/DOC.ILM_TEST_0"];
-            const auto* mesh = GetMeshes()["CHARA/DOC.ILM_HEAD1_2"];
+            const auto* mesh = GetMeshes()["CHARA/PRSD.ILM_HEAD1"];
+            if (mesh != nullptr)
+            {
+                SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+                _doubleBuffer.Active.DrawCallCount++;
+            }
+            mesh = GetMeshes()["CHARA/PRSD.ILM_TEST"];
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);

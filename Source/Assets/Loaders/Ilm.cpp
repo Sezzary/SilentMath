@@ -107,7 +107,7 @@ namespace Silent::Assets
             uint32 posXyOffset    = stream.ReadUint32();
             uint32 posZOffset     = stream.ReadUint32();
             uint32 normalsOffset  = stream.ReadUint32();
-            uint32 nextBodyOffset = stream.ReadUint32(); // `bodyOffset` of next mesh. Unused.
+            uint32 nextBodyOffset = stream.ReadUint32(); // Unused.
 
             // Read primitives.
             stream.SetPosition(primsOffset);
@@ -324,28 +324,28 @@ namespace Silent::Assets
                     {
                         BufferVertex3d
                         {
-                            .Position = { 0.1328125, -0.1796875, -0.0234375 },
+                            .Position = { 0.1328125f, -0.1796875f, -0.0234375f },
                             .Normal   = Vector3::One,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         },
                         BufferVertex3d
                         {
-                            .Position = { 0.0625, -0.0546875, -0.1015625 },
+                            .Position = { 0.0625f, -0.0546875f, -0.1015625f },
                             .Normal   = Vector3::One,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         },
                         BufferVertex3d
                         {
-                            .Position = { 0.0703125, -0.203125, -0.125 },
+                            .Position = { 0.0703125f, -0.203125, -0.125f },
                             .Normal   = Vector3::One,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         },
                         BufferVertex3d
                         {
-                            .Position = { -0.0859375, -0.0546875, -0.1015625 },
+                            .Position = { -0.0859375f, -0.0546875f, -0.1015625f },
                             .Normal   = Vector3::One,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green

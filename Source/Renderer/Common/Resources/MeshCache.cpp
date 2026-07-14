@@ -101,7 +101,7 @@ namespace Silent::Renderer
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Release(asset.Name + "_" + mesh.BoneName + "_" + std::to_string(mesh.BoneIdx));
+            Release(asset.Name + "_" + mesh.BoneName);
         }
     }
 

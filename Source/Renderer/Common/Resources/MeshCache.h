@@ -75,7 +75,7 @@ namespace Silent::Renderer
         /** @brief Releases meshes of an ILM model asset from the GPU.
          *
          * @note By convention, GPU meshes use the following naming pattern:
-         * `[ILM asset name]_[bone name]_[bone mesh variant index]`.
+         * `[ILM asset name]_[bone name]`.
          *
          * @param asset ILM asset.
          */

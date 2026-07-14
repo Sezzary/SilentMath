@@ -72,7 +72,7 @@ namespace Silent::Renderer::SdlGpu
         /** @brief Uploads meshes from an ILM model asset to the GPU.
          *
          * @note By convention, GPU meshes use the following naming pattern:
-         * `[ILM asset name]_[bone name]_[bone mesh variant index]`.
+         * `[ILM asset name]_[bone name]`.
          *
          * @param copyPass GPU copy pass.
          * @param asset ILM asset.
