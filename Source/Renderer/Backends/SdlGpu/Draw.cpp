@@ -56,7 +56,7 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler());
 
             auto model = Matrix::Identity;
-            model.Rotate(DEG_TO_RAD(0.0f), Vector3::UnitX);
+            model.Rotate(DEG_TO_RAD(90.0f), Vector3::UnitY);
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
@@ -75,17 +75,17 @@ namespace Silent::Renderer::SdlGpu
             };
             PushFragmentUniform(uni, 0);
 
-            const auto& assett = g_App.GetAssets()["CHARA/DOC.ILM"];
+            const auto& assett = g_App.GetAssets()["CHARA/HERO.ILM"];
             const auto& tytas = assett->GetData<IlmAsset>();
 
             // Draw.
-            const auto* mesh = GetMeshes()["CHARA/DOC.ILM_HEAD1"];
+            const auto* mesh = GetMeshes()["CHARA/HERO.ILM_HEAD1"];
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
                 _doubleBuffer.Active.DrawCallCount++;
             }
-            //mesh = GetMeshes()["CHARA/DOC.ILM_TEST"];
+            //mesh = GetMeshes()["CHARA/PRSD.ILM_TEST"];
             //if (mesh != nullptr)
             //{
             //    SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);

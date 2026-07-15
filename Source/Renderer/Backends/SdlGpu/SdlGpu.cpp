@@ -131,7 +131,7 @@ namespace Silent::Renderer::SdlGpu
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
         // @temp
-        GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
+        GetMeshes().Upload(*copyPass, "CHARA/HERO.ILM");
         //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD"); // @todo Uploading overwrites previous meshes?
 
         for (const auto& name : GetMeshes().GetNames())
@@ -140,6 +140,7 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Load temp. textures.
+        GetTextures().Upload(*copyPass, "CHARA/HERO.TIM");
         GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
         //GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
         assets.Load("TIM/BG_ETC.TIM");

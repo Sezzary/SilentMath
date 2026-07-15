@@ -265,11 +265,11 @@ namespace Silent::Assets
         }
 
         // @todo Implement render buckets? Sort primitives by CLUT? Needs materials.
-        // Convert to linear meshes.
+        // Linearize meshes.
         for (auto& mesh : asset.Meshes)
         {
             // Run through primitives.
-            for (const auto& prim : mesh.Native.Primitives)
+            /*for (const auto& prim : mesh.Native.Primitives)
             {
                 int baseVertIdx = mesh.Linear.Vertices.size();
 
@@ -301,15 +301,13 @@ namespace Silent::Assets
                         (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 2), (uint16)(baseVertIdx + 3)
                     });
                 }
-            }
+            }*/
 
-            // @todo Doesn't process properly.
-            /*
             // Run through primitives.
             auto vertLookup = std::unordered_map<IlmVertex, int>{};
             for (const auto& prim : mesh.Native.Primitives)
             {
-                // Collect primitive vertex indices.
+                // Collect vertex indices.
                 auto primIdxs = std::vector<uint16>{};
                 for (const auto& vert : prim.Vertices)
                 {
@@ -344,10 +342,9 @@ namespace Silent::Assets
                     .Position = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal   = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
                     .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 256.0f,
-                    .Col      = Color::White
+                    .Col      = Color(1, 1, 1, 0.3f)
                 };
             }
-            */
         }
 
         // @debug 2 green test triangles.
