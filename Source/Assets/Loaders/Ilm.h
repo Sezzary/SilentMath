@@ -32,8 +32,8 @@ namespace Silent::Assets
     struct IlmNativeMesh
     {
         std::vector<IlmPrimitive> Primitives = {};
-        std::vector<Vector3i>     Positions  = {}; /* Q23.8 */
-        std::vector<Vector3i>     Normals    = {}; /* Q23.8 */
+        std::vector<Vector3i>     Positions  = {}; /* Q24.7 */
+        std::vector<Vector3i>     Normals    = {}; /* Q24.7 */
         std::vector<Vector2i>     Uvs        = {}; /* Q23.8 */
     };
 

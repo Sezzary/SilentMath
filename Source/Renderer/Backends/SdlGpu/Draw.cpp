@@ -56,7 +56,7 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler());
 
             auto model = Matrix::Identity;
-            model.Rotate(DEG_TO_RAD(0.0f), Vector3::UnitY);
+            model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
@@ -85,12 +85,6 @@ namespace Silent::Renderer::SdlGpu
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
                 _doubleBuffer.Active.DrawCallCount++;
             }
-            //mesh = GetMeshes()["CHARA/PRSD.ILM_TEST"];
-            //if (mesh != nullptr)
-            //{
-            //    SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-            //    _doubleBuffer.Active.DrawCallCount++;
-            //}
         }
 
         //---------------------------

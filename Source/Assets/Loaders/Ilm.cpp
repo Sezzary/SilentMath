@@ -115,8 +115,8 @@ namespace Silent::Assets
             for (int j = 0; j < primCount; j++)
             {
                 // Read UV 0.
-                uint8 uvX0 = stream.ReadUint8(); // Q0.8
-                uint8 uvY0 = stream.ReadUint8(); // Q0.8
+                q0_8 uvX0 = stream.ReadUint8();
+                q0_8 uvY0 = stream.ReadUint8();
 
                 // Read CLUT indices.
                 int16 clutPos  = stream.ReadInt16(); // Unused.
@@ -125,19 +125,19 @@ namespace Silent::Assets
                 int   clutIdx  = clutPosZ; // @todo Check. Layout in VRAM appears to be simple.
 
                 // Read UV 1.
-                uint8 uvX1 = stream.ReadUint8(); // Q0.8
-                uint8 uvY1 = stream.ReadUint8(); // Q0.8
+                q0_8 uvX1 = stream.ReadUint8();
+                q0_8 uvY1 = stream.ReadUint8();
 
                 // Read texture page.
                 int16 tPage = stream.ReadInt16();
 
                 // Read UV 2.
-                uint8 uvX2 = stream.ReadUint8(); // Q0.8
-                uint8 uvY2 = stream.ReadUint8(); // Q0.8
+                q0_8 uvX2 = stream.ReadUint8();
+                q0_8 uvY2 = stream.ReadUint8();
 
                 // Read UV 3.
-                uint8 uvX3 = stream.ReadUint8(); // Q0.8
-                uint8 uvY3 = stream.ReadUint8(); // Q0.8
+                q0_8 uvX3 = stream.ReadUint8();
+                q0_8 uvY3 = stream.ReadUint8();
 
                 // Read vertex positions.
                 uint8 posIdx0 = stream.ReadUint8();
@@ -208,8 +208,8 @@ namespace Silent::Assets
             stream.SetPosition(posXyOffset);
             for (int j = 0; j < posCount; j++)
             {
-                int16 x = stream.ReadInt16(); // Q8.7
-                int16 y = stream.ReadInt16(); // Q8.7
+                q8_7 x = stream.ReadInt16();
+                q8_7 y = stream.ReadInt16();
 
                 // Collect XZ position components.
                 mesh.Native.Positions.push_back(Vector3i(x, y, 0));
@@ -219,7 +219,7 @@ namespace Silent::Assets
             stream.SetPosition(posZOffset);
             for (int j = 0; j < posCount; j++)
             {
-                int16 z = stream.ReadInt16(); // Q8.7
+                q8_7 z = stream.ReadInt16();
 
                 // Collect Z position component.
                 mesh.Native.Positions[j].z = z;
@@ -230,9 +230,9 @@ namespace Silent::Assets
             mesh.Native.Normals.reserve(normalCount);
             for (int j = 0; j < normalCount; j++)
             {
-                int8  x     = stream.ReadInt8(); // Q0.7
-                int8  y     = stream.ReadInt8(); // Q0.7
-                int8  z     = stream.ReadInt8(); // Q0.7
+                q0_7  x     = stream.ReadInt8();
+                q0_7  y     = stream.ReadInt8();
+                q0_7  z     = stream.ReadInt8();
                 uint8 count = stream.ReadUint8();
 
                 // Collect normal.
@@ -299,7 +299,7 @@ namespace Silent::Assets
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 2),
-                        (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 2), (uint16)(baseVertIdx + 3)
+                        (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 3), (uint16)(baseVertIdx + 2)
                     });
                 }
             }*/
@@ -338,53 +338,31 @@ namespace Silent::Assets
             mesh.Linear.Vertices.resize(vertLookup.size());
             for (const auto& [keyVert, vertIdx] : vertLookup)
             {
+                static float a = 1;
+                static float b = 0;
+                static float c = 0;
                 mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
                     .Position = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal   = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
                     .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 256.0f,
-                    .Col      = Color(1, 1, 1, 0.3f)
+                    //.Col = Color(a, b, c, 1.0f)
                 };
+
+                if (a == 1)
+                {
+                    b = 1; a = 0;
+                }
+                else if (b == 1)
+                {
+                    c = 1; b = 0;
+                }
+                else if (c == 1)
+                {
+                    a = 1; c = 0;
+                }
             }
         }
-
-        // @debug 2 green test triangles.
-        /*asset.Meshes.push_back(IlmMesh
-        {
-            .BoneIdx  = 0,
-            .BoneName = "TEST",
-            .Linear   = IlmLinearMesh
-            {
-                .Vertices =
-                {
-                    BufferVertex3d
-                    {
-                        .Position = { 0.1328125f, -0.1796875f, -0.0234375f },
-                        .Normal   = Vector3::UnitX,
-                        .Col      = Color::Green
-                    },
-                    BufferVertex3d
-                    {
-                        .Position = { 0.0625f, -0.0546875f, -0.1015625f },
-                        .Normal   = Vector3::UnitX,
-                        .Col      = Color::Green
-                    },
-                    BufferVertex3d
-                    {
-                        .Position = { 0.0703125f, -0.203125, -0.125f },
-                        .Normal   = Vector3::UnitX,
-                        .Col      = Color::Green
-                    },
-                    BufferVertex3d
-                    {
-                        .Position = { -0.0859375f, -0.0546875f, -0.1015625f },
-                        .Normal   = Vector3::UnitX,
-                        .Col      = Color::Green
-                    }
-                },
-                .Idxs = { 0, 1, 2, 1, 3, 2 }
-            }
-        });*/
 
         return std::make_shared<IlmAsset>(std::move(asset));
     }

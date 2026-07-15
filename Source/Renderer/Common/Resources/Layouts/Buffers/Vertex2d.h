@@ -7,6 +7,6 @@ namespace Silent::Renderer
     {
         Vector3 Position = Vector3::Zero;
         Vector2 Uv       = Vector2::Zero;
-        Color   Col      = Color::Clear;
+        Color   Col      = Color::White;
     };
 }
