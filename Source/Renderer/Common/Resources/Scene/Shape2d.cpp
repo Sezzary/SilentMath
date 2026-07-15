@@ -22,10 +22,26 @@ namespace Silent::Renderer
         {
             .Vertices =
             {
-                Vertex2d{ from,          colorFrom },
-                Vertex2d{ to,            colorTo   },
-                Vertex2d{ to   + offset, colorTo   },
-                Vertex2d{ from + offset, colorFrom }
+                Vertex2d
+                {
+                    .Position = from,
+                    .Col      = colorFrom
+                },
+                Vertex2d
+                {
+                    .Position = to,
+                    .Col      = colorTo
+                },
+                Vertex2d
+                {
+                    .Position = to + offset,
+                    .Col      = colorTo
+                },
+                Vertex2d
+                {
+                    .Position = from + offset,
+                    .Col      = colorFrom
+                }
             },
             .Depth   = depth,
             .ScaleMd = scaleMode,
@@ -51,9 +67,21 @@ namespace Silent::Renderer
         {
             .Vertices =
             {
-                Vertex2d{ vert0, color0 },
-                Vertex2d{ vert1, color1 },
-                Vertex2d{ vert2, color2 }
+                Vertex2d
+                {
+                    .Position = vert0,
+                    .Col      = color0
+                },
+                Vertex2d
+                {
+                    .Position = vert1,
+                    .Col      = color1
+                },
+                Vertex2d
+                {
+                    .Position = vert2,
+                    .Col      = color2
+                }
             },
             .Depth   = depth,
             .ScaleMd = scaleMode,
@@ -80,10 +108,26 @@ namespace Silent::Renderer
         {
             .Vertices =
             {
-                Vertex2d{ vert0, color0 },
-                Vertex2d{ vert1, color1 },
-                Vertex2d{ vert2, color2 },
-                Vertex2d{ vert3, color3 }
+                Vertex2d
+                {
+                    .Position = vert0,
+                    .Col      = color0
+                },
+                Vertex2d
+                {
+                    .Position = vert1,
+                    .Col      = color1
+                },
+                Vertex2d
+                {
+                    .Position = vert2,
+                    .Col      = color2
+                },
+                Vertex2d
+                {
+                    .Position = vert3,
+                    .Col      = color3
+                }
             },
             .Depth   = depth,
             .ScaleMd = scaleMode,

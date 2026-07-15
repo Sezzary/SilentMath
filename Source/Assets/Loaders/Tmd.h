@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 
 using namespace Silent::Renderer;
 

@@ -6,10 +6,10 @@
 #include "Renderer/Backends/SdlGpu/Resources/PingPongTexture.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms.h"
 #include "Renderer/Common/Resources/Primitive/Vertex2d.h"
 #include "Renderer/Common/Resources/Primitive/Vertex3d.h"
-#include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Renderer.h"
 
 namespace Silent::Renderer::SdlGpu

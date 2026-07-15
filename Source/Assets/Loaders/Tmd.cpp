@@ -3,7 +3,7 @@
 
 #include "Application.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Renderer.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"

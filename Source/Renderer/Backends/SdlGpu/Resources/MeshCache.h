@@ -2,7 +2,7 @@
 
 #include "Assets/AssetStreamer.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Common/Resources/MeshCache.h"
 
 using namespace Silent::Assets;

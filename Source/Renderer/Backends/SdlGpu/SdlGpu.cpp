@@ -6,8 +6,8 @@
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/PingPongTexture.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
-#include "Renderer/Common/Resources/Buffers.h"
-#include "Renderer/Common/Resources/Uniforms.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms.h"
 #include "Renderer/Common/Utils.h"
 #include "Renderer/Renderer.h"
 #include "Services/Filesystem.h"
@@ -132,11 +132,11 @@ namespace Silent::Renderer::SdlGpu
 
         // @temp
         GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
-        GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
+        //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD"); // @todo Uploading overwrites previous meshes?
 
         for (const auto& name : GetMeshes().GetNames())
         {
-            
+            Debug::Log(name);
         }
 
         // Load temp. textures.

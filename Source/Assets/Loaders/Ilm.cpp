@@ -2,7 +2,7 @@
 #include "Assets/Loaders/Ilm.h"
 
 #include "Application.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
@@ -63,7 +63,7 @@ namespace Silent::Assets
         // Read meshes.
         stream.SetPosition(meshesOffset);
         asset.Meshes.reserve(meshCount);
-        for (int i = 0; i < meshCount; i++)
+        for (int i = 0; i < 2; i++) // @todo Temporarily not using `meshCount`.
         {
             // Create UV index lookup.
             auto uvLookup = std::unordered_map<Vector2i, int>{}; // Key = UV (Q0.8), value = UV index.
@@ -281,7 +281,7 @@ namespace Silent::Assets
                         .Position = mesh.Native.Positions[prim.Vertices[i].PositionIdx].ToVector3() / 128.0f,
                         .Normal   = Vector3::Normalize(mesh.Native.Normals[prim.Vertices[i].NormalIdx].ToVector3()),
                         .Uv       = mesh.Native.Uvs[prim.Vertices[i].UvIdx].ToVector2() / 256.0f,
-                        .Col      = Color::White
+                        .Col      = Color(1, 1, 1, 0.3f)
                     });
                 }
 
@@ -351,47 +351,42 @@ namespace Silent::Assets
         }
 
         // @debug 2 green test triangles.
-        asset.Meshes.push_back(
-            IlmMesh
+        /*asset.Meshes.push_back(IlmMesh
+        {
+            .BoneIdx  = 0,
+            .BoneName = "TEST",
+            .Linear   = IlmLinearMesh
             {
-                .BoneIdx    = 0,
-                .BoneName   = "TEST",
-                .Linear = IlmLinearMesh
+                .Vertices =
                 {
-                    .Vertices =
+                    BufferVertex3d
                     {
-                        BufferVertex3d
-                        {
-                            .Position = { 0.1328125f, -0.1796875f, -0.0234375f },
-                            .Normal   = Vector3::UnitX,
-                            .Uv       = Vector2::Zero,
-                            .Col      = Color::Green
-                        },
-                        BufferVertex3d
-                        {
-                            .Position = { 0.0625f, -0.0546875f, -0.1015625f },
-                            .Normal   = Vector3::UnitX,
-                            .Uv       = Vector2::Zero,
-                            .Col      = Color::Green
-                        },
-                        BufferVertex3d
-                        {
-                            .Position = { 0.0703125f, -0.203125, -0.125f },
-                            .Normal   = Vector3::UnitX,
-                            .Uv       = Vector2::Zero,
-                            .Col      = Color::Green
-                        },
-                        BufferVertex3d
-                        {
-                            .Position = { -0.0859375f, -0.0546875f, -0.1015625f },
-                            .Normal   = Vector3::UnitX,
-                            .Uv       = Vector2::Zero,
-                            .Col      = Color::Green
-                        }
+                        .Position = { 0.1328125f, -0.1796875f, -0.0234375f },
+                        .Normal   = Vector3::UnitX,
+                        .Col      = Color::Green
                     },
-                    .Idxs = { 0, 1, 2, 1, 3, 2 }
-                }
-            });
+                    BufferVertex3d
+                    {
+                        .Position = { 0.0625f, -0.0546875f, -0.1015625f },
+                        .Normal   = Vector3::UnitX,
+                        .Col      = Color::Green
+                    },
+                    BufferVertex3d
+                    {
+                        .Position = { 0.0703125f, -0.203125, -0.125f },
+                        .Normal   = Vector3::UnitX,
+                        .Col      = Color::Green
+                    },
+                    BufferVertex3d
+                    {
+                        .Position = { -0.0859375f, -0.0546875f, -0.1015625f },
+                        .Normal   = Vector3::UnitX,
+                        .Col      = Color::Green
+                    }
+                },
+                .Idxs = { 0, 1, 2, 1, 3, 2 }
+            }
+        });*/
 
         return std::make_shared<IlmAsset>(std::move(asset));
     }

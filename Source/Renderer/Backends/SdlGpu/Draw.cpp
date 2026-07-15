@@ -43,7 +43,7 @@ namespace Silent::Renderer::SdlGpu
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
         GetMeshes().Bind(renderPass);
-        _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
+        _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Alpha);
 
         _view.Move();
 
@@ -75,16 +75,6 @@ namespace Silent::Renderer::SdlGpu
             };
             PushFragmentUniform(uni, 0);
 
-            static bool a = false;
-            if (!a)
-            {
-                for (const auto& name : GetMeshes().GetNames())
-                {
-                    Debug::Log(name);
-                }
-                a = true;
-            }
-
             const auto& assett = g_App.GetAssets()["CHARA/DOC.ILM"];
             const auto& tytas = assett->GetData<IlmAsset>();
 
@@ -95,18 +85,12 @@ namespace Silent::Renderer::SdlGpu
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
                 _doubleBuffer.Active.DrawCallCount++;
             }
-            mesh = GetMeshes()["CHARA/DOC.ILM_TEST"];
-            if (mesh != nullptr)
-            {
-                SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-                _doubleBuffer.Active.DrawCallCount++;
-            }
-            mesh = GetMeshes()["ITEM/UNQE1.TMD_0"];
-            if (mesh != nullptr)
-            {
-                SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-                _doubleBuffer.Active.DrawCallCount++;
-            }
+            //mesh = GetMeshes()["CHARA/DOC.ILM_TEST"];
+            //if (mesh != nullptr)
+            //{
+            //    SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+            //    _doubleBuffer.Active.DrawCallCount++;
+            //}
         }
 
         //---------------------------
