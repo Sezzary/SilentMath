@@ -287,14 +287,14 @@ namespace Silent::Assets
                 }
 
                 // Collect indices.
-                if (prim.Vertices.size() == TRI_IDX_COUNT)
+                if (prim.Vertices.size() == TRI_VERTEX_COUNT)
                 {
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 2)
                     });
                 }
-                else if (prim.Vertices.size() == QUAD_IDX_COUNT)
+                else if (prim.Vertices.size() == QUAD_VERTEX_COUNT)
                 {
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
@@ -317,19 +317,19 @@ namespace Silent::Assets
                 }
 
                 // Collect vertex indices.
-                if (primIdxs.size() == TRI_IDX_COUNT)
+                if (primIdxs.size() == TRI_VERTEX_COUNT)
                 {
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
                         primIdxs[0], primIdxs[1], primIdxs[2]
                     });
                 }
-                else if (primIdxs.size() == QUAD_IDX_COUNT)
+                else if (primIdxs.size() == QUAD_VERTEX_COUNT)
                 {
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
-                        primIdxs[0], primIdxs[1], primIdxs[2], 
-                        primIdxs[0], primIdxs[2], primIdxs[3]
+                        primIdxs[0], primIdxs[1], primIdxs[2],
+                        primIdxs[1], primIdxs[3], primIdxs[2]
                     });
                 }
             }

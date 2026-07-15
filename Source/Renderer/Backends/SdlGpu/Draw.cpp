@@ -56,7 +56,7 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler());
 
             auto model = Matrix::Identity;
-            model.Rotate(DEG_TO_RAD(90.0f), Vector3::UnitY);
+            model.Rotate(DEG_TO_RAD(0.0f), Vector3::UnitY);
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
