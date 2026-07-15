@@ -330,17 +330,17 @@ namespace Silent
     void ApplicationManager::Render()
     {
         // Wait for previous frame to finish.
-        if (_prevFrameFuture.valid())
+        if (_renderFuture.valid())
         {
-            _prevFrameFuture.wait();
+            _renderFuture.wait();
         }
 
         // Prepare renderer for new frame.
         _work.Renderer->PrepareFrameData();
         _work.Renderer->PrepareFrameResources();
 
-        // Render frame asynchronously.
-        _prevFrameFuture = _renderExecutor.AddTask(TASK(_work.Renderer->Update()));
+        // Render new frame asynchronously.
+        _renderFuture = _renderExecutor.AddTask(TASK(_work.Renderer->Update()));
     }
 
     void ApplicationManager::PollEvents()

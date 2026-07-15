@@ -63,7 +63,7 @@ namespace Silent::Assets
         // Read meshes.
         stream.SetPosition(meshesOffset);
         asset.Meshes.reserve(meshCount);
-        for (int i = 0; i < 2; i++) // @todo Temporarily not using `meshCount`.
+        for (int i = 0; i < meshCount; i++)
         {
             // Create UV index lookup.
             auto uvLookup = std::unordered_map<Vector2i, int>{}; // Key = UV (Q0.8), value = UV index.
@@ -268,6 +268,7 @@ namespace Silent::Assets
         // Linearize meshes.
         for (auto& mesh : asset.Meshes)
         {
+            // @todo Unoptimised version for testing.
             // Run through primitives.
             /*for (const auto& prim : mesh.Native.Primitives)
             {

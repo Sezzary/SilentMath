@@ -291,7 +291,7 @@ namespace Silent::Renderer
          */
         void SortRenderBufferData();
 
-        /** @brief Draws the current frame according to a hardcoded render graph. */
+        /** @brief Submits the current frame to draw according to a hardcoded render graph. */
         void DrawFrame();
 
         // =====================

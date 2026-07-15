@@ -56,10 +56,10 @@ namespace Silent
         bool        _isPaused = false;
         bool        _quit     = false;
         
-        ApplicationWork   _work            = {};
-        ParallelExecutor  _renderExecutor  = ParallelExecutor(1);
-        std::future<void> _prevFrameFuture = std::future<void>();
-        Vector2           _mouseWheelAxis  = Vector2::Zero;
+        ApplicationWork   _work           = {};
+        ParallelExecutor  _renderExecutor = ParallelExecutor(1);
+        std::future<void> _renderFuture   = std::future<void>();
+        Vector2           _mouseWheelAxis = Vector2::Zero;
 
     public:
         // =============

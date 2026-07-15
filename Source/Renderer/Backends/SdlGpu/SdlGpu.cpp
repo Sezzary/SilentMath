@@ -224,18 +224,26 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Update()
     {
+        // Wait for GPU to finish previous frame.
+        if (_renderFence != nullptr)
+        {
+            SDL_WaitForGPUFences(_device, true, &_renderFence, 1);
+            SDL_ReleaseGPUFence(_device, _renderFence);
+            _renderFence = nullptr;
+        }
+
         // Frame setup.
         SortRenderBufferData();
         ClearDrawBatches();
 
-        // Draw frame.
+        // Submit new frame to draw for GPU.
         if (_swapchainTexture != nullptr)
         {
             DrawFrame();
         }
 
-        // Submit command buffer to GPU.
-        SDL_SubmitGPUCommandBuffer(_commandBuffer);
+        // Submit command buffer for GPU to render new frame asynchronously.
+        _renderFence = SDL_SubmitGPUCommandBufferAndAcquireFence(_commandBuffer);
     }
 
     void Renderer::SaveScreenshot() const

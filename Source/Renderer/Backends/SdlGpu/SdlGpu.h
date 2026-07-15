@@ -53,6 +53,7 @@ namespace Silent::Renderer::SdlGpu
 
         SDL_GPUDevice*        _device        = nullptr;
         SDL_GPUCommandBuffer* _commandBuffer = nullptr;
+        SDL_GPUFence*         _renderFence   = nullptr;
         PipelineManager       _pipelines     = PipelineManager();
         GpuBuffers            _gpuBuffers    = {};
         DrawBatches           _drawBatches   = {};
