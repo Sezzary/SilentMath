@@ -16,7 +16,7 @@ namespace Silent::Renderer
     {
         auto& assets = g_App.GetAssets();
 
-        const auto* asset = assets.GetAsset(texName);
+        const auto* asset = assets[texName];
         switch (asset->Type)
         {
             case AssetType::Png:

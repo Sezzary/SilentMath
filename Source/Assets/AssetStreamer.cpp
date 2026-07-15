@@ -91,51 +91,6 @@ namespace Silent::Assets
         return _loadingCount;
     }
 
-    const Asset* AssetStreamer::GetAsset(int assetIdx)
-    {
-        // Get asset.
-        if (assetIdx < 0 || assetIdx >= _assets.size())
-        {
-            Debug::Log(Fmt("Attempted to get missing streamable asset {}.", assetIdx),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return nullptr;
-        }
-        const auto& asset = *_assets[assetIdx];
-
-        // Load if not preloaded.
-        if (asset.State != AssetState::Loaded)
-        {
-            //Debug::Log(Fmt("Getting non-preloaded streamable asset `{}`. Loading in place.", GetName(assetIdx)),
-            //           Debug::LogLevel::Warning, Debug::LogMode::Debug);
-
-            Load(assetIdx).wait();
-        }
-
-        // Check if loading failed.
-        if (asset.State == AssetState::Error)
-        {
-            Debug::Log(Fmt("Failed to get streamable asset `{}`.", GetName(assetIdx)),
-                       Debug::LogLevel::Error, Debug::LogMode::Debug);
-            return nullptr;
-        }
-        return &asset;
-    }
-
-    const Asset* AssetStreamer::GetAsset(const std::string& assetName)
-    {
-        // Check if asset exists.
-        const int* assetIdx = Find(_idxs, assetName);
-        if (assetIdx == nullptr)
-        {
-            Debug::Log(Fmt("Attempted to get missing streamable asset `{}`.", assetName),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return nullptr;
-        }
-
-        // Get asset by index.
-        return GetAsset(*assetIdx);
-    }
-
     bool AssetStreamer::IsBusy() const
     {
         return _loadingCount > 0;
@@ -366,5 +321,50 @@ namespace Silent::Assets
             // Remove load future.
             _loadFutures.erase(_idxs[asset->Name]);
         }
+    }
+
+    const Asset* AssetStreamer::operator[](int assetIdx)
+    {
+        // Get asset.
+        if (assetIdx < 0 || assetIdx >= _assets.size())
+        {
+            Debug::Log(Fmt("Attempted to get missing streamable asset {}.", assetIdx),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            return nullptr;
+        }
+        const auto& asset = *_assets[assetIdx];
+
+        // Load if not preloaded.
+        if (asset.State != AssetState::Loaded)
+        {
+            //Debug::Log(Fmt("Getting non-preloaded streamable asset `{}`. Loading in place.", GetName(assetIdx)),
+            //           Debug::LogLevel::Warning, Debug::LogMode::Debug);
+
+            Load(assetIdx).wait();
+        }
+
+        // Check if loading failed.
+        if (asset.State == AssetState::Error)
+        {
+            Debug::Log(Fmt("Failed to get streamable asset `{}`.", GetName(assetIdx)),
+                       Debug::LogLevel::Error, Debug::LogMode::Debug);
+            return nullptr;
+        }
+        return &asset;
+    }
+
+    const Asset* AssetStreamer::operator[](const std::string& assetName)
+    {
+        // Check if asset exists.
+        const int* assetIdx = Find(_idxs, assetName);
+        if (assetIdx == nullptr)
+        {
+            Debug::Log(Fmt("Attempted to get missing streamable asset `{}`.", assetName),
+                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            return nullptr;
+        }
+
+        // Get asset by index.
+        return (*this)[*assetIdx];
     }
 }

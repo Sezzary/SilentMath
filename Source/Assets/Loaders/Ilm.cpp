@@ -269,6 +269,43 @@ namespace Silent::Assets
         for (auto& mesh : asset.Meshes)
         {
             // Run through primitives.
+            for (const auto& prim : mesh.Native.Primitives)
+            {
+                int baseVertIdx = mesh.Linear.Vertices.size();
+
+                // Collect vertices.
+                for (int i = 0; i < prim.Vertices.size(); i++)
+                {
+                    mesh.Linear.Vertices.push_back(BufferVertex3d
+                    {
+                        .Position = mesh.Native.Positions[prim.Vertices[i].PositionIdx].ToVector3() / 128.0f,
+                        .Normal   = Vector3::Normalize(mesh.Native.Normals[prim.Vertices[i].NormalIdx].ToVector3()),
+                        .Uv       = mesh.Native.Uvs[prim.Vertices[i].UvIdx].ToVector2() / 256.0f,
+                        .Col      = Color::White
+                    });
+                }
+
+                // Collect indices.
+                if (prim.Vertices.size() == TRI_IDX_COUNT)
+                {
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
+                    {
+                        (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 2)
+                    });
+                }
+                else if (prim.Vertices.size() == QUAD_IDX_COUNT)
+                {
+                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
+                    {
+                        (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 2),
+                        (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 2), (uint16)(baseVertIdx + 3)
+                    });
+                }
+            }
+
+            // @todo Doesn't process properly.
+            /*
+            // Run through primitives.
             auto vertLookup = std::unordered_map<IlmVertex, int>{};
             for (const auto& prim : mesh.Native.Primitives)
             {
@@ -310,6 +347,7 @@ namespace Silent::Assets
                     .Col      = Color::White
                 };
             }
+            */
         }
 
         // @debug 2 green test triangles.
@@ -325,28 +363,28 @@ namespace Silent::Assets
                         BufferVertex3d
                         {
                             .Position = { 0.1328125f, -0.1796875f, -0.0234375f },
-                            .Normal   = Vector3::One,
+                            .Normal   = Vector3::UnitX,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         },
                         BufferVertex3d
                         {
                             .Position = { 0.0625f, -0.0546875f, -0.1015625f },
-                            .Normal   = Vector3::One,
+                            .Normal   = Vector3::UnitX,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         },
                         BufferVertex3d
                         {
                             .Position = { 0.0703125f, -0.203125, -0.125f },
-                            .Normal   = Vector3::One,
+                            .Normal   = Vector3::UnitX,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         },
                         BufferVertex3d
                         {
                             .Position = { -0.0859375f, -0.0546875f, -0.1015625f },
-                            .Normal   = Vector3::One,
+                            .Normal   = Vector3::UnitX,
                             .Uv       = Vector2::Zero,
                             .Col      = Color::Green
                         }

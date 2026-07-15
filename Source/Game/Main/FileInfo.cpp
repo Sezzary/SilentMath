@@ -96,7 +96,7 @@ namespace Silent::Game
     {
         auto& assets = g_App.GetAssets();
 
-        return assets.GetAsset(fileIdx)->Size + (assets.GetAsset(fileIdx)->Size % 0x100);
+        return assets[fileIdx]->Size + (assets[fileIdx]->Size % 0x100);
     }
 
     void Fs_GetFileName(char* outName, s32 fileIdx)
@@ -196,7 +196,7 @@ namespace Silent::Game
     {
         auto& assets = g_App.GetAssets();
 
-        return assets.GetAsset(fileIdx)->Size; // @todo Check. OG had alignment, need to account for difference in handling.
+        return assets[fileIdx]->Size; // @todo Check. OG had alignment, need to account for difference in handling.
     }
 
     s32 Fs_FindNextFileOfType(s32 fileType, s32 startIdx, s32 dir)

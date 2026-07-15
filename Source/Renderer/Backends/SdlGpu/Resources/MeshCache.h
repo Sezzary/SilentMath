@@ -42,7 +42,7 @@ namespace Silent::Renderer::SdlGpu
          * @param name Mesh name.
          */
         void Upload(SDL_GPUCopyPass& copyPass,
-                    const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                    std::span<const BufferVertex3d> verts, std::span<const uint16> idxs,
                     const std::string& name);
 
         /** @brief Uploads model meshes from a streamable model asset to the GPU.

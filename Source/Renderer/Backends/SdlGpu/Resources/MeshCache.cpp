@@ -22,7 +22,7 @@ namespace Silent::Renderer::SdlGpu
     }
 
     void MeshCache::Upload(SDL_GPUCopyPass& copyPass,
-                           const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                           std::span<const BufferVertex3d> verts, std::span<const uint16> idxs,
                            const std::string& name)
     {
         // Check if mesh with same name already exists.
@@ -62,8 +62,8 @@ namespace Silent::Renderer::SdlGpu
         });
 
         // Update GPU vertex buffer.
-        _vertexBuffer.UpdateVertices(copyPass, ToSpan(verts), vertOffset);
-        _vertexBuffer.UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
+        _vertexBuffer.UpdateVertices(copyPass, verts, vertOffset);
+        _vertexBuffer.UpdateIdxs(copyPass, idxs, idxOffset);
     }
 
     void MeshCache::Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName)
@@ -71,7 +71,7 @@ namespace Silent::Renderer::SdlGpu
         auto& assets = g_App.GetAssets();
 
         // Get asset.
-        const auto* asset = assets.GetAsset(assetName);
+        const auto* asset = assets[assetName];
         if (asset == nullptr)
         {
             Debug::Log(Fmt("Attempted to upload GPU meshes from invalid asset `{}`.", asset->Name),
@@ -131,7 +131,7 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
         }
     }
 
@@ -158,7 +158,7 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + std::to_string(i));
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + std::to_string(i));
         }
     }
 }

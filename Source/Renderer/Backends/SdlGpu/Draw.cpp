@@ -85,20 +85,26 @@ namespace Silent::Renderer::SdlGpu
                 a = true;
             }
 
-            const auto& assett = g_App.GetAssets().GetAsset("CHARA/PRSD.ILM");
+            const auto& assett = g_App.GetAssets()["CHARA/DOC.ILM"];
             const auto& tytas = assett->GetData<IlmAsset>();
 
             // Draw.
-            const auto* mesh = GetMeshes()["CHARA/PRSD.ILM_HEAD1"];
+            const auto* mesh = GetMeshes()["CHARA/DOC.ILM_HEAD1"];
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
                 _doubleBuffer.Active.DrawCallCount++;
             }
-            mesh = GetMeshes()["CHARA/PRSD.ILM_TEST"];
+            mesh = GetMeshes()["CHARA/DOC.ILM_TEST"];
             if (mesh != nullptr)
             {
-                SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+                SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+                _doubleBuffer.Active.DrawCallCount++;
+            }
+            mesh = GetMeshes()["ITEM/UNQE1.TMD_0"];
+            if (mesh != nullptr)
+            {
+                SDL_DrawGPUIndexedPrimitives(&renderPass, 6, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
                 _doubleBuffer.Active.DrawCallCount++;
             }
         }

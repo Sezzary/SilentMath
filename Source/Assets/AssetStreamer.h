@@ -111,20 +111,6 @@ namespace Silent::Assets
          */
         int GetLoadingCount() const;
 
-        /** @brief Gets a loaded asset via a file index.
-         *
-         * @param assetIdx Asset file index.
-         * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
-         */
-        const Asset* GetAsset(int assetIdx);
-
-        /** @brief Gets a loaded asset via a filename.
-         *
-         * @param assetName Asset filename.
-         * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
-         */
-        const Asset* GetAsset(const std::string& assetName);
-
         // ==========
         // Inquirers
         // ==========
@@ -173,5 +159,12 @@ namespace Silent::Assets
 
         /** @brief Unloads all currently loaded assets. */
         void UnloadAll();
+
+        // ==========
+        // Operators
+        // ==========
+
+        const Asset* operator[](int assetIdx);
+        const Asset* operator[](const std::string& assetName);
     };
 }
