@@ -210,6 +210,7 @@ namespace Silent::Renderer::SdlGpu
     void TextureCache::Release(const std::string& name)
     {
         _textures.erase(name);
+        _textures.erase(name + "_P");
     }
 
     Texture* TextureCache::operator[](const std::string& name)
@@ -228,12 +229,19 @@ namespace Silent::Renderer::SdlGpu
     void TextureCache::UploadPng(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<PngAsset>();
+
         Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
     }
 
     void TextureCache::UploadTim(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<TimAsset>();
+
         Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
+
+        if (data->Palette.has_value())
+        {
+            Upload(copyPass, ToSpan(data->Palette->Pixels), data->Palette->Resolution, asset.Name + "_P");
+        }
     }
 }

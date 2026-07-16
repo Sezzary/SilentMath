@@ -2,7 +2,9 @@
 #include "Assets/Loaders/Ilm.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Renderer/Renderer.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
@@ -11,6 +13,14 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
+    // @todo When extracting assets, some filenames need to be corrected for this to always point to a real texture.
+    static std::string GetTextureName(const std::string& name)
+    {
+        auto path = stdfs::path(name);
+        path.replace_extension(".TIM");
+        return path.string();
+    }
+
     std::shared_ptr<void> ParseIlm(const stdfs::path& filename)
     {
         constexpr int16  HEADER_MAGIC       = 0x630;
@@ -54,15 +64,12 @@ namespace Silent::Assets
         uint32 meshIdsOffset = stream.ReadUint32();
         auto   name          = stream.ReadNullString();
 
-        // Create asset.
-        auto asset = IlmAsset
-        {
-            .Name = name
-        };
+        // Set stream position to meshes.
+        stream.SetPosition(meshesOffset);
 
         // Read meshes.
-        stream.SetPosition(meshesOffset);
-        asset.Meshes.reserve(meshCount);
+        auto meshes = std::vector<IlmMesh>{};
+        meshes.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
             // Create UV index lookup.
@@ -118,18 +125,18 @@ namespace Silent::Assets
                 q0_8 uvX0 = stream.ReadUint8();
                 q0_8 uvY0 = stream.ReadUint8();
 
-                // Read CLUT indices.
-                int16 clutPos  = stream.ReadInt16(); // Unused.
-                int   clutPosX = (clutPos & 0x3F) * 0x10;
-                int   clutPosZ = (clutPos >> 6) & 0x1FF;
-                int   clutIdx  = clutPosZ; // @todo Check. Layout in VRAM appears to be simple.
+                // Read palette index.
+                int16 clutPos    = stream.ReadInt16();
+                int   clutPosX   = (clutPos & 0x3F) * 0x10;
+                int   clutPosZ   = (clutPos >> 6) & 0x1FF;
+                int   paletteIdx = clutPosZ; // @todo Check if this is correct.
 
                 // Read UV 1.
                 q0_8 uvX1 = stream.ReadUint8();
                 q0_8 uvY1 = stream.ReadUint8();
 
                 // Read texture page.
-                int16 tPage = stream.ReadInt16();
+                int16 tPage = stream.ReadInt16(); // Unused.
 
                 // Read UV 2.
                 q0_8 uvX2 = stream.ReadUint8();
@@ -183,7 +190,7 @@ namespace Silent::Assets
                 // Create primitive.
                 auto prim = IlmPrimitive
                 {
-                    .TPage = tPage
+                    .PaletteIdx = paletteIdx
                 };
 
                 // Collect vertices.
@@ -247,63 +254,30 @@ namespace Silent::Assets
             }
 
             // Collect mesh.
-            asset.Meshes.push_back(std::move(mesh));
+            meshes.push_back(std::move(mesh));
 
             // Reset stream position.
             stream.SetPosition(returnPos);
         }
 
-        // Read mesh IDs.
+        // Set stream position to mesh IDs.
         stream.SetPosition(meshIdsOffset);
-        asset.MeshIds.reserve(meshCount);
+
+        // Read mesh IDs.
+        auto meshIds = std::vector<int>{};
+        meshIds.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
             uint8 meshId = stream.ReadUint8();
 
             // Collect mesh ID.
-            asset.MeshIds.push_back(meshId);
+            meshIds.push_back(meshId);
         }
 
         // @todo Implement render buckets? Sort primitives by CLUT? Needs materials.
         // Linearize meshes.
-        for (auto& mesh : asset.Meshes)
+        for (auto& mesh : meshes)
         {
-            // @todo Unoptimised version for testing.
-            // Run through primitives.
-            /*for (const auto& prim : mesh.Native.Primitives)
-            {
-                int baseVertIdx = mesh.Linear.Vertices.size();
-
-                // Collect vertices.
-                for (int i = 0; i < prim.Vertices.size(); i++)
-                {
-                    mesh.Linear.Vertices.push_back(BufferVertex3d
-                    {
-                        .Position = mesh.Native.Positions[prim.Vertices[i].PositionIdx].ToVector3() / 128.0f,
-                        .Normal   = Vector3::Normalize(mesh.Native.Normals[prim.Vertices[i].NormalIdx].ToVector3()),
-                        .Uv       = mesh.Native.Uvs[prim.Vertices[i].UvIdx].ToVector2() / 256.0f,
-                        .Col      = Color(1, 1, 1, 0.3f)
-                    });
-                }
-
-                // Collect indices.
-                if (prim.Vertices.size() == TRI_VERTEX_COUNT)
-                {
-                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
-                    {
-                        (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 2)
-                    });
-                }
-                else if (prim.Vertices.size() == QUAD_VERTEX_COUNT)
-                {
-                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
-                    {
-                        (uint16)(baseVertIdx + 0), (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 2),
-                        (uint16)(baseVertIdx + 1), (uint16)(baseVertIdx + 3), (uint16)(baseVertIdx + 2)
-                    });
-                }
-            }*/
-
             // Run through primitives.
             auto vertLookup = std::unordered_map<IlmVertex, int>{};
             for (const auto& prim : mesh.Native.Primitives)
@@ -338,6 +312,7 @@ namespace Silent::Assets
             mesh.Linear.Vertices.resize(vertLookup.size());
             for (const auto& [keyVert, vertIdx] : vertLookup)
             {
+                // @todo Test colours.
                 static float a = 1;
                 static float b = 0;
                 static float c = 0;
@@ -345,8 +320,8 @@ namespace Silent::Assets
                 {
                     .Position = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal   = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 256.0f,
-                    //.Col = Color(a, b, c, 1.0f)
+                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 256.0f
+                    //,.Col = Color(a, b, c, 1.0f)
                 };
 
                 if (a == 1)
@@ -364,6 +339,26 @@ namespace Silent::Assets
             }
         }
 
-        return std::make_shared<IlmAsset>(std::move(asset));
+        return std::make_shared<IlmAsset>(IlmAsset
+        {
+            .Name        = name,
+            .TextureName = GetTextureName(name),
+            .Meshes      = std::move(meshes),
+            .MeshIds     = std::move(meshIds)
+        });
+    }
+
+    void IlmQueueGpuUpload(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueMeshUpload(asset.Name);
+    }
+
+    void IlmQueueGpuRelease(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueMeshRelease(asset.Name);
     }
 }

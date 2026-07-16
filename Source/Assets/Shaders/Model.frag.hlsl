@@ -1,11 +1,15 @@
+#include "Common/Constants.hlsli"
+
 Texture2D<float4> Texture : register(t0, space2);
+Texture2D<float4> Palette : register(t1, space2);
 SamplerState      Sampler : register(s0, space2);
 
 struct Input
 {
-    float4 Position : SV_Position;
-    float2 TexCoord : TEXCOORD0;
-    float4 Color    : COLOR0;
+    float4              Position   : SV_Position;
+    float2              TexCoord   : TEXCOORD0;
+    float4              Color      : COLOR0;
+    nointerpolation int PaletteIdx : TEXCOORD1;
 };
 
 cbuffer PerObject : register(b0, space3)
@@ -17,6 +21,22 @@ float4 main(Input input) : SV_Target
 {
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
+
+    // Handle indexed texture.
+    if (input.PaletteIdx != Constants::NO_VALUE)
+    {
+        // Get palette dimensions.
+        uint paletteWidth;
+        uint paletteHeight;
+        Palette.GetDimensions(paletteWidth, paletteHeight);
+
+        // Compute color index.
+        int colorIdx = (int)(texColor.r * (paletteWidth - 1) + 0.5f);
+
+        // Set indexed texture color.
+        int2 paletteCoords = int2(colorIdx, input.PaletteIdx);
+        texColor           = Palette.Load(int3(paletteCoords, 0));
+    }
 
     // Compute vertex and texture alpha combination.
     float alpha = input.Color.a * texColor.a;

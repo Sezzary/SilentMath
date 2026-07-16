@@ -4,13 +4,20 @@ namespace Silent::Assets
 {
     struct Asset;
 
+    /** @brief TIM color palette. */
+    struct TimPalette
+    {
+        Vector2i          Resolution = Vector2i::Zero;
+        std::vector<byte> Pixels     = {};
+    };
+
     /** @brief TIM asset data. */
     struct TimAsset
     {
-        Vector2i                         Resolution  = Vector2i::Zero;
-        std::vector<byte>                Pixels      = {}; // @todo Make this `PixelIdxs`.
-        float                            AspectRatio = 0.0f;
-        std::vector<std::vector<uint16>> Cluts       = {};
+        Vector2i                  Resolution  = Vector2i::Zero;
+        std::vector<byte>         Pixels      = {};
+        std::optional<TimPalette> Palette     = std::nullopt;
+        float                     AspectRatio = 0.0f;
     };
 
     /** @brief Parses a TIM asset file.

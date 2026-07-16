@@ -6,6 +6,8 @@ using namespace Silent::Renderer;
 
 namespace Silent::Assets
 {
+    struct Asset;
+
     /** @brief ILM indexed vertex. */
     struct IlmVertex
     {
@@ -24,8 +26,8 @@ namespace Silent::Assets
     /** @brief ILM primitive. */
     struct IlmPrimitive
     {
-        std::vector<IlmVertex> Vertices = {};
-        int                    TPage    = 0;
+        std::vector<IlmVertex> Vertices   = {};
+        int                    PaletteIdx = 0;
     };
 
     /** @brief ILM native format mesh. */
@@ -56,9 +58,10 @@ namespace Silent::Assets
     /** @brief ILM asset data. */
     struct IlmAsset
     {
-        std::string          Name    = {};
-        std::vector<IlmMesh> Meshes  = {};
-        std::vector<int>     MeshIds = {};
+        std::string          Name        = {};
+        std::string          TextureName = {};
+        std::vector<IlmMesh> Meshes      = {};
+        std::vector<int>     MeshIds     = {};
     };
 
     /** @brief Parses an ILM asset file.
@@ -67,6 +70,18 @@ namespace Silent::Assets
      * @return Parsed ILM asset data as a `void` pointer.
      */
     std::shared_ptr<void> ParseIlm(const stdfs::path& filename);
+
+    /** @brief Queues an ILM asset for upload to the GPU as meshes.
+     *
+     * @param asset ILM asset.
+     */
+    void IlmQueueGpuUpload(const Asset& asset);
+
+    /** @brief Queues a ILM asset to release from the GPU as meshes.
+     *
+     * @param asset ILM asset.
+     */
+    void IlmQueueGpuRelease(const Asset& asset);
 }
 
 namespace std 

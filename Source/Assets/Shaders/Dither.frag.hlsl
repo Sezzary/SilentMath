@@ -1,3 +1,4 @@
+#include "Common/Constants.hlsli"
 #include "Common/Math.hlsli"
 
 // References:
@@ -34,12 +35,12 @@ float4 main(Input input) : SV_Target
 
     // Compute 8-bit dithered color.
     int    dither    = DITHER_TABLE[pixelPos.x % DITHER_SIZE][pixelPos.y % DITHER_SIZE];
-    float3 color8Bit = texColor.rgb * float(Math::UINT8_MAX);
+    float3 color8Bit = texColor.rgb * float(Constants::UINT8_MAX);
     color8Bit       += (dither / 2.0f) - 4.0f;
 
     // 5-bit color truncation.
     color8Bit = lerp((uint3(color8Bit) & COLOR_MASK), COLOR_MASK, step(COLOR_MASK, color8Bit));
 
     // Compute final color.
-    return float4(color8Bit / float(Math::UINT8_MAX), 1.0f);
+    return float4(color8Bit / float(Constants::UINT8_MAX), 1.0f);
 }

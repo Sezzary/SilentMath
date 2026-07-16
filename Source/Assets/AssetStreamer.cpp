@@ -21,9 +21,9 @@ namespace Silent::Assets
     /** @brief Streamable asset file loader. */
     struct AssetLoader
     {
-        ParseFunc          Parse           = nullptr;
-        QueueGpuUploadFunc QueueGpuUpload  = nullptr;
-        QueueGpuUploadFunc QueueGpuRelease = nullptr;
+        ParseFunc           Parse           = nullptr;
+        QueueGpuUploadFunc  QueueGpuUpload  = nullptr;
+        QueueGpuReleaseFunc QueueGpuRelease = nullptr;
     };
 
     static const auto ASSET_TYPES = std::unordered_map<std::string, AssetType>
@@ -42,14 +42,13 @@ namespace Silent::Assets
         { ".CMP", AssetType::Cmp },
         { ".XA",  AssetType::Xa  },
         { ".STR", AssetType::Str },
-
         { ".PNG", AssetType::Png }
     };
 
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
         { AssetType::Anm, { ParseAnm }                                        },
-        { AssetType::Ilm, { ParseIlm/*, IlmQueueGpuUpload, IlmQueueGpuRelease*/ } },
+        { AssetType::Ilm, { ParseIlm, IlmQueueGpuUpload, IlmQueueGpuRelease } },
         { AssetType::Ipd, { ParseIpd/*, IpdQueueGpuUpload, IpdQueueGpuRelease*/ } },
         //{ AssetType::Plm, { ParsePlm, PlmQueueGpuUpload, PlmQueueGpuRelease } },
         { AssetType::Png, { PngParse, PngQueueGpuUpload, PngQueueGpuRelease } },

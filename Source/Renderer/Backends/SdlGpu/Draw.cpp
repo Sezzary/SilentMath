@@ -50,10 +50,12 @@ namespace Silent::Renderer::SdlGpu
         // @temp
         //---------------------------
 
-        auto* tex = GetTextures()[""];
+        // @todo How can an optional palette be bound in a clean way?
+        auto* tex = GetTextures()["TIM/HERO_PIC.TIM"];
         if (tex != nullptr)
         {
             tex->Bind(renderPass, GetActiveSampler());
+            tex->Bind(renderPass, GetActiveSampler(), 1);
 
             auto model = Matrix::Identity;
             model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);

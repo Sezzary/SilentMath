@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
 #include "Renderer/Common/Constants.h"
+#include "Renderer/Renderer.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
@@ -56,8 +57,8 @@ namespace Silent::Assets
         // Read CLUT and BPP flags.
         uint32 flags = stream.ReadUint32();
 
-        // Read CLUT.
-        auto clut = std::vector<uint16>{};
+        // Read palette.
+        auto palette = std::optional<TimPalette>();
         if (flags & (int)TimFlags::HasClut)
         {
             // Read size.
@@ -71,10 +72,33 @@ namespace Silent::Assets
             uint16 clutW = stream.ReadUint16();
             uint16 clutH = stream.ReadUint16();
 
-            // Read color values.
-            uint clutCount = clutW * clutH;
-            clut.resize(clutCount);
-            stream.ReadArray(ToSpan(clut));
+            // Create palette.
+            palette = TimPalette
+            {
+                .Resolution = Vector2i(clutW, clutH),
+                .Pixels     = std::vector<byte>((clutW * clutH) * RGBA_COMP_COUNT)
+            };
+
+            // Create palette pixels.
+            for (int y = 0; y < palette->Resolution.y; y++)
+            {
+                for (int x = 0; x < palette->Resolution.x; x++)
+                {
+                    uint16 color = stream.ReadUint16();
+                    byte*  out   = &palette->Pixels[((y * clutW) + x) * RGBA_COMP_COUNT];
+
+                    out[0] = (color & 0x1F) << 3;                        // R.
+                    out[1] = ((color >> 5) & 0x1F) << 3;                 // G.
+                    out[2] = ((color >> 10) & 0x1F) << 3;                // B.
+                    out[3] = (color & TRANSPARENT_COLOR_FLAG) ? 255 : 0; // A.
+
+                    // Interpret R0, G248, B0 as black. @todo Check if this is really required for some textures.
+                    if (out[2] == 0 && out[1] == 248 && out[0] == 0)
+                    {
+                        out[1] = 0;
+                    }
+                }
+            }
         }
 
         // Read image data header (unused).
@@ -137,18 +161,13 @@ namespace Silent::Assets
         // Define image resolution.
         auto res = Vector2i(imageW * widthCoeff, imageH);
 
-        // Create asset.
-        auto asset = TimAsset
-        {
-            .Resolution  = res,
-            .Pixels      = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT),
-            .AspectRatio = (float)res.x / (float)res.y
-        };
+        // Prepare palette variant pixels.
+        auto pixels = std::vector<byte>((res.x * res.y) * RGBA_COMP_COUNT);
 
         auto SetPixelColor = [&](int x, int y, uint16 color)
         {
             // Collect extracted RGBA components.
-            byte* out = &asset.Pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
+            byte* out = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
             out[0]    = (color & 0x1F) << 3;                        // B.
             out[1]    = ((color >> 5) & 0x1F) << 3;                 // G.
             out[2]    = ((color >> 10) & 0x1F) << 3;                // R.
@@ -176,18 +195,20 @@ namespace Silent::Assets
                         // Read colors.
                         uint16 colors = stream.ReadUint16();
 
-                        for (int i = 0; i < 4 && x < res.x; i++, x++)
+                        // Set pixel.
+                        for (int j = 0; j < 4 && x < res.x; j++, x++)
                         {
-                            uint idx = (colors >> (i * 4)) & 0xF;
-                            if (clut.empty())
+                            uint idx = (colors >> (j * 4)) & 0xF;
+                            if (!palette.has_value())
                             {
                                 uint16 color = idx * (0xFFFF / 0xF);
                                 SetPixelColor(x, y, color);
                             }
                             else
                             {
-                                uint16 color = clut[idx];
-                                SetPixelColor(x, y, color);
+                                byte* out = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
+                                out[0]    = idx; // Color index.
+                                out[3]    = 255; // A.
                             }
                         }
                         break;
@@ -198,7 +219,7 @@ namespace Silent::Assets
                         uint8 idx = stream.ReadUint8();
                         
                         // Set pixel.
-                        if (clut.empty())
+                        if (!palette.has_value())
                         {
                             // Grayscale color `[0, 255]`.
                             uint16 color = idx * (0xFFFF / 0xFF);
@@ -206,9 +227,9 @@ namespace Silent::Assets
                         }
                         else
                         {
-                            // CLUT color.
-                            uint16 color = clut[idx];
-                            SetPixelColor(x, y, color);
+                            byte* out = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
+                            out[0]    = idx; // Color index.
+                            out[3]    = 255; // A.
                         }
 
                         x++;
@@ -229,6 +250,14 @@ namespace Silent::Assets
             }
         }
 
+        // Create asset.
+        auto asset = TimAsset
+        {
+            .Resolution  = res,
+            .Pixels      = std::move(pixels),
+            .Palette     = std::move(palette),
+            .AspectRatio = (float)res.x / (float)res.y
+        };
         return std::make_shared<TimAsset>(std::move(asset));
     }
 

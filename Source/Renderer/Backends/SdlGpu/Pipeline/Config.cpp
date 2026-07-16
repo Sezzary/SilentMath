@@ -85,6 +85,16 @@ namespace Silent::Renderer::SdlGpu
             .offset      = sizeof(Vector3) +
                            sizeof(Vector3) +
                            sizeof(Vector2)
+        },
+        // `BufferVertex3d::PaletteIdx
+        {
+            .location    = 4,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_INT,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector3) +
+                           sizeof(Vector2) +
+                           sizeof(Color)
         }
     };
 
@@ -231,7 +241,7 @@ namespace Silent::Renderer::SdlGpu
             .VertShaderName           = "Primitive3d.vert",
             .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Model.frag",
-            .FragShaderSamplerCount   = 1,
+            .FragShaderSamplerCount   = 2,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_3D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_3D_ATTRIBS,
