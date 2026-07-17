@@ -75,11 +75,10 @@ namespace Silent::Assets
         // Fields
         // =======
 
-        std::vector<std::unique_ptr<Asset>>        _assets       = {}; /** Registered assets. */
-        std::unordered_map<int, std::string>       _names        = {}; /** Key = asset index, value = asset name. */
-        std::unordered_map<std::string, int>       _idxs         = {}; /** Key = asset name, value = asset index. */
-        std::unordered_map<int, std::future<void>> _loadFutures  = {}; /** Key = asset index, value = load future. */
-        std::atomic<int>                           _loadingCount = 0;  /** Number of currently loading assets. */
+        std::unordered_map<std::string, std::unique_ptr<Asset>> _assets       = {}; /** Key = asset name, value = asset. */
+        std::unordered_map<std::string, std::future<void>>      _loadFutures  = {}; /** Key = asset name, value = load future. */
+        std::atomic<int>                                        _loadingCount = 0;  /** Number of currently loading assets. */
+        std::unordered_map<int, std::string>                    _names        = {}; /** Key = asset index, value = asset name. */
 
     public:
         // =============
@@ -91,13 +90,6 @@ namespace Silent::Assets
         // ========
         // Getters
         // ========
-
-        /** Gets an asset's name by its legacy index.
-         *
-         * @param assetIdx Legacy asset file index.
-         * @return Asset name.
-         */
-        const std::string& GetName(int assetIdx) const;
 
         /** @brief Gets a vector containing the names of all loaded assets.
          *
@@ -131,31 +123,27 @@ namespace Silent::Assets
          */
         void Initialize(const stdfs::path& assetsPath);
 
+        /** @brief Loads an asset by name.
+         *
+         * @param name Name of the asset to load.
+         * @return `std::future` of the asset's load status.
+         */
+        const std::future<void>& Load(const std::string& name);
+
         /** @brief Loads an asset by index.
+         *
+         * @todo Only for temporary compatibility with original file table.
          *
          * @param assetIdx Index of the asset to load.
          * @return `std::future` of the asset's load status.
          */
-        const std::future<void>& Load(int assetIdx);
-
-        /** @brief Loads an asset by name.
-         *
-         * @param assetName Name of the asset to load.
-         * @return `std::future` of the asset's load status.
-         */
-        const std::future<void>& Load(const std::string& assetName);
-
-        /** @brief Unloads an asset by index.
-         *
-         * @param assetIdx Index of the asset to unload.
-         */
-        void Unload(int assetIdx);
+        const std::future<void>& Load(int idx);
 
         /** @brief Unloads an asset by name.
          *
-         * @param assetName Name of the asset to unload.
+         * @param name Name of the asset to unload.
          */
-        void Unload(const std::string& assetName);
+        void Unload(const std::string& name);
 
         /** @brief Unloads all currently loaded assets. */
         void UnloadAll();
@@ -164,7 +152,6 @@ namespace Silent::Assets
         // Operators
         // ==========
 
-        const Asset* operator[](int assetIdx);
-        const Asset* operator[](const std::string& assetName);
+        const Asset* operator[](const std::string& name);
     };
 }

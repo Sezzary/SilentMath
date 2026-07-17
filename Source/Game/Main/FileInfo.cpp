@@ -94,9 +94,8 @@ namespace Silent::Game
 
     s32 Fs_GetFileSize(s32 fileIdx)
     {
-        auto& assets = g_App.GetAssets();
-
-        return assets[fileIdx]->Size + (assets[fileIdx]->Size % 0x100);
+        // @stub
+        return 0;
     }
 
     void Fs_GetFileName(char* outName, s32 fileIdx)
@@ -194,9 +193,8 @@ namespace Silent::Game
 
     s32 Fs_GetFileSectorAlignedSize(s32 fileIdx)
     {
-        auto& assets = g_App.GetAssets();
-
-        return assets[fileIdx]->Size; // @todo Check. OG had alignment, need to account for difference in handling.
+        // @stub
+        return 0;
     }
 
     s32 Fs_FindNextFileOfType(s32 fileType, s32 startIdx, s32 dir)
