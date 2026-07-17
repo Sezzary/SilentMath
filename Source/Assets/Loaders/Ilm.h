@@ -14,20 +14,21 @@ namespace Silent::Assets
         int PositionIdx = 0;
         int NormalIdx   = 0;
         int UvIdx       = 0;
+        int PaletteIdx  = NO_VALUE;
 
         bool operator==(const IlmVertex& vert) const
         {
             return PositionIdx == vert.PositionIdx &&
                    NormalIdx   == vert.NormalIdx   &&
-                   UvIdx       == vert.UvIdx;
+                   UvIdx       == vert.UvIdx       &&
+                   PaletteIdx  == vert.PaletteIdx;
         }
     };
 
     /** @brief ILM primitive. */
     struct IlmPrimitive
     {
-        std::vector<IlmVertex> Vertices   = {};
-        int                    PaletteIdx = 0;
+        std::vector<IlmVertex> Vertices = {};
     };
 
     /** @brief ILM native format mesh. */

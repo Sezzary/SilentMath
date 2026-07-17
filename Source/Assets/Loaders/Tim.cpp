@@ -87,15 +87,17 @@ namespace Silent::Assets
                     uint16 color = stream.ReadUint16();
                     byte*  out   = &palette->Pixels[((y * clutW) + x) * RGBA_COMP_COUNT];
 
-                    out[0] = (color & 0x1F) << 3;                        // R.
-                    out[1] = ((color >> 5) & 0x1F) << 3;                 // G.
-                    out[2] = ((color >> 10) & 0x1F) << 3;                // B.
-                    out[3] = (color & TRANSPARENT_COLOR_FLAG) ? 255 : 0; // A.
+                    out[0] = (color & 0x1F) << 3;         // R.
+                    out[1] = ((color >> 5) & 0x1F) << 3;  // G.
+                    out[2] = ((color >> 10) & 0x1F) << 3; // B.
+                    out[3] = (color == 0) ? 0 : 255;      // A.
 
                     // Interpret R0, G248, B0 as black. @todo Check if this is really required for some textures.
-                    if (out[2] == 0 && out[1] == 248 && out[0] == 0)
+                    if (out[0] == 0   && // R.
+                        out[1] == 248 && // G.
+                        out[2] == 0)     // B.
                     {
-                        out[1] = 0;
+                        out[1] = 0; // G.
                     }
                 }
             }
@@ -168,17 +170,17 @@ namespace Silent::Assets
         {
             // Collect extracted RGBA components.
             byte* out = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-            out[0]    = (color & 0x1F) << 3;                        // B.
-            out[1]    = ((color >> 5) & 0x1F) << 3;                 // G.
-            out[2]    = ((color >> 10) & 0x1F) << 3;                // R.
-            out[3]    = (color & TRANSPARENT_COLOR_FLAG) ? 255 : 0; // A.
+            out[0]    = (color & 0x1F) << 3;         // R.
+            out[1]    = ((color >> 5) & 0x1F) << 3;  // G.
+            out[2]    = ((color >> 10) & 0x1F) << 3; // B.
+            out[3] = (color == 0) ? 0 : 255;         // A.
 
             // Interpret R0, G248, B0 as black. @todo Check if this is really required for some textures.
-            if (out[0] == 0   && // B.
+            if (out[0] == 0   && // R.
                 out[1] == 248 && // G.
-                out[2] == 0)     // R.
+                out[2] == 0)     // B.
             {
-                out[1] = 0;
+                out[1] = 0; // G.
             }
         };
 
@@ -207,7 +209,9 @@ namespace Silent::Assets
                             else
                             {
                                 byte* out = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-                                out[0]    = idx; // Color index.
+                                out[0]    = idx; // R (color index).
+                                out[1]    = 0;   // G.
+                                out[2]    = 0;   // B.
                                 out[3]    = 255; // A.
                             }
                         }
@@ -228,7 +232,9 @@ namespace Silent::Assets
                         else
                         {
                             byte* out = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-                            out[0]    = idx; // Color index.
+                            out[0]    = idx; // R (color index).
+                            out[1]    = 0;   // G.
+                            out[2]    = 0;   // B.
                             out[3]    = 255; // A.
                         }
 
@@ -248,6 +254,12 @@ namespace Silent::Assets
                     }
                 }
             }
+        }
+
+        if (palette.has_value())
+        {
+            //stbi_write_png((g_App.GetFilesystem().GetAppDirectory() / ("rara_P.png")).string().c_str(),
+            //                palette->Resolution.x, palette->Resolution.y, 4, palette->Pixels.data(), palette->Resolution.x * 4);
         }
 
         // Create asset.

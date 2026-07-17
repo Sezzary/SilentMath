@@ -51,11 +51,13 @@ namespace Silent::Renderer::SdlGpu
         //---------------------------
 
         // @todo How can an optional palette be bound in a clean way?
-        auto* tex = GetTextures()["TIM/HERO_PIC.TIM"];
+        //auto* tex = GetTextures()["TIM/HERO_PIC.TIM"];
+        auto* tex = GetTextures()["CHARA/HERO.TIM"];
+        auto* tex1 = GetTextures()["CHARA/HERO.TIM_P"];
         if (tex != nullptr)
         {
             tex->Bind(renderPass, GetActiveSampler());
-            tex->Bind(renderPass, GetActiveSampler(), 1);
+            tex1->Bind(renderPass, GetActiveSampler(), 1);
 
             auto model = Matrix::Identity;
             model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
@@ -76,9 +78,6 @@ namespace Silent::Renderer::SdlGpu
                 .IsFastAlpha = false
             };
             PushFragmentUniform(uni, 0);
-
-            const auto& assett = g_App.GetAssets()["CHARA/HERO.ILM"];
-            const auto& tytas = assett->GetData<IlmAsset>();
 
             // Draw.
             const auto* mesh = GetMeshes()["CHARA/HERO.ILM_HEAD1"];

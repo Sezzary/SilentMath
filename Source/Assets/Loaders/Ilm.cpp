@@ -188,10 +188,7 @@ namespace Silent::Assets
                 }
 
                 // Create primitive.
-                auto prim = IlmPrimitive
-                {
-                    .PaletteIdx = paletteIdx
-                };
+                auto prim = IlmPrimitive{};
 
                 // Collect vertices.
                 prim.Vertices.reserve(vertCount);
@@ -201,7 +198,8 @@ namespace Silent::Assets
                     {
                         .PositionIdx = posIdxs[k],
                         .NormalIdx   = normalIdxs[k],
-                        .UvIdx       = uvIdxs[k]
+                        .UvIdx       = uvIdxs[k],
+                        .PaletteIdx  = paletteIdx
                     });
                 }
 
@@ -282,28 +280,28 @@ namespace Silent::Assets
             auto vertLookup = std::unordered_map<IlmVertex, int>{};
             for (const auto& prim : mesh.Native.Primitives)
             {
-                // Collect vertex indices.
-                auto primIdxs = std::vector<uint16>{};
+                // Collect vertex indices in lookup table.
+                auto vertIdxs = std::vector<uint16>{};
                 for (const auto& vert : prim.Vertices)
                 {
-                    uint16 newIdx = GetLookupIdx(vertLookup, vert);
-                    primIdxs.push_back(newIdx);
+                    uint16 newVertIdx = GetLookupIdx(vertLookup, vert);
+                    vertIdxs.push_back(newVertIdx);
                 }
 
                 // Collect vertex indices.
-                if (primIdxs.size() == TRI_VERTEX_COUNT)
+                if (vertIdxs.size() == TRI_VERTEX_COUNT)
                 {
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
-                        primIdxs[0], primIdxs[1], primIdxs[2]
+                        vertIdxs[0], vertIdxs[1], vertIdxs[2]
                     });
                 }
-                else if (primIdxs.size() == QUAD_VERTEX_COUNT)
+                else if (vertIdxs.size() == QUAD_VERTEX_COUNT)
                 {
                     mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
                     {
-                        primIdxs[0], primIdxs[1], primIdxs[2],
-                        primIdxs[1], primIdxs[3], primIdxs[2]
+                        vertIdxs[0], vertIdxs[1], vertIdxs[2],
+                        vertIdxs[1], vertIdxs[3], vertIdxs[2]
                     });
                 }
             }
@@ -312,30 +310,13 @@ namespace Silent::Assets
             mesh.Linear.Vertices.resize(vertLookup.size());
             for (const auto& [keyVert, vertIdx] : vertLookup)
             {
-                // @todo Test colours.
-                static float a = 1;
-                static float b = 0;
-                static float c = 0;
                 mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
-                    .Position = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
-                    .Normal   = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 256.0f
-                    //,.Col = Color(a, b, c, 1.0f)
+                    .Position   = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
+                    .Normal     = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
+                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 256.0f,
+                    .PaletteIdx = keyVert.PaletteIdx
                 };
-
-                if (a == 1)
-                {
-                    b = 1; a = 0;
-                }
-                else if (b == 1)
-                {
-                    c = 1; b = 0;
-                }
-                else if (c == 1)
-                {
-                    a = 1; c = 0;
-                }
             }
         }
 
