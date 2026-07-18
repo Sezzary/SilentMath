@@ -13,12 +13,37 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    // @todo When extracting assets, some filenames need to be corrected for this to always point to a real texture.
-    static std::string GetTextureName(const std::string& name)
+    static std::string GetTextureAssetName(const std::string& name)
     {
-        auto path = stdfs::path(name);
-        path.replace_extension(".TIM");
-        return path.string();
+        // @hack Mappings for exceptional cases where an `.ILM` doesn't have a matching `.TIM` in the same directory.
+        if (name == "CHARA/EI.ILM")
+        {
+            return "TEST/EI.TIM";
+        }
+        else if (name == "CHARA/BIRD.ILM")
+        {
+            return "CHARA/REBIRD.TIM";
+        }
+        else if (name == "CHARA/MAN.ILM")
+        {
+            return "TEST/DEV.TIM";
+        }
+        else if (name == "CHARA/MTH.ILM")
+        {
+            return "CHARA/MOTH.TIM";
+        }
+        else if (name == "CHARA/WRM.ILM")
+        {
+            return "CHARA/WORM.TIM";
+        }
+
+        // Retrieve corrseponding `.TIM`.
+        auto texName = name;
+        if (texName.length() >= 3)
+        {
+            texName.replace(texName.length() - 4, 4, ".TIM");
+        }
+        return texName;
     }
 
     std::shared_ptr<void> ParseIlm(const stdfs::path& filename)
@@ -314,16 +339,38 @@ namespace Silent::Assets
                 {
                     .Position   = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal     = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / Vector2(256.0f, 192.0f),
+                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2(), // Unnormalized.
                     .PaletteIdx = keyVert.PaletteIdx
                 };
+            }
+        }
+
+        // Guess texture resolution. @todo Check if this yields correct result for every case.
+        auto guessedTexRes = Vector2i::Zero;
+        for (const auto& mesh : meshes)
+        {
+            for (const auto& vert : mesh.Linear.Vertices)
+            {
+                guessedTexRes = Vector2i(std::max(guessedTexRes.x, (int)CeilToStep(vert.Uv.x, 64)),
+                                         std::max(guessedTexRes.y, (int)CeilToStep(vert.Uv.y, 64)));
+            }
+        }
+
+        Debug::Log(Fmt("{}, {}", guessedTexRes.x, guessedTexRes.y));
+
+        // Normalize UVs.
+        for (auto& mesh : meshes)
+        {
+            for (auto& vert : mesh.Linear.Vertices)
+            {
+                vert.Uv /= guessedTexRes.ToVector2();
             }
         }
 
         return std::make_shared<IlmAsset>(IlmAsset
         {
             .Name        = name,
-            .TextureName = GetTextureName(name),
+            .TextureName = GetTextureAssetName(name),
             .Meshes      = std::move(meshes),
             .MeshIds     = std::move(meshIds)
         });

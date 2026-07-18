@@ -64,7 +64,7 @@ namespace Silent::Utils
             CacheGlyph(codePoint);
         }
 
-        // Debug.
+        // @debug
         /*for (int i = 0; i < _textureAtlases.size(); i++)
         {
             stbi_write_png((g_App.GetFilesystem().GetAppDirectory() / (_name + Fmt("_Atlas{}.png", i))).string().c_str(),
