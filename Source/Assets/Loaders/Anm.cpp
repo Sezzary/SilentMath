@@ -32,7 +32,11 @@ namespace Silent::Assets
         int32  flags            = stream.ReadInt32();
         int32  endOffset        = stream.ReadInt32();
         uint16 keyframeCount    = stream.ReadUint16();
-        uint8  scaleShift       = stream.ReadUint8(); // Unused.
+        uint8  translationShift = stream.ReadUint8();
+
+        // @todo Check. `translationShift` is always(?) 2, so values are converted from Q9?
+        float translationScale = (1 << 7) << translationShift;
+
         stream.Skip(1);
 
         int translationsSize = translationCount * Vector3i::AXIS_COUNT;
@@ -41,38 +45,37 @@ namespace Silent::Assets
                       Fmt("Attempted to parse ANM `{}` with incongruent number of translations and rotations.",
                           stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
 
-        // Create asset.
-        auto asset = AnmAsset
-        {
-            .Flags = flags
-        };
-
         // Read bones.
-        asset.Bones.reserve(boneCount);
+        auto bones = std::vector<AnmBone>{};
+        bones.reserve(boneCount);
         for (int i = 0; i < boneCount; i++)
         {
             int8 parentBoneIdx    = stream.ReadInt8();
             int8 rotIdx           = stream.ReadInt8();
             int8 translationIdx   = stream.ReadInt8();
-            int8 bindTranslationX = stream.ReadInt8();
-            int8 bindTranslationY = stream.ReadInt8();
-            int8 bindTranslationZ = stream.ReadInt8();
+            q0_7 bindTranslationX = stream.ReadInt8();
+            q0_7 bindTranslationY = stream.ReadInt8();
+            q0_7 bindTranslationZ = stream.ReadInt8();
 
             // Collect bone.
-            asset.Bones.push_back(AnmBone
+            bones.push_back(AnmBone
             {
                 .ParentBoneIdx   = parentBoneIdx,
                 .TranslationIdx  = translationIdx,
                 .RotationIdx     = rotIdx,
-                .BindTranslation = Vector3(bindTranslationX << scaleShift,
-                                           bindTranslationY << scaleShift,
-                                           bindTranslationZ << scaleShift)
+                .BindTranslation = Vector3((int)bindTranslationX << translationShift,
+                                           (int)bindTranslationY << translationShift,
+                                           (int)bindTranslationZ << translationShift) /
+                                   translationScale
             });
         }
 
-        // Read keyframes.
+        // Set stream position to keyframes.
         stream.SetPosition(keyframesOffset);
-        asset.Keyframes.reserve(keyframeCount);
+
+        // Read keyframes.
+        auto keyframes = std::vector<AnmKeyframe>{};
+        keyframes.reserve(keyframeCount);
         for (int i = 0; i < keyframeCount; i++)
         {
             auto keyframe = AnmKeyframe{};
@@ -81,39 +84,46 @@ namespace Silent::Assets
             keyframe.BoneTranslations.reserve(translationCount);
             for (int j = 0; j < translationCount; j++)
             {
-                int8 translationX = stream.ReadInt8();
-                int8 translationY = stream.ReadInt8();
-                int8 translationZ = stream.ReadInt8();
+                q0_7 x = stream.ReadInt8();
+                q0_7 y = stream.ReadInt8();
+                q0_7 z = stream.ReadInt8();
 
                 // Collect bone translation.
-                keyframe.BoneTranslations.push_back(Vector3(translationX << scaleShift,
-                                                            translationY << scaleShift,
-                                                            translationZ << scaleShift));
+                keyframe.BoneTranslations.push_back(Vector3((int)x << translationShift,
+                                                            (int)y << translationShift,
+                                                            (int)z << translationShift) /
+                                                    translationScale);
             }
 
             // Read bone rotations.
             keyframe.BoneRotationMats.reserve(rotCount);
             for (int j = 0; j < rotCount; j++)
             {
-                auto rotMat = std::array<std::array<int8, 3>, 3>{};
+                auto rotMat = std::array<std::array<q0_7, 3>, 3>{};
                 stream.ReadArray(ToSpan(rotMat));
 
+                // @todo Check correctness.
                 // Collect normalized bone rotation matrix.
-                //keyframe.BoneRotationMats.push_back(Matrix(rotMat[0][0] / 128.0f,
-                //                                           rotMat[1][0] / 128.0f,
-                //                                           rotMat[2][0] / 128.0f,
-                //                                           rotMat[0][1] / 128.0f,
-                //                                           rotMat[1][1] / 128.0f,
-                //                                           rotMat[2][1] / 128.0f,
-                //                                           rotMat[0][2] / 128.0f,
-                //                                           rotMat[1][2] / 128.0f,
-                //                                           rotMat[2][2] / 128.0f));
+                keyframe.BoneRotationMats.push_back(Matrix(rotMat[0][0] / 128.0f,
+                                                           rotMat[1][0] / 128.0f,
+                                                           rotMat[2][0] / 128.0f,
+                                                           rotMat[0][1] / 128.0f,
+                                                           rotMat[1][1] / 128.0f,
+                                                           rotMat[2][1] / 128.0f,
+                                                           rotMat[0][2] / 128.0f,
+                                                           rotMat[1][2] / 128.0f,
+                                                           rotMat[2][2] / 128.0f));
             }
 
             // Collect keyframe.
-            asset.Keyframes.push_back(std::move(keyframe));
+            keyframes.push_back(std::move(keyframe));
         }
 
-        return std::make_shared<AnmAsset>(std::move(asset));
+        return std::make_shared<AnmAsset>(AnmAsset
+        {
+            .Bones     = std::move(bones),
+            .Keyframes = std::move(keyframes),
+            .Flags     = flags
+        });
     }
 }
