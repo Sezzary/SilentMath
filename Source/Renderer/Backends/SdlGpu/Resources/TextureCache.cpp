@@ -239,9 +239,9 @@ namespace Silent::Renderer::SdlGpu
 
         Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
 
-        if (data->Palette.has_value())
+        if (data->PaletteAtlas.has_value())
         {
-            Upload(copyPass, ToSpan(data->Palette->Pixels), data->Palette->Resolution, asset.Name + "_P");
+            Upload(copyPass, ToSpan(data->PaletteAtlas->Pixels), data->PaletteAtlas->Resolution, asset.Name + "_P");
         }
     }
 }

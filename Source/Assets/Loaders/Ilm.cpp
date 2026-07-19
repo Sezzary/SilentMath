@@ -339,14 +339,15 @@ namespace Silent::Assets
                 {
                     .Position   = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal     = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2(), // Unnormalized.
+                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / Vector2(256.0f, 192.0f),
                     .PaletteIdx = keyVert.PaletteIdx
                 };
             }
         }
 
-        // Guess texture resolution. @todo Check if this yields correct result for every case.
-        auto guessedTexRes = Vector2i::Zero;
+        // @todo Not reliable. Textures don't have consistent dimensions and referencing UVs somehow isn't accurate.
+        // Guess texture resolution.
+        /*auto guessedTexRes = Vector2i::Zero;
         for (const auto& mesh : meshes)
         {
             for (const auto& vert : mesh.Linear.Vertices)
@@ -365,7 +366,7 @@ namespace Silent::Assets
             {
                 vert.Uv /= guessedTexRes.ToVector2();
             }
-        }
+        }*/
 
         return std::make_shared<IlmAsset>(IlmAsset
         {

@@ -1,8 +1,8 @@
 #include "Common/Constants.hlsli"
 
-Texture2D<float4> Texture : register(t0, space2);
-Texture2D<float4> Palette : register(t1, space2);
-SamplerState      Sampler : register(s0, space2);
+Texture2D<float4> Texture      : register(t0, space2);
+Texture2D<float4> PaletteAtlas : register(t1, space2);
+SamplerState      Sampler      : register(s0, space2);
 
 struct Input
 {
@@ -25,17 +25,17 @@ float4 main(Input input) : SV_Target
     // Handle indexed texture.
     if (input.PaletteIdx != Constants::NO_VALUE)
     {
-        // Get palette dimensions.
+        // Get palette atlas dimensions.
         uint paletteWidth;
         uint paletteHeight;
-        Palette.GetDimensions(paletteWidth, paletteHeight);
+        PaletteAtlas.GetDimensions(paletteWidth, paletteHeight);
 
-        // Compute color index.
+        // Decode color index from red channel.
         int colorIdx = (int)(texColor.r * (paletteWidth - 1) + 0.5f);
 
         // Set indexed texture color.
         int2 paletteCoords = int2(colorIdx, input.PaletteIdx);
-        texColor           = Palette.Load(int3(paletteCoords, 0));
+        texColor           = PaletteAtlas.Load(int3(paletteCoords, 0));
     }
 
     // Compute vertex and texture alpha combination.
