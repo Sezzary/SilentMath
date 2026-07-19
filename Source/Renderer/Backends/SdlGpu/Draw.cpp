@@ -51,7 +51,6 @@ namespace Silent::Renderer::SdlGpu
         //---------------------------
 
         // @todo How can an optional palette be bound in a clean way?
-        //auto* tex = GetTextures()["TIM/HERO_PIC.TIM"];
         auto* tex = GetTextures()["CHARA/HERO.TIM"];
         auto* tex1 = GetTextures()["CHARA/HERO.TIM_P"];
         if (tex != nullptr)

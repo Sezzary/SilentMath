@@ -339,7 +339,7 @@ namespace Silent::Assets
                 {
                     .Position   = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal     = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / Vector2(256.0f, 192.0f),
+                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / Vector2(256.0f, 192.0f), // @todo Wrong.
                     .PaletteIdx = keyVert.PaletteIdx
                 };
             }
@@ -356,8 +356,6 @@ namespace Silent::Assets
                                          std::max(guessedTexRes.y, (int)CeilToStep(vert.Uv.y, 64)));
             }
         }
-
-        Debug::Log(Fmt("{}, {}", guessedTexRes.x, guessedTexRes.y));
 
         // Normalize UVs.
         for (auto& mesh : meshes)

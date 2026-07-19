@@ -132,18 +132,9 @@ namespace Silent::Renderer::SdlGpu
 
         // @temp
         GetMeshes().Upload(*copyPass, "CHARA/HERO.ILM");
-        //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD"); // @todo Uploading overwrites previous meshes?
-
-        for (const auto& name : GetMeshes().GetNames())
-        {
-            Debug::Log(name);
-        }
-
-        // Load temp. textures.
+        GetMeshes().Upload(*copyPass, "CHARA/PRSD.ILM");
+        GetTextures().Upload(*copyPass, "CHARA/PRSD.TIM");
         GetTextures().Upload(*copyPass, "CHARA/HERO.TIM");
-        //GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
-        GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
-        assets.Load("TIM/BG_ETC.TIM");
 
         GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, "");
         // @todo If atlas textures aren't updated and the texture is missing, for some reason
@@ -159,30 +150,41 @@ namespace Silent::Renderer::SdlGpu
     {
         SDL_WaitForGPUIdle(_device);
 
+        // Release fences.
+        SDL_WaitForGPUFences(_device, true, &_renderFence, 1);
+        SDL_ReleaseGPUFence(_device, _renderFence);
+
+        // Release ImGui context.
         ImGui_ImplSDL3_Shutdown();
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
+        // Release scene resources.
         GetTextures().Release();
         GetMeshes().ReleaseAll();
 
+        // Release samplers.
         for (auto* sampler : _samplers)
         {
             SDL_ReleaseGPUSampler(_device, sampler);
         }
         _samplers.clear();
 
+        // Release render texture.
         _renderTexture.Release();
 
+        // Release depth  texture.
         if (_depthTexture != nullptr)
         {
             SDL_ReleaseGPUTexture(_device, _depthTexture);
             _depthTexture = nullptr;
         }
 
+        // Release GPU setup.
         _pipelines.Release();
         _gpuBuffers.Release();
 
+        // Release window and destroy GPU device.
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
     }
