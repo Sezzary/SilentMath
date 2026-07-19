@@ -66,7 +66,7 @@ namespace Silent::Assets
                 pixel[1] = 0; // G.
             }
 
-            pixel[3] = (color & TRANSPARENT_COLOR_FLAG) ? 255 : 0; // A.
+            pixel[3] = (color & TRANSPARENT_COLOR_FLAG) ? 0 : 255; // A.
         }
     };
 
@@ -113,8 +113,7 @@ namespace Silent::Assets
 
             // Read color values.
             uint colorCount = width * height;
-            auto clut       = std::vector<uint16>{};
-            clut.resize(colorCount);
+            auto clut       = std::vector<uint16>(colorCount);
             stream.ReadArray(ToSpan(clut));
 
             // Create palette atlas.
@@ -217,9 +216,9 @@ namespace Silent::Assets
                         uint16 colors = stream.ReadUint16();
 
                         // Set pixel.
-                        for (int j = 0; j < 4 && x < res.x; j++, x++)
+                        for (int i = 0; i < 4 && x < res.x; i++, x++)
                         {
-                            uint idx = (colors >> (j * 4)) & 0xF;
+                            uint idx = (colors >> (i * 4)) & 0xF;
                             if (!paletteAtlas.has_value())
                             {
                                 uint16 color = idx * (0xFFFF / 0xF);
