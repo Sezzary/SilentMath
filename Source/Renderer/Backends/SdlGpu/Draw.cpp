@@ -211,6 +211,11 @@ namespace Silent::Renderer::SdlGpu
                 {
                     tex->Bind(renderPass, GetActiveSampler());
                 }
+                tex = GetTextures()[batch.TextureName + "_P"];
+                if (tex != nullptr)
+                {
+                    tex->Bind(renderPass, GetActiveSampler(), 1);
+                }
             }
 
             // Draw.

@@ -40,6 +40,15 @@ namespace Silent::Renderer::SdlGpu
             .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
             .offset      = sizeof(Vector3) +
                            sizeof(Vector2)
+        },
+        // `BufferVertex2d::PaletteIdx`
+        {
+            .location    = 3,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_INT,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector2) +
+                           sizeof(Color)
         }
     };
 
@@ -203,7 +212,7 @@ namespace Silent::Renderer::SdlGpu
             .Stage                    = RenderStage::Sprite2d,
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Sprite2d.frag",
-            .FragShaderSamplerCount   = 1,
+            .FragShaderSamplerCount   = 2,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,

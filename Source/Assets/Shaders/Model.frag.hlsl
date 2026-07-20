@@ -30,8 +30,8 @@ float4 main(Input input) : SV_Target
         uint paletteHeight;
         PaletteAtlas.GetDimensions(paletteWidth, paletteHeight);
 
-        // Decode color index from 255-based red channel.
-        int colorIdx = (int)((texColor.r * 255.0f) + 0.5f);
+        // Decode color index from byte-based red channel.
+        int colorIdx = int((texColor.r * Constants::UINT8_MAX) + 0.5f);
 
         // Set indexed texture color.
         int2 paletteCoords = int2(colorIdx, input.PaletteIdx);

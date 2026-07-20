@@ -36,7 +36,7 @@ namespace Silent::Assets
      * @param res Image resolution.
      * @param x X pixel position.
      * @param y Y pixel position.
-     * @param color CLUT color.
+     * @param color CLUT color to process and set..
      * @param palette `true` if the image is a color palette atlas, `false` otherwise.
      */
     static void SetPixelColor(std::vector<byte>& pixels, const Vector2i& res, int x, int y, uint16 color,
@@ -44,7 +44,7 @@ namespace Silent::Assets
     {
         constexpr int TRANSPARENT_COLOR_FLAG = 1 << 15;
 
-        // Collect extracted RGBA pixel components.
+        // Set extracted RGBA pixel components.
         byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
         pixel[0]    = (color & 0x1F) << 3;         // R.
         pixel[1]    = ((color >> 5) & 0x1F) << 3;  // G.
@@ -69,6 +69,26 @@ namespace Silent::Assets
             pixel[3] = (color & TRANSPARENT_COLOR_FLAG) ? 0 : 255; // A.
         }
     };
+
+    /** @brief Sets an indexed pixel in an image pixel buffer to a given palette color index.
+     *
+     * @note The index is stored in the red color channel.
+     *
+     * @param pixels Output image indexed pixel buffer.
+     * @param res Image resolution.
+     * @param x X pixel position.
+     * @param y Y pixel position.
+     * @param idx Palette color index.
+     */
+    static void SetPixelIndex(std::vector<byte>& pixels, const Vector2i& res, int x, int y, int idx)
+    {
+        // Set pixel color palette index.
+        byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
+        pixel[0]    = idx; // Color index. Multiplied by 255 in shader to restore.
+        pixel[1]    = 0;   // Unused.
+        pixel[2]    = 0;   // Unused.
+        pixel[3]    = 255; // A.
+    }
 
     std::shared_ptr<void> TimParse(const stdfs::path& filename)
     {
@@ -97,7 +117,8 @@ namespace Silent::Assets
         uint32 flags = stream.ReadUint32();
 
         // Read CLUT and create palette atlas image.
-        auto paletteAtlas = std::optional<TimPaletteAtlas>();
+        bool hasSinglePalette = false;
+        auto paletteAtlas     = std::optional<TimPaletteAtlas>();
         if (flags & (int)TimFlags::HasClut)
         {
             // Read size.
@@ -108,8 +129,9 @@ namespace Silent::Assets
             uint16 coordY = stream.ReadUint16();
 
             // Read dimensions.
-            uint16 width = stream.ReadUint16();
-            uint16 height = stream.ReadUint16();
+            uint16 width     = stream.ReadUint16();
+            uint16 height    = stream.ReadUint16();
+            hasSinglePalette = height > 1;
 
             // Read color values.
             uint colorCount = width * height;
@@ -219,18 +241,14 @@ namespace Silent::Assets
                         for (int i = 0; i < 4 && x < res.x; i++, x++)
                         {
                             uint idx = (colors >> (i * 4)) & 0xF;
-                            if (!paletteAtlas.has_value())
+                            if (paletteAtlas.has_value())
                             {
-                                uint16 color = idx * (0xFFFF / 0xF);
-                                SetPixelColor(pixels, res, x, y, color);
+                                SetPixelIndex(pixels, res, x, y, idx);
                             }
                             else
                             {
-                                byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-                                pixel[0]    = idx; // Color index.
-                                pixel[1]    = 0;   // Unused.
-                                pixel[2]    = 0;   // Unused.
-                                pixel[3]    = 255; // A.
+                                uint16 color = idx * (0xFFFF / 0xF);
+                                SetPixelColor(pixels, res, x, y, color);
                             }
                         }
                         break;
@@ -241,19 +259,15 @@ namespace Silent::Assets
                         uint8 idx = stream.ReadUint8();
                         
                         // Set pixel.
-                        if (!paletteAtlas.has_value())
+                        if (paletteAtlas.has_value())
+                        {
+                            SetPixelIndex(pixels, res, x, y, idx);
+                        }
+                        else
                         {
                             // Grayscale color `[0, 255]`.
                             uint16 color = idx * (0xFFFF / 0xFF);
                             SetPixelColor(pixels, res, x, y, color);
-                        }
-                        else
-                        {
-                            byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-                            pixel[0]    = idx; // Color index.
-                            pixel[1]    = 0;   // Unused.
-                            pixel[2]    = 0;   // Unused.
-                            pixel[3]    = 255; // A.
                         }
 
                         x++;
