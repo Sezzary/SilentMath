@@ -2,6 +2,8 @@
 
 namespace Silent::Renderer
 {
+    constexpr char PALETTE_ATLAS_SUFFIX[] = "_P";
+
     /** @brief GPU texture base. */
     class TextureBase
     {

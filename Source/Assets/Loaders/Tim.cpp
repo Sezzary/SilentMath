@@ -84,7 +84,7 @@ namespace Silent::Assets
     {
         // Set pixel color palette index.
         byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-        pixel[0]    = idx; // Color index. Multiplied by 255 in shader to restore.
+        pixel[0]    = idx; // Color index.
         pixel[1]    = 0;   // Unused.
         pixel[2]    = 0;   // Unused.
         pixel[3]    = 255; // A.

@@ -2,6 +2,7 @@
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
@@ -12,6 +13,7 @@
 #include "Renderer/Renderer.h"
 #include "Services/Options.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Services;
 
 namespace Silent::Renderer::SdlGpu
@@ -50,16 +52,20 @@ namespace Silent::Renderer::SdlGpu
         // @temp
         //---------------------------
 
+        const auto* harryAnm = g_App.GetAssets()["ANIM/HB_BASE.ANM"];
+        const auto harryAnmData = harryAnm->GetData<AnmAsset>();
+
         // @todo How can an optional palette be bound in a clean way?
-        auto* tex = GetTextures()["CHARA/HERO.TIM"];
-        auto* tex1 = GetTextures()["CHARA/HERO.TIM_P"];
+        auto* tex             = GetTextures()["CHARA/HERO.TIM"];
+        auto* paletteAtlasTex = GetTextures()[Fmt("{}{}", "CHARA/HERO.TIM", PALETTE_ATLAS_SUFFIX)];
         if (tex != nullptr)
         {
-            tex->Bind(renderPass, GetActiveSampler());
-            tex1->Bind(renderPass, GetActiveSampler(), 1);
+            tex->Bind(renderPass, GetActiveSampler(), 0);
+            paletteAtlasTex->Bind(renderPass, GetActiveSampler(), 1);
 
             auto model = Matrix::Identity;
             model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
+            model.Translate(harryAnmData->Bones[1].BindTranslation);
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
@@ -116,7 +122,7 @@ namespace Silent::Renderer::SdlGpu
             auto* tex = GetTextures()[batch.TextureName];
             if (tex != nullptr)
             {
-                tex->Bind(renderPass, GetActiveSampler());
+                tex->Bind(renderPass, GetActiveSampler(), 0);
             }
 
             // Draw.
@@ -195,6 +201,11 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
+        // Bind default texture and palette atlas.
+        auto* tex = GetTextures()[""];
+        tex->Bind(renderPass, GetActiveSampler(), 0);
+        tex->Bind(renderPass, GetActiveSampler(), 1);
+
         // Draw 2D primitives.
         _gpuBuffers.ImmediateVertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Primitives2d)
@@ -203,15 +214,15 @@ namespace Silent::Renderer::SdlGpu
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
             PushFragmentUniform(batch.Uniform, 0);
 
-            // Bind texture.
+            // Bind texture and optional palette atlas.
             if (!batch.TextureName.empty())
             {
-                auto* tex = GetTextures()[batch.TextureName];
+                tex = GetTextures()[batch.TextureName];
                 if (tex != nullptr)
                 {
-                    tex->Bind(renderPass, GetActiveSampler());
+                    tex->Bind(renderPass, GetActiveSampler(), 0);
                 }
-                tex = GetTextures()[batch.TextureName + "_P"];
+                tex = GetTextures()[batch.TextureName + PALETTE_ATLAS_SUFFIX];
                 if (tex != nullptr)
                 {
                     tex->Bind(renderPass, GetActiveSampler(), 1);
