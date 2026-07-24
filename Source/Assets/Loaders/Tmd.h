@@ -75,13 +75,13 @@ namespace Silent::Assets
      *
      * @param asset TMD asset.
      */
-    void TmdQueueGpuUpload(const Asset& asset);
+    void QueueTmdGpuUpload(const Asset& asset);
 
     /** @brief Queues a TMD asset to release from the GPU as meshes.
      *
      * @param asset TMD asset.
      */
-    void TmdQueueGpuRelease(const Asset& asset);
+    void QueueTmdGpuRelease(const Asset& asset);
 }
 
 namespace std 

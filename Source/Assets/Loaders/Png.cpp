@@ -12,7 +12,7 @@ using namespace Silent::Services;
 
 namespace Silent::Assets
 {
-    std::shared_ptr<void> PngParse(const stdfs::path& filename)
+    std::shared_ptr<void> ParsePng(const stdfs::path& filename)
     {
         const auto& fs = g_App.GetFilesystem();
 
@@ -38,14 +38,14 @@ namespace Silent::Assets
         return std::make_shared<PngAsset>(std::move(asset));
     }
 
-    void PngQueueGpuUpload(const Asset& asset)
+    void QueuePngGpuUpload(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
         renderer.QueueTextureUpload(asset.Name);
     }
 
-    void PngQueueGpuRelease(const Asset& asset)
+    void QueuePngGpuRelease(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 

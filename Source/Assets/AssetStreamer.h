@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Assets/Loaders/Anm.h"
-#include "Assets/Loaders/Ilm.h"
+#include "Assets/Loaders/Lm.h"
 #include "Assets/Loaders/Ipd.h"
 #include "Assets/Loaders/Plm.h"
 #include "Assets/Loaders/Png.h"
@@ -15,19 +15,18 @@ namespace Silent::Assets
     {
         Tim, /** "Texture IMage"                 | PsyQ SDK texture image. */
         Vab, /** "Voice Audio Bank"              | PsyQ SDK audio bank. */
-        Bin, /** "BINary"                        | Original overlay data. */
+        Bin, /** "BINary"                        | Original logic overlay data. @unused PSX-specific. */
         Dms, /** "Demo Motion Sequence"?         | Cutscene data. */
-        Anm, /** "ANiMation"                     | Animation data. */
-        Plm, /** "PoLygon Model"?                | Map model data. */
-        Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. Used for environment streaming. */
-        Ilm, /** "Instanced Linked Model"?       | Skeletal model data. Used for characters. */
-        Tmd, /** "Three-dimensional Model Data"  | PsyQ SDK 3D model data. Used for inventory items. */
+        Anm, /** "ANiMation"                     | ILM animation data. */
+        Plm, /** "Prop Linked Mesh"?             | Global map prop model data. Identical to ILM. */
+        Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. */
+        Ilm, /** "Interactive Linked Mesh"?      | Skeletal character model data. Identical to PLM. */
+        Tmd, /** "3D Model Data"                 | PsyQ SDK 3D model data.. */
         Dat, /** "Demo dATa"?                    | Demo playback data. */
         Kdt, /** "Key Data Tracker"?             | Konami MIDI tracker data. */
         Cmp, /** "CoMPressed"                    | Compressed data. */
         Xa,  /** "eXtended Audio"                | PSX ADPCM audio stream. */
         Str, /** "video STReam"                  | PSX video stream. */
-
         Png
     };
 
@@ -61,7 +60,7 @@ namespace Silent::Assets
         {
             if (Data == nullptr)
             {
-                throw std::runtime_error("Attempted to get data for unloaded asset.");
+                throw std::runtime_error(Fmt("Attempted to get data for unloaded asset `{}`.", Name));
             }
 
             return std::reinterpret_pointer_cast<T>(Data);

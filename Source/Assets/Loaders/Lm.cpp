@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Assets/Loaders/Ilm.h"
+#include "Assets/Loaders/Lm.h"
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
@@ -15,29 +15,24 @@ namespace Silent::Assets
 {
     static std::string GetTextureAssetName(const std::string& name)
     {
-        // @hack Mappings for exceptional cases where an `.ILM` doesn't have a matching `.TIM` in the same directory.
-        if (name == "CHARA/EI.ILM")
+        // @hack Mappings for exceptional cases where `.ILM` doesn't have easily deducible `.TIM` association.
+        static const auto ILM_TIM_MAP = std::unordered_map<std::string, std::string>
         {
-            return "TEST/EI.TIM";
-        }
-        else if (name == "CHARA/BIRD.ILM")
+            { "CHARA/EI.ILM",   "TEST/EI.TIM"      },
+            { "CHARA/BIRD.ILM", "CHARA/REBIRD.TIM" },
+            { "CHARA/MAN.ILM",  "TEST/DEV.TIM"     },
+            { "CHARA/MTH.ILM",  "CHARA/MOTH.TIM"   },
+            { "CHARA/WRM.ILM",  "CHARA/WORM.TIM"   }
+        };
+
+        // Retrieve obtusely corresponding `.TIM`.
+        auto* texNamePtr = Find(ILM_TIM_MAP, name);
+        if (texNamePtr != nullptr)
         {
-            return "CHARA/REBIRD.TIM";
-        }
-        else if (name == "CHARA/MAN.ILM")
-        {
-            return "TEST/DEV.TIM";
-        }
-        else if (name == "CHARA/MTH.ILM")
-        {
-            return "CHARA/MOTH.TIM";
-        }
-        else if (name == "CHARA/WRM.ILM")
-        {
-            return "CHARA/WORM.TIM";
+            return *texNamePtr;
         }
 
-        // Retrieve corrseponding `.TIM`.
+        // Retrieve directly corresponding `.TIM`.
         auto texName = name;
         if (texName.length() >= 3)
         {
@@ -46,7 +41,7 @@ namespace Silent::Assets
         return texName;
     }
 
-    std::shared_ptr<void> ParseIlm(const stdfs::path& filename)
+    std::shared_ptr<void> ParseLm(const stdfs::path& filename)
     {
         constexpr int16  HEADER_MAGIC       = 0x630;
         constexpr uint32 HEADER_NAME_OFFSET = 0x14;
@@ -93,7 +88,7 @@ namespace Silent::Assets
         stream.SetPosition(meshesOffset);
 
         // Read meshes.
-        auto meshes = std::vector<IlmMesh>{};
+        auto meshes = std::vector<LmMesh>{};
         meshes.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
@@ -108,7 +103,7 @@ namespace Silent::Assets
             stream.Skip(1);
 
             // Create bone mesh.
-            auto mesh = IlmMesh
+            auto mesh = LmMesh
             {
                 .BoneIdx  = boneIdx,
                 .BoneName = boneName
@@ -213,13 +208,13 @@ namespace Silent::Assets
                 }
 
                 // Create primitive.
-                auto prim = IlmPrimitive{};
+                auto prim = LmPrimitive{};
 
                 // Collect vertices.
                 prim.Vertices.reserve(vertCount);
                 for (int k = 0; k < vertCount; k++)
                 {
-                    prim.Vertices.push_back(IlmVertex
+                    prim.Vertices.push_back(LmVertex
                     {
                         .PositionIdx = posIdxs[k],
                         .NormalIdx   = normalIdxs[k],
@@ -302,7 +297,7 @@ namespace Silent::Assets
         for (auto& mesh : meshes)
         {
             // Run through primitives.
-            auto vertLookup = std::unordered_map<IlmVertex, int>{};
+            auto vertLookup = std::unordered_map<LmVertex, int>{};
             for (const auto& prim : mesh.Native.Primitives)
             {
                 // Collect vertex indices in lookup table.
@@ -367,7 +362,7 @@ namespace Silent::Assets
             }
         }*/
 
-        return std::make_shared<IlmAsset>(IlmAsset
+        return std::make_shared<LmAsset>(LmAsset
         {
             .Name        = name,
             .TextureName = GetTextureAssetName(name),
@@ -376,14 +371,14 @@ namespace Silent::Assets
         });
     }
 
-    void IlmQueueGpuUpload(const Asset& asset)
+    void QueueLmGpuUpload(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
         renderer.QueueMeshUpload(asset.Name);
     }
 
-    void IlmQueueGpuRelease(const Asset& asset)
+    void QueueLmGpuRelease(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 

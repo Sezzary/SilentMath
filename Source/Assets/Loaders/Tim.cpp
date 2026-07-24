@@ -90,7 +90,7 @@ namespace Silent::Assets
         pixel[3]    = 255; // A.
     }
 
-    std::shared_ptr<void> TimParse(const stdfs::path& filename)
+    std::shared_ptr<void> ParseTim(const stdfs::path& filename)
     {
         constexpr int HEADER_MAGIC = 0x10;
         constexpr int BPP_MASK     = 0x7;
@@ -299,14 +299,14 @@ namespace Silent::Assets
         return std::make_shared<TimAsset>(std::move(asset));
     }
 
-    void TimQueueGpuUpload(const Asset& asset)
+    void QueueTimGpuUpload(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
         renderer.QueueTextureUpload(asset.Name);
     }
 
-    void TimQueueGpuRelease(const Asset& asset)
+    void QueueTimGpuRelease(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 

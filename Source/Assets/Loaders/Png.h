@@ -17,17 +17,17 @@ namespace Silent::Assets
      * @param filename Absolute asset file path.
      * @return Parsed PNG asset data as a `void` pointer.
      */
-    std::shared_ptr<void> PngParse(const stdfs::path& filename);
+    std::shared_ptr<void> ParsePng(const stdfs::path& filename);
 
     /** @brief Queues a PNG asset for upload to the GPU as a texture.
      *
      * @param asset PNG asset.
      */
-    void PngQueueGpuUpload(const Asset& asset);
+    void QueuePngGpuUpload(const Asset& asset);
 
     /** @brief Queues a PNG asset to release from the GPU as a texture.
      *
      * @param asset PNG asset.
      */
-    void PngQueueGpuRelease(const Asset& asset);
+    void QueuePngGpuRelease(const Asset& asset);
 }

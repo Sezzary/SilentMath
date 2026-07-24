@@ -69,15 +69,15 @@ namespace Silent::Renderer::SdlGpu
         // Helpers
         // ========
 
-        /** @brief Uploads meshes from an ILM model asset to the GPU.
+        /** @brief Uploads meshes from an LM model asset to the GPU.
          *
          * @note By convention, GPU meshes use the following naming pattern:
-         * `[ILM asset name]_[bone name]`.
+         * `[LM asset name]_[bone name]`.
          *
          * @param copyPass GPU copy pass.
-         * @param asset ILM asset.
+         * @param asset LM asset.
          */
-        void UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset);
+        void UploadLm(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
         /** @brief Uploads meshes from an IPD model asset to the GPU.
          *
@@ -85,13 +85,6 @@ namespace Silent::Renderer::SdlGpu
          * @param asset IPD asset.
          */
         void UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset);
-
-        /** @brief Uploads meshes from a PLM model asset to the GPU.
-         *
-         * @param copyPass GPU copy pass.
-         * @param asset PLM asset.
-         */
-        void UploadPlm(SDL_GPUCopyPass&, const Asset& asset);
 
         /** @brief Uploads meshes from a TMD model asset to the GPU.
          *

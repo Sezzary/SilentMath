@@ -520,14 +520,14 @@ namespace Silent::Assets
         return std::make_shared<TmdAsset>(std::move(asset));
     }
 
-    void TmdQueueGpuUpload(const Asset& asset)
+    void QueueTmdGpuUpload(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
         renderer.QueueMeshUpload(asset.Name);
     }
 
-    void TmdQueueGpuRelease(const Asset& asset)
+    void QueueTmdGpuRelease(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 

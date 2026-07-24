@@ -27,7 +27,7 @@ namespace Silent::Game
         VC_CAMERA_INTINFO   vcCameraInternalInfo; /** Debug camera info. */
         s_LmHeader          itemLmHdr;
         u8                  itemLmData[4096 - sizeof(s_LmHeader)]; // 4kb allocated for 2.75kb game files.
-        s32                 itemLmQueueIdx;
+        s32                 itemQueueLmIdx;
         s32                 objectCount;                     /** `objects` size. */
         s_WorldObject       objects[WORLD_OBJECT_COUNT_MAX]; /** World objects to draw. */
     };

@@ -3,8 +3,10 @@
 
 #include "Application.h"
 #include "Assets/Loaders/Anm.h"
-#include "Assets/Loaders/Ilm.h"
+#include "Assets/Loaders/Lm.h"
 #include "Assets/Loaders/Ipd.h"
+#include "Assets/Loaders/Plm.h"
+#include "Assets/Loaders/Png.h"
 #include "Assets/Loaders/Tim.h"
 #include "Assets/Loaders/Tmd.h"
 #include "Utils/Parallel.h"
@@ -48,12 +50,12 @@ namespace Silent::Assets
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
         { AssetType::Anm, { ParseAnm }                                        },
-        { AssetType::Ilm, { ParseIlm, IlmQueueGpuUpload, IlmQueueGpuRelease } },
-        { AssetType::Ipd, { ParseIpd/*, IpdQueueGpuUpload, IpdQueueGpuRelease*/ } },
-        //{ AssetType::Plm, { ParsePlm, PlmQueueGpuUpload, PlmQueueGpuRelease } },
-        { AssetType::Png, { PngParse, PngQueueGpuUpload, PngQueueGpuRelease } },
-        { AssetType::Tim, { TimParse, TimQueueGpuUpload, TimQueueGpuRelease } },
-        { AssetType::Tmd, { ParseTmd, TmdQueueGpuUpload, TmdQueueGpuRelease } }
+        { AssetType::Ilm, { ParseLm,  QueueLmGpuUpload,  QueueLmGpuRelease } },
+        { AssetType::Ipd, { ParseIpd/*, QueueIpdGpuUpload, QueueIpdGpuRelease*/ } },
+        { AssetType::Plm, { ParseLm,  QueueLmGpuUpload,  QueueLmGpuRelease } },
+        { AssetType::Png, { ParsePng, QueuePngGpuUpload, QueuePngGpuRelease } },
+        { AssetType::Tim, { ParseTim, QueueTimGpuUpload, QueueTimGpuRelease } },
+        { AssetType::Tmd, { ParseTmd, QueueTmdGpuUpload, QueueTmdGpuRelease } }
     };
 
     std::vector<std::string> AssetStreamer::GetLoadedNames() const

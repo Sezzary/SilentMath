@@ -58,8 +58,9 @@ namespace Silent::Renderer
         switch (asset->Type)
         {
             case AssetType::Ilm:
+            case AssetType::Plm:
             {
-                ReleaseIlm(*asset);
+                ReleaseLm(*asset);
                 break;
             }
             case AssetType::Ipd:
@@ -94,9 +95,9 @@ namespace Silent::Renderer
         return &*mesh;
     }
 
-    void MeshCacheBase::ReleaseIlm(const Asset& asset)
+    void MeshCacheBase::ReleaseLm(const Asset& asset)
     {
-        const auto data = asset.GetData<IlmAsset>();
+        const auto data = asset.GetData<LmAsset>();
 
         for (int i = 0; i < data->Meshes.size(); i++)
         {

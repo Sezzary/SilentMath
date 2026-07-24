@@ -8,15 +8,15 @@ namespace Silent::Assets
 {
     struct Asset;
 
-    /** @brief ILM indexed vertex. */
-    struct IlmVertex
+    /** @brief LM indexed vertex. */
+    struct LmVertex
     {
         int PositionIdx = 0;
         int NormalIdx   = 0;
         int UvIdx       = 0;
         int PaletteIdx  = NO_VALUE;
 
-        bool operator==(const IlmVertex& vert) const
+        bool operator==(const LmVertex& vert) const
         {
             return PositionIdx == vert.PositionIdx &&
                    NormalIdx   == vert.NormalIdx   &&
@@ -25,71 +25,71 @@ namespace Silent::Assets
         }
     };
 
-    /** @brief ILM primitive. */
-    struct IlmPrimitive
+    /** @brief LM primitive. */
+    struct LmPrimitive
     {
-        std::vector<IlmVertex> Vertices = {};
+        std::vector<LmVertex> Vertices = {};
     };
 
-    /** @brief ILM native format mesh. */
-    struct IlmNativeMesh
+    /** @brief LM native format mesh. */
+    struct LmNativeMesh
     {
-        std::vector<IlmPrimitive> Primitives = {};
+        std::vector<LmPrimitive> Primitives = {};
         std::vector<Vector3i>     Positions  = {}; /* Q24.7 */
         std::vector<Vector3i>     Normals    = {}; /* Q24.7 */
         std::vector<Vector2i>     Uvs        = {}; /* Q23.8 */
     };
 
-    /** @brief ILM GPU-compatible linear mesh. */
-    struct IlmLinearMesh
+    /** @brief LM GPU-compatible linear mesh. */
+    struct LmLinearMesh
     {
         std::vector<BufferVertex3d> Vertices = {};
         std::vector<uint16>         Idxs     = {};
     };
 
-    /** @brief ILM mesh. */
-    struct IlmMesh
+    /** @brief LM mesh. */
+    struct LmMesh
     {
         int           BoneIdx  = 0;
         std::string   BoneName = {};
-        IlmNativeMesh Native   = {};
-        IlmLinearMesh Linear   = {};
+        LmNativeMesh Native   = {};
+        LmLinearMesh Linear   = {};
     };
 
-    /** @brief ILM asset data. */
-    struct IlmAsset
+    /** @brief LM asset data. */
+    struct LmAsset
     {
         std::string          Name        = {};
         std::string          TextureName = {};
-        std::vector<IlmMesh> Meshes      = {};
+        std::vector<LmMesh> Meshes      = {};
         std::vector<int>     MeshIds     = {};
     };
 
-    /** @brief Parses an ILM asset file.
+    /** @brief Parses an LM asset file.
      *
      * @param filename Absolute asset file path.
-     * @return Parsed ILM asset data as a `void` pointer.
+     * @return Parsed LM asset data as a `void` pointer.
      */
-    std::shared_ptr<void> ParseIlm(const stdfs::path& filename);
+    std::shared_ptr<void> ParseLm(const stdfs::path& filename);
 
-    /** @brief Queues an ILM asset for upload to the GPU as meshes.
+    /** @brief Queues an LM asset for upload to the GPU as meshes.
      *
-     * @param asset ILM asset.
+     * @param asset LM asset.
      */
-    void IlmQueueGpuUpload(const Asset& asset);
+    void QueueLmGpuUpload(const Asset& asset);
 
-    /** @brief Queues a ILM asset to release from the GPU as meshes.
+    /** @brief Queues a LM asset to release from the GPU as meshes.
      *
-     * @param asset ILM asset.
+     * @param asset LM asset.
      */
-    void IlmQueueGpuRelease(const Asset& asset);
+    void QueueLmGpuRelease(const Asset& asset);
 }
 
 namespace std 
 {
-    template<> struct hash<Silent::Assets::IlmVertex> 
+    template<> struct hash<Silent::Assets::LmVertex> 
     {
-        size_t operator()(const Silent::Assets::IlmVertex& vert) const noexcept 
+        size_t operator()(const Silent::Assets::LmVertex& vert) const noexcept 
         {
             size_t hash = 0;
             auto CombineHash = [&](int val)

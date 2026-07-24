@@ -83,18 +83,14 @@ namespace Silent::Renderer::SdlGpu
         switch (asset->Type)
         {
             case AssetType::Ilm:
+            case AssetType::Plm:
             {
-                UploadIlm(copyPass, *asset);
+                UploadLm(copyPass, *asset);
                 break;
             }
             case AssetType::Ipd:
             {
                 UploadIpd(copyPass, *asset);
-                break;
-            }
-            case AssetType::Plm:
-            {
-                UploadPlm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
@@ -124,23 +120,15 @@ namespace Silent::Renderer::SdlGpu
         _vertexBuffer.Release();
     }
 
-    void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadLm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset.GetData<IlmAsset>();
+        const auto data = asset.GetData<LmAsset>();
 
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
             Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
         }
-    }
-
-    void MeshCache::UploadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
-    {
-        const auto data = asset.GetData<PlmAsset>();
-
-        // @todo
-        Debug::Log("Attempted to upload PLM GPU meshes: Unimplemented.", Debug::LogLevel::Warning);
     }
 
     void MeshCache::UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
