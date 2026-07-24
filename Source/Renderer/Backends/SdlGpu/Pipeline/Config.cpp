@@ -281,8 +281,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         },
         // Fade.
@@ -296,8 +295,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         },
         // CRT.
@@ -311,8 +309,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         },
         // Vignette.
@@ -326,8 +323,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         },
 
@@ -346,8 +342,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         }
     };

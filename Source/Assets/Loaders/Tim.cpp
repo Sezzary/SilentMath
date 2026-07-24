@@ -257,7 +257,7 @@ namespace Silent::Assets
                     {
                         // Read color index.
                         uint8 idx = stream.ReadUint8();
-                        
+
                         // Set pixel.
                         if (paletteAtlas.has_value())
                         {

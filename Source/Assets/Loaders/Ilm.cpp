@@ -339,13 +339,14 @@ namespace Silent::Assets
                 {
                     .Position   = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal     = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / Vector2(256.0f, 192.0f), // @todo Wrong.
+                    // @todo Not reliable. Textures don't have consistent dimensions and guessing from UVs somehow
+                    // doesn't yield correct dimensions.
+                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / Vector2(256.0f, 192.0f),
                     .PaletteIdx = keyVert.PaletteIdx
                 };
             }
         }
 
-        // @todo Not reliable. Textures don't have consistent dimensions and referencing UVs somehow isn't accurate.
         // Guess texture resolution.
         /*auto guessedTexRes = Vector2i::Zero;
         for (const auto& mesh : meshes)

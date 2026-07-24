@@ -45,9 +45,11 @@ namespace Silent::Renderer::SdlGpu
          * @param renderPass Render pass to bind the pipeline to.
          * @param renderStage Pipeline render stage.
          * @param blendMode Pipeline blend mode.
+         * @param allowWireframe Allow forcing wireframe blend mode. Disable for post-process effects and BLIT.
          * @throws `std::runtime_error` if the pipeline is invalid.
          */
-        void Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode);
+        void Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode,
+                  bool allowWireframe = true);
 
     private:
         // ========

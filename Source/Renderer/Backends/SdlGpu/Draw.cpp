@@ -158,7 +158,7 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableDithering)
         {
             // Bind pipeline.
-            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
+            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque, false);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -259,7 +259,7 @@ namespace Silent::Renderer::SdlGpu
             auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
             _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
-            _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque);
+            _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque, false);
 
             pushUniforms();
 
@@ -340,7 +340,7 @@ namespace Silent::Renderer::SdlGpu
         // Bind viewport quad.
         _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
 
-        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque);
+        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque, false);
 
         // Push uniform.
         auto uni = UniformBlit

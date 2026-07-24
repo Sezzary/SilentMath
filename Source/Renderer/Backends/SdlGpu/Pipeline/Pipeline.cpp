@@ -31,12 +31,22 @@ namespace Silent::Renderer::SdlGpu
         _pipelines.clear();
     }
 
-    void PipelineManager::Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode)
+    void PipelineManager::Bind(SDL_GPURenderPass& renderPass, RenderStage renderStage, BlendMode blendMode,
+                               bool allowWireframe)
     {
         Debug::Assert(_device != nullptr, "Attempted to bind uninitialized GPU pipeline manager.");
 
-        int   pipelineHash = GetPipelineHash(renderStage, Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe :
-                                                                                              blendMode);
+        auto activeBlendMove = BlendMode::Opaque;
+        if (allowWireframe)
+        {
+            activeBlendMove = Debug::g_Work.EnableWireframeMode ? BlendMode::Wireframe : blendMode;
+        }
+        else
+        {
+            activeBlendMove = blendMode;
+        }
+
+        int   pipelineHash = GetPipelineHash(renderStage, activeBlendMove);
         auto* pipeline     = Find(_pipelines, pipelineHash);
         if (pipeline == nullptr)
         {
