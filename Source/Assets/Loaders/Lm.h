@@ -35,9 +35,9 @@ namespace Silent::Assets
     struct LmNativeMesh
     {
         std::vector<LmPrimitive> Primitives = {};
-        std::vector<Vector3i>     Positions  = {}; /* Q24.7 */
-        std::vector<Vector3i>     Normals    = {}; /* Q24.7 */
-        std::vector<Vector2i>     Uvs        = {}; /* Q23.8 */
+        std::vector<Vector3i>    Positions  = {}; /** Q24.7 */
+        std::vector<Vector3i>    Normals    = {}; /** Q24.7 */
+        std::vector<Vector2i>    Uvs        = {}; /** Q23.8 */
     };
 
     /** @brief LM GPU-compatible linear mesh. */
@@ -50,8 +50,8 @@ namespace Silent::Assets
     /** @brief LM mesh. */
     struct LmMesh
     {
-        int           BoneIdx  = 0;
-        std::string   BoneName = {};
+        int          BoneIdx  = 0;
+        std::string  BoneName = {};
         LmNativeMesh Native   = {};
         LmLinearMesh Linear   = {};
     };
@@ -59,10 +59,10 @@ namespace Silent::Assets
     /** @brief LM asset data. */
     struct LmAsset
     {
-        std::string          Name        = {};
-        std::string          TextureName = {};
+        std::string         Name        = {};
+        std::string         TextureName = {};
         std::vector<LmMesh> Meshes      = {};
-        std::vector<int>     MeshIds     = {};
+        std::vector<int>    MeshIds     = {};
     };
 
     /** @brief Parses an LM asset file.
