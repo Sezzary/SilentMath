@@ -1,4 +1,4 @@
-#include "Common/Constants.hlsli"
+#include "Utils/Constants.hlsli"
 
 Texture2D<float4> Texture      : register(t0, space2);
 Texture2D<float4> PaletteAtlas : register(t1, space2);

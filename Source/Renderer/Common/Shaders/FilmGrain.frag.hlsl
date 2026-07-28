@@ -1,4 +1,4 @@
-#include "Common/Math.hlsli"
+#include "Utils/Math.hlsli"
 
 // References:
 // https://www.shadertoy.com/view/3sGGRz

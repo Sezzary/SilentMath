@@ -26,7 +26,7 @@ from pathlib import Path
 SHADERCROSS_NAME = "shadercross"
 BASE_PATH        = Path(__file__).parent
 SHADERCROSS_PATH = BASE_PATH / SHADERCROSS_NAME
-SOURCES_PATH     = BASE_PATH / "../Source/Assets/Shaders"
+SOURCES_PATH     = BASE_PATH / "../Source/Renderer/Common/Shaders"
 OUTPUT_PATH      = BASE_PATH / "../Build/Assets/Shaders"
 TEMP_OUTPUT_PATH = OUTPUT_PATH / ".temp"
 
