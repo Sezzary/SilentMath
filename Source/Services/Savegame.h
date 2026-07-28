@@ -4,7 +4,7 @@
 
 using namespace Silent::Utils;
 
-namespace Silent::Savegame
+namespace Silent::Services
 {
     constexpr int SAVEGAME_COUNT_MAX = 165; /** Max savegames per file. */
 

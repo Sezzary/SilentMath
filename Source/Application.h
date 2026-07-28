@@ -4,10 +4,10 @@
 #include "Audio/Audio.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
-#include "Savegame/Savegame.h"
 #include "Services/Clock.h"
 #include "Services/Filesystem.h"
 #include "Services/Options.h"
+#include "Services/Savegame.h"
 #include "Services/Toasts.h"
 #include "Utils/Font.h"
 #include "Utils/Parallel.h"
@@ -20,7 +20,6 @@ namespace Silent
     using namespace Audio;
     using namespace Input;
     using namespace Renderer;
-    using namespace Savegame;
     using namespace Services;
     using namespace Utils;
 

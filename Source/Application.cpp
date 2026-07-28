@@ -8,11 +8,11 @@
 #include "Game/Entry.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
-#include "Savegame/Savegame.h"
 #include "Services/Clock.h"
 #include "Services/Filesystem.h"
 #include "Services/Options.h"
 #include "Services/Platform.h"
+#include "Services/Savegame.h"
 #include "Services/Toasts.h"
 #include "Utils/Font.h"
 #include "Utils/Parallel.h"
@@ -23,7 +23,6 @@ using namespace Silent::Audio;
 using namespace Silent::Game;
 using namespace Silent::Input;
 using namespace Silent::Renderer;
-using namespace Silent::Savegame;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 

@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Savegame/Savegame.h"
+#include "Services/Savegame.h"
 
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
@@ -10,7 +10,7 @@
 
 using namespace Silent::Utils;
 
-namespace Silent::Savegame
+namespace Silent::Services
 {
     static const auto SAVE_LOCATION_NAME_KEYS = std::vector<std::string>
     {
