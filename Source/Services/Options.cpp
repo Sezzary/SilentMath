@@ -34,6 +34,7 @@ namespace Silent::Services
     constexpr char KEY_LIGHTING[]                                 = "Lighting";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
+    constexpr char KEY_ENABLE_FILM_GRAIN[]                        = "EnableFilmGrain";
     constexpr char KEY_ENABLE_VIGNETTE[]                          = "EnableVignette";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
     constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
@@ -73,6 +74,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Original;
     constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
     constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
+    constexpr bool DEFAULT_ENABLE_FILM_GRAIN                        = false;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
     constexpr bool DEFAULT_ENABLE_VIGNETTE                          = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
@@ -110,6 +112,7 @@ namespace Silent::Services
         _options.TextQuality        = DEFAULT_TEXT_QUALITY;
         _options.Lighting           = DEFAULT_LIGHTING;
         _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
+        _options.EnableFilmGrain    = DEFAULT_ENABLE_FILM_GRAIN;
         _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
         _options.EnableVignette     = DEFAULT_ENABLE_VIGNETTE;
         _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
@@ -248,6 +251,7 @@ namespace Silent::Services
         options.Lighting           = graphicsJson.value(KEY_LIGHTING,             DEFAULT_LIGHTING);
         options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
         options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
+        options.EnableFilmGrain    = graphicsJson.value(KEY_ENABLE_FILM_GRAIN,    DEFAULT_ENABLE_FILM_GRAIN);
         options.EnableVignette     = graphicsJson.value(KEY_ENABLE_VIGNETTE,      DEFAULT_ENABLE_VIGNETTE);
         options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
 
@@ -372,6 +376,7 @@ namespace Silent::Services
                     { KEY_LIGHTING,             options.TextQuality        },
                     { KEY_ENABLE_VERTEX_JITTER, options.EnableVertexJitter },
                     { KEY_ENABLE_DITHERING,     options.EnableDithering    },
+                    { KEY_ENABLE_FILM_GRAIN,    options.EnableFilmGrain    },
                     { KEY_ENABLE_VIGNETTE,      options.EnableVignette     },
                     { KEY_ENABLE_CRT_FILTER,    options.EnableCrtFilter    }
                 }

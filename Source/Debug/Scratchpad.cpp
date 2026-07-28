@@ -156,7 +156,7 @@ namespace Silent::Debug
                                      []() { Debug::Log("Releasing!"); });
 
             // Check if debug menu is enabled.
-            if (!Debug::g_Work.EnablePowerMenu)
+            if (!Debug::g_Work.EnableDebugMenu)
             {
                 but.Update(input.GetCursorPosition());
             }*/

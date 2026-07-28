@@ -52,7 +52,7 @@ namespace Silent::Debug
         uint64 PrevTime   = 0;
 
         Page Page                = Page::Renderer;
-        bool EnablePowerMenu     = false;
+        bool EnableDebugMenu     = false;
         bool EnableWireframeMode = false;
         bool EnableFreezeMode    = false;
     };

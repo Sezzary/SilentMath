@@ -129,7 +129,7 @@ namespace Silent::Renderer::SdlGpu
             .alpha_blend_op        = SDL_GPU_BLENDOP_ADD,
             .enable_blend          = true
         },
-        // Fast alpha. Requires `IsFastAlpha` shader uniform set to `true`.
+        // Fast alpha. @note Requires `IsFastAlpha` shader uniform set to `true`.
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
@@ -271,6 +271,20 @@ namespace Silent::Renderer::SdlGpu
         // Effects
         // ========
 
+        // Luma fade.
+        {
+            .Stage                    = RenderStage::LumaFade,
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "LumaFade.frag",
+            .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
+            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes               =
+            {
+                BlendMode::Opaque
+            }
+        },
         // Dither.
         {
             .Stage                    = RenderStage::Dither,
@@ -284,11 +298,26 @@ namespace Silent::Renderer::SdlGpu
                 BlendMode::Opaque
             }
         },
-        // Fade.
+        // Film grain.
         {
-            .Stage                    = RenderStage::Fade,
+            .Stage                    = RenderStage::FilmGrain,
             .VertShaderName           = "Primitive2d.vert",
-            .FragShaderName           = "LumaFade.frag",
+            .FragShaderName           = "FilmGrain.frag",
+            .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
+            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes               =
+            {
+                BlendMode::Opaque
+            }
+
+        },
+        // Vignette.
+        {
+            .Stage                    = RenderStage::Vignette,
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Vignette.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -303,20 +332,6 @@ namespace Silent::Renderer::SdlGpu
             .Stage                    = RenderStage::Crt,
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Crt.frag",
-            .FragShaderSamplerCount   = 1,
-            .FragShaderUniBufferCount = 1,
-            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
-            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
-            .BlendModes               =
-            {
-                BlendMode::Opaque
-            }
-        },
-        // Vignette.
-        {
-            .Stage                    = RenderStage::Vignette,
-            .VertShaderName           = "Primitive2d.vert",
-            .FragShaderName           = "Vignette.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,

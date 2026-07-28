@@ -116,14 +116,20 @@ namespace Silent::Debug
                     isOptChanged = true;
                 }
 
-                // `Enable CRT filter` checkbox.
-                if (ImGui::Checkbox("Enable CRT filter", &options->EnableCrtFilter))
+                // `Enable film grain` checkbox.
+                if (ImGui::Checkbox("Enable film grain", &options->EnableFilmGrain))
                 {
                     isOptChanged = true;
                 }
 
                 // `Enable vignette` checkbox.
                 if (ImGui::Checkbox("Enable vignette", &options->EnableVignette))
+                {
+                    isOptChanged = true;
+                }
+
+                // `Enable CRT filter` checkbox.
+                if (ImGui::Checkbox("Enable CRT filter", &options->EnableCrtFilter))
                 {
                     isOptChanged = true;
                 }

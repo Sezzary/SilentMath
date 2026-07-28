@@ -68,7 +68,7 @@ namespace Silent::Debug
         Scratchpad();
 
         // Check if debug menu is enabled.
-        if (!g_Work.EnablePowerMenu)
+        if (!g_Work.EnableDebugMenu)
         {
             g_Work.Messages.clear();
             return;
@@ -125,7 +125,7 @@ namespace Silent::Debug
         constexpr int BUFFER_SIZE = 255;
 
         // Check if debug menu is enabled.
-        if (!g_Work.EnablePowerMenu)
+        if (!g_Work.EnableDebugMenu)
         {
             return;
         }

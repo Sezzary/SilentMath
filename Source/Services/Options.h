@@ -128,6 +128,7 @@ namespace Silent::Services
         LightingType       Lighting           = LightingType::PerVertex;
         bool               EnableVertexJitter = false;
         bool               EnableDithering    = false;
+        bool               EnableFilmGrain    = false;
         bool               EnableVignette     = false;
         bool               EnableCrtFilter    = false;
 

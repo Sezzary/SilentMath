@@ -280,7 +280,7 @@ namespace Silent::Renderer::SdlGpu
         // @debug Luma fade test.
         if (Debug::g_Work.BlendAlpha > 0.0f)
         {
-            RunPostProcessPass(RenderStage::Fade, [&]()
+            RunPostProcessPass(RenderStage::LumaFade, [&]()
             {
                 auto uni = UniformLumaFade
                 {
@@ -291,10 +291,25 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
-        // CRT filter.
-        if (options->EnableCrtFilter)
+        // Film grain.
+        static float time = 0.0f; // @debug Test timer.
+        time = fmod(time + 0.1f, 1.0f);
+        if (options->EnableFilmGrain)
         {
-            RunPostProcessPass(RenderStage::Crt, [&]()
+            RunPostProcessPass(RenderStage::FilmGrain, [&]()
+            {
+                auto uni = UniformFilmGrain
+                {
+                    .Time = time
+                };
+                PushFragmentUniform(uni, 0);
+            });
+        }
+
+        // Vignette.
+        if (options->EnableVignette)
+        {
+            RunPostProcessPass(RenderStage::Vignette, [&]()
             {
                 auto uni = UniformCrt
                 {
@@ -305,10 +320,10 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
-        // Screen vignette.
-        if (options->EnableVignette)
+        // CRT filter.
+        if (options->EnableCrtFilter)
         {
-            RunPostProcessPass(RenderStage::Vignette, [&]()
+            RunPostProcessPass(RenderStage::Crt, [&]()
             {
                 auto uni = UniformCrt
                 {
@@ -366,12 +381,6 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawDebugMenu()
     {
-        // If debug menu is disabled, return early.
-        if (!Debug::g_Work.EnablePowerMenu)
-        {
-            return;
-        }
-
         // Start new frame.
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();

@@ -2,6 +2,7 @@
 
 #include "Renderer/Common/Resources/Layouts/Uniforms/Blit.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Crt.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms/FilmGrain.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Glyph2d.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/LumaFade.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Material.h"
@@ -14,6 +15,7 @@ namespace Silent::Renderer
 {
     using UniformType = std::variant<UniformBlit,
                                      UniformCrt,
+                                     UniformFilmGrain,
                                      UniformGlyph2d,
                                      UniformLumaFade,
                                      UniformMaterial,

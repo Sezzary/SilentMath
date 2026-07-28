@@ -380,12 +380,19 @@ namespace Silent::Renderer
 
     void RendererBase::DrawFrame()
     {
-        // @todo Refactor into a render graph?
+        // Scene.
         Draw3dScene();
         DrawDither();
         Draw2dScene();
+
+        // Final image.
         DrawPostProcess();
         DrawViewport();
-        DrawDebugMenu();
+
+        // @debug
+        if (!Debug::g_Work.EnableDebugMenu)
+        {
+            DrawDebugMenu();
+        }
     }
 }

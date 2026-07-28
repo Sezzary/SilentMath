@@ -37,9 +37,10 @@ float4 main(Input input) : SV_Target
     float factor      = lerp(LOWLIGHT, HIGHLIGHT, factorAlpha);
 
     // Combine color and apply gradient if active.
-    float3 color = input.Color.rgb * texColor.rgb;
-    color       *= lerp(1.0f, factor, float(HasGradient));
+    float3 finalColor = input.Color.rgb * texColor.rgb;
+    finalColor       *= lerp(1.0f, factor, float(HasGradient));
 
+    // Compute final color.
     float alpha = input.Color.a * texColor.a;
-    return float4(color, alpha);
+    return float4(finalColor, alpha);
 }

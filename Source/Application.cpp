@@ -270,7 +270,7 @@ namespace Silent
     void ApplicationManager::ToggleCursor()
     {
         // Show.
-        if ((!_work.Options->EnableFullscreen || Debug::g_Work.EnablePowerMenu) && !SDL_CursorVisible())
+        if ((!_work.Options->EnableFullscreen || Debug::g_Work.EnableDebugMenu) && !SDL_CursorVisible())
         {
             if (!SDL_ShowCursor())
             {
@@ -294,8 +294,8 @@ namespace Silent
             return;
         }
 
-        Debug::g_Work.EnablePowerMenu = !Debug::g_Work.EnablePowerMenu;
-        Debug::g_Work.Page            =  Debug::g_Work.EnablePowerMenu ? Debug::Page::Renderer : Debug::Page::None;
+        Debug::g_Work.EnableDebugMenu = !Debug::g_Work.EnableDebugMenu;
+        Debug::g_Work.Page            =  Debug::g_Work.EnableDebugMenu ? Debug::Page::Renderer : Debug::Page::None;
         ToggleCursor();
 
         Debug::Log("Toggled debug menu.", Debug::LogLevel::Info, Debug::LogMode::All, true);
@@ -348,7 +348,7 @@ namespace Silent
         auto event = SDL_Event{};
         while (SDL_PollEvent(&event))
         {
-            if (Debug::g_Work.EnablePowerMenu)
+            if (Debug::g_Work.EnableDebugMenu)
             {
                 ImGui_ImplSDL3_ProcessEvent(&event);
             }

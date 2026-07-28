@@ -14,6 +14,7 @@ struct Input
     float4 Color    : COLOR0;
 };
 
+static const uint   COLOR_MASK   = 0xF8;
 static const int    DITHER_SIZE  = 4;
 static const int4x4 DITHER_TABLE = int4x4
 (
@@ -25,8 +26,6 @@ static const int4x4 DITHER_TABLE = int4x4
 
 float4 main(Input input) : SV_Target
 {
-    static const uint COLOR_MASK = 0xF8;
-
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
