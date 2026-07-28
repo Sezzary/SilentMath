@@ -13,7 +13,7 @@ namespace Silent::Game
         s8              field_A0;
         s8              unused_A1[3]; /** @unused */
         s8              mapIdx;       /** `e_MapIdx` Index to overlay `.BIN` files. */
-        s8              mapRoomIdx;   /** Index to local map geometry `.IPD` files. */
+        s8              mapRoomIdx;   /** Index to local map geometry IPD files. */
         s16             savegameCount;
         s8              locationId;                  /** `e_SaveLocationId` */
         u8              paperMapIdx;                 /** `e_PaperMapIdx` | Index of the paper map displayed when opening the map screen. */

@@ -83,14 +83,18 @@ namespace Silent::Renderer::SdlGpu
         switch (asset->Type)
         {
             case AssetType::Ilm:
-            case AssetType::Plm:
             {
-                UploadLm(copyPass, *asset);
+                UploadIlm(copyPass, *asset);
                 break;
             }
             case AssetType::Ipd:
             {
                 UploadIpd(copyPass, *asset);
+                break;
+            }
+            case AssetType::Plm:
+            {
+                UploadPlm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
@@ -120,13 +124,12 @@ namespace Silent::Renderer::SdlGpu
         _vertexBuffer.Release();
     }
 
-    void MeshCache::UploadLm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset.GetData<LmAsset>();
+        const auto data = asset.GetData<IlmAsset>();
 
-        for (int i = 0; i < data->Meshes.size(); i++)
+        for (const auto& mesh : data->Lm.Meshes)
         {
-            const auto& mesh = data->Meshes[i];
             Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
         }
     }
@@ -135,8 +138,20 @@ namespace Silent::Renderer::SdlGpu
     {
         const auto data = asset.GetData<IpdAsset>();
 
-        // @todo
-        Debug::Log("Attempted to upload IPD GPU meshes: Unimplemented.", Debug::LogLevel::Warning);
+        for (const auto& mesh : data->Lm.Meshes)
+        {
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
+        }
+    }
+
+    void MeshCache::UploadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    {
+        const auto data = asset.GetData<PlmAsset>();
+
+        for (const auto& mesh : data->Lm.Meshes)
+        {
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
+        }
     }
 
     void MeshCache::UploadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)

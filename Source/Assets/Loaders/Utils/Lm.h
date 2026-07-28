@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Utils/Stream.h"
 
 using namespace Silent::Renderer;
+using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    struct Asset;
-
     /** @brief LM indexed vertex. */
     struct LmVertex
     {
@@ -56,8 +56,8 @@ namespace Silent::Assets
         LmLinearMesh Linear   = {};
     };
 
-    /** @brief LM asset data. */
-    struct LmAsset
+    /** @brief LM chunk. */
+    struct LmChunk
     {
         std::string         Name        = {};
         std::string         TextureName = {};
@@ -65,24 +65,19 @@ namespace Silent::Assets
         std::vector<int>    MeshIds     = {};
     };
 
-    /** @brief Parses an LM asset file.
+    /** @brief Parses the LM chunk from an ILM, PLM, or IPD asset file.
+     *
+     * @note UVs remain as pixel coordinates and must be normalized manually according to the preferred heuristics for
+     * the given parent format.
      *
      * @param filename Absolute asset file path.
-     * @return Parsed LM asset data as a `void` pointer.
+     * @param stream Output file stream.
+     * @param meshes Output meshes.
+     * @param meshIDs Output mesh IDs.
+     * @return LM part name.
      */
-    std::shared_ptr<void> ParseLm(const stdfs::path& filename);
-
-    /** @brief Queues an LM asset for upload to the GPU as meshes.
-     *
-     * @param asset LM asset.
-     */
-    void QueueLmGpuUpload(const Asset& asset);
-
-    /** @brief Queues a LM asset to release from the GPU as meshes.
-     *
-     * @param asset LM asset.
-     */
-    void QueueLmGpuRelease(const Asset& asset);
+    std::string ParseLmChunk(const stdfs::path& filename,
+                             Stream& stream, std::vector<LmMesh>& meshes, std::vector<int>& meshIds);
 }
 
 namespace std 

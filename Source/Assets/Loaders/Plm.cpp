@@ -2,7 +2,10 @@
 #include "Assets/Loaders/Plm.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
+#include "Assets/Loaders/Utils/Lm.h"
 #include "Utils/Stream.h"
+#include "Utils/Utils.h"
 
 using namespace Silent::Utils;
 
@@ -10,20 +13,22 @@ namespace Silent::Assets
 {
     std::shared_ptr<void> ParsePlm(const stdfs::path& filename)
     {
-        const auto& fs = g_App.GetFilesystem();
-
-        auto asset = PlmAsset{};
-
-        // Read file.
-        auto stream = Stream(filename, true, false);
-        if (!stream.IsOpen())
-        {
-            throw std::runtime_error(Fmt("Failed to open PLM `{}`.",
-                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
-        }
-
         // @todo
+        return nullptr;
+    }
 
-        return std::make_shared<PlmAsset>(std::move(asset));
+    void QueuePlmGpuUpload(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueMeshUpload(asset.Name);
+    }
+
+    void QueuePlmGpuRelease(const Asset& asset)
+    {
+
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueMeshRelease(asset.Name);
     }
 }

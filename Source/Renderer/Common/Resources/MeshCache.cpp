@@ -58,14 +58,18 @@ namespace Silent::Renderer
         switch (asset->Type)
         {
             case AssetType::Ilm:
-            case AssetType::Plm:
             {
-                ReleaseLm(*asset);
+                ReleaseIlm(*asset);
                 break;
             }
             case AssetType::Ipd:
             {
                 ReleaseIpd(*asset);
+                break;
+            }
+            case AssetType::Plm:
+            {
+                ReleasePlm(*asset);
                 break;
             }
             case AssetType::Tmd:
@@ -95,13 +99,12 @@ namespace Silent::Renderer
         return &*mesh;
     }
 
-    void MeshCacheBase::ReleaseLm(const Asset& asset)
+    void MeshCacheBase::ReleaseIlm(const Asset& asset)
     {
-        const auto data = asset.GetData<LmAsset>();
+        const auto data = asset.GetData<IlmAsset>();
 
-        for (int i = 0; i < data->Meshes.size(); i++)
+        for (const auto& mesh : data->Lm.Meshes)
         {
-            const auto& mesh = data->Meshes[i];
             Release(asset.Name + "_" + mesh.BoneName);
         }
     }
@@ -110,7 +113,20 @@ namespace Silent::Renderer
     {
         const auto data = asset.GetData<IpdAsset>();
 
-        // @todo
+        for (const auto& mesh : data->Lm.Meshes)
+        {
+            Release(asset.Name + "_" + mesh.BoneName);
+        }
+    }
+
+    void MeshCacheBase::ReleasePlm(const Asset& asset)
+    {
+        const auto data = asset.GetData<PlmAsset>();
+
+        for (const auto& mesh : data->Lm.Meshes)
+        {
+            Release(asset.Name + "_" + mesh.BoneName);
+        }
     }
 
     void MeshCacheBase::ReleaseTmd(const Asset& asset)

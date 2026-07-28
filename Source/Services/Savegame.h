@@ -26,7 +26,7 @@ namespace Silent::Services
 
         int      ContinueCount = 0;
         int      MapIdx        = 0; /** `e_MapIdx` */
-        int      MapRoomIdx    = 0; /** Index to local map geometry `.IPD` files. */
+        int      MapRoomIdx    = 0; /** Index to local map geometry IPD files. */
         int      PaperMapIdx   = 0; /** `e_PaperMapIdx` | Index of the paper map displayed in the map screen. */
         int      PaperMapFlags = 0;
         Bitfield EventFlags    = Bitfield(1664);

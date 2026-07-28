@@ -72,22 +72,32 @@ namespace Silent::Renderer
         const Mesh* operator[](const std::string& name) const;
 
     private:
-        /** @brief Releases meshes of an LM model asset from the GPU.
+        /** @brief Releases meshes of an ILM model asset from the GPU.
          *
          * @note By convention, GPU meshes use the following naming pattern:
-         * `[LM asset name]_[bone name]`.
+         * `[ILM asset name]_[bone name]`.
          *
-         * @param asset LM asset.
+         * @param asset ILM asset.
          */
-        void ReleaseLm(const Asset& asset);
+        void ReleaseIlm(const Asset& asset);
 
         /** @brief Releases meshes of an IPD model asset from the GPU.
          *
-         * @todo Mesh naming convention note.
+         * @note By convention, GPU meshes use the following naming pattern:
+         * `[IPD asset name]_[bone name]`.
          *
          * @param asset IPD asset.
          */
         void ReleaseIpd(const Asset& asset);
+
+        /** @brief Releases meshes of a PLM model asset from the GPU.
+         *
+         * @note By convention, GPU meshes use the following naming pattern:
+         * `[PLM asset name]_[bone name]`.
+         *
+         * @param asset PLM asset.
+         */
+        void ReleasePlm(const Asset& asset);
 
         /** @brief Releases meshes of a TMD model asset from the GPU.
          *

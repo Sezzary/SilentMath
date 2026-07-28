@@ -1,127 +1,48 @@
 #include "Framework.h"
-#include "Assets/Loaders/Lm.h"
+#include "Assets/Loaders/Utils/Lm.h"
 
 #include "Application.h"
-#include "Assets/AssetStreamer.h"
-#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Renderer.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Services/Filesystem.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
+using namespace Silent::Services;
 using namespace Silent::Renderer;
 using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    /** @brief Normalises the UVs of meshes according to a model's associated texture resolution.
-     *
-     * @param name Model name.
-     * @param meshes Model meshes with UVs to normalize.
-     */
-    static void NormalizeUvs(const std::string& name, std::vector<LmMesh>& meshes)
+    std::string ParseLmChunk(const stdfs::path& filename,
+                             Stream& stream, std::vector<LmMesh>& meshes, std::vector<int>& meshIds)
     {
-        constexpr int RES_STEP = 64;
-
-        // @todo Add to this if there are any more.
-        static const auto LM_TEX_RES_MAP = std::unordered_map<std::string, Vector2i>
-        {
-            { "HERO", Vector2i(256, 192) }
-        };
-
-        auto texRes = Vector2i::Zero;
-
-        // Get texture resolution.
-        const auto* obtuseTexRes = Find(LM_TEX_RES_MAP, name);
-        if (obtuseTexRes != nullptr)
-        {
-            texRes = *obtuseTexRes;
-        }
-        else
-        {
-            // Derive resolution from pixel UV layout.
-            for (const auto& mesh : meshes)
-            {
-                for (const auto& vert : mesh.Linear.Vertices)
-                {
-                    texRes = Vector2i(std::max(texRes.x, (int)CeilToStep(vert.Uv.x, RES_STEP)),
-                                      std::max(texRes.y, (int)CeilToStep(vert.Uv.y, RES_STEP)));
-                }
-            }
-        }
-
-        // Normalize UVs.
-        for (auto& mesh : meshes)
-        {
-            for (auto& vert : mesh.Linear.Vertices)
-            {
-                vert.Uv /= texRes.ToVector2();
-            }
-        }
-    }
-
-    /** @brief Gets a model's corresponding texture asset name.
-     *
-     * @param name Model name.
-     * @return Texture asset name.
-     */
-    static std::string GetTextureAssetName(const std::string& name)
-    {
-        // @hack Mappings for exceptional cases where `.*LM` doesn't have easily deducible `.TIM` association.
-        static const auto LM_TIM_MAP = std::unordered_map<std::string, std::string>
-        {
-            { /*CHARA/*/"EI"/*.ILM*/,   "TEST/EI.TIM"      },
-            { /*CHARA/*/"BIRD"/*.ILM*/, "CHARA/REBIRD.TIM" },
-            { /*CHARA/*/"MAN"/*.ILM*/,  "TEST/DEV.TIM"     },
-            { /*CHARA/*/"MTH"/*.ILM*/,  "CHARA/MOTH.TIM"   },
-            { /*CHARA/*/"WRM"/*.ILM*/,  "CHARA/WORM.TIM"   }
-        };
-
-        // Retrieve obtusely corresponding `.TIM`.
-        const auto* obtuseTexName = Find(LM_TIM_MAP, name);
-        if (obtuseTexName != nullptr)
-        {
-            return *obtuseTexName;
-        }
-
-        // Retrieve directly corresponding `.TIM`.
-        auto texName = "CHARA/" + name + ".TIM"; // @todo Append something else for PLM?
-        return texName; 
-    }
-
-    std::shared_ptr<void> ParseLm(const stdfs::path& filename)
-    {
-        constexpr int16  HEADER_MAGIC       = 0x630;
-        constexpr uint32 HEADER_NAME_OFFSET = 0x14;
+        constexpr int8   MAGIC              = 0x30;
+        constexpr uint8  VER                = 6;
+        constexpr uint32 NAME_OFFSET        = 0x14;
         constexpr int    BONE_IDX_STR_SIZE  = 2;
         constexpr int    BONE_NAME_STR_SIZE = 6;
 
         const auto& fs = g_App.GetFilesystem();
 
-        // Read file.
-        auto stream = Stream(filename, true, false);
-        if (!stream.IsOpen())
-        {
-            throw std::runtime_error(Fmt("Failed to open ILM `{}`.",
-                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
-        }
-
         // Read header magic.
-        int16 magic = stream.ReadInt16();
-        if (magic != HEADER_MAGIC)
+        int8 magic = stream.ReadInt8();
+        if (magic != MAGIC)
         {
-            throw std::runtime_error(Fmt("Failed to parse invalid *LM `{}`.",
+            throw std::runtime_error(Fmt("Failed to parse invalid LM chunk from `{}`.",
                                          stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
+        uint8 ver           = stream.ReadUint8(); // Unused.
         uint8 isInitialized = stream.ReadUint8(); // Unused.
 
         stream.Skip(1);
 
         // Read name offset.
         uint32 nameOffset = stream.ReadUint32();
-        if (nameOffset != HEADER_NAME_OFFSET)
+        if (nameOffset != NAME_OFFSET)
         {
-            throw std::runtime_error(Fmt("Attempted to parse *LM `{}` with incongruent name offset.",
+            throw std::runtime_error(Fmt("Attempted to parse LM chunk from `{}` with incongruent name offset.",
                                          stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
@@ -135,7 +56,6 @@ namespace Silent::Assets
         stream.SetPosition(meshesOffset);
 
         // Read meshes.
-        auto meshes = std::vector<LmMesh>{};
         meshes.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
@@ -329,7 +249,6 @@ namespace Silent::Assets
         stream.SetPosition(meshIdsOffset);
 
         // Read mesh IDs.
-        auto meshIds = std::vector<int>{};
         meshIds.reserve(meshCount);
         for (int i = 0; i < meshCount; i++)
         {
@@ -381,33 +300,12 @@ namespace Silent::Assets
                 {
                     .Position   = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 128.0f,
                     .Normal     = Vector3::Normalize(mesh.Native.Normals[keyVert.NormalIdx].ToVector3()),
-                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2(), // @note Unnormalized pixel UVs.
+                    .Uv         = mesh.Native.Uvs[keyVert.UvIdx].ToVector2(), // @note Unnormalized pixel coordinates.
                     .PaletteIdx = keyVert.PaletteIdx
                 };
             }
         }
-        NormalizeUvs(name, meshes);
 
-        return std::make_shared<LmAsset>(LmAsset
-        {
-            .Name        = name,
-            .TextureName = GetTextureAssetName(name),
-            .Meshes      = std::move(meshes),
-            .MeshIds     = std::move(meshIds)
-        });
-    }
-
-    void QueueLmGpuUpload(const Asset& asset)
-    {
-        auto& renderer = g_App.GetRenderer();
-
-        renderer.QueueMeshUpload(asset.Name);
-    }
-
-    void QueueLmGpuRelease(const Asset& asset)
-    {
-        auto& renderer = g_App.GetRenderer();
-
-        renderer.QueueMeshRelease(asset.Name);
+        return name;
     }
 }

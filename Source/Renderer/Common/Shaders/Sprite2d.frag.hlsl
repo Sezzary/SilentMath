@@ -42,7 +42,7 @@ float4 main(Input input) : SV_Target
     float alpha = input.Color.a * texColor.a;
     alpha       = lerp(alpha, step(0.5f, alpha), float(IsFastAlpha));
 
-    // Compute final fragment color.
-    float3 color = input.Color.rgb * texColor.rgb;
-    return float4(color, alpha);
+    // Compute final color.
+    float3 finalColor = input.Color.rgb * texColor.rgb;
+    return float4(finalColor, alpha);
 }

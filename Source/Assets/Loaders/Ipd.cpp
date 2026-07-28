@@ -2,6 +2,7 @@
 #include "Assets/Loaders/Ipd.h"
 
 #include "Application.h"
+#include "Assets/Loaders/Utils/Lm.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
 
@@ -54,18 +55,27 @@ namespace Silent::Assets
         uint32 modelBuffersOffset  = stream.ReadUint32();
         uint8  texsOffset          = stream.ReadUint8();
         stream.Skip(51); // Unknown.
-        uint32 modelOrderPtrOffset = stream.ReadUint32();
-
+        uint32 modelOrderListOffset = stream.ReadUint32();
         stream.Skip(52); // Collision.
 
-        // Read LM header magic.
+        // Set stream position to LM chunk.
         stream.SetPosition(lmHeaderOffset);
-        uint32 lmMagic = stream.ReadUint8();
-        if (lmMagic != LM_HEADER_MAGIC)
+
+        // Read LM chunk.
+        auto meshes  = std::vector<LmMesh>{};
+        auto meshIds = std::vector<int>{};
+        auto name    = ParseLmChunk(filename, stream, meshes, meshIds);
+
+        // @todo Normalize UVs.
+
+        // Set LM chunk data.
+        asset.Lm = LmChunk
         {
-            throw std::runtime_error(Fmt("Failed to parse invalid IPD `{}`.",
-                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
-        }
+            .Name        = name,
+            //.TextureName = GetTextureAssetName(name),// @todo
+            .Meshes      = std::move(meshes),
+            .MeshIds     = std::move(meshIds)
+        };
 
         // Read model infos.
         auto modelInfos = std::vector<IpdModelInfo>{};
@@ -80,6 +90,23 @@ namespace Silent::Assets
             modelInfos.push_back(std::move(modelInfo));
         }
 
+        // Read model buffers.
+        // @todo
+
         return std::make_shared<IpdAsset>(std::move(asset));
+    }
+
+    void QueueIpdGpuUpload(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueMeshUpload(asset.Name);
+    }
+
+    void QueueIpdGpuRelease(const Asset& asset)
+    {
+        auto& renderer = g_App.GetRenderer();
+
+        renderer.QueueMeshRelease(asset.Name);
     }
 }

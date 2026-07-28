@@ -26,6 +26,7 @@ float4 main(Input input) : SV_Target
     float  luma       = 1.0f - dot(workingColor, LUMA_BT601);
     float3 fadedColor = workingColor * Math::Remap(1.0f - FadeAlpha, luma, 1.0f, 0.0f, 1.0f);
 
+    // Compute final color.
     float3 finalColor = IsWhite ? (1.0f - fadedColor) : fadedColor;
     return float4(finalColor, 1.0f);
 }
