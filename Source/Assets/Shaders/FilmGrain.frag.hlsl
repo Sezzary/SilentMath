@@ -19,20 +19,19 @@ cbuffer PerFrame : register(b0, space3)
     float Time;
 }
 
+static const float3 LUMA_PHOTO_16MM = float3(0.2126f, 0.7152f, 0.0722f);
+static const float2 FREQ_SCALE      = float2(12.9898f, 78.233f);
+static const float  PHASE_AMP       = 43758.5453f;
+static const float  LUMA_COEFF      = 1.7f;
+static const float  MDF             = 0.1f;
+
 float3 PhotoLuma(float3 color)
 {
-    static const float3 LUMA_PHOTO_16MM = float3(0.2126f, 0.7152f, 0.0722f);
-
     return dot(color, LUMA_PHOTO_16MM);
 }
 
 float4 main(Input input) : SV_Target
 {
-    static const float2 FREQ_SCALE = float2(12.9898f, 78.233f);
-    static const float  PHASE_AMP  = 43758.5453f;
-    static const float  LUMA_COEFF = 1.7f;
-    static const float  MDF        = 0.1f;
-
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 

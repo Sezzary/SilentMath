@@ -390,7 +390,7 @@ namespace Silent::Renderer
         DrawViewport();
 
         // @debug
-        if (!Debug::g_Work.EnableDebugMenu)
+        if (Debug::g_Work.EnableDebugMenu)
         {
             DrawDebugMenu();
         }
