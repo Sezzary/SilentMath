@@ -192,14 +192,12 @@ namespace Silent::Utils
 
         int startPos = GetPosition();
 
-        bool isNullHit = false;
-        int  limit     = (size != NO_VALUE) ? size : (GetSize() - startPos);
+        int limit = (size != NO_VALUE) ? size : (GetSize() - startPos);
         for (int i = 0; i < limit; i++)
         {
             char c = ReadByte();
             if (c == '\0') 
             {
-                isNullHit = true;
                 break;
             }
 

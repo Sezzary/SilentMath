@@ -11,7 +11,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    /** @brief Normalises the UVs of meshes according to an ILM model's associated texture resolution.
+    /** @brief Normalizes the UVs of meshes according to an ILM model's associated texture resolution.
      *
      * @note For some models, the texture resolution cannot be deduced correctly from ILM data alone and must be
      * hardcoded.
@@ -23,7 +23,7 @@ namespace Silent::Assets
     {
         constexpr int RES_STEP = 64;
 
-        static const auto LM_TEX_RES_MAP = std::unordered_map<std::string, Vector2i>
+        static const auto ILM_TEX_RES_MAP = std::unordered_map<std::string, Vector2i>
         {
             { /*CHARA/*/"HERO"/*.ILM*/, Vector2i(256, 192) }
         };
@@ -31,7 +31,7 @@ namespace Silent::Assets
         auto texRes = Vector2i::Zero;
 
         // Get texture resolution.
-        const auto* obtuseTexRes = Find(LM_TEX_RES_MAP, name);
+        const auto* obtuseTexRes = Find(ILM_TEX_RES_MAP, name);
         if (obtuseTexRes != nullptr)
         {
             texRes = *obtuseTexRes;

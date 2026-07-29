@@ -58,18 +58,10 @@ namespace Silent::Renderer
         switch (asset->Type)
         {
             case AssetType::Ilm:
-            {
-                ReleaseIlm(*asset);
-                break;
-            }
             case AssetType::Ipd:
-            {
-                ReleaseIpd(*asset);
-                break;
-            }
             case AssetType::Plm:
             {
-                ReleasePlm(*asset);
+                ReleaseLm(*asset);
                 break;
             }
             case AssetType::Tmd:
@@ -99,31 +91,32 @@ namespace Silent::Renderer
         return &*mesh;
     }
 
-    void MeshCacheBase::ReleaseIlm(const Asset& asset)
+    void MeshCacheBase::ReleaseLm(const Asset& asset)
     {
-        const auto data = asset.GetData<IlmAsset>();
-
-        for (const auto& mesh : data->Lm.Meshes)
+        const std::vector<LmMesh>* meshes = nullptr;
+        switch (asset.Type)
         {
-            Release(asset.Name + "_" + mesh.BoneName);
+            case AssetType::Ilm:
+            {
+                const auto data = asset.GetData<IlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Ipd:
+            {
+                const auto data = asset.GetData<IpdAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Plm:
+            {
+                const auto data = asset.GetData<PlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
         }
-    }
 
-    void MeshCacheBase::ReleaseIpd(const Asset& asset)
-    {
-        const auto data = asset.GetData<IpdAsset>();
-
-        for (const auto& mesh : data->Lm.Meshes)
-        {
-            Release(asset.Name + "_" + mesh.BoneName);
-        }
-    }
-
-    void MeshCacheBase::ReleasePlm(const Asset& asset)
-    {
-        const auto data = asset.GetData<PlmAsset>();
-
-        for (const auto& mesh : data->Lm.Meshes)
+        for (const auto& mesh : *meshes)
         {
             Release(asset.Name + "_" + mesh.BoneName);
         }

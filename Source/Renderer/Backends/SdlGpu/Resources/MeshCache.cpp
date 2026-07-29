@@ -83,18 +83,10 @@ namespace Silent::Renderer::SdlGpu
         switch (asset->Type)
         {
             case AssetType::Ilm:
-            {
-                UploadIlm(copyPass, *asset);
-                break;
-            }
             case AssetType::Ipd:
-            {
-                UploadIpd(copyPass, *asset);
-                break;
-            }
             case AssetType::Plm:
             {
-                UploadPlm(copyPass, *asset);
+                UploadLm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
@@ -124,31 +116,32 @@ namespace Silent::Renderer::SdlGpu
         _vertexBuffer.Release();
     }
 
-    void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadLm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset.GetData<IlmAsset>();
-
-        for (const auto& mesh : data->Lm.Meshes)
+        const std::vector<LmMesh>* meshes = nullptr;
+        switch (asset.Type)
         {
-            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
+            case AssetType::Ilm:
+            {
+                const auto data = asset.GetData<IlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Ipd:
+            {
+                const auto data = asset.GetData<IpdAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Plm:
+            {
+                const auto data = asset.GetData<PlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
         }
-    }
 
-    void MeshCache::UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
-    {
-        const auto data = asset.GetData<IpdAsset>();
-
-        for (const auto& mesh : data->Lm.Meshes)
-        {
-            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
-        }
-    }
-
-    void MeshCache::UploadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
-    {
-        const auto data = asset.GetData<PlmAsset>();
-
-        for (const auto& mesh : data->Lm.Meshes)
+        for (const auto& mesh : *meshes)
         {
             Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
         }

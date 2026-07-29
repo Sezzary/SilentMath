@@ -12,14 +12,14 @@ namespace Silent::Assets
         LmChunk Lm = {};
     };
 
-    /** @brief Parses an PLM asset file.
+    /** @brief Parses a PLM asset file.
      *
      * @param filename Absolute asset file path.
      * @return Parsed PLM asset data as a `void` pointer.
      */
     std::shared_ptr<void> ParsePlm(const stdfs::path& filename);
 
-    /** @brief Queues an PLM asset for upload to the GPU as meshes.
+    /** @brief Queues a PLM asset for upload to the GPU as meshes.
      *
      * @param asset PLM asset.
      */
