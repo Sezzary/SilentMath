@@ -324,6 +324,12 @@ namespace Silent::Debug
                     isOptChanged = true;
                 }
 
+                // `Enable logos` checkbox.
+                if (ImGui::Checkbox("Enable logos", &options->EnableLogos))
+                {
+                    isOptChanged = true;
+                }
+
                 // `Enable toasts` checkbox.
                 if (ImGui::Checkbox("Enable toasts", &options->EnableToasts))
                 {

@@ -59,6 +59,7 @@ namespace Silent::Services
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
     constexpr char KEY_PAPER_MAP[]                                = "PaperMap";
     constexpr char KEY_DIALOG_PAUSE[]                             = "DialogPause";
+    constexpr char KEY_ENABLE_LOGOS[]                             = "EnableLogos";
     constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
     constexpr char KEY_ENABLE_PARALLELISM[]                       = "EnableParallelism";
 
@@ -97,6 +98,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Original;
     constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Original;
     constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
+    constexpr bool DEFAULT_ENABLE_LOGOS                             = true;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
     void OptionsManager::SetDefaultGraphicsOptions()
@@ -164,6 +166,7 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultSystemOptions()
     {
+        _options.EnableLogos       = DEFAULT_ENABLE_LOGOS;
         _options.EnableToasts      = DEFAULT_ENABLE_TOASTS;
         _options.EnableParallelism = GetCoreCount() > 1;
     }
@@ -325,6 +328,7 @@ namespace Silent::Services
 
         // Load system options.
         const auto& systemJson    = optionsJson[KEY_SYSTEM];
+        options.EnableLogos       = systemJson.value(KEY_ENABLE_LOGOS, DEFAULT_ENABLE_LOGOS);
         options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
         options.EnableParallelism = systemJson.value(KEY_ENABLE_PARALLELISM, GetCoreCount() > 1);
 
@@ -421,6 +425,7 @@ namespace Silent::Services
             {
                 KEY_SYSTEM,
                 {
+                    { KEY_ENABLE_LOGOS,  options.EnableLogos },
                     { KEY_ENABLE_TOASTS, options.EnableToasts }
                 }
             }
