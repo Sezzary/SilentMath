@@ -187,6 +187,18 @@ namespace Silent
         /** @brief Toggles the debug menu on and off. */
         void ToggleDebugMenu();
 
+        /** @brief Gets text in the system clipboard.
+         *
+         * @return Clipboard text.
+         */
+        std::string GetClipboardText();
+
+        /** @brief Sets text in the system clipboard.
+         *
+         * @param text Text to set.
+         */
+        void SetClipboardText(const std::string& text);
+
     private:
         // ========
         // Helpers

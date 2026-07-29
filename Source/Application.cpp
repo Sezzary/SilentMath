@@ -300,6 +300,30 @@ namespace Silent
         Debug::Log("Toggled debug menu.", Debug::LogLevel::Info, Debug::LogMode::All, true);
     }
 
+    std::string ApplicationManager::GetClipboardText()
+    {
+        auto* text = SDL_GetClipboardText();
+        if (text == nullptr)
+        {
+            Debug::Log(Fmt("Failed to get clipboard text: {}", SDL_GetError()),
+                       Debug::LogLevel::Warning, Debug::LogMode::All, true);
+            return {};
+        }
+
+        auto textStr = std::string(text);
+        SDL_free(text);
+        return textStr;
+    }
+
+    void ApplicationManager::SetClipboardText(const std::string& text)
+    {
+        if (!SDL_SetClipboardText(text.c_str()))
+        {
+            Debug::Log(Fmt("Failed to set clipboard text: {}", SDL_GetError()),
+                       Debug::LogLevel::Warning, Debug::LogMode::All, true);
+        }
+    }
+
     void ApplicationManager::Update()
     {
         // Update input.
