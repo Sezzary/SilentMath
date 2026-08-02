@@ -2,6 +2,7 @@
 #include "Assets/Loaders/Utils/Lm.h"
 
 #include "Application.h"
+#include "Assets/Loaders/Utils/LinearMesh.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Services/Filesystem.h"
@@ -17,11 +18,10 @@ namespace Silent::Assets
     std::string ParseLmChunk(const stdfs::path& filename,
                              Stream& stream, std::vector<LmMesh>& meshes, std::vector<int>& meshIds)
     {
-        constexpr int8   MAGIC              = 0x30;
-        constexpr uint8  VER                = 6;
-        constexpr uint32 NAME_OFFSET        = 0x14;
-        constexpr int    BONE_IDX_STR_SIZE  = 2;
-        constexpr int    BONE_NAME_STR_SIZE = 6;
+        constexpr int8   MAGIC          = 0x30;
+        constexpr uint8  VER            = 6;
+        constexpr uint32 NAME_OFFSET    = 0x14;
+        constexpr int    MESH_NAME_SIZE = 8;
 
         const auto& fs = g_App.GetFilesystem();
 
@@ -50,7 +50,7 @@ namespace Silent::Assets
         uint32 meshCount     = stream.ReadUint32();
         uint32 meshesOffset  = stream.ReadUint32();
         uint32 meshIdsOffset = stream.ReadUint32();
-        auto   name          = stream.ReadNullString();
+        auto   name          = stream.ReadCString();
 
         // Set stream position to meshes.
         stream.SetPosition(meshesOffset);
@@ -62,18 +62,15 @@ namespace Silent::Assets
             // Create UV index lookup.
             auto uvLookup = std::unordered_map<Vector2i, int>{}; // Key = UV (Q0.8), value = UV index.
 
-            // Read bone info.
-            auto boneIdxStr = stream.ReadNullString(BONE_IDX_STR_SIZE);
-            int  boneIdx    = std::stoi(boneIdxStr);
-            auto boneName   = stream.ReadNullString(BONE_NAME_STR_SIZE);
+            // Read mesh name.
+            auto meshName = stream.ReadCString(MESH_NAME_SIZE);
 
             stream.Skip(1);
 
-            // Create bone mesh.
+            // Create mesh.
             auto mesh = LmMesh
             {
-                .BoneIdx  = boneIdx,
-                .BoneName = boneName
+                .Name = meshName
             };
 
             // Read base vertex indices.

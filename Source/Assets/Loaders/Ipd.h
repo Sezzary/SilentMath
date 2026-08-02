@@ -6,10 +6,33 @@ namespace Silent::Assets
 {
     struct Asset;
 
+    /** @brief IPD model info. */
+    struct IpdModelInfo
+    {
+        uint8       IsGlobalPlm       = false;
+        std::string Name              = {};
+        uint32      ModelHeaderOffset = 0;
+    };
+
+    /** @brief IPD model buffer. */
+    struct IpdModelBuffer
+    {
+
+    };
+
+    /** @brief IPD collision. */
+    struct IpdCollision
+    {
+
+    };
+
     /** @brief IPD asset data. */
     struct IpdAsset
     {
-        LmChunk Lm = {};
+        LmChunk        Lm           = {};
+        IpdModelInfo   ModelInfos   = {};
+        IpdModelBuffer ModelBuffers = {};
+        IpdCollision   Collision    = {};
     };
 
     /** @brief Parses an IPD asset file.

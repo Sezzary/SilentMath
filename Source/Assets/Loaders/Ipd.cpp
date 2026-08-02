@@ -10,17 +10,55 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    struct IpdModelInfo
+    /** @brief Normalizes the UVs of meshes according to an IPD model's associated texture resolution.
+     *
+     * @param name Model name.
+     * @param meshes Model meshes with UVs to normalize.
+     */
+    static void NormalizeUvs(const std::string& name, std::vector<LmMesh>& meshes)
     {
-        uint8       IsGlobalPlm       = false;
-        std::string Name              = {};
-        uint32      ModelHeaderOffset = 0;
-    };
+        constexpr int RES_STEP = 128;
+
+        static const auto IPD_TEX_RES_MAP = std::unordered_map<std::string, Vector2i>
+        {
+            // @todo Account for some exceptions. Most textures are either 128x256 or 256x256, but some are thin strips
+            // or the UVs don't span far enough.
+        };
+
+        auto texRes = Vector2i::Zero;
+
+        // Get texture resolution.
+        const auto* obtuseTexRes = Find(IPD_TEX_RES_MAP, name);
+        if (obtuseTexRes != nullptr)
+        {
+            texRes = *obtuseTexRes;
+        }
+        else
+        {
+            // Derive resolution from pixel UV layout.
+            for (const auto& mesh : meshes)
+            {
+                for (const auto& vert : mesh.Linear.Vertices)
+                {
+                    texRes = Vector2i(std::max(texRes.x, (int)CeilToStep(vert.Uv.x, RES_STEP)),
+                                      std::max(texRes.y, (int)CeilToStep(vert.Uv.y, RES_STEP)));
+                }
+            }
+        }
+
+        // Normalize UVs.
+        for (auto& mesh : meshes)
+        {
+            for (auto& vert : mesh.Linear.Vertices)
+            {
+                vert.Uv /= texRes.ToVector2();
+            }
+        }
+    }
 
     std::shared_ptr<void> ParseIpd(const stdfs::path& filename)
     {
-        constexpr uint8 IPD_HEADER_MAGIC = 0x14;
-        constexpr uint8 LM_HEADER_MAGIC  = 0x30;
+        constexpr uint8 MAGIC = 0x14;
 
         const auto& fs = g_App.GetFilesystem();
 
@@ -36,7 +74,7 @@ namespace Silent::Assets
 
         // Read header magic.
         uint8 magic = stream.ReadUint8();
-        if (magic != IPD_HEADER_MAGIC)
+        if (magic != MAGIC)
         {
             throw std::runtime_error(Fmt("Failed to parse invalid IPD `{}`.",
                                          stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
@@ -46,7 +84,7 @@ namespace Silent::Assets
         uint8  isInitialized       = stream.ReadUint8();
         int8   levelGridX          = stream.ReadInt8();
         int8   levelGridZ          = stream.ReadInt8();
-        uint32 lmHeaderOffset      = stream.ReadUint32();
+        uint32 lmOffset            = stream.ReadUint32();
         uint8  modelCount          = stream.ReadUint8();
         uint8  modelBufferCount    = stream.ReadUint8();
         uint8  modelOrderCount     = stream.ReadUint8();
@@ -54,21 +92,24 @@ namespace Silent::Assets
         uint32 modelInfosOffset    = stream.ReadUint32();
         uint32 modelBuffersOffset  = stream.ReadUint32();
         uint8  texsOffset          = stream.ReadUint8();
-        stream.Skip(51); // Unknown.
+        stream.Skip(51); // Unknown. @todo
         uint32 modelOrderListOffset = stream.ReadUint32();
-        stream.Skip(52); // Collision.
+
+        // @todo Read collision.
+        stream.Skip(52);
 
         // Set stream position to LM chunk.
-        stream.SetPosition(lmHeaderOffset);
+        stream.SetPosition(lmOffset);
 
         // Read LM chunk.
         auto meshes  = std::vector<LmMesh>{};
         auto meshIds = std::vector<int>{};
         auto name    = ParseLmChunk(filename, stream, meshes, meshIds);
 
-        // @todo Normalize UVs.
+        // Normalize IPD UVs.
+        NormalizeUvs(name, meshes);
 
-        // Set LM chunk data.
+        // Set LM chunk.
         asset.Lm = LmChunk
         {
             .Name        = name,
@@ -77,21 +118,44 @@ namespace Silent::Assets
             .MeshIds     = std::move(meshIds)
         };
 
+        // Set stream position to model infos.
+        stream.SetPosition(modelInfosOffset);
+
         // Read model infos.
         auto modelInfos = std::vector<IpdModelInfo>{};
         modelInfos.reserve(modelCount);
-        stream.SetPosition(modelInfosOffset);
         for (int i = 0; i < modelCount; i++)
         {
-            auto modelInfo              = IpdModelInfo{};
-            modelInfo.IsGlobalPlm       = stream.ReadUint8();
-            modelInfo.Name              = stream.ReadNullString(8);
+            auto modelInfo        = IpdModelInfo{};
+            modelInfo.IsGlobalPlm = stream.ReadUint8();
+
+            stream.Skip(3);
+
+            modelInfo.Name              = stream.ReadCString(8);
             modelInfo.ModelHeaderOffset = stream.ReadUint32();
             modelInfos.push_back(std::move(modelInfo));
         }
 
-        // Read model buffers.
+        // Set stream position to model buffers.
+        stream.SetPosition(modelBuffersOffset);
+
         // @todo
+        // Read model buffers.
+        for (int i = 0; i < modelBufferCount; i++)
+        {
+            uint8 modelInstCount = stream.ReadUint8();
+            uint8 field_1        = stream.ReadUint8();
+
+            stream.Skip(1);
+
+            int16  minX                   = stream.ReadInt16();
+            int16  maxX                   = stream.ReadInt16();
+            int16  minZ                   = stream.ReadInt16();
+            int16  maxZ                   = stream.ReadInt16();
+            uint32 modelInstsOffset       = stream.ReadUint32();
+            uint32 field_10Offset         = stream.ReadUint32();
+            uint32 subcellPositionsOffset = stream.ReadUint32();
+        }
 
         return std::make_shared<IpdAsset>(std::move(asset));
     }

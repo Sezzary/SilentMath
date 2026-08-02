@@ -345,7 +345,7 @@ namespace Silent::Utils
         {
             _fonts.try_emplace(metadata.Name, _library, metadata, path, glyphPrecache);
 
-            Debug::Log(Fmt("Loaded font chain `{}` at point size {}.", metadata.Name, metadata.PointSize));
+            //Debug::Log(Fmt("Loaded font chain `{}` at point size {}.", metadata.Name, metadata.PointSize));
         }
         catch (const std::runtime_error& ex)
         {

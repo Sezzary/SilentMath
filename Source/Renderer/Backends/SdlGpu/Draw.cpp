@@ -85,7 +85,7 @@ namespace Silent::Renderer::SdlGpu
             PushFragmentUniform(uni, 0);
 
             // Draw.
-            const auto* mesh = GetMeshes()["CHARA/HERO.ILM_HEAD1"];
+            const auto* mesh = GetMeshes()["CHARA/HERO.ILM_02HEAD1"];
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);

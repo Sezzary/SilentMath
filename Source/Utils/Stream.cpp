@@ -183,7 +183,7 @@ namespace Silent::Utils
         return str;
     }
 
-    std::string Stream::ReadNullString(int size)
+    std::string Stream::ReadCString(int size)
     {
         constexpr int BUFFER_SIZE = 32;
 

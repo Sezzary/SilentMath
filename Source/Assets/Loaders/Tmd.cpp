@@ -2,6 +2,7 @@
 #include "Assets/Loaders/Tmd.h"
 
 #include "Application.h"
+#include "Assets/Loaders/Utils/LinearMesh.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Renderer.h"
@@ -13,8 +14,8 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    /** @brief TMD flags. */
-    enum class TmdFlags
+    /** @brief TMD header flags. */
+    enum class TmdHeaderFlags
     {
         Fixp = 1 << 0 /** 0: Relative offset from mesh data block start, 1: Absolute offset from file start. */
     };
@@ -30,7 +31,7 @@ namespace Silent::Assets
     /** @brief TMD packed primitive modes. */
     enum class TmdPrimitiveModes
     {
-        Brightness   = 1 << 0,
+        Brightness   = 1 << 0,                         /** 0: Brightly lit, 1: Textured as-is. */
         Transparency = 1 << 1,                         /** 0: Opaque, 1: Semi-transparent. */
         Textured     = 1 << 2,                         /** 0: Untextured, 1: Textured. */
         Quad         = 1 << 3,                         /** 0: Triangle, 1: Quad. */
@@ -54,7 +55,7 @@ namespace Silent::Assets
         Sprite  = 3
     };
 
-    /** @brief TMD textured primitive blend modes. */
+    /** @brief TMD primitive blend modes. */
     enum class TmdBlendMode
     {
         AlphaHalf  = 0,
@@ -63,15 +64,15 @@ namespace Silent::Assets
         AddQuarter = 3
     };
 
-    /** @brief TMD header layout. */
-    struct TmdHeaderLayout
+    /** @brief TMD header. */
+    struct TmdHeader
     {
         uint32 Version   = 0; /** Unused. */
         uint32 Flags     = 0;
         uint32 MeshCount = 0;
     };
 
-    /** @brief TMD mesh description layout. */
+    /** @brief TMD mesh description. */
     struct TmdMeshDescLayout
     {
         uint32 PositionOffset  = 0;
@@ -156,7 +157,7 @@ namespace Silent::Assets
         }
 
         // Read header.
-        auto header = TmdHeaderLayout
+        auto header = TmdHeader
         {
             .Version   = stream.ReadUint32(),
             .Flags     = stream.ReadUint32(),
@@ -164,7 +165,7 @@ namespace Silent::Assets
         };
 
         // Compute base data address.
-        int baseAddr = sizeof(TmdHeaderLayout) + (header.MeshCount * sizeof(TmdMeshDescLayout));
+        int baseAddr = sizeof(TmdHeader) + (header.MeshCount * sizeof(TmdMeshDescLayout));
 
         // Read mesh descriptions.
         auto meshDescs = std::vector<TmdMeshDescLayout>{};
@@ -189,7 +190,7 @@ namespace Silent::Assets
             meshDesc.Scale = stream.ReadUint32();
 
             // Adjust offsets.
-            if (header.Flags & (int)TmdFlags::Fixp)
+            if (header.Flags & (int)TmdHeaderFlags::Fixp)
             {
                 meshDesc.PositionOffset  -= baseAddr;
                 meshDesc.NormalOffset    -= baseAddr;
@@ -216,72 +217,84 @@ namespace Silent::Assets
             // @todo Texture name?
 
             // Create UV and color index lookups.
-            auto uvLookup    = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
-            auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.
+            auto uvLookup    = std::unordered_map<Vector2i, int>{}; // Key = UV, value = UV index.
+            auto colorLookup = std::unordered_map<Color,    int>{}; // Key = color, value = color index.
+
+            // Set stream position to vertex positions.
+            stream.SetPosition(baseAddr + meshDesc.PositionOffset);
 
             // Read vertex positions.
-            stream.SetPosition(baseAddr + meshDesc.PositionOffset);
             mesh.Native.Positions.reserve(meshDesc.PositionCount);
             for (int j = 0; j < meshDesc.PositionCount; j++)
             {
                 // Read components.
-                int16 x = stream.ReadInt16();
-                int16 y = stream.ReadInt16();
-                int16 z = stream.ReadInt16();
+                q3_12 x = stream.ReadInt16();
+                q3_12 y = stream.ReadInt16();
+                q3_12 z = stream.ReadInt16();
+
                 stream.Skip(2);
 
                 // Collect position.
-                mesh.Native.Positions.push_back(Vector3(x, y, z));
+                mesh.Native.Positions.push_back(Vector3i(x, y, z));
             }
 
-            // Read vertex normals.
+            // Set stream position to vertex normals.
             stream.SetPosition(baseAddr + meshDesc.NormalOffset);
+
+            // Read vertex normals.
             mesh.Native.Normals.reserve(meshDesc.NormalCount);
             for (int j = 0; j < meshDesc.NormalCount; j++)
             {
                 // Read components.
-                int16 x = stream.ReadInt16();
-                int16 y = stream.ReadInt16();
-                int16 z = stream.ReadInt16();
+                q3_12 x = stream.ReadInt16();
+                q3_12 y = stream.ReadInt16();
+                q3_12 z = stream.ReadInt16();
+
                 stream.Skip(2);
 
                 // Collect normal.
-                auto normal = Vector3::Normalize(Vector3(x, y, z));
+                auto normal = Vector3i(x, y, z);
                 mesh.Native.Normals.push_back(normal);
             }
 
-            // Read primitives.
+            // Set stream position to primitives.
             stream.SetPosition(baseAddr + meshDesc.PrimitiveOffset);
+
+            // Read primitives.
             mesh.Native.Primitives.reserve(meshDesc.PrimitiveCount);
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
-                int8 olen  = stream.ReadInt8(); // Unused.
-                int8 ilen  = stream.ReadInt8(); // Packet size in words.
-                int8 flags = stream.ReadInt8(); // `TmdPrimitiveFlags`
-                int8 mode  = stream.ReadInt8(); // `TmdPrimitiveModes`
+                uint8 olen  = stream.ReadUint8(); // Unused.
+                uint8 ilen  = stream.ReadUint8(); // Packet size in words.
+                uint8 flags = stream.ReadUint8(); // `TmdPrimitiveFlags`
+                uint8 mode  = stream.ReadUint8(); // `TmdPrimitiveModes`
 
-                bool isGouraud = mode & (int)TmdPrimitiveModes::Gouraud;
+                bool isLit         = mode & (int)TmdPrimitiveModes::Brightness;
+                bool isTransparent = mode & (int)TmdPrimitiveModes::Transparency;
+                bool isTextured    = mode & (int)TmdPrimitiveModes::Textured;
+                bool isQuad        = mode & (int)TmdPrimitiveModes::Quad;
+                bool isGouraud     = mode & (int)TmdPrimitiveModes::Gouraud;
+                auto primType      = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
 
                 // Compute next primitive position.
                 int nextPrimPos = stream.GetPosition() + (ilen * sizeof(int32));
 
                 // Read primitive.
-                auto primType = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
                 switch (primType)
                 {
                     case TmdPrimitiveType::Polygon:
                     {
                         // Read attributes.
-                        int  vertCount = (mode & (int)TmdPrimitiveModes::Quad) ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
-                        auto uvs       = std::vector<Vector2>(vertCount, Vector2::Zero);
+                        int  vertCount = isQuad ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
+                        auto uvs       = std::vector<Vector2i>(vertCount, Vector2i::Zero);
                         auto colors    = std::vector<Color>(vertCount, Color::White);
                         auto blendMode = BlendMode::Opaque;
-                        int  tpage     = 0;
+                        int  tPage     = 0;
                         bool isTri     = vertCount == TRI_VERTEX_COUNT;
 
                         // Read textured polygon.
-                        if (mode & (int)TmdPrimitiveModes::Textured)
+                        if (isTextured)
                         {
                             // Read UVs, CBA, and TSB.
                             uint16 cba = 0; // Unused.
@@ -292,8 +305,8 @@ namespace Silent::Assets
                                 uint8 u = stream.ReadUint8();
                                 uint8 v = stream.ReadUint8();
 
-                                // Set normalized UV.
-                                uvs[i] = Vector2(u, v) / (float)UCHAR_MAX;
+                                // Set UV.
+                                uvs[i] = Vector2i(u, v);
 
                                 // Read CBA.
                                 if (i == 0)
@@ -311,27 +324,25 @@ namespace Silent::Assets
                                 }
                             }
 
+                            auto tmdBlendMode = (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5);
+                            tPage             = tsb & (int)TmdTextureAttribs::TPage;
+
                             // Get blend mode and color alpha.
                             float colorAlpha = 1.0f;
-                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha,
-                                                         mode & (int)TmdPrimitiveModes::Transparency,
-                                                         (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
+                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, isTransparent, tmdBlendMode);
 
                             // Set colors.
                             for (auto& color : colors)
                             {
                                 color = Color(1.0f, 1.0f, 1.0f, colorAlpha);
                             }
-
-                            // Set tpage.
-                            tpage = tsb & (int)TmdTextureAttribs::TPage;
                         }
                         // Read untextured polygon.
                         else
                         {
                             // Get blend mode and color alpha.
                             float colorAlpha = 1.0f;
-                            if (mode & (int)TmdPrimitiveModes::Transparency)
+                            if (isTransparent)
                             {
                                 GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, true, TmdBlendMode::AlphaHalf);
                             }
@@ -381,7 +392,7 @@ namespace Silent::Assets
                         auto prim = TmdPrimitive
                         {
                             .BlendMd = blendMode,
-                            .TPage   = tpage
+                            .TPage   = tPage
                         };
                         for (int i = 0; i < vertCount; i++)
                         {
@@ -396,11 +407,12 @@ namespace Silent::Assets
                         mesh.Native.Primitives.push_back(prim);
                         break;
                     }
+                    default:
                     case TmdPrimitiveType::Line:
                     case TmdPrimitiveType::Sprite:
                     {
-                        Debug::Log(Fmt("Attempted to read unsupported primitive type while parsing TMD `{}`.",
-                                       filename.string()),
+                        Debug::Log(Fmt("Attempted to read unsupported primitive type {} while parsing TMD `{}`.",
+                                       (int)primType, filename.string()),
                                    Debug::LogLevel::Warning);
                         break;
                     }
@@ -509,9 +521,9 @@ namespace Silent::Assets
             {
                 mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
-                    .Position = mesh.Native.Positions[keyVert.PositionIdx] / 4096.0f,
-                    .Normal   = mesh.Native.Normals[std::min<int>(keyVert.NormalIdx, mesh.Native.Normals.size() - 1)],
-                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx],
+                    .Position = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 4096.0f,
+                    .Normal   = mesh.Native.Normals[keyVert.NormalIdx].ToVector3() / 4096.0f,
+                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 255.0f, // @todo Unreliable.
                     .Col      = mesh.Native.Colors[keyVert.ColorIdx]
                 };
             }
@@ -524,13 +536,13 @@ namespace Silent::Assets
     {
         auto& renderer = g_App.GetRenderer();
 
-        renderer.QueueMeshUpload(asset.Name);
+        //renderer.QueueMeshUpload(asset.Name);
     }
 
     void QueueTmdGpuRelease(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
-        renderer.QueueMeshRelease(asset.Name);
+        //renderer.QueueMeshRelease(asset.Name);
     }
 }

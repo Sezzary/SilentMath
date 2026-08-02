@@ -118,7 +118,7 @@ namespace Silent::Renderer
 
         for (const auto& mesh : *meshes)
         {
-            Release(asset.Name + "_" + mesh.BoneName);
+            Release(asset.Name + "_" + mesh.Name);
         }
     }
 

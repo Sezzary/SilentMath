@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Assets/Loaders/Utils/LinearMesh.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
 
@@ -38,9 +39,9 @@ namespace Silent::Assets
     struct TmdNativeMesh
     {
         std::vector<TmdPrimitive> Primitives  = {};
-        std::vector<Vector3>      Positions   = {};
-        std::vector<Vector3>      Normals     = {};
-        std::vector<Vector2>      Uvs         = {};
+        std::vector<Vector3i>     Positions   = {};
+        std::vector<Vector3i>     Normals     = {};
+        std::vector<Vector2i>     Uvs         = {};
         std::vector<Color>        Colors      = {};
     };
 
@@ -55,7 +56,7 @@ namespace Silent::Assets
     struct TmdMesh
     {
         TmdNativeMesh Native = {};
-        TmdLinearMesh Linear = {};
+        LinearMesh    Linear = {};
     };
 
     /** @brief TMD asset data. */

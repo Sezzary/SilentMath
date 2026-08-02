@@ -143,7 +143,7 @@ namespace Silent::Renderer::SdlGpu
 
         for (const auto& mesh : *meshes)
         {
-            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.BoneName);
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.Name);
         }
     }
 

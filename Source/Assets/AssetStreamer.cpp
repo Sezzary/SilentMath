@@ -187,7 +187,7 @@ namespace Silent::Assets
             }
 
             // Load asset data from file.
-            try
+            //try
             {
                 asset->State = AssetState::Loaded;
 
@@ -206,14 +206,14 @@ namespace Silent::Assets
                 Debug::Log(Fmt("Loaded streamable asset `{}`.", asset->Name),
                            Debug::LogLevel::Info, Debug::LogMode::Debug);
             }
-            catch (const std::exception& ex)
-            {
-                asset->Data  = nullptr;
-                asset->State = AssetState::Error;
-
-                Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()),
-                           Debug::LogLevel::Error);
-            }
+            //catch (const std::exception& ex)
+            //{
+            //    asset->Data  = nullptr;
+            //    asset->State = AssetState::Error;
+//
+            //    Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()),
+            //               Debug::LogLevel::Error);
+            //}
             _loadingCount--;
         });
 

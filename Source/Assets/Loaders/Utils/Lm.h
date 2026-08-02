@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Assets/Loaders/Utils/LinearMesh.h"
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Utils/Stream.h"
 
@@ -40,20 +41,12 @@ namespace Silent::Assets
         std::vector<Vector2i>    Uvs        = {}; /** Q23.8 */
     };
 
-    /** @brief LM GPU-compatible linear mesh. */
-    struct LmLinearMesh
-    {
-        std::vector<BufferVertex3d> Vertices = {};
-        std::vector<uint16>         Idxs     = {};
-    };
-
     /** @brief LM mesh. */
     struct LmMesh
     {
-        int          BoneIdx  = 0;
-        std::string  BoneName = {};
-        LmNativeMesh Native   = {};
-        LmLinearMesh Linear   = {};
+        std::string  Name   = {};
+        LmNativeMesh Native = {};
+        LinearMesh   Linear = {};
     };
 
     /** @brief LM chunk. */
