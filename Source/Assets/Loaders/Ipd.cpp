@@ -91,7 +91,7 @@ namespace Silent::Assets
         stream.Skip(9); // Unknown.
         uint32 modelInfosOffset    = stream.ReadUint32();
         uint32 modelBuffersOffset  = stream.ReadUint32();
-        uint8  texsOffset          = stream.ReadUint8();
+        uint8  textureCount        = stream.ReadUint8();
         stream.Skip(51); // Unknown. @todo
         uint32 modelOrderListOffset = stream.ReadUint32();
 

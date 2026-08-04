@@ -3,6 +3,7 @@
 #include "Renderer/Common/Resources/Layouts/Buffers.h"
 
 using namespace Silent::Renderer;
+
 namespace Silent::Assets
 {
     /** @brief GPU-compatible linear mesh. */
