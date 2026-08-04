@@ -139,85 +139,91 @@ namespace Silent::Assets
     {
         auto& executor = g_App.GetExecutor();
 
-        // Get asset.
-        const auto* assetPtr = Find(_assets, name);
-        if (assetPtr == nullptr)
+        // @lock Restrict load process access.
         {
-            Debug::Log(Fmt("Attempted to load missing streamable asset `{}`.", name),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return _loadFutures[""];
-        }
-        const auto& asset = *assetPtr;
+            auto lock = ParallelLock(_loadMutex);
 
-        // Check if loading or loaded.
-        if (asset->State == AssetState::Loading || asset->State == AssetState::Loaded)
-        {
-            return _loadFutures[asset->Name];
-        }
-
-        // Check if file is valid.
-        if (!stdfs::exists(asset->File))
-        {
-            Debug::Log(Fmt("Attempted to load streamable asset `{}` from missing file `{}`.",
-                           asset->Name, asset->File.string()),
-                       Debug::LogLevel::Error, Debug::LogMode::Debug);
-
-            asset->State = AssetState::Error;
-            return _loadFutures[asset->Name];
-        }
-
-        // Set loading state.
-        asset->State = AssetState::Loading;
-        _loadingCount++;
-
-        // Load asynchronously.
-        _loadFutures[asset->Name] = executor.AddTask([&]()
-        {
-            // Get loader.
-            const auto* loader = Find(ASSET_LOADERS, asset->Type);
-            if (loader == nullptr)
+            // Get asset.
+            const auto* assetPtr = Find(_assets, name);
+            if (assetPtr == nullptr)
             {
-                Debug::Log(Fmt("Attempted to load streamable asset `{}` with no loader for asset type {}.",
-                               asset->Name, (int)asset->Type),
-                           Debug::LogLevel::Error);
+                Debug::Log(Fmt("Attempted to load missing streamable asset `{}`.", name),
+                           Debug::LogLevel::Warning, Debug::LogMode::Debug);
+                return _loadFutures[""];
+            }
+            const auto& asset = *assetPtr;
 
-                asset->State = AssetState::Unloaded;
+            // Check if loading or loaded.
+            if (asset->State == AssetState::Loading ||
+                asset->State == AssetState::Loaded)
+            {
+                return _loadFutures[asset->Name];
+            }
+
+            // Check if file is valid.
+            if (!stdfs::exists(asset->File))
+            {
+                Debug::Log(Fmt("Attempted to load streamable asset `{}` from missing file `{}`.",
+                               asset->Name, asset->File.string()),
+                           Debug::LogLevel::Error, Debug::LogMode::Debug);
+
+                asset->State = AssetState::Error;
+                return _loadFutures[asset->Name];
+            }
+
+            // Set loading state.
+            asset->State = AssetState::Loading;
+            _loadingCount++;
+
+            // Load asynchronously.
+            _loadFutures[asset->Name] = executor.AddTask([&]()
+            {
+                // Get loader.
+                const auto* loader = Find(ASSET_LOADERS, asset->Type);
+                if (loader == nullptr)
+                {
+                    Debug::Log(Fmt("Attempted to load streamable asset `{}` with no loader for asset type {}.",
+                                   asset->Name, (int)asset->Type),
+                               Debug::LogLevel::Error);
+
+                    asset->State = AssetState::Unloaded;
+                    _loadingCount--;
+                    return;
+                }
+
+                // Load asset data from file.
+                //try
+                {
+                    asset->State = AssetState::Loaded;
+
+                    // Parse file.
+                    if (loader->Parse != nullptr)
+                    {
+                        asset->Data = loader->Parse(asset->File);
+                    }
+
+                    // Queue GPU resource upload.
+                    if (loader->QueueGpuUpload != nullptr)
+                    {
+                        loader->QueueGpuUpload(*asset);
+                    }
+
+                    Debug::Log(Fmt("Loaded streamable asset `{}`.", asset->Name),
+                               Debug::LogLevel::Info, Debug::LogMode::Debug);
+                }
+                //catch (const std::exception& ex)
+                //{
+                //    asset->Data  = nullptr;
+                //    asset->State = AssetState::Error;
+    //
+                //    Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()),
+                //               Debug::LogLevel::Error);
+                //}
                 _loadingCount--;
-                return;
-            }
+            });
 
-            // Load asset data from file.
-            //try
-            {
-                asset->State = AssetState::Loaded;
-
-                // Parse file.
-                if (loader->Parse != nullptr)
-                {
-                    asset->Data = loader->Parse(asset->File);
-                }
-
-                // Queue GPU resource upload.
-                if (loader->QueueGpuUpload != nullptr)
-                {
-                    loader->QueueGpuUpload(*asset);
-                }
-
-                Debug::Log(Fmt("Loaded streamable asset `{}`.", asset->Name),
-                           Debug::LogLevel::Info, Debug::LogMode::Debug);
-            }
-            //catch (const std::exception& ex)
-            //{
-            //    asset->Data  = nullptr;
-            //    asset->State = AssetState::Error;
-//
-            //    Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()),
-            //               Debug::LogLevel::Error);
-            //}
-            _loadingCount--;
-        });
-
-        return _loadFutures[asset->Name];
+            return _loadFutures[asset->Name];
+        }
     }
 
     const std::future<void>& AssetStreamer::Load(int idx)
@@ -235,48 +241,24 @@ namespace Silent::Assets
 
     void AssetStreamer::Unload(const std::string& name)
     {
-        // Get asset.
-        const auto* assetPtr = Find(_assets, name);
-        if (assetPtr == nullptr)
+        // @lock Restrict unload process access.
         {
-            Debug::Log(Fmt("Attempted to unload missing streamable asset `{}`.", name),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
-            return;
-        }
-        auto& asset = *assetPtr;
+            auto lock = ParallelLock(_unloadMutex);
 
-        // Check if already unloaded.
-        if (asset->State == AssetState::Unloaded)
-        {
-            return;
-        }
+            // Get asset.
+            const auto* assetPtr = Find(_assets, name);
+            if (assetPtr == nullptr)
+            {
+                Debug::Log(Fmt("Attempted to unload missing streamable asset `{}`.", name),
+                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
+                return;
+            }
+            auto& asset = *assetPtr;
 
-        // Queue GPU resource release.
-        const auto* loader = Find(ASSET_LOADERS, asset->Type);
-        if (loader != nullptr && loader->QueueGpuRelease != nullptr)
-        {
-            loader->QueueGpuRelease(*asset);
-        }
-
-        // Unload.
-        asset->State = AssetState::Unloaded;
-        asset->Data  = nullptr;
-
-        // Remove load future.
-        _loadFutures.erase(asset->Name);
-
-        Debug::Log(Fmt("Unloaded streamable asset `{}`.", asset->Name),
-                   Debug::LogLevel::Info, Debug::LogMode::Debug);
-    }
-
-    void AssetStreamer::UnloadAll()
-    {
-        // Run through registered assets.
-        for (auto& [keyName, asset] : _assets)
-        {
+            // Check if already unloaded.
             if (asset->State == AssetState::Unloaded)
             {
-                continue;
+                return;
             }
 
             // Queue GPU resource release.
@@ -292,6 +274,40 @@ namespace Silent::Assets
 
             // Remove load future.
             _loadFutures.erase(asset->Name);
+
+            Debug::Log(Fmt("Unloaded streamable asset `{}`.", asset->Name),
+                    Debug::LogLevel::Info, Debug::LogMode::Debug);
+        }
+    }
+
+    void AssetStreamer::UnloadAll()
+    {
+        // @lock Restrict unload process access.
+        {
+            auto lock = ParallelLock(_unloadMutex);
+
+            // Run through registered assets.
+            for (auto& [keyName, asset] : _assets)
+            {
+                if (asset->State == AssetState::Unloaded)
+                {
+                    continue;
+                }
+
+                // Queue GPU resource release.
+                const auto* loader = Find(ASSET_LOADERS, asset->Type);
+                if (loader != nullptr && loader->QueueGpuRelease != nullptr)
+                {
+                    loader->QueueGpuRelease(*asset);
+                }
+
+                // Unload.
+                asset->State = AssetState::Unloaded;
+                asset->Data  = nullptr;
+
+                // Remove load future.
+                _loadFutures.erase(asset->Name);
+            }
         }
     }
 

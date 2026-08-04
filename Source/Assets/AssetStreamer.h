@@ -80,6 +80,9 @@ namespace Silent::Assets
         std::atomic<int>                                        _loadingCount = 0;  /** Number of currently loading assets. */
         std::unordered_map<int, std::string>                    _names        = {}; /** Key = asset index, value = asset name. */
 
+        std::mutex _loadMutex   = {};
+        std::mutex _unloadMutex = {};
+
     public:
         // =============
         // Constructors
