@@ -197,10 +197,10 @@ namespace Silent::Game
             // Set clear color.
             renderer.SetClearColor(Color::Clear);
 
-            // Load `1ST/2ZANKO_E.TIM` ("There are violent and disturbing images...").
-            assets.Load("1ST/2ZANKO_E.TIM").wait();
+            // Load `CHARA/HERO.TIM` ("There are violent and disturbing images...").
+            assets.Load("CHARA/HERO.TIM").wait();
 
-            // Fade in `1ST/2ZANKO_E.TIM` with luma-multiply blending.
+            // Fade in `CHARA/HERO.TIM` with luma-multiply blending.
             static q23_8 fade = Q8(0.0f);
             if (fade >= Q8_COLOR(1.0f))
             {
@@ -208,8 +208,8 @@ namespace Silent::Game
             }
             else
             {
-                // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
-                auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
+                // Submit fullscreen sprite `CHARA/HERO.TIM.
+                auto sprite = Sprite2d::CreateSprite2d("CHARA/HERO.TIM", Vector2::Zero, Vector2::One,
                                                        SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
                                                        100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
                 renderer.SubmitSprite2d(sprite);

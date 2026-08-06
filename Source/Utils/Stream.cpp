@@ -67,7 +67,7 @@ namespace Silent::Utils
         _stream.seekg(pos, std::fstream::beg);
         if (_stream.fail())
         {
-            Debug::Log(Fmt("Failed to SetPosition binary file data stream to position {}.", pos), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to set position of binary file data stream to {}.", pos), Debug::LogLevel::Error);
         }
     }
 

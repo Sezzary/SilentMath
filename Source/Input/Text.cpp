@@ -78,7 +78,8 @@ namespace Silent::Input
         const auto* buffer = Find(_buffers, bufferId);
         if (buffer == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get text lines from missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get text lines from missing text buffer `{}`.", bufferId),
+                       Debug::LogLevel::Warning);
             return {};
         }
 
@@ -117,7 +118,8 @@ namespace Silent::Input
         const auto* buffer = Find(_buffers, bufferId);
         if (buffer == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get cursor position from missing text buffer `{}`.", bufferId), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to get cursor position from missing text buffer `{}`.", bufferId),
+                       Debug::LogLevel::Warning);
             return 0;
         }
 
@@ -128,7 +130,8 @@ namespace Silent::Input
     {
         if (lineWidthMax == 0 || charCountMax == 0)
         {
-            Debug::Log(Fmt("Attempted to insert invalid text buffer `{}` with max line width {} and character limit {}.", bufferId, lineWidthMax, charCountMax),
+            Debug::Log(Fmt("Attempted to insert invalid text buffer `{}` with max line width {} and character limit {}.",
+                           bufferId, lineWidthMax, charCountMax),
                        Debug::LogLevel::Warning);
             return;
         }

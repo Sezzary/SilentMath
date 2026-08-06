@@ -76,12 +76,12 @@ namespace Silent::Assets
         // =======
 
         std::unordered_map<std::string, std::unique_ptr<Asset>> _assets       = {}; /** Key = asset name, value = asset. */
-        std::unordered_map<std::string, std::future<void>>      _loadFutures  = {}; /** Key = asset name, value = load future. */
         std::atomic<int>                                        _loadingCount = 0;  /** Number of currently loading assets. */
         std::unordered_map<int, std::string>                    _names        = {}; /** Key = asset index, value = asset name. */
-
-        std::mutex _loadMutex   = {};
-        std::mutex _unloadMutex = {};
+        
+        std::unordered_map<std::string, std::future<void>> _loadFutures  = {}; /** Key = asset name, value = load future. */
+        std::mutex                                         _loadMutex    = {};
+        std::mutex                                         _unloadMutex  = {};
 
     public:
         // =============

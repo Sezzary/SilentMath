@@ -250,7 +250,7 @@ namespace Silent::Assets
             if (assetPtr == nullptr)
             {
                 Debug::Log(Fmt("Attempted to unload missing streamable asset `{}`.", name),
-                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
+                           Debug::LogLevel::Warning, Debug::LogMode::Debug);
                 return;
             }
             auto& asset = *assetPtr;
@@ -276,38 +276,16 @@ namespace Silent::Assets
             _loadFutures.erase(asset->Name);
 
             Debug::Log(Fmt("Unloaded streamable asset `{}`.", asset->Name),
-                    Debug::LogLevel::Info, Debug::LogMode::Debug);
+                       Debug::LogLevel::Info, Debug::LogMode::Debug);
         }
     }
 
     void AssetStreamer::UnloadAll()
     {
-        // @lock Restrict unload process access.
+        // Run through registered assets.
+        for (auto& [keyName, asset] : _assets)
         {
-            auto lock = ParallelLock(_unloadMutex);
-
-            // Run through registered assets.
-            for (auto& [keyName, asset] : _assets)
-            {
-                if (asset->State == AssetState::Unloaded)
-                {
-                    continue;
-                }
-
-                // Queue GPU resource release.
-                const auto* loader = Find(ASSET_LOADERS, asset->Type);
-                if (loader != nullptr && loader->QueueGpuRelease != nullptr)
-                {
-                    loader->QueueGpuRelease(*asset);
-                }
-
-                // Unload.
-                asset->State = AssetState::Unloaded;
-                asset->Data  = nullptr;
-
-                // Remove load future.
-                _loadFutures.erase(asset->Name);
-            }
+            Unload(keyName);
         }
     }
 
