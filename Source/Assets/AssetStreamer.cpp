@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Assets/Loaders/Anm.h"
+#include "Assets/Loaders/Dms.h"
 #include "Assets/Loaders/Ilm.h"
 #include "Assets/Loaders/Ipd.h"
 #include "Assets/Loaders/Plm.h"
@@ -50,6 +51,8 @@ namespace Silent::Assets
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
         { AssetType::Anm, { ParseAnm }                                        },
+        // @todo DAT.
+        { AssetType::Dms, { ParseDms }                                        },
         { AssetType::Ilm, { ParseIlm, QueueIlmGpuUpload, QueueIlmGpuRelease } },
         { AssetType::Ipd, { ParseIpd, QueueIpdGpuUpload, QueueIpdGpuRelease } },
         { AssetType::Plm, { ParsePlm, QueuePlmGpuUpload, QueuePlmGpuRelease } },

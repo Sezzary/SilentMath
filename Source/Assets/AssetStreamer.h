@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Assets/Loaders/Anm.h"
+#include "Assets/Loaders/Dms.h"
 #include "Assets/Loaders/Ilm.h"
 #include "Assets/Loaders/Ipd.h"
 #include "Assets/Loaders/Plm.h"
