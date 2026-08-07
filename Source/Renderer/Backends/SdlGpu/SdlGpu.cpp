@@ -137,7 +137,7 @@ namespace Silent::Renderer::SdlGpu
         GetTextures().Upload(*copyPass, "CHARA/HERO.TIM");
 
         //GetMeshes().Upload(*copyPass, "BG/APU0002.IPD");
-        GetMeshes().Upload(*copyPass, "ITEM/FOOK.TMD");
+        //GetMeshes().Upload(*copyPass, "ITEM/FOOK.TMD");
 
         GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, "");
         // @todo If atlas textures aren't updated and the texture is missing, for some reason

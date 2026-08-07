@@ -76,6 +76,14 @@ namespace Silent::Input
         bool HasUserActionInput = false;
     };
 
+    /** @brief Input state data for raw devices, actions, and analog axes. */
+    struct InputStates
+    {
+        DeviceStates         Device     = {};
+        std::vector<Action>  Actions    = {}; /** Index = `ActionId`. */
+        std::vector<Vector2> AnalogAxes = {}; /** Index = `AnalogAxisId`. */
+    };
+
     /** @brief Input manager. */
     class InputManager
     {
@@ -91,14 +99,12 @@ namespace Silent::Input
         // Fields
         // =======
 
-        Gamepad      _gamepad      = {};
-        Rumble       _rumble       = {};
-        DeviceStates _deviceStates = {};
+        Gamepad     _gamepad = {};
+        Rumble      _rumble  = {};
+        InputStates _states  = {};
 
-        BindingManager       _bindings   = BindingManager();
-        TextManager          _text       = TextManager();
-        std::vector<Action>  _actions    = {}; /** Index = `ActionId`. */
-        std::vector<Vector2> _analogAxes = {}; /** Index = `AnalogAxisId`. */
+        BindingManager _bindings = BindingManager();
+        TextManager    _text     = TextManager();
 
     public:
         // =============

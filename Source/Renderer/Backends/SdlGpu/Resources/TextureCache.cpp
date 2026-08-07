@@ -218,8 +218,8 @@ namespace Silent::Renderer::SdlGpu
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get missing GPU texture `{}`.", name),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            //Debug::Log(Fmt("Attempted to get missing GPU texture `{}`.", name),
+            //           Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return nullptr;
         }
 

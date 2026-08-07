@@ -18,15 +18,15 @@ namespace Silent::Assets
         Bin, /** "BINary"                        | Original logic overlay data. @unused PSX-specific. */
         Dms, /** "Demo Motion Sequence"?         | Cutscene data. */
         Anm, /** "ANiMation"                     | ILM animation data. */
-        Plm, /** "Prop Linked Mesh"?             | Global map prop model data. Identical to ILM. */
+        Plm, /** "Prop Linear Mesh"?             | Global map prop model data. Identical to ILM. */
         Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. */
-        Ilm, /** "Interactive Linked Mesh"?      | Skeletal character model data. Identical to PLM. */
+        Ilm, /** "Interactive Linear Mesh"?      | Skeletal character model data. Identical to PLM. */
         Tmd, /** "3D Model Data"                 | PsyQ SDK 3D model data.. */
-        Dat, /** "Demo dATa"?                    | Demo playback data. */
-        Kdt, /** "Key Data Tracker"?             | Konami MIDI tracker data. */
-        Cmp, /** "CoMPressed"                    | Compressed data. */
-        Xa,  /** "eXtended Audio"                | PSX ADPCM audio stream. */
-        Str, /** "video STReam"                  | PSX video stream. */
+        Dat, /** "Demo dATa"                     | Demo state or playback data. */
+        Kdt, /** "Key Data Tracker"              | Konami MIDI tracker data. */
+        Cmp, /** "CoMPressed"                    | Compressed data. @unused PSX-specific. */
+        Xa,  /** "eXtended Audio"                | PSX ADPCM audio stream. @unused PSX-specific. */
+        Str, /** "video STReam"                  | PSX video stream. @unused PSX-specific. */
         Png
     };
 

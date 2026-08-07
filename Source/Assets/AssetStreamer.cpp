@@ -32,7 +32,7 @@ namespace Silent::Assets
     {
         { ".TIM", AssetType::Tim },
         { ".VAB", AssetType::Vab },
-        { ".BIN", AssetType::Bin },
+        { ".BIN", AssetType::Bin }, // @unused PSX-specific.
         { ".DMS", AssetType::Dms },
         { ".ANM", AssetType::Anm },
         { ".PLM", AssetType::Plm },
@@ -41,9 +41,9 @@ namespace Silent::Assets
         { ".TMD", AssetType::Tmd },
         { ".DAT", AssetType::Dat },
         { ".KDT", AssetType::Kdt },
-        { ".CMP", AssetType::Cmp },
-        { ".XA",  AssetType::Xa  },
-        { ".STR", AssetType::Str },
+        { ".CMP", AssetType::Cmp }, // @unused PSX-specific.
+        { ".XA",  AssetType::Xa  }, // @unused PSX-specific.
+        { ".STR", AssetType::Str }, // @unused PSX-specific.
         { ".PNG", AssetType::Png }
     };
 
@@ -192,7 +192,7 @@ namespace Silent::Assets
                 }
 
                 // Load asset data from file.
-                //try
+                try
                 {
                     asset->State = AssetState::Loaded;
 
@@ -211,14 +211,14 @@ namespace Silent::Assets
                     Debug::Log(Fmt("Loaded streamable asset `{}`.", asset->Name),
                                Debug::LogLevel::Info, Debug::LogMode::Debug);
                 }
-                //catch (const std::exception& ex)
-                //{
-                //    asset->Data  = nullptr;
-                //    asset->State = AssetState::Error;
-    //
-                //    Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()),
-                //               Debug::LogLevel::Error);
-                //}
+                catch (const std::exception& ex)
+                {
+                    asset->State = AssetState::Error;
+                    asset->Data  = nullptr;
+    
+                    Debug::Log(Fmt("Failed to parse file for streamable asset `{}`: {}", asset->Name, ex.what()),
+                               Debug::LogLevel::Error);
+                }
                 _loadingCount--;
             });
 
