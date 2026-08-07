@@ -22,7 +22,7 @@ cbuffer PerFrame : register(b0, space3)
 static const float3 LUMA_16MM_FILM  = float3(0.2126f, 0.7152f, 0.0722f);
 static const float2 FREQ_SCALE      = float2(12.9898f, 78.233f);
 static const float  PHASE_AMPLITUDE = 43758.5453f;
-static const float  LUMA_SCALE      = 1.7f;
+static const float  LUMA_SCALE      = 1.0f;
 static const float  MDF             = 0.1f;
 
 float4 main(Input input) : SV_Target

@@ -32,13 +32,11 @@ namespace Silent::Game
     void GameFs_OptionBinLoad() // 0x80032C68
     {
         Fs_QueueStartReadTim(FILE_TIM_OPTION_TIM, FS_BUFFER_1, &g_ItemInspectionImg);
-        //Fs_QueueStartRead(FILE_VIN_OPTION_BIN, FS_BUFFER_1);
     }
 
     void GameFs_SaveLoadBinLoad() // 0x80032CA8
     {
         Fs_QueueStartReadTim(FILE_TIM_SAVELOAD_TIM, FS_BUFFER_1, &g_ItemInspectionImg);
-        //Fs_QueueStartRead(FILE_VIN_SAVELOAD_BIN, FS_BUFFER_1);
     }
 
     void func_80032CE8() // 0x80032CE8

@@ -192,6 +192,7 @@ namespace Silent::Utils
 
         int startPos = GetPosition();
 
+        // Reach `char`s.
         int limit = (size != NO_VALUE) ? size : (GetSize() - startPos);
         for (int i = 0; i < limit; i++)
         {
@@ -204,6 +205,7 @@ namespace Silent::Utils
             str += c;
         }
 
+        // If size is specified, set stream position to end of region.
         if (size != NO_VALUE)
         {
             SetPosition(startPos + size);

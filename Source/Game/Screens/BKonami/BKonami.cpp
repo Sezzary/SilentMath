@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/BackgroundDraw.h"
@@ -18,6 +19,7 @@
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Input;
 using namespace Silent::Renderer;
 
@@ -222,8 +224,7 @@ namespace Silent::Game
                         case 2:
                             if (g_GameWorkConst->config.autoLoad)
                             {
-                                Fs_QueueStartRead(FILE_VIN_SAVELOAD_BIN, FS_BUFFER_1);
-                                Fs_QueueStartSeek(FILE_TIM_SAVELOAD_TIM);
+                                g_App.GetAssets().Load("TIM/SAVELOAD.TIM");
                                 nextGameState = GameState_AutoLoadSavegame;
                             }
                             else

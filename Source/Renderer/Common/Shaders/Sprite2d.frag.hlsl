@@ -17,6 +17,11 @@ cbuffer PerObject : register(b0, space3)
     uint IsFastAlpha;
 };
 
+int DecodeColorIdx(float3 color)
+{
+    return int((color.r * Constants::UINT8_MAX) + 0.5f);
+}
+
 float4 main(Input input) : SV_Target
 {
     // Sample texture.
@@ -31,7 +36,7 @@ float4 main(Input input) : SV_Target
         PaletteAtlas.GetDimensions(paletteWidth, paletteHeight);
 
         // Decode color index from byte-based red channel.
-        int colorIdx = int((texColor.r * Constants::UINT8_MAX) + 0.5f);
+        int colorIdx = DecodeColorIdx(texColor);
 
         // Set indexed texture color.
         int2 paletteCoords = int2(colorIdx, input.PaletteIdx);
