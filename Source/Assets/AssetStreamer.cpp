@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Assets/Loaders/Anm.h"
+#include "Assets/Loaders/Dat.h"
 #include "Assets/Loaders/Dms.h"
 #include "Assets/Loaders/Ilm.h"
 #include "Assets/Loaders/Ipd.h"
@@ -51,7 +52,7 @@ namespace Silent::Assets
     static const auto ASSET_LOADERS = std::unordered_map<AssetType, AssetLoader>
     {
         { AssetType::Anm, { ParseAnm }                                        },
-        // @todo DAT.
+        { AssetType::Dat, { ParseDat }                                        },
         { AssetType::Dms, { ParseDms }                                        },
         { AssetType::Ilm, { ParseIlm, QueueIlmGpuUpload, QueueIlmGpuRelease } },
         { AssetType::Ipd, { ParseIpd, QueueIpdGpuUpload, QueueIpdGpuRelease } },
@@ -60,6 +61,17 @@ namespace Silent::Assets
         { AssetType::Tim, { ParseTim, QueueTimGpuUpload, QueueTimGpuRelease } },
         { AssetType::Tmd, { ParseTmd, QueueTmdGpuUpload, QueueTmdGpuRelease } }
     };
+
+    int AssetStreamer::GetIdx(const std::string& name)
+    {
+        const auto* asset = (*this)[name];
+        if (asset == nullptr)
+        {
+            return NO_VALUE;
+        }
+
+        return asset->Idx;
+    }
 
     std::vector<std::string> AssetStreamer::GetLoadedNames() const
     {
@@ -121,6 +133,7 @@ namespace Silent::Assets
             // Define asset entry.
             auto& asset = *_assets[name];
             asset.Name  = name;
+            asset.Idx   = i;
             asset.Type  = ASSET_TYPES.at(ext);
             asset.File  = file;
             asset.Size  = stdfs::file_size(file);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Assets/Loaders/Anm.h"
+#include "Assets/Loaders/Dat.h"
 #include "Assets/Loaders/Dms.h"
 #include "Assets/Loaders/Ilm.h"
 #include "Assets/Loaders/Ipd.h"
@@ -44,6 +45,7 @@ namespace Silent::Assets
     struct Asset
     {
         std::string             Name  = {};                   /** Filename relative to assets folder. */
+        int                     Idx   = 0;                    /** Registration index. */
         AssetType               Type  = AssetType::Tim;       /** File type. */
         stdfs::path             File  = {};                   /** Absolute system file path. */
         uint64                  Size  = 0;                    /** Raw file size in bytes. */
@@ -94,6 +96,13 @@ namespace Silent::Assets
         // ========
         // Getters
         // ========
+
+        /** @brief Gets the index of an asset by name.
+         *
+         * @param name Asset name.
+         * @return Asset index.
+         */
+        int GetIdx(const std::string& name);
 
         /** @brief Gets a vector containing the names of all loaded assets.
          *
