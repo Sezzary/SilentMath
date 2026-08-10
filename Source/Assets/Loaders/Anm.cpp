@@ -23,6 +23,14 @@ namespace Silent::Assets
                                          stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
+        // Parse Harry character map-specific keyframes. @todo
+        auto name = filename.filename().string();
+        if (name.starts_with("HB_M"))
+        {
+            throw std::runtime_error(Fmt("Failed to open ANM `{}`, which only contains Harry keyframes. Unimplemented.",
+                                         stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
+        }
+
         // Read header.
         int16  keyframesOffset  = stream.ReadInt16();
         uint8  rotCount         = stream.ReadUint8();

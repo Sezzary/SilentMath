@@ -93,7 +93,8 @@ namespace Silent::Input
         Mouse,
         Gamepad,
 
-        Printable
+        Printable,
+        Recordable
     };
 
     extern const std::vector<std::vector<ActionId>> ACTION_ID_GROUPS; /** Index = `ActionGroupId`. */
@@ -114,6 +115,7 @@ namespace Silent::Input
         int      _ticksActive     = 0;
         int      _prevTicksActive = 0;
         int      _ticksInactive   = 0;
+        bool     _isLocked        = false;
 
     public:
         // =============
@@ -195,6 +197,12 @@ namespace Silent::Input
          */
         bool IsReleased(float delaySecMax = FLT_MAX, float stateMin = 0.0f) const;
 
+        /** @brief Checks if the action is locked from user input.
+         *
+         * @return `true` if locked, `false` otherwise.
+         */
+        bool IsLocked() const;
+
         // ==========
         // Utilities
         // ==========
@@ -207,5 +215,11 @@ namespace Silent::Input
 
         /** @brief Resets the action state, clearing all values. */
         void Clear();
+
+        /** @brief Flags the action as locked from user input. */
+        void Lock();
+
+        /** @brief Unflags the action as locked from user input. */
+        void Unlock();
     };
 }

@@ -66,8 +66,8 @@ namespace Silent::Renderer
         if (input.GetAction(In::MouseClickMiddle).IsHeld())
         {
             const auto& mouseAxis = input.GetAnalogAxis(AnalogAxisId::Mouse);
-            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), -mouseAxis.x);
-            Position.Translate(Up, mouseAxis.y);
+            Position.Translate(Vector3::Normalize(Vector3::Cross(Direction, Up)), -mouseAxis.State.x);
+            Position.Translate(Up, mouseAxis.State.y);
         }
 
         // Rotate.

@@ -2,9 +2,11 @@
 #include "Assets/Loaders/Dat.h"
 
 #include "Application.h"
+#include "Input/Input.h"
 #include "Services/Filesystem.h"
 #include "Utils/Stream.h"
 
+using namespace Silent::Input;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
@@ -74,7 +76,7 @@ namespace Silent::Assets
             // @todo Read controller state.
             playStream.Skip(15);
 
-            int8 expectedGameState = playStream.ReadInt8();
+            int8 expectedGameState    = playStream.ReadInt8();
             int8 videoPresentInterval = playStream.ReadInt8();
 
             playStream.Skip(2);
@@ -82,11 +84,11 @@ namespace Silent::Assets
             uint32 randSeed = playStream.ReadUint32();
         }
 
-        // @todo Convert everything to a new standard somehow.
+        // @todo Convert everything for Silent Engine's input recorder.
 
         return std::make_shared<DatAsset>(DatAsset
         {
-
+            .FrameCount = (int)frameCount
         });
     }
 }

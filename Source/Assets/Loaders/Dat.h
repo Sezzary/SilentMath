@@ -1,11 +1,16 @@
 #pragma once
 
+#include "Input/Input.h"
+
+using namespace Silent::Input;
+
 namespace Silent::Assets
 {
     /** @brief DAT asset data. */
     struct DatAsset
     {
-        int Dummy = 0;
+        int                           FrameCount = 0;
+        std::vector<RecordedKeyframe> Keyframes  = {};
     };
 
     /** @brief Parses an DAT asset file.

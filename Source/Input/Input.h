@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Input/Action.h"
+#include "Input/AnalogAxis.h"
 #include "Input/Binding.h"
 #include "Input/Event.h"
+#include "Input/Recording.h"
 #include "Input/Text.h"
 
 namespace Silent::Input
@@ -22,23 +24,6 @@ namespace Silent::Input
         Low,
         High,
         LowAndHigh
-    };
-
-    /** @brief Analog axis IDs for specialized gameplay and raw device axes. */
-    enum class AnalogAxisId
-    {
-        /** Gameplay */
-
-        Move,
-        Camera,
-
-        /** Raw */
-
-        Mouse,
-        StickLeft,
-        StickRight,
-
-        Count
     };
 
     /** @brief Connected gamepad data. */
@@ -79,9 +64,9 @@ namespace Silent::Input
     /** @brief Input state data for raw devices, actions, and analog axes. */
     struct InputStates
     {
-        DeviceStates         Device     = {};
-        std::vector<Action>  Actions    = {}; /** Index = `ActionId`. */
-        std::vector<Vector2> AnalogAxes = {}; /** Index = `AnalogAxisId`. */
+        DeviceStates            Device     = {};
+        std::vector<Action>     Actions    = {}; /** Index = `ActionId`. */
+        std::vector<AnalogAxis> AnalogAxes = {}; /** Index = `AnalogAxisId`. */
     };
 
     /** @brief Input manager. */
@@ -105,12 +90,14 @@ namespace Silent::Input
 
         BindingManager _bindings = BindingManager();
         TextManager    _text     = TextManager();
+        Recorder       _recorder = Recorder(); // @todo Hook this in.
 
     public:
         // =============
         // Constructors
         // =============
 
+        /** @brief Creates a default uninitialized instance. */
         InputManager() = default;
 
         // ========
@@ -135,7 +122,7 @@ namespace Silent::Input
          * @param axisId Analog axis ID.
          * @return Analog axis reference.
          */
-        const Vector2& GetAnalogAxis(AnalogAxisId axisId) const;
+        const AnalogAxis& GetAnalogAxis(AnalogAxisId axisId) const;
 
         /** @brief Gets a reference to the mouse cursor's current screen position in percent.
          *
@@ -269,6 +256,15 @@ namespace Silent::Input
          * @param deviceId Device ID of the gamepad to disconnect.
          */
         void DisconnectGamepad(int deviceId);
+
+        /** @brief Locks a group of actions from user input.
+         *
+         * @param groupId ID of the action group to lock.
+         */
+        void LockActionGroup(ActionGroupId groupId);
+
+        /** @brief Unlocks all actions for user input. */
+        void UnlockActions();
 
         /** @brief Inserts a new text buffer.
          *
