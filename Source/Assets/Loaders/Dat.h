@@ -9,8 +9,7 @@ namespace Silent::Assets
     /** @brief DAT asset data. */
     struct DatAsset
     {
-        int                           FrameCount = 0;
-        std::vector<RecordedKeyframe> Keyframes  = {};
+        Recording InputRecording = {};
     };
 
     /** @brief Parses an DAT asset file.

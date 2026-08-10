@@ -14,6 +14,11 @@ namespace Silent::Input
         return _state;
     }
 
+    const Recording& Recorder::GetRecording() const
+    {
+        return _recording;
+    }
+
     void Recorder::Update(std::vector<Action>& actions, std::vector<AnalogAxis>& axes)
     {
         switch (_state)
@@ -26,32 +31,41 @@ namespace Silent::Input
             case RecorderState::Playing:
             {
                 // Check if playback is finished.
-                if (_frameIdx >= _frameCount)
+                if (_frameIdx >= _recording.FrameCount)
                 {
                     _state = RecorderState::StopPlaying;
                     return;
                 }
 
-                // Update active frame.
-                const auto& nextKeyframe = _keyframes[_keyframeIdx];
-                if (nextKeyframe.FrameIdx == _frameIdx)
+                // Clear actions and analog axes on initial frame.
+                if (_frameIdx == 0)
                 {
-                    for (const auto& [keyActionId, event] : nextKeyframe.Actions)
-                    {
-                        auto& activeEvent = _activeFrame.Actions[keyActionId];
-                        activeEvent       = event;
-                    }
-
-                    for (const auto& [keyAxisId, event] : nextKeyframe.AnalogAxes)
-                    {
-                        auto& activeEvent = _activeFrame.AnalogAxes[keyAxisId];
-                        activeEvent       = event;
-                    }
-
-                    _keyframeIdx++;
+                    ClearActionsAndAnalogAxes(actions, axes);
                 }
 
-                // Update action states.
+                // Update active frame.
+                if (_keyframeIdx < _recording.Keyframes.size())
+                {
+                    const auto& nextKeyframe = _recording.Keyframes[_keyframeIdx];
+                    if (nextKeyframe.FrameIdx == _frameIdx)
+                    {
+                        for (const auto& [keyActionId, event] : nextKeyframe.Actions)
+                        {
+                            auto& activeEvent = _activeFrame.Actions[keyActionId];
+                            activeEvent       = event;
+                        }
+    
+                        for (const auto& [keyAxisId, event] : nextKeyframe.AnalogAxes)
+                        {
+                            auto& activeEvent = _activeFrame.AnalogAxes[keyAxisId];
+                            activeEvent       = event;
+                        }
+    
+                        _keyframeIdx++;
+                    }
+                }
+
+                // Update locked action states.
                 for (const auto& [keyActionId, state] : _activeFrame.Actions)
                 {
                     auto& action = actions[(int)keyActionId];
@@ -61,7 +75,7 @@ namespace Silent::Input
                     }
                 }
 
-                // Update analog axis states.
+                // Update locked analog axis states.
                 for (const auto& [keyAxisId, state] : _activeFrame.AnalogAxes)
                 {
                     auto& axis = axes[(int)keyAxisId];
@@ -77,8 +91,14 @@ namespace Silent::Input
                 _activeFrame.FrameIdx = _frameIdx;
                 auto recKeyframe      = RecordedKeyframe{};
 
-                // Run through relevant action IDs.
-                for (const auto actionId : _relevantActionIds)
+                // Clear actions and analog axes on initial frame.
+                if (_frameIdx == 0)
+                {
+                    ClearActionsAndAnalogAxes(actions, axes);
+                }
+
+                // Run through valid action IDs.
+                for (const auto actionId : _validActionIds)
                 {
                     const auto& action      = actions[(int)actionId];
                     float&      activeState = _activeFrame.Actions[action.GetId()];
@@ -100,8 +120,8 @@ namespace Silent::Input
                     activeState = action.GetState();
                 }
 
-                // Run through relevant analog axis IDs.
-                for (auto axisId : _relevantAnalogAxisIds)
+                // Run through valid analog axis IDs.
+                for (auto axisId : _validAnalogAxisIds)
                 {
                     const auto& axis        = axes[(int)axisId];
                     auto&       activeState = _activeFrame.AnalogAxes[axis.GetId()];
@@ -127,19 +147,21 @@ namespace Silent::Input
                 if (!recKeyframe.Actions.empty() || !recKeyframe.AnalogAxes.empty())
                 {
                     recKeyframe.FrameIdx = _frameIdx;
-                    _keyframes.push_back(std::move(recKeyframe));
+                    _recording.Keyframes.push_back(std::move(recKeyframe));
                 }
                 break;
             }
             case RecorderState::StopPlaying:
             {
+                _state = RecorderState::None;
+
                 // Update action states.
                 for (const auto& [keyActionId, event] : _activeFrame.Actions)
                 {
                     auto& action = actions[(int)keyActionId];
                     if (action.IsLocked())
                     {
-                        action.Update(0.0f);
+                        action.Clear();
                     }
                 }
 
@@ -158,7 +180,8 @@ namespace Silent::Input
             }
             case RecorderState::StopRecording:
             {
-                // @todo Then fetch?
+                _state                = RecorderState::None;
+                _recording.FrameCount = _frameIdx + 1;
 
                 Debug::Log("Stopped input recording.");
                 return;
@@ -168,43 +191,39 @@ namespace Silent::Input
         _frameIdx++;
     }
 
-    void Recorder::Play(int frameCount, const std::vector<RecordedKeyframe>& recKeyframes,
-                        const std::set<ActionId>& relevantActionIds, const std::set<AnalogAxisId>& relevantAxisIds)
+    void Recorder::Play(const Recording& rec,
+                        const std::set<ActionId>& validActionIds, const std::set<AnalogAxisId>& validAxisIds)
     {
+        // Check if recorder is idle.
         if (_state != RecorderState::None)
         {
             Debug::Log(Fmt("Attempted to interrupt input recorder with new playback while in state {}.", (int)_state),
                        Debug::LogLevel::Error);
             return;
         }
-        Debug::Log("Input recording playback started.");
 
-        frameCount = std::clamp(frameCount, 0, frameCount);
+        // Check if recording is valid.
+        if (rec.FrameCount == NO_VALUE)
+        {
+            Debug::Log(Fmt("Attempted to play invalid input recording.", (int)_state), Debug::LogLevel::Error);
+            return;
+        }
 
         // Setup.
-        Reset();
-        _state                 = RecorderState::Playing;
-        _frameCount            = frameCount;
-        _keyframes             = recKeyframes;
-        _relevantActionIds     = relevantActionIds;
-        _relevantAnalogAxisIds = relevantAxisIds;
+        _state              = RecorderState::Playing;
+        _frameIdx           = 0;
+        _keyframeIdx        = 0;
+        _recording          = rec;
+        _validActionIds     = validActionIds;
+        _validAnalogAxisIds = validAxisIds;
+        InitializeActiveFrame();
 
-        // Set action event states for initial active frame.
-        for (auto actionId : relevantActionIds)
-        {
-            _activeFrame.Actions[actionId] = 0.0f;
-        }
-
-        // Set analog axis event states for initial active frame.
-        for (auto axisId : relevantAxisIds)
-        {
-            _activeFrame.AnalogAxes[axisId] = Vector2::Zero;
-        }
+        Debug::Log("Input recording playback started.");
     }
 
-    void Recorder::Record(std::vector<Action>& actions, std::vector<AnalogAxis>& axes,
-                          const std::set<ActionId>& relevantActionIds, const std::set<AnalogAxisId>& relevantAxisIds)
+    void Recorder::Record(const std::set<ActionId>& validActionIds, const std::set<AnalogAxisId>& validAxisIds)
     {
+        // Check if recorder is idle.
         if (_state != RecorderState::None)
         {
             Debug::Log(Fmt("Attempted to interrupt input recorder with new recording while in state {}.", (int)_state),
@@ -212,21 +231,19 @@ namespace Silent::Input
             return;
         }
 
+        // Setup.
+        _state              = RecorderState::Recording;
+        _frameIdx           = 0;
+        _keyframeIdx        = 0;
+        _recording          = {};
+        _validActionIds     = validActionIds;
+        _validAnalogAxisIds = validAxisIds;
+        InitializeActiveFrame();
+
         Debug::Log("Input recording started.");
-
-        Reset();
-        _state                 = RecorderState::Recording;
-        _relevantActionIds     = relevantActionIds;
-        _relevantAnalogAxisIds = relevantAxisIds;
-
-        for (auto actionId : relevantActionIds)
-        {
-            const auto& action      = actions[(int)actionId];
-            auto&       activeEvent = _activeFrame.Actions[action.GetId()];
-        }
     }
 
-    const std::vector<RecordedKeyframe>& Recorder::Stop()
+    void Recorder::Stop()
     {
         switch (_state)
         {
@@ -249,15 +266,43 @@ namespace Silent::Input
         }
     }
 
-    void Recorder::Reset()
+    void Recorder::InitializeActiveFrame()
     {
-        _state       = RecorderState::None;
-        _frameIdx    = 0;
-        _keyframeIdx = 0;
         _activeFrame = {};
-        _frameCount  = 0;
-        _keyframes.clear();
-        _relevantActionIds.clear();
-        _relevantAnalogAxisIds.clear();
+
+        // Set action event states.
+        for (auto actionId : _validActionIds)
+        {
+            _activeFrame.Actions[actionId] = 0.0f;
+        }
+
+        // Set analog axis event states.
+        for (auto axisId : _validAnalogAxisIds)
+        {
+            _activeFrame.AnalogAxes[axisId] = Vector2::Zero;
+        }
+    }
+
+    void Recorder::ClearActionsAndAnalogAxes(std::vector<Action>& actions, std::vector<AnalogAxis>& axes)
+    {
+        // Clear locked actions.
+        for (auto actionId : _validActionIds)
+        {
+            auto& action = actions[(int)actionId];
+            if (action.IsLocked())
+            {
+                action.Clear();
+            }
+        }
+
+        // Clear locked analog axes.
+        for (auto axisId : _validAnalogAxisIds)
+        {
+            auto& axis = axes[(int)axisId];
+            if (axis.IsLocked())
+            {
+                axis.State = Vector2::Zero;
+            }
+        }
     }
 }

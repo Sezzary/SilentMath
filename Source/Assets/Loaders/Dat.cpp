@@ -88,7 +88,7 @@ namespace Silent::Assets
 
         return std::make_shared<DatAsset>(DatAsset
         {
-            .FrameCount = (int)frameCount
+            
         });
     }
 }
