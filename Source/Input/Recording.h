@@ -15,12 +15,26 @@ namespace Silent::Input
         StopRecording
     };
 
+    /** @brief Recorded input action event. */
+    struct RecordedAction
+    {
+        ActionId ActionId = ActionId::Up;
+        float    State    = 0.0f;
+    };
+
+    /** @brief Recorded input action event. */
+    struct RecordedAnalogAxis
+    {
+        AnalogAxisId AnalogAxisId = AnalogAxisId::Move;
+        Vector2      State        = Vector2::Zero;
+    };
+
     /** @brief Recorded input event keyframe. */
     struct RecordedKeyframe
     {
-        int                                       FrameIdx   = 0;
-        std::unordered_map<ActionId, float>       Actions    = {}; /** Key = action ID, value = action state. */
-        std::unordered_map<AnalogAxisId, Vector2> AnalogAxes = {}; /** Key = analog axis ID, value = analog axis state. */
+        int                             FrameIdx   = 0;
+        std::vector<RecordedAction>     Actions    = {};
+        std::vector<RecordedAnalogAxis> AnalogAxes = {};
     };
 
     /** @brief Input recording. */
@@ -43,9 +57,9 @@ namespace Silent::Input
         int              _frameIdx    = 0;
         int              _keyframeIdx = 0;
 
-        Recording              _recording          = {};
-        std::set<ActionId>     _validActionIds     = {};
-        std::set<AnalogAxisId> _validAnalogAxisIds = {};
+        Recording                 _recording          = {};
+        std::vector<ActionId>     _validActionIds     = {};
+        std::vector<AnalogAxisId> _validAnalogAxisIds = {};
 
     public:
         // =============
@@ -81,15 +95,15 @@ namespace Silent::Input
 
         /** @brief Starts a new input recording playback.
          *
-         * @note Only relevant actions and analog axes, defined by `validActionIds` and `validAxisIds`, are played back.
-         * Additionally, they must be locked before commencing playback.
+         * @note Only relevant actions and analog axes, defined by `validActionIds` and `validAxisIds`, will be played
+         * back. Additionally, they must be locked before calling this method to commence playback.
          *
          * @param rec Input recording to play.
          * @param validActionIds Playable action IDs.
          * @param validAxisIds Playable analog axis IDs.
          */
         void Play(const Recording& rec,
-                  const std::set<ActionId>& validActionIds, const std::set<AnalogAxisId>& validAxisIds);
+                  const std::vector<ActionId>& validActionIds, const std::vector<AnalogAxisId>& validAxisIds);
 
         /** @brief Starts a new input recording.
          *
@@ -98,7 +112,7 @@ namespace Silent::Input
          * @param validActionIds Recordable action IDs.
          * @param validAxisIds Recordable analog axis IDs.
          */
-        void Record(const std::set<ActionId>& validActionIds, const std::set<AnalogAxisId>& validAxisIds);
+        void Record(const std::vector<ActionId>& validActionIds, const std::vector<AnalogAxisId>& validAxisIds);
 
         /** @brief Signals the recorder to stop playing or recording on the next tick. */
         void Stop();
@@ -107,6 +121,18 @@ namespace Silent::Input
         // ========
         // Helpers
         // ========
+
+        /** @brief Gets an active action event for the current frame.
+         *
+         * @return Active action event.
+         */
+        RecordedAction* GetActiveActionEvent(ActionId actionId);
+
+        /** @brief Gets an active analog axis event for the current frame.
+         *
+         * @return Active analog axis event.
+         */
+        RecordedAnalogAxis* GetActiveAnalogAxisEvent(AnalogAxisId axisId);
 
         /** @brief Initializes the active frame with active actions and analog axes. */
         void InitializeActiveFrame();

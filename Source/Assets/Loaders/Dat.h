@@ -10,6 +10,7 @@ namespace Silent::Assets
     struct DatAsset
     {
         Recording InputRecording = {};
+        uint      RandomSeed     = 0;
     };
 
     /** @brief Parses an DAT asset file.
