@@ -385,7 +385,7 @@ def main():
         HEIGHT = 400
 
         multiprocessing.freeze_support()
-        logging.basicConfig(level = logging.INFO)
+        logging.basicConfig(level=logging.INFO)
 
         customtkinter.set_appearance_mode("Dark")
 

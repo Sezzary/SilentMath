@@ -23,8 +23,7 @@ namespace Silent::Assets
         }
 
         // Read header.
-        stream.Skip(1);
-
+        uint8 isInitialized   = stream.ReadUint8(); // Unused.
         uint8 charaEntryCount = stream.ReadUint8();
         uint8 segmentCount    = stream.ReadUint8();
 

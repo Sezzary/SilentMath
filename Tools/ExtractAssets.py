@@ -384,9 +384,11 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
         idx = idx + 1
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     logging.info("Extracting assets...")
 
-    logging.basicConfig(level=logging.INFO)
+    # Setup.
     args          = _create_parser().parse_args()
     exe: BinaryIO = args.executable
     checksum      = _get_checksum(exe)

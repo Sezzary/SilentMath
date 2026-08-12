@@ -104,7 +104,7 @@ endif()
 # Generate shaders.
 add_custom_target(
     GenerateShaders ALL
-    COMMAND Python3::Interpreter "${CMAKE_CURRENT_SOURCE_DIR}/Tools/GenerateShaders.py" "${SYSTEM_NAME}"
+    COMMAND Python3::Interpreter "${CMAKE_CURRENT_SOURCE_DIR}/Tools/GenerateShaders.py" "-os" "${SYSTEM_NAME}"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 add_dependencies(${CMAKE_PROJECT_NAME} GenerateShaders)

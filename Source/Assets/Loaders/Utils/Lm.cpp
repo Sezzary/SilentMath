@@ -20,7 +20,7 @@ namespace Silent::Assets
     {
         constexpr int8   MAGIC          = 0x30;
         constexpr uint8  VER            = 6;
-        constexpr uint32 NAME_OFFSET    = 0x14;
+        constexpr uint32 NAME_OFFSET    = 20;
         constexpr int    MESH_NAME_SIZE = 8;
 
         const auto& fs = g_App.GetFilesystem();

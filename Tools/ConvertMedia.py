@@ -104,8 +104,9 @@ def _convert_str_to_mpg(ffmpeg_cmd: str, output_folder: Path, str_file: Path):
 
 def main():
     try:
+        logging.basicConfig(level=logging.INFO)
+
         # Setup.
-        logging.basicConfig(level = logging.INFO)
         args       = _create_parser().parse_args()
         ffmpeg_cmd = _get_ffmpeg_cmd()
 

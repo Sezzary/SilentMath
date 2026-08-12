@@ -363,9 +363,9 @@ def _parse_vab(vab_file: Path):
 
 def main():
     try:
-        # Setup.
-        logging.basicConfig(level = logging.INFO)
+        logging.basicConfig(level=logging.INFO)
 
+        # Setup.
         parser = _create_parser()
         args   = parser.parse_args()
         if not args.kdtFile and not args.vabFile:
