@@ -82,8 +82,10 @@ namespace Silent::Assets
             // Read body offset.
             uint32 bodyOffset = stream.ReadUint32();
 
+            // Store next mesh offset.
+            int nextMeshOffset = stream.GetPosition();
+
             // Set stream position to current mesh body.
-            int returnPos = stream.GetPosition();
             stream.SetPosition(bodyOffset);
 
             // Read mesh component counts.
@@ -238,8 +240,8 @@ namespace Silent::Assets
             // Collect mesh.
             meshes.push_back(std::move(mesh));
 
-            // Reset stream position.
-            stream.SetPosition(returnPos);
+            // Set stream position to next mesh.
+            stream.SetPosition(nextMeshOffset);
         }
 
         // Set stream position to mesh IDs.

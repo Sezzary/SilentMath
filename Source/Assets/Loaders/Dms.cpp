@@ -129,8 +129,8 @@ namespace Silent::Assets
             uint32 holdRangesOffset = stream.ReadUint32();
             uint32 keyframesOffset  = stream.ReadUint32();
 
-            // Store current stream position.
-            int streamPos = stream.GetPosition();
+            // Store next character entry offset.
+            int nextCharaEntryOffset = stream.GetPosition();
 
             // Set stream position to character hold ranges.
             stream.SetPosition(holdRangesOffset);
@@ -183,8 +183,8 @@ namespace Silent::Assets
                 .Keyframes  = std::move(charaKeyframes)
             });
 
-            // Restore stream position.
-            stream.SetPosition(streamPos);
+            // Set stream position to next character entry.
+            stream.SetPosition(nextCharaEntryOffset);
         }
 
         return std::make_shared<DmsAsset>(DmsAsset

@@ -261,8 +261,8 @@ namespace Silent::Assets
                 bool isGouraud     = mode & (int)TmdPrimitiveModes::Gouraud;
                 auto primType      = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
 
-                // Compute next primitive position.
-                int nextPrimPos = stream.GetPosition() + (ilen * sizeof(int32));
+                // Store next primitive offset.
+                int nextPrimOffset = stream.GetPosition() + (ilen * sizeof(int32));
 
                 // Read primitive.
                 switch (primType)
@@ -389,7 +389,7 @@ namespace Silent::Assets
                 }
 
                 // Set stream position to next primitive.
-                stream.SetPosition(nextPrimPos);
+                stream.SetPosition(nextPrimOffset);
             }
 
             // Collect indexed UVs.
