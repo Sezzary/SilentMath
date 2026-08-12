@@ -139,6 +139,10 @@ namespace Silent::Renderer::SdlGpu
                 meshes          = &data->Lm.Meshes;
                 break;
             }
+            default:
+            {
+                return;
+            }
         }
 
         for (const auto& mesh : *meshes)

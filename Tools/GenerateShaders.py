@@ -14,7 +14,6 @@ Arguments:
                      `Linux`   : Generates .SPV shaders.
 """
 
-import glob
 import logging
 import os
 import platform
@@ -23,7 +22,7 @@ import shutil
 import subprocess
 import sys
 
-from argparse import ArgumentParser, FileType
+from argparse import ArgumentParser
 from pathlib  import Path
 
 SHADERCROSS_NAME = "shadercross"
@@ -79,7 +78,7 @@ def _get_output_formats(build_os: str):
 
 def _get_shader_headers(source_path: Path):
     """
-    Get the HLSLI headers of a shader source.
+    Get the `HLSLI` headers of a shader source.
     """
     INCLUDE_REGEX = re.compile(r'#include\s+["<](.*?)[">]')
 
@@ -88,12 +87,12 @@ def _get_shader_headers(source_path: Path):
     # Collect nested header paths.
     stack = [source_path]
     while stack:
-        # Ignore collected header.
+        # Ignore header path if previously collected.
         current_path = stack.pop()
         if current_path in header_paths or not current_path.is_file():
             continue
 
-        # Ignore source path.
+        # Collect header path.
         if current_path != source_path:
             header_paths.add(current_path)
 
@@ -128,7 +127,7 @@ def main():
         os.makedirs(OUTPUT_PATH,      exist_ok=True)
         os.makedirs(TEMP_OUTPUT_PATH, exist_ok=True)
 
-        # Collect all shader sources and headers.
+        # Collect all shader sources.
         shader_sources = list(Path(SOURCES_PATH).rglob("*.hlsl"))
 
         # Build shaders to temporary output folder.

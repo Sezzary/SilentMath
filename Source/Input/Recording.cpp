@@ -155,7 +155,7 @@ namespace Silent::Input
                     }
                 }
 
-                // Add new recorded keyframe.
+                // Collect new recorded keyframe.
                 if (!recKeyframe.Actions.empty() || !recKeyframe.AnalogAxes.empty())
                 {
                     recKeyframe.FrameIdx = _frameIdx;

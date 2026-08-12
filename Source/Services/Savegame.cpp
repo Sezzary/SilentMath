@@ -340,7 +340,6 @@ namespace Silent::Services
 
     std::optional<Savegame> SavegameManager::FromSavegameBuffer(const std::vector<byte>& buffer) const
     {
-        // @heapalloc
         auto save = Savegame{};
 
         // Deserialize buffer.
@@ -356,8 +355,7 @@ namespace Silent::Services
 
     std::vector<byte> SavegameManager::ToSavegameBuffer(const Savegame& save) const
     {
-        // @heapalloc
-        auto buffer = std::vector<byte>();
+        auto buffer = std::vector<byte>{};
 
         // Serialize buffer.
         struct_pack::serialize_to(buffer, save);
