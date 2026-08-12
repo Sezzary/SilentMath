@@ -8,11 +8,11 @@ namespace Silent::Input
     /** @brief Input recorder state. */
     enum class RecorderState
     {
-        None,
-        Playing,
-        Recording,
-        StopPlaying,
-        StopRecording
+        None,         /** The recorder is inactive. */
+        Playing,      /** Plays back an input recording, updating locked and valid actions and analog axes. */
+        Recording,    /** Records valid action and analog axis input events. */
+        StopPlaying,  /** Stops playback, clearing valid action and analog axis states.  */
+        StopRecording /** Stops an input recording, finalizing the recorded data. */
     };
 
     /** @brief Recorded input action event. */
@@ -22,7 +22,7 @@ namespace Silent::Input
         float    State    = 0.0f;
     };
 
-    /** @brief Recorded input action event. */
+    /** @brief Recorded input analog axis event. */
     struct RecordedAnalogAxis
     {
         AnalogAxisId AnalogAxisId = AnalogAxisId::Move;
@@ -81,7 +81,8 @@ namespace Silent::Input
 
         /** @brief Gets the current recording.
          *
-         * @note Used to retrieve a recording after stopping.
+         * @note A full recording can only be retrieved on the tick after the recorder has been stopped.
+         * The first keyframe contains clear states of all valid actions and analog axes.
          *
          * @return Input recording.
          */
@@ -91,6 +92,11 @@ namespace Silent::Input
         // Utilities
         // ==========
 
+        /** @brief Handles the recorder state.
+         *
+         * @param actions Input actions to update during playback or read from while recording.
+         * @param axes Analog axes to update during playback or read from while recording.
+         */
         void Update(std::vector<Action>& actions, std::vector<AnalogAxis>& axes);
 
         /** @brief Starts a new input recording playback.
@@ -108,6 +114,7 @@ namespace Silent::Input
         /** @brief Starts a new input recording.
          *
          * @note Only relevant actions and analog axes, defined by `validActionIds` and `validAxisIds`, are recorded.
+         * The initial frame records clear states for all valid actions and analog axes as a keyframe.
          *
          * @param validActionIds Recordable action IDs.
          * @param validAxisIds Recordable analog axis IDs.

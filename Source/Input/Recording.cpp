@@ -171,20 +171,14 @@ namespace Silent::Input
                 for (const auto& activeEvent : _activeFrame.Actions)
                 {
                     auto& action = actions[(int)activeEvent.ActionId];
-                    if (action.IsLocked())
-                    {
-                        action.Clear();
-                    }
+                    action.Clear();
                 }
 
                 // Update analog axis states.
                 for (const auto& activeEvent : _activeFrame.AnalogAxes)
                 {
                     auto& axis = axes[(int)activeEvent.AnalogAxisId];
-                    if (axis.IsLocked())
-                    {
-                        axis.State = Vector2::Zero;
-                    }
+                    axis.State = Vector2::Zero;
                 }
 
                 Debug::Log("Stopped input recording playback.");
@@ -335,20 +329,14 @@ namespace Silent::Input
         for (auto actionId : _validActionIds)
         {
             auto& action = actions[(int)actionId];
-            if (action.IsLocked())
-            {
-                action.Clear();
-            }
+            action.Clear();
         }
 
         // Clear locked analog axes.
         for (auto axisId : _validAnalogAxisIds)
         {
             auto& axis = axes[(int)axisId];
-            if (axis.IsLocked())
-            {
-                axis.State = Vector2::Zero;
-            }
+            axis.State = Vector2::Zero;
         }
     }
 }

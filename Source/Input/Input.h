@@ -90,7 +90,7 @@ namespace Silent::Input
 
         BindingManager _bindings = BindingManager();
         TextManager    _text     = TextManager();
-        Recorder       _recorder = Recorder(); // @todo Hook this in.
+        Recorder       _recorder = Recorder();
 
     public:
         // =============
@@ -149,6 +149,14 @@ namespace Silent::Input
          * determined.
          */
         int GetGamepadBatteryPercentage() const;
+
+        /** @brief Gets the current input recording.
+         *
+         * @note A full recording can only be retrieved on the tick after the recorder has been stopped.
+         *
+         * @return Input recording.
+         */
+        const Recording& GetRecording() const;
 
         /** @brief Gets a text block from a text buffer.
          *
@@ -265,6 +273,27 @@ namespace Silent::Input
 
         /** @brief Unlocks all actions for user input. */
         void UnlockActions();
+
+        /** @brief Locks a group of analog axes from user input.
+         *
+         * @param groupId ID of the analog axes group to lock.
+         */
+        void LockAnalogAxisGroup(AnalogAxisGroupId groupId);
+
+        /** @brief Unlocks all analog axes for user input. */
+        void UnlockAnalogAxes();
+
+        /** @brief Signals the input recorder to start recording playback on the next tick.
+         *
+         * @param rec Input recording to play.
+         */
+        void StartPlayback(const Recording& rec);
+
+        /** @brief Signals the input recorder to start recording on the next tick. */
+        void StartRecording();
+
+        /** @brief Signals the input recorder to stop playing or recording on the next tick. */
+        void StopRecorder();
 
         /** @brief Inserts a new text buffer.
          *

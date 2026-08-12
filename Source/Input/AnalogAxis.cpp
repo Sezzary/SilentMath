@@ -23,12 +23,12 @@ namespace Silent::Input
         }
     };
 
-    const std::vector<AnalogAxisGroupId>  USER_ANALOG_AXIS_GROUP_IDS =
+    const std::vector<AnalogAxisGroupId> USER_ANALOG_AXIS_GROUP_IDS =
     {
         AnalogAxisGroupId::Gameplay
     };
 
-    const std::vector<AnalogAxisGroupId>  RAW_ANALOG_AXIS_GROUP_IDS =
+    const std::vector<AnalogAxisGroupId> RAW_ANALOG_AXIS_GROUP_IDS =
     {
         AnalogAxisGroupId::Raw
     };
