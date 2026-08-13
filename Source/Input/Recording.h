@@ -150,5 +150,14 @@ namespace Silent::Input
          * @param axes Input analog axes.
          */
         void ClearActionsAndAnalogAxes(std::vector<Action>& actions, std::vector<AnalogAxis>& axes);
+
+        // =======
+        // States
+        // =======
+
+        void StatePlaying(std::vector<Action>& actions, std::vector<AnalogAxis>& axes);
+        void StateRecording(std::vector<Action>& actions, std::vector<AnalogAxis>& axes);
+        void StateStopPlaying(std::vector<Action>& actions, std::vector<AnalogAxis>& axes);
+        void StateStopRecording();
     };
 }
