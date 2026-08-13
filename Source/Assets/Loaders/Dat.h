@@ -6,7 +6,7 @@ using namespace Silent::Input;
 
 namespace Silent::Assets
 {
-    /** @brief DAT input recording user options configuration. */
+    /** @brief DAT demo user options configuration. */
     struct DatOptionsConfig
     {
         int  SoundType         = 0;
@@ -26,7 +26,7 @@ namespace Silent::Assets
         int  PalLanguageId     = 0;
     };
 
-    /** @brief DAT input recording savegame. */
+    /** @brief DAT demo savegame. */
     struct DatSavegame
     {
 
@@ -43,7 +43,7 @@ namespace Silent::Assets
         std::vector<int>  ExpectedGameStates = {};
     };
 
-    /** @brief Parses an DAT asset file.
+    /** @brief Parses a DAT asset file.
      *
      * @param filename Absolute asset file path.
      * @return Parsed DAT asset data as a `void` pointer.

@@ -210,7 +210,7 @@ namespace Silent::Renderer::SdlGpu
     void TextureCache::Release(const std::string& name)
     {
         _textures.erase(name);
-        _textures.erase(name + "_P");
+        _textures.erase(name + PALETTE_ATLAS_SUFFIX);
     }
 
     Texture* TextureCache::operator[](const std::string& name)

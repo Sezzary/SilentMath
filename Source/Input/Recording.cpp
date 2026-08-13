@@ -161,6 +161,9 @@ namespace Silent::Input
                     recKeyframe.FrameIdx = _frameIdx;
                     _recording.Keyframes.push_back(std::move(recKeyframe));
                 }
+
+                // Increment playback frame count.
+                _recording.FrameCount++;
                 break;
             }
             case RecorderState::StopPlaying:
@@ -186,14 +189,14 @@ namespace Silent::Input
             }
             case RecorderState::StopRecording:
             {
-                _state                = RecorderState::None;
-                _recording.FrameCount = _frameIdx + 1;
+                _state = RecorderState::None;
 
                 Debug::Log("Stopped input recording.");
                 return;
             }
         }
 
+        // Increment active playback frame index.
         _frameIdx++;
     }
 

@@ -12,7 +12,7 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    /** @brief DAT input recording controller key bindings for input actions. */
+    /** @brief DAT demo controller key bindings for input actions. */
     struct DatControllerConfig
     {
         int Enter     = 0;
@@ -31,7 +31,7 @@ namespace Silent::Assets
         int Option    = 0;
     };
 
-    /** @brief DAT input recording PSX controller state. */
+    /** @brief DAT demo PSX controller state. */
     struct DatControllerState
     {
         int ButtonFlags = 0;
@@ -41,7 +41,7 @@ namespace Silent::Assets
         int LeftY       = 0;
     };
 
-    /** @brief DAT input recording frame. */
+    /** @brief DAT demo frame. */
     struct DatFrame
     {
         DatControllerState ControllerState   = {};
@@ -49,13 +49,46 @@ namespace Silent::Assets
         uint               RandomSeed        = 0;
     };
 
+    static RecordedAction* GetActiveActionEvent(RecordedKeyframe& activeFrame, ActionId actionId)
+    {
+        for (auto& activeEvent : activeFrame.Actions)
+        {
+            if (activeEvent.ActionId == actionId)
+            {
+                return &activeEvent;
+            }
+        }
+
+        return nullptr;
+    }
+
+    static RecordedAnalogAxis* GetActiveAnalogAxisEvent(RecordedKeyframe& activeFrame, AnalogAxisId axisId)
+    {
+        for (auto& activeEvent : activeFrame.AnalogAxes)
+        {
+            if (activeEvent.AnalogAxisId == axisId)
+            {
+                return &activeEvent;
+            }
+        }
+
+        return nullptr;
+    }
+
+    /** @brief Records an action event in a keyframe if the action's state has changed.
+     *
+     * @param recKeyframe Output recorded keyframe.
+     * @param activeFrame Active recording frame with states to compare against.
+     * @param actionId ID of the action to record.
+     * @param state Action state.
+     */
     const void SetRecordedAction(RecordedKeyframe& recKeyframe, RecordedKeyframe& activeFrame,
                                  ActionId actionId, float state)
     {
-        auto& activeEvent = activeFrame.Actions[(int)actionId];
+        auto* activeEvent = GetActiveActionEvent(activeFrame, actionId);
 
-        // Record action event if state changed.
-        if (activeEvent.State != state)
+        // Record action event if recording initial frame or state changed.
+        if (activeEvent == nullptr || activeEvent->State != state)
         {
             recKeyframe.Actions.push_back(RecordedAction
             {
@@ -64,17 +97,31 @@ namespace Silent::Assets
             });
 
             // Update active event.
-            activeEvent.State = state;
+            if (activeEvent == nullptr)
+            {
+                activeFrame.Actions.push_back(recKeyframe.Actions.back());
+            }
+            else
+            {
+                activeEvent->State = state;
+            }
         }
     }
 
+    /** @brief Records an analog axis event in a keyframe if the analog axis' state has changed.
+     *
+     * @param recKeyframe Output recorded keyframe.
+     * @param activeFrame Active recording frame with states to compare against.
+     * @param axisId ID of the analog axis to record.
+     * @param state Analog axis state.
+     */
     const void SetRecordedAnalogAxis(RecordedKeyframe& recKeyframe, RecordedKeyframe& activeFrame,
                                      AnalogAxisId axisId, const Vector2& state)
     {
-        auto& activeEvent = activeFrame.AnalogAxes[(int)axisId];
+        auto* activeEvent = GetActiveAnalogAxisEvent(activeFrame, axisId);
 
         // Record analog axis event if state changed.
-        if (activeEvent.State != state)
+        if (activeEvent == nullptr || activeEvent->State != state)
         {
             recKeyframe.AnalogAxes.push_back(RecordedAnalogAxis
             {
@@ -83,7 +130,14 @@ namespace Silent::Assets
             });
 
             // Update active event.
-            activeEvent.State = state;
+            if (activeEvent == nullptr)
+            {
+                activeFrame.AnalogAxes.push_back(recKeyframe.AnalogAxes.back());
+            }
+            else
+            {
+                activeEvent->State = state;
+            }
         }
     }
 
@@ -102,10 +156,10 @@ namespace Silent::Assets
         }
         else
         {
-            throw std::runtime_error(Fmt("Failed to open DAT `{}`. The file's name must start with `DEMO`, "
+            throw std::runtime_error(Fmt("Failed to open DAT `{}`. The filename must start with `DEMO`, "
                                          "which contains the header. "
                                          "The associated `PLAY` file, containing playback frames, "
-                                         "is read automatically.",
+                                         "is picked up automatically by the parser.",
                                          stdfs::relative(filename, fs.GetAssetsDirectory()).string()));
         }
 
@@ -129,8 +183,8 @@ namespace Silent::Assets
         auto contConfig = DatControllerConfig
         {
             .Enter     = stateStream.ReadUint16(),
-            .Cancel    = stateStream.ReadUint16(),
-            .Skip      = stateStream.ReadUint16(),
+            .Cancel    = stateStream.ReadUint16(), // Unused.
+            .Skip      = stateStream.ReadUint16(), // Unused.
             .Action    = stateStream.ReadUint16(),
             .Aim       = stateStream.ReadUint16(),
             .Light     = stateStream.ReadUint16(),
@@ -204,7 +258,7 @@ namespace Silent::Assets
         uint32 frameCount = stateStream.ReadUint32();
         uint16 randSeed   = stateStream.ReadUint16();
 
-        // Read recorded input frames.
+        // Read demo frames.
         auto frames = std::vector<DatFrame>{};
         frames.reserve(frameCount);
         for (int i = 0; i < frameCount; i++)
@@ -213,10 +267,10 @@ namespace Silent::Assets
             uint8  contStatus      = playStream.ReadUint8();  // Unused.
             uint8  contFlags       = playStream.ReadUint8();  // Unused.
             uint16 contButtonFlags = playStream.ReadUint16(); // Unused.
-            uint8  contRightX      = playStream.ReadInt8(); // } @todo Check. Originally `uint8`, not sure if this breaks it.
-            int8   contRightY      = playStream.ReadInt8(); // }
-            int8   contLeftX       = playStream.ReadInt8(); // }
-            int8   contLeftY       = playStream.ReadInt8(); // }
+            int8   contRightX      = playStream.ReadInt8();   // } @todo Check. Originally `uint8`, not sure if this breaks it.
+            int8   contRightY      = playStream.ReadInt8();   // }
+            int8   contLeftX       = playStream.ReadInt8();   // }
+            int8   contLeftY       = playStream.ReadInt8();   // }
 
             int8 expectedGameState    = playStream.ReadInt8();
             int8 videoPresentInterval = playStream.ReadInt8(); // Unused. @todo Check if this can be ignored.
@@ -225,7 +279,7 @@ namespace Silent::Assets
 
             uint32 randSeed = playStream.ReadUint32();
 
-            // Collect recorded input frame.
+            // Collect demo frame.
             frames.push_back(DatFrame
             {
                 .ControllerState = DatControllerState
@@ -246,7 +300,7 @@ namespace Silent::Assets
         auto expectedGameStates = std::vector<int>{};
         expectedGameStates.reserve(frameCount);
 
-        // Convert input recording.
+        // Create input recording.
         auto activeFrame  = RecordedKeyframe{};
         auto recKeyframes = std::vector<RecordedKeyframe>{};
         for (int i = 0; i < frames.size(); i++)
@@ -254,6 +308,7 @@ namespace Silent::Assets
             const auto& frame     = frames[i];
             const auto& contState = frame.ControllerState;
 
+            // Update active playback frame index.
             activeFrame.FrameIdx = i;
 
             // Create recorded keyframe.
@@ -280,7 +335,7 @@ namespace Silent::Assets
             // Collect recorded keyframe.
             if (!recKeyframe.Actions.empty() || !recKeyframe.AnalogAxes.empty())
             {
-                recKeyframe.FrameIdx = i;
+                recKeyframe.FrameIdx = activeFrame.FrameIdx;
                 recKeyframes.push_back(std::move(recKeyframe));
             }
 
