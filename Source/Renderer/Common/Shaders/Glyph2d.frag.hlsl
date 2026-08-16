@@ -18,11 +18,11 @@ cbuffer PerObject : register(b0, space3)
     float GradientUvMaxY;
 };
 
+static const float HIGHLIGHT = 0.97f;
+static const float LOWLIGHT  = 0.65f;
+
 float4 main(Input input) : SV_Target
 {
-    static const float HIGHLIGHT = 0.97f;
-    static const float LOWLIGHT  = 0.65f;
-
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 

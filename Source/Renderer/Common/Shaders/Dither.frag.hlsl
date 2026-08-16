@@ -1,5 +1,4 @@
 #include "Utils/Constants.hlsli"
-#include "Utils/Math.hlsli"
 
 // References:
 // https://gist.github.com/ompuco/3209f1b32213cec5b7bccf0e67caf3e9
