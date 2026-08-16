@@ -3,14 +3,15 @@
 *Silent Engine* is an in-progress cross-platform engine port designed to run the original *Silent Hill* on modern systems. It aims to be a monolithic, flexible, and future-proof foundation with modern standards that will enable long-term goals such as translation support and modding. Written from the ground-up with a high-quality, no-compromise codebase.
 
 *Q: CAN I PLAY THIS?*
-Not yet! While some core logic has been migrated from our decompilation repository, the priority is building a stable engine foundation before integrating gameplay and graphics. I prioritize maintainability over quick, observable progress I can show off; simply getting the game to "work" is secondary to avoiding long-term technical debt. Additionally, much of the decompiled source still requires documentation and deobfuscation. Despite what completion metrics might suggest, the decompiled game code is hardly in a usable state, and rushing the port while the base source is being refined would be a mistake. However, the boot process, FMV playback, and main menus are already functional, with the rest steadily underway.
+Not yet! While some core logic has been migrated from our decompilation repository, the priority is building a stable engine foundation before integrating gameplay and graphics. I prioritize maintainability over quick, observable progress I can show off; simply getting the game to "work" is secondary to avoiding long-term technical debt. Additionally, much of the decompiled source still requires documentation and deobfuscation. Despite what completion metrics might suggest, the decompiled game code is hardly in a usable state, and rushing the port while the base source is being refined would be a mistake. However, the boot process, FMV playback, and main menus are already roughly functional, with progress on various rebuilt subsystems steadily underway alongside research of the original PSX code.
 
 Decompilation progress can be tracked here:
 https://github.com/Vatuu/silent-hill-decomp
 
 ## Contributing
 
-Too early for this, but feel free to take a look around in the meantime! Active discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (look for the `#Multi-Platform Port (Silent Engine)` thread under the `#silent-hill` channel).
+Contributions to the decompilation repository are welcome. We need more people to help document, deobduscate, and conduct general research on the original PSX code.
+As for this project: it's still rather early to ramp up the effort, but you are free to take a look around in the meantime! Discussion and updates can be found on the [PS1/PS2 Decompilation](https://discord.gg/VwCPdfbxgm) Discord server (`#Multi-Platform Port (Silent Engine)` thread under the `#silent-hill` channel).
 
 ## Prospects
 
@@ -100,7 +101,7 @@ Build the LuaJIT dependency locally.
 cd Libraries/LuaJIT && make && cd ../..
 ```
 
-Set up a Python virtual environment. Make sure to activate it whenever working with any of the scripts found in `Tools`.
+Set up a Python virtual environment and activate it.
 ```
 python3 -m venv .venv
 source .venv/bin/activate
@@ -111,29 +112,14 @@ Install required Python packages.
 pip install -r Requirements.txt
 ```
 
-Generate the launcher. This small GUI utility automates asset extraction from a compatible user-provided ROM.
-```
-python3 Tools/GenerateLauncher.py
-```
-
 <details>
 <summary>Windows</summary>
 TODO: Steps incomplete.
-
-Build shaders.
-```
-python Tools/GenerateShaders.py Windows
-```
 </details>
 
 <details>
 <summary>macOS</summary>
 TODO: Steps incomplete.
-
-Build shaders.
-```
-python Tools/GenerateShaders.py macOS
-```
 </details>
 
 <details>
@@ -148,25 +134,17 @@ libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
 libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
 libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev
 ```
-
-Build shaders.
-```
-python Tools/GenerateShaders.py Linux
-```
 </details>
-
-### Transfer assets
-
-Copy the `Assets` folder from the root of the repository to the `Build` folder. Then, run the `Launcher` utility to extract all required assets from a 1.1 US release of the game.
-Original game assets are not provided. Your own ROM must be sourced.
 
 ### Build the code (Debug/Release)
 
-Available commands:
 - Configure Debug:`cmake -S . -B Build/Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug`
 - Build Debug: `cmake --build Build/Debug`
 
 - Configure Release:`cmake -S . -B Build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release`
 - Build Release: `cmake --build Build/Release`
 
-- Activate Python virtual environment: `source .venv/bin/activate`
+### Transfer assets
+
+Copy the `Assets` folder (containing custom supplementary files) from the root of the repository to the `Build` folder. Then, run the `Launcher` utility to extract all required original assets from a 1.1 US release of the game. Note this utility is rather barebones at the moment and works silently in the background when extraction begins.
+Original game assets are not provided and your own ROM must be sourced.

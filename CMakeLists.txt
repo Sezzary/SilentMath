@@ -93,13 +93,13 @@ else()
     set(SYSTEM_NAME "Unknown")
 endif()
 
-# Generate launcher. @todo
-#add_custom_target(
-#    GenerateLauncher ALL
-#    COMMAND Python3::Interpreter "${CMAKE_CURRENT_SOURCE_DIR}/Tools/GenerateLauncher.py""
-#    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-#)
-#add_dependencies(${CMAKE_PROJECT_NAME} GenerateLauncher)
+# Generate launcher.
+add_custom_target(
+    GenerateLauncher ALL
+    COMMAND Python3::Interpreter "${CMAKE_CURRENT_SOURCE_DIR}/Tools/GenerateLauncher.py"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+add_dependencies(${CMAKE_PROJECT_NAME} GenerateLauncher)
 
 # Generate shaders.
 add_custom_target(
