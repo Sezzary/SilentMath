@@ -168,12 +168,12 @@ namespace Silent::Utils
          */
         std::string ReadString();
 
-        /** @brief Reads a null-terminated string from the data stream and increments the file pointer.
+        /** @brief Reads a null-terminated C string from the data stream and increments the file pointer.
          *
          * @param size Optional fixed string size in bytes. If `NO_VALUE`, reads until a null character is encountered.
          * @return `std::string` data.
          */
-        std::string ReadNullString(int size = NO_VALUE);
+        std::string ReadCString(int size = NO_VALUE);
 
         /** @brief Reads a bitfield from the data stream and increments the file pointer.
          *

@@ -5,7 +5,7 @@
 #include "Assets/AssetStreamer.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
 #include "Renderer/Common/Constants.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Common/Resources/MeshCache.h"
 #include "Utils/Utils.h"
 
@@ -22,13 +22,13 @@ namespace Silent::Renderer::SdlGpu
     }
 
     void MeshCache::Upload(SDL_GPUCopyPass& copyPass,
-                           const std::vector<BufferVertex3d>& verts, const std::vector<uint16>& idxs,
+                           std::span<const BufferVertex3d> verts, std::span<const uint16> idxs,
                            const std::string& name)
     {
         // Check if mesh with same name already exists.
         if (Find(_meshes, name) != nullptr)
         {
-            Debug::Log(Fmt("Attempted to overwrite existing GPU mesh `{}`.", name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to upload existing GPU mesh `{}`.", name), Debug::LogLevel::Warning);
             return;
         }
 
@@ -49,7 +49,7 @@ namespace Silent::Renderer::SdlGpu
                 _idxAllocator.Deallocate(idxs.size());
             }
 
-            Debug::Log(Fmt("Failed to upload GPU mesh `{}`: out of memory.", name), Debug::LogLevel::Warning);
+            Debug::Log(Fmt("Attempted to upload GPU mesh `{}` with not enough memory.", name), Debug::LogLevel::Error);
             return;
         }
 
@@ -62,8 +62,8 @@ namespace Silent::Renderer::SdlGpu
         });
 
         // Update GPU vertex buffer.
-        _vertexBuffer.UpdateVertices(copyPass, ToSpan(verts), vertOffset);
-        _vertexBuffer.UpdateIdxs(copyPass, ToSpan(idxs), idxOffset);
+        _vertexBuffer.UpdateVertices(copyPass, verts, vertOffset);
+        _vertexBuffer.UpdateIdxs(copyPass, idxs, idxOffset);
     }
 
     void MeshCache::Upload(SDL_GPUCopyPass& copyPass, const std::string& assetName)
@@ -71,7 +71,7 @@ namespace Silent::Renderer::SdlGpu
         auto& assets = g_App.GetAssets();
 
         // Get asset.
-        const auto* asset = assets.GetAsset(assetName);
+        const auto* asset = assets[assetName];
         if (asset == nullptr)
         {
             Debug::Log(Fmt("Attempted to upload GPU meshes from invalid asset `{}`.", asset->Name),
@@ -83,18 +83,10 @@ namespace Silent::Renderer::SdlGpu
         switch (asset->Type)
         {
             case AssetType::Ilm:
-            {
-                UploadIlm(copyPass, *asset);
-                break;
-            }
             case AssetType::Ipd:
-            {
-                UploadIpd(copyPass, *asset);
-                break;
-            }
             case AssetType::Plm:
             {
-                UploadPlm(copyPass, *asset);
+                UploadLm(copyPass, *asset);
                 break;
             }
             case AssetType::Tmd:
@@ -124,31 +116,39 @@ namespace Silent::Renderer::SdlGpu
         _vertexBuffer.Release();
     }
 
-    void MeshCache::UploadIlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
+    void MeshCache::UploadLm(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
-        const auto data = asset.GetData<IlmAsset>();
-
-        for (int i = 0; i < data->Meshes.size(); i++)
+        const std::vector<LmMesh>* meshes = nullptr;
+        switch (asset.Type)
         {
-            const auto& mesh = data->Meshes[i];
-            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + mesh.BoneName);
+            case AssetType::Ilm:
+            {
+                const auto data = asset.GetData<IlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Ipd:
+            {
+                const auto data = asset.GetData<IpdAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Plm:
+            {
+                const auto data = asset.GetData<PlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            default:
+            {
+                return;
+            }
         }
-    }
 
-    void MeshCache::UploadPlm(SDL_GPUCopyPass& copyPass, const Asset& asset)
-    {
-        const auto data = asset.GetData<PlmAsset>();
-
-        // @todo
-        Debug::Log("Attempted to upload PLM GPU meshes: Unimplemented.", Debug::LogLevel::Warning);
-    }
-
-    void MeshCache::UploadIpd(SDL_GPUCopyPass& copyPass, const Asset& asset)
-    {
-        const auto data = asset.GetData<IpdAsset>();
-
-        // @todo
-        Debug::Log("Attempted to upload IPD GPU meshes: Unimplemented.", Debug::LogLevel::Warning);
+        for (const auto& mesh : *meshes)
+        {
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + mesh.Name);
+        }
     }
 
     void MeshCache::UploadTmd(SDL_GPUCopyPass& copyPass, const Asset& asset)
@@ -158,7 +158,7 @@ namespace Silent::Renderer::SdlGpu
         for (int i = 0; i < data->Meshes.size(); i++)
         {
             const auto& mesh = data->Meshes[i];
-            Upload(copyPass, mesh.Linear.Vertices, mesh.Linear.Idxs, asset.Name + "_" + std::to_string(i));
+            Upload(copyPass, ToSpan(mesh.Linear.Vertices), ToSpan(mesh.Linear.Idxs), asset.Name + "_" + std::to_string(i));
         }
     }
 }

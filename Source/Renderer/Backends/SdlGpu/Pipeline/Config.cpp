@@ -2,7 +2,7 @@
 #include "Renderer/Backends/SdlGpu/Pipeline/Config.h"
 
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 
 namespace Silent::Renderer::SdlGpu
@@ -40,6 +40,15 @@ namespace Silent::Renderer::SdlGpu
             .format      = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
             .offset      = sizeof(Vector3) +
                            sizeof(Vector2)
+        },
+        // `BufferVertex2d::PaletteIdx`
+        {
+            .location    = 3,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_INT,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector2) +
+                           sizeof(Color)
         }
     };
 
@@ -85,6 +94,16 @@ namespace Silent::Renderer::SdlGpu
             .offset      = sizeof(Vector3) +
                            sizeof(Vector3) +
                            sizeof(Vector2)
+        },
+        // `BufferVertex3d::PaletteIdx
+        {
+            .location    = 4,
+            .buffer_slot = 0,
+            .format      = SDL_GPU_VERTEXELEMENTFORMAT_INT,
+            .offset      = sizeof(Vector3) +
+                           sizeof(Vector3) +
+                           sizeof(Vector2) +
+                           sizeof(Color)
         }
     };
 
@@ -110,7 +129,7 @@ namespace Silent::Renderer::SdlGpu
             .alpha_blend_op        = SDL_GPU_BLENDOP_ADD,
             .enable_blend          = true
         },
-        // Fast alpha. Requires `IsFastAlpha` shader uniform set to `true`.
+        // Fast alpha. @note Requires `IsFastAlpha` shader uniform set to `true`.
         {
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
@@ -193,7 +212,7 @@ namespace Silent::Renderer::SdlGpu
             .Stage                    = RenderStage::Sprite2d,
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Sprite2d.frag",
-            .FragShaderSamplerCount   = 1,
+            .FragShaderSamplerCount   = 2,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
@@ -231,7 +250,7 @@ namespace Silent::Renderer::SdlGpu
             .VertShaderName           = "Primitive3d.vert",
             .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Model.frag",
-            .FragShaderSamplerCount   = 1,
+            .FragShaderSamplerCount   = 2,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_3D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_3D_ATTRIBS,
@@ -252,6 +271,20 @@ namespace Silent::Renderer::SdlGpu
         // Effects
         // ========
 
+        // Luma fade.
+        {
+            .Stage                    = RenderStage::LumaFade,
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "LumaFade.frag",
+            .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
+            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes               =
+            {
+                BlendMode::Opaque
+            }
+        },
         // Dither.
         {
             .Stage                    = RenderStage::Dither,
@@ -262,23 +295,36 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         },
-        // Fade.
+        // Film grain.
         {
-            .Stage                    = RenderStage::Fade,
+            .Stage                    = RenderStage::FilmGrain,
             .VertShaderName           = "Primitive2d.vert",
-            .FragShaderName           = "LumaFade.frag",
+            .FragShaderName           = "FilmGrain.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
+            }
+
+        },
+        // Vignette.
+        {
+            .Stage                    = RenderStage::Vignette,
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Vignette.frag",
+            .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
+            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes               =
+            {
+                BlendMode::Opaque
             }
         },
         // CRT.
@@ -292,23 +338,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
-            }
-        },
-        // Vignette.
-        {
-            .Stage                    = RenderStage::Vignette,
-            .VertShaderName           = "Primitive2d.vert",
-            .FragShaderName           = "Vignette.frag",
-            .FragShaderSamplerCount   = 1,
-            .FragShaderUniBufferCount = 1,
-            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
-            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
-            .BlendModes               =
-            {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         },
 
@@ -327,8 +357,7 @@ namespace Silent::Renderer::SdlGpu
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =
             {
-                BlendMode::Opaque,
-                BlendMode::Wireframe
+                BlendMode::Opaque
             }
         }
     };

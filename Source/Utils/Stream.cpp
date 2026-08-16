@@ -67,7 +67,7 @@ namespace Silent::Utils
         _stream.seekg(pos, std::fstream::beg);
         if (_stream.fail())
         {
-            Debug::Log(Fmt("Failed to SetPosition binary file data stream to position {}.", pos), Debug::LogLevel::Error);
+            Debug::Log(Fmt("Failed to set position of binary file data stream to {}.", pos), Debug::LogLevel::Error);
         }
     }
 
@@ -183,7 +183,7 @@ namespace Silent::Utils
         return str;
     }
 
-    std::string Stream::ReadNullString(int size)
+    std::string Stream::ReadCString(int size)
     {
         constexpr int BUFFER_SIZE = 32;
 
@@ -192,20 +192,20 @@ namespace Silent::Utils
 
         int startPos = GetPosition();
 
-        bool isNullHit = false;
-        int  limit     = (size != NO_VALUE) ? size : (GetSize() - startPos);
-        for (int i = 0; i < limit; ++i)
+        // Reach `char`s.
+        int limit = (size != NO_VALUE) ? size : (GetSize() - startPos);
+        for (int i = 0; i < limit; i++)
         {
             char c = ReadByte();
             if (c == '\0') 
             {
-                isNullHit = true;
                 break;
             }
 
             str += c;
         }
 
+        // If size is specified, set stream position to end of region.
         if (size != NO_VALUE)
         {
             SetPosition(startPos + size);

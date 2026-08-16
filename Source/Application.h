@@ -4,10 +4,10 @@
 #include "Audio/Audio.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
-#include "Savegame/Savegame.h"
 #include "Services/Clock.h"
 #include "Services/Filesystem.h"
 #include "Services/Options.h"
+#include "Services/Savegame.h"
 #include "Services/Toasts.h"
 #include "Utils/Font.h"
 #include "Utils/Parallel.h"
@@ -20,7 +20,6 @@ namespace Silent
     using namespace Audio;
     using namespace Input;
     using namespace Renderer;
-    using namespace Savegame;
     using namespace Services;
     using namespace Utils;
 
@@ -56,10 +55,10 @@ namespace Silent
         bool        _isPaused = false;
         bool        _quit     = false;
         
-        ApplicationWork   _work            = {};
-        ParallelExecutor  _renderExecutor  = ParallelExecutor(1);
-        std::future<void> _prevFrameFuture = std::future<void>();
-        Vector2           _mouseWheelAxis  = Vector2::Zero;
+        ApplicationWork   _work           = {};
+        ParallelExecutor  _renderExecutor = ParallelExecutor(1);
+        std::future<void> _renderFuture   = std::future<void>();
+        Vector2           _mouseWheelAxis = Vector2::Zero;
 
     public:
         // =============
@@ -187,6 +186,18 @@ namespace Silent
 
         /** @brief Toggles the debug menu on and off. */
         void ToggleDebugMenu();
+
+        /** @brief Gets text in the system clipboard.
+         *
+         * @return Clipboard text.
+         */
+        std::string GetClipboardText();
+
+        /** @brief Sets text in the system clipboard.
+         *
+         * @param text Text to set.
+         */
+        void SetClipboardText(const std::string& text);
 
     private:
         // ========

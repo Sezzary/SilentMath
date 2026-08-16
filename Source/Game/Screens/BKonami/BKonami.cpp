@@ -5,6 +5,7 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Game/Bodyprog/Demo.h"
 #include "Game/Bodyprog/MemCard.h"
 #include "Game/Bodyprog/Screen/BackgroundDraw.h"
@@ -18,6 +19,7 @@
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Input;
 using namespace Silent::Renderer;
 
@@ -222,8 +224,7 @@ namespace Silent::Game
                         case 2:
                             if (g_GameWorkConst->config.autoLoad)
                             {
-                                Fs_QueueStartRead(FILE_VIN_SAVELOAD_BIN, FS_BUFFER_1);
-                                Fs_QueueStartSeek(FILE_TIM_SAVELOAD_TIM);
+                                g_App.GetAssets().Load("TIM/SAVELOAD.TIM");
                                 nextGameState = GameState_AutoLoadSavegame;
                             }
                             else
@@ -302,7 +303,7 @@ namespace Silent::Game
 
         // Submit fullscreen sprite `1ST/KONAMI.TIM`.
         auto sprite = Sprite2d::CreateSprite2d("1ST/KONAMI.TIM", Vector2::Zero, Vector2::One,
-                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - Q8_TO_FLT(g_ScreenFadeProgress), 0, 1);
@@ -314,7 +315,7 @@ namespace Silent::Game
 
         // Submit fullscreen sprite `1ST/KONAMI2.TIM`.
         auto sprite = Sprite2d::CreateSprite2d("1ST/KONAMI2.TIM", Vector2::Zero, Vector2::One,
-                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - Q8_TO_FLT(g_ScreenFadeProgress), 0, 1);

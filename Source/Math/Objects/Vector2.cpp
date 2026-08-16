@@ -167,6 +167,12 @@ namespace Silent::Math
         return *this;
     }
 
+    Vector2& Vector2::operator/=(const Vector2& vec)
+    {
+        ToGlmVec2() /= vec.ToGlmVec2();
+        return *this;
+    }
+
     Vector2& Vector2::operator/=(float scalar)
     {
         ToGlmVec2() /= scalar;

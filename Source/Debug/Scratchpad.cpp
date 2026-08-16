@@ -32,6 +32,8 @@ namespace Silent::Debug
             auto& renderer = g_App.GetRenderer();
             auto& fonts    = g_App.GetFonts();
 
+            return;
+
             float s = 5.0f;
             auto col = Color(0.4f,0.4f,0);
             auto pg = Debug::Page::Renderer;
@@ -54,7 +56,7 @@ namespace Silent::Debug
             // Bottom Face (Y = -5.0)
             renderer.SubmitDebugTriangle({-s, -s, -s}, { s, -s, -s}, { s, -s,  s}, col, pg); // Tri 1
 
-            return;
+            //return;
 
             Msg("Does this work?");
 
@@ -68,14 +70,14 @@ namespace Silent::Debug
             auto cursorPos    = Vector2(RoundToStep(input.GetCursorPosition().x, 100.0f / 320.0f),
                                         RoundToStep(input.GetCursorPosition().y, 100.0f / 240.0f));
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/BG_ETC.TIM", Vector2(0.0f, 64.0f / 256.0f), Vector2(32.0f / 128.0f, 96.0f / 256.0f),
-                                                         SCREEN_SPACE_RES / 2.0f, 0.0f, Vector2(1.0f, 0.75f), Color::White,
+                                                         SCREEN_SPACE_RES / 2.0f, 0.0f, Vector2(1.0f, 0.75f), Color::White, 0,
                                                          0, AlignMode::Center, ScaleMode::HorizontalEdge, BlendMode::Alpha);
             renderer.SubmitSprite2d(cursorSprite);
 
             return;
 
             //auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
-            //                                        Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White,
+            //                                        Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White, 0,
             //                                        1100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
             //renderer.SubmitSprite2d(sprite0);
 
@@ -154,7 +156,7 @@ namespace Silent::Debug
                                      []() { Debug::Log("Releasing!"); });
 
             // Check if debug menu is enabled.
-            if (!Debug::g_Work.EnablePowerMenu)
+            if (!Debug::g_Work.EnableDebugMenu)
             {
                 but.Update(input.GetCursorPosition());
             }*/

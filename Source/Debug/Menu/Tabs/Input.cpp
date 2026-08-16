@@ -106,7 +106,7 @@ namespace Silent::Debug
                     ImGui::TableSetColumnIndex(0);
                     ImGui::Text("Move:", 0, 0);
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("(%.2f, %.2f)", moveAxis.x, moveAxis.y, 0, 1);
+                    ImGui::Text("(%.2f, %.2f)", moveAxis.State.x, moveAxis.State.y, 0, 1);
 
                     // `Camera axis` info.
                     const auto& camAxis = input.GetAnalogAxis(AnalogAxisId::Camera);
@@ -114,7 +114,7 @@ namespace Silent::Debug
                     ImGui::TableSetColumnIndex(0);
                     ImGui::Text("Camera:", 1, 0);
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("(%.2f, %.2f)", camAxis.x, camAxis.y, 1, 1);
+                    ImGui::Text("(%.2f, %.2f)", camAxis.State.x, camAxis.State.y, 1, 1);
 
                     // `Mouse axis` info.
                     const auto& mouseAxis = input.GetAnalogAxis(AnalogAxisId::Mouse);
@@ -122,7 +122,7 @@ namespace Silent::Debug
                     ImGui::TableSetColumnIndex(0);
                     ImGui::Text("Mouse:", 2, 0);
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("(%.2f, %.2f)", mouseAxis.x, mouseAxis.y, 2, 1);
+                    ImGui::Text("(%.2f, %.2f)", mouseAxis.State.x, mouseAxis.State.y, 2, 1);
 
                     // `Left stick axis` info.
                     const auto& leftStickAxis = input.GetAnalogAxis(AnalogAxisId::StickLeft);
@@ -130,7 +130,7 @@ namespace Silent::Debug
                     ImGui::TableSetColumnIndex(0);
                     ImGui::Text("Left stick:", 3, 0);
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("(%.2f, %.2f)", leftStickAxis.x, leftStickAxis.y, 3, 1);
+                    ImGui::Text("(%.2f, %.2f)", leftStickAxis.State.x, leftStickAxis.State.y, 3, 1);
 
                     // `Right stick axis` info.
                     const auto& rightStickAxis = input.GetAnalogAxis(AnalogAxisId::StickRight);
@@ -138,7 +138,7 @@ namespace Silent::Debug
                     ImGui::TableSetColumnIndex(0);
                     ImGui::Text("Right stick:", 4, 0);
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("(%.2f, %.2f)", rightStickAxis.x, rightStickAxis.y, 4, 1);
+                    ImGui::Text("(%.2f, %.2f)", rightStickAxis.State.x, rightStickAxis.State.y, 4, 1);
 
                     ImGui::EndTable();
                 }

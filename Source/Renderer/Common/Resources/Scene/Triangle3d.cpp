@@ -7,7 +7,7 @@
 namespace Silent::Renderer
 {
     Triangle3d Triangle3d::CreateTriangle3d(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2,
-                                            const Color& color,
+                                            const Color& color, int paletteIdx,
                                             BlendMode blendMode)
     {
         auto normal = GetNormal(vert0, vert1, vert2);
@@ -18,21 +18,24 @@ namespace Silent::Renderer
             {
                 Triangle3dVertex
                 {
-                    .Position = vert0,
-                    .Normal   = normal,
-                    .Col      = color
+                    .Position   = vert0,
+                    .Normal     = normal,
+                    .Col        = color,
+                    .PaletteIdx = paletteIdx
                 },
                 Triangle3dVertex
                 {
-                    .Position = vert1,
-                    .Normal   = normal,
-                    .Col      = color
+                    .Position   = vert1,
+                    .Normal     = normal,
+                    .Col        = color,
+                    .PaletteIdx = paletteIdx
                 },
                 Triangle3dVertex
                 {
-                    .Position = vert2,
-                    .Normal   = normal,
-                    .Col      = color
+                    .Position   = vert2,
+                    .Normal     = normal,
+                    .Col        = color,
+                    .PaletteIdx = paletteIdx
                 },
             },
             .BlendMd = blendMode

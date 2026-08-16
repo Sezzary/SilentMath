@@ -7,7 +7,7 @@ using namespace Silent::Services;
 
 namespace Silent::Input
 {
-    const std::vector<std::vector<ActionId>> ACTION_ID_GROUPS
+    const std::vector<std::vector<ActionId>> ACTION_ID_GROUPS =
     {
         /** General */
         {
@@ -100,6 +100,25 @@ namespace Silent::Input
             In::Comma,
             In::Period,
             In::Slash
+        },
+        /** Recordable */
+        {
+            In::Up,
+            In::Down,
+            In::Left,
+            In::Right,
+            In::Enter,
+            In::Action,
+            In::Aim,
+            In::Light,
+            In::Run,
+            In::View,
+            In::StepLeft,
+            In::StepRight,
+            In::Pause,
+            In::Item,
+            In::Map,
+            In::Option
         }
     };
 
@@ -194,6 +213,11 @@ namespace Silent::Input
         return _state <= stateMin && _prevState > stateMin && _ticksActive <= delayTicksMax;
     }
 
+    bool Action::IsLocked() const
+    {
+        return _isLocked;
+    }
+
     void Action::Update(float state)
     {
         _prevState = _state;
@@ -232,5 +256,15 @@ namespace Silent::Input
         _ticksActive     = 0;
         _prevTicksActive = 0;
         _ticksInactive   = 0;
+    }
+
+    void Action::Lock()
+    {
+        _isLocked = true;
+    }
+
+    void Action::Unlock()
+    {
+        _isLocked = false;
     }
 }

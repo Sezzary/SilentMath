@@ -23,6 +23,7 @@ VGMSTREAM_NAME          = "vgmstream-cli"
 CONVERT_SOUND_BANK_NAME = "convertSoundBank.py"
 KDT_TOOL_NAME           = "kdt-tool.py"
 EXTRACT_ASSETS_NAME     = "ExtractAssets.py"
+CONVERT_MEDIA_NAME      = "ConvertMedia.py"
 CONVERT_MUSIC_SEQ_NAME  = "ConvertMusicSequence.py"
 BASE_PATH               = Path(sys.executable).parent
 TEMP_BASE_PATH          = Path(getattr(sys, '_MEIPASS', os.path.abspath(".")))
@@ -108,6 +109,20 @@ def _get_vgmstream_exe():
         os.chmod(vgmstream_exe, 0o755)
 
     return vgmstream_exe
+
+def _get_convert_media_py():
+    """
+    Get the `ConvertMedia.py` script to use.
+    """
+    # Define script path.
+    convert_media_py = TEMP_BASE_PATH / CONVERT_MEDIA_NAME
+
+    # Set permissions.
+    system_os = platform.system().lower()
+    if system_os in ["darwin", "linux"]:
+        os.chmod(convert_media_py, 0o755)
+
+    return convert_media_py
 
 def _get_convert_music_seq_py():
     """
@@ -251,6 +266,10 @@ def _convert_audio_and_video():
     logging.info("Converting audio and video...")
 
     # Setup.
+    python_cmd       = _get_python_cmd()
+    convert_media_py = _get_convert_media_py()
+
+    # Setup.
     ffmpeg_cmd = get_ffmpeg_cmd()
 
     # Create folders.
@@ -259,42 +278,20 @@ def _convert_audio_and_video():
 
     # Run through `XA` and `STR` files.
     for _file in (ASSETS_PATH / "XA").iterdir():
-        # Run command.
+        # Define output folder.
         if _file.suffix == "XA":
-            newFile = f"{_file.stem}{WAV_EXT}"
-            logging.info(f"Converting `{_file.name}` to `{newFile}`...")
-
-            command = [
-                ffmpeg_cmd, "-y",
-                "-hide_banner",
-                "-loglevel", "error",
-                "-i", _file,
-                ASSETS_AUDIO_PATH / newFile
-            ]
+            output_folder = ASSETS_AUDIO_PATH
         elif _file.suffix == "STR":
-            newFile = f"{_file.stem}{MPG_EXT}"
-            logging.info(f"Converting `{_file.name}` to `{newFile}`...")
-
-            command = [
-                ffmpeg_cmd, "-y",
-                "-hide_banner",
-                "-loglevel", "error",
-                "-i", _file,
-                "-r", "30",
-                "-c:v", "mpeg1video",
-                "-q:v", "1",
-                "-bf", "0",
-                "-maxrate:v", "1500k",
-                "-bufsize:v", "1835k",
-                "-vf", "format=yuv420p",
-                "-c:a", "mp2",
-                "-ar", "44100",
-                "-ac", "2",
-                "-f", "mpeg",
-                ASSETS_VIDEO_PATH / newFile
-            ]
+            output_folder = ASSETS_VIDEO_PATH
         else:
             continue
+    
+        # Run command.
+        command = [
+            python_cmd,
+            convert_media_py,
+            output_folder
+        ]
         result = subprocess.run(command)
 
         # Report status.
@@ -388,7 +385,7 @@ def main():
         HEIGHT = 400
 
         multiprocessing.freeze_support()
-        logging.basicConfig(level = logging.INFO)
+        logging.basicConfig(level=logging.INFO)
 
         customtkinter.set_appearance_mode("Dark")
 

@@ -4,10 +4,10 @@
 #include "Application.h"
 #include "Assets/Fonts.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms.h"
 #include "Renderer/Common/Resources/Primitive/Vertex2d.h"
 #include "Renderer/Common/Resources/Primitive/Vertex3d.h"
-#include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Renderer.h"
 #include "Utils/Font.h"
 #include "Utils/Utils.h"
@@ -148,9 +148,10 @@ namespace Silent::Renderer::SdlGpu
                 auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
                 bufferVerts.push_back(BufferVertex2d
                 {
-                    .Position = pos,
-                    .Uv       = prim.Vertices[i].Uv,
-                    .Col      = prim.Vertices[i].Col
+                    .Position   = pos,
+                    .Uv         = prim.Vertices[i].Uv,
+                    .Col        = prim.Vertices[i].Col,
+                    .PaletteIdx = prim.Vertices[i].PaletteIdx
                 });
             }
 

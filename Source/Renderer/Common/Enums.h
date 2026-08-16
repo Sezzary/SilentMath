@@ -19,9 +19,10 @@ namespace Silent::Renderer
         // ========
 
         Dither,
-        Fade,
-        Crt,
+        LumaFade,
+        FilmGrain,
         Vignette,
+        Crt,
 
         // ======
         // Final

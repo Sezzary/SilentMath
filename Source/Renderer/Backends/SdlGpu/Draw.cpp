@@ -2,6 +2,7 @@
 #include "Renderer/Backends/SdlGpu/SdlGpu.h"
 
 #include "Application.h"
+#include "Assets/AssetStreamer.h"
 #include "Renderer/Backends/SdlGpu/Pipeline/Pipeline.h"
 #include "Renderer/Backends/SdlGpu/Resources/Buffer.h"
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
@@ -12,6 +13,7 @@
 #include "Renderer/Renderer.h"
 #include "Services/Options.h"
 
+using namespace Silent::Assets;
 using namespace Silent::Services;
 
 namespace Silent::Renderer::SdlGpu
@@ -42,36 +44,37 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
-        //GetMeshes().Bind(renderPass);
-        //_pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Opaque);
+        GetMeshes().Bind(renderPass);
+        _pipelines.Bind(renderPass, RenderStage::Model, BlendMode::Alpha);
 
         _view.Move();
 
         // @temp
         //---------------------------
 
-        //auto* tex = GetTextures()[g_App.GetVideo().GetName()];
-        //if (tex == nullptr)
-        //{
-        //    auto* tex = GetTextures()["TIM/BG_ETC.TIM"];
-        //}
+        const auto* harryAnm = g_App.GetAssets()["ANIM/HB_BASE.ANM"];
+        const auto harryAnmData = harryAnm->GetData<AnmAsset>();
 
-        /*if (tex != nullptr)
+        // @todo How can an optional palette be bound in a clean way?
+        auto* tex             = GetTextures()["CHARA/HERO.TIM"];
+        auto* paletteAtlasTex = GetTextures()[Fmt("{}{}", "CHARA/HERO.TIM", PALETTE_ATLAS_SUFFIX)];
+        if (tex != nullptr)
         {
-            tex->Bind(renderPass, GetActiveSampler());
-            
-            _view.Move();
+            tex->Bind(renderPass, GetActiveSampler(), 0);
+            paletteAtlasTex->Bind(renderPass, GetActiveSampler(), 1);
 
             auto model = Matrix::Identity;
-            model.Rotate(DEG_TO_RAD(45.0f), Vector3::UnitX);
+            model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
+            model.Translate(harryAnmData->Bones[1].BindTranslation);
 
-            auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
+            auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
             auto uni0 = UniformView{};
-            auto uni1 = UniformPrimitive3d{};
             memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
-            memcpy(&uni1.ModelMat, &model[0][0], 64);
             PushVertexUniform(uni0, 0);
+
+            auto uni1 = UniformPrimitive3d{};
+            memcpy(&uni1.ModelMat, &model[0][0], 64);
             PushVertexUniform(uni1, 1);
 
             // Push uniform.
@@ -82,13 +85,13 @@ namespace Silent::Renderer::SdlGpu
             PushFragmentUniform(uni, 0);
 
             // Draw.
-            //const auto* mesh = GetMeshes()["TestCube"];
-            //if (mesh != nullptr)
-            //{
-            //    SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-            //    _doubleBuffer.Active.DrawCallCount++;
-            //}
-        }*/
+            const auto* mesh = GetMeshes()["CHARA/HERO.ILM_02HEAD1"];
+            if (mesh != nullptr)
+            {
+                SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
+                _doubleBuffer.Active.DrawCallCount++;
+            }
+        }
 
         //---------------------------
 
@@ -119,7 +122,7 @@ namespace Silent::Renderer::SdlGpu
             auto* tex = GetTextures()[batch.TextureName];
             if (tex != nullptr)
             {
-                tex->Bind(renderPass, GetActiveSampler());
+                tex->Bind(renderPass, GetActiveSampler(), 0);
             }
 
             // Draw.
@@ -155,7 +158,7 @@ namespace Silent::Renderer::SdlGpu
         if (options->EnableDithering)
         {
             // Bind pipeline.
-            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque);
+            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque, false);
 
             // Bind render texture.
             auto binding = SDL_GPUTextureSamplerBinding
@@ -198,6 +201,11 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, &depthTargetInfo);
 
+        // Bind default texture and palette atlas.
+        auto* tex = GetTextures()[""];
+        tex->Bind(renderPass, GetActiveSampler(), 0);
+        tex->Bind(renderPass, GetActiveSampler(), 1);
+
         // Draw 2D primitives.
         _gpuBuffers.ImmediateVertices2d.Bind(renderPass, 0, 0);
         for (const auto& batch : _drawBatches.Primitives2d)
@@ -206,13 +214,18 @@ namespace Silent::Renderer::SdlGpu
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
             PushFragmentUniform(batch.Uniform, 0);
 
-            // Bind texture.
+            // Bind texture and optional palette atlas.
             if (!batch.TextureName.empty())
             {
-                auto* tex = GetTextures()[batch.TextureName];
+                tex = GetTextures()[batch.TextureName];
                 if (tex != nullptr)
                 {
-                    tex->Bind(renderPass, GetActiveSampler());
+                    tex->Bind(renderPass, GetActiveSampler(), 0);
+                }
+                tex = GetTextures()[batch.TextureName + PALETTE_ATLAS_SUFFIX];
+                if (tex != nullptr)
+                {
+                    tex->Bind(renderPass, GetActiveSampler(), 1);
                 }
             }
 
@@ -246,7 +259,7 @@ namespace Silent::Renderer::SdlGpu
             auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
             _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
-            _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque);
+            _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque, false);
 
             pushUniforms();
 
@@ -267,7 +280,7 @@ namespace Silent::Renderer::SdlGpu
         // @debug Luma fade test.
         if (Debug::g_Work.BlendAlpha > 0.0f)
         {
-            RunPostProcessPass(RenderStage::Fade, [&]()
+            RunPostProcessPass(RenderStage::LumaFade, [&]()
             {
                 auto uni = UniformLumaFade
                 {
@@ -278,10 +291,25 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
-        // CRT filter.
-        if (options->EnableCrtFilter)
+        // Film grain.
+        static float time = 0.0f; // @debug Test timer.
+        time = fmod(time + 0.1f, 1.0f);
+        if (options->EnableFilmGrain)
         {
-            RunPostProcessPass(RenderStage::Crt, [&]()
+            RunPostProcessPass(RenderStage::FilmGrain, [&]()
+            {
+                auto uni = UniformFilmGrain
+                {
+                    .Time = time
+                };
+                PushFragmentUniform(uni, 0);
+            });
+        }
+
+        // Vignette.
+        if (options->EnableVignette)
+        {
+            RunPostProcessPass(RenderStage::Vignette, [&]()
             {
                 auto uni = UniformCrt
                 {
@@ -292,10 +320,10 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
-        // Screen vignette.
-        if (options->EnableVignette)
+        // CRT filter.
+        if (options->EnableCrtFilter)
         {
-            RunPostProcessPass(RenderStage::Vignette, [&]()
+            RunPostProcessPass(RenderStage::Crt, [&]()
             {
                 auto uni = UniformCrt
                 {
@@ -327,7 +355,7 @@ namespace Silent::Renderer::SdlGpu
         // Bind viewport quad.
         _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
 
-        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque);
+        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque, false);
 
         // Push uniform.
         auto uni = UniformBlit
@@ -353,12 +381,6 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawDebugMenu()
     {
-        // If debug menu is disabled, return early.
-        if (!Debug::g_Work.EnablePowerMenu)
-        {
-            return;
-        }
-
         // Start new frame.
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();

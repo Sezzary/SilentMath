@@ -2,6 +2,8 @@
 
 namespace Silent::Renderer
 {
+    constexpr char PALETTE_ATLAS_SUFFIX[] = "_P";
+
     /** @brief GPU texture base. */
     class TextureBase
     {
@@ -36,5 +38,15 @@ namespace Silent::Renderer
         // =============
 
         virtual ~TextureCacheBase() = default;
+
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the names of textures cached on the GPU, sorted in alphanumerically.
+         *
+         * @return Texture names.
+         */
+        std::vector<std::string> GetNames() const;
     };
 }

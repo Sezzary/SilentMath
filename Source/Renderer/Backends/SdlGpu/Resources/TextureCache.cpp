@@ -173,7 +173,7 @@ namespace Silent::Renderer::SdlGpu
         auto& assets = g_App.GetAssets();
 
         // Get asset.
-        const auto* asset = assets.GetAsset(assetName);
+        const auto* asset = assets[assetName];
         if (asset == nullptr)
         {
             Debug::Log(Fmt("Attempted to upload invalid asset `{}` as GPU texture.", asset->Name),
@@ -210,6 +210,7 @@ namespace Silent::Renderer::SdlGpu
     void TextureCache::Release(const std::string& name)
     {
         _textures.erase(name);
+        _textures.erase(name + PALETTE_ATLAS_SUFFIX);
     }
 
     Texture* TextureCache::operator[](const std::string& name)
@@ -217,8 +218,8 @@ namespace Silent::Renderer::SdlGpu
         auto* tex = Find(_textures, name);
         if (tex == nullptr)
         {
-            Debug::Log(Fmt("Attempted to get missing GPU texture `{}`.", name),
-                       Debug::LogLevel::Warning, Debug::LogMode::Debug);
+            //Debug::Log(Fmt("Attempted to get missing GPU texture `{}`.", name),
+            //           Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return nullptr;
         }
 
@@ -228,12 +229,20 @@ namespace Silent::Renderer::SdlGpu
     void TextureCache::UploadPng(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<PngAsset>();
+
         Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
     }
 
     void TextureCache::UploadTim(SDL_GPUCopyPass& copyPass, const Asset& asset)
     {
         const auto data = asset.GetData<TimAsset>();
+
         Upload(copyPass, ToSpan(data->Pixels), data->Resolution, asset.Name);
+
+        if (data->PaletteAtlas.has_value())
+        {
+            auto paletteAtlasName = asset.Name + PALETTE_ATLAS_SUFFIX;
+            Upload(copyPass, ToSpan(data->PaletteAtlas->Pixels), data->PaletteAtlas->Resolution, paletteAtlasName);
+        }
     }
 }

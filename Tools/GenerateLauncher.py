@@ -62,11 +62,10 @@ def _cleanup():
 
 def main():
     try:
-        # Setup.
-        logging.basicConfig(level = logging.INFO)
+        logging.basicConfig(level=logging.INFO)
+        _cleanup()
 
         logging.info("Generating launcher...")
-        _cleanup()
 
         # Setup.
         system_os     = platform.system().lower()

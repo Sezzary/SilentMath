@@ -4,8 +4,10 @@
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
 #include "Input/Action.h"
+#include "Input/AnalogAxis.h"
 #include "Input/Binding.h"
 #include "Input/Event.h"
+#include "Input/Recorder.h"
 #include "Input/Text.h"
 #include "Services/Clock.h"
 #include "Services/Options.h"
@@ -26,22 +28,22 @@ namespace Silent::Input
 
     const Action& InputManager::GetAction(ActionId actionId) const
     {
-        return _actions[(int)actionId];
+        return _states.Actions[(int)actionId];
     }
 
-    const Vector2& InputManager::GetAnalogAxis(AnalogAxisId axisId) const
+    const AnalogAxis& InputManager::GetAnalogAxis(AnalogAxisId axisId) const
     {
-        return _analogAxes[(int)axisId];
+        return _states.AnalogAxes[(int)axisId];
     }
 
     const Vector2& InputManager::GetCursorPosition() const
     {
-        return _deviceStates.CursorPosition;
+        return _states.Device.CursorPosition;
     }
 
     float InputManager::GetRawEventState(EventId eventId) const
     {
-        return _deviceStates.Events[(int)eventId];
+        return _states.Device.Events[(int)eventId];
     }
 
     GamepadVendorId InputManager::GetGamepadVendorId() const
@@ -59,6 +61,11 @@ namespace Silent::Input
         int percent = 0;
         SDL_GetGamepadPowerInfo(_gamepad.Device, &percent);
         return percent;
+    }
+
+    const Recording& InputManager::GetRecording() const
+    {
+        return _recorder.GetRecording();
     }
 
     const std::string& InputManager::GetText(const std::string& textId) const
@@ -92,29 +99,29 @@ namespace Silent::Input
 
     bool InputManager::IsUsingGamepad() const
     {
-        return _deviceStates.IsUsingGamepad;
+        return _states.Device.IsUsingGamepad;
     }
 
     bool InputManager::IsUsingMouse() const
     {
-        return _deviceStates.IsUsingMouse;
+        return _states.Device.IsUsingMouse;
     }
 
     bool InputManager::HasDeviceInput() const
     {
-        return _deviceStates.HasKeyboardInput ||
-               _deviceStates.HasMouseInput    ||
-               _deviceStates.HasGamepadInput;
+        return _states.Device.HasKeyboardInput ||
+               _states.Device.HasMouseInput    ||
+               _states.Device.HasGamepadInput;
     }
 
     bool InputManager::HasRawActionInput() const
     {
-        return _deviceStates.HasRawActionInput;
+        return _states.Device.HasRawActionInput;
     }
 
     bool InputManager::HasUserActionInput() const
     {
-        return _deviceStates.HasUserActionInput;
+        return _states.Device.HasUserActionInput;
     }
 
     void InputManager::Initialize()
@@ -126,16 +133,24 @@ namespace Silent::Input
             Debug::Log(Fmt("Failed to initialize gamepad subsystem: {}", SDL_GetError()), Debug::LogLevel::Error);
         }
 
-        // Initialize event states and control axes.
-        _deviceStates.Events.resize((int)EventId::Count);
-        _analogAxes.resize((int)AnalogAxisId::Count);
+        // Initialize event states.
+        _states.Device.Events.resize((int)EventId::Count);
+        _states.AnalogAxes.resize((int)AnalogAxisId::Count);
 
         // Initialize actions.
-        _actions.reserve((int)ActionId::Count);
+        _states.Actions.reserve((int)ActionId::Count);
         for (int i = 0; i < (int)ActionId::Count; i++)
         {
             auto actionId = (ActionId)i;
-            _actions.push_back(Action(actionId));
+            _states.Actions.push_back(Action(actionId));
+        }
+
+        // Initialize analog axes.
+        _states.AnalogAxes.reserve((int)AnalogAxisId::Count);
+        for (int i = 0; i < (int)AnalogAxisId::Count; i++)
+        {
+            auto axisId = (AnalogAxisId)i;
+            _states.AnalogAxes.push_back(AnalogAxis(axisId));
         }
 
         // Initialize bindings.
@@ -155,11 +170,11 @@ namespace Silent::Input
         auto&       toaster    = g_App.GetToaster();
 
         // Clear data.
-        _deviceStates.HasKeyboardInput   =
-        _deviceStates.HasMouseInput      =
-        _deviceStates.HasGamepadInput    =
-        _deviceStates.HasRawActionInput  =
-        _deviceStates.HasUserActionInput = false;
+        _states.Device.HasKeyboardInput   =
+        _states.Device.HasMouseInput      =
+        _states.Device.HasGamepadInput    =
+        _states.Device.HasRawActionInput  =
+        _states.Device.HasUserActionInput = false;
 
         // Capture event states asynchronously.
         auto tasks = ParallelTasks
@@ -171,28 +186,31 @@ namespace Silent::Input
         executor.AddTasks(tasks).wait();
 
         // Update "using gamepad" state.
-        if (_deviceStates.HasKeyboardInput || _deviceStates.HasMouseInput)
+        if (_states.Device.HasKeyboardInput || _states.Device.HasMouseInput)
         {
-            _deviceStates.IsUsingGamepad = false;
+            _states.Device.IsUsingGamepad = false;
         }
-        else if (_deviceStates.HasGamepadInput)
+        else if (_states.Device.HasGamepadInput)
         {
-            _deviceStates.IsUsingGamepad = true;
+            _states.Device.IsUsingGamepad = true;
         }
 
         // Update "using mouse" state.
-        if (_deviceStates.HasKeyboardInput || _deviceStates.HasGamepadInput)
+        if (_states.Device.HasKeyboardInput || _states.Device.HasGamepadInput)
         {
-            _deviceStates.IsUsingMouse = false;
+            _states.Device.IsUsingMouse = false;
         }
-        else if (_deviceStates.HasMouseInput)
+        else if (_states.Device.HasMouseInput)
         {
-            _deviceStates.IsUsingMouse = true;
+            _states.Device.IsUsingMouse = true;
         }
 
-        // Update components.
+        // Update actions and analog axes.
         UpdateActions();
         UpdateAnalogAxes();
+        _recorder.Update(_states.Actions, _states.AnalogAxes);
+
+        // Update other components.
         UpdateRumble();
         HandleHotkeyActions();
 
@@ -289,6 +307,66 @@ namespace Silent::Input
         Debug::Log("Gamepad disconnected.");
     }
 
+    void InputManager::LockActionGroup(ActionGroupId groupId)
+    {
+        for (auto actionId : ACTION_ID_GROUPS[(int)groupId])
+        {
+            auto& action = _states.Actions[(int)actionId];
+            action.Lock();
+        }
+    }
+
+    void InputManager::UnlockActions()
+    {
+        for (auto& action : _states.Actions)
+        {
+            action.Unlock();
+        }
+    }
+
+    void InputManager::LockAnalogAxisGroup(AnalogAxisGroupId groupId)
+    {
+        for (auto axisId : ANALOG_AXIS_ID_GROUPS[(int)groupId])
+        {
+            auto& axis = _states.AnalogAxes[(int)axisId];
+            axis.Lock();
+        }
+    }
+
+    void InputManager::UnlockAnalogAxes()
+    {
+        for (auto& axis : _states.AnalogAxes)
+        {
+            axis.Unlock();
+        }
+    }
+
+    void InputManager::StartPlayback(const Recording& rec)
+    {
+        // Lock recordable actions and analog axes.
+        LockActionGroup(ActionGroupId::Recordable);
+        LockAnalogAxisGroup(AnalogAxisGroupId::Recordable);
+
+        _recorder.Play(rec,
+                       ACTION_ID_GROUPS[(int)ActionGroupId::Recordable],
+                       ANALOG_AXIS_ID_GROUPS[(int)AnalogAxisGroupId::Recordable]);
+    }
+
+    void InputManager::StartRecording()
+    {
+        _recorder.Record(ACTION_ID_GROUPS[(int)ActionGroupId::Recordable],
+                         ANALOG_AXIS_ID_GROUPS[(int)AnalogAxisGroupId::Recordable]);
+    }
+
+    void InputManager::StopRecorder()
+    {
+        // Unlock actions and analog axes.
+        UnlockActions();
+        UnlockAnalogAxes();
+
+        _recorder.Stop();
+    }
+
     void InputManager::InsertText(const std::string& textId, int lineWidthMax, int charCountMax)
     {
         _text.InsertBuffer(textId, lineWidthMax, charCountMax);
@@ -351,8 +429,13 @@ namespace Silent::Input
                 const auto& actionIds = ACTION_ID_GROUPS[(int)actionGroupId];
                 for (auto actionId : actionIds)
                 {
-                    auto& action = _actions[(int)actionId];
-                    float state  = 0.0f;
+                    auto& action = _states.Actions[(int)actionId];
+                    if (action.IsLocked())
+                    {
+                        continue;
+                    }
+
+                    float state = 0.0f;
 
                     // Get max gamepad event state.
                     if (IsGamepadConnected())
@@ -378,7 +461,7 @@ namespace Silent::Input
                     action.Update(state);
                     if (state != 0.0f)
                     {
-                        _deviceStates.HasUserActionInput;
+                        _states.Device.HasUserActionInput;
                     }
                 }
             }
@@ -392,8 +475,13 @@ namespace Silent::Input
                 const auto& profile = _bindings.GetProfile(profileId);
                 for (auto& [keyActionId, eventIds] : profile)
                 {
-                    auto& action = _actions[(int)keyActionId];
-                    float state  = 0.0f;
+                    auto& action = _states.Actions[(int)keyActionId];
+                    if (action.IsLocked())
+                    {
+                        continue;
+                    }
+
+                    float state = 0.0f;
 
                     for (auto eventId : eventIds)
                     {
@@ -404,7 +492,7 @@ namespace Silent::Input
                     action.Update(state);
                     if (state != 0.0f)
                     {
-                        _deviceStates.HasRawActionInput;
+                        _states.Device.HasRawActionInput;
                     }
                 }
             }
@@ -423,61 +511,67 @@ namespace Silent::Input
     {
         const auto& options = g_App.GetOptions();
 
-        auto&       moveAxis       = _analogAxes[(int)AnalogAxisId::Move];
-        auto&       camAxis        = _analogAxes[(int)AnalogAxisId::Camera];
-        const auto& mouseAxis      = GetAnalogAxis(AnalogAxisId::Mouse);
-        const auto& stickLeftAxis  = GetAnalogAxis(AnalogAxisId::StickLeft);
-        const auto& stickRightAxis = GetAnalogAxis(AnalogAxisId::StickRight);
+        auto&       moveAxis       = _states.AnalogAxes[(int)AnalogAxisId::Move];
+        auto&       camAxis        = _states.AnalogAxes[(int)AnalogAxisId::Camera];
+        const auto& mouseAxis      = _states.AnalogAxes[(int)AnalogAxisId::Mouse];
+        const auto& leftStickAxis  = _states.AnalogAxes[(int)AnalogAxisId::StickLeft];
+        const auto& rightStickAxis = _states.AnalogAxes[(int)AnalogAxisId::StickRight];
 
-        // Set move axis.
-        if (stickLeftAxis != Vector2::Zero)
+        // Set move axis state.
+        if (!moveAxis.IsLocked())
         {
-            // Analog.
-            moveAxis = stickLeftAxis;
+            if (leftStickAxis.State != Vector2::Zero)
+            {
+                // Analog.
+                moveAxis = leftStickAxis;
+            }
+            else
+            {
+                // Discrete `Up`/`Down`.
+                if (( GetAction(In::Up).IsHeld() &&  GetAction(In::Down).IsHeld()) ||
+                    (!GetAction(In::Up).IsHeld() && !GetAction(In::Down).IsHeld()))
+                {
+                    moveAxis.State.y = 0.0f;
+    
+                }
+                else if (GetAction(In::Up).IsHeld())
+                {
+                    moveAxis.State.y = 1.0f;
+                }
+                else if (GetAction(In::Down).IsHeld())
+                {
+                    moveAxis.State.y = -1.0f;
+                }
+    
+                // Discrete `Left`/`Right`.
+                if (( GetAction(In::Left).IsHeld() &&  GetAction(In::Right).IsHeld()) ||
+                    (!GetAction(In::Left).IsHeld() && !GetAction(In::Right).IsHeld()))
+                {
+                    moveAxis.State.x = 0.0f;
+    
+                }
+                else if (GetAction(In::Left).IsHeld())
+                {
+                    moveAxis.State.x = -1.0f;
+                }
+                else if (GetAction(In::Right).IsHeld())
+                {
+                    moveAxis.State.x = 1.0f;
+                }
+            }
         }
-        else
+
+        // Set camera axis state.
+        if (!camAxis.IsLocked())
         {
-            // Discrete `Up`/`Down`.
-            if (( GetAction(In::Up).IsHeld() &&  GetAction(In::Down).IsHeld()) ||
-                (!GetAction(In::Up).IsHeld() && !GetAction(In::Down).IsHeld()))
+            if (rightStickAxis.State != Vector2::Zero)
             {
-                moveAxis.y = 0.0f;
-
+                camAxis = rightStickAxis;
             }
-            else if (GetAction(In::Up).IsHeld())
+            else
             {
-                moveAxis.y = 1.0f;
+                camAxis = mouseAxis;
             }
-            else if (GetAction(In::Down).IsHeld())
-            {
-                moveAxis.y = -1.0f;
-            }
-
-            // Discrete `Left`/`Right`.
-            if (( GetAction(In::Left).IsHeld() &&  GetAction(In::Right).IsHeld()) ||
-                (!GetAction(In::Left).IsHeld() && !GetAction(In::Right).IsHeld()))
-            {
-                moveAxis.x = 0.0f;
-
-            }
-            else if (GetAction(In::Left).IsHeld())
-            {
-                moveAxis.x = -1.0f;
-            }
-            else if (GetAction(In::Right).IsHeld())
-            {
-                moveAxis.x = 1.0f;
-            }
-        }
-
-        // Set camera axis.
-        if (stickRightAxis != Vector2::Zero)
-        {
-            camAxis = stickRightAxis;
-        }
-        else
-        {
-            camAxis = mouseAxis;
         }
     }
 
@@ -527,10 +621,10 @@ namespace Silent::Input
                 bool state = keyboardState[scanCode];
                 if (state)
                 {
-                    _deviceStates.HasKeyboardInput = true;
+                    _states.Device.HasKeyboardInput = true;
                 }
 
-                _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
+                _states.Device.Events[eventIdx] = state ? 1.0f : 0.0f;
             }
 
             eventIdx++;
@@ -543,10 +637,10 @@ namespace Silent::Input
             bool state = modState & modCode;
             if (state)
             {
-                _deviceStates.HasKeyboardInput = true;
+                _states.Device.HasKeyboardInput = true;
             }
 
-            _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
+            _states.Device.Events[eventIdx] = state ? 1.0f : 0.0f;
             eventIdx++;
         }
     }
@@ -571,29 +665,29 @@ namespace Silent::Input
             bool state = butState & SDL_BUTTON_MASK(butCode);
             if (state)
             {
-                _deviceStates.HasMouseInput = true;
+                _states.Device.HasMouseInput = true;
             }
 
-            _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
+            _states.Device.Events[eventIdx] = state ? 1.0f : 0.0f;
             eventIdx++;
         }
 
         if (wheelAxis != Vector2::Zero)
         {
-            _deviceStates.HasMouseInput = true;
+            _states.Device.HasMouseInput = true;
         }
 
         // @todo Investigate. Unclear how SDL3 mouse wheel values work.
         // Set mouse scroll event states.
-        _deviceStates.Events[eventIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
-        _deviceStates.Events[eventIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
-        _deviceStates.Events[eventIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
-        _deviceStates.Events[eventIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
-        eventIdx                          += SQUARE(Vector2::AXIS_COUNT);
+        _states.Device.Events[eventIdx]     = (wheelAxis.x < 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
+        _states.Device.Events[eventIdx + 1] = (wheelAxis.x > 0.0f) ? std::clamp(abs(wheelAxis.x), 0.0f, 1.0f) : 0.0f;
+        _states.Device.Events[eventIdx + 2] = (wheelAxis.y < 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
+        _states.Device.Events[eventIdx + 3] = (wheelAxis.y > 0.0f) ? std::clamp(abs(wheelAxis.y), 0.0f, 1.0f) : 0.0f;
+        eventIdx                           += SQUARE(Vector2::AXIS_COUNT);
 
         // Set cursor position state.
-        auto prevCursorPos           = _deviceStates.CursorPosition;
-        _deviceStates.CursorPosition = pos;
+        auto prevCursorPos            = _states.Device.CursorPosition;
+        _states.Device.CursorPosition = pos;
 
         auto res = Vector2i::Zero;
         if (!SDL_GetWindowSize(&window, &res.x, &res.y))
@@ -601,23 +695,27 @@ namespace Silent::Input
             Debug::Log(Fmt("Failed to get window size: {}", SDL_GetError()), Debug::LogLevel::Error);
         }
 
-        float sensitivity = (options->MouseSensitivity * 0.1f) + 0.4f;
-        auto  moveAxis    = (((_deviceStates.CursorPosition - prevCursorPos) / SCREEN_SPACE_RES) *
-                             (res.ToVector2() / SCREEN_SPACE_RES)) * sensitivity;
-        if (moveAxis != Vector2::Zero)
+        float sensitivity   = (options->MouseSensitivity * 0.1f) + 0.4f;
+        auto  moveAxisState = (((_states.Device.CursorPosition - prevCursorPos) / SCREEN_SPACE_RES) *
+                               (res.ToVector2() / SCREEN_SPACE_RES)) * sensitivity;
+        if (moveAxisState != Vector2::Zero)
         {
-            _deviceStates.HasMouseInput = true;
+            _states.Device.HasMouseInput = true;
         }
 
         // Set mouse movement event states.
-        _deviceStates.Events[eventIdx]     = (moveAxis.x < 0.0f) ? abs(moveAxis.x) : 0.0f;
-        _deviceStates.Events[eventIdx + 1] = (moveAxis.x > 0.0f) ? abs(moveAxis.x) : 0.0f;
-        _deviceStates.Events[eventIdx + 2] = (moveAxis.y < 0.0f) ? abs(moveAxis.y) : 0.0f;
-        _deviceStates.Events[eventIdx + 3] = (moveAxis.y > 0.0f) ? abs(moveAxis.y) : 0.0f;
-        eventIdx                          += SQUARE(Vector2::AXIS_COUNT);
+        _states.Device.Events[eventIdx]     = (moveAxisState.x < 0.0f) ? abs(moveAxisState.x) : 0.0f;
+        _states.Device.Events[eventIdx + 1] = (moveAxisState.x > 0.0f) ? abs(moveAxisState.x) : 0.0f;
+        _states.Device.Events[eventIdx + 2] = (moveAxisState.y < 0.0f) ? abs(moveAxisState.y) : 0.0f;
+        _states.Device.Events[eventIdx + 3] = (moveAxisState.y > 0.0f) ? abs(moveAxisState.y) : 0.0f;
+        eventIdx                           += SQUARE(Vector2::AXIS_COUNT);
 
-        // Set raw mouse axis.
-        _analogAxes[(int)AnalogAxisId::Mouse] = moveAxis;
+        // Set raw mouse axis state.
+        auto& mouseAxis = _states.AnalogAxes[(int)AnalogAxisId::Mouse];
+        if (!mouseAxis.IsLocked())
+        {
+            mouseAxis.State = moveAxisState;
+        }
     }
 
     void InputManager::ReadGamepad()
@@ -637,15 +735,15 @@ namespace Silent::Input
             }
             if (state)
             {
-                _deviceStates.HasGamepadInput = true;
+                _states.Device.HasGamepadInput = true;
             }
 
-            _deviceStates.Events[eventIdx] = state ? 1.0f : 0.0f;
+            _states.Device.Events[eventIdx] = state ? 1.0f : 0.0f;
             eventIdx++;
         }
 
         // Collect stick axes.
-        auto stickAxes = std::vector<Vector2>(VALID_GAMEPAD_STICK_AXIS_CODES.size() / Vector2::AXIS_COUNT);
+        auto stickAxisStates = std::vector<Vector2>(VALID_GAMEPAD_STICK_AXIS_CODES.size() / Vector2::AXIS_COUNT);
         for (int i = 0, j = 0; i < VALID_GAMEPAD_STICK_AXIS_CODES.size(); i++)
         {
             if (!IsGamepadConnected())
@@ -656,7 +754,7 @@ namespace Silent::Input
             auto  axisCode = VALID_GAMEPAD_STICK_AXIS_CODES[i];
             float state    = (float)SDL_GetGamepadAxis(_gamepad.Device, axisCode) / (float)SHRT_MAX;
 
-            auto& axis = stickAxes[j];
+            auto& axis = stickAxisStates[j];
             if ((i % Vector2::AXIS_COUNT) == 0)
             {
                 axis.x = state;
@@ -681,19 +779,19 @@ namespace Silent::Input
         }
 
         // Set gamepad stick axis event states.
-        for (int i = 0; i < stickAxes.size(); i++)
+        for (int i = 0; i < stickAxisStates.size(); i++)
         {
-            const auto& axis = stickAxes[i];
+            const auto& axis = stickAxisStates[i];
             if (axis != Vector2::Zero)
             {
-                _deviceStates.HasGamepadInput = true;
+                _states.Device.HasGamepadInput = true;
             }
 
-            _deviceStates.Events[eventIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
-            _deviceStates.Events[eventIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
-            _deviceStates.Events[eventIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
-            _deviceStates.Events[eventIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
-            eventIdx                                += Vector2::AXIS_COUNT * 2;
+            _states.Device.Events[eventIdx + i]       = (axis.x < 0.0f) ? abs(axis.x) : 0.0f;
+            _states.Device.Events[eventIdx + (i + 1)] = (axis.x > 0.0f) ? abs(axis.x) : 0.0f;
+            _states.Device.Events[eventIdx + (i + 2)] = (axis.y < 0.0f) ? abs(axis.y) : 0.0f;
+            _states.Device.Events[eventIdx + (i + 3)] = (axis.y > 0.0f) ? abs(axis.y) : 0.0f;
+            eventIdx                                 += Vector2::AXIS_COUNT * 2;
         }
 
         // Set gamepad trigger axis event states.
@@ -711,16 +809,26 @@ namespace Silent::Input
             }
             if (state > 0.0f)
             {
-                _deviceStates.HasGamepadInput = true;
+                _states.Device.HasGamepadInput = true;
             }
 
-            _deviceStates.Events[eventIdx] = state;
+            _states.Device.Events[eventIdx] = state;
             eventIdx++;
         }
 
-        // Set raw stick axes.
-        _analogAxes[(int)AnalogAxisId::StickLeft]  = stickAxes.front();
-        _analogAxes[(int)AnalogAxisId::StickRight] = stickAxes.back();
+        // Set raw left stick axis state.
+        auto& leftStickAxis = _states.AnalogAxes[(int)AnalogAxisId::StickLeft];
+        if (!leftStickAxis.IsLocked())
+        {
+            leftStickAxis.State = stickAxisStates.front();
+        }
+
+        // Set raw right stick axis state.
+        auto& rightStickAxis = _states.AnalogAxes[(int)AnalogAxisId::StickRight];
+        if (!rightStickAxis.IsLocked())
+        {
+            rightStickAxis.State = stickAxisStates.back();
+        }
     }
 
     void InputManager::HandleHotkeyActions()

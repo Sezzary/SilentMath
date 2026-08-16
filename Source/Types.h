@@ -23,10 +23,12 @@ namespace Silent
 
     using q0_7   = int8;
     using q11_4  = int16;
+    using q8_7   = int16;
     using q7_8   = int16;
     using q3_12  = int16;
     using q27_4  = int32;
     using q25_6  = int32;
+    using q24_7  = int32;
     using q23_8  = int32;
     using q21_10 = int32;
     using q19_12 = int32;
@@ -38,14 +40,14 @@ namespace Silent
     using q20_12 = uint32;
     using q52_12 = uint64;
 
-    using s8  = int8_t;
-    using s16 = int16_t;
-    using s32 = int32_t;
-    using s64 = int64_t;
-    using u8  = uint8_t;
-    using u16 = uint16_t;
-    using u32 = uint32_t;
-    using u64 = uint64_t;
+    using s8  = int8;
+    using s16 = int16;
+    using s32 = int32;
+    using s64 = int64;
+    using u8  = uint8;
+    using u16 = uint16;
+    using u32 = uint32;
+    using u64 = uint64;
 
     constexpr    int  NO_VALUE     = -1;
     static const auto EMPTY_STRING = std::string();

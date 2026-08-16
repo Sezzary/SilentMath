@@ -74,7 +74,7 @@ namespace Silent::Renderer::SdlGpu
          * @param sampler Texture sampler.
          * @param slotIdx Shader sampler slot index.
          */
-        void Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler, int slotIdx = 0);
+        void Bind(SDL_GPURenderPass& renderPass, SDL_GPUSampler& sampler, int slotIdx);
     };
 
     /** @brief GPU texture cache. */
@@ -125,6 +125,8 @@ namespace Silent::Renderer::SdlGpu
 
         /** @brief Releases a cached texture from the GPU.
          *
+         * @note If the texture is indexed, it additionally releases its palette.
+         *
          * @param name Name of the texture to release.
          */
         void Release(const std::string& name);
@@ -148,6 +150,8 @@ namespace Silent::Renderer::SdlGpu
         void UploadPng(SDL_GPUCopyPass& copyPass, const Asset& asset);
 
         /** @brief Loads a texture from a TIM asset to the GPU.
+         *
+         * @note If the texture is indexed, it additionally uploads its palette.
          *
          * @param copyPass GPU copy pass.
          * @param asset TIM asset.

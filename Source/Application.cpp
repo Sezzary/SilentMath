@@ -8,11 +8,11 @@
 #include "Game/Entry.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
-#include "Savegame/Savegame.h"
 #include "Services/Clock.h"
 #include "Services/Filesystem.h"
 #include "Services/Options.h"
 #include "Services/Platform.h"
+#include "Services/Savegame.h"
 #include "Services/Toasts.h"
 #include "Utils/Font.h"
 #include "Utils/Parallel.h"
@@ -23,7 +23,6 @@ using namespace Silent::Audio;
 using namespace Silent::Game;
 using namespace Silent::Input;
 using namespace Silent::Renderer;
-using namespace Silent::Savegame;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
@@ -270,7 +269,7 @@ namespace Silent
     void ApplicationManager::ToggleCursor()
     {
         // Show.
-        if ((!_work.Options->EnableFullscreen || Debug::g_Work.EnablePowerMenu) && !SDL_CursorVisible())
+        if ((!_work.Options->EnableFullscreen || Debug::g_Work.EnableDebugMenu) && !SDL_CursorVisible())
         {
             if (!SDL_ShowCursor())
             {
@@ -294,11 +293,35 @@ namespace Silent
             return;
         }
 
-        Debug::g_Work.EnablePowerMenu = !Debug::g_Work.EnablePowerMenu;
-        Debug::g_Work.Page            =  Debug::g_Work.EnablePowerMenu ? Debug::Page::Renderer : Debug::Page::None;
+        Debug::g_Work.EnableDebugMenu = !Debug::g_Work.EnableDebugMenu;
+        Debug::g_Work.Page            =  Debug::g_Work.EnableDebugMenu ? Debug::Page::Renderer : Debug::Page::None;
         ToggleCursor();
 
         Debug::Log("Toggled debug menu.", Debug::LogLevel::Info, Debug::LogMode::All, true);
+    }
+
+    std::string ApplicationManager::GetClipboardText()
+    {
+        auto* text = SDL_GetClipboardText();
+        if (text == nullptr)
+        {
+            Debug::Log(Fmt("Failed to get clipboard text: {}", SDL_GetError()),
+                       Debug::LogLevel::Warning, Debug::LogMode::All, true);
+            return {};
+        }
+
+        auto textStr = std::string(text);
+        SDL_free(text);
+        return textStr;
+    }
+
+    void ApplicationManager::SetClipboardText(const std::string& text)
+    {
+        if (!SDL_SetClipboardText(text.c_str()))
+        {
+            Debug::Log(Fmt("Failed to set clipboard text: {}", SDL_GetError()),
+                       Debug::LogLevel::Warning, Debug::LogMode::All, true);
+        }
     }
 
     void ApplicationManager::Update()
@@ -330,17 +353,17 @@ namespace Silent
     void ApplicationManager::Render()
     {
         // Wait for previous frame to finish.
-        if (_prevFrameFuture.valid())
+        if (_renderFuture.valid())
         {
-            _prevFrameFuture.wait();
+            _renderFuture.wait();
         }
 
         // Prepare renderer for new frame.
         _work.Renderer->PrepareFrameData();
         _work.Renderer->PrepareFrameResources();
 
-        // Render frame asynchronously.
-        _prevFrameFuture = _renderExecutor.AddTask(TASK(_work.Renderer->Update()));
+        // Render new frame asynchronously.
+        _renderFuture = _renderExecutor.AddTask(TASK(_work.Renderer->Update()));
     }
 
     void ApplicationManager::PollEvents()
@@ -348,7 +371,7 @@ namespace Silent
         auto event = SDL_Event{};
         while (SDL_PollEvent(&event))
         {
-            if (Debug::g_Work.EnablePowerMenu)
+            if (Debug::g_Work.EnableDebugMenu)
             {
                 ImGui_ImplSDL3_ProcessEvent(&event);
             }

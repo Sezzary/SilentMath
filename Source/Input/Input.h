@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Input/Action.h"
+#include "Input/AnalogAxis.h"
 #include "Input/Binding.h"
 #include "Input/Event.h"
+#include "Input/Recorder.h"
 #include "Input/Text.h"
 
 namespace Silent::Input
@@ -22,23 +24,6 @@ namespace Silent::Input
         Low,
         High,
         LowAndHigh
-    };
-
-    /** @brief Analog axis IDs for specialized gameplay and raw device axes. */
-    enum class AnalogAxisId
-    {
-        /** Gameplay */
-
-        Move,
-        Camera,
-
-        /** Raw */
-
-        Mouse,
-        StickLeft,
-        StickRight,
-
-        Count
     };
 
     /** @brief Connected gamepad data. */
@@ -76,6 +61,14 @@ namespace Silent::Input
         bool HasUserActionInput = false;
     };
 
+    /** @brief Input state data for raw devices, actions, and analog axes. */
+    struct InputStates
+    {
+        DeviceStates            Device     = {};
+        std::vector<Action>     Actions    = {}; /** Index = `ActionId`. */
+        std::vector<AnalogAxis> AnalogAxes = {}; /** Index = `AnalogAxisId`. */
+    };
+
     /** @brief Input manager. */
     class InputManager
     {
@@ -91,20 +84,20 @@ namespace Silent::Input
         // Fields
         // =======
 
-        Gamepad      _gamepad      = {};
-        Rumble       _rumble       = {};
-        DeviceStates _deviceStates = {};
+        Gamepad     _gamepad = {};
+        Rumble      _rumble  = {};
+        InputStates _states  = {};
 
-        BindingManager       _bindings   = BindingManager();
-        TextManager          _text       = TextManager();
-        std::vector<Action>  _actions    = {}; /** Index = `ActionId`. */
-        std::vector<Vector2> _analogAxes = {}; /** Index = `AnalogAxisId`. */
+        BindingManager _bindings = BindingManager();
+        TextManager    _text     = TextManager();
+        Recorder       _recorder = Recorder();
 
     public:
         // =============
         // Constructors
         // =============
 
+        /** @brief Creates a default uninitialized instance. */
         InputManager() = default;
 
         // ========
@@ -129,7 +122,7 @@ namespace Silent::Input
          * @param axisId Analog axis ID.
          * @return Analog axis reference.
          */
-        const Vector2& GetAnalogAxis(AnalogAxisId axisId) const;
+        const AnalogAxis& GetAnalogAxis(AnalogAxisId axisId) const;
 
         /** @brief Gets a reference to the mouse cursor's current screen position in percent.
          *
@@ -156,6 +149,14 @@ namespace Silent::Input
          * determined.
          */
         int GetGamepadBatteryPercentage() const;
+
+        /** @brief Gets the current input recording.
+         *
+         * @note A full recording can only be retrieved on the tick after the recorder has been stopped.
+         *
+         * @return Input recording.
+         */
+        const Recording& GetRecording() const;
 
         /** @brief Gets a text block from a text buffer.
          *
@@ -263,6 +264,36 @@ namespace Silent::Input
          * @param deviceId Device ID of the gamepad to disconnect.
          */
         void DisconnectGamepad(int deviceId);
+
+        /** @brief Locks a group of actions from user input.
+         *
+         * @param groupId ID of the action group to lock.
+         */
+        void LockActionGroup(ActionGroupId groupId);
+
+        /** @brief Unlocks all actions for user input. */
+        void UnlockActions();
+
+        /** @brief Locks a group of analog axes from user input.
+         *
+         * @param groupId ID of the analog axes group to lock.
+         */
+        void LockAnalogAxisGroup(AnalogAxisGroupId groupId);
+
+        /** @brief Unlocks all analog axes for user input. */
+        void UnlockAnalogAxes();
+
+        /** @brief Signals the input recorder to start recording playback on the next tick.
+         *
+         * @param rec Input recording to play.
+         */
+        void StartPlayback(const Recording& rec);
+
+        /** @brief Signals the input recorder to start recording on the next tick. */
+        void StartRecording();
+
+        /** @brief Signals the input recorder to stop playing or recording on the next tick. */
+        void StopRecorder();
 
         /** @brief Inserts a new text buffer.
          *

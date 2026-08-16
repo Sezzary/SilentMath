@@ -6,10 +6,10 @@
 #include "Renderer/Backends/SdlGpu/Resources/PingPongTexture.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/VertexBuffer.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms.h"
 #include "Renderer/Common/Resources/Primitive/Vertex2d.h"
 #include "Renderer/Common/Resources/Primitive/Vertex3d.h"
-#include "Renderer/Common/Resources/Uniforms.h"
 #include "Renderer/Renderer.h"
 
 namespace Silent::Renderer::SdlGpu
@@ -17,7 +17,8 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffer draw batch. */
     struct DrawBatch
     {
-        std::string TextureName  = {};
+        //VertexBuffer<BufferVertex2d>* VertexBuffer = nullptr; // @todo
+        std::string TextureName  = {}; // @todo Or pointer to SDL_gpu texture handle?
         RenderStage RenderStg    = RenderStage::Sprite2d;
         BlendMode   BlendMd      = BlendMode::Opaque;
         UniformType Uniform      = {};
@@ -53,6 +54,7 @@ namespace Silent::Renderer::SdlGpu
 
         SDL_GPUDevice*        _device        = nullptr;
         SDL_GPUCommandBuffer* _commandBuffer = nullptr;
+        SDL_GPUFence*         _renderFence   = nullptr;
         PipelineManager       _pipelines     = PipelineManager();
         GpuBuffers            _gpuBuffers    = {};
         DrawBatches           _drawBatches   = {};

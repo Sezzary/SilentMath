@@ -6,8 +6,8 @@
 #include "Renderer/Backends/SdlGpu/Resources/MeshCache.h"
 #include "Renderer/Backends/SdlGpu/Resources/PingPongTexture.h"
 #include "Renderer/Backends/SdlGpu/Resources/TextureCache.h"
-#include "Renderer/Common/Resources/Buffers.h"
-#include "Renderer/Common/Resources/Uniforms.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms.h"
 #include "Renderer/Common/Utils.h"
 #include "Renderer/Renderer.h"
 #include "Services/Filesystem.h"
@@ -33,8 +33,6 @@ namespace Silent::Renderer::SdlGpu
         static constexpr char NAME[] = "SDL_gpu";
 
         auto& assets = g_App.GetAssets();
-
-        // @todo Make function for common init stuff to call at the start of every backend-specific init function.
 
         _type   = RendererType::SdlGpu;
         _window = &window;
@@ -133,14 +131,16 @@ namespace Silent::Renderer::SdlGpu
         auto* copyPass        = SDL_BeginGPUCopyPass(uploadCmdBuffer);
 
         // @temp
-        //GetMeshes().Upload(*copyPass, "CHARA/DOC.ILM");
-        //GetMeshes().Upload(*copyPass, "ITEM/UNQE1.TMD");
+        GetMeshes().Upload(*copyPass, "CHARA/HERO.ILM");
+        //GetMeshes().Upload(*copyPass, "CHARA/PRSD.ILM");
+        //GetTextures().Upload(*copyPass, "CHARA/PRSD.TIM");
+        GetTextures().Upload(*copyPass, "CHARA/HERO.TIM");
+        //GetTextures().Upload(*copyPass, "MISC/DEMO0000.DAT"); // Temp. load test.
+        //GetTextures().Upload(*copyPass, "ANIM/AMUSE1.DMS"); // Temp. load test.
 
-        // Load temp. textures.
-        //GetTextures().Upload(*copyPass, "TIM/HERO_PIC.TIM");
-        //GetTextures().Upload(*copyPass, "1ST/2ZANKO_E.TIM");
-        assets.Load("TIM/BG_ETC.TIM");
-        
+        //GetMeshes().Upload(*copyPass, "BG/APU0002.IPD");
+        //GetMeshes().Upload(*copyPass, "ITEM/FOOK.TMD");
+
         GetTextures().Upload(*copyPass, ToSpan(DEFAULT_TEXTURE_PIXELS), DEFAULT_TEXTURE_RES, "");
         // @todo If atlas textures aren't updated and the texture is missing, for some reason
         // the app hangs instead of crashing like it's supposed to. Why isn't such an error
@@ -155,30 +155,41 @@ namespace Silent::Renderer::SdlGpu
     {
         SDL_WaitForGPUIdle(_device);
 
+        // Release fences.
+        SDL_WaitForGPUFences(_device, true, &_renderFence, 1);
+        SDL_ReleaseGPUFence(_device, _renderFence);
+
+        // Release ImGui context.
         ImGui_ImplSDL3_Shutdown();
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui::DestroyContext();
 
+        // Release scene resources.
         GetTextures().Release();
         GetMeshes().ReleaseAll();
 
+        // Release samplers.
         for (auto* sampler : _samplers)
         {
             SDL_ReleaseGPUSampler(_device, sampler);
         }
         _samplers.clear();
 
+        // Release render texture.
         _renderTexture.Release();
 
+        // Release depth  texture.
         if (_depthTexture != nullptr)
         {
             SDL_ReleaseGPUTexture(_device, _depthTexture);
             _depthTexture = nullptr;
         }
 
+        // Release GPU setup.
         _pipelines.Release();
         _gpuBuffers.Release();
 
+        // Release window and destroy GPU device.
         SDL_ReleaseWindowFromGPUDevice(_device, _window);
         SDL_DestroyGPUDevice(_device);
     }
@@ -220,18 +231,26 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Update()
     {
+        // Wait for GPU to finish previous frame.
+        if (_renderFence != nullptr)
+        {
+            SDL_WaitForGPUFences(_device, true, &_renderFence, 1);
+            SDL_ReleaseGPUFence(_device, _renderFence);
+            _renderFence = nullptr;
+        }
+
         // Frame setup.
         SortRenderBufferData();
         ClearDrawBatches();
 
-        // Draw frame.
+        // Submit new frame to draw for GPU.
         if (_swapchainTexture != nullptr)
         {
             DrawFrame();
         }
 
-        // Submit command buffer to GPU.
-        SDL_SubmitGPUCommandBuffer(_commandBuffer);
+        // Submit command buffer for GPU to render new frame asynchronously.
+        _renderFence = SDL_SubmitGPUCommandBufferAndAcquireFence(_commandBuffer);
     }
 
     void Renderer::SaveScreenshot() const

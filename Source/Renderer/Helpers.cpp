@@ -69,7 +69,11 @@ namespace Silent::Renderer
             verts.reserve(shape.Vertices.size());
             for (int i = 0; i < shape.Vertices.size(); i++)
             {
-                verts.push_back(Vertex2d{ posArr[i], shape.Vertices[i].Col, Vector2::Zero });
+                verts.push_back(Vertex2d
+                {
+                    .Position = posArr[i],
+                    .Col      = shape.Vertices[i].Col
+                });
             }
 
             // Add 2D primitive.
@@ -185,10 +189,34 @@ namespace Silent::Renderer
                 {
                     .Vertices =
                     {
-                        Vertex2d{ pos0, sprite.Col0, uv0 },
-                        Vertex2d{ pos1, sprite.Col1, uv1 },
-                        Vertex2d{ pos2, sprite.Col2, uv2 },
-                        Vertex2d{ pos3, sprite.Col3, uv3 }
+                        Vertex2d
+                        {
+                            .Position   = pos0,
+                            .Uv         = uv0,
+                            .Col        = sprite.Col0,
+                            .PaletteIdx = sprite.PaletteIdx
+                        },
+                        Vertex2d
+                        {
+                            .Position   = pos1,
+                            .Uv         = uv1,
+                            .Col        = sprite.Col1,
+                            .PaletteIdx = sprite.PaletteIdx
+                        },
+                        Vertex2d
+                        {
+                            .Position   = pos2,
+                            .Uv         = uv2,
+                            .Col        = sprite.Col2,
+                            .PaletteIdx = sprite.PaletteIdx
+                        },
+                        Vertex2d
+                        {
+                            .Position   = pos3,
+                            .Uv         = uv3,
+                            .Col        = sprite.Col3,
+                            .PaletteIdx = sprite.PaletteIdx
+                        }
                     },
                     .Depth       = sprite.Depth,
                     .TextureName = sprite.TextureName,
@@ -244,10 +272,30 @@ namespace Silent::Renderer
                 {
                     .Vertices =
                     {
-                        Vertex2d{ pos0, glyph.Col, uv0 },
-                        Vertex2d{ pos1, glyph.Col, uv1 },
-                        Vertex2d{ pos2, glyph.Col, uv2 },
-                        Vertex2d{ pos3, glyph.Col, uv3 }
+                        Vertex2d
+                        {
+                            .Position = pos0,
+                            .Uv       = uv0,
+                            .Col      = glyph.Col
+                        },
+                        Vertex2d
+                        {
+                            .Position = pos1,
+                            .Uv       = uv1,
+                            .Col      = glyph.Col
+                        },
+                        Vertex2d
+                        {
+                            .Position = pos2,
+                            .Uv       = uv2,
+                            .Col      = glyph.Col
+                        },
+                        Vertex2d
+                        {
+                            .Position = pos3,
+                            .Uv       = uv3,
+                            .Col      = glyph.Col
+                        }
                     },
                     .Depth       = glyph.Depth,
                     .TextureName = glyph.AtlasName,
@@ -277,10 +325,11 @@ namespace Silent::Renderer
             {
                 verts.push_back(Vertex3d
                 {
-                    .Position = vert.Position,
-                    .Normal   = vert.Normal,
-                    .Col      = vert.Col,
-                    .Uv       = vert.Uv
+                    .Position   = vert.Position,
+                    .Normal     = vert.Normal,
+                    .Uv         = vert.Uv,
+                    .Col        = vert.Col,
+                    .PaletteIdx = vert.PaletteIdx
                 });
             }
 
@@ -336,12 +385,19 @@ namespace Silent::Renderer
 
     void RendererBase::DrawFrame()
     {
-        // @todo Refactor into a render graph?
+        // Scene.
         Draw3dScene();
         DrawDither();
         Draw2dScene();
+
+        // Final image.
         DrawPostProcess();
         DrawViewport();
-        DrawDebugMenu();
+
+        // @debug
+        if (Debug::g_Work.EnableDebugMenu)
+        {
+            DrawDebugMenu();
+        }
     }
 }

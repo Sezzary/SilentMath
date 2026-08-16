@@ -160,7 +160,7 @@ namespace Silent::Game
             g_DeltaTime    =
             g_DeltaTimeRaw = DELTA_TIME_30_FPS;
             g_GravitySpeed = Q12_MULT(DELTA_TIME_30_FPS, GRAVITY_SPEED_PER_SEC);
-            
+
             // Set clear color.
             renderer.SetClearColor(Color::From8Bit(g_GameWork.background2dColor.r,
                                                    g_GameWork.background2dColor.g,
@@ -210,7 +210,7 @@ namespace Silent::Game
             {
                 // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
                 auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
-                                                       SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                                       SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
                                                        100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
                 renderer.SubmitSprite2d(sprite);
 

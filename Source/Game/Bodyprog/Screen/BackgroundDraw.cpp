@@ -26,14 +26,14 @@ namespace Silent::Game
 
         // Submit fullscreen background sprite.
         auto sprite = Sprite2d::CreateSprite2d(assetName, Vector2::Zero, Vector2::One,
-                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                               SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
                                                DEPTH_MAX, AlignMode::Center, scaleMode, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
 
         // Submit gamma overlay sprite.
         auto gammaColor  = Color(1.0f, 1.0f, 1.0f, Q8_TO_FLT(g_Screen_BackgroundImgGamma));
         auto gammaSprite = Sprite2d::CreateSprite2d(assetName, Vector2::Zero, Vector2::One,
-                                                    SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White,
+                                                    SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
                                                     DEPTH_MAX - 1, AlignMode::Center, scaleMode, BlendMode::Add);
         renderer.SubmitSprite2d(gammaSprite);
 

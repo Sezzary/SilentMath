@@ -29,6 +29,16 @@ namespace Silent::Renderer
         BlockAllocator                        _idxAllocator    = BlockAllocator();
 
     public:
+        // ========
+        // Getters
+        // ========
+
+        /** @brief Gets the names of meshes cached on the GPU, sorted in alphanumerically.
+         *
+         * @return Mesh names.
+         */
+        std::vector<std::string> GetNames() const;
+
         // ==========
         // Utilities
         // ==========
@@ -62,27 +72,19 @@ namespace Silent::Renderer
         const Mesh* operator[](const std::string& name) const;
 
     private:
-        /** @brief Releases meshes of an ILM model asset from the GPU.
+        /** @brief Releases meshes of an LM chunk from the GPU.
          *
          * @note By convention, GPU meshes use the following naming pattern:
-         * `[ILM asset name]_[bone name]_[bone mesh variant index]`.
+         * `[asset name]_[bone name]`.
          *
-         * @param asset ILM asset.
+         * @param asset ILM, PLM, or IPD asset.
          */
-        void ReleaseIlm(const Asset& asset);
-
-        /** @brief Releases meshes of an IPD model asset from the GPU.
-         *
-         * @todo Mesh naming convention note.
-         *
-         * @param asset IPD asset.
-         */
-        void ReleaseIpd(const Asset& asset);
+        void ReleaseLm(const Asset& asset);
 
         /** @brief Releases meshes of a TMD model asset from the GPU.
          *
          * @note By convention, GPU meshes use the following naming pattern:
-         * `[TMD asset name]_[mesh index]`.
+         * `[asset name]_[mesh index]`.
          *
          * @param asset TMD asset.
          */

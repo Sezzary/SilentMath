@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Savegame/Savegame.h"
+#include "Services/Savegame.h"
 
 #include "Application.h"
 #include "Assets/TranslationKeys.h"
@@ -10,7 +10,7 @@
 
 using namespace Silent::Utils;
 
-namespace Silent::Savegame
+namespace Silent::Services
 {
     static const auto SAVE_LOCATION_NAME_KEYS = std::vector<std::string>
     {
@@ -340,7 +340,6 @@ namespace Silent::Savegame
 
     std::optional<Savegame> SavegameManager::FromSavegameBuffer(const std::vector<byte>& buffer) const
     {
-        // @heapalloc
         auto save = Savegame{};
 
         // Deserialize buffer.
@@ -356,8 +355,7 @@ namespace Silent::Savegame
 
     std::vector<byte> SavegameManager::ToSavegameBuffer(const Savegame& save) const
     {
-        // @heapalloc
-        auto buffer = std::vector<byte>();
+        auto buffer = std::vector<byte>{};
 
         // Serialize buffer.
         struct_pack::serialize_to(buffer, save);

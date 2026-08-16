@@ -178,13 +178,14 @@ namespace Silent::Renderer::SdlGpu
 
         // Map transfer data.
         auto* mappedTransferData = (T*)SDL_MapGPUTransferBuffer(_device, _transferBuffer, false);
-        memcpy(mappedTransferData, data.data(), data.size_bytes());
+        memcpy(mappedTransferData + offset, data.data(), data.size_bytes());
         SDL_UnmapGPUTransferBuffer(_device, _transferBuffer);
 
         // Upload data.
         auto transferBufferLoc = SDL_GPUTransferBufferLocation
         {
-            .transfer_buffer = _transferBuffer
+            .transfer_buffer = _transferBuffer,
+            .offset          = offset * sizeof(T)
         };
         auto bufferRegion = SDL_GPUBufferRegion
         {
@@ -192,7 +193,7 @@ namespace Silent::Renderer::SdlGpu
             .offset = offset * sizeof(T),
             .size   = (uint)data.size_bytes()
         };
-        SDL_UploadToGPUBuffer(&copyPass, &transferBufferLoc, &bufferRegion, true);
+        SDL_UploadToGPUBuffer(&copyPass, &transferBufferLoc, &bufferRegion, false);
     }
 
     template <typename T>
@@ -220,7 +221,7 @@ namespace Silent::Renderer::SdlGpu
         }
         else if (_usageFlags & SDL_GPU_BUFFERUSAGE_INDIRECT)
         {
-            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name));
+            Debug::Log(Fmt("Attempted to bind indirect GPU buffer `{}`.", _name), Debug::LogLevel::Warning);
         }
     }
 

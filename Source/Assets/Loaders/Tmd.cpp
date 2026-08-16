@@ -2,8 +2,9 @@
 #include "Assets/Loaders/Tmd.h"
 
 #include "Application.h"
+#include "Assets/Loaders/Utils/LinearMesh.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 #include "Renderer/Renderer.h"
 #include "Utils/Stream.h"
 #include "Utils/Utils.h"
@@ -13,10 +14,10 @@ using namespace Silent::Utils;
 
 namespace Silent::Assets
 {
-    /** @brief TMD flags. */
-    enum class TmdFlags
+    /** @brief TMD header flags. */
+    enum class TmdHeaderFlags
     {
-        Fixp = 1 << 0 /** 0: Relative offset from mesh data block start, 1: Absolute offset from file start. */
+        Fixp = 1 << 0 /** 0: Relative offset from meshes block start, 1: Absolute offset from file start. */
     };
 
     /** @brief TMD primitive flags. */
@@ -24,13 +25,13 @@ namespace Silent::Assets
     {
         Lit         = 1 << 0, /** 0: Use light, 1: Use raw color. */
         DoubleSided = 1 << 1, /** 0: Single-sided, 1: Double-sided. */
-        Graded      = 1 << 2  /** 0: Fixed color, 1: Gradient. */
+        Graded      = 1 << 2  /** Untextured only. 0: Solid color, 1: Graded color. */
     };
 
     /** @brief TMD packed primitive modes. */
     enum class TmdPrimitiveModes
     {
-        Brightness   = 1 << 0,
+        Brightness   = 1 << 0,                         /** 0: Brightly lit, 1: Textured as-is. */
         Transparency = 1 << 1,                         /** 0: Opaque, 1: Semi-transparent. */
         Textured     = 1 << 2,                         /** 0: Untextured, 1: Textured. */
         Quad         = 1 << 3,                         /** 0: Triangle, 1: Quad. */
@@ -43,7 +44,7 @@ namespace Silent::Assets
     {
         TPage        = (1 << 0) | (1 << 2) | (1 << 3) | (1 << 4), /** PSX texture page. */
         BlendMode    = (1 << 5) | (1 << 6),                       /** `TmdBlendMode` */
-        TextureDepth = (1 << 7) | (1 << 8)                        /** Unused. */
+        ColorMode    = (1 << 7) | (1 << 8)                        /** 0: 4-bit, 1: 8-bit, 2: 15-bit. */
     };
 
     /** TMD primitive types. */
@@ -54,7 +55,7 @@ namespace Silent::Assets
         Sprite  = 3
     };
 
-    /** @brief TMD textured primitive blend modes. */
+    /** @brief TMD primitive blend modes. */
     enum class TmdBlendMode
     {
         AlphaHalf  = 0,
@@ -63,15 +64,15 @@ namespace Silent::Assets
         AddQuarter = 3
     };
 
-    /** @brief TMD header layout. */
-    struct TmdHeaderLayout
+    /** @brief TMD header. */
+    struct TmdHeader
     {
         uint32 Version   = 0; /** Unused. */
         uint32 Flags     = 0;
         uint32 MeshCount = 0;
     };
 
-    /** @brief TMD mesh description layout. */
+    /** @brief TMD mesh description. */
     struct TmdMeshDescLayout
     {
         uint32 PositionOffset  = 0;
@@ -156,57 +157,40 @@ namespace Silent::Assets
         }
 
         // Read header.
-        auto header = TmdHeaderLayout
+        auto header = TmdHeader
         {
             .Version   = stream.ReadUint32(),
             .Flags     = stream.ReadUint32(),
             .MeshCount = stream.ReadUint32()
         };
 
-        // Compute base data address.
-        int baseAddr = sizeof(TmdHeaderLayout) + (header.MeshCount * sizeof(TmdMeshDescLayout));
+        // Compute meshes offset.
+        int  meshesOffset = sizeof(TmdHeader) + (header.MeshCount * sizeof(TmdMeshDescLayout));
+        bool hasFixp      = header.Flags & (int)TmdHeaderFlags::Fixp;
 
         // Read mesh descriptions.
         auto meshDescs = std::vector<TmdMeshDescLayout>{};
         meshDescs.reserve(header.MeshCount);
         for (int i = 0; i < header.MeshCount; i++)
         {
-            auto meshDesc = TmdMeshDescLayout{};
-
-            // Read vertex data.
-            meshDesc.PositionOffset = stream.ReadUint32();
-            meshDesc.PositionCount  = stream.ReadUint32();
-
-            // Read normal data.
-            meshDesc.NormalOffset = stream.ReadUint32();
-            meshDesc.NormalCount  = stream.ReadUint32();
-
-            // Read primitive data.
-            meshDesc.PrimitiveOffset = stream.ReadUint32();
-            meshDesc.PrimitiveCount  = stream.ReadUint32();
-
-            // Read scale.
-            meshDesc.Scale = stream.ReadUint32();
-
-            // Adjust offsets.
-            if (header.Flags & (int)TmdFlags::Fixp)
+            // Read mesh description.
+            auto meshDesc = TmdMeshDescLayout
             {
-                meshDesc.PositionOffset  -= baseAddr;
-                meshDesc.NormalOffset    -= baseAddr;
-                meshDesc.PrimitiveOffset -= baseAddr;
-            }
+                .PositionOffset  = stream.ReadUint32(),
+                .PositionCount   = stream.ReadUint32(),
+                .NormalOffset    = stream.ReadUint32(),
+                .NormalCount     = stream.ReadUint32(),
+                .PrimitiveOffset = stream.ReadUint32(),
+                .PrimitiveCount  = stream.ReadUint32(),
+                .Scale           = stream.ReadUint32()
+            };
 
             // Collect mesh description.
             meshDescs.push_back(std::move(meshDesc));
         }
 
-        // Create asset.
-        auto asset = TmdAsset
-        {
-            .Meshes = std::vector<TmdMesh>(header.MeshCount)
-        };
-
         // Read meshes.
+        auto meshes = std::vector<TmdMesh>(header.MeshCount);
         for (int i = 0; i < header.MeshCount; i++)
         {
             const auto& meshDesc = meshDescs[i];
@@ -216,72 +200,86 @@ namespace Silent::Assets
             // @todo Texture name?
 
             // Create UV and color index lookups.
-            auto uvLookup    = std::unordered_map<Vector2, int>{}; // Key = UV, value = UV index.
-            auto colorLookup = std::unordered_map<Color,   int>{}; // Key = color, value = color index.
+            auto uvLookup    = std::unordered_map<Vector2i, int>{}; // Key = UV, value = UV index.
+            auto colorLookup = std::unordered_map<Color,    int>{}; // Key = color, value = color index.
+
+            // Set stream position to vertex positions.
+            stream.SetPosition(hasFixp ? meshDesc.PositionOffset : (meshesOffset + meshDesc.PositionOffset));
 
             // Read vertex positions.
-            stream.SetPosition(baseAddr + meshDesc.PositionOffset);
-            mesh.Psx.Positions.reserve(meshDesc.PositionCount);
+            mesh.Native.Positions.reserve(meshDesc.PositionCount);
             for (int j = 0; j < meshDesc.PositionCount; j++)
             {
                 // Read components.
-                int16 x = stream.ReadInt16();
-                int16 y = stream.ReadInt16();
-                int16 z = stream.ReadInt16();
+                q3_12 x = stream.ReadInt16();
+                q3_12 y = stream.ReadInt16();
+                q3_12 z = stream.ReadInt16();
+
                 stream.Skip(2);
 
                 // Collect position.
-                mesh.Psx.Positions.push_back(Vector3(x, y, z));
+                mesh.Native.Positions.push_back(Vector3i(x, y, z));
             }
 
+            // Set stream position to vertex normals.
+            stream.SetPosition(hasFixp ? meshDesc.NormalOffset : (meshesOffset + meshDesc.NormalOffset));
+
             // Read vertex normals.
-            stream.SetPosition(baseAddr + meshDesc.NormalOffset);
-            mesh.Psx.Normals.reserve(meshDesc.NormalCount);
+            mesh.Native.Normals.reserve(meshDesc.NormalCount);
             for (int j = 0; j < meshDesc.NormalCount; j++)
             {
                 // Read components.
-                int16 x = stream.ReadInt16();
-                int16 y = stream.ReadInt16();
-                int16 z = stream.ReadInt16();
+                q3_12 x = stream.ReadInt16();
+                q3_12 y = stream.ReadInt16();
+                q3_12 z = stream.ReadInt16();
+
                 stream.Skip(2);
 
                 // Collect normal.
-                auto normal = Vector3::Normalize(Vector3(x, y, z));
-                mesh.Psx.Normals.push_back(normal);
+                auto normal = Vector3i(x, y, z);
+                mesh.Native.Normals.push_back(normal);
             }
 
+            // Set stream position to primitives.
+            stream.SetPosition(hasFixp ? meshDesc.PrimitiveOffset : (meshesOffset + meshDesc.PrimitiveOffset));
+
             // Read primitives.
-            stream.SetPosition(baseAddr + meshDesc.PrimitiveOffset);
-            mesh.Psx.Primitives.reserve(meshDesc.PrimitiveCount);
+            mesh.Native.Primitives.reserve(meshDesc.PrimitiveCount);
             for (int j = 0; j < meshDesc.PrimitiveCount; j++)
             {
                 // Read attributes.
-                int8 olen  = stream.ReadInt8(); // Unused.
-                int8 ilen  = stream.ReadInt8(); // Packet size in words.
-                int8 flags = stream.ReadInt8(); // `TmdPrimitiveFlags`
-                int8 mode  = stream.ReadInt8(); // `TmdPrimitiveModes`
+                uint8 olen  = stream.ReadUint8(); // Unused.
+                uint8 ilen  = stream.ReadUint8(); // Packet size in words.
+                uint8 flags = stream.ReadUint8(); // `TmdPrimitiveFlags`
+                uint8 mode  = stream.ReadUint8(); // `TmdPrimitiveModes`
 
-                bool isGouraud = mode & (int)TmdPrimitiveModes::Gouraud;
+                bool isGraded      = flags & (int)TmdPrimitiveFlags::Graded;
+                bool isBright      = mode & (int)TmdPrimitiveModes::Brightness;
+                bool isTransparent = mode & (int)TmdPrimitiveModes::Transparency;
+                bool isTextured    = mode & (int)TmdPrimitiveModes::Textured;
+                bool isQuad        = mode & (int)TmdPrimitiveModes::Quad;
+                bool isGouraud     = mode & (int)TmdPrimitiveModes::Gouraud;
+                auto primType      = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
 
-                // Compute next primitive position.
-                int nextPrimPos = stream.GetPosition() + (ilen * sizeof(int32));
+                // Store next primitive offset.
+                int nextPrimOffset = stream.GetPosition() + (ilen * sizeof(int32));
 
                 // Read primitive.
-                auto primType = (TmdPrimitiveType)((mode & (int)TmdPrimitiveModes::Primitive) >> 5);
                 switch (primType)
                 {
                     case TmdPrimitiveType::Polygon:
                     {
                         // Read attributes.
-                        int  vertCount = (mode & (int)TmdPrimitiveModes::Quad) ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
-                        auto uvs       = std::vector<Vector2>(vertCount, Vector2::Zero);
-                        auto colors    = std::vector<Color>(vertCount, Color::White);
-                        auto blendMode = BlendMode::Opaque;
-                        int  tpage     = 0;
-                        bool isTri     = vertCount == TRI_VERTEX_COUNT;
+                        int   vertCount  = isQuad ? QUAD_VERTEX_COUNT : TRI_VERTEX_COUNT;
+                        auto  uvs        = std::vector<Vector2i>(vertCount, Vector2i::Zero);
+                        auto  colors     = std::vector<Color>(vertCount, Color::White);
+                        auto  blendMode  = BlendMode::Opaque;
+                        float colorAlpha = 1.0f;
+                        int   tPage      = 0;
+                        bool  isTri      = vertCount == TRI_VERTEX_COUNT;
 
-                        // Read textured polygon.
-                        if (mode & (int)TmdPrimitiveModes::Textured)
+                        // Read textured polygon UVs.
+                        if (isTextured)
                         {
                             // Read UVs, CBA, and TSB.
                             uint16 cba = 0; // Unused.
@@ -292,8 +290,8 @@ namespace Silent::Assets
                                 uint8 u = stream.ReadUint8();
                                 uint8 v = stream.ReadUint8();
 
-                                // Set normalized UV.
-                                uvs[i] = Vector2(u, v) / (float)UCHAR_MAX;
+                                // Set UV.
+                                uvs[i] = Vector2i(u, v);
 
                                 // Read CBA.
                                 if (i == 0)
@@ -311,42 +309,41 @@ namespace Silent::Assets
                                 }
                             }
 
+                            tPage             = tsb & (int)TmdTextureAttribs::TPage;
+                            auto tmdBlendMode = (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5);
+                            int colorMode     = (tsb & (int)TmdTextureAttribs::ColorMode) >> 7; // Unused.
+
                             // Get blend mode and color alpha.
-                            float colorAlpha = 1.0f;
-                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha,
-                                                         mode & (int)TmdPrimitiveModes::Transparency,
-                                                         (TmdBlendMode)((tsb & (int)TmdTextureAttribs::BlendMode) >> 5));
+                            GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, isTransparent, tmdBlendMode);
 
                             // Set colors.
                             for (auto& color : colors)
                             {
                                 color = Color(1.0f, 1.0f, 1.0f, colorAlpha);
                             }
-
-                            // Set tpage.
-                            tpage = tsb & (int)TmdTextureAttribs::TPage;
                         }
-                        // Read untextured polygon.
+                        // Read untextured polygon colors.
                         else
                         {
                             // Get blend mode and color alpha.
-                            float colorAlpha = 1.0f;
-                            if (mode & (int)TmdPrimitiveModes::Transparency)
+                            if (isTransparent)
                             {
                                 GetTmdBlendModeAndColorAlpha(blendMode, colorAlpha, true, TmdBlendMode::AlphaHalf);
                             }
 
                             // Read colors.
-                            uint32 color = stream.ReadUint32();
-                            for (int i = 0; i < vertCount; i++)
+                            for (int i = 0; i < (isGraded ? vertCount : 1); i++)
                             {
-                                if (isGouraud && i > 0)
-                                {
-                                    color = stream.ReadUint32();
-                                }
-
-                                colors[i] = ConvertTmdVertexColor(color, colorAlpha);
+                                uint32 color = stream.ReadUint32();
+                                colors[i]    = ConvertTmdVertexColor(color, colorAlpha);
                             }
+                        }
+
+                        // Read normal indices.
+                        auto normalIdxs = std::vector<uint16>(vertCount);
+                        for (int i = 0; i < (isGouraud ? vertCount : 1); i++)
+                        {
+                            normalIdxs[i] = stream.ReadUint16();
                         }
 
                         // Read position indices.
@@ -355,24 +352,8 @@ namespace Silent::Assets
                         {
                             idx = stream.ReadUint16();
                         }
-                        if (isTri)
-                        {
-                            stream.Skip(2);
-                        }
 
-                        // Read normal indices.
-                        auto   normalIdxs = std::vector<uint16>(vertCount);
-                        uint16 normalIdx  = stream.ReadUint16();
-                        for (int i = 0; i < vertCount; i++)
-                        {
-                            if (isGouraud && i > 0) 
-                            {
-                                normalIdx = stream.ReadUint16();
-                            }
-
-                            normalIdxs[i] = normalIdx;
-                        }
-                        if (!isGouraud || isTri)
+                        if (isQuad)
                         {
                             stream.Skip(2);
                         }
@@ -381,101 +362,60 @@ namespace Silent::Assets
                         auto prim = TmdPrimitive
                         {
                             .BlendMd = blendMode,
-                            .TPage   = tpage
+                            .TPage   = tPage
                         };
                         for (int i = 0; i < vertCount; i++)
                         {
                             prim.Vertices.push_back(TmdVertex
                             {
                                 .PositionIdx = posIdxs[i],
-                                .NormalIdx   = normalIdxs[i],
+                                .NormalIdx   = normalIdxs[isGouraud ? 0 : i],
                                 .UvIdx       = GetLookupIdx(uvLookup, uvs[i]),
                                 .ColorIdx    = GetLookupIdx(colorLookup, colors[i])
                             });
                         }
-                        mesh.Psx.Primitives.push_back(prim);
+                        mesh.Native.Primitives.push_back(prim);
                         break;
                     }
+                    default:
                     case TmdPrimitiveType::Line:
                     case TmdPrimitiveType::Sprite:
                     {
-                        Debug::Log(Fmt("Attempted to read unsupported primitive type while parsing TMD `{}`.",
-                                       filename.string()),
-                                   Debug::LogLevel::Warning);
+                        Debug::Log(Fmt("Attempted to read unsupported primitive type {} while parsing TMD `{}`.",
+                                       (int)primType, filename.string()),
+                                   Debug::LogLevel::Warning, Debug::LogMode::Debug);
                         break;
                     }
                 }
 
-                stream.SetPosition(nextPrimPos);
+                // Set stream position to next primitive.
+                stream.SetPosition(nextPrimOffset);
             }
 
             // Collect indexed UVs.
-            mesh.Psx.Uvs.resize(uvLookup.size());
+            mesh.Native.Uvs.resize(uvLookup.size());
             for (const auto& [keyUv, uvIdx] : uvLookup)
             {
-                mesh.Psx.Uvs[uvIdx] = keyUv;
+                mesh.Native.Uvs[uvIdx] = keyUv;
             }
 
             // Collect indexed colors.
-            mesh.Psx.Colors.resize(colorLookup.size());
+            mesh.Native.Colors.resize(colorLookup.size());
             for (const auto& [keyColor, colorIdx] : colorLookup)
             {
-                mesh.Psx.Colors[colorIdx] = keyColor;
+                mesh.Native.Colors[colorIdx] = keyColor;
             }
 
             // Collect mesh.
-            asset.Meshes.push_back(std::move(mesh));
+            meshes.push_back(std::move(mesh));
         }
 
-        /*for (auto& mesh : asset.Meshes)
-        {
-            float radius = 0.0f;
-            int i = 0;
-            for (const auto& prim : mesh.Psx.Primitives)
-            {
-                for (const auto& vert : prim.Vertices)
-                {
-                    auto pos = mesh.Psx.Positions[vert.PositionIdx];
-                    auto normal = mesh.Psx.Normals[std::min<int>(vert.Psx.NormalIdx, mesh.Psx.Normals.size() - 1)];
-                    auto uv = mesh.Psx.Uvs[vert.UvIdx];
-                    auto color = mesh.Psx.Colors[vert.ColorIdx];
-                    mesh.Linear.Vertices.push_back(BufferVertex3d
-                    {
-                        .Position = pos / 5792.61865f,
-                        .Normal   = normal,
-                        .Uv       = uv,
-                        .Col      = color
-                    });
-
-                    radius = std::max(radius, Vector3::Distance(Vector3::Zero, pos));
-                }
-                i++;
-
-                // Collect linear vertex indices.
-                if (prim.Vertices.size() == TRI_IDX_COUNT)
-                {
-                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
-                    {
-                        (uint16)mesh.Linear.Vertices.size() - 2, (uint16)mesh.Linear.Vertices.size() - 1, (uint16)mesh.Linear.Vertices.size()
-                    });
-                }
-                else if (prim.Vertices.size() == QUAD_IDX_COUNT)
-                {
-                    mesh.Linear.Idxs.insert(mesh.Linear.Idxs.end(),
-                    {
-                        (uint16)mesh.Linear.Vertices.size() - 2, (uint16)mesh.Linear.Vertices.size() - 1, (uint16)mesh.Linear.Vertices.size(),
-                        (uint16)mesh.Linear.Vertices.size() - 2, (uint16)mesh.Linear.Vertices.size(), (uint16)mesh.Linear.Vertices.size() - 3
-                    });
-                }
-            }
-        }*/
-
         // Convert to linear meshes. @todo Implement render buckets? Sort primitives by CLUT?
-        for (auto& mesh : asset.Meshes)
+        /*for (auto& mesh : meshes)
         {
             // Run through primitives.
             auto vertLookup = std::unordered_map<TmdVertex, int>{};
-            for (const auto& prim : mesh.Psx.Primitives)
+            for (const auto& prim : mesh.Native.Primitives)
             {
                 // Collect primitive vertex indices.
                 auto primIdxs = std::vector<uint16>{};
@@ -509,28 +449,31 @@ namespace Silent::Assets
             {
                 mesh.Linear.Vertices[vertIdx] = BufferVertex3d
                 {
-                    .Position = mesh.Psx.Positions[keyVert.PositionIdx] / 4096.0f,
-                    .Normal   = mesh.Psx.Normals[std::min<int>(keyVert.NormalIdx, mesh.Psx.Normals.size() - 1)],
-                    .Uv       = mesh.Psx.Uvs[keyVert.UvIdx],
-                    .Col      = mesh.Psx.Colors[keyVert.ColorIdx]
+                    .Position = mesh.Native.Positions[keyVert.PositionIdx].ToVector3() / 4096.0f,
+                    .Normal   = mesh.Native.Normals[keyVert.NormalIdx].ToVector3() / 4096.0f,
+                    .Uv       = mesh.Native.Uvs[keyVert.UvIdx].ToVector2() / 255.0f, // @todo Unreliable.
+                    .Col      = mesh.Native.Colors[keyVert.ColorIdx]
                 };
             }
-        }
+        }*/
 
-        return std::make_shared<TmdAsset>(std::move(asset));
+        return std::make_shared<TmdAsset>(TmdAsset
+        {
+            .Meshes = std::move(meshes)
+        });
     }
 
-    void TmdQueueGpuUpload(const Asset& asset)
+    void QueueTmdGpuUpload(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
-        renderer.QueueMeshUpload(asset.Name);
+        //renderer.QueueMeshUpload(asset.Name);
     }
 
-    void TmdQueueGpuRelease(const Asset& asset)
+    void QueueTmdGpuRelease(const Asset& asset)
     {
         auto& renderer = g_App.GetRenderer();
 
-        renderer.QueueMeshRelease(asset.Name);
+        //renderer.QueueMeshRelease(asset.Name);
     }
 }

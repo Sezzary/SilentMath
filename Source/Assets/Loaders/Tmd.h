@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Assets/Loaders/Utils/LinearMesh.h"
 #include "Renderer/Common/Enums.h"
-#include "Renderer/Common/Resources/Buffers.h"
+#include "Renderer/Common/Resources/Layouts/Buffers.h"
 
 using namespace Silent::Renderer;
 
@@ -34,12 +35,13 @@ namespace Silent::Assets
         int                    TPage    = 0;
     };
 
-    struct TmdPsxMesh
+    /** @brief TMD native format mesh. */
+    struct TmdNativeMesh
     {
         std::vector<TmdPrimitive> Primitives  = {};
-        std::vector<Vector3>      Positions   = {};
-        std::vector<Vector3>      Normals     = {};
-        std::vector<Vector2>      Uvs         = {};
+        std::vector<Vector3i>     Positions   = {};
+        std::vector<Vector3i>     Normals     = {};
+        std::vector<Vector2i>     Uvs         = {};
         std::vector<Color>        Colors      = {};
     };
 
@@ -53,8 +55,8 @@ namespace Silent::Assets
     /** @brief TMD mesh. */
     struct TmdMesh
     {
-        TmdPsxMesh    Psx    = {};
-        TmdLinearMesh Linear = {};
+        TmdNativeMesh Native = {};
+        LinearMesh    Linear = {};
     };
 
     /** @brief TMD asset data. */
@@ -74,13 +76,13 @@ namespace Silent::Assets
      *
      * @param asset TMD asset.
      */
-    void TmdQueueGpuUpload(const Asset& asset);
+    void QueueTmdGpuUpload(const Asset& asset);
 
     /** @brief Queues a TMD asset to release from the GPU as meshes.
      *
      * @param asset TMD asset.
      */
-    void TmdQueueGpuRelease(const Asset& asset);
+    void QueueTmdGpuRelease(const Asset& asset);
 }
 
 namespace std 

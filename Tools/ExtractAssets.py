@@ -149,6 +149,16 @@ RELEASES = (
     Release("NTSC Beta 99-01-22",       "SLUS-00707", 0x84AB9750, 0xB850, 2072, DIRS_NTSC, FILE_TYPES, RomFlags.NONE)
 )
 
+# Mappings of file renames. 
+# @todo Renames will shift the file order and can only be done when reliance on the file table is no longer necessary.
+FILE_RENAMES = {
+    "CHARA/MTH.ILM":  "CHARA/MOTH.ILM",
+    "CHARA/WRM.ILM":  "CHARA/WORM.ILM",
+    "CHARA/BIRD.ILM": "CHARA/REBIRD.ILM",
+    "TEST/EI.TIM":    "CHARA/EI.TIM",
+    "TEST/DEV.TIM":   "CHARA/MAN.TIM"
+}
+
 def _create_parser():
     """
     Create an argument parser for the script.
@@ -296,7 +306,7 @@ def _decompress_lzss_file(data: bytes) -> bytes:
                 byte = window[offset]
                 output.append(byte)
 
-                # Write to window and move `window_ptr``.
+                # Write to window and move `window_ptr`.
                 window[window_ptr] = byte
                 window_ptr         = (window_ptr + 1) & 0xFFF
 
@@ -374,9 +384,11 @@ def _extract(entries:Iterable[TableEntry], output: Path, file: BinaryIO, sector_
         idx = idx + 1
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     logging.info("Extracting assets...")
 
-    logging.basicConfig(level=logging.INFO)
+    # Setup.
     args          = _create_parser().parse_args()
     exe: BinaryIO = args.executable
     checksum      = _get_checksum(exe)

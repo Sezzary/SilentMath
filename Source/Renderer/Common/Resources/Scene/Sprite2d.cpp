@@ -16,7 +16,7 @@ namespace Silent::Renderer
     {
         auto& assets = g_App.GetAssets();
 
-        const auto* asset = assets.GetAsset(texName);
+        const auto* asset = assets[texName];
         switch (asset->Type)
         {
             case AssetType::Png:
@@ -42,7 +42,7 @@ namespace Silent::Renderer
 
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                       const Vector2& pos, float rot, const Vector2& scale,
-                                      const Color& color0, const Color& color1, const Color& color2, const Color& color3,
+                                      const Color& color0, const Color& color1, const Color& color2, const Color& color3, int paletteIdx,
                                       int depth, AlignMode alignMode, ScaleMode scaleMode,
                                       BlendMode blendMode)
     {
@@ -58,6 +58,7 @@ namespace Silent::Renderer
             .Col1        = color1,
             .Col2        = color2,
             .Col3        = color3,
+            .PaletteIdx  = paletteIdx,
             .Depth       = depth,
             .AlignMd     = alignMode,
             .ScaleMd     = scaleMode,
@@ -66,7 +67,7 @@ namespace Silent::Renderer
     }
 
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
-                                      const Vector2& pos, float rot, const Vector2& scale, const Color& color,
+                                      const Vector2& pos, float rot, const Vector2& scale, const Color& color, int paletteIdx,
                                       int depth, AlignMode alignMode, ScaleMode scaleMode,
                                       BlendMode blendMode)
     {
@@ -82,6 +83,7 @@ namespace Silent::Renderer
             .Col1        = color,
             .Col2        = color,
             .Col3        = color,
+            .PaletteIdx  = paletteIdx,
             .Depth       = depth,
             .AlignMd     = alignMode,
             .ScaleMd     = scaleMode,
@@ -90,7 +92,7 @@ namespace Silent::Renderer
     }
 
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
-                                      const Vector2& pos, float rot, float scale, const Color& color,
+                                      const Vector2& pos, float rot, float scale, const Color& color, int paletteIdx,
                                       int depth, AlignMode alignMode, ScaleMode scaleMode,
                                       BlendMode blendMode)
     {
@@ -104,11 +106,12 @@ namespace Silent::Renderer
             .UvMax       = uvMax,
             .Position    = pos,
             .Rotation    = rot,
-            .Scale       = localScale * scale,
+            .Scale       = Vector2::One, // @todo Something broke. `localScale` can't be used.
             .Col0        = color,
             .Col1        = color,
             .Col2        = color,
             .Col3        = color,
+            .PaletteIdx  = paletteIdx,
             .Depth       = depth,
             .AlignMd     = alignMode,
             .ScaleMd     = scaleMode,
@@ -117,7 +120,7 @@ namespace Silent::Renderer
     }
 
     Sprite2d CreateSprite2d(const std::string& texName, const Vector2i& pixelMin, const Vector2i& pixelMax,
-                            const Vector2i& pos, float rot,
+                            const Vector2i& pos, float rot, int paletteIdx,
                             int depth, AlignMode alignMode, ScaleMode scaleMode,
                             BlendMode blendMode)
     {
@@ -132,6 +135,7 @@ namespace Silent::Renderer
             .Col1        = Color::White,
             .Col2        = Color::White,
             .Col3        = Color::White,
+            .PaletteIdx  = paletteIdx,
             .Depth       = depth,
             .AlignMd     = alignMode,
             .ScaleMd     = scaleMode,

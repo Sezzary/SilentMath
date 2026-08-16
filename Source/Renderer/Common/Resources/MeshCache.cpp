@@ -11,6 +11,20 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
+    std::vector<std::string> MeshCacheBase::GetNames() const
+    {
+        // Collect sorted mesh names.
+        auto names = std::vector<std::string>{};
+        names.reserve(_meshes.size());
+        for (const auto& [keyName, mesh] : _meshes)
+        {
+            names.push_back(keyName);
+        }
+        Sort(names);
+
+        return names;
+    }
+
     void MeshCacheBase::Release(const std::string& name)
     {
         // Check if mesh name exists.
@@ -33,7 +47,7 @@ namespace Silent::Renderer
         auto& assets = g_App.GetAssets();
 
         // Get asset.
-        const auto* asset = assets.GetAsset(assetName);
+        const auto* asset = assets[assetName];
         if (asset == nullptr)
         {
             Debug::Log(Fmt("Attempted to unload GPU meshes from invalid asset `{}`.", asset->Name),
@@ -44,13 +58,10 @@ namespace Silent::Renderer
         switch (asset->Type)
         {
             case AssetType::Ilm:
-            {
-                ReleaseIlm(*asset);
-                break;
-            }
             case AssetType::Ipd:
+            case AssetType::Plm:
             {
-                ReleaseIpd(*asset);
+                ReleaseLm(*asset);
                 break;
             }
             case AssetType::Tmd:
@@ -80,22 +91,35 @@ namespace Silent::Renderer
         return &*mesh;
     }
 
-    void MeshCacheBase::ReleaseIlm(const Asset& asset)
+    void MeshCacheBase::ReleaseLm(const Asset& asset)
     {
-        const auto data = asset.GetData<IlmAsset>();
-
-        for (int i = 0; i < data->Meshes.size(); i++)
+        const std::vector<LmMesh>* meshes = nullptr;
+        switch (asset.Type)
         {
-            const auto& mesh = data->Meshes[i];
-            Release(asset.Name + "_" + mesh.BoneName); // @todo Append bone variant index.
+            case AssetType::Ilm:
+            {
+                const auto data = asset.GetData<IlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Ipd:
+            {
+                const auto data = asset.GetData<IpdAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
+            case AssetType::Plm:
+            {
+                const auto data = asset.GetData<PlmAsset>();
+                meshes          = &data->Lm.Meshes;
+                break;
+            }
         }
-    }
 
-    void MeshCacheBase::ReleaseIpd(const Asset& asset)
-    {
-        const auto data = asset.GetData<IpdAsset>();
-
-        // @todo
+        for (const auto& mesh : *meshes)
+        {
+            Release(asset.Name + "_" + mesh.Name);
+        }
     }
 
     void MeshCacheBase::ReleaseTmd(const Asset& asset)

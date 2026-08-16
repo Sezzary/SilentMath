@@ -21,13 +21,11 @@ float4 main(Input input) : SV_Target
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
-    // Compute UV coordinate.
-    float2 uv = input.Position.xy / Resolution.xy;
-
     // Compute vignette effect.
-    float vignette = (((16.0f * uv.x) * uv.y) * (1.0f - uv.x)) * (1.0f - uv.y);
+    float2 uv       = input.Position.xy / Resolution.xy;
+    float  vignette = (((16.0f * uv.x) * uv.y) * (1.0f - uv.x)) * (1.0f - uv.y);
 
-    // Compute final fragment color.
-    float3 color = texColor.rgb * pow(vignette, STRENGTH);
-    return float4(color, 1.0f);
+    // Compute final color.
+    float3 finalColor = texColor.rgb * pow(vignette, STRENGTH);
+    return float4(finalColor, 1.0f);
 }

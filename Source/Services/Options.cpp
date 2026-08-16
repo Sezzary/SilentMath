@@ -34,6 +34,7 @@ namespace Silent::Services
     constexpr char KEY_LIGHTING[]                                 = "Lighting";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
     constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
+    constexpr char KEY_ENABLE_FILM_GRAIN[]                        = "EnableFilmGrain";
     constexpr char KEY_ENABLE_VIGNETTE[]                          = "EnableVignette";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
     constexpr char KEY_ENABLE_AUTO_LOAD[]                         = "EnableAutoLoad";
@@ -58,6 +59,7 @@ namespace Silent::Services
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
     constexpr char KEY_PAPER_MAP[]                                = "PaperMap";
     constexpr char KEY_DIALOG_PAUSE[]                             = "DialogPause";
+    constexpr char KEY_ENABLE_LOGOS[]                             = "EnableLogos";
     constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
     constexpr char KEY_ENABLE_PARALLELISM[]                       = "EnableParallelism";
 
@@ -73,6 +75,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Original;
     constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
     constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
+    constexpr bool DEFAULT_ENABLE_FILM_GRAIN                        = false;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
     constexpr bool DEFAULT_ENABLE_VIGNETTE                          = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
@@ -95,6 +98,7 @@ namespace Silent::Services
     constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Original;
     constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Original;
     constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
+    constexpr bool DEFAULT_ENABLE_LOGOS                             = true;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
     void OptionsManager::SetDefaultGraphicsOptions()
@@ -110,6 +114,7 @@ namespace Silent::Services
         _options.TextQuality        = DEFAULT_TEXT_QUALITY;
         _options.Lighting           = DEFAULT_LIGHTING;
         _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
+        _options.EnableFilmGrain    = DEFAULT_ENABLE_FILM_GRAIN;
         _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
         _options.EnableVignette     = DEFAULT_ENABLE_VIGNETTE;
         _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
@@ -161,6 +166,7 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultSystemOptions()
     {
+        _options.EnableLogos       = DEFAULT_ENABLE_LOGOS;
         _options.EnableToasts      = DEFAULT_ENABLE_TOASTS;
         _options.EnableParallelism = GetCoreCount() > 1;
     }
@@ -248,6 +254,7 @@ namespace Silent::Services
         options.Lighting           = graphicsJson.value(KEY_LIGHTING,             DEFAULT_LIGHTING);
         options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
         options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
+        options.EnableFilmGrain    = graphicsJson.value(KEY_ENABLE_FILM_GRAIN,    DEFAULT_ENABLE_FILM_GRAIN);
         options.EnableVignette     = graphicsJson.value(KEY_ENABLE_VIGNETTE,      DEFAULT_ENABLE_VIGNETTE);
         options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
 
@@ -321,6 +328,7 @@ namespace Silent::Services
 
         // Load system options.
         const auto& systemJson    = optionsJson[KEY_SYSTEM];
+        options.EnableLogos       = systemJson.value(KEY_ENABLE_LOGOS, DEFAULT_ENABLE_LOGOS);
         options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
         options.EnableParallelism = systemJson.value(KEY_ENABLE_PARALLELISM, GetCoreCount() > 1);
 
@@ -341,16 +349,16 @@ namespace Silent::Services
     {
         // Create keyboard/mouse bindings JSON.
         auto kmBindsJson = json();
-        for (const auto& [actionId, eventIds] : options.KeyboardMouseBindings)
+        for (const auto& [keyActionId, eventIds] : options.KeyboardMouseBindings)
         {
-            kmBindsJson[std::to_string((int)actionId)] = eventIds.front();
+            kmBindsJson[std::to_string((int)keyActionId)] = eventIds.front();
         }
 
         // Create gamepad bindings JSON.
         auto gamepadBindsJson = json();
-        for (const auto& [actionId, eventIds] : options.KeyboardMouseBindings)
+        for (const auto& [keyActionId, eventIds] : options.KeyboardMouseBindings)
         {
-            gamepadBindsJson[std::to_string((int)actionId)] = eventIds.front();
+            gamepadBindsJson[std::to_string((int)keyActionId)] = eventIds.front();
         }
 
         // Create options JSON.
@@ -372,6 +380,7 @@ namespace Silent::Services
                     { KEY_LIGHTING,             options.TextQuality        },
                     { KEY_ENABLE_VERTEX_JITTER, options.EnableVertexJitter },
                     { KEY_ENABLE_DITHERING,     options.EnableDithering    },
+                    { KEY_ENABLE_FILM_GRAIN,    options.EnableFilmGrain    },
                     { KEY_ENABLE_VIGNETTE,      options.EnableVignette     },
                     { KEY_ENABLE_CRT_FILTER,    options.EnableCrtFilter    }
                 }
@@ -416,6 +425,7 @@ namespace Silent::Services
             {
                 KEY_SYSTEM,
                 {
+                    { KEY_ENABLE_LOGOS,  options.EnableLogos },
                     { KEY_ENABLE_TOASTS, options.EnableToasts }
                 }
             }

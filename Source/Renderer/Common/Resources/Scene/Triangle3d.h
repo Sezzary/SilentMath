@@ -11,10 +11,11 @@ namespace Silent::Renderer
     {
         struct Triangle3dVertex
         {
-            Vector3 Position = Vector3::Zero;
-            Vector3 Normal   = Vector3::One;
-            Color   Col      = Color::Clear;
-            Vector2 Uv       = Vector2::Zero;
+            Vector3 Position   = Vector3::Zero;
+            Vector3 Normal     = Vector3::One;
+            Vector2 Uv         = Vector2::Zero;
+            Color   Col        = Color::Clear;
+            int     PaletteIdx = NO_VALUE;
         };
 
         std::array<Triangle3dVertex, TRI_VERTEX_COUNT> Vertices    = {};
@@ -22,7 +23,7 @@ namespace Silent::Renderer
         BlendMode                                      BlendMd     = BlendMode::Opaque;
 
         static Triangle3d CreateTriangle3d(const Vector3& vert0, const Vector3& vert1, const Vector3& vert2,
-                                           const Color& color,
+                                           const Color& color, int paletteIdx = NO_VALUE,
                                            BlendMode blendMode = BlendMode::Opaque);
     };
 }

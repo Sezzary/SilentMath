@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Assets/Loaders/Anm.h"
+#include "Assets/Loaders/Dat.h"
+#include "Assets/Loaders/Dms.h"
 #include "Assets/Loaders/Ilm.h"
 #include "Assets/Loaders/Ipd.h"
 #include "Assets/Loaders/Plm.h"
@@ -14,19 +17,18 @@ namespace Silent::Assets
     {
         Tim, /** "Texture IMage"                 | PsyQ SDK texture image. */
         Vab, /** "Voice Audio Bank"              | PsyQ SDK audio bank. */
-        Bin, /** "BINary"                        | Original overlay data. */
+        Bin, /** "BINary"                        | Original logic overlay data. @unused PSX-specific. */
         Dms, /** "Demo Motion Sequence"?         | Cutscene data. */
-        Anm, /** "ANiMation"                     | Animation data. */
-        Plm, /** "PoLygon Model"?                | Map model data. */
-        Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. Used for environment streaming. */
-        Ilm, /** "Instanced Linked Model"?       | Skeletal model data. Used for characters. */
-        Tmd, /** "Three-dimensional Model Data"  | PsyQ SDK 3D model data. Used for inventory items. */
-        Dat, /** "Demo dATa"?                    | Demo playback data. */
-        Kdt, /** "Key Data Tracker"?             | Konami MIDI tracker data. */
-        Cmp, /** "CoMPressed"                    | Compressed data. */
-        Xa,  /** "eXtended Audio"                | PSX ADPCM audio stream. */
-        Str, /** "video STReam"                  | PSX video stream. */
-
+        Anm, /** "ANiMation"                     | ILM animation data. */
+        Plm, /** "Prop Linear Mesh"?             | Global map prop model data. Identical to ILM. */
+        Ipd, /** "Instanced Polygon model Data"? | Map model and collision data. */
+        Ilm, /** "Interactive Linear Mesh"?      | Skeletal character model data. Identical to PLM. */
+        Tmd, /** "3D Model Data"                 | PsyQ SDK 3D model data.. */
+        Dat, /** "Demo dATa"                     | Demo state or playback data. */
+        Kdt, /** "Key Data Tracker"              | Konami MIDI tracker data. */
+        Cmp, /** "CoMPressed"                    | Compressed data. @unused PSX-specific. */
+        Xa,  /** "eXtended Audio"                | PSX ADPCM audio stream. @unused PSX-specific. */
+        Str, /** "video STReam"                  | PSX video stream. @unused PSX-specific. */
         Png
     };
 
@@ -43,6 +45,7 @@ namespace Silent::Assets
     struct Asset
     {
         std::string             Name  = {};                   /** Filename relative to assets folder. */
+        int                     Idx   = 0;                    /** Registration index. */
         AssetType               Type  = AssetType::Tim;       /** File type. */
         stdfs::path             File  = {};                   /** Absolute system file path. */
         uint64                  Size  = 0;                    /** Raw file size in bytes. */
@@ -60,7 +63,7 @@ namespace Silent::Assets
         {
             if (Data == nullptr)
             {
-                throw std::runtime_error("Attempted to get data for unloaded asset.");
+                throw std::runtime_error(Fmt("Attempted to get data for unloaded asset `{}`.", Name));
             }
 
             return std::reinterpret_pointer_cast<T>(Data);
@@ -75,11 +78,13 @@ namespace Silent::Assets
         // Fields
         // =======
 
-        std::vector<std::unique_ptr<Asset>>        _assets       = {}; /** Registered assets. */
-        std::unordered_map<int, std::string>       _names        = {}; /** Key = asset index, value = asset name. */
-        std::unordered_map<std::string, int>       _idxs         = {}; /** Key = asset name, value = asset index. */
-        std::unordered_map<int, std::future<void>> _loadFutures  = {}; /** Key = asset index, value = load future. */
-        std::atomic<int>                           _loadingCount = 0;  /** Number of currently loading assets. */
+        std::unordered_map<std::string, std::unique_ptr<Asset>> _assets       = {}; /** Key = asset name, value = asset. */
+        std::atomic<int>                                        _loadingCount = 0;  /** Number of currently loading assets. */
+        std::unordered_map<int, std::string>                    _names        = {}; /** Key = asset index, value = asset name. */
+        
+        std::unordered_map<std::string, std::future<void>> _loadFutures  = {}; /** Key = asset name, value = load future. */
+        std::mutex                                         _loadMutex    = {};
+        std::mutex                                         _unloadMutex  = {};
 
     public:
         // =============
@@ -92,12 +97,12 @@ namespace Silent::Assets
         // Getters
         // ========
 
-        /** Gets an asset's name by its legacy index.
+        /** @brief Gets the index of an asset by name.
          *
-         * @param assetIdx Legacy asset file index.
-         * @return Asset name.
+         * @param name Asset name.
+         * @return Asset index.
          */
-        const std::string& GetName(int assetIdx) const;
+        int GetIdx(const std::string& name);
 
         /** @brief Gets a vector containing the names of all loaded assets.
          *
@@ -110,20 +115,6 @@ namespace Silent::Assets
          * @return Number of assets being loaded.
          */
         int GetLoadingCount() const;
-
-        /** @brief Gets a loaded asset via a file index.
-         *
-         * @param assetIdx Asset file index.
-         * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
-         */
-        const Asset* GetAsset(int assetIdx);
-
-        /** @brief Gets a loaded asset via a filename.
-         *
-         * @param assetName Asset filename.
-         * @return Pointer to an `Asset` object if the asset is loaded, `nullptr` otherwise.
-         */
-        const Asset* GetAsset(const std::string& assetName);
 
         // ==========
         // Inquirers
@@ -145,33 +136,35 @@ namespace Silent::Assets
          */
         void Initialize(const stdfs::path& assetsPath);
 
+        /** @brief Loads an asset by name.
+         *
+         * @param name Name of the asset to load.
+         * @return `std::future` of the asset's load status.
+         */
+        const std::future<void>& Load(const std::string& name);
+
         /** @brief Loads an asset by index.
+         *
+         * @todo Only for temporary compatibility with original file table.
          *
          * @param assetIdx Index of the asset to load.
          * @return `std::future` of the asset's load status.
          */
-        const std::future<void>& Load(int assetIdx);
-
-        /** @brief Loads an asset by name.
-         *
-         * @param assetName Name of the asset to load.
-         * @return `std::future` of the asset's load status.
-         */
-        const std::future<void>& Load(const std::string& assetName);
-
-        /** @brief Unloads an asset by index.
-         *
-         * @param assetIdx Index of the asset to unload.
-         */
-        void Unload(int assetIdx);
+        const std::future<void>& Load(int idx);
 
         /** @brief Unloads an asset by name.
          *
-         * @param assetName Name of the asset to unload.
+         * @param name Name of the asset to unload.
          */
-        void Unload(const std::string& assetName);
+        void Unload(const std::string& name);
 
         /** @brief Unloads all currently loaded assets. */
         void UnloadAll();
+
+        // ==========
+        // Operators
+        // ==========
+
+        const Asset* operator[](const std::string& name);
     };
 }
