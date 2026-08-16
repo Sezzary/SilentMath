@@ -135,6 +135,8 @@ namespace Silent::Renderer::SdlGpu
         //GetMeshes().Upload(*copyPass, "CHARA/PRSD.ILM");
         //GetTextures().Upload(*copyPass, "CHARA/PRSD.TIM");
         GetTextures().Upload(*copyPass, "CHARA/HERO.TIM");
+        //GetTextures().Upload(*copyPass, "MISC/DEMO0000.DAT"); // Temp. load test.
+        //GetTextures().Upload(*copyPass, "ANIM/AMUSE1.DMS"); // Temp. load test.
 
         //GetMeshes().Upload(*copyPass, "BG/APU0002.IPD");
         //GetMeshes().Upload(*copyPass, "ITEM/FOOK.TMD");

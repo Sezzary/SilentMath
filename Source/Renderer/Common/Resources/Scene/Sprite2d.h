@@ -19,6 +19,7 @@ namespace Silent::Renderer
         Color       Col1        = Color::Clear;
         Color       Col2        = Color::Clear;
         Color       Col3        = Color::Clear;
+        int         PaletteIdx  = NO_VALUE;
         int         Depth       = 0;
         AlignMode   AlignMd     = AlignMode::Center;
         ScaleMode   ScaleMd     = ScaleMode::ShortEdge;
@@ -26,22 +27,22 @@ namespace Silent::Renderer
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
                                        const Vector2& pos, float rot, const Vector2& scale,
-                                       const Color& color0, const Color& color1, const Color& color2, const Color& color3,
+                                       const Color& color0, const Color& color1, const Color& color2, const Color& color3, int paletteIdx = NO_VALUE,
                                        int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                        BlendMode blendMode = BlendMode::Alpha);
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
-                                       const Vector2& pos, float rot, const Vector2& scale, const Color& color,
+                                       const Vector2& pos, float rot, const Vector2& scale, const Color& color, int paletteIdx = NO_VALUE,
                                        int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                        BlendMode blendMode = BlendMode::Alpha);
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,
-                                       const Vector2& pos, float rot, float scale, const Color& color,
+                                       const Vector2& pos, float rot, float scale, const Color& color, int paletteIdx = NO_VALUE,
                                        int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                        BlendMode blendMode = BlendMode::Alpha);
 
         static Sprite2d CreateSprite2d(const std::string& texName, const Vector2i& pixelMin, const Vector2i& pixelMax,
-                                       const Vector2& pos, float rot,
+                                       const Vector2& pos, float rot, int paletteIdx = NO_VALUE,
                                        int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
                                        BlendMode blendMode = BlendMode::Alpha);
     };

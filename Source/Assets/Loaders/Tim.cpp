@@ -117,8 +117,7 @@ namespace Silent::Assets
         uint32 flags = stream.ReadUint32();
 
         // Read CLUT and create palette atlas image.
-        bool hasSinglePalette = false;
-        auto paletteAtlas     = std::optional<TimPaletteAtlas>();
+        auto paletteAtlas = std::optional<TimPaletteAtlas>();
         if (flags & (int)TimFlags::HasClut)
         {
             // Read size.
@@ -129,9 +128,8 @@ namespace Silent::Assets
             uint16 coordY = stream.ReadUint16();
 
             // Read dimensions.
-            uint16 width     = stream.ReadUint16();
-            uint16 height    = stream.ReadUint16();
-            hasSinglePalette = height > 1;
+            uint16 width  = stream.ReadUint16();
+            uint16 height = stream.ReadUint16();
 
             // Read color values.
             uint colorCount = width * height;

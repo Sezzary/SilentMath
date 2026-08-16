@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "Input/Recording.h"
+#include "Input/Recorder.h"
 
 #include "Input/Action.h"
 #include "Input/AnalogAxis.h"
@@ -38,7 +38,7 @@ namespace Silent::Input
         // Check if recorder is idle.
         if (_state != RecorderState::None)
         {
-            Debug::Log(Fmt("Attempted to interrupt input recorder with new playback while in state {}.", (int)_state),
+            Debug::Log(Fmt("Attempted to start input recording playback while in non-idle state {}.", (int)_state),
                        Debug::LogLevel::Error);
             return;
         }
@@ -59,7 +59,7 @@ namespace Silent::Input
         _validAnalogAxisIds = validAxisIds;
         InitializeActiveFrame();
 
-        Debug::Log("Input recording playback started.");
+        Debug::Log("Started input recording playback.");
     }
 
     void Recorder::Record(const std::vector<ActionId>& validActionIds, const std::vector<AnalogAxisId>& validAxisIds)
@@ -81,7 +81,7 @@ namespace Silent::Input
         _validAnalogAxisIds = validAxisIds;
         InitializeActiveFrame();
 
-        Debug::Log("Input recording started.");
+        Debug::Log("Started input recording.");
     }
 
     void Recorder::Stop()
@@ -160,14 +160,14 @@ namespace Silent::Input
 
     void Recorder::ClearActionsAndAnalogAxes(std::vector<Action>& actions, std::vector<AnalogAxis>& axes)
     {
-        // Clear locked actions.
+        // Clear valid actions.
         for (auto actionId : _validActionIds)
         {
             auto& action = actions[(int)actionId];
             action.Clear();
         }
 
-        // Clear locked analog axes.
+        // Clear valid analog axes.
         for (auto axisId : _validAnalogAxisIds)
         {
             auto& axis = axes[(int)axisId];
@@ -260,9 +260,9 @@ namespace Silent::Input
         // Run through valid action IDs.
         for (const auto actionId : _validActionIds)
         {
-            const auto& action      = actions[(int)actionId];
-            auto*       activeEvent = GetActiveActionEvent(action.GetId());
-
+            const auto& action = actions[(int)actionId];
+            
+            auto* activeEvent = GetActiveActionEvent(action.GetId());
             if (activeEvent == nullptr)
             {
                 continue;
@@ -285,9 +285,9 @@ namespace Silent::Input
         // Run through valid analog axis IDs.
         for (auto axisId : _validAnalogAxisIds)
         {
-            const auto& axis        = axes[(int)axisId];
-            auto*       activeEvent = GetActiveAnalogAxisEvent(axis.GetId());
+            const auto& axis = axes[(int)axisId];
 
+            auto* activeEvent = GetActiveAnalogAxisEvent(axis.GetId());
             if (activeEvent == nullptr)
             {
                 continue;

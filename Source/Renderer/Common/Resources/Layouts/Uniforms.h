@@ -24,8 +24,7 @@ namespace Silent::Renderer
                                      UniformSprite2d,
                                      UniformView>;
 
-    // @todo Uniform buffers need to be packed flatly in the shader.
-    /** @brief GPU uniform buffer slots. */
+    /** @brief GPU uniform buffer slots. @todo Can't use this as uniform buffers must be packed flatly in the shader. */
     enum class UniformSlot
     {
         PerFrame    = 0,

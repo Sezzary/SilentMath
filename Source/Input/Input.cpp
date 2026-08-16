@@ -7,7 +7,7 @@
 #include "Input/AnalogAxis.h"
 #include "Input/Binding.h"
 #include "Input/Event.h"
-#include "Input/Recording.h"
+#include "Input/Recorder.h"
 #include "Input/Text.h"
 #include "Services/Clock.h"
 #include "Services/Options.h"

@@ -191,27 +191,31 @@ namespace Silent::Renderer
                     {
                         Vertex2d
                         {
-                            .Position = pos0,
-                            .Uv       = uv0,
-                            .Col      = sprite.Col0
+                            .Position   = pos0,
+                            .Uv         = uv0,
+                            .Col        = sprite.Col0,
+                            .PaletteIdx = sprite.PaletteIdx
                         },
                         Vertex2d
                         {
-                            .Position = pos1,
-                            .Uv       = uv1,
-                            .Col      = sprite.Col1
+                            .Position   = pos1,
+                            .Uv         = uv1,
+                            .Col        = sprite.Col1,
+                            .PaletteIdx = sprite.PaletteIdx
                         },
                         Vertex2d
                         {
-                            .Position = pos2,
-                            .Uv       = uv2,
-                            .Col      = sprite.Col2
+                            .Position   = pos2,
+                            .Uv         = uv2,
+                            .Col        = sprite.Col2,
+                            .PaletteIdx = sprite.PaletteIdx
                         },
                         Vertex2d
                         {
-                            .Position = pos3,
-                            .Uv       = uv3,
-                            .Col      = sprite.Col3
+                            .Position   = pos3,
+                            .Uv         = uv3,
+                            .Col        = sprite.Col3,
+                            .PaletteIdx = sprite.PaletteIdx
                         }
                     },
                     .Depth       = sprite.Depth,
@@ -321,10 +325,11 @@ namespace Silent::Renderer
             {
                 verts.push_back(Vertex3d
                 {
-                    .Position = vert.Position,
-                    .Normal   = vert.Normal,
-                    .Uv       = vert.Uv,
-                    .Col      = vert.Col
+                    .Position   = vert.Position,
+                    .Normal     = vert.Normal,
+                    .Uv         = vert.Uv,
+                    .Col        = vert.Col,
+                    .PaletteIdx = vert.PaletteIdx
                 });
             }
 

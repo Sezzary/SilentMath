@@ -82,7 +82,7 @@ namespace Silent::Renderer
             return;
         }
 
-        auto tri = Triangle3d::CreateTriangle3d(vert0, vert1, vert2, color, BlendMode::Add);
+        auto tri = Triangle3d::CreateTriangle3d(vert0, vert1, vert2, color, NO_VALUE, BlendMode::Add);
         _sceneObjects.Triangles3d.push_back(tri);
     }
 }

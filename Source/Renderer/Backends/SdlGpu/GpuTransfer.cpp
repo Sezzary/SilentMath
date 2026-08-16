@@ -148,9 +148,10 @@ namespace Silent::Renderer::SdlGpu
                 auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
                 bufferVerts.push_back(BufferVertex2d
                 {
-                    .Position = pos,
-                    .Uv       = prim.Vertices[i].Uv,
-                    .Col      = prim.Vertices[i].Col
+                    .Position   = pos,
+                    .Uv         = prim.Vertices[i].Uv,
+                    .Col        = prim.Vertices[i].Col,
+                    .PaletteIdx = prim.Vertices[i].PaletteIdx
                 });
             }
 
