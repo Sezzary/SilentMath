@@ -53,7 +53,8 @@ namespace Silent::Renderer::SdlGpu
         //---------------------------
 
         const auto* harryAnm = g_App.GetAssets()["ANIM/HB_BASE.ANM"];
-        const auto harryAnmData = harryAnm->GetData<AnmAsset>();
+        const auto* harryAnm1 = g_App.GetAssets()["ANIM/HB_M1S00.ANM"];
+        const auto harryAnmData = harryAnm1->GetData<AnmAsset>();
 
         // @todo How can an optional palette be bound in a clean way?
         auto* tex             = GetTextures()["CHARA/HERO.TIM"];
