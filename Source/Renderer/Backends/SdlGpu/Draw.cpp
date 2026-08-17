@@ -20,17 +20,18 @@ namespace Silent::Renderer::SdlGpu
 {
     void Renderer::Draw3dScene()
     {
-        // Process copy pass.
+        // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
         CopyImmediatePrimitives3d(*copyPass);
 
+        // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
-        // Process render pass.
+        // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture     = _renderTexture.Read(),
+            .texture     = _renderTexture.Write(),
             .clear_color = SDL_FColor{ _clearColor.R(), _clearColor.G(), _clearColor.B(), _clearColor.A() },
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
@@ -66,7 +67,7 @@ namespace Silent::Renderer::SdlGpu
 
             auto model = Matrix::Identity;
             model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
-            model.Translate(harryAnmData->Bones[1].BindTranslation);
+            //model.Translate(harryAnmData->Bones[1].BindTranslation);
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
@@ -102,7 +103,7 @@ namespace Silent::Renderer::SdlGpu
         // Draw 3D primitives.
         for (const auto& batch : _drawBatches.Primitives3d)
         {
-            // Bind pipeline.
+            // Pipeline setup.
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
             PushFragmentUniform(batch.Uniform, 0);
 
@@ -131,65 +132,82 @@ namespace Silent::Renderer::SdlGpu
             _doubleBuffer.Active.DrawCallCount++;
         }
 
+        // End render pass.
         SDL_EndGPURenderPass(&renderPass);
+        _renderTexture.Swap();
     }
 
     void Renderer::DrawDither()
     {
         auto& options = g_App.GetOptions();
         
-        // Process copy pass.
+        // Check if dithering is enabled.
+        if (!options->EnableDithering)
+        {
+            return;
+        }
+
+        // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
         CopyGpuViewportQuad(*copyPass);
 
+        // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
-        // Process render pass.
+        // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _renderTexture.Read(),
-            .load_op  = SDL_GPU_LOADOP_LOAD,
+            .texture  = _renderTexture.Write(),
+            .load_op  = SDL_GPU_LOADOP_DONT_CARE,
             .store_op = SDL_GPU_STOREOP_STORE
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // @todo Severe visual artefacts.
-        // Dither.
-        if (options->EnableDithering)
+        // Bind pipeline.
+        _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque, false);
+
+        // Bind texture.
+        auto binding = SDL_GPUTextureSamplerBinding
         {
-            // Bind pipeline.
-            _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque, false);
+            .texture = _renderTexture.Read(),
+            .sampler = _samplers[(int)TextureFilterType::Nearest]
+        };
+        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
 
-            // Bind render texture.
-            auto binding = SDL_GPUTextureSamplerBinding
-            {
-                .texture = _renderTexture.Read(),
-                .sampler = _samplers[(int)TextureFilterType::Nearest]
-            };
-            SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+        // Bind vertex buffer.
+        _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
 
-            // Draw.
-            SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-            _doubleBuffer.Active.DrawCallCount++;
-        }
+        // Draw.
+        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+        _doubleBuffer.Active.DrawCallCount++;
 
+        // End render pass.
         SDL_EndGPURenderPass(&renderPass);
+        _renderTexture.Swap();
     }
 
     void Renderer::Draw2dScene()
     {
-        // Process copy pass.
+        // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
+        // Copy primitives.
         CopyImmediatePrimitives2d(*copyPass);
 
+        // Copy 3D scene to write texture.
+        auto viewportRes = GetViewportResolution();
+        auto fromTexLoc  = SDL_GPUTextureLocation{ .texture = _renderTexture.Read()  };
+        auto toTexLoc    = SDL_GPUTextureLocation{ .texture = _renderTexture.Write() };
+        SDL_CopyGPUTextureToTexture(copyPass, &fromTexLoc, &toTexLoc, viewportRes.x, viewportRes.y, 1, false);
+
+        // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
-        // Process render pass.
+        // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _renderTexture.Read(),
+            .texture  = _renderTexture.Write(),
             .load_op  = SDL_GPU_LOADOP_LOAD,
             .store_op = SDL_GPU_STOREOP_STORE
         };
@@ -213,7 +231,6 @@ namespace Silent::Renderer::SdlGpu
         {
             // Bind pipeline.
             _pipelines.Bind(renderPass, batch.RenderStg, batch.BlendMd);
-            PushFragmentUniform(batch.Uniform, 0);
 
             // Bind texture and optional palette atlas.
             if (!batch.TextureName.empty())
@@ -230,40 +247,49 @@ namespace Silent::Renderer::SdlGpu
                 }
             }
 
+            // Push uniform.
+            PushFragmentUniform(batch.Uniform, 0);
+
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
             _doubleBuffer.Active.DrawCallCount++;
         }
 
+        // End render pass.
         SDL_EndGPURenderPass(&renderPass);
+        _renderTexture.Swap();
     }
 
     void Renderer::DrawPostProcess()
     {
         const auto& options  = g_App.GetOptions();
 
+        // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
         CopyGpuViewportQuad(*copyPass);
 
+        // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
-        auto RunPostProcessPass = [&](RenderStage renderStage, auto pushUniforms)
+        auto RunPostProcessPass = [&](RenderStage renderStage, auto pushUniform)
         {
+            // Process render pass.
             auto colorTargetInfo = SDL_GPUColorTargetInfo
             {
                 .texture  = _renderTexture.Write(),
                 .load_op  = SDL_GPU_LOADOP_DONT_CARE,
                 .store_op = SDL_GPU_STOREOP_STORE
             };
-
             auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-            _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
+            // Bind pipeline.
             _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque, false);
 
-            pushUniforms();
+            // Bind vertex buffer.
+            _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
 
+            // Bind texture.
             auto binding = SDL_GPUTextureSamplerBinding
             {
                 .texture = _renderTexture.Read(),
@@ -271,11 +297,16 @@ namespace Silent::Renderer::SdlGpu
             };
             SDL_BindGPUFragmentSamplers(renderPass, 0, &binding, 1);
 
-            SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-            SDL_EndGPURenderPass(renderPass);
+            // Push uniform.
+            pushUniform();
 
-            _renderTexture.Swap();
+            // Draw.
+            SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
             _doubleBuffer.Active.DrawCallCount++;
+
+            // End render pass.            
+            SDL_EndGPURenderPass(renderPass);
+            _renderTexture.Swap();
         };
 
         // @debug Luma fade test.
@@ -343,7 +374,7 @@ namespace Silent::Renderer::SdlGpu
 
         const auto& options = g_App.GetOptions();
 
-        // Process render pass.
+        // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
             .texture     = _swapchainTexture,
@@ -353,10 +384,19 @@ namespace Silent::Renderer::SdlGpu
         };
         auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
 
-        // Bind viewport quad.
+        // Bind pipeline.
+        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque, false);
+
+        // Bind vertex buffer.
         _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
 
-        _pipelines.Bind(renderPass, RenderStage::Blit, BlendMode::Opaque, false);
+        // Bind texture.
+        auto binding = SDL_GPUTextureSamplerBinding
+        {
+            .texture = _renderTexture.Read(),
+            .sampler = _samplers[(int)TextureFilterType::Nearest]
+        };
+        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
 
         // Push uniform.
         auto uni = UniformBlit
@@ -365,18 +405,11 @@ namespace Silent::Renderer::SdlGpu
         };
         PushFragmentUniform(uni, 0);
 
-        // Bind render texture.
-        auto binding = SDL_GPUTextureSamplerBinding
-        {
-            .texture = _renderTexture.Read(),
-            .sampler = _samplers[(int)TextureFilterType::Nearest]
-        };
-        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
-
         // Draw.
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
         _doubleBuffer.Active.DrawCallCount++;
 
+        // End render pass.
         SDL_EndGPURenderPass(&renderPass);
     }
 
@@ -398,7 +431,7 @@ namespace Silent::Renderer::SdlGpu
         auto* drawData = ImGui::GetDrawData();
         ImGui_ImplSDLGPU3_PrepareDrawData(drawData, _commandBuffer);
 
-        // Process render pass.
+        // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
             .texture  = _swapchainTexture,
@@ -409,7 +442,9 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         ImGui_ImplSDLGPU3_RenderDrawData(drawData, _commandBuffer, renderPass);
+        _doubleBuffer.Active.DrawCallCount++;
 
+        // End render pass.
         SDL_EndGPURenderPass(renderPass);
     }
 }
