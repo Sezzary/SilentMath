@@ -60,14 +60,14 @@ namespace Silent::Assets
 
     /** @brief Parses the LM chunk from an ILM, PLM, or IPD asset file.
      *
-     * @note UVs remain as pixel coordinates and must be normalized manually according to the preferred heuristics for
+     * @note UVs remain as pixel coordinates and must be normalized manually according to the preferred heuristics of
      * the given parent format.
      *
      * @param filename Absolute asset file path.
      * @param stream Output file stream.
      * @param meshes Output meshes.
      * @param meshIDs Output mesh IDs.
-     * @return LM part name.
+     * @return LM chunk name.
      */
     std::string ParseLmChunk(const stdfs::path& filename,
                              Stream& stream, std::vector<LmMesh>& meshes, std::vector<int>& meshIds);
