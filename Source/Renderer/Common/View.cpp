@@ -33,6 +33,10 @@ namespace Silent::Renderer
         {
             speed = 0.2f;
         }
+        else if (input.GetAction(In::Z).IsHeld())
+        {
+            speed = 0.01f;
+        }
 
         // Move on 2D plane.
         if (input.GetAction(In::W).IsHeld())

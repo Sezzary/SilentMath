@@ -20,6 +20,8 @@ namespace Silent::Renderer::SdlGpu
 {
     void Renderer::Draw3dScene()
     {
+        const auto& options = g_App.GetOptions();
+
         // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
@@ -73,6 +75,8 @@ namespace Silent::Renderer::SdlGpu
 
             auto uni0 = UniformView{};
             memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
+            uni0.HasJitter           = options->EnableVertexJitter;
+            uni0.ViewportAspectRatio = GetViewportAspectRatio();
             PushVertexUniform(uni0, 0);
 
             auto uni1 = UniformPrimitive3d{};
@@ -112,7 +116,9 @@ namespace Silent::Renderer::SdlGpu
 
             auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
-            auto uni0 = UniformView{};
+            auto uni0                = UniformView{};
+            uni0.HasJitter           = options->EnableVertexJitter;
+            uni0.ViewportAspectRatio = GetViewportAspectRatio();
             memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
             PushVertexUniform(uni0, 0);
 

@@ -1,3 +1,6 @@
+// References:
+// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP
+
 struct Input
 {
     float3              Position   : POSITION0;
@@ -18,6 +21,8 @@ struct Output
 cbuffer PerFrame : register(b0, space1)
 {
     column_major float4x4 ViewProjMat;
+    uint                  HasJitter;
+    float                 ViewportAspectRatio;
 };
 
 cbuffer PerObject : register(b1, space1)
@@ -25,13 +30,36 @@ cbuffer PerObject : register(b1, space1)
     column_major float4x4 ModelMat;
 };
 
+static float JITTER_RESOLUTION = 240.0f;
+
+float4 GetPosition(float3 inputPos)
+{
+    // Compute model-view-projection matrix.
+    column_major float4x4 mvpMat = mul(ViewProjMat, ModelMat);
+
+    // Compute NDC position.
+    float4 pos = mul(mvpMat, float4(inputPos, 1.0f));
+
+    // Apply jitter.
+    if (HasJitter)
+    {
+        // Compute aspect scale 
+        float2 aspectScale = (ViewportAspectRatio > 1.0f) ? float2(ViewportAspectRatio, 1.0f) :
+                                                            float2(1.0f, 1.0f / ViewportAspectRatio);
+        float2 jitterRes   = JITTER_RESOLUTION * aspectScale;
+
+        // Compute rounded vertex position to produce jitter.
+        float2 ndc = pos.xy / pos.w;
+        pos.xy     = round(ndc * jitterRes) / jitterRes * pos.w;
+    }
+
+    return pos;
+}
+
 Output main(Input input)
 {
     Output output;
-
-    column_major float4x4 mvpMat = mul(ViewProjMat, ModelMat);
-
-    output.Position   = mul(mvpMat, float4(input.Position, 1.0f));
+    output.Position   = GetPosition(input.Position);
     output.TexCoord   = input.TexCoord;
     output.Color      = input.Color;
     output.PaletteIdx = input.PaletteIdx;

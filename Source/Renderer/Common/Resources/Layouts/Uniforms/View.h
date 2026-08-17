@@ -6,5 +6,7 @@ namespace Silent::Renderer
     struct alignas(16) UniformView
     {
         float ViewProjMat[4][4];
+        uint  HasJitter;
+        float ViewportAspectRatio;
     };
 }
