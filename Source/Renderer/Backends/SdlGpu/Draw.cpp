@@ -73,22 +73,28 @@ namespace Silent::Renderer::SdlGpu
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
-            auto uni0 = UniformView{};
-            memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
-            uni0.HasJitter           = options->EnableVertexJitter;
-            uni0.ViewportAspectRatio = GetViewportAspectRatio();
-            PushVertexUniform(uni0, 0);
+            // Push view unifotm.
+            auto viewUni = UniformView
+            {
+                .ViewProjMat         = viewProj,
+                .HasJitter           = options->EnableVertexJitter,
+                .ViewportAspectRatio = GetViewportAspectRatio(),
+            };
+            PushVertexUniform(viewUni, 0);
 
-            auto uni1 = UniformPrimitive3d{};
-            memcpy(&uni1.ModelMat, &model[0][0], 64);
-            PushVertexUniform(uni1, 1);
+            // Push 3D primitive uniform.
+            auto prim3dUni = UniformPrimitive3d
+            {
+                .ModelMat = model
+            };
+            PushVertexUniform(prim3dUni, 1);
 
-            // Push uniform.
-            auto uni = UniformModel
+            // Push model uniform.
+            auto modelUni = UniformModel
             {
                 .IsFastAlpha = false
             };
-            PushFragmentUniform(uni, 0);
+            PushFragmentUniform(modelUni, 0);
 
             // Draw.
             const auto* mesh = GetMeshes()["CHARA/HERO.ILM_02HEAD1"];
@@ -116,15 +122,21 @@ namespace Silent::Renderer::SdlGpu
 
             auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
-            auto uni0                = UniformView{};
-            uni0.HasJitter           = options->EnableVertexJitter;
-            uni0.ViewportAspectRatio = GetViewportAspectRatio();
-            memcpy(&uni0.ViewProjMat, &viewProj[0][0], 64);
-            PushVertexUniform(uni0, 0);
+            // Push view uniform.
+            auto viewUni = UniformView
+            {
+                .ViewProjMat         = viewProj,
+                .HasJitter           = options->EnableVertexJitter,
+                .ViewportAspectRatio = GetViewportAspectRatio(),
+            };
+            PushVertexUniform(viewUni, 0);
 
-            auto uni1 = UniformPrimitive3d{};
-            memcpy(&uni1.ModelMat, &model[0][0], 64);
-            PushVertexUniform(uni1, 1);
+            // Push 3D primitive uniform.
+            auto prim3dUni = UniformPrimitive3d
+            {
+                .ModelMat = model
+            };
+            PushVertexUniform(prim3dUni, 1);
 
             // Bind texture.
             auto* tex = GetTextures()[batch.TextureName];
