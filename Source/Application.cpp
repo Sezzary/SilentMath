@@ -116,8 +116,8 @@ namespace Silent
 
     void ApplicationManager::Initialize()
     {
-        constexpr float WINDOW_ASPECT_RATIO_MIN = 3.0f / 4.0f;
-        constexpr float WINDOW_ASPECT_RATIO_MAX = 42.0f / 9.0f;
+        constexpr float WINDOW_ASPECT_RATIO_MIN = 4.0f / 3.0f;
+        constexpr float WINDOW_ASPECT_RATIO_MAX = 32.0f / 9.0f;
         constexpr float IMGUI_FONT_POINT_SIZE   = 13.0f;
 
         _isPaused = false;
@@ -333,7 +333,7 @@ namespace Silent
         //if (_work.Clock.GetTicks() > 0)
         for (int i = 0; i < _work.Clock.GetTicks(); i++)
         {
-            Entry();
+            //Entry();
         }
 
         // Update audio.

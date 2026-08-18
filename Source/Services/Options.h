@@ -27,17 +27,17 @@ namespace Silent::Services
         Fps60
     };
 
-    enum class RenderScaleType
-    {
-        Original,
-        DoubleOriginal,
-        Native
-    };
-
     enum class AspectRatioType
     {
         Ratio4to3,
         Ratio16to9,
+        Native
+    };
+
+    enum class RenderScaleType
+    {
+        Original,
+        DoubleOriginal,
         Native
     };
 
@@ -117,21 +117,21 @@ namespace Silent::Services
         // Graphics (user)
         // ================
 
-        GraphicsPresetType PresetType           = GraphicsPresetType::None;
-        bool               EnableFullscreen     = false;
-        int                BrightnessLevel      = 0;
-        FrameRateType      FrameRate            = FrameRateType::Fps30;
-        RenderScaleType    RenderScale          = RenderScaleType::Native;
-        AspectRatioType    AspectRatio          = AspectRatioType::Native;
-        TextureFilterType  TextureFilter        = TextureFilterType::Nearest;
-        TextQualityType    TextQuality          = TextQualityType::Smooth;
-        LightingType       Lighting             = LightingType::PerVertex;
-        bool               EnableVertexJitter   = false;
-        bool               EnableDithering      = false;
+        GraphicsPresetType PresetType         = GraphicsPresetType::None;
+        bool               EnableFullscreen   = false;
+        int                BrightnessLevel    = 0;
+        FrameRateType      FrameRate          = FrameRateType::Fps30;
+        AspectRatioType    AspectRatio        = AspectRatioType::Native;
+        RenderScaleType    RenderScale        = RenderScaleType::Native;
+        TextureFilterType  TextureFilter      = TextureFilterType::Nearest;
+        TextQualityType    TextQuality        = TextQualityType::Smooth;
+        LightingType       Lighting           = LightingType::PerVertex;
+        bool               EnableVertexJitter = false;
+        bool               EnableDithering    = false;
         bool               EnablePixelization = false;
-        bool               EnableFilmGrain      = false;
-        bool               EnableVignette       = false;
-        bool               EnableCrtFilter      = false;
+        bool               EnableFilmGrain    = false;
+        bool               EnableVignette     = false;
+        bool               EnableCrtFilter    = false;
 
         // =========
         // Gameplay

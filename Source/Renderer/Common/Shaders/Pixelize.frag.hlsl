@@ -25,9 +25,9 @@ float4 main(Input input) : SV_Target
     float rawScale = Resolution.y / VirtualHeight;
     float scale    = max(1.0, floor(rawScale));
 
-    // Compute texture coord snapped to pixel grid.
-    float2 pixels   = floor(Resolution / scale);
-    float2 texCoord = floor(input.TexCoord * pixels) / pixels;
+    // Compute texture coord snapped to virtual pixel grid.
+    float2 gridSize = float2(Resolution.x / scale, VirtualHeight);
+    float2 texCoord = floor(input.TexCoord * gridSize) / gridSize;
 
     // Sample final color.
     return Texture.Sample(Sampler, texCoord);

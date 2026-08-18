@@ -35,11 +35,13 @@ float4 main(Input input) : SV_Target
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
-    // Compute virtual pixel position relative to virtual height.
-    float  rawScale = Resolution.y / VirtualHeight;
-    float  scale    = max(1.0, floor(rawScale));
-    float2 pixels   = floor(Resolution / scale);
-    int2   pixelPos = int2(floor(input.TexCoord * pixels));
+    // Compute integer-snapped scale based on target virtual height.
+    float rawScale = Resolution.y / VirtualHeight;
+    float scale    = max(1.0, floor(rawScale));
+
+    // Compute pixel position.
+    float2 gridSize = float2(Resolution.x / scale, VirtualHeight);
+    int2   pixelPos = int2(floor(input.TexCoord * gridSize));
 
     // Compute 8-bit dithered color.
     int    dither    = DITHER_TABLE[pixelPos.x % DITHER_SIZE][pixelPos.y % DITHER_SIZE];

@@ -27,8 +27,8 @@ namespace Silent::Services
     constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
     constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
     constexpr char KEY_FRAME_RATE[]                               = "FrameRate";
-    constexpr char KEY_RENDER_SCALE[]                             = "RenderScale";
     constexpr char KEY_ASPECT_RATIO[]                             = "AspectRatio";
+    constexpr char KEY_RENDER_SCALE[]                             = "RenderScale";
     constexpr char KEY_TEXTURE_FILTER[]                           = "TextureFilter";
     constexpr char KEY_TEXT_QUALITY[]                             = "TextQuality";
     constexpr char KEY_LIGHTING[]                                 = "Lighting";
@@ -70,8 +70,8 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = BRIGHTNESS_LEVEL_MAX / 2;
     constexpr auto DEFAULT_FRAME_RATE                               = FrameRateType::Fps60;
-    constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO                             = AspectRatioType::Native;
+    constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_TEXTURE_FILTER                           = TextureFilterType::Nearest;
     constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Original;
     constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
@@ -110,8 +110,8 @@ namespace Silent::Services
         _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
         _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
         _options.FrameRate          = DEFAULT_FRAME_RATE;
-        _options.RenderScale        = DEFAULT_RENDER_SCALE;
         _options.AspectRatio        = DEFAULT_ASPECT_RATIO;
+        _options.RenderScale        = DEFAULT_RENDER_SCALE;
         _options.TextureFilter      = DEFAULT_TEXTURE_FILTER;
         _options.TextQuality        = DEFAULT_TEXT_QUALITY;
         _options.Lighting           = DEFAULT_LIGHTING;
@@ -250,8 +250,8 @@ namespace Silent::Services
         options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
         options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
         options.FrameRate          = graphicsJson.value(KEY_FRAME_RATE,           DEFAULT_FRAME_RATE);
-        options.RenderScale        = graphicsJson.value(KEY_RENDER_SCALE,         DEFAULT_RENDER_SCALE);
         options.AspectRatio        = graphicsJson.value(KEY_ASPECT_RATIO,         DEFAULT_ASPECT_RATIO);
+        options.RenderScale        = graphicsJson.value(KEY_RENDER_SCALE,         DEFAULT_RENDER_SCALE);
         options.TextureFilter      = graphicsJson.value(KEY_TEXTURE_FILTER,       DEFAULT_TEXTURE_FILTER);
         options.TextQuality        = graphicsJson.value(KEY_TEXT_QUALITY,         DEFAULT_TEXT_QUALITY);
         options.Lighting           = graphicsJson.value(KEY_LIGHTING,             DEFAULT_LIGHTING);
@@ -377,8 +377,8 @@ namespace Silent::Services
                     { KEY_ENABLE_FULLSCREEN,    options.EnableFullscreen   },
                     { KEY_BRIGHTNESS_LEVEL,     options.BrightnessLevel    },
                     { KEY_FRAME_RATE,           options.FrameRate          },
-                    { KEY_RENDER_SCALE,         options.RenderScale        },
                     { KEY_ASPECT_RATIO,         options.AspectRatio        },
+                    { KEY_RENDER_SCALE,         options.RenderScale        },
                     { KEY_TEXTURE_FILTER,       options.TextureFilter      },
                     { KEY_TEXT_QUALITY,         options.Lighting           },
                     { KEY_LIGHTING,             options.TextQuality        },

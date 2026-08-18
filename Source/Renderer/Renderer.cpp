@@ -55,23 +55,34 @@ namespace Silent::Renderer
         auto res = g_App.GetWindowResolution();
         return res;
 
-        // @todo Render scale should be a post-process instead?
-        switch (options->RenderScale)
+        float targetAspect = 0.0f;
+        switch (options->AspectRatio)
         {
-            case RenderScaleType::Original:
+            case AspectRatioType::Ratio4to3:
             {
-                res = RETRO_SCREEN_SPACE_RES.ToVector2i();
+                targetAspect = 4.0f / 3.0f;
                 break;
             }
-            case RenderScaleType::DoubleOriginal:
+            case AspectRatioType::Ratio16to9:
             {
-                res = RETRO_SCREEN_SPACE_RES.ToVector2i() * 2.0f;
+                targetAspect = 16.0f / 9.0f;
                 break;
             }
-            case RenderScaleType::Native:
+            default:
+            case AspectRatioType::Native:
             {
-                break;
+                return res;
             }
+        }
+
+        float windowAspect = (float)res.x / (float)res.y;
+        if (windowAspect > targetAspect)
+        {
+            res.x = (int)(res.y * targetAspect);
+        }
+        else
+        {
+            res.y = (int)(res.x / targetAspect);
         }
 
         return res;

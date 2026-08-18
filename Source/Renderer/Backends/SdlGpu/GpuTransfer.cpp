@@ -311,26 +311,32 @@ namespace Silent::Renderer::SdlGpu
     {
         constexpr auto BUFFER_IDXS = std::array<uint16, QUAD_IDX_COUNT>{ 0, 2, 1, 1, 2, 3 };
 
-        // @todo Compute aspect-correct vertex positions.
+        auto  windowRes      = Vector2(g_App.GetWindowResolution());
+        float windowAspect   = windowRes.x / windowRes.y;
+        auto  viewportRes    = GetViewportResolution().ToVector2();
+        float viewportAspect = GetViewportAspectRatio();
+
+        auto scale = Vector2::One;//viewportRes / windowRes;
+
         auto bufferVerts = std::vector<BufferVertex2d>
         {
             {
-                .Position = Vector3(-1.0f, 1.0f, 0.0f),
+                .Position = Vector3(-scale.x, scale.y, 0.0f),
                 .Uv       = Vector2(0.0f, 0.0f),
                 .Col      = Color::White
             },
             {
-                .Position = Vector3(1.0f, 1.0f, 0.0f),
+                .Position = Vector3(scale.x, scale.y, 0.0f),
                 .Uv       = Vector2(1.0f, 0.0f),
                 .Col      = Color::White
             },
             {
-                .Position = Vector3(-1.0f, -1.0f, 0.0f),
+                .Position = Vector3(-scale.x, -scale.y, 0.0f),
                 .Uv       = Vector2(0.0f, 1.0f),
                 .Col      = Color::White
             },
             {
-                .Position = Vector3(1.0f, -1.0f, 0.0f),
+                .Position = Vector3(scale.x, -scale.y, 0.0f),
                 .Uv       = Vector2(1.0f, 1.0f),
                 .Col      = Color::White
             }

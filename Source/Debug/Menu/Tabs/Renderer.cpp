@@ -23,6 +23,13 @@ namespace Silent::Debug
             {
                 if (ImGui::BeginTable("Status", 2))
                 {
+                    // `Window resolution` info.
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("Window resolution:", 0, 0);
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%d, %d", g_App.GetWindowResolution().x, g_App.GetWindowResolution().y, 0, 1);
+
                     // `FPS` info.
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);

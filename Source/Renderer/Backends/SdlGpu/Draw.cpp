@@ -200,7 +200,7 @@ namespace Silent::Renderer::SdlGpu
         auto uni = UniformPixelize
         {
             .Resolution    = GetViewportResolution().ToVector2(),
-            .VirtualHeight = 240.0f
+            .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
         };
         PushFragmentUniform(uni, 0);
 
@@ -258,7 +258,7 @@ namespace Silent::Renderer::SdlGpu
         auto uni = UniformDither
         {
             .Resolution    = GetViewportResolution().ToVector2(),
-            .VirtualHeight = 240.0f
+            .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
         };
         PushFragmentUniform(uni, 0);
 
@@ -346,7 +346,11 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::DrawPostProcess()
     {
-        const auto& options  = g_App.GetOptions();
+        const auto& options = g_App.GetOptions();
+
+        // @debug Test timer.
+        static float time = 0.0f;
+        time              = fmod(time + 0.1f, 1.0f);
 
         // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
@@ -408,8 +412,6 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Film grain.
-        static float time = 0.0f; // @debug Test timer.
-        time = fmod(time + 0.1f, 1.0f);
         if (options->EnableFilmGrain)
         {
             RunPostProcessPass(RenderStage::FilmGrain, [&]()
@@ -427,10 +429,10 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Vignette, [&]()
             {
-                auto uni = UniformCrt
+                auto uni = UniformCrt // @todo Make unique uniform.
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
-                    .Time       = 0.0f
+                    .Time       = time
                 };
                 PushFragmentUniform(uni, 0);
             });
@@ -444,7 +446,7 @@ namespace Silent::Renderer::SdlGpu
                 auto uni = UniformCrt
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
-                    .Time       = 0.0f
+                    .Time       = time
                 };
                 PushFragmentUniform(uni, 0);
             });

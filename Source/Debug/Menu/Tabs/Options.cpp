@@ -11,8 +11,8 @@ using namespace Silent::Utils;
 namespace Silent::Debug
 {
     constexpr const char* FRAME_RATE_ITEMS[]        = { "30 FPS", "60 FPS" };
-    constexpr const char* RENDER_SCALE_ITEMS[]      = { "Original", "DoubleOriginal", "Native" };
     constexpr const char* ASPECT_RATIO_ITEMS[]      = { "4:3", "16:9", "Native"  };
+    constexpr const char* RENDER_SCALE_ITEMS[]      = { "Original", "DoubleOriginal", "Native" };
     constexpr const char* TEXTURE_FILTER_ITEMS[]    = { "Nearest", "Linear" };
     constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Original", "Smooth" };
     constexpr const char* LIGHTING_ITEMS[]          = { "Per vertex", "Per pixel" };
@@ -64,19 +64,19 @@ namespace Silent::Debug
                     isOptChanged       = true;
                 }
 
-                // `Render scale` combo.
-                int renderScale = (int)options->RenderScale;
-                if (ImGui::Combo("Render scale", &renderScale, RENDER_SCALE_ITEMS, IM_ARRAYSIZE(RENDER_SCALE_ITEMS)))
-                {
-                    options->RenderScale = (RenderScaleType)renderScale;
-                    isOptChanged         = true;
-                }
-
                 // `Aspect ratio` combo.
                 int aspectRatio = (int)options->AspectRatio;
                 if (ImGui::Combo("Aspect ratio", &aspectRatio, ASPECT_RATIO_ITEMS, IM_ARRAYSIZE(ASPECT_RATIO_ITEMS)))
                 {
                     options->AspectRatio = (AspectRatioType)aspectRatio;
+                    isOptChanged         = true;
+                }
+
+                // `Render scale` combo.
+                int renderScale = (int)options->RenderScale;
+                if (ImGui::Combo("Render scale", &renderScale, RENDER_SCALE_ITEMS, IM_ARRAYSIZE(RENDER_SCALE_ITEMS)))
+                {
+                    options->RenderScale = (RenderScaleType)renderScale;
                     isOptChanged         = true;
                 }
 
