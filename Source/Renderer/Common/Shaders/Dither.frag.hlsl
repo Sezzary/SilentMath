@@ -2,6 +2,7 @@
 
 // References:
 // https://gist.github.com/ompuco/3209f1b32213cec5b7bccf0e67caf3e9
+// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP
 
 Texture2D<float4> Texture : register(t0, space2);
 SamplerState      Sampler : register(s0, space2);
@@ -11,6 +12,12 @@ struct Input
     float4 Position : SV_Position;
     float2 TexCoord : TEXCOORD0;
     float4 Color    : COLOR0;
+};
+
+cbuffer PerFrame : register(b0, space3)
+{
+    float2 Resolution;
+    float  VirtualHeight;
 };
 
 static const uint   COLOR_MASK   = 0xF8;
@@ -28,8 +35,11 @@ float4 main(Input input) : SV_Target
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
-    // Compute pixel position.
-    int2 pixelPos = int2(floor(input.Position.xy));
+    // Compute virtual pixel position relative to virtual height.
+    float  rawScale = Resolution.y / VirtualHeight;
+    float  scale    = max(1.0, floor(rawScale));
+    float2 pixels   = floor(Resolution / scale);
+    int2   pixelPos = int2(floor(input.TexCoord * pixels));
 
     // Compute 8-bit dithered color.
     int    dither    = DITHER_TABLE[pixelPos.x % DITHER_SIZE][pixelPos.y % DITHER_SIZE];

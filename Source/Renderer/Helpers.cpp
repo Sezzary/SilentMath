@@ -387,7 +387,8 @@ namespace Silent::Renderer
     {
         // Scene.
         Draw3dScene();
-        DrawDither();
+        DrawPixelization();
+        DrawDithering();
         Draw2dScene();
 
         // Final image.

@@ -18,6 +18,7 @@ namespace Silent::Renderer
         // Effects
         // ========
 
+        Pixelize,
         Dither,
         LumaFade,
         FilmGrain,

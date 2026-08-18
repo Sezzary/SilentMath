@@ -299,17 +299,22 @@ namespace Silent::Renderer
         // =====================
 
         /** @brief Draws a 3D scene to a cleared off-screen render texture.
-         * Called before `Draw2dScene`.
+         * Called before `DrawPixelization`.
          */
         virtual void Draw3dScene() = 0;
 
-        /** @brief Draws dithering over the 3D scene to an off-screen render texture.
-         * Called after `Draw3dScene` and before `Draw2dScene`.
+        /** @brief Draws pixelization over the 3D scene to an off-screen render texture.
+         * Called after `Draw3dScene` and before `DrawDithering`.
          */
-        virtual void DrawDither() = 0;
+        virtual void DrawPixelization() = 0;
+
+        /** @brief Draws dithering over the 3D scene to an off-screen render texture.
+         * Called after `DrawPixelization` and before `Draw2dScene`.
+         */
+        virtual void DrawDithering() = 0;
 
         /** @brief Draws a 2D scene on top of the 3D scene to an off-screen render texture.
-         * Called after `Draw3dScene` and before `DrawPostProcess`.
+         * Called after `DrawDithering` and before `DrawPostProcess`.
          */
         virtual void Draw2dScene() = 0;
 

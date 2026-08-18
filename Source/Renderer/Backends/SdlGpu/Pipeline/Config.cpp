@@ -271,11 +271,11 @@ namespace Silent::Renderer::SdlGpu
         // Effects
         // ========
 
-        // Luma fade.
+        // Pixelize.
         {
-            .Stage                    = RenderStage::LumaFade,
+            .Stage                    = RenderStage::Pixelize,
             .VertShaderName           = "Primitive2d.vert",
-            .FragShaderName           = "LumaFade.frag",
+            .FragShaderName           = "Pixelize.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -291,6 +291,21 @@ namespace Silent::Renderer::SdlGpu
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Dither.frag",
             .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
+            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes               =
+            {
+                BlendMode::Opaque
+            }
+        },
+        // Luma fade.
+        {
+            .Stage                    = RenderStage::LumaFade,
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "LumaFade.frag",
+            .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
             .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
             .BlendModes               =

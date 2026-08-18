@@ -110,6 +110,12 @@ namespace Silent::Debug
                     isOptChanged = true;
                 }
 
+                // `Enable pixelization` checkbox.
+                if (ImGui::Checkbox("Enable pixelization", &options->EnablePixelization))
+                {
+                    isOptChanged = true;
+                }
+
                 // `Enable dithering` checkbox.
                 if (ImGui::Checkbox("Enable dithering", &options->EnableDithering))
                 {

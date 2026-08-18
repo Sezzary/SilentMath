@@ -6,14 +6,14 @@ namespace Math
 {
     static const float PI = 3.1415927f;
 
-    /** @brief Remaps `x` from one value range to another.
+    /** @brief Remaps a value from one value range to another.
      *
      * @param x Value to remap.
-     * @param fromMin Lower bound of the initial range.
-     * @param fromMax Upper bound of the initial range.
-     * @param toMin Lower bound of the target range.
-     * @param toMax Upper bound of the target range.
-     * return `x` remapped to the target range.
+     * @param min0 Minimim value of first range.
+     * @param max0 Maximum value of first range.
+     * @param min1 Minimum value of second range.
+     * @param max1 Maximum value of second range.
+     * @return `x` remapped from the first range to the second.
      */
     float Remap(float x, float fromMin, float fromMax, float toMin, float toMax)
     {

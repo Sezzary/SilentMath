@@ -176,7 +176,8 @@ namespace Silent::Renderer::SdlGpu
         // ============================================================
 
         void Draw3dScene() override;
-        void DrawDither() override;
+        void DrawPixelization() override;
+        void DrawDithering() override;
         void Draw2dScene() override;
         void DrawPostProcess() override;
         void DrawViewport() override;

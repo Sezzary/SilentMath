@@ -117,20 +117,21 @@ namespace Silent::Services
         // Graphics (user)
         // ================
 
-        GraphicsPresetType PresetType         = GraphicsPresetType::None;
-        bool               EnableFullscreen   = false;
-        int                BrightnessLevel    = 0;
-        FrameRateType      FrameRate          = FrameRateType::Fps30;
-        RenderScaleType    RenderScale        = RenderScaleType::Native;
-        AspectRatioType    AspectRatio        = AspectRatioType::Native;
-        TextureFilterType  TextureFilter      = TextureFilterType::Nearest;
-        TextQualityType    TextQuality        = TextQualityType::Smooth;
-        LightingType       Lighting           = LightingType::PerVertex;
-        bool               EnableVertexJitter = false;
-        bool               EnableDithering    = false;
-        bool               EnableFilmGrain    = false;
-        bool               EnableVignette     = false;
-        bool               EnableCrtFilter    = false;
+        GraphicsPresetType PresetType           = GraphicsPresetType::None;
+        bool               EnableFullscreen     = false;
+        int                BrightnessLevel      = 0;
+        FrameRateType      FrameRate            = FrameRateType::Fps30;
+        RenderScaleType    RenderScale          = RenderScaleType::Native;
+        AspectRatioType    AspectRatio          = AspectRatioType::Native;
+        TextureFilterType  TextureFilter        = TextureFilterType::Nearest;
+        TextQualityType    TextQuality          = TextQualityType::Smooth;
+        LightingType       Lighting             = LightingType::PerVertex;
+        bool               EnableVertexJitter   = false;
+        bool               EnableDithering      = false;
+        bool               EnablePixelization = false;
+        bool               EnableFilmGrain      = false;
+        bool               EnableVignette       = false;
+        bool               EnableCrtFilter      = false;
 
         // =========
         // Gameplay
