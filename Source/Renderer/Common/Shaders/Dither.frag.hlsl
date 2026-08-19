@@ -2,7 +2,7 @@
 
 // References:
 // https://gist.github.com/ompuco/3209f1b32213cec5b7bccf0e67caf3e9
-// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP
+// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP/blob/f047fabf5b2492d9572ed85b4ac0cde2ff3b4004/Shaders/PS1_ObjectShader.shader
 
 Texture2D<float4> Texture : register(t0, space2);
 SamplerState      Sampler : register(s0, space2);

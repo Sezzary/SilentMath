@@ -167,6 +167,20 @@ namespace Silent::Renderer::SdlGpu
         // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
+        // FXAA.
+        if (options->Antialiasing == AntialiasingType::Low)
+        {
+            RunPostProcessPass(RenderStage::Fxaa, [&]()
+            {
+                auto uni = UniformFxaa
+                {
+                    .Resolution    = GetViewportResolution().ToVector2(),
+                    .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
+                };
+                PushFragmentUniform(uni, 0);
+            });
+        }
+
         // Pixelization.
         if (options->EnablePixelization)
         {

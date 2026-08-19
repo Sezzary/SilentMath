@@ -1,7 +1,7 @@
 #include "Utils/Math.hlsli"
 
 // References:
-// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP
+// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP/blob/f047fabf5b2492d9572ed85b4ac0cde2ff3b4004/Shaders/PixelizeShader.shader
 
 Texture2D<float4> Texture : register(t0, space2);
 SamplerState      Sampler : register(s0, space2);

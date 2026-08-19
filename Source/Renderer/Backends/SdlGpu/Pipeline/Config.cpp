@@ -183,9 +183,9 @@ namespace Silent::Renderer::SdlGpu
 
     const std::vector<PipelineConfig> PIPELINE_CONFIGS =
     {
-        // ==========
-        // Materials
-        // ==========
+        // =========
+        // Material
+        // =========
 
         // 2D shape.
         {
@@ -267,9 +267,9 @@ namespace Silent::Renderer::SdlGpu
             .EnableDepthTest = true
         },
 
-        // ========
-        // Effects
-        // ========
+        // =============
+        // Post-process
+        // =============
 
         // Pixelize.
         {
@@ -347,6 +347,20 @@ namespace Silent::Renderer::SdlGpu
             .Stage                    = RenderStage::Crt,
             .VertShaderName           = "Primitive2d.vert",
             .FragShaderName           = "Crt.frag",
+            .FragShaderSamplerCount   = 1,
+            .FragShaderUniBufferCount = 1,
+            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
+            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
+            .BlendModes               =
+            {
+                BlendMode::Opaque
+            }
+        },
+        // FXAA.
+        {
+            .Stage                    = RenderStage::Fxaa,
+            .VertShaderName           = "Primitive2d.vert",
+            .FragShaderName           = "Fxaa.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,

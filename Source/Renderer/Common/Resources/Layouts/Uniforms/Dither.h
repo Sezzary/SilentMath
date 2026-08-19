@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Per-frame GPU uniform data for 3D scene dithering effect data. */
+    /** @brief Per-frame GPU uniform data for 3D scene dithering post-process. */
     struct alignas(16) UniformDither
     {
         Vector2 Resolution    = Vector2::Zero;

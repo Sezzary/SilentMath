@@ -5,18 +5,18 @@ namespace Silent::Renderer
     /** @brief Render stages representing pipelines or shader programs, depending on the backend. */
     enum class RenderStage
     {
-        // ==========
-        // Materials
-        // ==========
+        // =========
+        // Material
+        // =========
 
         Shape2d,
         Sprite2d,
         Glyph2d,
         Model,
 
-        // ========
-        // Effects
-        // ========
+        // =============
+        // Post-process
+        // =============
 
         Pixelize,
         Dither,
@@ -24,6 +24,7 @@ namespace Silent::Renderer
         FilmGrain,
         Vignette,
         Crt,
+        Fxaa,
 
         // ======
         // Final

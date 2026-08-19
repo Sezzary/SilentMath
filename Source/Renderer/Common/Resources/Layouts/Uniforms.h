@@ -4,6 +4,7 @@
 #include "Renderer/Common/Resources/Layouts/Uniforms/Crt.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Dither.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/FilmGrain.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms/Fxaa.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Glyph2d.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/LumaFade.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Material.h"
@@ -19,6 +20,7 @@ namespace Silent::Renderer
                                      UniformCrt,
                                      UniformDither,
                                      UniformFilmGrain,
+                                     UniformFxaa,
                                      UniformGlyph2d,
                                      UniformLumaFade,
                                      UniformMaterial,

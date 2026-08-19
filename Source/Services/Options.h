@@ -63,7 +63,7 @@ namespace Silent::Services
     {
         None,
         Low, /** FXAA. */
-        High /** MSAA. */
+        High /** SMAA. */
     };
 
     enum class SoundType
@@ -133,7 +133,7 @@ namespace Silent::Services
         TextureFilterType  TextureFilter          = TextureFilterType::Nearest; // @todo
         TextQualityType    TextQuality            = TextQualityType::Smooth; // @todo
         LightingType       Lighting               = LightingType::PerVertex; // @todo
-        AntialiasingType   Antialiasing           = AntialiasingType::None; // @todo
+        AntialiasingType   Antialiasing           = AntialiasingType::None; // @todo High.
         bool               EnableAmbientOcclusion = false; // @todo
         bool               EnableVertexJitter     = false;
         bool               EnablePixelization     = false;

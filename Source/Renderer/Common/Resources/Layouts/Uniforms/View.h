@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Per-frame GPU uniform data for 3D primitive vertex shader. */
+    /** @brief Per-frame GPU uniform data for view in 3D primitive vertex. */
     struct alignas(16) UniformView
     {
         Matrix ViewProjMat         = Matrix::Identity;

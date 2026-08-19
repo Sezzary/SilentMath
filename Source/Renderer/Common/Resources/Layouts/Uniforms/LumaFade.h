@@ -2,7 +2,7 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Per-frame GPU uniform data for post-process luma fade. */
+    /** @brief Per-frame GPU uniform data for luma fade post-process. */
     struct alignas(16) UniformLumaFade
     {
         float FadeAlpha = 0.0f;

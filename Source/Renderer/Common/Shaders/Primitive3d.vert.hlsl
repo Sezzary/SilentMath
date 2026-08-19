@@ -1,5 +1,5 @@
 // References:
-// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP
+// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP/blob/f047fabf5b2492d9572ed85b4ac0cde2ff3b4004/Shaders/PS1_ObjectShader.shader
 
 struct Input
 {
