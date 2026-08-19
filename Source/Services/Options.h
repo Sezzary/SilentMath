@@ -59,6 +59,13 @@ namespace Silent::Services
         PerPixel
     };
 
+    enum class AntialiasingType
+    {
+        None,
+        Low, /** FXAA. */
+        High /** MSAA. */
+    };
+
     enum class SoundType
     {
         Stereo,
@@ -117,21 +124,23 @@ namespace Silent::Services
         // Graphics (user)
         // ================
 
-        GraphicsPresetType PresetType         = GraphicsPresetType::None;
-        bool               EnableFullscreen   = false;
-        int                BrightnessLevel    = 0;
-        FrameRateType      FrameRate          = FrameRateType::Fps30;
-        AspectRatioType    AspectRatio        = AspectRatioType::Native;
-        RenderScaleType    RenderScale        = RenderScaleType::Native;
-        TextureFilterType  TextureFilter      = TextureFilterType::Nearest;
-        TextQualityType    TextQuality        = TextQualityType::Smooth;
-        LightingType       Lighting           = LightingType::PerVertex;
-        bool               EnableVertexJitter = false;
-        bool               EnableDithering    = false;
-        bool               EnablePixelization = false;
-        bool               EnableFilmGrain    = false;
-        bool               EnableVignette     = false;
-        bool               EnableCrtFilter    = false;
+        GraphicsPresetType PresetType             = GraphicsPresetType::None;
+        bool               EnableFullscreen       = false;
+        int                BrightnessLevel        = 0;
+        FrameRateType      FrameRate              = FrameRateType::Fps30; // @todo
+        AspectRatioType    AspectRatio            = AspectRatioType::Native; // @todo
+        RenderScaleType    RenderScale            = RenderScaleType::Native; // @todo
+        TextureFilterType  TextureFilter          = TextureFilterType::Nearest; // @todo
+        TextQualityType    TextQuality            = TextQualityType::Smooth; // @todo
+        LightingType       Lighting               = LightingType::PerVertex; // @todo
+        AntialiasingType   Antialiasing           = AntialiasingType::None; // @todo
+        bool               EnableAmbientOcclusion = false; // @todo
+        bool               EnableVertexJitter     = false;
+        bool               EnablePixelization     = false;
+        bool               EnableDithering        = false;
+        bool               EnableFilmGrain        = false;
+        bool               EnableVignette         = false;
+        bool               EnableCrtFilter        = false;
 
         // =========
         // Gameplay
@@ -198,7 +207,7 @@ namespace Silent::Services
         // Fields
         // =======
 
-        Options _options = {}; /** Options configuration data. */
+        Options _options = {};
 
     public:
         // =============

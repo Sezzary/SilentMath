@@ -577,7 +577,9 @@ namespace Silent::Input
 
     void InputManager::UpdateRumble()
     {
-        if (_rumble.Ticks == 0 || !IsGamepadConnected())
+        const auto& options = g_App.GetOptions();
+
+        if (!IsGamepadConnected() || !options->EnableVibration || _rumble.Ticks == 0)
         {
             _rumble = {};
             return;

@@ -387,12 +387,11 @@ namespace Silent::Renderer
     {
         // Scene.
         Draw3dScene();
-        DrawPixelization();
-        DrawDithering();
+        Draw3dScenePostProcess();
         Draw2dScene();
 
         // Final image.
-        DrawPostProcess();
+        DrawScenePostProcess();
         DrawViewport();
 
         // @debug

@@ -27,9 +27,8 @@ float4 main(Input input) : SV_Target
     if (input.PaletteIdx != Constants::NO_VALUE)
     {
         // Get palette atlas dimensions.
-        uint paletteWidth;
-        uint paletteHeight;
-        PaletteAtlas.GetDimensions(paletteWidth, paletteHeight);
+        uint2 paletteSize;
+        PaletteAtlas.GetDimensions(paletteSize.x, paletteSize.y);
 
         // Get color index.
         int colorIdx = Math::DecodeColorIdx(texColor);

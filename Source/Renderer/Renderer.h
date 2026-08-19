@@ -299,32 +299,27 @@ namespace Silent::Renderer
         // =====================
 
         /** @brief Draws a 3D scene to a cleared off-screen render texture.
-         * Called before `DrawPixelization`.
+         * Called before `Draw3dScenePostProcess`.
          */
         virtual void Draw3dScene() = 0;
 
-        /** @brief Draws pixelization over the 3D scene to an off-screen render texture.
-         * Called after `Draw3dScene` and before `DrawDithering`.
+        /** @brief Draws post-process effects on top of the 3D scene to an off-screen render texture.
+         * Called after `Draw3dScene` and before `Draw2dScene`.
          */
-        virtual void DrawPixelization() = 0;
-
-        /** @brief Draws dithering over the 3D scene to an off-screen render texture.
-         * Called after `DrawPixelization` and before `Draw2dScene`.
-         */
-        virtual void DrawDithering() = 0;
+        virtual void Draw3dScenePostProcess() = 0;
 
         /** @brief Draws a 2D scene on top of the 3D scene to an off-screen render texture.
-         * Called after `DrawDithering` and before `DrawPostProcess`.
+         * Called after `Draw3dScenePostProcess` and before `DrawScenePostProcess`.
          */
         virtual void Draw2dScene() = 0;
 
         /** @brief Draws post-process effects on top of the combined 3D and 2D scenes to an off-screen render texture.
          * Called after `Draw2dScene` and before `DrawViewport`.
          */
-        virtual void DrawPostProcess() = 0;
+        virtual void DrawScenePostProcess() = 0;
 
         /** @brief Draws the viewport containing post-procesed, combined 3D and 2D scenes to the swapchain.
-         * Called after `DrawPostProcess` and before `DrawDebugMenu`.
+         * Called after `DrawScenePostProcess` and before `DrawDebugMenu`.
          */
         virtual void DrawViewport() = 0;
 

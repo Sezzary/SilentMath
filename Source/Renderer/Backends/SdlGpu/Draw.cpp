@@ -155,15 +155,9 @@ namespace Silent::Renderer::SdlGpu
         _renderTexture.Swap();
     }
 
-    void Renderer::DrawPixelization()
+    void Renderer::Draw3dScenePostProcess()
     {
         const auto& options = g_App.GetOptions();
-
-        // Check if pixelize filter is enabled.
-        if (!options->EnablePixelization)
-        {
-            return;
-        }
 
         // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
@@ -173,106 +167,39 @@ namespace Silent::Renderer::SdlGpu
         // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
-        // Start render pass.
-        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        // Pixelization.
+        if (options->EnablePixelization)
         {
-            .texture  = _renderTexture.Write(),
-            .load_op  = SDL_GPU_LOADOP_DONT_CARE,
-            .store_op = SDL_GPU_STOREOP_STORE
-        };
-        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
-
-        // Bind pipeline.
-        _pipelines.Bind(renderPass, RenderStage::Pixelize, BlendMode::Opaque, false);
-
-        // Bind texture.
-        auto binding = SDL_GPUTextureSamplerBinding
-        {
-            .texture = _renderTexture.Read(),
-            .sampler = _samplers[(int)TextureFilterType::Nearest]
-        };
-        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
-
-        // Bind vertex buffer.
-        _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
-
-        // Push uniform.
-        auto uni = UniformPixelize
-        {
-            .Resolution    = GetViewportResolution().ToVector2(),
-            .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
-        };
-        PushFragmentUniform(uni, 0);
-
-        // Draw.
-        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;
-
-        // End render pass.
-        SDL_EndGPURenderPass(&renderPass);
-        _renderTexture.Swap();
-    }
-
-    void Renderer::DrawDithering()
-    {
-        const auto& options = g_App.GetOptions();
-        
-        // Check if dithering is enabled.
-        if (!options->EnableDithering)
-        {
-            return;
+            RunPostProcessPass(RenderStage::Pixelize, [&]()
+            {
+                auto uni = UniformPixelize
+                {
+                    .Resolution    = GetViewportResolution().ToVector2(),
+                    .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
+                };
+                PushFragmentUniform(uni, 0);
+            });
         }
 
-        // Start copy pass.
-        auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
-
-        CopyGpuViewportQuad(*copyPass);
-
-        // End copy pass.
-        SDL_EndGPUCopyPass(copyPass);
-
-        // Start render pass.
-        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        // Dithering.
+        if (options->EnableDithering)
         {
-            .texture  = _renderTexture.Write(),
-            .load_op  = SDL_GPU_LOADOP_DONT_CARE,
-            .store_op = SDL_GPU_STOREOP_STORE
-        };
-        auto& renderPass = *SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
-
-        // Bind pipeline.
-        _pipelines.Bind(renderPass, RenderStage::Dither, BlendMode::Opaque, false);
-
-        // Bind texture.
-        auto binding = SDL_GPUTextureSamplerBinding
-        {
-            .texture = _renderTexture.Read(),
-            .sampler = _samplers[(int)TextureFilterType::Nearest]
-        };
-        SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
-
-        // Bind vertex buffer.
-        _gpuBuffers.ViewportVertices.Bind(renderPass, 0, 0);
-
-        // Push uniform.
-        auto uni = UniformDither
-        {
-            .Resolution    = GetViewportResolution().ToVector2(),
-            .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
-        };
-        PushFragmentUniform(uni, 0);
-
-        // Draw.
-        SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;
-
-        // End render pass.
-        SDL_EndGPURenderPass(&renderPass);
-        _renderTexture.Swap();
+            RunPostProcessPass(RenderStage::Dither, [&]()
+            {
+                auto uni = UniformDither
+                {
+                    .Resolution    = GetViewportResolution().ToVector2(),
+                    .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
+                };
+                PushFragmentUniform(uni, 0);
+            });
+        }
     }
 
     void Renderer::Draw2dScene()
     {
+        // @todo Additionally draw 3D objects in 3D space
+
         // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
@@ -344,7 +271,7 @@ namespace Silent::Renderer::SdlGpu
         _renderTexture.Swap();
     }
 
-    void Renderer::DrawPostProcess()
+    void Renderer::DrawScenePostProcess()
     {
         const auto& options = g_App.GetOptions();
 
@@ -359,43 +286,6 @@ namespace Silent::Renderer::SdlGpu
 
         // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
-
-        auto RunPostProcessPass = [&](RenderStage renderStage, auto pushUniforms)
-        {
-            // Process render pass.
-            auto colorTargetInfo = SDL_GPUColorTargetInfo
-            {
-                .texture  = _renderTexture.Write(),
-                .load_op  = SDL_GPU_LOADOP_DONT_CARE,
-                .store_op = SDL_GPU_STOREOP_STORE
-            };
-            auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
-
-            // Bind pipeline.
-            _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque, false);
-
-            // Bind vertex buffer.
-            _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
-
-            // Bind texture.
-            auto binding = SDL_GPUTextureSamplerBinding
-            {
-                .texture = _renderTexture.Read(),
-                .sampler = _samplers[(int)TextureFilterType::Nearest]
-            };
-            SDL_BindGPUFragmentSamplers(renderPass, 0, &binding, 1);
-
-            // Push uniforms.
-            pushUniforms();
-
-            // Draw.
-            SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-            _doubleBuffer.Active.DrawCallCount++;
-
-            // End render pass.            
-            SDL_EndGPURenderPass(renderPass);
-            _renderTexture.Swap();
-        };
 
         // @debug Luma fade test.
         if (Debug::g_Work.BlendAlpha > 0.0f)
@@ -484,7 +374,7 @@ namespace Silent::Renderer::SdlGpu
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
 
-        // Push uniform.
+        // Push uniform. @todo Brightness is only applied to the 3D scene, not the entire viewport.
         auto uni = UniformBlit
         {
             .Brightness = (options->BrightnessLevel * BRIGHTNESS_STEP) - BRIGHTNESS_MIDDLE
@@ -532,5 +422,42 @@ namespace Silent::Renderer::SdlGpu
 
         // End render pass.
         SDL_EndGPURenderPass(renderPass);
+    }
+
+    void Renderer::RunPostProcessPass(RenderStage renderStage, const std::function<void()>& pushUniforms)
+    {
+        // Process render pass.
+        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        {
+            .texture  = _renderTexture.Write(),
+            .load_op  = SDL_GPU_LOADOP_DONT_CARE,
+            .store_op = SDL_GPU_STOREOP_STORE
+        };
+        auto* renderPass = SDL_BeginGPURenderPass(_commandBuffer, &colorTargetInfo, 1, nullptr);
+
+        // Bind pipeline.
+        _pipelines.Bind(*renderPass, renderStage, BlendMode::Opaque, false);
+
+        // Bind vertex buffer.
+        _gpuBuffers.ViewportVertices.Bind(*renderPass, 0, 0);
+
+        // Bind texture.
+        auto binding = SDL_GPUTextureSamplerBinding
+        {
+            .texture = _renderTexture.Read(),
+            .sampler = _samplers[(int)TextureFilterType::Nearest]
+        };
+        SDL_BindGPUFragmentSamplers(renderPass, 0, &binding, 1);
+
+        // Push uniforms.
+        pushUniforms();
+
+        // Draw.
+        SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
+        _doubleBuffer.Active.DrawCallCount++;
+
+        // End render pass.            
+        SDL_EndGPURenderPass(renderPass);
+        _renderTexture.Swap();
     }
 }

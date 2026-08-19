@@ -16,6 +16,7 @@ namespace Silent::Debug
     constexpr const char* TEXTURE_FILTER_ITEMS[]    = { "Nearest", "Linear" };
     constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Original", "Smooth" };
     constexpr const char* LIGHTING_ITEMS[]          = { "Per vertex", "Per pixel" };
+    constexpr const char* ANTIALIASING_ITEMS[]      = { "None", "Low", "High" };
     constexpr const char* SOUND_ITEMS[]             = { "Stereo", "Monaural" };
     constexpr const char* BLOOD_COLOR_ITEMS[]       = { "Normal", "Green", "Violet", "Black" };
     constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
@@ -96,12 +97,26 @@ namespace Silent::Debug
                     isOptChanged         = true;
                 }
 
-                // `Lighting type` combo.
+                // `Lighting` combo.
                 int lighting = (int)options->Lighting;
                 if (ImGui::Combo("Lighting", &lighting, LIGHTING_ITEMS, IM_ARRAYSIZE(LIGHTING_ITEMS)))
                 {
                     options->Lighting = (LightingType)lighting;
                     isOptChanged      = true;
+                }
+
+                // `Antialiasing` combo.
+                int antialiasing = (int)options->Antialiasing;
+                if (ImGui::Combo("Antialiasing", &antialiasing, ANTIALIASING_ITEMS, IM_ARRAYSIZE(ANTIALIASING_ITEMS)))
+                {
+                    options->Antialiasing = (AntialiasingType)antialiasing;
+                    isOptChanged          = true;
+                }
+
+                // `Enable ambient occlusion` checkbox.
+                if (ImGui::Checkbox("Enable ambient occlusion", &options->EnableAmbientOcclusion))
+                {
+                    isOptChanged = true;
                 }
 
                 // `Enable vertex jitter` checkbox.

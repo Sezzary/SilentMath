@@ -17,7 +17,7 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffer draw batch. */
     struct DrawBatch
     {
-        //VertexBuffer<BufferVertex2d>* VertexBuffer = nullptr; // @todo
+        //VertexBuffer<BufferType>* VertexBuffer = nullptr; // @todo
         std::string TextureName  = {}; // @todo Or pointer to SDL_gpu texture handle?
         RenderStage RenderStg    = RenderStage::Sprite2d;
         BlendMode   BlendMd      = BlendMode::Opaque;
@@ -176,11 +176,19 @@ namespace Silent::Renderer::SdlGpu
         // ============================================================
 
         void Draw3dScene() override;
-        void DrawPixelization() override;
-        void DrawDithering() override;
+        void Draw3dScenePostProcess() override;
         void Draw2dScene() override;
-        void DrawPostProcess() override;
+        void DrawScenePostProcess() override;
         void DrawViewport() override;
         void DrawDebugMenu() override;
+
+        /** @brief Runs a post-process pass on the scene.
+         *
+         * @note Before making successive calls to this function, copying the viewport quad to the GPU is required.
+         *
+         * @param renderStage Pipeline render stage.
+         * @param pushUniforms Callback to push shader uniforms.
+         */
+        void RunPostProcessPass(RenderStage renderStage, const std::function<void()>& pushUniforms);
     };
 }
