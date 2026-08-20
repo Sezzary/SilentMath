@@ -40,7 +40,7 @@ float4 main(Input input) : SV_Target
     float scale    = max(1.0, floor(rawScale));
 
     // Compute pixel position.
-    float2 gridSize = float2(Resolution.x / scale, VirtualHeight);
+    float2 gridSize = floor(Resolution.xy / scale);
     int2   pixelPos = int2(floor(input.TexCoord * gridSize));
 
     // Compute 8-bit dithered color.
