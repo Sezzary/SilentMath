@@ -16,7 +16,6 @@ struct Input
 cbuffer PerFrame : register(b0, space3)
 {
     float2 Resolution;
-    float  VirtualHeight; // @todo
 }
 
 static const float SPAN_MAX    = 8.0f;

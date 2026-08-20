@@ -13,6 +13,7 @@
 #include "Renderer/Common/Resources/Layouts/Uniforms/Primitive3d.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Sprite2d.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/View.h"
+#include "Renderer/Common/Resources/Layouts/Uniforms/Vignette.h"
 
 namespace Silent::Renderer
 {
@@ -28,7 +29,8 @@ namespace Silent::Renderer
                                      UniformPixelize,
                                      UniformPrimitive3d,
                                      UniformSprite2d,
-                                     UniformView>;
+                                     UniformView,
+                                     UniformVignette>;
 
     /** @brief GPU uniform buffer slots. @todo Can't use this as uniform buffers must be packed flatly in the shader. */
     enum class UniformSlot

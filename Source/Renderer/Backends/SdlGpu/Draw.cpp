@@ -174,8 +174,7 @@ namespace Silent::Renderer::SdlGpu
             {
                 auto uni = UniformFxaa
                 {
-                    .Resolution    = GetViewportResolution().ToVector2(),
-                    .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
+                    .Resolution = GetViewportResolution().ToVector2()
                 };
                 PushFragmentUniform(uni, 0);
             });
@@ -333,7 +332,7 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Vignette, [&]()
             {
-                auto uni = UniformCrt // @todo Make unique uniform.
+                auto uni = UniformVignette
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
                     .Time       = time
