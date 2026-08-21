@@ -18,7 +18,6 @@ namespace Silent::Renderer
         // Post-process
         // =============
 
-        Pixelize,
         Dither,
         LumaFade,
         FilmGrain,

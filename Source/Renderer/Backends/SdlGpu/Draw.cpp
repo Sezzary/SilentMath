@@ -180,20 +180,6 @@ namespace Silent::Renderer::SdlGpu
             });
         }
 
-        // Pixelization.
-        if (options->EnablePixelization)
-        {
-            RunPostProcessPass(RenderStage::Pixelize, [&]()
-            {
-                auto uni = UniformPixelize
-                {
-                    .Resolution    = GetViewportResolution().ToVector2(),
-                    .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
-                };
-                PushFragmentUniform(uni, 0);
-            });
-        }
-
         // Dithering.
         if (options->DitheringScale != DitheringScaleType::None)
         {

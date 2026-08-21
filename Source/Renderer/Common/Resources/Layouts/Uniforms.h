@@ -9,7 +9,6 @@
 #include "Renderer/Common/Resources/Layouts/Uniforms/LumaFade.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Material.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Model.h"
-#include "Renderer/Common/Resources/Layouts/Uniforms/Pixelize.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Primitive3d.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/Sprite2d.h"
 #include "Renderer/Common/Resources/Layouts/Uniforms/View.h"
@@ -26,7 +25,6 @@ namespace Silent::Renderer
                                      UniformLumaFade,
                                      UniformMaterial,
                                      UniformModel,
-                                     UniformPixelize,
                                      UniformPrimitive3d,
                                      UniformSprite2d,
                                      UniformView,

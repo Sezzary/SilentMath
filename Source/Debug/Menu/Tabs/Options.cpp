@@ -150,12 +150,6 @@ namespace Silent::Debug
                     isOptChanged = true;
                 }
 
-                // `Enable pixelization` checkbox.
-                if (ImGui::Checkbox("Enable pixelization", &options->EnablePixelization))
-                {
-                    isOptChanged = true;
-                }
-
                 // `Enable film grain` checkbox.
                 if (ImGui::Checkbox("Enable film grain", &options->EnableFilmGrain))
                 {

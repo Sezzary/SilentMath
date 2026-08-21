@@ -36,7 +36,6 @@ namespace Silent::Services
     constexpr char KEY_DITHERING_SCALE[]                          = "DitheringScale";
     constexpr char KEY_ENABLE_AMBIENT_OCCLUSION[]                 = "EnableAmbientOcclusion";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
-    constexpr char KEY_ENABLE_PIXELIZATION[]                      = "EnablePixelization";
     constexpr char KEY_ENABLE_FILM_GRAIN[]                        = "EnableFilmGrain";
     constexpr char KEY_ENABLE_VIGNETTE[]                          = "EnableVignette";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
@@ -81,7 +80,6 @@ namespace Silent::Services
     constexpr auto DEFAULT_DITHERING_SCALE                          = DitheringScaleType::Retro;
     constexpr bool DEFAULT_ENABLE_AMBIENT_OCCLUSION                 = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
-    constexpr bool DEFAULT_ENABLE_PIXELIZATION                      = false;
     constexpr bool DEFAULT_ENABLE_FILM_GRAIN                        = false;
     constexpr bool DEFAULT_ENABLE_VIGNETTE                          = false;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
@@ -123,7 +121,6 @@ namespace Silent::Services
         _options.DitheringScale         = DEFAULT_DITHERING_SCALE;
         _options.EnableAmbientOcclusion = DEFAULT_ENABLE_AMBIENT_OCCLUSION;
         _options.EnableVertexJitter     = DEFAULT_ENABLE_VERTEX_JITTER;
-        _options.EnablePixelization     = DEFAULT_ENABLE_PIXELIZATION;
         _options.EnableFilmGrain        = DEFAULT_ENABLE_FILM_GRAIN;
         _options.EnableVignette         = DEFAULT_ENABLE_VIGNETTE;
         _options.EnableCrtFilter        = DEFAULT_ENABLE_CRT_FILTER;
@@ -264,7 +261,6 @@ namespace Silent::Services
         options.DitheringScale         = graphicsJson.value(KEY_DITHERING_SCALE,          DEFAULT_DITHERING_SCALE);
         options.EnableAmbientOcclusion = graphicsJson.value(KEY_ENABLE_AMBIENT_OCCLUSION, DEFAULT_ENABLE_AMBIENT_OCCLUSION);
         options.EnableVertexJitter     = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER,     DEFAULT_ENABLE_VERTEX_JITTER);
-        options.EnablePixelization     = graphicsJson.value(KEY_ENABLE_PIXELIZATION,      DEFAULT_ENABLE_PIXELIZATION);
         options.EnableFilmGrain        = graphicsJson.value(KEY_ENABLE_FILM_GRAIN,        DEFAULT_ENABLE_FILM_GRAIN);
         options.EnableVignette         = graphicsJson.value(KEY_ENABLE_VIGNETTE,          DEFAULT_ENABLE_VIGNETTE);
         options.EnableCrtFilter        = graphicsJson.value(KEY_ENABLE_CRT_FILTER,        DEFAULT_ENABLE_CRT_FILTER);
@@ -392,7 +388,6 @@ namespace Silent::Services
                     { KEY_ANTIALIASING,             options.Antialiasing           },
                     { KEY_ENABLE_AMBIENT_OCCLUSION, options.EnableAmbientOcclusion },
                     { KEY_ENABLE_VERTEX_JITTER,     options.EnableVertexJitter     },
-                    { KEY_ENABLE_PIXELIZATION,      options.EnablePixelization     },
                     { KEY_DITHERING_SCALE,          options.DitheringScale         },
                     { KEY_ENABLE_FILM_GRAIN,        options.EnableFilmGrain        },
                     { KEY_ENABLE_VIGNETTE,          options.EnableVignette         },

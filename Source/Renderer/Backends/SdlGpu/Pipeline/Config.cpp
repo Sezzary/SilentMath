@@ -271,20 +271,6 @@ namespace Silent::Renderer::SdlGpu
         // Post-process
         // =============
 
-        // Pixelize.
-        {
-            .Stage                    = RenderStage::Pixelize,
-            .VertShaderName           = "Primitive2d.vert",
-            .FragShaderName           = "Pixelize.frag",
-            .FragShaderSamplerCount   = 1,
-            .FragShaderUniBufferCount = 1,
-            .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
-            .VertBufferAttribs        = BUFFER_VERTEX_2D_ATTRIBS,
-            .BlendModes               =
-            {
-                BlendMode::Opaque
-            }
-        },
         // Dither.
         {
             .Stage                    = RenderStage::Dither,
