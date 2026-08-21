@@ -234,8 +234,8 @@ namespace Silent::Utils
             .AtlasSize     = size - Vector2i(GLYPH_PADDING * 2),
             .Bearing       = Vector2(Q6_TO_FLT(metrics.horiBearingX), Q6_TO_FLT(metrics.horiBearingY)),
             .Spacing       = Q6_TO_FLT(metrics.horiAdvance) + (_pointSize * _tracking),
-            .Ascender      = Q6_TO_FLT(ftFont->ascender),
-            .Descender     = Q6_TO_FLT(ftFont->descender),
+            .Ascender      = Q6_TO_FLT(ftFont->size->metrics.ascender),
+            .Descender     = Q6_TO_FLT(ftFont->size->metrics.descender),
             .MinY          = Q6_TO_FLT(ftBox.yMin),
             .MaxY          = Q6_TO_FLT(ftBox.yMax)
         };

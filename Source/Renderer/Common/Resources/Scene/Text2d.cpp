@@ -29,7 +29,7 @@ namespace Silent::Renderer
             .GradientSteps  = 0,
             .GradientUvMinY = Remap(shapedGlyph.Attribs.Ascender,
                                     shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
-                                    uvMax.y, uvMin.y), // @todo Ascender value has issues with high-res fonts?
+                                    uvMax.y, uvMin.y),
             .GradientUvMaxY = Remap(0.0f,
                                     shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
                                     uvMax.y, uvMin.y)
