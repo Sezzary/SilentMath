@@ -195,14 +195,36 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Dithering.
-        if (options->EnableDithering)
+        if (options->DitheringScale != DitheringScaleType::None)
         {
             RunPostProcessPass(RenderStage::Dither, [&]()
             {
+                auto res = GetViewportResolution().ToVector2();
+
+                float virtualHeight = res.y;
+                switch(options->DitheringScale)
+                {
+                    case DitheringScaleType::Retro:
+                    {
+                        virtualHeight = RETRO_SCREEN_SPACE_RES.y;
+                        break;
+                    }
+                    case DitheringScaleType::Retro2x:
+                    {
+                        virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2;
+                        break;
+                    }
+                    default:
+                    case DitheringScaleType::Native:
+                    {
+                        break;
+                    }
+                }
+
                 auto uni = UniformDither
                 {
-                    .Resolution    = GetViewportResolution().ToVector2(),
-                    .VirtualHeight = RETRO_SCREEN_SPACE_RES.y
+                    .Resolution    = res,
+                    .VirtualHeight = virtualHeight
                 };
                 PushFragmentUniform(uni, 0);
             });

@@ -26,7 +26,7 @@ namespace Silent::Renderer
             .Depth          = depth,
             .ScaleMd        = scaleMode,
             .HasGradient    = hasGradient,
-            .GradientSteps  = 0,
+            .GradientSteps  = 0, // @todo
             .GradientUvMinY = Remap(shapedGlyph.Attribs.Ascender,
                                     shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
                                     uvMax.y, uvMin.y),
@@ -48,7 +48,7 @@ namespace Silent::Renderer
         auto* font = fonts.GetFont(fontName);
         if (font == nullptr)
         {
-            Debug::Log(Fmt("Attempted to create 2D text with missing font `{}`.", fontName),
+            Debug::Log(Fmt("Attempted to create 2D text using missing font `{}`.", fontName),
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return {};
         }

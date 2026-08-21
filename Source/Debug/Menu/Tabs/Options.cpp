@@ -2,9 +2,11 @@
 #include "Debug/Menu/Tabs/Options.h"
 
 #include "Application.h"
+#include "Renderer/Renderer.h"
 #include "Services/Options.h"
 #include "Utils/Translator.h"
 
+using namespace Silent::Renderer;
 using namespace Silent::Services;
 using namespace Silent::Utils;
 
@@ -12,22 +14,24 @@ namespace Silent::Debug
 {
     constexpr const char* FRAME_RATE_ITEMS[]        = { "30 FPS", "60 FPS" };
     constexpr const char* ASPECT_RATIO_ITEMS[]      = { "4:3", "16:9", "Native"  };
-    constexpr const char* RENDER_SCALE_ITEMS[]      = { "Original", "DoubleOriginal", "Native" };
+    constexpr const char* RENDER_SCALE_ITEMS[]      = { "Retro", "Retro 2x", "Native" };
     constexpr const char* TEXTURE_FILTER_ITEMS[]    = { "Nearest", "Linear" };
-    constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Original", "Smooth" };
-    constexpr const char* LIGHTING_ITEMS[]          = { "Per vertex", "Per pixel" };
+    constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Retro", "Smooth" };
+    constexpr const char* LIGHTING_ITEMS[]          = { "Retro", "Smooth" };
     constexpr const char* ANTIALIASING_ITEMS[]      = { "None", "Low", "High" };
+    constexpr const char* DITHERING_SCALE_ITEMS[]   = { "None", "Retro", "Retro 2x", "Native" };
     constexpr const char* SOUND_ITEMS[]             = { "Stereo", "Monaural" };
     constexpr const char* BLOOD_COLOR_ITEMS[]       = { "Normal", "Green", "Violet", "Black" };
     constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
     constexpr const char* WEAPON_CONTROL_ITEMS[]    = { "Switch", "Press" };
     constexpr const char* VIEW_MODE_ITEMS[]         = { "Normal", "Self view" };
-    constexpr const char* PAPER_MAP_ITEMS[]         = { "Original", "Scalable" };
-    constexpr const char* DIALOG_PAUSE_ITEMS[]      = { "Original", "Condensed" };
+    constexpr const char* PAPER_MAP_QUALITY_ITEMS[] = { "Retro", "Hd" };
+    constexpr const char* DIALOG_PAUSE_ITEMS[]      = { "Retro", "Refined" };
 
     void AddOptionsTab()
     {
         auto& options    = g_App.GetOptions();
+        auto& renderer   = g_App.GetRenderer();
         auto& translator = g_App.GetTranslator();
 
         if (ImGui::BeginTabItem("Options"))
@@ -79,6 +83,13 @@ namespace Silent::Debug
                 {
                     options->RenderScale = (RenderScaleType)renderScale;
                     isOptChanged         = true;
+
+                    if (options->RenderScale    != RenderScaleType::Native &&
+                        options->DitheringScale != DitheringScaleType::None)
+                    {
+                        options->DitheringScale = DitheringScaleType::Native;
+                    }
+                    renderer.SignalResize();
                 }
 
                 // `Texture filter` combo.
@@ -113,6 +124,20 @@ namespace Silent::Debug
                     isOptChanged          = true;
                 }
 
+                // `Dithering scale` combo.
+                int ditheringScale = (int)options->DitheringScale;
+                if (ImGui::Combo("Dithering scale", &ditheringScale, DITHERING_SCALE_ITEMS, IM_ARRAYSIZE(DITHERING_SCALE_ITEMS)))
+                {
+                    options->DitheringScale = (DitheringScaleType)ditheringScale;
+                    isOptChanged            = true;
+
+                    if (options->RenderScale    != RenderScaleType::Native &&
+                        options->DitheringScale != DitheringScaleType::None)
+                    {
+                        options->DitheringScale = DitheringScaleType::Native;
+                    }
+                }
+
                 // `Enable ambient occlusion` checkbox.
                 if (ImGui::Checkbox("Enable ambient occlusion", &options->EnableAmbientOcclusion))
                 {
@@ -127,12 +152,6 @@ namespace Silent::Debug
 
                 // `Enable pixelization` checkbox.
                 if (ImGui::Checkbox("Enable pixelization", &options->EnablePixelization))
-                {
-                    isOptChanged = true;
-                }
-
-                // `Enable dithering` checkbox.
-                if (ImGui::Checkbox("Enable dithering", &options->EnableDithering))
                 {
                     isOptChanged = true;
                 }
@@ -327,11 +346,11 @@ namespace Silent::Debug
                 }
 
                 // `Paper map` combo.
-                int paperMap = (int)options->PaperMap;
-                if (ImGui::Combo("Paper map", &paperMap, PAPER_MAP_ITEMS, IM_ARRAYSIZE(PAPER_MAP_ITEMS)))
+                int paperMap = (int)options->PaperMapQuality;
+                if (ImGui::Combo("Paper map quality", &paperMap, PAPER_MAP_QUALITY_ITEMS, IM_ARRAYSIZE(PAPER_MAP_QUALITY_ITEMS)))
                 {
-                    options->PaperMap = (PaperMapQuality)paperMap;
-                    isOptChanged      = true;
+                    options->PaperMapQuality = (PaperMapQualityType)paperMap;
+                    isOptChanged             = true;
                 }
             }
 

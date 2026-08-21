@@ -40,8 +40,9 @@ float4 main(Input input) : SV_Target
     float scale    = max(1.0, floor(rawScale));
 
     // Compute pixel position.
-    //float2 gridSize = floor(Resolution.xy / scale); // Produces even virutal pixels but more of them.
-    float2 gridSize = float2(Resolution.x / scale, VirtualHeight);
+    //float2 gridSize = floor(Resolution.xy / scale); // Even XY (adds extra X pixels to accommodate).
+    //float2 gridSize = float2(Resolution.x / scale, VirtualHeight); // Uneven X, even Y.
+    float2 gridSize = float2(Resolution.x / rawScale, VirtualHeight); // Uneven XY.
     int2   pixelPos = int2(floor(input.TexCoord * gridSize));
 
     // Compute 8-bit dithered color.

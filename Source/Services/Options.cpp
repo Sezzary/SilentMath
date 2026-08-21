@@ -33,10 +33,10 @@ namespace Silent::Services
     constexpr char KEY_TEXT_QUALITY[]                             = "TextQuality";
     constexpr char KEY_LIGHTING[]                                 = "Lighting";
     constexpr char KEY_ANTIALIASING[]                             = "Antialiasing";
+    constexpr char KEY_DITHERING_SCALE[]                          = "DitheringScale";
     constexpr char KEY_ENABLE_AMBIENT_OCCLUSION[]                 = "EnableAmbientOcclusion";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
     constexpr char KEY_ENABLE_PIXELIZATION[]                      = "EnablePixelization";
-    constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
     constexpr char KEY_ENABLE_FILM_GRAIN[]                        = "EnableFilmGrain";
     constexpr char KEY_ENABLE_VIGNETTE[]                          = "EnableVignette";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
@@ -60,7 +60,7 @@ namespace Silent::Services
     constexpr char KEY_WALK_RUN_CONTROL[]                         = "WalkRunControl";
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
-    constexpr char KEY_PAPER_MAP[]                                = "PaperMap";
+    constexpr char KEY_PAPER_MAP_QUALITY[]                        = "PaperMapQuality";
     constexpr char KEY_DIALOG_PAUSE[]                             = "DialogPause";
     constexpr char KEY_ENABLE_LOGOS[]                             = "EnableLogos";
     constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
@@ -75,13 +75,13 @@ namespace Silent::Services
     constexpr auto DEFAULT_ASPECT_RATIO                             = AspectRatioType::Native;
     constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_TEXTURE_FILTER                           = TextureFilterType::Nearest;
-    constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Original;
-    constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
+    constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Retro;
+    constexpr auto DEFAULT_LIGHTING                                 = LightingType::Retro;
     constexpr auto DEFAULT_ANTIALIASING                             = AntialiasingType::None;
+    constexpr auto DEFAULT_DITHERING_SCALE                          = DitheringScaleType::Retro;
     constexpr bool DEFAULT_ENABLE_AMBIENT_OCCLUSION                 = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
     constexpr bool DEFAULT_ENABLE_PIXELIZATION                      = false;
-    constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
     constexpr bool DEFAULT_ENABLE_FILM_GRAIN                        = false;
     constexpr bool DEFAULT_ENABLE_VIGNETTE                          = false;
     constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
@@ -101,8 +101,8 @@ namespace Silent::Services
     constexpr auto DEFAULT_RETREAT_TURN_CONTROL                     = ControlInversionType::Normal;
     constexpr auto DEFAULT_WALK_RUN_CONTROL                         = ControlInversionType::Normal;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
-    constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Original;
-    constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Original;
+    constexpr auto DEFAULT_PAPER_MAP_QUALITY                        = PaperMapQualityType::Retro;
+    constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Retro;
     constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
     constexpr bool DEFAULT_ENABLE_LOGOS                             = true;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
@@ -120,10 +120,10 @@ namespace Silent::Services
         _options.TextQuality            = DEFAULT_TEXT_QUALITY;
         _options.Lighting               = DEFAULT_LIGHTING;
         _options.Antialiasing           = DEFAULT_ANTIALIASING;
+        _options.DitheringScale         = DEFAULT_DITHERING_SCALE;
         _options.EnableAmbientOcclusion = DEFAULT_ENABLE_AMBIENT_OCCLUSION;
         _options.EnableVertexJitter     = DEFAULT_ENABLE_VERTEX_JITTER;
         _options.EnablePixelization     = DEFAULT_ENABLE_PIXELIZATION;
-        _options.EnableDithering        = DEFAULT_ENABLE_DITHERING;
         _options.EnableFilmGrain        = DEFAULT_ENABLE_FILM_GRAIN;
         _options.EnableVignette         = DEFAULT_ENABLE_VIGNETTE;
         _options.EnableCrtFilter        = DEFAULT_ENABLE_CRT_FILTER;
@@ -168,8 +168,8 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultEnhancementsOptions()
     {
-        _options.PaperMap    = DEFAULT_PAPER_MAP;
-        _options.DialogPause = DEFAULT_DIALOG_PAUSE;
+        _options.PaperMapQuality = DEFAULT_PAPER_MAP_QUALITY;
+        _options.DialogPause     = DEFAULT_DIALOG_PAUSE;
     }
 
     void OptionsManager::SetDefaultSystemOptions()
@@ -261,10 +261,10 @@ namespace Silent::Services
         options.TextQuality            = graphicsJson.value(KEY_TEXT_QUALITY,             DEFAULT_TEXT_QUALITY);
         options.Lighting               = graphicsJson.value(KEY_LIGHTING,                 DEFAULT_LIGHTING);
         options.Antialiasing           = graphicsJson.value(KEY_ANTIALIASING,             DEFAULT_ANTIALIASING);
+        options.DitheringScale         = graphicsJson.value(KEY_DITHERING_SCALE,          DEFAULT_DITHERING_SCALE);
         options.EnableAmbientOcclusion = graphicsJson.value(KEY_ENABLE_AMBIENT_OCCLUSION, DEFAULT_ENABLE_AMBIENT_OCCLUSION);
         options.EnableVertexJitter     = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER,     DEFAULT_ENABLE_VERTEX_JITTER);
         options.EnablePixelization     = graphicsJson.value(KEY_ENABLE_PIXELIZATION,      DEFAULT_ENABLE_PIXELIZATION);
-        options.EnableDithering        = graphicsJson.value(KEY_ENABLE_DITHERING,         DEFAULT_ENABLE_DITHERING);
         options.EnableFilmGrain        = graphicsJson.value(KEY_ENABLE_FILM_GRAIN,        DEFAULT_ENABLE_FILM_GRAIN);
         options.EnableVignette         = graphicsJson.value(KEY_ENABLE_VIGNETTE,          DEFAULT_ENABLE_VIGNETTE);
         options.EnableCrtFilter        = graphicsJson.value(KEY_ENABLE_CRT_FILTER,        DEFAULT_ENABLE_CRT_FILTER);
@@ -334,13 +334,13 @@ namespace Silent::Services
 
         // Load enhancements options.
         const auto& enhancementsJson = optionsJson[KEY_ENHANCEMENTS];
-        options.PaperMap             = enhancementsJson.value(KEY_PAPER_MAP,    DEFAULT_PAPER_MAP);
-        options.DialogPause          = enhancementsJson.value(KEY_DIALOG_PAUSE, DEFAULT_DIALOG_PAUSE);
+        options.PaperMapQuality      = enhancementsJson.value(KEY_PAPER_MAP_QUALITY, DEFAULT_PAPER_MAP_QUALITY);
+        options.DialogPause          = enhancementsJson.value(KEY_DIALOG_PAUSE,      DEFAULT_DIALOG_PAUSE);
 
         // Load system options.
         const auto& systemJson    = optionsJson[KEY_SYSTEM];
-        options.EnableLogos       = systemJson.value(KEY_ENABLE_LOGOS, DEFAULT_ENABLE_LOGOS);
-        options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
+        options.EnableLogos       = systemJson.value(KEY_ENABLE_LOGOS,       DEFAULT_ENABLE_LOGOS);
+        options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS,      DEFAULT_ENABLE_TOASTS);
         options.EnableParallelism = systemJson.value(KEY_ENABLE_PARALLELISM, GetCoreCount() > 1);
 
         return options;
@@ -393,7 +393,7 @@ namespace Silent::Services
                     { KEY_ENABLE_AMBIENT_OCCLUSION, options.EnableAmbientOcclusion },
                     { KEY_ENABLE_VERTEX_JITTER,     options.EnableVertexJitter     },
                     { KEY_ENABLE_PIXELIZATION,      options.EnablePixelization     },
-                    { KEY_ENABLE_DITHERING,         options.EnableDithering        },
+                    { KEY_DITHERING_SCALE,          options.DitheringScale         },
                     { KEY_ENABLE_FILM_GRAIN,        options.EnableFilmGrain        },
                     { KEY_ENABLE_VIGNETTE,          options.EnableVignette         },
                     { KEY_ENABLE_CRT_FILTER,        options.EnableCrtFilter        }
@@ -432,8 +432,8 @@ namespace Silent::Services
             {
                 KEY_ENHANCEMENTS,
                 {
-                    { KEY_PAPER_MAP,    options.PaperMap    },
-                    { KEY_DIALOG_PAUSE, options.DialogPause }
+                    { KEY_PAPER_MAP_QUALITY, options.PaperMapQuality },
+                    { KEY_DIALOG_PAUSE,      options.DialogPause     }
                 }
             },
             {

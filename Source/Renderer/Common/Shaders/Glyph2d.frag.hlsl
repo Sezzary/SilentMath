@@ -1,3 +1,4 @@
+#include "Utils/Constants.hlsli"
 #include "Utils/Math.hlsli"
 
 Texture2D<float4> Texture : register(t0, space2);
@@ -18,8 +19,8 @@ cbuffer PerObject : register(b0, space3)
     float GradientUvMaxY;
 };
 
-static const float HIGHLIGHT = 0.97f;
-static const float LOWLIGHT  = 0.65f;
+static const float HIGHLIGHT = 248.0f / (float)Constants::UINT8_MAX;
+static const float LOWLIGHT  = 167.0f / (float)Constants::UINT8_MAX;
 
 float4 main(Input input) : SV_Target
 {

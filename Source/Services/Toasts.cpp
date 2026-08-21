@@ -96,7 +96,7 @@ namespace Silent::Services
         auto linePos = Vector2(TEXT_MARGIN, LINE_OFFSET);
         for (const auto& toast : _toasts)
         {
-            auto fontName = (options->TextQuality == TextQualityType::Original) ? "RetroSans" : "SmoothSans";
+            auto fontName = (options->TextQuality == TextQualityType::Retro) ? "RetroSans" : "SmoothSans";
             auto text     = Text2d::CreateText2d(toast.Message, fontName,
                                                  linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
                                                  toast.Col, (int)TextStyleFlags::None, true,

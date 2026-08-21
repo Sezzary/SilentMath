@@ -26,8 +26,9 @@ float4 main(Input input) : SV_Target
     float scale    = max(1.0, floor(rawScale));
 
     // Compute texture coord snapped to virtual pixel grid.
-    //float2 gridSize        = floor(Resolution.xy / scale); // Produces even virutal pixels but more of them.
-    float2 gridSize        = float2(Resolution.x / scale, VirtualHeight);
+    //float2 gridSize        = floor(Resolution.xy / scale); // Even XY (adds extra X pixels to accommodate).
+    //float2 gridSize        = float2(Resolution.x / scale, VirtualHeight); // Uneven X, even Y.
+    float2 gridSize        = float2(Resolution.x / rawScale, VirtualHeight); // Uneven XY.
     float2 snappedTexCoord = floor(input.TexCoord * gridSize) / gridSize;
 
     // Sample final color.

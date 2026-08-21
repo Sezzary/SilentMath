@@ -53,45 +53,58 @@ namespace Silent::Renderer
         const auto& options = g_App.GetOptions();
 
         auto res = g_App.GetWindowResolution();
-        return res;
 
-        float targetAspect = 0.0f;
+        int virtualHeight = res.y;
+        switch (options->RenderScale)
+        {
+            case RenderScaleType::Retro:
+            {
+                virtualHeight = RETRO_SCREEN_SPACE_RES.y;
+                break;
+            }
+            case RenderScaleType::Retro2x:
+            {
+                virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2;
+                break;
+            }
+            default:
+            case RenderScaleType::Native:
+            {
+                break;
+            }
+        }
+
+        float aspect = GetViewportAspectRatio();
+        return Vector2i(virtualHeight * aspect, virtualHeight);
+    }
+
+    float RendererBase::GetViewportAspectRatio() const
+    {
+        const auto& options = g_App.GetOptions();
+
+        auto res = g_App.GetWindowResolution().ToVector2();
+
+        float aspect = res.x / res.y;
         switch (options->AspectRatio)
         {
             case AspectRatioType::Ratio4to3:
             {
-                targetAspect = 4.0f / 3.0f;
+                aspect = 4.0f / 3.0f;
                 break;
             }
             case AspectRatioType::Ratio16to9:
             {
-                targetAspect = 16.0f / 9.0f;
+                aspect = 16.0f / 9.0f;
                 break;
             }
             default:
             case AspectRatioType::Native:
             {
-                return res;
+                break;
             }
         }
 
-        float windowAspect = (float)res.x / (float)res.y;
-        if (windowAspect > targetAspect)
-        {
-            res.x = (int)(res.y * targetAspect);
-        }
-        else
-        {
-            res.y = (int)(res.x / targetAspect);
-        }
-
-        return res;
-    }
-
-    float RendererBase::GetViewportAspectRatio() const
-    {
-        auto res = GetViewportResolution().ToVector2();
-        return res.x / res.y;
+        return aspect;
     }
 
     const BoundingFrustum& RendererBase::GetViewFrustum() const

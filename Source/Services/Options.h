@@ -15,8 +15,8 @@ namespace Silent::Services
     enum class GraphicsPresetType
     {
         None,
-        Original,
-        OriginalPlus,
+        Retro,
+        RetroPlus,
         Recommended,
         Max
     };
@@ -36,8 +36,8 @@ namespace Silent::Services
 
     enum class RenderScaleType
     {
-        Original,
-        DoubleOriginal,
+        Retro,
+        Retro2x,
         Native
     };
 
@@ -49,14 +49,14 @@ namespace Silent::Services
 
     enum class TextQualityType
     {
-        Original,
+        Retro,
         Smooth
     };
 
     enum class LightingType
     {
-        PerVertex,
-        PerPixel
+        Retro,
+        Smooth
     };
 
     enum class AntialiasingType
@@ -64,6 +64,14 @@ namespace Silent::Services
         None,
         Low, /** FXAA. */
         High /** SMAA. */
+    };
+
+    enum class DitheringScaleType
+    {
+        None,
+        Retro,
+        Retro2x,
+        Native
     };
 
     enum class SoundType
@@ -98,16 +106,16 @@ namespace Silent::Services
         SelfView
     };
 
-    enum class PaperMapQuality
+    enum class PaperMapQualityType
     {
-        Original,
-        Scalable,
+        Retro,
+        Hd,
     };
 
     enum class DialogPauseType
     {
-        Original,
-        Condensed
+        Retro,
+        Refined
     };
 
     /** @brief User options configuration data. */
@@ -127,17 +135,17 @@ namespace Silent::Services
         GraphicsPresetType PresetType             = GraphicsPresetType::None;
         bool               EnableFullscreen       = false;
         int                BrightnessLevel        = 0;
-        FrameRateType      FrameRate              = FrameRateType::Fps30; // @todo
-        AspectRatioType    AspectRatio            = AspectRatioType::Native; // @todo
-        RenderScaleType    RenderScale            = RenderScaleType::Native; // @todo
-        TextureFilterType  TextureFilter          = TextureFilterType::Nearest; // @todo
-        TextQualityType    TextQuality            = TextQualityType::Smooth; // @todo
-        LightingType       Lighting               = LightingType::PerVertex; // @todo
-        AntialiasingType   Antialiasing           = AntialiasingType::None; // @todo High.
-        bool               EnableAmbientOcclusion = false; // @todo
+        FrameRateType      FrameRate              = FrameRateType::Fps30;        // @todo
+        AspectRatioType    AspectRatio            = AspectRatioType::Native;     // @todo
+        RenderScaleType    RenderScale            = RenderScaleType::Native;     // @todo
+        TextureFilterType  TextureFilter          = TextureFilterType::Nearest;  // @todo
+        TextQualityType    TextQuality            = TextQualityType::Smooth;
+        LightingType       Lighting               = LightingType::Retro;         // @todo
+        AntialiasingType   Antialiasing           = AntialiasingType::None;      // @todo High.
+        DitheringScaleType DitheringScale         = DitheringScaleType::Retro;
+        bool               EnableAmbientOcclusion = false;                       // @todo
         bool               EnableVertexJitter     = false;
         bool               EnablePixelization     = false;
-        bool               EnableDithering        = false;
         bool               EnableFilmGrain        = false;
         bool               EnableVignette         = false;
         bool               EnableCrtFilter        = false;
@@ -181,8 +189,8 @@ namespace Silent::Services
         // Enhancements
         // =============
 
-        PaperMapQuality PaperMap    = PaperMapQuality::Original;
-        DialogPauseType DialogPause = DialogPauseType::Original;
+        PaperMapQualityType PaperMapQuality = PaperMapQualityType::Retro;
+        DialogPauseType     DialogPause     = DialogPauseType::Retro;
 
         // ==================
         // System (internal)

@@ -19,9 +19,13 @@ namespace Silent::Renderer
 
     constexpr int DEPTH_MAX = 1024;
 
-    constexpr auto DEFAULT_TEXTURE_RES    = Vector2i(1, 1);
-    constexpr auto DEFAULT_TEXTURE_PIXELS = std::array<byte, RGBA_COMP_COUNT>
+    constexpr int  DEFAULT_TEXTURE_SIZE   = 4;
+    constexpr auto DEFAULT_TEXTURE_RES    = Vector2i(DEFAULT_TEXTURE_SIZE, DEFAULT_TEXTURE_SIZE);
+    constexpr auto DEFAULT_TEXTURE_PIXELS = std::array<byte, SQUARE(DEFAULT_TEXTURE_SIZE) * RGBA_COMP_COUNT>
     {
-        Q8_COLOR(1.0f), Q8_COLOR(1.0f), Q8_COLOR(1.0f), Q8_COLOR(1.0f)
+        Q8_COLOR(0.0f), Q8_COLOR(0.0f), Q8_COLOR(0.0f), Q8_COLOR(1.0f),
+        Q8_COLOR(1.0f), Q8_COLOR(0.0f), Q8_COLOR(1.0f), Q8_COLOR(1.0f),
+        Q8_COLOR(1.0f), Q8_COLOR(0.0f), Q8_COLOR(1.0f), Q8_COLOR(1.0f),
+        Q8_COLOR(0.0f), Q8_COLOR(0.0f), Q8_COLOR(0.0f), Q8_COLOR(1.0f)
     };
 }
