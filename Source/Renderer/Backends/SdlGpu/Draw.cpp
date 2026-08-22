@@ -197,7 +197,7 @@ namespace Silent::Renderer::SdlGpu
                     }
                     case DitheringScaleType::Retro2x:
                     {
-                        virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2;
+                        virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2.0f;
                         break;
                     }
                     default:
@@ -334,6 +334,8 @@ namespace Silent::Renderer::SdlGpu
                 PushFragmentUniform(uni, 0);
             });
         }
+
+        // @todo Need largest render target.
 
         // Vignette.
         if (options->EnableVignette)

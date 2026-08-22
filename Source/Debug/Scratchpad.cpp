@@ -100,7 +100,7 @@ namespace Silent::Debug
             // Text.
             auto text = Text2d::CreateText2d("Śliwka", "RetroSerif",
                                              cursorPos, 0.0f, RETRO_PIXEL_SCALE.y * 16.0f, 1.0f,
-                                             Color::White, (int)TextStyleFlags::Gradient/* | (int)TextStyleFlags::HalfHeight*/, true,
+                                             Color::White, (int)TextStyleFlags::Gradient | (int)TextStyleFlags::HalfHeight, true,
                                              1, AlignMode::BottomLeft);
             renderer.SubmitText2d(text);
             //auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",

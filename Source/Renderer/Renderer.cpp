@@ -52,9 +52,9 @@ namespace Silent::Renderer
     {
         const auto& options = g_App.GetOptions();
 
-        auto res = g_App.GetWindowResolution();
+        auto res = g_App.GetWindowResolution().ToVector2();
 
-        int virtualHeight = res.y;
+        float virtualHeight = res.y;
         switch (options->RenderScale)
         {
             case RenderScaleType::Retro:
@@ -64,7 +64,7 @@ namespace Silent::Renderer
             }
             case RenderScaleType::Retro2x:
             {
-                virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2;
+                virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2.0f;
                 break;
             }
             default:
