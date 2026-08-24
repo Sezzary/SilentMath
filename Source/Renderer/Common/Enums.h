@@ -48,6 +48,16 @@ namespace Silent::Renderer
         Count
     };
 
+    /** @brief Render target types. */
+    enum class RenderTargetType
+    {
+        Virtual240p,
+        Virtual480p,
+        Native,
+
+        Count
+    };
+
     /** @brief Screen space shape align modes. */
     enum class AlignMode
     {

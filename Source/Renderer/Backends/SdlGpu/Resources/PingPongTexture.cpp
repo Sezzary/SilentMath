@@ -13,6 +13,19 @@ namespace Silent::Renderer
         return _targets[_writeIdx];
     }
 
+    bool PingPongTexture::IsValid() const
+    {
+        for (const auto* target : _targets)
+        {
+            if (target == nullptr)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     void PingPongTexture::Initialize(SDL_GPUDevice& device)
     {
         _device = &device;

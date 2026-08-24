@@ -22,6 +22,8 @@ namespace Silent::Renderer::SdlGpu
     {
         const auto& options = g_App.GetOptions();
 
+        auto& renderTarget = _renderTargets[(int)RenderTargetType::Native];
+
         // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
 
@@ -33,14 +35,14 @@ namespace Silent::Renderer::SdlGpu
         // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture     = _renderTexture.Write(),
+            .texture     = renderTarget.Write(),
             .clear_color = SDL_FColor{ _clearColor.R(), _clearColor.G(), _clearColor.B(), _clearColor.A() },
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
         };
         auto depthTargetInfo = SDL_GPUDepthStencilTargetInfo
         {
-            .texture     = _depthTexture,
+            .texture     = _depthTarget,
             .clear_depth = 1.0f,
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_DONT_CARE
@@ -152,7 +154,7 @@ namespace Silent::Renderer::SdlGpu
 
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
-        _renderTexture.Swap();
+        renderTarget.Swap();
     }
 
     void Renderer::Draw3dScenePostProcess()
@@ -219,7 +221,9 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw2dScene()
     {
-        // @todo Additionally draw 3D objects in 3D space
+        auto& renderTarget = _renderTargets[(int)RenderTargetType::Native];
+
+        // @todo Additionally draw 3D objects in 3D space.
 
         // Start copy pass.
         auto* copyPass = SDL_BeginGPUCopyPass(_commandBuffer);
@@ -229,8 +233,8 @@ namespace Silent::Renderer::SdlGpu
 
         // Copy 3D scene to write texture.
         auto viewportRes = GetViewportResolution();
-        auto fromTexLoc  = SDL_GPUTextureLocation{ .texture = _renderTexture.Read()  };
-        auto toTexLoc    = SDL_GPUTextureLocation{ .texture = _renderTexture.Write() };
+        auto fromTexLoc  = SDL_GPUTextureLocation{ .texture = renderTarget.Read()  };
+        auto toTexLoc    = SDL_GPUTextureLocation{ .texture = renderTarget.Write() };
         SDL_CopyGPUTextureToTexture(copyPass, &fromTexLoc, &toTexLoc, viewportRes.x, viewportRes.y, 1, false);
 
         // End copy pass.
@@ -239,13 +243,13 @@ namespace Silent::Renderer::SdlGpu
         // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _renderTexture.Write(),
+            .texture  = renderTarget.Write(),
             .load_op  = SDL_GPU_LOADOP_LOAD,
             .store_op = SDL_GPU_STOREOP_STORE
         };
         auto depthTargetInfo = SDL_GPUDepthStencilTargetInfo
         {
-            .texture     = _depthTexture,
+            .texture     = _depthTarget,
             .clear_depth = 1.0f,
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_DONT_CARE
@@ -289,7 +293,7 @@ namespace Silent::Renderer::SdlGpu
 
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
-        _renderTexture.Swap();
+        renderTarget.Swap();
     }
 
     void Renderer::DrawScenePostProcess()
@@ -373,10 +377,12 @@ namespace Silent::Renderer::SdlGpu
 
         const auto& options = g_App.GetOptions();
 
+        auto& renderTarget = _renderTargets[(int)RenderTargetType::Native];
+
         // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture     = _swapchainTexture,
+            .texture     = _swapchainTarget,
             .clear_color = SDL_FColor{ Color::Black.R(), Color::Black.G(), Color::Black.B(), Color::Black.A() },
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
@@ -392,7 +398,7 @@ namespace Silent::Renderer::SdlGpu
         // Bind texture.
         auto binding = SDL_GPUTextureSamplerBinding
         {
-            .texture = _renderTexture.Read(),
+            .texture = renderTarget.Read(),
             .sampler = _samplers[(int)TextureFilterType::Nearest]
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
@@ -433,7 +439,7 @@ namespace Silent::Renderer::SdlGpu
         // Start render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _swapchainTexture,
+            .texture  = _swapchainTarget,
             .load_op  = SDL_GPU_LOADOP_LOAD,
             .store_op = SDL_GPU_STOREOP_STORE
         };
@@ -449,10 +455,12 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::RunPostProcessPass(RenderStage renderStage, const std::function<void()>& pushUniforms)
     {
+        auto& renderTarget = _renderTargets[(int)RenderTargetType::Native];
+
         // Process render pass.
         auto colorTargetInfo = SDL_GPUColorTargetInfo
         {
-            .texture  = _renderTexture.Write(),
+            .texture  = renderTarget.Write(),
             .load_op  = SDL_GPU_LOADOP_DONT_CARE,
             .store_op = SDL_GPU_STOREOP_STORE
         };
@@ -467,7 +475,7 @@ namespace Silent::Renderer::SdlGpu
         // Bind texture.
         auto binding = SDL_GPUTextureSamplerBinding
         {
-            .texture = _renderTexture.Read(),
+            .texture = renderTarget.Read(),
             .sampler = _samplers[(int)TextureFilterType::Nearest]
         };
         SDL_BindGPUFragmentSamplers(renderPass, 0, &binding, 1);
@@ -481,6 +489,6 @@ namespace Silent::Renderer::SdlGpu
 
         // End render pass.            
         SDL_EndGPURenderPass(renderPass);
-        _renderTexture.Swap();
+        renderTarget.Swap();
     }
 }

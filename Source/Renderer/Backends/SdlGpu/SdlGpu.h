@@ -52,17 +52,17 @@ namespace Silent::Renderer::SdlGpu
         // Fields
         // =======
 
-        SDL_GPUDevice*        _device        = nullptr;
-        SDL_GPUCommandBuffer* _commandBuffer = nullptr;
-        SDL_GPUFence*         _renderFence   = nullptr;
-        PipelineManager       _pipelines     = PipelineManager();
-        GpuBuffers            _gpuBuffers    = {};
-        DrawBatches           _drawBatches   = {};
+        SDL_GPUDevice*               _device        = nullptr;
+        SDL_GPUCommandBuffer*        _commandBuffer = nullptr;
+        SDL_GPUFence*                _renderFence   = nullptr;
+        std::vector<SDL_GPUSampler*> _samplers      = {};
+        PipelineManager              _pipelines     = PipelineManager();
+        GpuBuffers                   _gpuBuffers    = {};
+        DrawBatches                  _drawBatches   = {};
 
-        std::vector<SDL_GPUSampler*> _samplers         = {};
-        PingPongTexture              _renderTexture    = PingPongTexture();
-        SDL_GPUTexture*              _depthTexture     = nullptr;
-        SDL_GPUTexture*              _swapchainTexture = nullptr;
+        std::vector<PingPongTexture> _renderTargets   = {};
+        SDL_GPUTexture*              _depthTarget     = nullptr;
+        SDL_GPUTexture*              _swapchainTarget = nullptr;
 
     public:
         // =============

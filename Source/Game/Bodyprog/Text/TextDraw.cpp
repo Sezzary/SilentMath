@@ -114,7 +114,7 @@ namespace Silent::Game
 
         // Submit text.
         auto fontName   = (options->TextQuality == TextQualityType::Retro) ? "RetroSerif" : "SmoothSerif";
-        auto pos        = SnapToGrid(ConvertRetroScreenPixelsToPercent(g_StringPosition), 240);
+        auto pos        = SnapToGrid(ConvertRetroScreenPixelsToPercent(g_StringPosition), (int)RETRO_SCREEN_SPACE_RES.y);
         int  styleFlags = (int)TextStyleFlags::Gradient | (isHalfHeight ? (int)TextStyleFlags::HalfHeight :
                                                                           (int)TextStyleFlags::None);
         auto text       = Text2d::CreateText2d(str, fontName,

@@ -39,6 +39,12 @@ namespace Silent::Renderer
          */
         SDL_GPUTexture*& Write();
 
+        // ===================
+        // Override Inquirers
+        // ===================
+
+        bool IsValid() const override;
+
         // ==========
         // Utilities
         // ==========
