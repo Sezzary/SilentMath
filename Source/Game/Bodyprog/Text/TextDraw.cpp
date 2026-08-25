@@ -89,22 +89,6 @@ namespace Silent::Game
         g_StringColorId = colorId;
     }
 
-    static Vector2 SnapToGrid(const Vector2& pos, float virtualHeight)
-    {
-        auto res = g_App.GetWindowResolution();
-
-        float rawScale = res.y / virtualHeight;
-        float scale    = std::max(1.0f, std::floor(rawScale));
-
-        auto gridSize = Vector2(res.x / rawScale, virtualHeight);
-
-        auto uv           = pos / 100.0f;
-        auto snappedPixel = Vector2(std::floor(uv.x * gridSize.x), 
-                                    std::floor(uv.y * gridSize.y));
-
-        return (snappedPixel / gridSize) * SCREEN_SPACE_RES;
-    }
-
     float Gfx_StringDraw(const std::string& str, int strLength, bool isHalfHeight)
     {
         constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
@@ -113,14 +97,14 @@ namespace Silent::Game
         auto&       renderer = g_App.GetRenderer();
 
         // Submit text.
-        auto fontName   = (options->TextQuality == TextQualityType::Retro) ? "RetroSerif" : "SmoothSerif";
-        auto pos        = SnapToGrid(ConvertRetroScreenPixelsToPercent(g_StringPosition), (int)RETRO_SCREEN_SPACE_RES.y);
+        auto fontName   = (options->TextQuality == TextQualityType::Retro) ? "RetroSerif" : "ModernSerif";
+        auto pos        = GetGridAlignedScreenPercent(ConvertRetroScreenPixelsToPercent(g_StringPosition), (int)RETRO_SCREEN_SPACE_RES.y);
         int  styleFlags = (int)TextStyleFlags::Gradient | (isHalfHeight ? (int)TextStyleFlags::HalfHeight :
                                                                           (int)TextStyleFlags::None);
         auto text       = Text2d::CreateText2d(str, fontName,
                                                pos, 0.0f, SCALE, 1.0f,
                                                STRING_COLORS[g_StringColorId], styleFlags, true,
-                                               6, AlignMode::BottomLeft, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                               6, AlignMode::BottomLeft, ScaleMode::VerticalEdge, BlendMode::Alpha);
         renderer.SubmitText2d(text);
 
         // @todo Need to return width in retro resolution space (320x240).

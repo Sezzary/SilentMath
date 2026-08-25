@@ -23,7 +23,7 @@ namespace Silent::Gui
         // =======
 
         bool      _prevState = false;
-        ScaleMode _scaleMode = ScaleMode::ShortEdge;
+        ScaleMode _scaleMode = ScaleMode::VerticalEdge;
 
         Callback _onEnter   = nullptr;
         Callback _onInside  = nullptr;

@@ -116,9 +116,7 @@ namespace Silent
 
     void ApplicationManager::Initialize()
     {
-        constexpr float WINDOW_ASPECT_RATIO_MIN = 4.0f / 3.0f;
-        constexpr float WINDOW_ASPECT_RATIO_MAX = 32.0f / 9.0f;
-        constexpr float IMGUI_FONT_POINT_SIZE   = 13.0f;
+        constexpr float IMGUI_FONT_POINT_SIZE = 13.0f;
 
         _isPaused = false;
         _quit     = false;
@@ -157,7 +155,7 @@ namespace Silent
             throw std::runtime_error(Fmt("Failed to create window: {}", SDL_GetError()));
         }
         SDL_SetWindowMinimumSize(_window, (int)RETRO_SCREEN_SPACE_RES.x * 2, (int)RETRO_SCREEN_SPACE_RES.y * 2);
-        SDL_SetWindowAspectRatio(_window, WINDOW_ASPECT_RATIO_MIN, WINDOW_ASPECT_RATIO_MAX);
+        SDL_SetWindowAspectRatio(_window, ASPECT_RATIO_4_TO_3, ASPECT_RATIO_16_TO_9);
 
         // Assets.
         _work.Assets.Initialize(_work.Filesystem.GetAssetsDirectory() / ASSETS_PSX_DIR_NAME);

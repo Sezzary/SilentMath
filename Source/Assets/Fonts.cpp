@@ -11,7 +11,7 @@ namespace Silent::Assets
     const std::vector<FontMetadata> FONTS_METADATA
     {
         {
-            .Name      = "SmoothSerif",
+            .Name      = "ModernSerif",
             .Filenames =
             {
                 "FreeSerif.ttf",
@@ -45,7 +45,7 @@ namespace Silent::Assets
             .EnableAntialiasing = false
         },
         {
-            .Name      = "SmoothSans",
+            .Name      = "ModernSans",
             .Filenames =
             {
                 "NotoSans-Bold.ttf",

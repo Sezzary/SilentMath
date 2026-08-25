@@ -29,7 +29,7 @@ namespace Silent::Renderer
         Vector2     Scale     = Vector2::Zero;
         Color       Col       = Color::Clear;
         int         Depth     = 0;
-        ScaleMode   ScaleMd   = ScaleMode::ShortEdge;
+        ScaleMode   ScaleMd   = ScaleMode::VerticalEdge;
 
         bool  HasGradient    = false;
         int   GradientSteps  = 0;
@@ -39,7 +39,7 @@ namespace Silent::Renderer
         static Glyph2d CreateGlyph2d(const ShapedGlyph& shapedGlyph, bool hasGradient,
                                      const std::string& atlasName, const Vector2& uvMin, const Vector2& uvMax,
                                      const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                     int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge);
+                                     int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge);
     };
 
     /** @brief 2D screen text. */
@@ -57,7 +57,7 @@ namespace Silent::Renderer
         bool        HasShadow  = false;
         int         Depth      = 0;
         AlignMode   AlignMd    = AlignMode::Center;
-        ScaleMode   ScaleMd    = ScaleMode::ShortEdge;
+        ScaleMode   ScaleMd    = ScaleMode::VerticalEdge;
         BlendMode   BlendMd    = BlendMode::Alpha;
 
         /** @brief Creates a 2D text message.
@@ -69,7 +69,7 @@ namespace Silent::Renderer
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
                                    const Vector2& pos, float rot, float scale, float tracking,
                                    const Color& color, int styleFlags, bool hasDropShadow,
-                                   int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::ShortEdge,
+                                   int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::VerticalEdge,
                                    BlendMode blendMode = BlendMode::Alpha);
     };
 }

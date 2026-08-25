@@ -94,7 +94,7 @@ namespace Silent::Debug
 
             //auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
             //                                        Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White, 0,
-            //                                        1100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+            //                                        1100, AlignMode::Center, ScaleMode::VerticalEdge, BlendMode::Opaque);
             //renderer.SubmitSprite2d(sprite0);
 
             // Text.
@@ -112,7 +112,7 @@ namespace Silent::Debug
             //return;
 
             // GUI button test.
-            /*static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::ShortEdge,
+            /*static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::VerticalEdge,
                                      []() { Debug::Log("Entering!"); },
                                      [&]()
                                      {
@@ -137,7 +137,7 @@ namespace Silent::Debug
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            0, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                                                            0, ScaleMode::VerticalEdge, BlendMode::Alpha);
                                         renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Leaving!"); },
@@ -164,7 +164,7 @@ namespace Silent::Debug
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            0, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                                                            0, ScaleMode::VerticalEdge, BlendMode::Alpha);
                                         renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Clicking!"); },
@@ -200,7 +200,7 @@ namespace Silent::Debug
                                                 Color(0.0f, 1.0f, 0.0f, 1.0f),
                                                 Color(0.0f, 1.0f, 0.0f, 1.0f),
                                                 Color(0.0f, 0.0f, 0.0f, 0.0f),
-                                                0, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                                0, ScaleMode::VerticalEdge, BlendMode::Alpha);
             auto line0 = Shape2d::CreateLine(Vector2i(10, 10),
                                                 Vector2i(50, 10),
                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),

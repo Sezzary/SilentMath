@@ -137,7 +137,7 @@ namespace Silent::Game
         // Submit fullscreen sprite `1ST/2ZANKO_E.TIM`.
         auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
-                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                                100, AlignMode::Center, ScaleMode::VerticalEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - Q8_TO_FLT(g_ScreenFadeProgress), 0, 1);
         //Screen_BackgroundImgDraw(&g_MainImg0);

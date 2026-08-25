@@ -29,8 +29,8 @@ namespace Silent::Services
 
     enum class AspectRatioType
     {
-        Ratio4to3,
-        Ratio16to9,
+        Retro,
+        Wide,
         Native
     };
 
@@ -50,13 +50,13 @@ namespace Silent::Services
     enum class TextQualityType
     {
         Retro,
-        Smooth
+        Modern
     };
 
     enum class LightingType
     {
         Retro,
-        Smooth
+        Modern
     };
 
     enum class AntialiasingType
@@ -139,7 +139,7 @@ namespace Silent::Services
         AspectRatioType    AspectRatio            = AspectRatioType::Native; // @todo
         RenderScaleType    RenderScale            = RenderScaleType::Native;
         TextureFilterType  TextureFilter          = TextureFilterType::Nearest; // @todo
-        TextQualityType    TextQuality            = TextQualityType::Smooth;
+        TextQualityType    TextQuality            = TextQualityType::Modern;
         LightingType       Lighting               = LightingType::Retro; // @todo
         AntialiasingType   Antialiasing           = AntialiasingType::None; // @todo High.
         DitheringScaleType DitheringScale         = DitheringScaleType::Retro;

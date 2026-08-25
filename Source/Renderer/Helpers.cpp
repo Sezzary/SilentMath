@@ -33,7 +33,7 @@ namespace Silent::Renderer
     {
         // @todo How to apply this?
         // Compute aspect correction.
-        auto aspectCorrection = GetScreenAspectCorrection(ScaleMode::ShortEdge);
+        auto aspectCorrection = GetScreenAspectCorrection(ScaleMode::VerticalEdge);
 
         for (const auto& shape : _sceneObjects.Shapes2d)
         {

@@ -14,8 +14,15 @@ namespace Silent::Math
     constexpr uint  GOLDEN_RATIO = 0x9E3779B9;
 
     constexpr int LINE_VERTEX_COUNT = 2;
+    constexpr int LINE_IDX_COUNT    = 2;
     constexpr int TRI_VERTEX_COUNT  = 3;
+    constexpr int TRI_IDX_COUNT     = 3;
     constexpr int QUAD_VERTEX_COUNT = 4;
+    constexpr int QUAD_IDX_COUNT    = 6;
+    constexpr int RGB_COMP_COUNT    = 3;
+    constexpr int RGBA_COMP_COUNT   = 4;
+
+    constexpr std::array<int, TRI_VERTEX_COUNT * 2> QUAD_TRI_IDXS = { 0, 1, 2, 0, 2, 3 };
 
     /** @brief Geometry containment types. */
     enum class ContainmentType

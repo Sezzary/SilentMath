@@ -13,11 +13,11 @@ using namespace Silent::Utils;
 namespace Silent::Debug
 {
     constexpr const char* FRAME_RATE_ITEMS[]        = { "30 FPS", "60 FPS" };
-    constexpr const char* ASPECT_RATIO_ITEMS[]      = { "4:3", "16:9", "Native"  };
+    constexpr const char* ASPECT_RATIO_ITEMS[]      = { "Retro", "Wide", "Native"  };
     constexpr const char* RENDER_SCALE_ITEMS[]      = { "Retro", "Retro 2x", "Native" };
     constexpr const char* TEXTURE_FILTER_ITEMS[]    = { "Nearest", "Linear" };
-    constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Retro", "Smooth" };
-    constexpr const char* LIGHTING_ITEMS[]          = { "Retro", "Smooth" };
+    constexpr const char* TEXT_QUALITY_ITEMS[]      = { "Retro", "Modern" };
+    constexpr const char* LIGHTING_ITEMS[]          = { "Retro", "Modern" };
     constexpr const char* ANTIALIASING_ITEMS[]      = { "None", "Low", "High" };
     constexpr const char* DITHERING_SCALE_ITEMS[]   = { "None", "Retro", "Retro 2x", "Native" };
     constexpr const char* SOUND_ITEMS[]             = { "Stereo", "Monaural" };
