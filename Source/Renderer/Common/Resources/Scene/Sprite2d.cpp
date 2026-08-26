@@ -27,6 +27,7 @@ namespace Silent::Renderer
             case AssetType::Tim:
             {
                 const auto& data = asset->GetData<PngAsset>();
+                return (float)data->Resolution.x / (float)data->Resolution.y;
                 return data->AspectRatio;
             }
             default:
@@ -96,8 +97,10 @@ namespace Silent::Renderer
                                       int depth, AlignMode alignMode, ScaleMode scaleMode,
                                       BlendMode blendMode)
     {
+        // @todo Fix sprite scaling.
         auto aspect     = GetSpriteAspectRatio(texName);
-        auto localScale = Vector2(aspect, 1.0f);
+        auto localScale = Vector2((aspect >= 1.0f) ? 1.0f            : aspect,
+                                  (aspect >= 1.0f) ? (1.0f / aspect) : 1.0f);
 
         return Sprite2d
         {
@@ -106,7 +109,7 @@ namespace Silent::Renderer
             .UvMax       = uvMax,
             .Position    = pos,
             .Rotation    = rot,
-            .Scale       = Vector2::One, // @todo Something broke. `localScale` can't be used.
+            .Scale       = localScale * scale,
             .Col0        = color,
             .Col1        = color,
             .Col2        = color,

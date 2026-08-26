@@ -100,7 +100,7 @@ namespace Silent::Services
             auto text     = Text2d::CreateText2d(toast.Message, fontName,
                                                  linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
                                                  toast.Col, (int)TextStyleFlags::None, true,
-                                                 0, AlignMode::BottomLeft, ScaleMode::VerticalEdge, BlendMode::Alpha);
+                                                 0, AlignMode::BottomLeft);
             renderer.SubmitText2d(text);
 
             linePos.y += LINE_OFFSET;

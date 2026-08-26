@@ -8,7 +8,8 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    constexpr int GLYPH_2D_COUNT_MAX = 1024;
+    constexpr int  GLYPH_2D_COUNT_MAX = 1024;
+    constexpr auto GLYPH_SCALE_MODE   = ScaleMode::VerticalEdge;
 
     /** @brief Text embellishment style flags. */
     enum class TextStyleFlags
@@ -29,16 +30,29 @@ namespace Silent::Renderer
         Vector2     Scale     = Vector2::Zero;
         Color       Col       = Color::Clear;
         int         Depth     = 0;
-        ScaleMode   ScaleMd   = ScaleMode::VerticalEdge;
 
         bool  HasGradient    = false;
         float GradientUvMinY = 0.0f;
         float GradientUvMaxY = 0.0f;
 
+        /** @brief Creates a 2D glyph.
+         *
+         * @param shadedGlyph Shaped glyph with spacing parameters.
+         * @param hasGradient Has vertical center gradient.
+         * @param atlasName Name of the texture atlas containing the rasterized glyph. @todo For now, always the first one.
+         * @param uvMin Lower texture atlas UV bound.
+         * @param uvMax Upper texture atlas UV bound.
+         * @param pos Position in screen percent.
+         * @param rot Rotation in radians.
+         * @param scale Scale.
+         * @param color Tint color.
+         * @param depth Glyph layer render priority.
+         * @return 2D glyph.
+         */
         static Glyph2d CreateGlyph2d(const ShapedGlyph& shapedGlyph, bool hasGradient,
                                      const std::string& atlasName, const Vector2& uvMin, const Vector2& uvMax,
                                      const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                     int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge);
+                                     int depth = 0);
     };
 
     /** @brief 2D screen text. */
@@ -56,19 +70,25 @@ namespace Silent::Renderer
         bool        HasShadow  = false;
         int         Depth      = 0;
         AlignMode   AlignMd    = AlignMode::Center;
-        ScaleMode   ScaleMd    = ScaleMode::VerticalEdge;
-        BlendMode   BlendMd    = BlendMode::Alpha;
 
-        /** @brief Creates a 2D text message.
+        /** @brief Creates a shaped 2D text message.
          *
-         * @todo
-         * @param msg Message of the text.
-         * @param tracking Tracking scale relative to the point size.
+         * @param msg Message string.
+         * @param fontName Font chain name to use for glyphs.
+         * @param pos Screen position in percent.
+         * @param rot Rotation in radians.
+         * @param scale Scale.
+         * @param tracking Additional tracking between glyphs relative to the point size. @todo Implement properly.
+         * @param color Glyph tint color.
+         * @param styleFlags Style flags.
+         * @param hasDropShadow Has bottom-right drop shadow.
+         * @param depth Glyph layer render priority.
+         * @param alignMode Alignment mode.
+         * @return Shaped 2D text.
          */
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
                                    const Vector2& pos, float rot, float scale, float tracking,
                                    const Color& color, int styleFlags, bool hasDropShadow,
-                                   int depth = 0, AlignMode alignMode = AlignMode::Center, ScaleMode scaleMode = ScaleMode::VerticalEdge,
-                                   BlendMode blendMode = BlendMode::Alpha);
+                                   int depth = 0, AlignMode alignMode = AlignMode::Center);
     };
 }

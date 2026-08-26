@@ -242,7 +242,7 @@ namespace Silent::Renderer
 
             // Set alignment offset and aspect correction.
             auto offset           = Vector2(glyph.Scale.x, glyph.Scale.y);
-            auto aspectCorrection = GetScreenAspectCorrection(glyph.ScaleMd);
+            auto aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
 
             // Compute relative vertex positions.
             auto rotMat  = Matrix::CreateRotationZ(-glyph.Rotation);

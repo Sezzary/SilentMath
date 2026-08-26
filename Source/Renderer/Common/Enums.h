@@ -75,8 +75,8 @@ namespace Silent::Renderer
     /** @brief Screen space scale modes relative to the display aspect ratio. */
     enum class ScaleMode
     {
-        VerticalEdge,   /** "Fit". */
-        HorizontalEdge, /** "Fill". */
+        VerticalEdge,   /** Fit. */
+        HorizontalEdge, /** Fill. */
         Stretch
     };
 }

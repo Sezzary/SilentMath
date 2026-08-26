@@ -222,7 +222,7 @@ namespace Silent::Renderer
         float heightScale      = (text.StyleFlags & (int)TextStyleFlags::HalfHeight) ? 0.5f : 1.0f;
         auto  textScale        = Vector2(1.0f, heightScale) * text.Scale;
         auto  textSize         = (Vector2(text.Shape.Width, (float)text.Font->GetPointSize()) * fontScaleFactor) * textScale;
-        auto  aspectCorrection = GetScreenAspectCorrection(text.ScaleMd);
+        auto  aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
 
         // Compute text position.
         // @todo Use common function for alignment pivots.
@@ -325,7 +325,7 @@ namespace Silent::Renderer
                 auto glyph = Glyph2d::CreateGlyph2d(shapedGlyph, hasGradient,
                                                     atlasName, uvMin, uvMax,
                                                     pos + offset, text.Rotation, scale, color,
-                                                    depth, text.ScaleMd);
+                                                    depth);
                 _sceneObjects.Glyphs2d.push_back(glyph);
 
                 return true;

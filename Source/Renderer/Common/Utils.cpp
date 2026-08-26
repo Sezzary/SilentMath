@@ -92,12 +92,12 @@ namespace Silent::Renderer
         {
             case ScaleMode::VerticalEdge:
             {
-                aspectCorrection.y = aspect;
+                aspectCorrection.x = 1.0f / aspect;
                 break;
             }
             case ScaleMode::HorizontalEdge:
             {
-                aspectCorrection.x = 1.0f / aspect;
+                aspectCorrection.y = aspect;
                 break;
             }
             default:

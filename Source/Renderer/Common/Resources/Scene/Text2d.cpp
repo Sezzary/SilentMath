@@ -12,7 +12,7 @@ namespace Silent::Renderer
     Glyph2d Glyph2d::CreateGlyph2d(const ShapedGlyph& shapedGlyph, bool hasGradient,
                                    const std::string& atlasName, const Vector2& uvMin, const Vector2& uvMax,
                                    const Vector2& pos, float rot, const Vector2& scale, const Color& color,
-                                   int depth, ScaleMode scaleMode)
+                                   int depth)
     {
         return Glyph2d
         {
@@ -24,7 +24,6 @@ namespace Silent::Renderer
             .Scale          = scale,
             .Col            = color,
             .Depth          = depth,
-            .ScaleMd        = scaleMode,
             .HasGradient    = hasGradient,
             .GradientUvMinY = Remap(shapedGlyph.Attribs.Ascender,
                                     shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
@@ -38,8 +37,7 @@ namespace Silent::Renderer
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
                                 const Vector2& pos, float rot, float scale, float tracking,
                                 const Color& color, int styleFlags, bool hasDropShadow,
-                                int depth, AlignMode alignMode, ScaleMode scaleMode,
-                                BlendMode blendMode)
+                                int depth, AlignMode alignMode)
     {
         auto& fonts = g_App.GetFonts();
 
@@ -66,9 +64,7 @@ namespace Silent::Renderer
             .StyleFlags = styleFlags,
             .HasShadow  = hasDropShadow,
             .Depth      = depth,
-            .AlignMd    = alignMode,
-            .ScaleMd    = ScaleMode::HorizontalEdge, // @todo
-            .BlendMd    = blendMode
+            .AlignMd    = alignMode
         };
     }
 }

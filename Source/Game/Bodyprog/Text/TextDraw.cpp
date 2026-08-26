@@ -104,7 +104,7 @@ namespace Silent::Game
         auto text       = Text2d::CreateText2d(str, fontName,
                                                pos, 0.0f, SCALE, 1.0f,
                                                STRING_COLORS[g_StringColorId], styleFlags, true,
-                                               6, AlignMode::BottomLeft, ScaleMode::VerticalEdge, BlendMode::Alpha);
+                                               6, AlignMode::BottomLeft);
         renderer.SubmitText2d(text);
 
         // @todo Need to return width in retro resolution space (320x240).
