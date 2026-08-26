@@ -92,8 +92,7 @@ namespace Silent::Game
 
     void open_main(s32 file_idx, s16 num_frames) // 0x801E2AA4
     {
-        //Fs_QueueWaitForEmpty();
-        //movie_main(nullptr, num_frames, g_FileTable[file_idx].startSector);
+        // @stub
     }
 
     bool movie_main(const std::string& file_name, s32 f_size, s32 sector) // 0x801E2B9C
@@ -117,8 +116,7 @@ namespace Silent::Game
             }
             else
             {
-                // @todo Use real delta time.
-                video.Update(1.0f / 30.0f);//Q12_TO_FLT(g_DeltaTime));
+                video.Update(Q12_TO_FLT(g_DeltaTime));
             }
         }
 

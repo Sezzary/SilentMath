@@ -32,7 +32,6 @@ namespace Silent::Renderer
         ScaleMode   ScaleMd   = ScaleMode::VerticalEdge;
 
         bool  HasGradient    = false;
-        int   GradientSteps  = 0;
         float GradientUvMinY = 0.0f;
         float GradientUvMaxY = 0.0f;
 

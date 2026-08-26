@@ -26,7 +26,6 @@ namespace Silent::Renderer
             .Depth          = depth,
             .ScaleMd        = scaleMode,
             .HasGradient    = hasGradient,
-            .GradientSteps  = 0, // @todo
             .GradientUvMinY = Remap(shapedGlyph.Attribs.Ascender,
                                     shapedGlyph.Attribs.MinY, shapedGlyph.Attribs.MaxY,
                                     uvMax.y, uvMin.y),

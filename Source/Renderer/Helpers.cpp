@@ -304,7 +304,6 @@ namespace Silent::Renderer
                     .Uniform     = UniformGlyph2d
                     {
                         .HasGradient    = glyph.HasGradient,
-                        .GradientSteps  = (uint)glyph.GradientSteps,
                         .GradientUvMinY = glyph.GradientUvMinY,
                         .GradientUvMaxY = glyph.GradientUvMaxY
                     }

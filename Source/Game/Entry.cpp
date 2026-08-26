@@ -17,7 +17,7 @@ namespace Silent::Game
 {
     static void MainLoop()
     {
-        constexpr q19_12 DELTA_TIME_30_FPS     = Q12(1.0f / (float)(TICKS_PER_SECOND));
+        constexpr q19_12 DELTA_TIME_30_FPS     = Q12(1.0f / (float)(Services::TICKS_PER_SECOND));
         constexpr q19_12 GRAVITY_SPEED_PER_SEC = Q12(9.8f);
 
         s32 vBlanks;
