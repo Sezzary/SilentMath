@@ -33,10 +33,11 @@ namespace Silent::Renderer::SdlGpu
         SDL_EndGPUCopyPass(copyPass);
 
         // Start render pass.
-        auto colorTargetInfo = SDL_GPUColorTargetInfo
+        const auto& clearColor      = _sceneBuffer.Render.ClearColor;
+        auto        colorTargetInfo = SDL_GPUColorTargetInfo
         {
             .texture     = renderTarget.Write(),
-            .clear_color = SDL_FColor{ _clearColor.R(), _clearColor.G(), _clearColor.B(), _clearColor.A() },
+            .clear_color = SDL_FColor{ clearColor.R(), clearColor.G(), clearColor.B(), clearColor.A() },
             .load_op     = SDL_GPU_LOADOP_CLEAR,
             .store_op    = SDL_GPU_STOREOP_STORE
         };
@@ -103,7 +104,7 @@ namespace Silent::Renderer::SdlGpu
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-                _doubleBuffer.Active.DrawCallCount++;
+                _sceneBuffer.Active.DrawCallCount++;
             }
         }
 
@@ -149,7 +150,7 @@ namespace Silent::Renderer::SdlGpu
 
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
-            _doubleBuffer.Active.DrawCallCount++;
+            _sceneBuffer.Active.DrawCallCount++;
         }
 
         // End render pass.
@@ -288,7 +289,7 @@ namespace Silent::Renderer::SdlGpu
 
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
-            _doubleBuffer.Active.DrawCallCount++;
+            _sceneBuffer.Active.DrawCallCount++;
         }
 
         // End render pass.
@@ -312,15 +313,15 @@ namespace Silent::Renderer::SdlGpu
         // End copy pass.
         SDL_EndGPUCopyPass(copyPass);
 
-        // @debug Luma fade test.
-        if (Debug::g_Work.BlendAlpha > 0.0f)
+        // Luma fade.
+        if (_sceneBuffer.Render.LumaFadeAlpha > 0.0f)
         {
             RunPostProcessPass(RenderStage::LumaFade, [&]()
             {
                 auto uni = UniformLumaFade
                 {
-                    .FadeAlpha = Debug::g_Work.BlendAlpha,
-                    .IsWhite   = false
+                    .FadeAlpha = _sceneBuffer.Render.LumaFadeAlpha,
+                    .IsWhite   = _sceneBuffer.Render.IsLumaFadeWhite
                 };
                 PushFragmentUniform(uni, 0);
             });
@@ -412,7 +413,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;
+        _sceneBuffer.Active.DrawCallCount++;
 
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
@@ -426,7 +427,7 @@ namespace Silent::Renderer::SdlGpu
         ImGui::NewFrame();
 
         // Draw GUIs.
-        for (auto& drawCall : _doubleBuffer.Render.DebugGuiDrawCalls)
+        for (auto& drawCall : _sceneBuffer.Render.DebugGuiDrawCalls)
         {
             drawCall();
         }
@@ -447,7 +448,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         ImGui_ImplSDLGPU3_RenderDrawData(drawData, _commandBuffer, renderPass);
-        _doubleBuffer.Active.DrawCallCount++;
+        _sceneBuffer.Active.DrawCallCount++;
 
         // End render pass.
         SDL_EndGPURenderPass(renderPass);
@@ -485,7 +486,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _doubleBuffer.Active.DrawCallCount++;
+        _sceneBuffer.Active.DrawCallCount++;
 
         // End render pass.            
         SDL_EndGPURenderPass(renderPass);

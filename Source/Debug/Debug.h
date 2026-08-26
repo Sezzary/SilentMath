@@ -41,8 +41,6 @@ namespace Silent::Debug
     /** @brief Debug workspace. */
     struct DebugWork
     {
-        float BlendAlpha = 0.0f; // @temp
-
         std::vector<std::string> Messages  = {};
         uint64                   StartTime = 0;
 

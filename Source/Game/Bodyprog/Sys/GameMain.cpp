@@ -139,7 +139,9 @@ namespace Silent::Game
                                                 SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
                                                 100, AlignMode::Center, ScaleMode::VerticalEdge, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
-        Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - Q8_TO_FLT(g_ScreenFadeProgress), 0, 1);
+
+        // Update luma fade.
+        renderer.SetLumaFade(Q8_TO_FLT(g_ScreenFadeProgress), false);
         //Screen_BackgroundImgDraw(&g_MainImg0);
     }
 }

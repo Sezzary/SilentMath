@@ -40,12 +40,18 @@ namespace Silent::Renderer
 
     int RendererBase::GetDrawCallCount() const
     {
-        return _doubleBuffer.Render.DrawCallCount;
+        return _sceneBuffer.Render.DrawCallCount;
     }
 
     void RendererBase::SetClearColor(const Color& color)
     {
-        _clearColor = color;
+        _sceneBuffer.Active.ClearColor = color;
+    }
+
+    void RendererBase::SetLumaFade(float alpha, bool isWhite)
+    {
+        _sceneBuffer.Active.LumaFadeAlpha   = std::clamp(alpha, 0.0f, 1.0f);
+        _sceneBuffer.Active.IsLumaFadeWhite = isWhite;
     }
 
     Vector2i RendererBase::GetViewportResolution() const
@@ -138,33 +144,33 @@ namespace Silent::Renderer
         ProcessGlyphs2d();
         ProcessTriangles3d();
 
-        _doubleBuffer.Swap();
+        _sceneBuffer.Swap();
         video.SwapFrameBuffer();
     }
 
     void RendererBase::SignalResize()
     {
-        _doubleBuffer.Active.IsResized = true;
+        _sceneBuffer.Active.IsResized = true;
     }
 
     void RendererBase::QueueTextureUpload(const std::string& assetName)
     {
-        _doubleBuffer.Active.TextureUploadQueue.push_back(assetName);
+        _sceneBuffer.Active.TextureUploadQueue.push_back(assetName);
     }
 
     void RendererBase::QueueTextureRelease(const std::string& assetName)
     {
-        _doubleBuffer.Active.TextureReleaseQueue.push_back(assetName);
+        _sceneBuffer.Active.TextureReleaseQueue.push_back(assetName);
     }
 
     void RendererBase::QueueMeshUpload(const std::string& assetName)
     {
-        _doubleBuffer.Active.MeshUploadQueue.push_back(assetName);
+        _sceneBuffer.Active.MeshUploadQueue.push_back(assetName);
     }
 
     void RendererBase::QueueMeshRelease(const std::string& assetName)
     {
-        _doubleBuffer.Active.MeshReleaseQueue.push_back(assetName);
+        _sceneBuffer.Active.MeshReleaseQueue.push_back(assetName);
     }
 
     bool RendererBase::SubmitShape2d(const Shape2d& shape)

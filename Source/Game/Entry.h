@@ -2,6 +2,6 @@
 
 namespace Silent::Game
 {
-    /** @brief Runs the game. */
-    void Entry();
+    /** @brief Ticks the game state. */
+    void UpdateGame();
 }

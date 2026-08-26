@@ -25,7 +25,7 @@ namespace Silent::Debug
     constexpr const char* CONTROL_INVERSION_ITEMS[] = { "Normal", "Reverse" };
     constexpr const char* WEAPON_CONTROL_ITEMS[]    = { "Switch", "Press" };
     constexpr const char* VIEW_MODE_ITEMS[]         = { "Normal", "Self view" };
-    constexpr const char* PAPER_MAP_QUALITY_ITEMS[] = { "Retro", "Hd" };
+    constexpr const char* PAPER_MAP_QUALITY_ITEMS[] = { "Retro", "Modern" };
     constexpr const char* DIALOG_PAUSE_ITEMS[]      = { "Retro", "Refined" };
 
     void AddOptionsTab()

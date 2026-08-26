@@ -20,8 +20,8 @@ namespace Silent::Renderer
                                                GLYPH_2D_COUNT_MAX);
             data.ImmediatePrimitives3d.reserve(TRI_3D_COUNT_MAX);
         };
-        ReserveMemory(_doubleBuffer.Active);
-        ReserveMemory(_doubleBuffer.Render);
+        ReserveMemory(_sceneBuffer.Active);
+        ReserveMemory(_sceneBuffer.Render);
 
         _sceneObjects.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
         _sceneObjects.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
@@ -79,9 +79,9 @@ namespace Silent::Renderer
             // Add 2D primitive.
             // @lock Restrict 2D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives2dMutex);
+                auto lock = ParallelLock(_sceneBuffer.Primitives2dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
+                _sceneBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices    = std::move(verts),
                     .Depth       = shape.Depth,
@@ -183,9 +183,9 @@ namespace Silent::Renderer
             // Add 2D primitive.
             // @lock Restrict 2D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives2dMutex);
+                auto lock = ParallelLock(_sceneBuffer.Primitives2dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
+                _sceneBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -266,9 +266,9 @@ namespace Silent::Renderer
             // Add 2D primitive.
             // @lock Restrict 2D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives2dMutex);
+                auto lock = ParallelLock(_sceneBuffer.Primitives2dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
+                _sceneBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -336,9 +336,9 @@ namespace Silent::Renderer
             // Add 3D primitive.
             // @lock Restrict 3D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives3dMutex);
+                auto lock = ParallelLock(_sceneBuffer.Primitives3dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives3d.push_back(Primitive3d
+                _sceneBuffer.Active.ImmediatePrimitives3d.push_back(Primitive3d
                 {
                     .Vertices    = std::move(verts),
                     .TextureName = tri.TextureName,
@@ -365,7 +365,7 @@ namespace Silent::Renderer
             // Sort 2D primitives.
             [&]()
             {
-                Sort(_doubleBuffer.Render.ImmediatePrimitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
+                Sort(_sceneBuffer.Render.ImmediatePrimitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
                 {
                     return prim0.Depth > prim1.Depth;
                 });
@@ -374,7 +374,7 @@ namespace Silent::Renderer
             // Sort 3D primitives.
             [&]()
             {
-                Sort(_doubleBuffer.Render.ImmediatePrimitives3d, [](const Primitive3d& prim0, const Primitive3d& prim1)
+                Sort(_sceneBuffer.Render.ImmediatePrimitives3d, [](const Primitive3d& prim0, const Primitive3d& prim1)
                 {
                     return true;
                 });

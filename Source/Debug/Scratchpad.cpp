@@ -49,7 +49,7 @@ namespace Silent::Debug
             auto& renderer = g_App.GetRenderer();
             auto& fonts    = g_App.GetFonts();
 
-            //return;
+            return;
 
             /*float s = 5.0f;
             auto col = Color(0.4f,0.4f,0);

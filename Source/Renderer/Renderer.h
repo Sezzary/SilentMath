@@ -28,6 +28,10 @@ namespace Silent::Renderer
             bool IsResized     = false;
             int  DrawCallCount = 0;
 
+            Color ClearColor      = Color::Clear;
+            float LumaFadeAlpha   = 0.0f;
+            bool  IsLumaFadeWhite = false;
+
             std::vector<Primitive2d>           ImmediatePrimitives2d = {};
             std::vector<Primitive3d>           ImmediatePrimitives3d = {};
             std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
@@ -66,13 +70,12 @@ namespace Silent::Renderer
 
         SDL_Window*  _window       = nullptr;
         RendererType _type         = RendererType::SdlGpu;
-        Color        _clearColor   = Color::Clear;
         View         _view         = View();
         SceneObjects _sceneObjects = {};
 
-        SceneDoubleBuffer                 _doubleBuffer = {};
-        std::unique_ptr<TextureCacheBase> _textures     = nullptr;
-        std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
+        SceneDoubleBuffer                 _sceneBuffer = {};
+        std::unique_ptr<TextureCacheBase> _textures    = nullptr;
+        std::unique_ptr<MeshCacheBase>    _meshes      = nullptr;
 
     public:
         // =============
@@ -122,6 +125,13 @@ namespace Silent::Renderer
          * @param color New clear color.
          */
         void SetClearColor(const Color& color);
+
+        /** @brief Sets the luma fade alpha and color.
+         *
+         * @param alpha Luma fade alpha.
+         * @param isWhite `true` for fade to white, `false` for fade to black.
+         */
+        void SetLumaFade(float alpha, bool isWhite);
 
         // ==========
         // Utilities

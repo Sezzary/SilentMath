@@ -333,7 +333,7 @@ namespace Silent::Renderer::SdlGpu
         }
 
         // Check if update is required.
-        if (!_doubleBuffer.Render.IsResized && allValid)
+        if (!_sceneBuffer.Render.IsResized && allValid)
         {
             return;
         }
@@ -365,7 +365,7 @@ namespace Silent::Renderer::SdlGpu
 
     SDL_GPUTexture* Renderer::GetDepthTexture()
     {
-        if (_depthTarget != nullptr && !_doubleBuffer.Render.IsResized)
+        if (_depthTarget != nullptr && !_sceneBuffer.Render.IsResized)
         {
             return _depthTarget;
         }

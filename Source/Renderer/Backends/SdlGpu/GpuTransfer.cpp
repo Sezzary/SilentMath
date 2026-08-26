@@ -61,22 +61,22 @@ namespace Silent::Renderer::SdlGpu
 
         // Release/upload textures.
         auto& texs = GetTextures();
-        for (const auto& name : _doubleBuffer.Render.TextureReleaseQueue)
+        for (const auto& name : _sceneBuffer.Render.TextureReleaseQueue)
         {
             texs.Release(name);
         }
-        for (const auto& assetName : _doubleBuffer.Render.TextureUploadQueue)
+        for (const auto& assetName : _sceneBuffer.Render.TextureUploadQueue)
         {
             texs.Upload(copyPass, assetName);
         }
 
         // Release/upload meshes.
         auto& meshes = GetMeshes();
-        for (const auto& name : _doubleBuffer.Render.MeshReleaseQueue)
+        for (const auto& name : _sceneBuffer.Render.MeshReleaseQueue)
         {
             meshes.Release(name);
         }
-        for (const auto& assetName : _doubleBuffer.Render.MeshUploadQueue)
+        for (const auto& assetName : _sceneBuffer.Render.MeshUploadQueue)
         {
             meshes.Upload(copyPass, assetName);
         }
@@ -133,13 +133,13 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
+        bufferVerts.reserve(_sceneBuffer.Render.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_sceneBuffer.Render.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _doubleBuffer.Render.ImmediatePrimitives2d)
+        for (const auto& prim : _sceneBuffer.Render.ImmediatePrimitives2d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
@@ -217,13 +217,13 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
+        bufferVerts.reserve(_sceneBuffer.Render.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
+        bufferIdxs.reserve(_sceneBuffer.Render.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _doubleBuffer.Render.ImmediatePrimitives3d)
+        for (const auto& prim : _sceneBuffer.Render.ImmediatePrimitives3d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)

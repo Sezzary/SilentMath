@@ -109,7 +109,7 @@ namespace Silent::Services
     enum class PaperMapQualityType
     {
         Retro,
-        Hd,
+        Modern,
     };
 
     enum class DialogPauseType

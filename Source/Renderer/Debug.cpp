@@ -22,7 +22,7 @@ namespace Silent::Renderer
 
     void RendererBase::SubmitDebugGui(std::function<void()> drawFunc)
     {
-        if (_doubleBuffer.Active.DebugGuiDrawCalls.size() >= DEBUG_GUI_COUNT_MAX)
+        if (_sceneBuffer.Active.DebugGuiDrawCalls.size() >= DEBUG_GUI_COUNT_MAX)
         {
             Debug::Log("Attempted to submit debug GUI draw call to full container.",
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
@@ -35,7 +35,7 @@ namespace Silent::Renderer
             return;
         }
 
-        _doubleBuffer.Active.DebugGuiDrawCalls.push_back(drawFunc);
+        _sceneBuffer.Active.DebugGuiDrawCalls.push_back(drawFunc);
     }
 
     void RendererBase::SubmitDebugLine(const Vector2& from, const Vector2& to, const Color& color, ScaleMode scaleMode,
@@ -59,7 +59,7 @@ namespace Silent::Renderer
 
         // @todo Submit to `_sceneObjects.Triangles3d`.
         auto line = Primitive3d::CreateDebugLine(from, to, color);
-        //_doubleBuffer.Active.Primitives3d.push_back(line);
+        //_sceneBuffer.Active.Primitives3d.push_back(line);
     }
 
     void RendererBase::SubmitDebugTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2,
