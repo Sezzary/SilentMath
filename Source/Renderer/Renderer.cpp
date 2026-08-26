@@ -90,12 +90,12 @@ namespace Silent::Renderer
         {
             case AspectRatioType::Retro:
             {
-                aspect = 4.0f / 3.0f;
+                aspect = ASPECT_RATIO_4_TO_3;
                 break;
             }
             case AspectRatioType::Wide:
             {
-                aspect = 16.0f / 9.0f;
+                aspect = ASPECT_RATIO_16_TO_9;
                 break;
             }
             default:
