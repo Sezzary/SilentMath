@@ -7,6 +7,7 @@
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Scene/Shape2d.h"
 #include "Renderer/Common/Utils.h"
+#include "Renderer/Renderer.h"
 
 using namespace Silent::Assets;
 
@@ -19,15 +20,14 @@ namespace Silent::Renderer
         const auto* asset = assets[texName];
         switch (asset->Type)
         {
-            case AssetType::Png:
+            case AssetType::Tim:
             {
                 const auto& data = asset->GetData<TimAsset>();
                 return data->AspectRatio;
             }
-            case AssetType::Tim:
+            case AssetType::Png:
             {
                 const auto& data = asset->GetData<PngAsset>();
-                return (float)data->Resolution.x / (float)data->Resolution.y;
                 return data->AspectRatio;
             }
             default:
@@ -97,10 +97,53 @@ namespace Silent::Renderer
                                       int depth, AlignMode alignMode, ScaleMode scaleMode,
                                       BlendMode blendMode)
     {
-        // @todo Fix sprite scaling.
-        auto aspect     = GetSpriteAspectRatio(texName);
-        auto localScale = Vector2((aspect >= 1.0f) ? 1.0f            : aspect,
-                                  (aspect >= 1.0f) ? (1.0f / aspect) : 1.0f);
+        const auto& renderer = g_App.GetRenderer();
+
+        float viewportAspect = renderer.GetViewportAspectRatio();
+        auto  spriteAspect   = GetSpriteAspectRatio(texName);
+
+        auto localScale = Vector2::One;
+        switch (scaleMode)
+        {
+            case ScaleMode::VerticalEdge:
+            {
+                localScale = Vector2(spriteAspect, 1.0f);
+                break;
+            }
+            case ScaleMode::HorizontalEdge:
+            {
+                localScale = Vector2(1.0f, 1.0f / spriteAspect) * viewportAspect;
+                break;
+            }
+            case ScaleMode::Fit:
+            {
+                if (spriteAspect >= viewportAspect)
+                {
+                    localScale = Vector2(1.0f, 1.0f / spriteAspect) * viewportAspect;
+                }
+                else
+                {
+                    localScale.x = spriteAspect;
+                }
+                break;
+            }
+            case ScaleMode::Fill:
+            {
+                if (spriteAspect >= viewportAspect)
+                {
+                    localScale.x = spriteAspect;
+                }
+                else
+                {
+                    localScale = Vector2(1.0f, 1.0f / spriteAspect) * viewportAspect;
+                }
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
 
         return Sprite2d
         {

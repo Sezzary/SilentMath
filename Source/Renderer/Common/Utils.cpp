@@ -91,17 +91,18 @@ namespace Silent::Renderer
         switch(scaleMode)
         {
             case ScaleMode::VerticalEdge:
+            case ScaleMode::Fit:
             {
                 aspectCorrection.x = 1.0f / aspect;
                 break;
             }
             case ScaleMode::HorizontalEdge:
+            case ScaleMode::Fill:
             {
                 aspectCorrection.y = aspect;
                 break;
             }
             default:
-            case ScaleMode::Stretch:
             {
                 break;
             }
@@ -112,11 +113,6 @@ namespace Silent::Renderer
 
     Vector2 GetAspectCorrectScreenPosition(const Vector2 pos, ScaleMode scaleMode)
     {
-        if (scaleMode == ScaleMode::Stretch)
-        {
-            return pos;
-        }
-
         const auto& renderer = g_App.GetRenderer();
 
         float aspect = renderer.GetViewportAspectRatio();

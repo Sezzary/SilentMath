@@ -16,6 +16,8 @@ struct Output
     nointerpolation int PaletteIdx : TEXCOORD1;
 };
 
+// @todo Screen space object scaling is already correct, but it would be nicer to use an orthographic view matrix.
+// Might refactor later.
 /*cbuffer PerFrame : register(b0, space1)
 {
     column_major float4x4 ProjectionMat;
@@ -46,7 +48,7 @@ float4 GetPosition(float2 inputPos)
 
         // Compute rounded vertex position to produce jitter.
         float2 ndc = pos.xy / pos.w;
-        pos.xy     = round(ndc * jitterRes) / jitterRes * pos.w;
+        pos.xy     = (round(ndc * jitterRes) / jitterRes) * pos.w;
     }
 
     return pos;

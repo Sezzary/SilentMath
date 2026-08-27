@@ -103,10 +103,6 @@ namespace Silent::Renderer
     {
         for (const auto& sprite : _sceneObjects.Sprites2d)
         {
-            // @todo Apply scale mode later.
-            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
-            auto ndc = ConvertScreenPercentToNdc(sprite.Position);
-
             // Set alignment offset.
             auto offset = Vector2::Zero;
             switch (sprite.AlignMd)
@@ -169,6 +165,7 @@ namespace Silent::Renderer
             auto relPos3 = Vector2::Transform(-sprite.Scale                            + offset, rotMat) * aspectCorrection;
 
             // Compute vertex positions.
+            auto ndc  = ConvertScreenPercentToNdc(sprite.Position);
             auto pos0 = Vector2(ndc.x + relPos0.x, ndc.y + relPos0.y);
             auto pos1 = Vector2(ndc.x + relPos1.x, ndc.y + relPos1.y);
             auto pos2 = Vector2(ndc.x + relPos2.x, ndc.y + relPos2.y);
@@ -237,9 +234,6 @@ namespace Silent::Renderer
     {
         for (const auto& glyph : _sceneObjects.Glyphs2d)
         {
-            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
-            auto ndc = ConvertScreenPercentToNdc(glyph.Position);
-
             // Set alignment offset and aspect correction.
             auto offset           = Vector2(glyph.Scale.x, glyph.Scale.y);
             auto aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
@@ -252,6 +246,7 @@ namespace Silent::Renderer
             auto relPos3 = Vector2::Transform(-glyph.Scale                           + offset, rotMat) * aspectCorrection;
 
             // Compute vertex positions.
+            auto ndc  = ConvertScreenPercentToNdc(glyph.Position);
             auto pos0 = ndc + relPos0;
             auto pos1 = ndc + relPos1;
             auto pos2 = ndc + relPos2;

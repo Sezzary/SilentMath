@@ -90,8 +90,8 @@ namespace Silent::Renderer
 
         auto res = g_App.GetWindowResolution().ToVector2();
 
-        // Compute aspect ratio. @note Only horizontal aspect ratios are supported.
-        float aspect = std::max(res.x / res.y, 1.0f);
+        // Compute aspect ratio.
+        float aspect = res.x / res.y;
         switch (options->AspectRatio)
         {
             case AspectRatioType::Retro:

@@ -17,14 +17,16 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffer draw batch. */
     struct DrawBatch
     {
-        //VertexBuffer<BufferType>* VertexBuffer = nullptr; // @todo
-        std::string TextureName  = {}; // @todo Or pointer to SDL_gpu texture handle?
-        RenderStage RenderStg    = RenderStage::Sprite2d;
-        BlendMode   BlendMd      = BlendMode::Opaque;
-        UniformType Uniform      = {};
-        int         VertexCount  = 0;
-        int         VertexOffset = 0;
-        int         IdxOffset    = 0;
+        std::string TextureName = {};
+        RenderStage RenderStg   = RenderStage::Sprite2d;
+        BlendMode   BlendMd     = BlendMode::Opaque;
+        
+        UniformType Uniform = {};
+        
+        VertexBuffer<BufferType>* VertexBuffer = nullptr;  // @todo
+        int                       VertexCount  = 0;
+        int                       VertexOffset = 0;
+        int                       IdxOffset    = 0;
     };
 
     /** @brief Sorted GPU buffer draw batches. */
