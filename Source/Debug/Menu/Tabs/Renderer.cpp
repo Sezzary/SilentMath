@@ -35,7 +35,7 @@ namespace Silent::Debug
                     ImGui::TableSetColumnIndex(0);
                     ImGui::Text("FPS:", 0, 0);
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%d", (int)round(g_Work.Fps), 0, 1);
+                    ImGui::Text("%d", (int)roundf(g_Work.Fps), 0, 1);
 
                     // `Frame time` info.
                     ImGui::TableNextRow();
