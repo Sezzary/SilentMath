@@ -50,7 +50,7 @@ float4 GetPosition(float3 inputPos)
 
         // Compute rounded vertex position to produce jitter.
         float2 ndc = pos.xy / pos.w;
-        pos.xy     = round(ndc * jitterRes) / jitterRes * pos.w;
+        pos.xy     = (round(ndc * jitterRes) / jitterRes) * pos.w;
     }
 
     return pos;

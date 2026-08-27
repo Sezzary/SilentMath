@@ -175,6 +175,20 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Fxaa, [&]()
             {
+                auto uniVert0 = UniformPrimitive2dPerFrame
+                {
+                    .ProjectionMat       = Matrix::Identity,
+                    .HasJitter           = options->EnableVertexJitter,
+                    .ViewportAspectRatio = GetViewportAspectRatio(),
+                };
+                PushVertexUniform(uniVert0, 0);
+
+                auto uniVert1 = UniformPrimitive2dPerObject
+                {
+                    .ModelMat = Matrix::Identity
+                };
+                PushVertexUniform(uniVert1, 1);
+
                 auto uniFrag0 = UniformFxaaPerFrame
                 {
                     .Resolution = GetViewportResolution().ToVector2()
@@ -222,6 +236,8 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::Draw2dScene()
     {
+        const auto& options = g_App.GetOptions();
+
         auto& renderTarget = _renderTargets[(int)RenderTargetType::Native];
 
         // @todo Additionally draw 3D objects in 3D space.
@@ -284,6 +300,20 @@ namespace Silent::Renderer::SdlGpu
                 }
             }
 
+            auto uniVert0 = UniformPrimitive2dPerFrame
+            {
+                .ProjectionMat       = Matrix::Identity,
+                .HasJitter           = options->EnableVertexJitter,
+                .ViewportAspectRatio = GetViewportAspectRatio(),
+            };
+            PushVertexUniform(uniVert0, 0);
+
+            auto uniVert1 = UniformPrimitive2dPerObject
+            {
+                .ModelMat = Matrix::Identity
+            };
+            PushVertexUniform(uniVert1, 1);
+
             // Push uniform.
             PushFragmentUniform(batch.Uniform, 0);
 
@@ -318,6 +348,20 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::LumaFade, [&]()
             {
+                auto uniVert0 = UniformPrimitive2dPerFrame
+                {
+                    .ProjectionMat       = Matrix::Identity,
+                    .HasJitter           = options->EnableVertexJitter,
+                    .ViewportAspectRatio = GetViewportAspectRatio(),
+                };
+                PushVertexUniform(uniVert0, 0);
+
+                auto uniVert1 = UniformPrimitive2dPerObject
+                {
+                    .ModelMat = Matrix::Identity
+                };
+                PushVertexUniform(uniVert1, 1);
+
                 auto uniFrag0 = UniformLumaFadePerFrame
                 {
                     .FadeAlpha = _sceneBuffer.Render.LumaFadeAlpha,
@@ -332,6 +376,20 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::FilmGrain, [&]()
             {
+                auto uniVert0 = UniformPrimitive2dPerFrame
+                {
+                    .ProjectionMat       = Matrix::Identity,
+                    .HasJitter           = options->EnableVertexJitter,
+                    .ViewportAspectRatio = GetViewportAspectRatio(),
+                };
+                PushVertexUniform(uniVert0, 0);
+
+                auto uniVert1 = UniformPrimitive2dPerObject
+                {
+                    .ModelMat = Matrix::Identity
+                };
+                PushVertexUniform(uniVert1, 1);
+
                 auto uniFrag0 = UniformFilmGrainPerFrame
                 {
                     .Time = time
@@ -347,6 +405,20 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Vignette, [&]()
             {
+                auto uniVert0 = UniformPrimitive2dPerFrame
+                {
+                    .ProjectionMat       = Matrix::Identity,
+                    .HasJitter           = options->EnableVertexJitter,
+                    .ViewportAspectRatio = GetViewportAspectRatio(),
+                };
+                PushVertexUniform(uniVert0, 0);
+
+                auto uniVert1 = UniformPrimitive2dPerObject
+                {
+                    .ModelMat = Matrix::Identity
+                };
+                PushVertexUniform(uniVert1, 1);
+
                 auto uniFrag0 = UniformVignettePerFrame
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
@@ -361,6 +433,20 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Crt, [&]()
             {
+                auto uniVert0 = UniformPrimitive2dPerFrame
+                {
+                    .ProjectionMat       = Matrix::Identity,
+                    .HasJitter           = options->EnableVertexJitter,
+                    .ViewportAspectRatio = GetViewportAspectRatio(),
+                };
+                PushVertexUniform(uniVert0, 0);
+
+                auto uniVert1 = UniformPrimitive2dPerObject
+                {
+                    .ModelMat = Matrix::Identity
+                };
+                PushVertexUniform(uniVert1, 1);
+
                 auto uniFrag0 = UniformCrtPerFrame
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
@@ -403,6 +489,22 @@ namespace Silent::Renderer::SdlGpu
             .sampler = _samplers[(int)TextureFilterType::Nearest]
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
+
+        // Push per-frame 2D primitive uniform.
+        auto uniVert0 = UniformPrimitive2dPerFrame
+        {
+            .ProjectionMat       = Matrix::Identity,
+            .HasJitter           = options->EnableVertexJitter,
+            .ViewportAspectRatio = GetViewportAspectRatio(),
+        };
+        PushVertexUniform(uniVert0, 0);
+
+        // Push per-object 2D primitive uniform.
+        auto uniVert1 = UniformPrimitive2dPerObject
+        {
+            .ModelMat = Matrix::Identity
+        };
+        PushVertexUniform(uniVert1, 1);
 
         // Push per-frame BLIT uniform. @todo Brightness is only applied to the 3D scene, not the entire viewport.
         auto uniFrag0 = UniformBlitPerFrame

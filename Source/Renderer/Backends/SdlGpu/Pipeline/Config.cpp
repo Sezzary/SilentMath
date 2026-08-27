@@ -191,6 +191,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Shape2d,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Shape2d.frag",
             .FragShaderUniBufferCount = 1,
             .VertBufferDescs          = BUFFER_VERTEX_2D_DESCS,
@@ -211,6 +212,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Sprite2d,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Sprite2d.frag",
             .FragShaderSamplerCount   = 2,
             .FragShaderUniBufferCount = 1,
@@ -232,6 +234,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Glyph2d,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Glyph2d.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -275,6 +278,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Dither,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Dither.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -289,6 +293,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::LumaFade,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "LumaFade.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -303,6 +308,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::FilmGrain,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "FilmGrain.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -318,6 +324,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Vignette,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Vignette.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -332,6 +339,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Crt,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Crt.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -346,6 +354,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Fxaa,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Fxaa.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,
@@ -365,6 +374,7 @@ namespace Silent::Renderer::SdlGpu
         {
             .Stage                    = RenderStage::Blit,
             .VertShaderName           = "Primitive2d.vert",
+            .VertShaderUniBufferCount = 2,
             .FragShaderName           = "Blit.frag",
             .FragShaderSamplerCount   = 1,
             .FragShaderUniBufferCount = 1,

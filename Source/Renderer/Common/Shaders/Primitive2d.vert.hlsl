@@ -16,7 +16,7 @@ struct Output
     nointerpolation int PaletteIdx : TEXCOORD1;
 };
 
-/*cbuffer PerFrame : register(b0, space1)
+cbuffer PerFrame : register(b0, space1)
 {
     column_major float4x4 ProjectionMat;
     uint                  HasJitter;
@@ -28,10 +28,10 @@ cbuffer PerObject : register(b1, space1)
     column_major float4x4 ModelMat;
 };
 
-float4 GetPosition(float2 inputPos)
+float4 GetPosition(float3 inputPos)
 {
     // Compute model-projection matrix.
-    column_major float4x4 modelProjMat = mul(ViewProjMat, ModelMat);
+    column_major float4x4 modelProjMat = mul(ProjectionMat, ModelMat);
 
     // Compute NDC position.
     float4 pos = mul(modelProjMat, float4(inputPos, 1.0f));
@@ -46,17 +46,17 @@ float4 GetPosition(float2 inputPos)
 
         // Compute rounded vertex position to produce jitter.
         float2 ndc = pos.xy / pos.w;
-        pos.xy     = round(ndc * jitterRes) / jitterRes * pos.w;
+        pos.xy     = (round(ndc * jitterRes) / jitterRes) * pos.w;
     }
 
     return pos;
-}*/
+}
 
 Output main(Input input)
 {
     Output output;
 
-    //output.Position   = GetPosition(input.Position);
+    //output.Position   = GetPosition(input.Position); // @todo
     output.Position   = float4(input.Position, 1.0f);
     output.TexCoord   = input.TexCoord;
     output.Color      = input.Color;
