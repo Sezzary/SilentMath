@@ -56,8 +56,8 @@ Output main(Input input)
 {
     Output output;
 
-    //output.Position   = GetPosition(input.Position); // @todo
-    output.Position   = float4(input.Position, 1.0f);
+    output.Position   = GetPosition(input.Position); // @todo
+    //output.Position   = float4(input.Position, 1.0f);
     output.TexCoord   = input.TexCoord;
     output.Color      = input.Color;
     output.PaletteIdx = input.PaletteIdx;

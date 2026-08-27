@@ -67,7 +67,7 @@ namespace Silent::Renderer
     Vector2 GetGridAlignedScreenPercent(const Vector2& pos, float virtualHeight)
     {
         // Compute grid size.
-        auto  res      = g_App.GetWindowResolution();
+        auto  res      = g_App.GetWindowResolution(); // @todo Get from renderer. Or not, given how it's used.
         float rawScale = res.y / virtualHeight;
         float scale    = std::max(1.0f, std::floor(rawScale));
         auto  gridSize = Vector2(res.x / rawScale, virtualHeight);
@@ -108,21 +108,6 @@ namespace Silent::Renderer
         }
 
         return aspectCorrection;
-    }
-
-    Vector2 GetAspectCorrectScreenPosition(const Vector2 pos, ScaleMode scaleMode)
-    {
-        if (scaleMode == ScaleMode::Stretch)
-        {
-            return pos;
-        }
-
-        const auto& renderer = g_App.GetRenderer();
-
-        float aspect = renderer.GetViewportAspectRatio();
-        
-        // @todo Needs another adjustment.
-        return pos * GetScreenAspectCorrection(scaleMode);
     }
 
     Vector2 ConvertRetroScreenPixelsToPercent(const Vector2i& pos)

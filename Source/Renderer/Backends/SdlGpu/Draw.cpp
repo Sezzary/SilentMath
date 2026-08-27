@@ -224,6 +224,20 @@ namespace Silent::Renderer::SdlGpu
                     }
                 }
 
+                auto uniVert0 = UniformPrimitive2dPerFrame
+                {
+                    .ProjectionMat       = Matrix::Identity,
+                    .HasJitter           = options->EnableVertexJitter,
+                    .ViewportAspectRatio = GetViewportAspectRatio(),
+                };
+                PushVertexUniform(uniVert0, 0);
+
+                auto uniVert1 = UniformPrimitive2dPerObject
+                {
+                    .ModelMat = Matrix::Identity
+                };
+                PushVertexUniform(uniVert1, 1);
+
                 auto uniFrag0 = UniformDitherPerFrame
                 {
                     .Resolution    = res,
@@ -302,7 +316,8 @@ namespace Silent::Renderer::SdlGpu
 
             auto uniVert0 = UniformPrimitive2dPerFrame
             {
-                .ProjectionMat       = Matrix::Identity,
+                .ProjectionMat       = Matrix::CreateOrthographic(-GetViewportAspectRatio(), GetViewportAspectRatio(),
+                                                                  -1.0f, 1.0f),
                 .HasJitter           = options->EnableVertexJitter,
                 .ViewportAspectRatio = GetViewportAspectRatio(),
             };
@@ -310,7 +325,7 @@ namespace Silent::Renderer::SdlGpu
 
             auto uniVert1 = UniformPrimitive2dPerObject
             {
-                .ModelMat = Matrix::Identity
+                .ModelMat = Matrix::CreateTranslation(Vector3::Zero)
             };
             PushVertexUniform(uniVert1, 1);
 

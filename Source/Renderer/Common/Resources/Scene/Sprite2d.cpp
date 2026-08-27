@@ -19,15 +19,14 @@ namespace Silent::Renderer
         const auto* asset = assets[texName];
         switch (asset->Type)
         {
-            case AssetType::Png:
+            case AssetType::Tim:
             {
                 const auto& data = asset->GetData<TimAsset>();
                 return data->AspectRatio;
             }
-            case AssetType::Tim:
+            case AssetType::Png:
             {
                 const auto& data = asset->GetData<PngAsset>();
-                return (float)data->Resolution.x / (float)data->Resolution.y;
                 return data->AspectRatio;
             }
             default:
@@ -99,8 +98,9 @@ namespace Silent::Renderer
     {
         // @todo Fix sprite scaling.
         auto aspect     = GetSpriteAspectRatio(texName);
-        auto localScale = Vector2((aspect >= 1.0f) ? 1.0f            : aspect,
-                                  (aspect >= 1.0f) ? (1.0f / aspect) : 1.0f);
+        //auto localScale = Vector2((aspect >= 1.0f) ? 1.0f            : aspect,
+        //                          (aspect >= 1.0f) ? (1.0f / aspect) : 1.0f);
+        auto localScale = Vector2(aspect, 1.0f);
 
         return Sprite2d
         {

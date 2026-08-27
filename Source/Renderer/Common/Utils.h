@@ -35,14 +35,6 @@ namespace Silent::Renderer
      */
     Vector2 GetScreenAspectCorrection(ScaleMode scaleMode);
 
-    /** @brief Computes a screen position in percent corrected according to the screen aspect ratio and a scale mode.
-     *
-     * @param pos Screen position in percent.
-     * @param scaleMode Scale mode.
-     * @return Screen position in percent corrected for the screen aspect ratio and scale mode.
-     */
-    Vector2 GetAspectCorrectScreenPosition(const Vector2 pos, ScaleMode scaleMode);
-
     /** @brief Converts a screen position in retro pixels to percent.
      *
      * @param pos Screen position in retro pixels (320x240 resolution).

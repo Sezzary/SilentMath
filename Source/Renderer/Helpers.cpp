@@ -31,10 +31,6 @@ namespace Silent::Renderer
 
     void RendererBase::ProcessShapes2d()
     {
-        // @todo How to apply this?
-        // Compute aspect correction.
-        auto aspectCorrection = GetScreenAspectCorrection(ScaleMode::VerticalEdge);
-
         for (const auto& shape : _sceneObjects.Shapes2d)
         {
             auto posArr = std::vector<Vector2>{};
@@ -103,10 +99,6 @@ namespace Silent::Renderer
     {
         for (const auto& sprite : _sceneObjects.Sprites2d)
         {
-            // @todo Apply scale mode later.
-            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
-            auto ndc = ConvertScreenPercentToNdc(sprite.Position);
-
             // Set alignment offset.
             auto offset = Vector2::Zero;
             switch (sprite.AlignMd)
@@ -161,18 +153,13 @@ namespace Silent::Renderer
             // Compute aspect correction.
             auto aspectCorrection = GetScreenAspectCorrection(sprite.ScaleMd);
 
-            // Compute relative vertex positions.
-            auto rotMat  = Matrix::CreateRotationZ(-sprite.Rotation);
-            auto relPos0 = Vector2::Transform(Vector2(-sprite.Scale.x, sprite.Scale.y) + offset, rotMat) * aspectCorrection;
-            auto relPos1 = Vector2::Transform(sprite.Scale                             + offset, rotMat) * aspectCorrection;
-            auto relPos2 = Vector2::Transform(Vector2(sprite.Scale.x, -sprite.Scale.y) + offset, rotMat) * aspectCorrection;
-            auto relPos3 = Vector2::Transform(-sprite.Scale                            + offset, rotMat) * aspectCorrection;
-
-            // Compute vertex positions.
-            auto pos0 = Vector2(ndc.x + relPos0.x, ndc.y + relPos0.y);
-            auto pos1 = Vector2(ndc.x + relPos1.x, ndc.y + relPos1.y);
-            auto pos2 = Vector2(ndc.x + relPos2.x, ndc.y + relPos2.y);
-            auto pos3 = Vector2(ndc.x + relPos3.x, ndc.y + relPos3.y);
+            // Compute positions.
+            auto ndc    = ConvertScreenPercentToNdc(sprite.Position);
+            auto rotMat = Matrix::CreateRotationZ(-sprite.Rotation);
+            auto pos0   = ndc + Vector2::Transform(Vector2(-sprite.Scale.x, sprite.Scale.y) + offset, rotMat);
+            auto pos1   = ndc + Vector2::Transform(sprite.Scale                             + offset, rotMat);
+            auto pos2   = ndc + Vector2::Transform(Vector2(sprite.Scale.x, -sprite.Scale.y) + offset, rotMat);
+            auto pos3   = ndc + Vector2::Transform(-sprite.Scale                            + offset, rotMat);
 
             // Compute vertex UVs.
             auto uv0 = sprite.UvMin;
@@ -237,25 +224,17 @@ namespace Silent::Renderer
     {
         for (const auto& glyph : _sceneObjects.Glyphs2d)
         {
-            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
-            auto ndc = ConvertScreenPercentToNdc(glyph.Position);
-
             // Set alignment offset and aspect correction.
             auto offset           = Vector2(glyph.Scale.x, glyph.Scale.y);
             auto aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
 
-            // Compute relative vertex positions.
-            auto rotMat  = Matrix::CreateRotationZ(-glyph.Rotation);
-            auto relPos0 = Vector2::Transform(Vector2(-glyph.Scale.x, glyph.Scale.y) + offset, rotMat) * aspectCorrection;
-            auto relPos1 = Vector2::Transform(glyph.Scale                            + offset, rotMat) * aspectCorrection;
-            auto relPos2 = Vector2::Transform(Vector2(glyph.Scale.x, -glyph.Scale.y) + offset, rotMat) * aspectCorrection;
-            auto relPos3 = Vector2::Transform(-glyph.Scale                           + offset, rotMat) * aspectCorrection;
-
             // Compute vertex positions.
-            auto pos0 = ndc + relPos0;
-            auto pos1 = ndc + relPos1;
-            auto pos2 = ndc + relPos2;
-            auto pos3 = ndc + relPos3;
+            auto ndc    = ConvertScreenPercentToNdc(glyph.Position);
+            auto rotMat = Matrix::CreateRotationZ(-glyph.Rotation);
+            auto pos0   = Vector2::Transform(Vector2(-glyph.Scale.x, glyph.Scale.y) + offset, rotMat);
+            auto pos1   = Vector2::Transform(glyph.Scale                            + offset, rotMat);
+            auto pos2   = Vector2::Transform(Vector2(glyph.Scale.x, -glyph.Scale.y) + offset, rotMat);
+            auto pos3   = Vector2::Transform(-glyph.Scale                           + offset, rotMat);
 
             // Compute vertex UVs.
             auto uv0 = glyph.UvMin;

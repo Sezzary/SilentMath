@@ -25,8 +25,9 @@ namespace Silent::Renderer
     {
         struct Data
         {
-            bool IsResized     = false;
-            int  DrawCallCount = 0;
+            Vector2i WindowResolution = Vector2i::Zero;
+            bool     IsResized        = false;
+            int      DrawCallCount    = 0;
 
             Color ClearColor      = Color::Clear;
             float LumaFadeAlpha   = 0.0f;
