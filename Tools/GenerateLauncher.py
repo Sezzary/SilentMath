@@ -125,6 +125,7 @@ def main():
     except Exception as ex:
         _cleanup()
 
+        # Fail.
         logging.error(f"Error: {ex}")
         sys.exit(1)
 
