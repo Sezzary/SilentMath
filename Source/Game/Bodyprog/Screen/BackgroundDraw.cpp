@@ -22,7 +22,7 @@ namespace Silent::Game
         auto& renderer = g_App.GetRenderer();
 
         // Define scale mode.
-        auto scaleMode = fit ? ScaleMode::VerticalEdge : ScaleMode::HorizontalEdge;
+        auto scaleMode = fit ? ScaleMode::Fit : ScaleMode::Fill;
 
         // Submit fullscreen background sprite.
         auto sprite = Sprite2d::CreateSprite2d(assetName, Vector2::Zero, Vector2::One,

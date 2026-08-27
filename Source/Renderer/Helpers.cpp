@@ -15,8 +15,8 @@ namespace Silent::Renderer
         auto ReserveMemory = [](SceneDoubleBuffer::Data& data)
         {
             data.DebugGuiDrawCalls.reserve(DEBUG_GUI_COUNT_MAX);
-            data.ImmediatePrimitives2d.reserve(SHAPE_2D_COUNT_MAX + 
-                                               SPRITE_2D_COUNT_MAX + 
+            data.ImmediatePrimitives2d.reserve(SHAPE_2D_COUNT_MAX  +
+                                               SPRITE_2D_COUNT_MAX +
                                                GLYPH_2D_COUNT_MAX);
             data.ImmediatePrimitives3d.reserve(TRI_3D_COUNT_MAX);
         };
@@ -31,7 +31,7 @@ namespace Silent::Renderer
 
     void RendererBase::ProcessShapes2d()
     {
-        // @todo How to apply this?
+        // @todo How to apply this? Maybe merge sprites and shapes to be one thing.
         // Compute aspect correction.
         auto aspectCorrection = GetScreenAspectCorrection(ScaleMode::VerticalEdge);
 

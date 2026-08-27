@@ -58,7 +58,7 @@ namespace Silent::Renderer
     {
         const auto& options = g_App.GetOptions();
 
-        auto res = g_App.GetWindowResolution().ToVector2();
+        auto res = _sceneBuffer.Render.WindowResolution.ToVector2();
 
         float virtualHeight = res.y;
         switch (options->RenderScale)
@@ -88,7 +88,7 @@ namespace Silent::Renderer
     {
         const auto& options = g_App.GetOptions();
 
-        auto res = g_App.GetWindowResolution().ToVector2();
+        auto res = _sceneBuffer.Render.WindowResolution.ToVector2();
 
         // Compute aspect ratio.
         float aspect = res.x / res.y;
@@ -128,6 +128,8 @@ namespace Silent::Renderer
     {
         auto& video    = g_App.GetVideo();
         auto& executor = g_App.GetExecutor();
+
+        _sceneBuffer.Active.WindowResolution = g_App.GetWindowResolution();
 
         // @todo Using parallelism here causes flickering. Why if lock guards are in place??
         // Generate active buffer data.

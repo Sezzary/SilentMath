@@ -311,7 +311,7 @@ namespace Silent::Renderer::SdlGpu
     {
         constexpr auto BUFFER_IDXS = std::array<uint16, QUAD_IDX_COUNT>{ 0, 2, 1, 1, 2, 3 };
 
-        auto  windowRes      = Vector2(g_App.GetWindowResolution());
+        auto  windowRes      = _sceneBuffer.Active.WindowResolution.ToVector2();
         float windowAspect   = windowRes.x / windowRes.y;
         auto  viewportRes    = GetViewportResolution().ToVector2();
         float viewportAspect = GetViewportAspectRatio();

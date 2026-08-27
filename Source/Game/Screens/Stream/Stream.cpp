@@ -120,14 +120,11 @@ namespace Silent::Game
             }
         }
 
-        // @todo Fix sprite scaling.
         // Submit fullscreen video sprite.
-        float aspect = video.GetAspectRatio();
-        auto  scale  = Vector2((aspect >= 1.0f) ? 1.0f            : aspect,
-                               (aspect >= 1.0f) ? (1.0f / aspect) : 1.0f);;
         auto  sprite = Sprite2d::CreateSprite2d(video.GetName(), Vector2::Zero, Vector2::One,
-                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), scale, Color::White, NO_VALUE,
-                                                100, AlignMode::Center, ScaleMode::HorizontalEdge, BlendMode::Opaque);
+                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, video.GetAspectRatio(),
+                                                Color::White, NO_VALUE,
+                                                100, AlignMode::Center, ScaleMode::Fit, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         return true;
     }
