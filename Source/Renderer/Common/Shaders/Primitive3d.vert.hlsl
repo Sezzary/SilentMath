@@ -1,3 +1,5 @@
+#include "Utils/Constants.hlsli"
+
 // References:
 // https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP/blob/f047fabf5b2492d9572ed85b4ac0cde2ff3b4004/Shaders/PS1_ObjectShader.shader
 
@@ -20,7 +22,7 @@ struct Output
 
 cbuffer PerFrame : register(b0, space1)
 {
-    column_major float4x4 ViewProjMat;
+    column_major float4x4 ViewProjectionMat;
     uint                  HasJitter;
     float                 ViewportAspectRatio;
 };
@@ -30,23 +32,21 @@ cbuffer PerObject : register(b1, space1)
     column_major float4x4 ModelMat;
 };
 
-static float JITTER_RESOLUTION = 240.0f;
-
 float4 GetPosition(float3 inputPos)
 {
     // Compute model-view-projection matrix.
-    column_major float4x4 mvpMat = mul(ViewProjMat, ModelMat);
+    column_major float4x4 modelViewProjMat = mul(ViewProjectionMat, ModelMat);
 
     // Compute NDC position.
-    float4 pos = mul(mvpMat, float4(inputPos, 1.0f));
+    float4 pos = mul(modelViewProjMat, float4(inputPos, 1.0f));
 
     // Apply jitter.
     if (HasJitter)
     {
         // Compute aspect scale 
-        float2 aspectScale = (ViewportAspectRatio > 1.0f) ? float2(ViewportAspectRatio, 1.0f) :
-                                                            float2(1.0f, 1.0f / ViewportAspectRatio);
-        float2 jitterRes   = JITTER_RESOLUTION * aspectScale;
+        float2 aspectScale = (ViewportAspectRatio >= 1.0f) ? float2(ViewportAspectRatio, 1.0f) :
+                                                             float2(1.0f, 1.0f / ViewportAspectRatio);
+        float2 jitterRes   = Constants::JITTER_HEIGHT * aspectScale;
 
         // Compute rounded vertex position to produce jitter.
         float2 ndc = pos.xy / pos.w;

@@ -88,7 +88,7 @@ namespace Silent::Renderer
                     .TextureName = {},
                     .RenderStg   = RenderStage::Shape2d,
                     .BlendMd     = shape.BlendMd,
-                    .Uniform     = UniformSprite2d
+                    .Uniform     = UniformSprite2dPerObject
                     {
                         .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
                     }
@@ -222,7 +222,7 @@ namespace Silent::Renderer
                     .TextureName = sprite.TextureName,
                     .RenderStg   = RenderStage::Sprite2d,
                     .BlendMd     = sprite.BlendMd,
-                    .Uniform     = UniformSprite2d
+                    .Uniform     = UniformSprite2dPerObject
                     {
                         .IsFastAlpha = sprite.BlendMd == BlendMode::FastAlpha
                     }
@@ -301,7 +301,7 @@ namespace Silent::Renderer
                     .TextureName = glyph.AtlasName,
                     .RenderStg   = RenderStage::Glyph2d,
                     .BlendMd     = BlendMode::Alpha,
-                    .Uniform     = UniformGlyph2d
+                    .Uniform     = UniformGlyph2dPerObject
                     {
                         .HasGradient    = glyph.HasGradient,
                         .GradientUvMinY = glyph.GradientUvMinY,
@@ -343,7 +343,7 @@ namespace Silent::Renderer
                     .TextureName = tri.TextureName,
                     .RenderStg   = RenderStage::Model,
                     .BlendMd     = tri.BlendMd,
-                    .Uniform     = UniformModel
+                    .Uniform     = UniformModelPerObject
                     {
                         .IsFastAlpha = tri.BlendMd == BlendMode::FastAlpha
                     }

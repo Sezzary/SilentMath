@@ -70,34 +70,34 @@ namespace Silent::Renderer::SdlGpu
             tex->Bind(renderPass, GetActiveSampler(), 0);
             paletteAtlasTex->Bind(renderPass, GetActiveSampler(), 1);
 
-            auto model = Matrix::Identity;
-            model.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
-            //model.Translate(harryAnmData->Bones[1].BindTranslation);
+            auto modelMat = Matrix::Identity;
+            modelMat.Rotate(DEG_TO_RAD(180.0f), Vector3::UnitX);
+            //modelMat.Translate(harryAnmData->Bones[1].BindTranslation);
 
             auto viewProj = _view.GetMatrix(glm::radians(0.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
-            // Push view unifotm.
-            auto viewUni = UniformView
+            // Push per-frame 3D primitive uniform.
+            auto uniVert0 = UniformPrimitive3dPerFrame
             {
-                .ViewProjMat         = viewProj,
+                .ViewProjectionMat   = viewProj,
                 .HasJitter           = options->EnableVertexJitter,
                 .ViewportAspectRatio = GetViewportAspectRatio(),
             };
-            PushVertexUniform(viewUni, 0);
+            PushVertexUniform(uniVert0, 0);
 
-            // Push 3D primitive uniform.
-            auto prim3dUni = UniformPrimitive3d
+            // Push per-object 3D primitive uniform.
+            auto uniVert1 = UniformPrimitive3dPerObject
             {
-                .ModelMat = model
+                .ModelMat = modelMat
             };
-            PushVertexUniform(prim3dUni, 1);
+            PushVertexUniform(uniVert1, 1);
 
-            // Push model uniform.
-            auto modelUni = UniformModel
+            // Push per-object model uniform.
+            auto uniFrag0 = UniformModelPerObject
             {
                 .IsFastAlpha = false
             };
-            PushFragmentUniform(modelUni, 0);
+            PushFragmentUniform(uniFrag0, 0);
 
             // Draw.
             const auto* mesh = GetMeshes()["CHARA/HERO.ILM_02HEAD1"];
@@ -125,21 +125,21 @@ namespace Silent::Renderer::SdlGpu
 
             auto viewProj = _view.GetMatrix(glm::radians(45.0f), GetViewportAspectRatio(), 0.1f, 100.0f);
 
-            // Push view uniform.
-            auto viewUni = UniformView
+            // Push per-frame 3D primitive uniform.
+            auto uniVert0 = UniformPrimitive3dPerFrame
             {
-                .ViewProjMat         = viewProj,
+                .ViewProjectionMat   = viewProj,
                 .HasJitter           = options->EnableVertexJitter,
                 .ViewportAspectRatio = GetViewportAspectRatio(),
             };
-            PushVertexUniform(viewUni, 0);
+            PushVertexUniform(uniVert0, 0);
 
-            // Push 3D primitive uniform.
-            auto prim3dUni = UniformPrimitive3d
+            // Push per-object 3D primitive uniform.
+            auto uniVert1 = UniformPrimitive3dPerObject
             {
                 .ModelMat = model
             };
-            PushVertexUniform(prim3dUni, 1);
+            PushVertexUniform(uniVert1, 1);
 
             // Bind texture.
             auto* tex = GetTextures()[batch.TextureName];
@@ -175,11 +175,11 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Fxaa, [&]()
             {
-                auto uni = UniformFxaa
+                auto uniFrag0 = UniformFxaaPerFrame
                 {
                     .Resolution = GetViewportResolution().ToVector2()
                 };
-                PushFragmentUniform(uni, 0);
+                PushFragmentUniform(uniFrag0, 0);
             });
         }
 
@@ -210,12 +210,12 @@ namespace Silent::Renderer::SdlGpu
                     }
                 }
 
-                auto uni = UniformDither
+                auto uniFrag0 = UniformDitherPerFrame
                 {
                     .Resolution    = res,
                     .VirtualHeight = virtualHeight
                 };
-                PushFragmentUniform(uni, 0);
+                PushFragmentUniform(uniFrag0, 0);
             });
         }
     }
@@ -318,12 +318,12 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::LumaFade, [&]()
             {
-                auto uni = UniformLumaFade
+                auto uniFrag0 = UniformLumaFadePerFrame
                 {
                     .FadeAlpha = _sceneBuffer.Render.LumaFadeAlpha,
                     .IsWhite   = _sceneBuffer.Render.IsLumaFadeWhite
                 };
-                PushFragmentUniform(uni, 0);
+                PushFragmentUniform(uniFrag0, 0);
             });
         }
 
@@ -332,11 +332,11 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::FilmGrain, [&]()
             {
-                auto uni = UniformFilmGrain
+                auto uniFrag0 = UniformFilmGrainPerFrame
                 {
                     .Time = time
                 };
-                PushFragmentUniform(uni, 0);
+                PushFragmentUniform(uniFrag0, 0);
             });
         }
 
@@ -347,12 +347,12 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Vignette, [&]()
             {
-                auto uni = UniformVignette
+                auto uniFrag0 = UniformVignettePerFrame
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
                     .Time       = time
                 };
-                PushFragmentUniform(uni, 0);
+                PushFragmentUniform(uniFrag0, 0);
             });
         }
 
@@ -361,12 +361,12 @@ namespace Silent::Renderer::SdlGpu
         {
             RunPostProcessPass(RenderStage::Crt, [&]()
             {
-                auto uni = UniformCrt
+                auto uniFrag0 = UniformCrtPerFrame
                 {
                     .Resolution = GetViewportResolution().ToVector2(),
                     .Time       = time
                 };
-                PushFragmentUniform(uni, 0);
+                PushFragmentUniform(uniFrag0, 0);
             });
         }
     }
@@ -404,12 +404,12 @@ namespace Silent::Renderer::SdlGpu
         };
         SDL_BindGPUFragmentSamplers(&renderPass, 0, &binding, 1);
 
-        // Push uniform. @todo Brightness is only applied to the 3D scene, not the entire viewport.
-        auto uni = UniformBlit
+        // Push per-frame BLIT uniform. @todo Brightness is only applied to the 3D scene, not the entire viewport.
+        auto uniFrag0 = UniformBlitPerFrame
         {
             .Brightness = (options->BrightnessLevel * BRIGHTNESS_STEP) - BRIGHTNESS_MIDDLE
         };
-        PushFragmentUniform(uni, 0);
+        PushFragmentUniform(uniFrag0, 0);
 
         // Draw.
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
