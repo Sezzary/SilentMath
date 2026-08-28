@@ -11,6 +11,9 @@
 #include "Renderer/Common/Resources/MeshCache.h"
 #include "Renderer/Common/Resources/TextureCache.h"
 #include "Renderer/Common/View.h"
+#include "Utils/DoubleBuffer.h"
+
+using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
@@ -20,45 +23,54 @@ namespace Silent::Renderer
         SdlGpu
     };
 
-    /** @brief Double-buffered scene data. */
-    struct SceneDoubleBuffer
+    /** @brief High-level renderer objects to draw submitted by game logic. */
+    struct RendererObjects
     {
-        struct Data
-        {
-            Vector2i WindowResolution = Vector2i::Zero;
-            bool     IsResized        = false;
-            int      DrawCallCount    = 0;
+        // =========
+        // Retained
+        // =========
 
-            Color ClearColor      = Color::Clear;
-            float LumaFadeAlpha   = 0.0f;
-            bool  IsLumaFadeWhite = false;
+        // @todo Retained draw requests, such as for animated character models, particle effects, will go here.
 
-            std::vector<Primitive2d>           ImmediatePrimitives2d = {};
-            std::vector<Primitive3d>           ImmediatePrimitives3d = {};
-            std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
+        // ==========
+        // Transient
+        // ==========
 
-            std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
-            std::vector<std::string> TextureReleaseQueue = {}; /** GPU texture names. */
-            std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
-            std::vector<std::string> MeshReleaseQueue    = {}; /** GPU mesh names. */
-        };
-
-        Data Active = {};
-        Data Render = {};
-
-        std::mutex Primitives2dMutex = {};
-        std::mutex Primitives3dMutex = {};
-
-        void Swap();
-    };
-
-    /** @brief Unprocessed scene objects. */
-    struct SceneObjects
-    {
         std::vector<Shape2d>    Shapes2d    = {};
         std::vector<Sprite2d>   Sprites2d   = {};
         std::vector<Glyph2d>    Glyphs2d    = {};
         std::vector<Triangle3d> Triangles3d = {};
+    };
+
+    /** @brief Thread-safe staged renderer frame. */
+    struct RendererFrame
+    {
+        Vector2i SwapchainResolution = Vector2i::Zero;
+        bool     IsResized           = false;
+        Color    ClearColor          = Color::Clear;
+
+        float LumaFadeAlpha   = 0.0f;
+        bool  IsLumaFadeWhite = false;
+        
+        std::vector<Primitive2d>           ImmediatePrimitives2d = {};
+        std::vector<Primitive3d>           ImmediatePrimitives3d = {};
+        std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
+
+        std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
+        std::vector<std::string> TextureReleaseQueue = {}; /** GPU texture names. */
+        std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
+        std::vector<std::string> MeshReleaseQueue    = {}; /** GPU mesh names. */
+
+        int DrawCallCount = 0;
+    };
+
+    /** @brief Thread-safe renderer scene containing high-level objects and staged frame. */
+    struct RendererScene
+    {
+        RendererObjects             Objects           = {};
+        DoubleBuffer<RendererFrame> Frame             = {};
+        std::mutex                  Primitives2dMutex = {};
+        std::mutex                  Primitives3dMutex = {};
     };
 
     /** @brief Renderer base. */
@@ -69,14 +81,13 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        SDL_Window*  _window       = nullptr;
-        RendererType _type         = RendererType::SdlGpu;
-        View         _view         = View();
-        SceneObjects _sceneObjects = {};
+        SDL_Window*   _window = nullptr;
+        RendererType  _type   = RendererType::SdlGpu;
+        View          _view   = View();
+        RendererScene _scene  = {};
 
-        SceneDoubleBuffer                 _sceneBuffer = {};
-        std::unique_ptr<TextureCacheBase> _textures    = nullptr;
-        std::unique_ptr<MeshCacheBase>    _meshes      = nullptr;
+        std::unique_ptr<TextureCacheBase> _textures = nullptr;
+        std::unique_ptr<MeshCacheBase>    _meshes   = nullptr;
 
     public:
         // =============

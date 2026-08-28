@@ -33,7 +33,7 @@ namespace Silent::Renderer::SdlGpu
         SDL_EndGPUCopyPass(copyPass);
 
         // Start render pass.
-        const auto& clearColor      = _sceneBuffer.Render.ClearColor;
+        const auto& clearColor      = _scene.Frame.Front.ClearColor;
         auto        colorTargetInfo = SDL_GPUColorTargetInfo
         {
             .texture     = renderTarget.Write(),
@@ -104,7 +104,7 @@ namespace Silent::Renderer::SdlGpu
             if (mesh != nullptr)
             {
                 SDL_DrawGPUIndexedPrimitives(&renderPass, mesh->IdxCount, 1, mesh->IdxOffset, mesh->VertexOffset, 0);
-                _sceneBuffer.Active.DrawCallCount++;
+                _scene.Frame.Back.DrawCallCount++;
             }
         }
 
@@ -150,7 +150,7 @@ namespace Silent::Renderer::SdlGpu
 
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
-            _sceneBuffer.Active.DrawCallCount++;
+            _scene.Frame.Back.DrawCallCount++;
         }
 
         // End render pass.
@@ -289,7 +289,7 @@ namespace Silent::Renderer::SdlGpu
 
             // Draw.
             SDL_DrawGPUIndexedPrimitives(&renderPass, batch.VertexCount, 1, batch.IdxOffset, batch.VertexOffset, 0);
-            _sceneBuffer.Active.DrawCallCount++;
+            _scene.Frame.Back.DrawCallCount++;
         }
 
         // End render pass.
@@ -314,14 +314,14 @@ namespace Silent::Renderer::SdlGpu
         SDL_EndGPUCopyPass(copyPass);
 
         // Luma fade.
-        if (_sceneBuffer.Render.LumaFadeAlpha > 0.0f)
+        if (_scene.Frame.Front.LumaFadeAlpha > 0.0f)
         {
             RunPostProcessPass(RenderStage::LumaFade, [&]()
             {
                 auto uniFrag0 = UniformLumaFadePerFrame
                 {
-                    .FadeAlpha = _sceneBuffer.Render.LumaFadeAlpha,
-                    .IsWhite   = _sceneBuffer.Render.IsLumaFadeWhite
+                    .FadeAlpha = _scene.Frame.Front.LumaFadeAlpha,
+                    .IsWhite   = _scene.Frame.Front.IsLumaFadeWhite
                 };
                 PushFragmentUniform(uniFrag0, 0);
             });
@@ -413,7 +413,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         SDL_DrawGPUIndexedPrimitives(&renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _sceneBuffer.Active.DrawCallCount++;
+        _scene.Frame.Back.DrawCallCount++;
 
         // End render pass.
         SDL_EndGPURenderPass(&renderPass);
@@ -427,7 +427,7 @@ namespace Silent::Renderer::SdlGpu
         ImGui::NewFrame();
 
         // Draw GUIs.
-        for (auto& drawCall : _sceneBuffer.Render.DebugGuiDrawCalls)
+        for (auto& drawCall : _scene.Frame.Front.DebugGuiDrawCalls)
         {
             drawCall();
         }
@@ -448,7 +448,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         ImGui_ImplSDLGPU3_RenderDrawData(drawData, _commandBuffer, renderPass);
-        _sceneBuffer.Active.DrawCallCount++;
+        _scene.Frame.Back.DrawCallCount++;
 
         // End render pass.
         SDL_EndGPURenderPass(renderPass);
@@ -486,7 +486,7 @@ namespace Silent::Renderer::SdlGpu
 
         // Draw.
         SDL_DrawGPUIndexedPrimitives(renderPass, QUAD_IDX_COUNT, 1, 0, 0, 0);
-        _sceneBuffer.Active.DrawCallCount++;
+        _scene.Frame.Back.DrawCallCount++;
 
         // End render pass.            
         SDL_EndGPURenderPass(renderPass);

@@ -96,6 +96,9 @@ namespace Silent::Renderer
         /** @brief Creates a 2D quad shape using retro pixels.
          *
          * @note Vertex order: top-left, bottom-left, top-right, bottom-right.
+         * 0---2
+         * | / |
+         * 1---3
          *
          * @param vert0 First vertex position in retro pixels (320x240 resolution).
          * @param vert1 Second vertex position in retro pixels (320x240 resolution).

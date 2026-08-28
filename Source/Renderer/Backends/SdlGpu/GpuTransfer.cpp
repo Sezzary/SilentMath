@@ -61,22 +61,22 @@ namespace Silent::Renderer::SdlGpu
 
         // Release/upload textures.
         auto& texs = GetTextures();
-        for (const auto& name : _sceneBuffer.Render.TextureReleaseQueue)
+        for (const auto& name : _scene.Frame.Front.TextureReleaseQueue)
         {
             texs.Release(name);
         }
-        for (const auto& assetName : _sceneBuffer.Render.TextureUploadQueue)
+        for (const auto& assetName : _scene.Frame.Front.TextureUploadQueue)
         {
             texs.Upload(copyPass, assetName);
         }
 
         // Release/upload meshes.
         auto& meshes = GetMeshes();
-        for (const auto& name : _sceneBuffer.Render.MeshReleaseQueue)
+        for (const auto& name : _scene.Frame.Front.MeshReleaseQueue)
         {
             meshes.Release(name);
         }
-        for (const auto& assetName : _sceneBuffer.Render.MeshUploadQueue)
+        for (const auto& assetName : _scene.Frame.Front.MeshUploadQueue)
         {
             meshes.Upload(copyPass, assetName);
         }
@@ -133,13 +133,13 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_sceneBuffer.Render.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_sceneBuffer.Render.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
+        bufferVerts.reserve(_scene.Frame.Front.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_scene.Frame.Front.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _sceneBuffer.Render.ImmediatePrimitives2d)
+        for (const auto& prim : _scene.Frame.Front.ImmediatePrimitives2d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
@@ -217,13 +217,13 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_sceneBuffer.Render.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
-        bufferIdxs.reserve(_sceneBuffer.Render.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
+        bufferVerts.reserve(_scene.Frame.Front.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
+        bufferIdxs.reserve(_scene.Frame.Front.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _sceneBuffer.Render.ImmediatePrimitives3d)
+        for (const auto& prim : _scene.Frame.Front.ImmediatePrimitives3d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
@@ -311,7 +311,7 @@ namespace Silent::Renderer::SdlGpu
     {
         constexpr auto BUFFER_IDXS = std::array<uint16, QUAD_IDX_COUNT>{ 0, 2, 1, 1, 2, 3 };
 
-        auto  windowRes      = _sceneBuffer.Active.WindowResolution.ToVector2();
+        auto  windowRes      = _scene.Frame.Back.SwapchainResolution.ToVector2();
         float windowAspect   = windowRes.x / windowRes.y;
         auto  viewportRes    = GetViewportResolution().ToVector2();
         float viewportAspect = GetViewportAspectRatio();

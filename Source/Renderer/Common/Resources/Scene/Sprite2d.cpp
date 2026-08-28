@@ -72,7 +72,7 @@ namespace Silent::Renderer
                 }
                 else
                 {
-                    localScale.x = aspect;
+                    localScale = Vector2(aspect, 1.0f);
                 }
                 break;
             }
@@ -80,7 +80,7 @@ namespace Silent::Renderer
             {
                 if (aspect >= viewportAspect)
                 {
-                    localScale.x = aspect;
+                    localScale = Vector2(aspect, 1.0f);
                 }
                 else
                 {
