@@ -27,15 +27,15 @@ namespace Silent::Debug
     Vector2 SnapToGrid(const Vector2& pos, const Vector2& res, float virtualHeight)
     {
         float rawScale = res.y / virtualHeight;
-        float scale    = std::max(1.0f, std::floorf(rawScale));
+        float scale    = std::max(1.0f, floorf(rawScale));
 
         //auto gridSize = Vector2(res.x / scale, virtualHeight); // Precise horizontal scaling.
         auto gridSize = Vector2(res.x / rawScale, virtualHeight);
 
         auto uv = pos / 100.0f;
 
-        auto snappedPixel = Vector2(std::floorf(uv.x * gridSize.x), 
-                                    std::floorf(uv.y * gridSize.y));
+        auto snappedPixel = Vector2(floorf(uv.x * gridSize.x), 
+                                    floorf(uv.y * gridSize.y));
 
         return Vector2((snappedPixel.x / gridSize.x) * 100.0f,
                        (snappedPixel.y / gridSize.y) * 100.0f);
@@ -49,7 +49,7 @@ namespace Silent::Debug
             auto& renderer = g_App.GetRenderer();
             auto& fonts    = g_App.GetFonts();
 
-            return;
+            //return;
 
             /*float s = 5.0f;
             auto col = Color(0.4f,0.4f,0);
