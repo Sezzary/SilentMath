@@ -449,12 +449,12 @@ namespace Silent::Game
                                         translator(KEY_MAIN_MENU_OPENING_QUOTE) +
                                         translator(MAIN_MENU_ENTRY_STRING_KEYS[i]) +
                                         translator(KEY_MAIN_MENU_CLOSING_QUOTE);
-                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterBottom);
             }
             else
             {
                 auto unselectedEntryStr = /*"{M}" + */translator(MAIN_MENU_ENTRY_STRING_KEYS[i]);
-                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
+                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterBottom);
             }
         }
     }

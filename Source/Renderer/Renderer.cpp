@@ -117,7 +117,8 @@ namespace Silent::Renderer
 
         _scene.Frame.Back.SwapchainResolution = g_App.GetWindowResolution();
 
-        // @todo Using parallelism here causes flickering. Why if lock guards are in place??
+        // @todo Using parallelism here causes flickering, but even without it some 2D objects don't draw. There's
+        // a severe bug somewhere.
         // Generate active buffer data.
         //auto tasks = ParallelTasks
         //{
@@ -223,7 +224,6 @@ namespace Silent::Renderer
         auto  aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
 
         // Compute text position.
-        // @todo Use common function for alignment pivots.
         auto textOffset = Vector2::Zero;
         switch (text.AlignMd)
         {
@@ -273,7 +273,7 @@ namespace Silent::Renderer
                 break;
             }
         }
-        auto adjTextPos = text.Position + Vector2::Transform(textOffset, rotMat);
+        auto adjTextPos = text.Position + (Vector2::Transform(textOffset, rotMat) * aspectCorrection);
 
         // Compute shadow offset.
         auto shadowOffset    = (SHADOW_OFFSET * Vector2(1.0f, heightScale)) * aspectCorrection;
