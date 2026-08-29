@@ -222,9 +222,8 @@ namespace Silent::Game
             return MapMsgState_Idle;
         }
 
-        g_SysWork.isMgsStringSet            = false;
-        g_SysWork.enableHighResGlyphs = false;
-        msgDisplayLength               = 0;
+        g_SysWork.isMgsStringSet = false;
+        msgDisplayLength         = 0;
 
         if (g_SysWork.bgmStatusFlags & BgmStatusFlag_VoiceDialog)
         {
