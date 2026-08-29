@@ -31,34 +31,34 @@ namespace Silent::Game
 
             case BrightnessMenuState_2:
                 // Set config.
-                if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickLeft)
+                if (g_Controller0->buttonFlags.pulsed & ControllerFlag_LStickHighLeft)
                 {
                     if (g_GameWork.config.brightness != 0)
                     {
                         g_GameWork.config.brightness--;
-                        //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
+                        //Sd_SfxPlay(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
-                if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickRight)
+                if (g_Controller0->buttonFlags.pulsed & ControllerFlag_LStickHighRight)
                 {
                     if (g_GameWork.config.brightness < 7)
                     {
                         g_GameWork.config.brightness++;
-                        //Sd_PlaySfx(Sfx_Back, 0, Q8_CLAMPED(0.25f));
+                        //Sd_SfxPlay(Sfx_Back, 0, Q8_CLAMPED(0.25f));
                     }
                 }
 
                 // Fade screen and leave menu.
-                if (g_Controller0->clickedBtnFlags & (g_GameWork.config.controllerConfig.enter |
+                if (g_Controller0->buttonFlags.clicked & (g_GameWork.config.controllerConfig.enter |
                                                     g_GameWork.config.controllerConfig.cancel))
                 {
-                    if (g_Controller0->clickedBtnFlags & g_GameWork.config.controllerConfig.enter)
+                    if (g_Controller0->buttonFlags.clicked & g_GameWork.config.controllerConfig.enter)
                     {
-                        //Sd_PlaySfx(Sfx_Confirm, 0, Q8_CLAMPED(0.25f));
+                        //Sd_SfxPlay(Sfx_Confirm, 0, Q8_CLAMPED(0.25f));
                     }
                     else
                     {
-                        //Sd_PlaySfx(Sfx_Cancel, 0, Q8_CLAMPED(0.25f));
+                        //Sd_SfxPlay(Sfx_Cancel, 0, Q8_CLAMPED(0.25f));
                     }
 
                     //ScreenFade_Start(true, false, false);
@@ -103,7 +103,7 @@ namespace Silent::Game
     void Options_BrightnessMenu_ConfigDraw()
     {
         // @todo
-        //Gfx_StringSetColor(StringColorId_White);
+        //Gfx_StringColorSet(StringColorId_White);
         //Gfx_StringSetPosition(SCREEN_POSITION_X(25.0f), SCREEN_POSITION_Y(79.5f));
         //Gfx_StringDraw("LEVEL_________", 20);
         //Gfx_StringDrawInt(1, g_GameWork.config.brightness);
@@ -125,11 +125,11 @@ namespace Silent::Game
 
         // Determine UI movement direction.
         int dir      = 0;
-        if (g_Controller0->heldBtnFlags & ControllerFlag_LStickLeft)
+        if (g_Controller0->buttonFlags.held & ControllerFlag_LStickHighLeft)
         {
             dir = 1;
         }
-        else if (g_Controller0->heldBtnFlags & ControllerFlag_LStickRight)
+        else if (g_Controller0->buttonFlags.held & ControllerFlag_LStickHighRight)
         {
             dir = 2;
         }

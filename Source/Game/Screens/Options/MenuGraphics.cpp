@@ -95,7 +95,7 @@ namespace Silent::Game
         const auto& translator = g_App.GetTranslator();
 
         // Submit heading string.
-        Gfx_StringSetColor(StringColorId_White);
+        Gfx_StringColorSet(StringColorId_White);
         Gfx_StringSetPosition(HEADING_STR_POS.x, HEADING_STR_POS.y);
         Gfx_StringDraw(translator(KEY_OPTIONS_MENU_HEADING), DEFAULT_MAP_MESSAGE_LENGTH);
 
@@ -130,7 +130,7 @@ namespace Silent::Game
         const auto& translator = g_App.GetTranslator();
 
         // Submit heading string.
-        //Gfx_StringSetColor(StringColorId_White);
+        //Gfx_StringColorSet(StringColorId_White);
         //Gfx_StringSetPosition(HEADING_STR_POS.vx, HEADING_STR_POS.vy);
         //Gfx_StringDraw(translator(KEY_OPTIONS_MENU_EXTRA), DEFAULT_MAP_MESSAGE_LENGTH);
 
@@ -366,7 +366,7 @@ namespace Silent::Game
 
         const auto& input = g_App.GetInput();
  
-        //Gfx_StringSetColor(StringColorId_White);
+        //Gfx_StringColorSet(StringColorId_White);
 
         // Draw left/right arrows for subset of options.
         if (g_MainOptionsMenu_SelectedEntry >= 4 && g_MainOptionsMenu_SelectedEntry < 9)
@@ -500,7 +500,7 @@ namespace Silent::Game
 
         const auto& input = g_App.GetInput();
 
-        //Gfx_StringSetColor(StringColorId_White);
+        //Gfx_StringColorSet(StringColorId_White);
 
         // Draw left/right arrows for subset of options.
         if (g_ExtraOptionsMenu_SelectedEntry < ExtraOptionsMenuEntry_Count)

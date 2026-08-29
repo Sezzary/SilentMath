@@ -169,8 +169,7 @@ namespace Silent::Game
         // Initialize engine.
         else
         {
-            /*func_8004BB10(); // Initializes something for graphics.
-            func_800890B8();
+            /*func_800890B8();
             sd_init();*/
 
             isInitComplete = true;

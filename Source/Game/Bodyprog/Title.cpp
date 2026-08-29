@@ -441,7 +441,7 @@ namespace Silent::Game
             }
 
             Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
-            Gfx_StringSetColor(StringColorId_White);
+            Gfx_StringColorSet(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
             {
@@ -485,7 +485,7 @@ namespace Silent::Game
         for (int i = 0; i < DIFFICULTY_MENU_SELECTION_COUNT; i++)
         {
             Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
-            Gfx_StringSetColor(StringColorId_White);
+            Gfx_StringColorSet(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
             {

@@ -22,6 +22,13 @@ namespace Silent::Game
     constexpr int FONT_12X16_GLYPH_SIZE_Y   = 16;
     constexpr int FONT_12X16_LINE_COUNT_MAX = 9;
 
+    /** @brief Processed message node types. */
+    enum class NodeType
+    {
+        Text,
+        Command
+    };
+
     /** @brief String color IDs for strings displayed in screen space.
      * Used as indices into `STRING_COLORS`.
      */
@@ -38,13 +45,6 @@ namespace Silent::Game
         StringColorId_Black       = 8,
 
         StringColorId_Count
-    };
-
-    /** @brief Processed message node types. */
-    enum class NodeType
-    {
-        Text,
-        Command
     };
 
     /** @brief Processed message node. */
@@ -69,35 +69,54 @@ namespace Silent::Game
     extern s32      g_MapMsg_WidthIdx;
     extern s32      g_MapMsg_Widths[12];
 
-    /** Sets the position of the next string to be drawn by `Gfx_StringDraw`. */
+    /** @brief Sets the global position of the next string to be drawn by `Gfx_StringDraw`.
+     *
+     * @param x X screen position.
+     * @param y Y screen position.
+     */
     void Gfx_StringSetPosition(int posX, int posY);
 
     void Gfx_Strings2dLayerIdxSet(s32 idx);
 
     void Gfx_StringsReset2dLayerIdx();
 
-    /** Sets the color of the next string drawn by `Gfx_StringDraw`.
+    /** @brief Sets the global color state of the next string drawn by `Gfx_StringDraw`.
      *
-     * @param colorId ID of the color to set.
+     * @param colorId ID of the new color to set (`e_ColorId`).
      */
-    void Gfx_StringSetColor(e_StringColorId colorId);
+    void Gfx_StringColorSet(e_StringColorId colorId);
 
-    /** Draws a string in screen space using 12x16 glyphs.
+    /** @brief Draws a string in screen space using 12x16 glyphs.
+     *
+     * @note References glyphs in `FONT16.TIM`. The texture is loaded into VRAM across multiple texture pages,
+     * hence why the texture is a single row with 4-pixel padding every 21st glyph instead of a stacked arrangement.
      *
      * @param str String to draw.
-     * @param strLength String length for rollout
-     * @return Length of the string.
+     * @param strLength Number of consecutive glyphs to draw from the string.
      */
     float Gfx_StringDraw(const std::string& str, int strLength, bool isHalfHeight = false, AlignMode alignMode = AlignMode::BottomLeft);
 
-    s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx);
+    /** @brief Computes the screen space widths of lines in a map message using 12x16 glyphs and populates
+     * `g_MapMsg_Widths`.
+     *
+     * @param mapMsgIdx Index of the map message to evaluate.
+     */
+    s32 Gfx_MapMsg_WidthsCompute(s32 mapMsgIdx);
 
-    /** Draws string and returns map message index. */
+    /** @brief Draws a string in screen space using 12x16 glyphs and returns a map message code.
+     *
+     * @param mapMsg Map message to draw.
+     * @param strLength Number of consecutive glyphs to draw from the map message.
+     * @return Map message code (`e_MapMsgReturnCode`).
+     */
     s32 Gfx_MapMsg_StringDraw(const std::string& mapMsg, s32 strLength, bool isHalfHeight = false);
 
     void Gfx_MapMsg_DefaultStringInfoSet();
 
+    /** @brief Draws an integer string in screen space using 12x16 glyphs.
+     *
+     * @param widthMin Minimum width of the integer string.
+     * @param strLength Number of consecutive glyphs to draw from the integer string.
+     */
     void Gfx_StringDrawInt(s32 widthMin, s32 strLength);
-
-    void func_8004BB10();
 }

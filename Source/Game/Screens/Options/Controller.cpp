@@ -69,7 +69,7 @@ namespace Silent::Game
                 selectedEntries.preset = ControllerMenuState_Exit;
 
                 // Leave menu.
-                if (g_Controller0.clickedBtnFlags & (g_GameWork.config.controllerConfig.enter |
+                if (g_Controller0.buttonFlags.clicked & (g_GameWork.config.controllerConfig.enter |
                                                     g_GameWork.config.controllerConfig.cancel))
                 {
                     //Sd_EngineCmd(Sfx_Cancel);
@@ -81,18 +81,18 @@ namespace Silent::Game
                 }
 
                 // Move selection cursor up/down.
-                if (g_Controller0.pulsedGuiBtnFlags & ControllerFlag_LStickUp)
+                if (g_Controller0.buttonFlags.pulsedGui & ControllerFlag_LStickHighUp)
                 {
                     g_GameWork.gameStateSteps[1] = ControllerMenuState_Type3;
                     g_GameWork.gameStateSteps[2] = 0;
                 }
-                else if (g_Controller0.pulsedGuiBtnFlags & ControllerFlag_LStickDown)
+                else if (g_Controller0.buttonFlags.pulsedGui & ControllerFlag_LStickHighDown)
                 {
                     g_GameWork.gameStateSteps[1] = ControllerMenuState_Type1;
                     g_GameWork.gameStateSteps[2] = 0;
                 }
                 // Move selection cursor left/right.
-                else if (g_Controller0.pulsedGuiBtnFlags & (ControllerFlag_LStickLeft | ControllerFlag_LStickRight))
+                else if (g_Controller0.buttonFlags.pulsedGui & (ControllerFlag_LStickHighLeft | ControllerFlag_LStickHighRight))
                 {
                     g_GameWork.gameStateSteps[1] = ControllerMenuState_Actions;
                     g_GameWork.gameStateSteps[2] = 0;
@@ -105,13 +105,13 @@ namespace Silent::Game
                 selectedEntries.preset = g_GameWork.gameStateSteps[1];
 
                 // Set binding preset.
-                if (g_Controller0.clickedBtnFlags & g_GameWork.config.controllerConfig.enter)
+                if (g_Controller0.buttonFlags.clicked & g_GameWork.config.controllerConfig.enter)
                 {
                     //Sd_EngineCmd(Sfx_Confirm);
                     //Settings_RestoreControlDefaults(g_GameWork.gameStateSteps[1] - 1);
                 }
                 // Reset selection cursor.
-                else if (g_Controller0.clickedBtnFlags & g_GameWork.config.controllerConfig.cancel)
+                else if (g_Controller0.buttonFlags.clicked & g_GameWork.config.controllerConfig.cancel)
                 {
                     //Sd_EngineCmd(Sfx_Cancel);
                     g_GameWork.gameStateSteps[1] = ControllerMenuState_Exit;
@@ -121,18 +121,18 @@ namespace Silent::Game
                 else
                 {
                     // Move selection cursor up/down.
-                    if (g_Controller0.pulsedGuiBtnFlags & ControllerFlag_LStickUp)
+                    if (g_Controller0.buttonFlags.pulsedGui & ControllerFlag_LStickHighUp)
                     {
                         g_GameWork.gameStateSteps[1] = (g_GameWork.gameStateSteps[1] - 1) & 3;
                         g_GameWork.gameStateSteps[2] = 0;
                     }
-                    else if (g_Controller0.pulsedGuiBtnFlags & ControllerFlag_LStickDown)
+                    else if (g_Controller0.buttonFlags.pulsedGui & ControllerFlag_LStickHighDown)
                     {
                         g_GameWork.gameStateSteps[1] = (g_GameWork.gameStateSteps[1] + 1) & 3;
                         g_GameWork.gameStateSteps[2] = 0;
                     }
                     // Move selection cursor left/right.
-                    else if (g_Controller0.pulsedGuiBtnFlags & (ControllerFlag_LStickLeft | ControllerFlag_LStickRight))
+                    else if (g_Controller0.buttonFlags.pulsedGui & (ControllerFlag_LStickHighLeft | ControllerFlag_LStickHighRight))
                     {
                         g_GameWork.gameStateSteps[1] = ControllerMenuState_Actions;
                         g_GameWork.gameStateSteps[2] = 0;
@@ -144,7 +144,7 @@ namespace Silent::Game
                 actionIdx = selectedEntries.action;
 
                 // Move selection cursor up/down.
-                if (g_Controller0.pulsedGuiBtnFlags & ControllerFlag_LStickUp)
+                if (g_Controller0.buttonFlags.pulsedGui & ControllerFlag_LStickHighUp)
                 {
                     if (actionIdx != InputAction_Enter)
                     {
@@ -155,7 +155,7 @@ namespace Silent::Game
                         selectedEntries.action = InputAction_Option;
                     }
                 }
-                else if (g_Controller0.pulsedGuiBtnFlags & ControllerFlag_LStickDown)
+                else if (g_Controller0.buttonFlags.pulsedGui & ControllerFlag_LStickHighDown)
                 {
                     if (actionIdx != InputAction_Option)
                     {
@@ -167,7 +167,7 @@ namespace Silent::Game
                     }
                 }
                 // Move selection cursor left/right.
-                else if (g_Controller0.pulsedGuiBtnFlags & (ControllerFlag_LStickLeft | ControllerFlag_LStickRight))
+                else if (g_Controller0.buttonFlags.pulsedGui & (ControllerFlag_LStickHighLeft | ControllerFlag_LStickHighRight))
                 {
                     g_GameWork.gameStateSteps[2] = 0;
                     g_GameWork.gameStateSteps[1] = selectedEntries.preset;
@@ -202,7 +202,7 @@ namespace Silent::Game
         }
 
         // Play cursor navigation SFX.
-        if (g_Controller0.pulsedGuiBtnFlags & (ControllerFlag_LStickUp | ControllerFlag_LStickRight | ControllerFlag_LStickDown | ControllerFlag_LStickLeft))
+        if (g_Controller0.buttonFlags.pulsedGui & (ControllerFlag_LStickHighUp | ControllerFlag_LStickHighRight | ControllerFlag_LStickHighDown | ControllerFlag_LStickHighLeft))
         {
             //Sd_EngineCmd(Sfx_Back);
         }

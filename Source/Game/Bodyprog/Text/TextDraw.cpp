@@ -128,7 +128,7 @@ namespace Silent::Game
         g_Strings2dLayerIdx = 6;
     }
 
-    void Gfx_StringSetColor(e_StringColorId colorId)
+    void Gfx_StringColorSet(e_StringColorId colorId)
     {
         g_StringColorId = colorId;
     }
@@ -271,7 +271,7 @@ namespace Silent::Game
         return textSize.x;// * aspectCorrection.x;
     }
 
-    s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx) // 0x8004ACF4
+    s32 Gfx_MapMsg_WidthsCompute(s32 mapMsgIdx) // 0x8004ACF4
     {
         s32 i;
         s32 j;
@@ -330,7 +330,7 @@ namespace Silent::Game
                             break;
 
                         case MAP_MSG_CODE_LINE_POSITION:
-                            D_800C38B0.positionIdx = msgArg;
+                            g_PositionIdx = msgArg;
                             break;
 
                         case MAP_MSG_CODE_JUMP:
@@ -388,29 +388,29 @@ namespace Silent::Game
         s32 idx;
         s32 charWidth;
 
-        int result = 0;
+        int returnCode = MapMsgReturnCode_None;
 
         g_StringPosition.x = -(g_MapMsg_Widths[0] / 2);
 
-        switch ((u8)D_800C38B0.positionIdx)
+        switch (g_PositionIdx)
         {
-            case 0:
+            case 0: // @unused
                 g_StringPosition.y = -92;
                 break;
 
-            case 1:
+            case 1: // @unused
                 g_StringPosition.y = 76 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
                 break;
 
-            case 2:
+            case 2: // @unused
                 g_StringPosition.y = -60;
                 break;
 
-            case 3:
+            case 3: // @unused
                 g_StringPosition.y = 44 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
                 break;
 
-            case 4: // All others are unused.
+            case 4:
                 g_StringPosition.y = ((FONT_12X16_LINE_COUNT_MAX - g_MapMsg_WidthIdx) * 8) - 76;
                 break;
         }
@@ -460,7 +460,7 @@ namespace Silent::Game
                     }
                     case MAP_MSG_CODE_END:
                     {
-                        result  = NO_VALUE;
+                        returnCode  = NO_VALUE;
                         lineIdx = FONT_12X16_LINE_COUNT_MAX;
                         break;
                     }
@@ -496,22 +496,22 @@ namespace Silent::Game
                     }
                     case MAP_MSG_CODE_ALIGN_CENTER:
                     {
-                        result    = MapMsgCode_AlignCenter;
-                        glyphPosX = -(g_MapMsg_Widths[lineIdx] / 2);
-                        alignMode = AlignMode::CenterBottom;
+                        returnCode = MapMsgReturnCode_AlignCenter;
+                        glyphPosX  = -(g_MapMsg_Widths[lineIdx] / 2);
+                        alignMode  = AlignMode::CenterBottom;
                         break;
                     }
                     case MAP_MSG_CODE_NEWLINE:
                     {
                         lineIdx++;
 
-                        switch (result)
+                        switch (returnCode)
                         {
-                            case MapMsgCode_AlignCenter:
+                            case MapMsgReturnCode_AlignCenter:
                                 glyphPosX = -(g_MapMsg_Widths[lineIdx] / 2);
                                 break;
 
-                            case MapMsgCode_SetByT:
+                            case MapMsgReturnCode_SetByT:
                                 glyphPosX = g_StringPositionX1;
                                 break;
 
@@ -525,13 +525,13 @@ namespace Silent::Game
                     }
                     case MAP_MSG_CODE_SELECT:
                     {
-                        result  = codeArg;
-                        lineIdx = FONT_12X16_LINE_COUNT_MAX;
+                        returnCode = codeArg;
+                        lineIdx    = FONT_12X16_LINE_COUNT_MAX;
                         break;
                     }
                     case MAP_MSG_CODE_TAB:
                     {
-                        result             = MapMsgCode_SetByT;
+                        returnCode         = MapMsgReturnCode_SetByT;
                         g_StringPositionX1 = -120;
                         glyphPosX          = -120;
                         break;
@@ -563,14 +563,14 @@ namespace Silent::Game
                 strLength -= charCount;
                 if (strLength <= 0)
                 {
-                    return result;
+                    return returnCode;
                 }
             }
         }
 
         // @todo Apply offset.
         g_StringPosition = Vector2i(glyphPosX, glyphPosY);
-        return result;
+        return returnCode;
     }
 
     void Gfx_MapMsg_DefaultStringInfoSet() // 0x8004B684

@@ -38,9 +38,9 @@ namespace Silent::Game
 
         // Check for user input.
         hasInput = false;
-        if ((g_Controller0->clickedBtnFlags & (g_GameWorkPtr->config.controllerConfig.enter |
+        if ((g_Controller0->buttonFlags.clicked & (g_GameWorkPtr->config.controllerConfig.enter |
                                                g_GameWorkPtr->config.controllerConfig.cancel)) ||
-            (g_Controller0->heldBtnFlags & g_GameWorkPtr->config.controllerConfig.skip))
+            (g_Controller0->buttonFlags.held & g_GameWorkPtr->config.controllerConfig.skip))
         {
             hasInput = true;
         }
@@ -68,7 +68,7 @@ namespace Silent::Game
                 msgDisplayInc                    = 2; // Advance 2 glyphs at a time.
 
                 //Gfx_MapMsg_DefaultStringInfoSet();
-                //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);
+                //var_a1 = Gfx_MapMsg_WidthsCompute(g_MapMsg_CurrentIdx);
 
                 D_800BCD74 = 1;
                 g_SysWork.isMgsStringSet = true;
@@ -93,7 +93,7 @@ namespace Silent::Game
                     D_800BCD74 = 0;
                 }
 
-                Gfx_StringSetColor(StringColorId_White);
+                Gfx_StringColorSet(StringColorId_White);
                 Gfx_StringSetPosition(40, 160);
 
                 msgDisplayLength += msgDisplayInc;
@@ -130,12 +130,12 @@ namespace Silent::Game
                                 break;
                             }
                         }
-                        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.cancel)
+                        else if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.cancel)
                         {
                             g_MapMsg_Select.maxIdx           = temp;
                             g_MapMsg_Select.selectedEntryIdx = g_MapMsg_SelectCancelIdx;
 
-                            //Sd_PlaySfx(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
+                            //Sd_SfxPlay(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
 
                             if (g_SysWork.silentYesSelection)
                             {
@@ -145,17 +145,17 @@ namespace Silent::Game
                             stateMachineIdx1 = FINISH_MAP_MSG;
                             break;
                         }
-                        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.enter)
+                        else if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.enter)
                         {
                             g_MapMsg_Select.maxIdx = temp;
 
                             if (g_MapMsg_Select.selectedEntryIdx == (s8)g_MapMsg_SelectCancelIdx)
                             {
-                                //Sd_PlaySfx(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
+                                //Sd_SfxPlay(Sfx_MenuCancel, 0, Q8_CLAMPED(0.25f));
                             }
                             else if (!g_SysWork.silentYesSelection)
                             {
-                                //Sd_PlaySfx(Sfx_MenuConfirm, 0, Q8_CLAMPED(0.25f));
+                                //Sd_SfxPlay(Sfx_MenuConfirm, 0, Q8_CLAMPED(0.25f));
                             }
 
                             if (g_SysWork.silentYesSelection)
@@ -180,7 +180,7 @@ namespace Silent::Game
                         g_MapMsg_CurrentIdx++;
                         g_SysWork.mapMsgTimer = g_MapMsg_Select.maxIdx;
 
-                        //var_a1 = Gfx_MapMsg_CalculateWidths(g_MapMsg_CurrentIdx);
+                        //var_a1 = Gfx_MapMsg_WidthsCompute(g_MapMsg_CurrentIdx);
 
                         msgDisplayLength = 0;
                         stateMachineIdx0 = 0;
@@ -211,7 +211,7 @@ namespace Silent::Game
                 stateMachineIdx0 = 0;
                 stateMachineIdx1 = Gfx_MapMsg_SelectionUpdate(g_MapMsg_CurrentIdx, &msgDisplayLength);
 
-                if (stateMachineIdx1 != 0 && stateMachineIdx1 < MapMsgCode_Select4)
+                if (stateMachineIdx1 != 0 && stateMachineIdx1 < MapMsgReturnCode_Select4)
                 {
                     stateMachineIdx0 = NO_VALUE;
                 }
@@ -251,17 +251,17 @@ namespace Silent::Game
         switch (mapMsgCode)
         {
             case NO_VALUE:
-            case MapMsgCode_None:
+            case MapMsgReturnCode_None:
                 g_MapMsg_SelectFlashTimer = Q12(0.0f);
                 break;
 
-            case MapMsgCode_Select2:
-            case MapMsgCode_Select3:
-            case MapMsgCode_Select4:
+            case MapMsgReturnCode_Select2:
+            case MapMsgReturnCode_Select3:
+            case MapMsgReturnCode_Select4:
                 g_MapMsg_Select.maxIdx  = 1;
                 g_MapMsg_SelectCancelIdx = (mapMsgCode == 3) ? 2 : 1;
 
-                if (mapMsgCode == MapMsgCode_Select4)
+                if (mapMsgCode == MapMsgReturnCode_Select4)
                 {
                     // Shows selection prompt with map messages at indices 0 and 1.
                     // All maps have "Yes" and "No" as messages 0 and 1, respectively.
@@ -269,11 +269,11 @@ namespace Silent::Game
                     {
                         if (g_MapMsg_Select.selectedEntryIdx == i)
                         {
-                            Gfx_StringSetColor((e_StringColorId)(((g_MapMsg_SelectFlashTimer >> 10) * 3) + 4));
+                            Gfx_StringColorSet((e_StringColorId)(((g_MapMsg_SelectFlashTimer >> 10) * 3) + 4));
                         }
                         else
                         {
-                            Gfx_StringSetColor(StringColorId_White);
+                            Gfx_StringColorSet(StringColorId_White);
                         }
 
                         Gfx_StringSetPosition(32, (STRING_LINE_OFFSET * i) + 98);
@@ -294,11 +294,11 @@ namespace Silent::Game
                     {
                         if (g_MapMsg_Select.selectedEntryIdx == i)
                         {
-                            Gfx_StringSetColor((e_StringColorId)(((g_MapMsg_SelectFlashTimer >> 10) * 3) + 4));
+                            Gfx_StringColorSet((e_StringColorId)(((g_MapMsg_SelectFlashTimer >> 10) * 3) + 4));
                         }
                         else
                         {
-                            Gfx_StringSetColor(StringColorId_White);
+                            Gfx_StringColorSet(StringColorId_White);
                         }
 
                         Gfx_StringSetPosition(32, (STRING_LINE_OFFSET * i) + 96);
@@ -306,28 +306,28 @@ namespace Silent::Game
                     }
                 }
 
-                if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickUp &&
+                if (g_Controller0->buttonFlags.clicked & ControllerFlag_LStickHighUp &&
                     g_MapMsg_Select.selectedEntryIdx != 0)
                 {
                     g_MapMsg_SelectFlashTimer = Q12(0.0f);
                     g_MapMsg_Select.selectedEntryIdx--;
 
-                    //Sd_PlaySfx(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
+                    //Sd_SfxPlay(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
                 }
 
-                if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickDown &&
+                if (g_Controller0->buttonFlags.clicked & ControllerFlag_LStickHighDown &&
                     g_MapMsg_Select.selectedEntryIdx != (mapMsgCode - 1))
                 {
                     g_MapMsg_SelectFlashTimer = Q12(0.0f);
                     g_MapMsg_Select.selectedEntryIdx++;
 
-                    //Sd_PlaySfx(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
+                    //Sd_SfxPlay(Sfx_MenuMove, 0, Q8_CLAMPED(0.25f));
                 }
 
                 mapMsgCode = NO_VALUE;
                 break;
 
-            case MapMsgCode_DisplayAll:
+            case MapMsgReturnCode_DisplayAll:
                 *arg1 = MAP_MESSAGE_DISPLAY_ALL_LENGTH;
                 break;
         }

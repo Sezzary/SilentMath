@@ -28,15 +28,17 @@ namespace Silent::Game
         MapMsgIdx_NowMaking         = 14  /** @unused? */
     };
 
-    enum e_MapMsgCode
+    /** @brief Map message return codes. Returned by `Gfx_MapMsg_StringDraw`. */
+    enum e_MapMsgReturnCode
     {
-        MapMsgCode_None        = 0,
-        MapMsgCode_Select2     = 2,
-        MapMsgCode_Select3     = 3,
-        MapMsgCode_Select4     = 4,
-        MapMsgCode_DisplayAll  = 20,
-        MapMsgCode_SetByT      = 88,
-        MapMsgCode_AlignCenter = 99
+        MapMsgReturnCode_None        = 0,
+        MapMsgReturnCode_Terminate   = 1,
+        MapMsgReturnCode_Select2     = 2,
+        MapMsgReturnCode_Select3     = 3,
+        MapMsgReturnCode_Select4     = 4,
+        MapMsgReturnCode_DisplayAll  = 20,
+        MapMsgReturnCode_SetByT      = 88,
+        MapMsgReturnCode_AlignCenter = 99
     };
 
     /** @brief Map message states.
