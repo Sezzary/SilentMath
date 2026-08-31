@@ -16,7 +16,8 @@ namespace Silent::Renderer
     {
         None       = 0,
         Gradient   = 1 << 0,
-        HalfHeight = 1 << 1
+        Shadow     = 1 << 1,
+        HalfHeight = 1 << 2
     };
 
     /** @brief 2D screen glyph. */
@@ -35,7 +36,7 @@ namespace Silent::Renderer
         float GradientUvMinY = 0.0f;
         float GradientUvMaxY = 0.0f;
 
-        /** @brief Creates a 2D glyph.
+        /** @brief Creates a 2D screen glyph.
          *
          * @param shadedGlyph Shaped glyph with spacing parameters.
          * @param hasGradient Has vertical center gradient.
@@ -67,7 +68,6 @@ namespace Silent::Renderer
         float       Tracking   = 0.0f;
         Color       Col        = Color::White;
         int         StyleFlags = (int)TextStyleFlags::None;
-        bool        HasShadow  = false;
         int         Depth      = 0;
         AlignMode   AlignMd    = AlignMode::Center;
 
@@ -77,18 +77,17 @@ namespace Silent::Renderer
          * @param fontName Font chain name to use for glyphs.
          * @param pos Screen position in percent.
          * @param rot Rotation in radians.
-         * @param scale Scale.
+         * @param scale Scale relative to the screen height.
          * @param tracking Additional tracking between glyphs relative to the point size. @todo Implement properly.
          * @param color Glyph tint color.
          * @param styleFlags Style flags.
-         * @param hasDropShadow Has bottom-right drop shadow.
          * @param depth Glyph layer render priority.
          * @param alignMode Alignment mode.
          * @return Shaped 2D text.
          */
         static Text2d CreateText2d(const std::string& msg, const std::string& fontName,
                                    const Vector2& pos, float rot, float scale, float tracking,
-                                   const Color& color, int styleFlags, bool hasDropShadow,
+                                   const Color& color, int styleFlags,
                                    int depth = 0, AlignMode alignMode = AlignMode::Center);
     };
 }

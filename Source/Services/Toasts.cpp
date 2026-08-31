@@ -99,7 +99,7 @@ namespace Silent::Services
             auto fontName = (options->TextQuality == TextQualityType::Retro) ? "RetroSans" : "ModernSans";
             auto text     = Text2d::CreateText2d(toast.Message, fontName,
                                                  linePos, DEG_TO_RAD(0.0f), TEXT_SCALE, 1.0f,
-                                                 toast.Col, (int)TextStyleFlags::None, true,
+                                                 toast.Col, (int)TextStyleFlags::Shadow,
                                                  0, AlignMode::BottomLeft);
             renderer.SubmitText2d(text);
 

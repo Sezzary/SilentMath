@@ -406,7 +406,6 @@ namespace Silent::Game
         u8                     (*mapRoomIdxGet)(q19_12 posX, q19_12 posY); // Called by `Game_MapRoomIdxUpdate`.
         s8                     unused_8;
         s32                    (*func_C)();
-        // 3 bytes of padding.
         void                   (*bgmEvent)(bool);
         s8                     bgmIdx;
         u8                     ambientAudioIdx; // Ambient file index from `g_AmbientVabTaskLoadCmds`.
@@ -434,11 +433,9 @@ namespace Silent::Game
         void                   (*npcSpawnEvent)();
         s_MapHdr_field_4C*     unkTable1_4C; // Related to collision?
         s16                    unkTable1Count_50;
-        // 2 bytes of padding.
         s_BloodSplat*          bloodSplats;
         s16                    bloodSplatCount;
-        // 2 bytes of padding.
-        s_MapOverlayHdr_5C* field_5C;
+        s_MapOverlayHdr_5C*    field_5C;
 
         void                   (*func_60)(s32 idx, bool arg1);
         s32                    (*func_64)(POLY_FT4** poly, s32);

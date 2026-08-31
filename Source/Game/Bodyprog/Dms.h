@@ -60,9 +60,10 @@ namespace Silent::Game
      * @param unusedAngle @unused
      * @param time Playback time.
      * @param dmsAsset DMS asset.
+     * @return Projection distance.
      */
-    s32 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
-                             const DmsAsset& dmsAsset);
+    q19_12 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
+                                const DmsAsset& dmsAsset);
 
     /** @brief Linearly interpolates between two DMS camera keyframes.
      *
@@ -70,10 +71,11 @@ namespace Silent::Game
      * @param prevKeyframe Previous camera keyframe.
      * @param nextKeyframe Next camera keyframe.
      * @param alpha Interpolation alpha.
+     * @return Projection distance.
      */
-    s32 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
-                               const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
-                               q19_12 alpha);
+    q19_12 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
+                                  const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
+                                  q19_12 alpha);
 
     /** @brief Gets keyframe interpolation data at a given playback time from a given DMS camera entry.
      *

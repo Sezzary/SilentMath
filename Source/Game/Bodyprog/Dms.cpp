@@ -25,7 +25,7 @@ namespace Silent::Game
             Math_Vector3Zero(pos);
             Math_SVectorZero(rot);
 
-            /*Text_Debug_PositionSet(SCREEN_POSITION_X(15.75f), SCREEN_POSITION_Y(37.5f));
+            /*Text_Debug_PositionSet(50, 90);
             #if VERSION_EQUAL_OR_OLDER(PROTO_981216)
                 // Code seen in 98-12-16 build.
                 Text_Debug_Draw(charaName);
@@ -100,24 +100,24 @@ namespace Silent::Game
         result.Rotation.z = Dms_AngleLerp(prevKeyframe.Rotation.z, nextKeyframe.Rotation.z, alpha);
     }
 
-    s32 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
-                             const Asset& dmsAsset)
+    q19_12 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
+                                const Asset& dmsAsset)
     {
-        s32                 prevKeyframeIdx;
-        s32                 nextKeyframeIdx;
-        s32                 alpha;
-        s32                 camProjVal;
-
         const auto  dmsData  = dmsAsset.GetData<DmsAsset>();
         const auto& camEntry = dmsData->CameraEntry;
 
-        // Interpolate current keyframe.
-        auto activeCamKeyframe = DmsKeyframeCamera{};
+        // Get keyframe interpolation.
+        int    prevKeyframeIdx = 0;
+        int    nextKeyframeIdx = 0;
+        q19_12 alpha           = Q12(0.0f);
         Dms_KeyframeInterpGet(prevKeyframeIdx, nextKeyframeIdx, alpha, time, camEntry, dmsAsset);
-        camProjVal = Dms_CameraKeyframeLerp(activeCamKeyframe,
-                                            std::get<DmsKeyframeCamera>(camEntry.Keyframes[prevKeyframeIdx]),
-                                            std::get<DmsKeyframeCamera>(camEntry.Keyframes[nextKeyframeIdx]),
-                                            alpha);
+        
+        // Interpolate current keyframe.
+        auto   activeCamKeyframe = DmsKeyframeCamera{};
+        q19_12 camProjDist       = Dms_CameraKeyframeLerp(activeCamKeyframe,
+                                                          std::get<DmsKeyframeCamera>(camEntry.Keyframes[prevKeyframeIdx]),
+                                                          std::get<DmsKeyframeCamera>(camEntry.Keyframes[nextKeyframeIdx]),
+                                                          alpha);
 
         // Set position target.
         posTarget->vx = Q8_TO_Q12(activeCamKeyframe.PositionTarget.x + dmsData->Origin.x);
@@ -129,14 +129,14 @@ namespace Silent::Game
         lookAtTarget->vy = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.y + dmsData->Origin.y);
         lookAtTarget->vz = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.z + dmsData->Origin.z);
 
-        // `camProjVal` comes from `curFrame.projectionDistance`, return value is passed to `vcChangeProjectionValue`.
+        // `camProjDist` comes from `curFrame.projectionDistance`, return value is passed to `vcChangeProjectionValue`.
         // Might be related to FOV?
-        return camProjVal;
+        return camProjDist;
     }
 
-    s32 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
-                               const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
-                               q19_12 alpha)
+    q19_12 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
+                                  const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
+                                  q19_12 alpha)
     {
         // Set position target.
         result.PositionTarget.x = prevKeyframe.PositionTarget.x + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.x - prevKeyframe.PositionTarget.x, alpha);
@@ -244,6 +244,6 @@ namespace Silent::Game
 
     q19_12 Dms_AngleLerp(q3_12 angleFrom, q3_12 angleTo, q19_12 alpha)
     {
-        return Q12_ANGLE_NORM_S((q19_12)(Q12_MULT_PRECISE(Q12_ANGLE_NORM_S(angleTo - angleFrom), alpha)) + angleFrom);
+        return Q12_ANGLE_NORM_S((q19_12)Q12_MULT_PRECISE(Q12_ANGLE_NORM_S(angleTo - angleFrom), alpha) + angleFrom);
     }
 }

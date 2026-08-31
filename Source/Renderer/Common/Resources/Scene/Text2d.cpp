@@ -36,7 +36,7 @@ namespace Silent::Renderer
 
     Text2d Text2d::CreateText2d(const std::string& msg, const std::string& fontName,
                                 const Vector2& pos, float rot, float scale, float tracking,
-                                const Color& color, int styleFlags, bool hasDropShadow,
+                                const Color& color, int styleFlags,
                                 int depth, AlignMode alignMode)
     {
         auto& fonts = g_App.GetFonts();
@@ -62,7 +62,6 @@ namespace Silent::Renderer
             .Tracking   = tracking,
             .Col        = color,
             .StyleFlags = styleFlags,
-            .HasShadow  = hasDropShadow,
             .Depth      = depth,
             .AlignMd    = alignMode
         };

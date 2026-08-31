@@ -269,7 +269,7 @@ namespace Silent::Game
         D_800A9A68 += g_DeltaTimeRaw;
         if (!((D_800A9A68 >> 11) & (1 << 0)))
         {
-            Gfx_StringSetPosition(SCREEN_POSITION_X(39.25f), SCREEN_POSITION_Y(43.5f));
+            Gfx_StringPositionSet(131, 104);
             Gfx_StringDraw("\x07PAUSED", DEFAULT_MAP_MESSAGE_LENGTH);
         }
 
@@ -932,7 +932,7 @@ namespace Silent::Game
                 SysWork_StateStepIncrement(0);
 
             case 3:
-                Gfx_StringSetPosition(SCREEN_POSITION_X(32.5f), SCREEN_POSITION_Y(43.5f));
+                Gfx_StringPositionSet(104, 104);
                 Gfx_StringDraw("\aGAME_OVER", DEFAULT_MAP_MESSAGE_LENGTH);
                 g_SysWork.field_28++;
 
@@ -945,7 +945,7 @@ namespace Silent::Game
                 break;
 
             case 4:
-                Gfx_StringSetPosition(SCREEN_POSITION_X(32.5f), SCREEN_POSITION_Y(43.5f));
+                Gfx_StringPositionSet(104, 104);
                 Gfx_StringDraw("\aGAME_OVER", DEFAULT_MAP_MESSAGE_LENGTH);
                 //SysWork_StateStepIncrementAfterFade(2, true, 0, Q12(2.0f), false);
                 break;

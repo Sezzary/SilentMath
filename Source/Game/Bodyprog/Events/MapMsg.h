@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Game/Bodyprog/Text/TextDraw.h"
+
 namespace Silent::Game
 {
     constexpr int DEFAULT_MAP_MESSAGE_LENGTH     = 99;
@@ -26,19 +28,6 @@ namespace Silent::Game
         MapMsgIdx_DoorLocked        = 12,
         MapMsgIdx_DoorUnlocked      = 13,
         MapMsgIdx_NowMaking         = 14  /** @unused? */
-    };
-
-    /** @brief Map message return codes. Returned by `Gfx_MapMsg_StringDraw`. */
-    enum e_MapMsgReturnCode
-    {
-        MapMsgReturnCode_None        = 0,
-        MapMsgReturnCode_Terminate   = 1,
-        MapMsgReturnCode_Select2     = 2,
-        MapMsgReturnCode_Select3     = 3,
-        MapMsgReturnCode_Select4     = 4,
-        MapMsgReturnCode_DisplayAll  = 20,
-        MapMsgReturnCode_SetByT      = 88,
-        MapMsgReturnCode_AlignCenter = 99
     };
 
     /** @brief Map message states.
@@ -68,11 +57,9 @@ namespace Silent::Game
         u8 selectedEntryIdx;
     };
 
-    extern u8 g_MapMsg_AudioLoadBlock;
-
     s32 Gfx_MapMsg_Draw(s32 mapMsgIdx);
 
-    s32 Gfx_MapMsg_SelectionUpdate(u8 mapMsgIdx, s32* arg1);
+    s32 Gfx_MapMsg_SelectionUpdate(u8 mapMsgIdx, s32* displayLength);
 
     void func_8003708C(s16* ptr0, u16* ptr1);
 

@@ -336,7 +336,7 @@ namespace Silent::Renderer
             }
 
             // Submit 2D drop shadow glyph.
-            if (text.HasShadow)
+            if (text.StyleFlags & (int)TextStyleFlags::Shadow)
             {
                 auto shadowColor = SHADOW_COLOR;
                 shadowColor.A()  = text.Col.A();

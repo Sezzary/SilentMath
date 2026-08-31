@@ -104,7 +104,7 @@ namespace Silent::Game
     {
         // @todo
         //Gfx_StringColorSet(StringColorId_White);
-        //Gfx_StringSetPosition(SCREEN_POSITION_X(25.0f), SCREEN_POSITION_Y(79.5f));
+        //Gfx_StringPositionSet(SCREEN_WIDTH / 4, 190);
         //Gfx_StringDraw("LEVEL_________", 20);
         //Gfx_StringDrawInt(1, g_GameWork.config.brightness);
     }

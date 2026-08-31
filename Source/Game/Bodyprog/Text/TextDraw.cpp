@@ -5,11 +5,11 @@
 #include "Game/Bodyprog/Bodyprog.h"
 
 #include "Application.h"
-#include "Game/Bodyprog/Events/MapMsg.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Common/Enums.h"
 #include "Renderer/Common/Resources/Scene/Text2d.h"
 #include "Renderer/Common/Utils.h"
+#include "Utils/Font.h"
 #include "Utils/Utils.h"
 
 using namespace Silent::Renderer;
@@ -17,13 +17,14 @@ using namespace Silent::Utils;
 
 namespace Silent::Game
 {
-    /** @brief Converts a floating-point X screen position in percent to a fixed-point X screen coodinate. */
-    #define SCREEN_POSITION_X(percent) \
-        (s32)((int)RETRO_SCREEN_SPACE_RES.x * ((percent) / 100.0f))
+    /** @brief Message line position types for `MAP_MSG_CODE_LINE_POSITION` arguments. */
+    enum class MsgLinePositionType
+    {
+        Subtitle    = 0,
+        Information = 4,
 
-    /** @brief Converts a floating-point Y screen position in percent to a fixed-point Y screen coodinate. */
-    #define SCREEN_POSITION_Y(percent) \
-        (s32)((int)RETRO_SCREEN_SPACE_RES.y * ((percent) / 100.0f))
+        Count
+    };
 
     constexpr auto STRING_COLORS = std::array<Color, StringColorId_Count>
     {
@@ -38,28 +39,30 @@ namespace Silent::Game
         Color::From8Bit(4,   4,   4)
     };
 
-    static auto g_StringColorId = StringColorId_White;
-
-    /** Text index 2D layer.
-     * If modifying `Gfx_StringSetPosition`, when setting it to
-     * a value lower than 6, text will not be affected by the fade effect.
-     */
-    static s32 g_Strings2dLayerIdx = 6;
-
     Vector2i g_StringPosition;
-    int      g_StringPositionX1;
-    s32      g_PositionIdx;
-    s32      g_MapMsg_Widths[12];
-    s32      g_MapMsg_WidthIdx;
+    u8       g_MapMsg_AudioLoadBlock;
 
-    static std::vector<MsgNode> ParseMsg(const std::string& mapMsg)
+    static auto g_StringColorId  = StringColorId_White;
+    
+    ParsedMsg GetParsedMsg(const std::string& msg, const std::string& fontName, float lineHeight)
     {
-        auto nodes  = std::vector<MsgNode>{};
+        auto& fonts = g_App.GetFonts();
+
+        // Get font.
+        auto* font = fonts.GetFont(fontName);
+        if (font == nullptr)
+        {
+            Debug::Log(Fmt("Attempted to parse tagged message with invalid font `{}`.", fontName),
+                       Debug::LogLevel::Error);
+            return {};
+        }
+
         auto buffer = std::string();
         bool inCmd  = false;
 
         // Parse message into nodes.
-        for (char c : mapMsg)
+        auto nodes = std::vector<MsgNode>{};
+        for (char c : msg)
         {
             // Start collecting command.
             if (c == '{' && !inCmd)
@@ -96,57 +99,72 @@ namespace Silent::Game
             }
         }
 
-        return nodes;
-    }
-
-    void Gfx_StringSetPosition(int posX, int posY)
-    {
-        constexpr int OFFSET_X = SCREEN_POSITION_X(2.0f);//SCREEN_POSITION_X(50.0f);
-        constexpr int OFFSET_Y = -(SCREEN_POSITION_Y(9.0f)) + 3;
-
-        if (posX != NO_VALUE)
+        // Compute line widths.
+        auto lineWidths = std::vector<float>{};
+        for (const auto& node : nodes)
         {
-            g_StringPosition.x = posX;// - OFFSET_X;
-            //g_StringPositionX1 = (s16)(posX - OFFSET_X);
+            // Ignore non-text node.
+            if (node.Type != NodeType::Text)
+            {
+                continue;
+            }
+
+            // Collect line width.
+            auto shape = font->GetShapedText(node.Value);
+            lineWidths.push_back(shape.Width);
         }
 
-        if (posY != NO_VALUE)
+        return ParsedMsg
         {
-            g_StringPosition.y = posY;// - OFFSET_Y;
-        }
-
-        g_Strings2dLayerIdx = 6;
+            .FontName   = fontName,
+            .Nodes      = std::move(nodes),
+            .LineWidths = std::move(lineWidths),
+            .LineHeight = lineHeight
+        };
     }
 
-    void Gfx_Strings2dLayerIdxSet(s32 idx) // 0x8004A8C0
+    void DrawString(const std::string& str, const std::string& fontName, const Vector2& pos, float scale,
+                    const Color& color, int styleFlags, AlignMode alignMode)
     {
-        g_Strings2dLayerIdx = idx;
+        constexpr int DEPTH = 6;
+
+        const auto& options  = g_App.GetOptions();
+        auto&       renderer = g_App.GetRenderer();
+
+        // Submit text.
+        //auto pos  = GetGridAlignedScreenPercent(ConvertRetroScreenPixelsToPercent(g_StringPosition), (int)RETRO_SCREEN_SPACE_RES.y);
+        auto text = Text2d::CreateText2d(str, fontName,
+                                         pos, 0.0f, scale, 1.0f,
+                                         color, styleFlags,
+                                         DEPTH, alignMode);
+        renderer.SubmitText2d(text);
     }
 
-    void Gfx_StringsReset2dLayerIdx() // 0x8004A8CC
+    e_MsgReturnCode DrawParsedMsg(const ParsedMsg& msg, const Vector2& pos, float scale,
+                                  int styleFlags, int displayLength)
     {
-        g_Strings2dLayerIdx = 6;
-    }
+        constexpr int TAB_SIZE = (40.0f / RETRO_SCREEN_SPACE_RES.x) * SCREEN_SPACE_RES.x;
 
-    void Gfx_StringColorSet(e_StringColorId colorId)
-    {
-        g_StringColorId = colorId;
-    }
-
-    void DrawMsg(const std::string& msg, const Vector2& pos, int glyphCount)
-    {
         struct State
         {
-            Vector2i        Offset     = Vector2i::Zero;
+            Vector2         Position   = Vector2::Zero;
+            Vector2         Offset     = Vector2::Zero;
+            float           LineHeight = 0.0f;
             e_StringColorId ColorId    = StringColorId_White;
-            int             StyleFlags = (int)TextStyleFlags::Gradient;
+            int             StyleFlags = (int)TextStyleFlags::None;
             AlignMode       AlignMd    = AlignMode::BottomLeft;
         };
 
-        auto state = State{};
+        auto state = State
+        {
+            .Position   = pos,
+            .LineHeight = msg.LineHeight,
+            .StyleFlags = styleFlags
+        };
+        auto returnCode = MsgReturnCode_None;
 
-        auto nodes = ParseMsg(msg);
-        for (const auto& node : nodes)
+        // Run through message nodes.
+        for (const auto& node : msg.Nodes)
         {
             // Skip invalid node.
             if (node.Value.empty())
@@ -154,26 +172,28 @@ namespace Silent::Game
                 continue;
             }
 
+            // Draw text.
             if (node.Type == NodeType::Text)
             {
                 // Draw text string.
-                int   drawnGlyphCount = GetCodePoints(node.Value).size();
-                auto  str             = node.Value.substr(0, std::min(drawnGlyphCount, glyphCount - 1));
-                float width           = Gfx_StringDraw(str, 400,
-                                                       state.StyleFlags & (int)TextStyleFlags::HalfHeight,
-                                                       state.AlignMd); // @todo Integrate width.
+                int  glyphCount = GetCodePoints(node.Value).size();
+                auto str        = node.Value.substr(0, std::min(glyphCount, displayLength - 1));
+                DrawString(str, msg.FontName, state.Position, scale,
+                           STRING_COLORS[state.ColorId], state.StyleFlags,
+                           state.AlignMd);
 
                 // Stop drawing if length exceeded.
-                glyphCount -= drawnGlyphCount;
-                if (glyphCount <= 0)
+                displayLength -= glyphCount;
+                if (displayLength <= 0)
                 {
-                    return;
+                    return MsgReturnCode_None;
                 }
             }
+            // Handle command.
             else if (node.Type == NodeType::Command)
             {
                 char code = node.Value[0];
-                int  arg  = node.Value[1];
+                int  arg  = node.Value[1]; // @note Note valid for `MAP_MSG_CODE_JUMP`.
 
                 switch (code)
                 {
@@ -184,295 +204,30 @@ namespace Silent::Game
                     }
                     case MAP_MSG_CODE_END:
                     {
-                        // @todo
+                        returnCode = MsgReturnCode_End;
                         break;
                     }
                     case MAP_MSG_CODE_HALF_HEIGHT:
                     {
                         state.StyleFlags &= (int)TextStyleFlags::HalfHeight;
+                        state.LineHeight /= 2;
                         break;
                     }
                     case MAP_MSG_CODE_JUMP:
                     {
-                        // @todo What do these values mean?
+                        // @todo What do these values mean? This was only set when computing line widths in legacy code.
                         if (arg == 2)
                         {
                             g_MapMsg_AudioLoadBlock = 3;
                         }
-                        break;
-                    }
-                    case MAP_MSG_CODE_LINE_POSITION:
-                    {
-                        // @todo
-                        break;
-                    }
-                    case MAP_MSG_CODE_ALIGN_CENTER:
-                    {
-                        state.AlignMd = AlignMode::BottomLeft;
-                        break;
-                    }
-                    case MAP_MSG_CODE_NEWLINE:
-                    {
-                        state.Offset.y += (state.StyleFlags &= (int)TextStyleFlags::HalfHeight) ? 16 : 8;
-                        break;
-                    }
-                    case MAP_MSG_CODE_SELECT:
-                    {
-                        // @todo Returns `arg` as the result.
-                        break;
-                    }
-                    case MAP_MSG_CODE_TAB:
-                    {
-                        state.Offset.x += 120;
-                        break;
-                    }
-                    case MAP_MSG_CODE_PAGE:
-                    {
-                        // @todo Dynamic pages.
-                        break;
-                    }
-                    case MAP_MSG_CODE_ALIGN_RIGHT:
-                    {
-                        state.AlignMd = AlignMode::BottomRight;
-                        break;
-                    }
-                }
-            }
-        }
-    }
 
-    float Gfx_StringDraw(const std::string& str, int strLength, bool isHalfHeight, AlignMode alignMode)
-    {
-        constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
-
-        const auto& options  = g_App.GetOptions();
-        auto&       renderer = g_App.GetRenderer();
-
-        // Submit text.
-        auto fontName   = (options->TextQuality == TextQualityType::Retro) ? "RetroSerif" : "ModernSerif";
-        auto pos        = GetGridAlignedScreenPercent(ConvertRetroScreenPixelsToPercent(g_StringPosition), (int)RETRO_SCREEN_SPACE_RES.y);
-        int  styleFlags = (int)TextStyleFlags::Gradient | (isHalfHeight ? (int)TextStyleFlags::HalfHeight :
-                                                                          (int)TextStyleFlags::None);
-        auto text       = Text2d::CreateText2d(str, fontName,
-                                               pos, 0.0f, SCALE, 1.0f,
-                                               STRING_COLORS[g_StringColorId], styleFlags, true,
-                                               6, alignMode);
-        renderer.SubmitText2d(text);
-
-        auto  fontScaleFactor  = SCREEN_SPACE_RES / (float)text.Font->GetPointSize();
-        float heightScale      = (text.StyleFlags & (int)TextStyleFlags::HalfHeight) ? 0.5f : 1.0f;
-        auto  textScale        = Vector2(1.0f, heightScale) * text.Scale;
-        auto  textSize         = (Vector2(text.Shape.Width, (float)text.Font->GetPointSize()) * fontScaleFactor) * textScale;
-        auto  aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
-
-        // @todo Need to return width in retro resolution space (320x240).
-        //float fontScaleFactor = SCREEN_SPACE_RES.x / (float)text.Font->GetPointSize();
-        //auto  textWidth       = (text.Shape.Width * fontScaleFactor) * text.Scale;
-        return textSize.x;// * aspectCorrection.x;
-    }
-
-    s32 Gfx_MapMsg_WidthsCompute(s32 mapMsgIdx) // 0x8004ACF4
-    {
-        s32 i;
-        s32 j;
-        s32 charCode;
-        u8  msgCode;
-        s32 msgArg;
-        u8* mapMsg;
-
-        g_MapMsg_WidthIdx  = 1;
-        g_MapMsg_AudioLoadBlock = 0;
-
-        // @todo Needs rewrite.
-
-        /*for (i = (FONT_12X16_LINE_COUNT_MAX - 1); i >= 0; i--)
-        {
-            g_MapMsg_Widths[i] = 0;
-        }
-
-        mapMsg = g_MapOverlayHdr.mapMessages[mapMsgIdx];
-
-        for (j = 0; j < FONT_12X16_LINE_COUNT_MAX; )
-        {
-            charCode = *mapMsg;
-
-            switch (charCode)
-            {
-                case '\t':
-                case '\n':
-                case ' ':
-                    mapMsg++;
-                    break;
-
-                case '_':
-                    ++mapMsg;
-                    g_MapMsg_Widths[g_MapMsg_WidthIdx - 1] += FONT_12X16_SPACE_SIZE;
-                    break;
-
-                case MAP_MSG_CODE_MARKER:
-                    msgCode = *++mapMsg;
-                    msgArg  = *++mapMsg - '0';
-
-                    switch (msgCode)
-                    {
-                        case MAP_MSG_CODE_COLOR:
-                        case MAP_MSG_CODE_SELECT:
-                        case MAP_MSG_CODE_TAB:
-                            break;
-
-                        case MAP_MSG_CODE_NEWLINE:
-                            j++;
-                            g_MapMsg_WidthIdx++;
-                            break;
-
-                        case MAP_MSG_CODE_END:
-                            j = FONT_12X16_LINE_COUNT_MAX;
-                            break;
-
-                        case MAP_MSG_CODE_LINE_POSITION:
-                            g_PositionIdx = msgArg;
-                            break;
-
-                        case MAP_MSG_CODE_JUMP:
-                            if (msgArg == 2)
-                            {
-                                g_MapMsg_AudioLoadBlock = 3;
-                            }
-
-                            while (msgArg != ' ' && msgArg != '\t')
-                            {
-                                msgArg = *++mapMsg;
-                            }
-
-                            break;
-
-                        case MAP_MSG_CODE_HIGH_RES:
-                            //g_SysWork.enableHighResGlyphs = true;
-                            break;
-                    }
-
-                    mapMsg++;
-                    break;
-
-                case 0:
-                    j = FONT_12X16_LINE_COUNT_MAX;
-                    break;
-
-                default:
-                    // Convert literal `!` and `&` into `char`s mappable to representative atlas glyphs.
-                    if (charCode == '!')
-                    {
-                        charCode = '\\';
-                    }
-                    else if (charCode == '&')
-                    {
-                        charCode = '^';
-                    }
-
-                    g_MapMsg_Widths[g_MapMsg_WidthIdx - 1] += FONT_12X16_GLYPH_WIDTHS[charCode - GLYPH_TABLE_ASCII_OFFSET];
-                    mapMsg++;
-                    break;
-            }
-        }*/
-    }
-
-    s32 Gfx_MapMsg_StringDraw(const std::string& mapMsg, s32 strLength, bool isHalfHeight) // 0x8004AF18
-    {
-        s32 glyphPosX;
-        s32 glyphPosY;
-        u32 temp_a0;
-        s32 temp_a0_2;
-        s32 i;
-        s32 longestLineWidth;
-        s32 lineIdx;
-        s32 idx;
-        s32 charWidth;
-
-        int returnCode = MapMsgReturnCode_None;
-
-        g_StringPosition.x = -(g_MapMsg_Widths[0] / 2);
-
-        switch (g_PositionIdx)
-        {
-            case 0: // @unused
-                g_StringPosition.y = -92;
-                break;
-
-            case 1: // @unused
-                g_StringPosition.y = 76 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
-                break;
-
-            case 2: // @unused
-                g_StringPosition.y = -60;
-                break;
-
-            case 3: // @unused
-                g_StringPosition.y = 44 - ((g_MapMsg_WidthIdx - 1) * FONT_12X16_GLYPH_SIZE_Y);
-                break;
-
-            case 4:
-                g_StringPosition.y = ((FONT_12X16_LINE_COUNT_MAX - g_MapMsg_WidthIdx) * 8) - 76;
-                break;
-        }
-
-        longestLineWidth = g_MapMsg_Widths[0];
-        for (i = 0; i < g_MapMsg_WidthIdx; i++)
-        {
-            if (longestLineWidth < g_MapMsg_Widths[i])
-            {
-                longestLineWidth = g_MapMsg_Widths[i];
-            }
-        }
-
-        g_StringPosition.x = -(longestLineWidth / 2);
-        g_StringPositionX1 = g_StringPosition.x;
-        glyphPosX          = g_StringPositionX1;
-        glyphPosY          = g_StringPosition.y;
-
-        auto alignMode = AlignMode::BottomLeft;
-
-        // Process message nodes.
-        auto nodes = ParseMsg(mapMsg);
-        for (const auto& node : nodes)
-        {
-            // Skip invalid node.
-            if (node.Value.empty())
-            {
-                continue;
-            }
-
-            if (node.Type == NodeType::Command)
-            {
-                char code    = node.Value[0];
-                int  codeArg = code - '0';
-
-                switch (code)
-                {
-                    case MAP_MSG_CODE_COLOR:
-                    {
-                        g_StringColorId = (e_StringColorId)codeArg;
-                        break;
-                    }
-                    case MAP_MSG_CODE_DISPLAY_ALL:
-                    {
-                        strLength = MAP_MESSAGE_DISPLAY_ALL_LENGTH;
-                        break;
-                    }
-                    case MAP_MSG_CODE_END:
-                    {
-                        returnCode  = NO_VALUE;
-                        lineIdx = FONT_12X16_LINE_COUNT_MAX;
-                        break;
-                    }
-                    case MAP_MSG_CODE_JUMP:
-                    {
-                        // Skip if another message already in progress.
+                        // Skip if another message is already in progress.
                         if (g_SysWork.mapMsgTimer != NO_VALUE)
                         {
                             break;
                         }
 
-                        // Parse time value.
+                        // Parse time value, e.g. `(1.5)`.
                         auto timeStr = std::string();
                         for (char c : node.Value.substr(2, node.Value.size() - 1))
                         {
@@ -492,97 +247,111 @@ namespace Silent::Game
                     }
                     case MAP_MSG_CODE_LINE_POSITION:
                     {
+                        switch ((MsgLinePositionType)arg)
+                        {
+                            case MsgLinePositionType::Subtitle:
+                            {
+                                // Compute widest line width.
+                                int widestLineWidth = 0;
+                                for (int lineWidth : msg.LineWidths)
+                                {
+                                    if (lineWidth > widestLineWidth)
+                                    {
+                                        widestLineWidth = lineWidth;
+                                    }
+                                }
+
+                                // Set start line position. @todo To percent.
+                                state.Position = Vector2((int)round((120 - (widestLineWidth / 2)) * GetScreenAspectCorrection(GLYPH_SCALE_MODE).x),
+                                                          (320 - (((msg.LineWidths.size() - 1) * state.LineHeight))) - 8);
+                                break;
+                            }
+                            case MsgLinePositionType::Information:
+                            {
+                                state.Position = ConvertRetroScreenPixelsToPercent(Vector2i(160, 76));
+                                break;
+                            }
+                        }
                         break;
                     }
                     case MAP_MSG_CODE_ALIGN_CENTER:
                     {
-                        returnCode = MapMsgReturnCode_AlignCenter;
-                        glyphPosX  = -(g_MapMsg_Widths[lineIdx] / 2);
-                        alignMode  = AlignMode::CenterBottom;
+                        state.AlignMd = AlignMode::BottomLeft;
                         break;
                     }
                     case MAP_MSG_CODE_NEWLINE:
                     {
-                        lineIdx++;
-
-                        switch (returnCode)
-                        {
-                            case MapMsgReturnCode_AlignCenter:
-                                glyphPosX = -(g_MapMsg_Widths[lineIdx] / 2);
-                                break;
-
-                            case MapMsgReturnCode_SetByT:
-                                glyphPosX = g_StringPositionX1;
-                                break;
-
-                            default:
-                                glyphPosX = -(longestLineWidth / 2);
-                                break;
-                        }
-
-                        glyphPosY += FONT_12X16_GLYPH_SIZE_Y;
+                        state.Offset.y += state.LineHeight;
                         break;
                     }
                     case MAP_MSG_CODE_SELECT:
                     {
-                        returnCode = codeArg;
-                        lineIdx    = FONT_12X16_LINE_COUNT_MAX;
+                        returnCode = (e_MsgReturnCode)arg;
                         break;
                     }
                     case MAP_MSG_CODE_TAB:
                     {
-                        returnCode         = MapMsgReturnCode_SetByT;
-                        g_StringPositionX1 = -120;
-                        glyphPosX          = -120;
+                        state.Offset.x += TAB_SIZE;
+                        break;
+                    }
+                    case MAP_MSG_CODE_END_PAGE:
+                    {
+                        returnCode = MsgReturnCode_EndPage;
                         break;
                     }
                     case MAP_MSG_CODE_ALIGN_RIGHT:
                     {
-                        // @todo
+                        state.AlignMd = AlignMode::BottomRight;
                         break;
                     }
-                    case MAP_MSG_CODE_PAGE:
-                    {
-                        // @todo
-                        break;
-                    }
-                    default:
-                    {
-                        continue;
-                    }
-                }
-            }
-            else if (node.Type == NodeType::Text)
-            {
-                // Draw text string.
-                int   charCount = GetCodePoints(node.Value).size();
-                auto  text      = node.Value.substr(0, std::min(charCount, strLength - 1));
-                float width     = Gfx_StringDraw(text, 400, isHalfHeight, alignMode); // @todo Integrate width.
-
-                // Stop drawing if length exceeded.
-                strLength -= charCount;
-                if (strLength <= 0)
-                {
-                    return returnCode;
                 }
             }
         }
 
-        // @todo Apply offset.
-        g_StringPosition = Vector2i(glyphPosX, glyphPosY);
         return returnCode;
     }
 
-    void Gfx_MapMsg_DefaultStringInfoSet() // 0x8004B684
+    void Gfx_StringPositionSet(int posX, int posY)
     {
-        g_MapMsg_WidthIdx             = 1;
-        g_PositionIdx                 = 1;
-        g_StringPositionX1            = SCREEN_POSITION_X(-37.5f);
-        g_StringColorId               = StringColorId_White;
+        if (posX != NO_VALUE)
+        {
+            g_StringPosition.x = posX;
+        }
+
+        if (posY != NO_VALUE)
+        {
+            g_StringPosition.y = posY;
+        }
     }
 
-    void Gfx_StringDrawInt(s32 widthMin, s32 val) // 0x8004B9F8
+    void Gfx_StringColorSet(e_StringColorId colorId)
     {
-        Gfx_StringDraw(std::to_string(val), 5);
+        g_StringColorId = colorId;
+    }
+
+    void Gfx_MapMsg_Reset()
+    {
+        g_StringColorId = StringColorId_White;
+    }
+
+    void Gfx_StringDraw(const std::string& str, int displayLength, bool isHalfHeight, AlignMode alignMode)
+    {
+        constexpr float SCALE = RETRO_PIXEL_SCALE.y * 16.0f;
+
+        const auto& options  = g_App.GetOptions();
+        auto&       renderer = g_App.GetRenderer();
+
+        // Draw string.
+        auto fontName   = (options->TextQuality == TextQualityType::Retro) ? "RetroSerif" : "ModernSerif";
+        auto pos        = ConvertRetroScreenPixelsToPercent(g_StringPosition);//GetGridAlignedScreenPercent(ConvertRetroScreenPixelsToPercent(g_StringPosition), (int)RETRO_SCREEN_SPACE_RES.y);
+        int  styleFlags = (int)TextStyleFlags::Gradient |
+                          (int)TextStyleFlags::Shadow   |
+                          (isHalfHeight ? (int)TextStyleFlags::HalfHeight : (int)TextStyleFlags::None);
+        DrawString(str, fontName, pos, SCALE, STRING_COLORS[g_StringColorId], styleFlags, alignMode);
+    }
+
+    void Gfx_StringDrawInt(s32 widthMin, s32 displayLength)
+    {
+        Gfx_StringDraw(std::to_string(displayLength), 5);
     }
 }

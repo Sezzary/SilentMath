@@ -13,6 +13,11 @@ using namespace Silent::Assets;
 
 namespace Silent::Renderer
 {
+    /** @brief Gets the aspect ratio of a TIM or PNG asset.
+     *
+     * @param texName Texture asset name.
+     * @return Aspect ratio.
+     */
     static float GetSpriteAspectRatio(const std::string& texName)
     {
         auto& assets = g_App.GetAssets();
@@ -32,13 +37,13 @@ namespace Silent::Renderer
             }
             default:
             {
-                Debug::Log(Fmt("Attempted to get sprite aspect ratio from non-image asset `{}`.", texName),
+                Debug::Log(Fmt("Attempted to get sprite aspect ratio for non-image asset `{}`.", texName),
                            Debug::LogLevel::Error);
                 break;
             }
         }
 
-        return 0.0f;
+        return 1.0f;
     }
 
     Sprite2d Sprite2d::CreateSprite2d(const std::string& texName, const Vector2& uvMin, const Vector2& uvMax,

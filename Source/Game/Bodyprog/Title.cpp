@@ -440,7 +440,7 @@ namespace Silent::Game
                 continue;
             }
 
-            Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
+            Gfx_StringPositionSet(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
             Gfx_StringColorSet(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
@@ -450,7 +450,7 @@ namespace Silent::Game
                                         translator(MAIN_MENU_ENTRY_STRING_KEYS[i]) +
                                         translator(KEY_MAIN_MENU_CLOSING_QUOTE)
                                         ;
-                float width = Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterBottom);
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterBottom);
 
                 //g_StringPosition.x -= ConvertScreenPercentToRetroPixels(Vector2(width * 0.5f, 0.0f)).x;
                 //Gfx_StringDraw(translator(KEY_MAIN_MENU_OPENING_QUOTE), DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterRight);
@@ -484,7 +484,7 @@ namespace Silent::Game
         // Draw selection strings.
         for (int i = 0; i < DIFFICULTY_MENU_SELECTION_COUNT; i++)
         {
-            Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
+            Gfx_StringPositionSet(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
             Gfx_StringColorSet(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
