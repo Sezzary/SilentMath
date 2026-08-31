@@ -22,22 +22,22 @@ namespace Silent::Game
         auto& renderer = g_App.GetRenderer();
 
         // Define scale mode.
-        auto scaleMode = fit ? ScaleMode::ShortEdge : ScaleMode::VerticalEdge;
+        auto scaleMode = fit ? ScaleMode::Fit : ScaleMode::Fill;
 
         // Submit fullscreen background sprite.
         auto sprite = Sprite2d::CreateSprite2d(assetName, Vector2::Zero, Vector2::One,
                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
-                                               DEPTH_MAX, AlignMode::Center, scaleMode, BlendMode::Opaque);
+                                               DEPTH_2D_MAX, AlignMode::Center, scaleMode, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
 
         // Submit gamma overlay sprite.
         auto gammaColor  = Color(1.0f, 1.0f, 1.0f, Q8_TO_FLT(g_Screen_BackgroundImgGamma));
         auto gammaSprite = Sprite2d::CreateSprite2d(assetName, Vector2::Zero, Vector2::One,
                                                     SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
-                                                    DEPTH_MAX - 1, AlignMode::Center, scaleMode, BlendMode::Add);
+                                                    DEPTH_2D_MAX - 1, AlignMode::Center, scaleMode, BlendMode::Add);
         renderer.SubmitSprite2d(gammaSprite);
 
-        g_SysWork.bgmStatusFlags    |= BgmStatusFlag_Pause;
+        g_SysWork.bgmStatusFlags   |= BgmStatusFlag_Pause;
         g_Screen_BackgroundImgGamma = Q8(0.5f);
     }
 
@@ -45,7 +45,7 @@ namespace Silent::Game
     {
         // @stub Use overload above.
 
-        g_SysWork.bgmStatusFlags    |= BgmStatusFlag_Pause;
+        g_SysWork.bgmStatusFlags   |= BgmStatusFlag_Pause;
         g_Screen_BackgroundImgGamma = Q8(0.5f);
     }
 
@@ -81,7 +81,7 @@ namespace Silent::Game
         *((u16*)&poly->r0) = g_Screen_BackgroundImgGamma + (g_Screen_BackgroundImgGamma << 8);
         poly->b0           = g_Screen_BackgroundImgGamma;*/
 
-        g_SysWork.bgmStatusFlags    |= BgmStatusFlag_Pause;
+        g_SysWork.bgmStatusFlags   |= BgmStatusFlag_Pause;
         g_Screen_BackgroundImgGamma = Q8(0.5f);
     }
 

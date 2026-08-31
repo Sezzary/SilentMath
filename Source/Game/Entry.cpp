@@ -17,7 +17,7 @@ namespace Silent::Game
 {
     static void MainLoop()
     {
-        constexpr q19_12 DELTA_TIME_30_FPS     = Q12(1.0f / (float)(TICKS_PER_SECOND));
+        constexpr q19_12 DELTA_TIME_30_FPS     = Q12(1.0f / (float)(Services::TICKS_PER_SECOND));
         constexpr q19_12 GRAVITY_SPEED_PER_SEC = Q12(9.8f);
 
         s32 vBlanks;
@@ -169,15 +169,14 @@ namespace Silent::Game
         // Initialize engine.
         else
         {
-            /*func_8004BB10(); // Initializes something for graphics.
-            func_800890B8();
+            /*func_800890B8();
             sd_init();*/
 
             isInitComplete = true;
         }
     }
 
-    void Entry()
+    void UpdateGame()
     {
         constexpr q23_8 FADE_STEP = Q8(1 / 32.0f);
 
@@ -211,10 +210,11 @@ namespace Silent::Game
                 // Submit fullscreen sprite `1ST/2ZANKO_E.TIM.
                 auto sprite = Sprite2d::CreateSprite2d("1ST/2ZANKO_E.TIM", Vector2::Zero, Vector2::One,
                                                        SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
-                                                       100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                                       100, AlignMode::Center, ScaleMode::Fit, BlendMode::Opaque);
                 renderer.SubmitSprite2d(sprite);
 
-                Debug::g_Work.BlendAlpha = std::clamp<float>(1.0f - Q8_TO_FLT(fade), 0, 1);
+                // Update luma fade.
+                renderer.SetLumaFade(Q8_TO_FLT(fade), false);
                 fade = std::clamp(fade + FADE_STEP, Q8(0.0f), Q8(1.0f));
             }
         }

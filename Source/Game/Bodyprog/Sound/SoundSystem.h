@@ -315,7 +315,7 @@ namespace Silent::Game
     /** @unused Stop main audio system. */
     void Sd_AudioStop(void);
 
-    u8 Sd_PlaySfx(u16 sfxId, q0_7 balance, u8 vol);
+    u8 Sd_SfxPlay(u16 sfxId, q0_7 balance, u8 vol);
 
     /** Updates attributes from currently playing specified audio. */
     void Sd_SfxAttributesUpdate(u16 sfxId, q0_7 balance, u8 vol, s8 pitch);

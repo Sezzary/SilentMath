@@ -27,13 +27,15 @@ namespace Silent::Services
     constexpr char KEY_ENABLE_MAXIMIZED[]                         = "EnableMaximized";
     constexpr char KEY_BRIGHTNESS_LEVEL[]                         = "BrightnessLevel";
     constexpr char KEY_FRAME_RATE[]                               = "FrameRate";
-    constexpr char KEY_RENDER_SCALE[]                             = "RenderScale";
     constexpr char KEY_ASPECT_RATIO[]                             = "AspectRatio";
+    constexpr char KEY_RENDER_SCALE[]                             = "RenderScale";
     constexpr char KEY_TEXTURE_FILTER[]                           = "TextureFilter";
     constexpr char KEY_TEXT_QUALITY[]                             = "TextQuality";
     constexpr char KEY_LIGHTING[]                                 = "Lighting";
+    constexpr char KEY_ANTIALIASING[]                             = "Antialiasing";
+    constexpr char KEY_DITHERING_SCALE[]                          = "DitheringScale";
+    constexpr char KEY_ENABLE_AMBIENT_OCCLUSION[]                 = "EnableAmbientOcclusion";
     constexpr char KEY_ENABLE_VERTEX_JITTER[]                     = "EnableVertexJitter";
-    constexpr char KEY_ENABLE_DITHERING[]                         = "EnableDithering";
     constexpr char KEY_ENABLE_FILM_GRAIN[]                        = "EnableFilmGrain";
     constexpr char KEY_ENABLE_VIGNETTE[]                          = "EnableVignette";
     constexpr char KEY_ENABLE_CRT_FILTER[]                        = "EnableCrtFilter";
@@ -57,7 +59,7 @@ namespace Silent::Services
     constexpr char KEY_WALK_RUN_CONTROL[]                         = "WalkRunControl";
     constexpr char KEY_DISABLE_AUTO_AIMING[]                      = "DisableAutoAiming";
     constexpr char KEY_VIEW_MODE[]                                = "ViewMode";
-    constexpr char KEY_PAPER_MAP[]                                = "PaperMap";
+    constexpr char KEY_PAPER_MAP_QUALITY[]                        = "PaperMapQuality";
     constexpr char KEY_DIALOG_PAUSE[]                             = "DialogPause";
     constexpr char KEY_ENABLE_LOGOS[]                             = "EnableLogos";
     constexpr char KEY_ENABLE_TOASTS[]                            = "EnableToasts";
@@ -69,16 +71,18 @@ namespace Silent::Services
     constexpr bool DEFAULT_ENABLE_FULLSCREEN                        = false;
     constexpr int  DEFAULT_BRIGHTNESS_LEVEL                         = BRIGHTNESS_LEVEL_MAX / 2;
     constexpr auto DEFAULT_FRAME_RATE                               = FrameRateType::Fps60;
-    constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_ASPECT_RATIO                             = AspectRatioType::Native;
+    constexpr auto DEFAULT_RENDER_SCALE                             = RenderScaleType::Native;
     constexpr auto DEFAULT_TEXTURE_FILTER                           = TextureFilterType::Nearest;
-    constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Original;
-    constexpr auto DEFAULT_LIGHTING                                 = LightingType::PerVertex;
-    constexpr bool DEFAULT_ENABLE_DITHERING                         = true;
-    constexpr bool DEFAULT_ENABLE_FILM_GRAIN                        = false;
-    constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
-    constexpr bool DEFAULT_ENABLE_VIGNETTE                          = false;
+    constexpr auto DEFAULT_TEXT_QUALITY                             = TextQualityType::Retro;
+    constexpr auto DEFAULT_LIGHTING                                 = LightingType::Retro;
+    constexpr auto DEFAULT_ANTIALIASING                             = AntialiasingType::None;
+    constexpr auto DEFAULT_DITHERING_SCALE                          = DitheringScaleType::Retro;
+    constexpr bool DEFAULT_ENABLE_AMBIENT_OCCLUSION                 = false;
     constexpr bool DEFAULT_ENABLE_VERTEX_JITTER                     = false;
+    constexpr bool DEFAULT_ENABLE_FILM_GRAIN                        = false;
+    constexpr bool DEFAULT_ENABLE_VIGNETTE                          = false;
+    constexpr bool DEFAULT_ENABLE_CRT_FILTER                        = false;
     constexpr bool DEFAULT_ENABLE_AUTO_LOAD                         = false;
     constexpr bool DEFAULT_ENABLE_SUBTITLES                         = true;
     constexpr auto DEFAULT_SOUND                                    = SoundType::Stereo;
@@ -95,36 +99,37 @@ namespace Silent::Services
     constexpr auto DEFAULT_RETREAT_TURN_CONTROL                     = ControlInversionType::Normal;
     constexpr auto DEFAULT_WALK_RUN_CONTROL                         = ControlInversionType::Normal;
     constexpr bool DEFAULT_DISABLE_AUTO_AIMING                      = false;
-    constexpr auto DEFAULT_PAPER_MAP                                = PaperMapQuality::Original;
-    constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Original;
+    constexpr auto DEFAULT_PAPER_MAP_QUALITY                        = PaperMapQualityType::Retro;
+    constexpr auto DEFAULT_DIALOG_PAUSE                             = DialogPauseType::Retro;
     constexpr auto DEFAULT_VIEW_MODE                                = ViewMode::Normal;
     constexpr bool DEFAULT_ENABLE_LOGOS                             = true;
     constexpr bool DEFAULT_ENABLE_TOASTS                            = true;
 
     void OptionsManager::SetDefaultGraphicsOptions()
     {
-        _options.WindowedSize       = DEFAULT_WINDOWED_SIZE;
-        _options.EnableMaximized    = DEFAULT_ENABLE_MAXIMIZED;
-        _options.EnableFullscreen   = DEFAULT_ENABLE_FULLSCREEN;
-        _options.BrightnessLevel    = DEFAULT_BRIGHTNESS_LEVEL;
-        _options.FrameRate          = DEFAULT_FRAME_RATE;
-        _options.RenderScale        = DEFAULT_RENDER_SCALE;
-        _options.AspectRatio        = DEFAULT_ASPECT_RATIO;
-        _options.TextureFilter      = DEFAULT_TEXTURE_FILTER;
-        _options.TextQuality        = DEFAULT_TEXT_QUALITY;
-        _options.Lighting           = DEFAULT_LIGHTING;
-        _options.EnableVertexJitter = DEFAULT_ENABLE_VERTEX_JITTER;
-        _options.EnableFilmGrain    = DEFAULT_ENABLE_FILM_GRAIN;
-        _options.EnableDithering    = DEFAULT_ENABLE_DITHERING;
-        _options.EnableVignette     = DEFAULT_ENABLE_VIGNETTE;
-        _options.EnableCrtFilter    = DEFAULT_ENABLE_CRT_FILTER;
+        _options.WindowedSize           = DEFAULT_WINDOWED_SIZE;
+        _options.EnableMaximized        = DEFAULT_ENABLE_MAXIMIZED;
+        _options.EnableFullscreen       = DEFAULT_ENABLE_FULLSCREEN;
+        _options.BrightnessLevel        = DEFAULT_BRIGHTNESS_LEVEL;
+        _options.FrameRate              = DEFAULT_FRAME_RATE;
+        _options.AspectRatio            = DEFAULT_ASPECT_RATIO;
+        _options.RenderScale            = DEFAULT_RENDER_SCALE;
+        _options.TextureFilter          = DEFAULT_TEXTURE_FILTER;
+        _options.TextQuality            = DEFAULT_TEXT_QUALITY;
+        _options.Lighting               = DEFAULT_LIGHTING;
+        _options.Antialiasing           = DEFAULT_ANTIALIASING;
+        _options.DitheringScale         = DEFAULT_DITHERING_SCALE;
+        _options.EnableAmbientOcclusion = DEFAULT_ENABLE_AMBIENT_OCCLUSION;
+        _options.EnableVertexJitter     = DEFAULT_ENABLE_VERTEX_JITTER;
+        _options.EnableFilmGrain        = DEFAULT_ENABLE_FILM_GRAIN;
+        _options.EnableVignette         = DEFAULT_ENABLE_VIGNETTE;
+        _options.EnableCrtFilter        = DEFAULT_ENABLE_CRT_FILTER;
     }
 
     void OptionsManager::SetDefaultGameplayOptions()
     {
         const auto& translator = g_App.GetTranslator();
-
-        const auto& locales = translator.GetLocales();
+        const auto& locales    = translator.GetLocales();
 
         _options.EnableAutoLoad  = DEFAULT_ENABLE_AUTO_LOAD;
         _options.EnableSubtitles = DEFAULT_ENABLE_SUBTITLES;
@@ -160,8 +165,8 @@ namespace Silent::Services
 
     void OptionsManager::SetDefaultEnhancementsOptions()
     {
-        _options.PaperMap    = DEFAULT_PAPER_MAP;
-        _options.DialogPause = DEFAULT_DIALOG_PAUSE;
+        _options.PaperMapQuality = DEFAULT_PAPER_MAP_QUALITY;
+        _options.DialogPause     = DEFAULT_DIALOG_PAUSE;
     }
 
     void OptionsManager::SetDefaultSystemOptions()
@@ -240,23 +245,25 @@ namespace Silent::Services
         auto options = Options{};
 
         // Load graphics options.
-        const auto& graphicsJson   = optionsJson[KEY_GRAPHICS];
-        options.WindowedSize.x     = graphicsJson.value(KEY_WINDOWED_SIZE_X,      DEFAULT_WINDOWED_SIZE.x);
-        options.WindowedSize.y     = graphicsJson.value(KEY_WINDOWED_SIZE_Y,      DEFAULT_WINDOWED_SIZE.y);
-        options.EnableMaximized    = graphicsJson.value(KEY_ENABLE_MAXIMIZED,     DEFAULT_ENABLE_MAXIMIZED);
-        options.EnableFullscreen   = graphicsJson.value(KEY_ENABLE_FULLSCREEN,    DEFAULT_ENABLE_FULLSCREEN);
-        options.BrightnessLevel    = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,     DEFAULT_BRIGHTNESS_LEVEL);
-        options.FrameRate          = graphicsJson.value(KEY_FRAME_RATE,           DEFAULT_FRAME_RATE);
-        options.RenderScale        = graphicsJson.value(KEY_RENDER_SCALE,         DEFAULT_RENDER_SCALE);
-        options.AspectRatio        = graphicsJson.value(KEY_ASPECT_RATIO,         DEFAULT_ASPECT_RATIO);
-        options.TextureFilter      = graphicsJson.value(KEY_TEXTURE_FILTER,       DEFAULT_TEXTURE_FILTER);
-        options.TextQuality        = graphicsJson.value(KEY_TEXT_QUALITY,         DEFAULT_TEXT_QUALITY);
-        options.Lighting           = graphicsJson.value(KEY_LIGHTING,             DEFAULT_LIGHTING);
-        options.EnableVertexJitter = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER, DEFAULT_ENABLE_VERTEX_JITTER);
-        options.EnableDithering    = graphicsJson.value(KEY_ENABLE_DITHERING,     DEFAULT_ENABLE_DITHERING);
-        options.EnableFilmGrain    = graphicsJson.value(KEY_ENABLE_FILM_GRAIN,    DEFAULT_ENABLE_FILM_GRAIN);
-        options.EnableVignette     = graphicsJson.value(KEY_ENABLE_VIGNETTE,      DEFAULT_ENABLE_VIGNETTE);
-        options.EnableCrtFilter    = graphicsJson.value(KEY_ENABLE_CRT_FILTER,    DEFAULT_ENABLE_CRT_FILTER);
+        const auto& graphicsJson       = optionsJson[KEY_GRAPHICS];
+        options.WindowedSize.x         = graphicsJson.value(KEY_WINDOWED_SIZE_X,          DEFAULT_WINDOWED_SIZE.x);
+        options.WindowedSize.y         = graphicsJson.value(KEY_WINDOWED_SIZE_Y,          DEFAULT_WINDOWED_SIZE.y);
+        options.EnableMaximized        = graphicsJson.value(KEY_ENABLE_MAXIMIZED,         DEFAULT_ENABLE_MAXIMIZED);
+        options.EnableFullscreen       = graphicsJson.value(KEY_ENABLE_FULLSCREEN,        DEFAULT_ENABLE_FULLSCREEN);
+        options.BrightnessLevel        = graphicsJson.value(KEY_BRIGHTNESS_LEVEL,         DEFAULT_BRIGHTNESS_LEVEL);
+        options.FrameRate              = graphicsJson.value(KEY_FRAME_RATE,               DEFAULT_FRAME_RATE);
+        options.AspectRatio            = graphicsJson.value(KEY_ASPECT_RATIO,             DEFAULT_ASPECT_RATIO);
+        options.RenderScale            = graphicsJson.value(KEY_RENDER_SCALE,             DEFAULT_RENDER_SCALE);
+        options.TextureFilter          = graphicsJson.value(KEY_TEXTURE_FILTER,           DEFAULT_TEXTURE_FILTER);
+        options.TextQuality            = graphicsJson.value(KEY_TEXT_QUALITY,             DEFAULT_TEXT_QUALITY);
+        options.Lighting               = graphicsJson.value(KEY_LIGHTING,                 DEFAULT_LIGHTING);
+        options.Antialiasing           = graphicsJson.value(KEY_ANTIALIASING,             DEFAULT_ANTIALIASING);
+        options.DitheringScale         = graphicsJson.value(KEY_DITHERING_SCALE,          DEFAULT_DITHERING_SCALE);
+        options.EnableAmbientOcclusion = graphicsJson.value(KEY_ENABLE_AMBIENT_OCCLUSION, DEFAULT_ENABLE_AMBIENT_OCCLUSION);
+        options.EnableVertexJitter     = graphicsJson.value(KEY_ENABLE_VERTEX_JITTER,     DEFAULT_ENABLE_VERTEX_JITTER);
+        options.EnableFilmGrain        = graphicsJson.value(KEY_ENABLE_FILM_GRAIN,        DEFAULT_ENABLE_FILM_GRAIN);
+        options.EnableVignette         = graphicsJson.value(KEY_ENABLE_VIGNETTE,          DEFAULT_ENABLE_VIGNETTE);
+        options.EnableCrtFilter        = graphicsJson.value(KEY_ENABLE_CRT_FILTER,        DEFAULT_ENABLE_CRT_FILTER);
 
         // Load gameplay options.
         const auto& gameplayJson = optionsJson[KEY_GAMEPLAY];
@@ -323,13 +330,13 @@ namespace Silent::Services
 
         // Load enhancements options.
         const auto& enhancementsJson = optionsJson[KEY_ENHANCEMENTS];
-        options.PaperMap             = enhancementsJson.value(KEY_PAPER_MAP,    DEFAULT_PAPER_MAP);
-        options.DialogPause          = enhancementsJson.value(KEY_DIALOG_PAUSE, DEFAULT_DIALOG_PAUSE);
+        options.PaperMapQuality      = enhancementsJson.value(KEY_PAPER_MAP_QUALITY, DEFAULT_PAPER_MAP_QUALITY);
+        options.DialogPause          = enhancementsJson.value(KEY_DIALOG_PAUSE,      DEFAULT_DIALOG_PAUSE);
 
         // Load system options.
         const auto& systemJson    = optionsJson[KEY_SYSTEM];
-        options.EnableLogos       = systemJson.value(KEY_ENABLE_LOGOS, DEFAULT_ENABLE_LOGOS);
-        options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS, DEFAULT_ENABLE_TOASTS);
+        options.EnableLogos       = systemJson.value(KEY_ENABLE_LOGOS,       DEFAULT_ENABLE_LOGOS);
+        options.EnableToasts      = systemJson.value(KEY_ENABLE_TOASTS,      DEFAULT_ENABLE_TOASTS);
         options.EnableParallelism = systemJson.value(KEY_ENABLE_PARALLELISM, GetCoreCount() > 1);
 
         return options;
@@ -367,22 +374,24 @@ namespace Silent::Services
             {
                 KEY_GRAPHICS,
                 {
-                    { KEY_WINDOWED_SIZE_X,      options.WindowedSize.x     },
-                    { KEY_WINDOWED_SIZE_Y,      options.WindowedSize.y     },
-                    { KEY_ENABLE_MAXIMIZED,     options.EnableMaximized    },
-                    { KEY_ENABLE_FULLSCREEN,    options.EnableFullscreen   },
-                    { KEY_BRIGHTNESS_LEVEL,     options.BrightnessLevel    },
-                    { KEY_FRAME_RATE,           options.FrameRate          },
-                    { KEY_RENDER_SCALE,         options.RenderScale        },
-                    { KEY_ASPECT_RATIO,         options.AspectRatio        },
-                    { KEY_TEXTURE_FILTER,       options.TextureFilter      },
-                    { KEY_TEXT_QUALITY,         options.Lighting           },
-                    { KEY_LIGHTING,             options.TextQuality        },
-                    { KEY_ENABLE_VERTEX_JITTER, options.EnableVertexJitter },
-                    { KEY_ENABLE_DITHERING,     options.EnableDithering    },
-                    { KEY_ENABLE_FILM_GRAIN,    options.EnableFilmGrain    },
-                    { KEY_ENABLE_VIGNETTE,      options.EnableVignette     },
-                    { KEY_ENABLE_CRT_FILTER,    options.EnableCrtFilter    }
+                    { KEY_WINDOWED_SIZE_X,          options.WindowedSize.x         },
+                    { KEY_WINDOWED_SIZE_Y,          options.WindowedSize.y         },
+                    { KEY_ENABLE_MAXIMIZED,         options.EnableMaximized        },
+                    { KEY_ENABLE_FULLSCREEN,        options.EnableFullscreen       },
+                    { KEY_BRIGHTNESS_LEVEL,         options.BrightnessLevel        },
+                    { KEY_FRAME_RATE,               options.FrameRate              },
+                    { KEY_ASPECT_RATIO,             options.AspectRatio            },
+                    { KEY_RENDER_SCALE,             options.RenderScale            },
+                    { KEY_TEXTURE_FILTER,           options.TextureFilter          },
+                    { KEY_TEXT_QUALITY,             options.TextQuality            },
+                    { KEY_LIGHTING,                 options.Lighting               },
+                    { KEY_ANTIALIASING,             options.Antialiasing           },
+                    { KEY_ENABLE_AMBIENT_OCCLUSION, options.EnableAmbientOcclusion },
+                    { KEY_ENABLE_VERTEX_JITTER,     options.EnableVertexJitter     },
+                    { KEY_DITHERING_SCALE,          options.DitheringScale         },
+                    { KEY_ENABLE_FILM_GRAIN,        options.EnableFilmGrain        },
+                    { KEY_ENABLE_VIGNETTE,          options.EnableVignette         },
+                    { KEY_ENABLE_CRT_FILTER,        options.EnableCrtFilter        }
                 }
             },
             {
@@ -418,8 +427,8 @@ namespace Silent::Services
             {
                 KEY_ENHANCEMENTS,
                 {
-                    { KEY_PAPER_MAP,    options.PaperMap    },
-                    { KEY_DIALOG_PAUSE, options.DialogPause }
+                    { KEY_PAPER_MAP_QUALITY, options.PaperMapQuality },
+                    { KEY_DIALOG_PAUSE,      options.DialogPause     }
                 }
             },
             {

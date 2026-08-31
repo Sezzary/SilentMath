@@ -18,10 +18,10 @@ namespace Silent::Utils
         // Fields
         // =======
 
-        plm_t*             _plm         = nullptr;
-        DoubleBuffer<byte> _frameBuffer = {};
-        std::vector<float> _audioBuffer = {};
-        std::mutex         _audioMutex  = {};
+        plm_t*                          _plm         = nullptr;
+        DoubleBuffer<std::vector<byte>> _frameBuffer = {};
+        std::vector<float>              _audioBuffer = {};
+        std::mutex                      _audioMutex  = {};
 
         std::string    _activeVideoName = {};
         stdfs::path    _videosPath      = {};

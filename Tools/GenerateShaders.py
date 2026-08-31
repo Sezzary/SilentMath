@@ -197,10 +197,15 @@ def main():
             for fail_name in fail_names:
                 logging.info(f"`{fail_name}`")
 
+            # Fail.
+            if len(fail_names) > 0:
+                sys.exit(1)
+
         _cleanup()
     except Exception as ex:
         _cleanup()
 
+        # Fail.
         logging.error(f"{ex}")
         sys.exit(1)
 

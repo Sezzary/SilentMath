@@ -24,6 +24,23 @@ using namespace Silent::Gui;
 
 namespace Silent::Debug
 {
+    Vector2 SnapToGrid(const Vector2& pos, const Vector2& res, float virtualHeight)
+    {
+        float rawScale = res.y / virtualHeight;
+        float scale    = std::max(1.0f, floorf(rawScale));
+
+        //auto gridSize = Vector2(res.x / scale, virtualHeight); // Precise horizontal scaling.
+        auto gridSize = Vector2(res.x / rawScale, virtualHeight);
+
+        auto uv = pos / 100.0f;
+
+        auto snappedPixel = Vector2(floorf(uv.x * gridSize.x), 
+                                    floorf(uv.y * gridSize.y));
+
+        return Vector2((snappedPixel.x / gridSize.x) * 100.0f,
+                       (snappedPixel.y / gridSize.y) * 100.0f);
+    }
+
     void Scratchpad()
     {
         if constexpr (IS_DEBUG_BUILD)
@@ -34,7 +51,7 @@ namespace Silent::Debug
 
             return;
 
-            float s = 5.0f;
+            /*float s = 5.0f;
             auto col = Color(0.4f,0.4f,0);
             auto pg = Debug::Page::Renderer;
 
@@ -54,7 +71,7 @@ namespace Silent::Debug
             renderer.SubmitDebugTriangle({-s,  s,  s}, { s,  s,  s}, { s,  s, -s}, col, pg); // Tri 1
 
             // Bottom Face (Y = -5.0)
-            renderer.SubmitDebugTriangle({-s, -s, -s}, { s, -s, -s}, { s, -s,  s}, col, pg); // Tri 1
+            renderer.SubmitDebugTriangle({-s, -s, -s}, { s, -s, -s}, { s, -s,  s}, col, pg); // Tri 1*/
 
             //return;
 
@@ -67,36 +84,35 @@ namespace Silent::Debug
             // Sprite test.
 
             // Cursor.
-            auto cursorPos    = Vector2(RoundToStep(input.GetCursorPosition().x, 100.0f / 320.0f),
-                                        RoundToStep(input.GetCursorPosition().y, 100.0f / 240.0f));
+            auto cursorPos    = SnapToGrid(input.GetCursorPosition(), g_App.GetWindowResolution().ToVector2(), RETRO_SCREEN_SPACE_RES.y);
             auto cursorSprite = Sprite2d::CreateSprite2d("TIM/BG_ETC.TIM", Vector2(0.0f, 64.0f / 256.0f), Vector2(32.0f / 128.0f, 96.0f / 256.0f),
-                                                         SCREEN_SPACE_RES / 2.0f, 0.0f, Vector2(1.0f, 0.75f), Color::White, 0,
+                                                         SCREEN_SPACE_RES / 2.0f, 0.0f, 1.0f, 0.75f, Color::White, NO_VALUE,
                                                          0, AlignMode::Center, ScaleMode::HorizontalEdge, BlendMode::Alpha);
             renderer.SubmitSprite2d(cursorSprite);
 
-            return;
+            //return;
 
             //auto sprite0 = Sprite2d::CreateSprite2d("TIM/HERO_PIC.TIM", Vector2::Zero, Vector2::One,
             //                                        Vector2(50.0f, 50.0f), 0.0f, Vector2::One, Color::White, 0,
-            //                                        1100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+            //                                        1100, AlignMode::Center, ScaleMode::VerticalEdge, BlendMode::Opaque);
             //renderer.SubmitSprite2d(sprite0);
 
             // Text.
-            auto text = Text2d::CreateText2d("Śliwka", "SmoothSerif",
-                                             input.GetCursorPosition(), 0.0f, 1.0f / 14.0f, 1.0f,
-                                             Color::White, (int)TextStyleFlags::Gradient, true,
+            auto text = Text2d::CreateText2d("Śliwka", "RetroSerif",
+                                             cursorPos, 0.0f, RETRO_PIXEL_SCALE.y * 16.0f, 1.0f,
+                                             Color::White, (int)TextStyleFlags::Gradient | (int)TextStyleFlags::Shadow | (int)TextStyleFlags::HalfHeight,
                                              1, AlignMode::BottomLeft);
             renderer.SubmitText2d(text);
             //auto text2 = Text2d::CreateText2d("Have you seen a little girl?", "SmoothSerif",
             //                                  Vector2(10.0f, 20.0f), 0/*DEG_TO_RAD(45.0f)*/, 1.0f / 14.0f, 1.0f, 
-            //                                  Color::White, (int)TextStyleFlags::Gradient, true,
+            //                                  Color::White, (int)TextStyleFlags::Gradient | (int)TextStyleFlags::Shadow,
             //                                  1, AlignMode::CenterLeft);
             //renderer.SubmitText2d(text2);
 
             //return;
 
             // GUI button test.
-            /*static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::ShortEdge,
+            /*static auto but = Button(Vector2(25.0f, 25.0f), Vector2(25.0f, 25.0f), ScaleMode::VerticalEdge,
                                      []() { Debug::Log("Entering!"); },
                                      [&]()
                                      {
@@ -121,7 +137,7 @@ namespace Silent::Debug
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
                                                                             Color(0.0f, 1.0f, 0.2f, 0.4f),
-                                                                            0, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                                                            0, ScaleMode::VerticalEdge, BlendMode::Alpha);
                                         renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Leaving!"); },
@@ -148,7 +164,7 @@ namespace Silent::Debug
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
                                                                             Color(1.0f, 0.0f, 0.4f, 0.4f),
-                                                                            0, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                                                            0, ScaleMode::VerticalEdge, BlendMode::Alpha);
                                         renderer.SubmitShape2d(quad);
                                      },
                                      []() { Debug::Log("Clicking!"); },
@@ -184,7 +200,7 @@ namespace Silent::Debug
                                                 Color(0.0f, 1.0f, 0.0f, 1.0f),
                                                 Color(0.0f, 1.0f, 0.0f, 1.0f),
                                                 Color(0.0f, 0.0f, 0.0f, 0.0f),
-                                                0, ScaleMode::ShortEdge, BlendMode::Alpha);
+                                                0, ScaleMode::VerticalEdge, BlendMode::Alpha);
             auto line0 = Shape2d::CreateLine(Vector2i(10, 10),
                                                 Vector2i(50, 10),
                                                 Color(1.0f, 1.0f, 0.0f, 1.0f),

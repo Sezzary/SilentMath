@@ -266,11 +266,11 @@ namespace Silent::Game
             "SLOT2"
         };
 
-        Gfx_StringSetColor(StringColorId_White);
+        Gfx_StringColorSet(StringColorId_White);
 
         for (i = 0; i < MEMCARD_SLOT_COUNT_MAX; i++)
         {
-            Gfx_StringSetPosition(SLOT_STR_POS_TABLE[i].vx, SLOT_STR_POS_TABLE[i].vy);
+            Gfx_StringPositionSet(SLOT_STR_POS_TABLE[i].vx, SLOT_STR_POS_TABLE[i].vy);
             Gfx_StringDraw(SLOT_STRS[i], 50);
         }
 
@@ -288,23 +288,23 @@ namespace Silent::Game
 
     void SaveScreen_FileIdxDraw(s32 saveIdx, s32 slotIdx, s32 fileId, s32 entryType) // 0x801E2FCC
     {
-        constexpr int OFFSET_X             = SCREEN_POSITION_X(47.0f);
-        constexpr int FILE_STR_MARGIN_X    = SCREEN_POSITION_X(10.0f);
-        constexpr int FILE_ID_STR_MARGIN_X = FILE_STR_MARGIN_X + SCREEN_POSITION_X(15.75f);
-        constexpr int POS_Y                = SCREEN_POSITION_Y(14.75f);
+        constexpr int OFFSET_X             = 150;
+        constexpr int FILE_STR_MARGIN_X    = SCREEN_WIDTH / 10;
+        constexpr int FILE_ID_STR_MARGIN_X = FILE_STR_MARGIN_X + 50;
+        constexpr int POS_Y                = 35;
 
         const char* FILE_STR = "FILE";
 
         if (saveIdx == g_SlotElementSelectedIdx[slotIdx] && entryType >= SavegameEntryType_OutOfBlocks)
         {
-            Gfx_StringSetColor(StringColorId_White);
+            Gfx_StringColorSet(StringColorId_White);
 
             // Draw "FILE" string.
-            Gfx_StringSetPosition((slotIdx * OFFSET_X) + FILE_STR_MARGIN_X, POS_Y);
+            Gfx_StringPositionSet((slotIdx * OFFSET_X) + FILE_STR_MARGIN_X, POS_Y);
             Gfx_StringDraw(FILE_STR, 50);
 
             // Draw file ID string.
-            Gfx_StringSetPosition((slotIdx * OFFSET_X) + FILE_ID_STR_MARGIN_X, POS_Y);
+            Gfx_StringPositionSet((slotIdx * OFFSET_X) + FILE_ID_STR_MARGIN_X, POS_Y);
             Gfx_StringDrawInt(1, fileId);
         }
     }
@@ -313,20 +313,20 @@ namespace Silent::Game
     {
         if (saveEntry != nullptr && saveEntry->isNextFearMode_B)
         {
-            Gfx_StringSetColor(StringColorId_Gold);
+            Gfx_StringColorSet(StringColorId_Gold);
             return true;
         }
 
-        Gfx_StringSetColor(StringColorId_White);
+        Gfx_StringColorSet(StringColorId_White);
         return false;
     }
 
     void SaveScreen_SaveLocationDraw(s_SaveScreenElement* saveEntry, s32 saveIdx, s32 slotIdx) // 0x801E30C4
     {
-        constexpr int OFFSET_X = SCREEN_POSITION_X(47.0f);
-        constexpr int MARGIN_X = SCREEN_POSITION_X(28.25f);
-        constexpr int OFFSET_Y = SCREEN_POSITION_Y(8.5f);
-        constexpr int MARGIN_Y = SCREEN_POSITION_Y(22.25f);
+        constexpr int OFFSET_X = 150;
+        constexpr int MARGIN_X = 90;
+        constexpr int OFFSET_Y = SCREEN_HEIGHT / 12;
+        constexpr int MARGIN_Y = 53;
 
         s32 nameIdx = saveEntry->locationId_8;
 
@@ -363,10 +363,10 @@ namespace Silent::Game
                 {
                     colorId = StringColorId_White;
                 }
-                Gfx_StringSetColor(colorId);
+                Gfx_StringColorSet(colorId);
             }
 
-            Gfx_StringSetPosition(((slotIdx * OFFSET_X) + MARGIN_X) - (X_OFFSETS[nameIdx] / 2),
+            Gfx_StringPositionSet(((slotIdx * OFFSET_X) + MARGIN_X) - (X_OFFSETS[nameIdx] / 2),
                                 (selectedSaveIdx * OFFSET_Y) + MARGIN_Y);
             Gfx_StringDraw(g_Savegame_SaveLocationNames[nameIdx], 50);
         }
@@ -520,7 +520,7 @@ namespace Silent::Game
         }
 
         D_801E7514[slotIdx] = true;
-        Gfx_StringSetColor(StringColorId_White);
+        Gfx_StringColorSet(StringColorId_White);
 
         // Draw memory card message string.
         switch (entryType)
@@ -529,20 +529,20 @@ namespace Silent::Game
             case SavegameEntryType_UnformattedMemCard:
             case SavegameEntryType_CorruptedMemCard:
             case SavegameEntryType_LoadMemCard:
-                Gfx_StringSetPosition((slotIdx * SLOT_COLUMN_OFFSET) + 22, 82);
+                Gfx_StringPositionSet((slotIdx * SLOT_COLUMN_OFFSET) + 22, 82);
                 break;
 
             case SavegameEntryType_NoDataInMemCard:
             case SavegameEntryType_Unk6:
-                Gfx_StringSetPosition((slotIdx * SLOT_COLUMN_OFFSET) + 38, 90);
+                Gfx_StringPositionSet((slotIdx * SLOT_COLUMN_OFFSET) + 38, 90);
                 break;
 
             case SavegameEntryType_OutOfBlocks:
-                Gfx_StringSetPosition((slotIdx * SLOT_COLUMN_OFFSET) + 32, 90);
+                Gfx_StringPositionSet((slotIdx * SLOT_COLUMN_OFFSET) + 32, 90);
                 break;
 
             default:
-                Gfx_StringSetPosition((slotIdx * SLOT_COLUMN_OFFSET) + 6, (D_801E7518[slotIdx] * 20) + 53);
+                Gfx_StringPositionSet((slotIdx * SLOT_COLUMN_OFFSET) + 6, (D_801E7518[slotIdx] * 20) + 53);
                 break;
         }
         Gfx_StringDraw(DIALOG_STRS[entryType], 50);
@@ -705,7 +705,7 @@ namespace Silent::Game
                 }
 
                 D_801E7554 = strIdx;
-                Gfx_StringSetPosition(160 - (X_OFFSETS[strIdx] >> 1), 186);
+                Gfx_StringPositionSet(160 - (X_OFFSETS[strIdx] >> 1), 186);
                 Gfx_StringDraw(DIALOG_STRS[strIdx], DEFAULT_MAP_MESSAGE_LENGTH);
 
                 // Finished saving.
@@ -749,9 +749,9 @@ namespace Silent::Game
                 g_SaveScreen_OverwriteActive = 1;
 
             case 1:
-                Gfx_StringSetPosition(160 - (X_OFFSETS[stringIdx] / 2), 178);
+                Gfx_StringPositionSet(160 - (X_OFFSETS[stringIdx] / 2), 178);
                 Gfx_StringDraw(DIALOG_STRS[stringIdx], DEFAULT_MAP_MESSAGE_LENGTH);
-                Gfx_StringSetPosition(104, 196);
+                Gfx_StringPositionSet(104, 196);
                 Gfx_StringDraw("\x07Yes__________No", DEFAULT_MAP_MESSAGE_LENGTH);
 
                 //poly = (POLY_F4*)GsOUT_PACKET_P;
@@ -1562,8 +1562,8 @@ namespace Silent::Game
 
         if (g_MemCard_ActiveMemCardSlotSaves[selectedSaveIdx].type_4 == SavegameEntryType_NewFile)
         {
-            Gfx_StringSetColor(StringColorId_White);
-            Gfx_StringSetPosition(66, 178);
+            Gfx_StringColorSet(StringColorId_White);
+            Gfx_StringPositionSet(66, 178);
             Gfx_StringDraw("You_need_1_free_block\n__to_create_a_new_file.", 0x32);
         }
         else if (g_MemCard_ActiveMemCardSlotSaves[selectedSaveIdx].type_4 == SavegameEntryType_Save)
@@ -1585,24 +1585,24 @@ namespace Silent::Game
             mins = (timeInSec / 60) % 60;
             sec  = timeInSec % 60;
 
-            Gfx_StringSetColor(StringColorId_White);
-            Gfx_StringSetPosition(40, 178);
+            Gfx_StringColorSet(StringColorId_White);
+            Gfx_StringPositionSet(40, 178);
             Gfx_StringDraw("Data", 5);
 
             digitCount = saveDataIdx < 10;
 
-            Gfx_StringSetPosition(digitCount * 5 + 92, 178);
+            Gfx_StringPositionSet(digitCount * 5 + 92, 178);
             Gfx_StringDrawInt(2, saveDataIdx);
 
-            Gfx_StringSetPosition(40, 196);
+            Gfx_StringPositionSet(40, 196);
             Gfx_StringDraw("Save", 5);
 
             digitCount = saveId < 10;
 
-            Gfx_StringSetPosition(digitCount * 5 + 92, 196);
+            Gfx_StringPositionSet(digitCount * 5 + 92, 196);
             Gfx_StringDrawInt(2, saveId);
 
-            Gfx_StringSetPosition(128, 178);
+            Gfx_StringPositionSet(128, 178);
             Gfx_StringDraw("Time", 5);
 
             digitCount = 0;
@@ -1618,19 +1618,19 @@ namespace Silent::Game
                 }
             }
 
-            Gfx_StringSetPosition((digitCount * 10) + 176, 178);
+            Gfx_StringPositionSet((digitCount * 10) + 176, 178);
             Gfx_StringDrawInt(3, hours);
             Gfx_StringDraw("_:_", 3);
 
             digitCount = mins < 10;
 
-            Gfx_StringSetPosition((digitCount * 10) + 220, 178);
+            Gfx_StringPositionSet((digitCount * 10) + 220, 178);
             Gfx_StringDrawInt(2, mins);
             Gfx_StringDraw("_:_", 3);
 
             digitCount = sec < 10;
 
-            Gfx_StringSetPosition((digitCount * 10) + 254, 178);
+            Gfx_StringPositionSet((digitCount * 10) + 254, 178);
             Gfx_StringDrawInt(2, sec);
 
             if (!(hyperBlasterBeamColor & 0x18)) // Checks if the player have no special hyper blaster beam color unlocked.
@@ -1743,7 +1743,7 @@ namespace Silent::Game
 
                 // Memory cards are inserted and user is moving between slots.
                 if (g_Savegame_ElementCount0[0] != 0 && g_Savegame_ElementCount0[1] != 0 &&
-                    (g_Controller0->clickedBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft)))
+                    (g_Controller0->buttonFlags.clicked & (ControllerFlag_LStickHighRight | ControllerFlag_LStickHighLeft)))
                 {
                     g_SelectedSaveSlotIdx ^= 1;
                     SD_Call(Sfx_MenuMove);
@@ -1757,7 +1757,7 @@ namespace Silent::Game
                     g_MemCard_ActiveMemCardSlotSaves = MemCard_ActiveMemCardSlotGet(g_SelectedSaveSlotIdx);
 
                     // Move down savegame entry.
-                    if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickUp)
+                    if (g_Controller0->buttonFlags.pulsed & ControllerFlag_LStickHighUp)
                     {
                         if (g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx] != 0)
                         {
@@ -1767,7 +1767,7 @@ namespace Silent::Game
                     }
 
                     // Move up savegame entry.
-                    if (g_Controller0->pulsedBtnFlags & ControllerFlag_LStickDown)
+                    if (g_Controller0->buttonFlags.pulsed & ControllerFlag_LStickHighDown)
                     {
                         if (g_SlotElementSelectedIdx[g_SelectedSaveSlotIdx] < g_Savegame_ElementCount0[g_SelectedSaveSlotIdx] - 1)
                         {
@@ -1800,7 +1800,7 @@ namespace Silent::Game
                     }
 
                     // Overwrite or format savegame entry.
-                    if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.enter)
+                    if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.enter)
                     {
                         if (g_SaveScreen_IsFormatting | g_SaveScreen_IsNewSaveSelected)
                         {
@@ -1817,7 +1817,7 @@ namespace Silent::Game
                 }
 
                 // Exit save screen.
-                if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.cancel)
+                if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.cancel)
                 {
                     ScreenFade_Start(false, false, false);
                     Game_StateStepSet(1, 2);
@@ -1840,19 +1840,19 @@ namespace Silent::Game
 
                 g_SaveScreen_MemCardStateTextTimer = 0;
 
-                if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickLeft)
+                if (g_Controller0->buttonFlags.clicked & ControllerFlag_LStickHighLeft)
                 {
                     isSaveWriteOptionSelected = gameStateStep;
                     SD_Call(Sfx_MenuMove);
                 }
 
-                if (g_Controller0->clickedBtnFlags & ControllerFlag_LStickRight)
+                if (g_Controller0->buttonFlags.clicked & ControllerFlag_LStickHighRight)
                 {
                     isSaveWriteOptionSelected = false;
                     SD_Call(Sfx_MenuMove);
                 }
 
-                if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.enter)
+                if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.enter)
                 {
                     if (!isSaveWriteOptionSelected)
                     {
@@ -1867,7 +1867,7 @@ namespace Silent::Game
                 }
 
                 // Cancel overwrite.
-                if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.cancel)
+                if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.cancel)
                 {
                     Game_StateStepSet(1, 0);
                     SD_Call(Sfx_MenuCancel);

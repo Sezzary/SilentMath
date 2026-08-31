@@ -79,7 +79,7 @@ namespace Silent::Renderer::SdlGpu
          *
          * @note This produces perfect hashing.
          *
-         * @param renderStage Render stage.
+         * @param renderStage Pipeline render stage.
          * @param blendMode Blend mode.
          * @return Pipeline hash.
          */

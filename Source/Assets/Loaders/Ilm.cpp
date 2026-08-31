@@ -13,7 +13,7 @@ namespace Silent::Assets
 {
     /** @brief Normalizes the UVs of meshes according to an ILM model's associated texture resolution.
      *
-     * @note For some models, the texture resolution cannot be deduced correctly from ILM data alone and must be
+     * @note For some models, the texture resolution cannot be deduced correctly from ILM data alone and is therefore
      * hardcoded.
      *
      * @param name Model name.
@@ -61,7 +61,7 @@ namespace Silent::Assets
 
     /** @brief Gets an ILM model's corresponding texture asset name.
      *
-     * @note For some models, the texture name cannot be deduced correctly from the model name alone and must be
+     * @note For some models, the texture name cannot be deduced correctly from the model name alone and is therefore
      * hardcoded.
      *
      * @param name Model name.
@@ -73,7 +73,7 @@ namespace Silent::Assets
         {
             { /*CHARA/*/"EI"/*.ILM*/,   "TEST/EI.TIM"      },
             { /*CHARA/*/"BIRD"/*.ILM*/, "CHARA/REBIRD.TIM" },
-            { /*CHARA/*/"MAN"/*.ILM*/,  "TEST/DEV.TIM"     },
+            { /*CHARA/*/"MAN"/*.ILM*/,  "TEST/DEV.TIM"     }, // `TEST/NINGEN.TIM` is identical.
             { /*CHARA/*/"MTH"/*.ILM*/,  "CHARA/MOTH.TIM"   },
             { /*CHARA/*/"WRM"/*.ILM*/,  "CHARA/WORM.TIM"   }
         };

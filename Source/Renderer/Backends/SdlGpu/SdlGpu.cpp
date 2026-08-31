@@ -81,9 +81,15 @@ namespace Silent::Renderer::SdlGpu
         InitializeDoubleBuffer();
         InitializeGpuBuffers();
 
-        // Initialize GPU textures.
+        // Initialize textures.
         _textures = std::make_unique<TextureCache>(*_device);
-        _renderTexture.Initialize(*_device);
+
+        // Initialize render targets.
+        _renderTargets.resize((int)RenderTargetType::Count);
+        for (auto& renderTarget : _renderTargets)
+        {
+            renderTarget.Initialize(*_device);
+        }
 
         // Initialize pipelines.
         _pipelines.Initialize(*_window, *_device);
@@ -175,14 +181,17 @@ namespace Silent::Renderer::SdlGpu
         }
         _samplers.clear();
 
-        // Release render texture.
-        _renderTexture.Release();
-
-        // Release depth  texture.
-        if (_depthTexture != nullptr)
+        // Release render targets.
+        for (auto& renderTarget : _renderTargets)
         {
-            SDL_ReleaseGPUTexture(_device, _depthTexture);
-            _depthTexture = nullptr;
+            renderTarget.Release();
+        }
+
+        // Release depth target.
+        if (_depthTarget != nullptr)
+        {
+            SDL_ReleaseGPUTexture(_device, _depthTarget);
+            _depthTarget = nullptr;
         }
 
         // Release GPU setup.
@@ -204,19 +213,19 @@ namespace Silent::Renderer::SdlGpu
             return;
         }
 
-        // Acquire render textures.
+        // Acquire render targets.
         UpdateRenderTargets();
 
-        // Acquire depth stencil texture.
-        _depthTexture = GetDepthTexture();
-        if (_depthTexture == nullptr)
+        // Acquire depth target.
+        _depthTarget = GetDepthTexture();
+        if (_depthTarget == nullptr)
         {
             return;
         }
 
-        // Acquire swapchain texture.
-        _swapchainTexture = nullptr;
-        if (!SDL_WaitAndAcquireGPUSwapchainTexture(_commandBuffer, _window, &_swapchainTexture, nullptr, nullptr))
+        // Acquire swapchain target.
+        _swapchainTarget = nullptr;
+        if (!SDL_WaitAndAcquireGPUSwapchainTexture(_commandBuffer, _window, &_swapchainTarget, nullptr, nullptr))
         {
             return;
         }
@@ -244,7 +253,7 @@ namespace Silent::Renderer::SdlGpu
         ClearDrawBatches();
 
         // Submit new frame to draw for GPU.
-        if (_swapchainTexture != nullptr)
+        if (_swapchainTarget != nullptr)
         {
             DrawFrame();
         }
@@ -313,40 +322,57 @@ namespace Silent::Renderer::SdlGpu
 
     void Renderer::UpdateRenderTargets()
     {
-        if (_renderTexture.Read()  != nullptr &&
-            _renderTexture.Write() != nullptr &&
-            !_doubleBuffer.Render.IsResized)
+        // Check if all render targets are valid.
+        bool allValid = true;
+        for (const auto& renderTarget : _renderTargets)
+        {
+            if (!renderTarget.IsValid())
+            {
+                allValid = false;
+            }
+        }
+
+        // Check if update is required.
+        if (!_scene.Frame.Front.IsResized && allValid)
         {
             return;
         }
 
-        _renderTexture.Release();
-
-        auto viewportRes   = GetViewportResolution();
-        auto renderTexInfo = SDL_GPUTextureCreateInfo
+        auto SetRenderTarget = [&](PingPongTexture& renderTarget, const Vector2i& res)
         {
-            .type                 = SDL_GPU_TEXTURETYPE_2D,
-            .format               = SDL_GetGPUSwapchainTextureFormat(_device, _window),
-            .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
-            .width                = (uint)viewportRes.x,
-            .height               = (uint)viewportRes.y,
-            .layer_count_or_depth = 1,
-            .num_levels           = 1
+            renderTarget.Release();
+
+            auto viewportRes   = GetViewportResolution();
+            auto renderTexInfo = SDL_GPUTextureCreateInfo
+            {
+                .type                 = SDL_GPU_TEXTURETYPE_2D,
+                .format               = SDL_GetGPUSwapchainTextureFormat(_device, _window),
+                .usage                = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
+                .width                = (uint)res.x,
+                .height               = (uint)res.y,
+                .layer_count_or_depth = 1,
+                .num_levels           = 1
+            };
+            renderTarget.Read()  = SDL_CreateGPUTexture(_device, &renderTexInfo);
+            renderTarget.Write() = SDL_CreateGPUTexture(_device, &renderTexInfo);
         };
-        _renderTexture.Read()  = SDL_CreateGPUTexture(_device, &renderTexInfo);
-        _renderTexture.Write() = SDL_CreateGPUTexture(_device, &renderTexInfo);
+
+        // Update all render targets.
+        SetRenderTarget(_renderTargets[(int)RenderTargetType::Virtual240p], GetViewportResolution());
+        SetRenderTarget(_renderTargets[(int)RenderTargetType::Virtual480p], GetViewportResolution());
+        SetRenderTarget(_renderTargets[(int)RenderTargetType::Native],      GetViewportResolution());
     }
 
     SDL_GPUTexture* Renderer::GetDepthTexture()
     {
-        if (_depthTexture != nullptr && !_doubleBuffer.Render.IsResized)
+        if (_depthTarget != nullptr && !_scene.Frame.Front.IsResized)
         {
-            return _depthTexture;
+            return _depthTarget;
         }
 
-        if (_depthTexture != nullptr)
+        if (_depthTarget != nullptr)
         {
-            SDL_ReleaseGPUTexture(_device, _depthTexture);
+            SDL_ReleaseGPUTexture(_device, _depthTarget);
         }
 
         auto viewportRes  = GetViewportResolution();

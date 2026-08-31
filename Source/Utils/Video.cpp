@@ -18,8 +18,8 @@ namespace Silent::Utils
      */
     static void OnVideoFrame(plm_t* plm, plm_frame_t* frame, void* user)
     {
-        auto* frameBuffer = (DoubleBuffer<byte>*)user;
-        plm_frame_to_rgba(frame, (uint8*)frameBuffer->Active.data(), frame->width * RGBA_COMP_COUNT);
+        auto* frameBuffer = (DoubleBuffer<std::vector<byte>>*)user;
+        plm_frame_to_rgba(frame, (uint8*)frameBuffer->Back.data(), frame->width * RGBA_COMP_COUNT);
     }
 
     /** @brief Callback to decode audio samples from an MPEG1 stream.
@@ -96,7 +96,7 @@ namespace Silent::Utils
             Debug::Log("Attempted to get video frame with no video playing.", Debug::LogLevel::Warning);
         }
 
-        return _frameBuffer.Render;
+        return _frameBuffer.Front;
     }
 
     std::vector<float> VideoPlayer::GetAudioFrame()
@@ -186,7 +186,7 @@ namespace Silent::Utils
 
         // Resize buffer.
         auto res = GetResolution();
-        _frameBuffer.Active.resize((res.x * res.y) * RGBA_COMP_COUNT);
+        _frameBuffer.Back.resize((res.x * res.y) * RGBA_COMP_COUNT);
 
         // Decode frame.
         plm_decode(_plm, 0.0f);
@@ -212,7 +212,7 @@ namespace Silent::Utils
 
         Debug::Log(Fmt("Stopped video `{}`.", _activeVideoName));
 
-        _frameBuffer.Active.clear();
+        _frameBuffer.Back.clear();
         _audioBuffer.clear();
         _activeVideoName = {};
     }
@@ -228,9 +228,9 @@ namespace Silent::Utils
         // Resize buffer if required.
         auto res          = GetResolution();
         int  requiredSize = (res.x * res.y) * RGBA_COMP_COUNT;
-        if (_frameBuffer.Active.size() != requiredSize)
+        if (_frameBuffer.Back.size() != requiredSize)
         {
-            _frameBuffer.Active.resize(requiredSize);
+            _frameBuffer.Back.resize(requiredSize);
         }
 
         // Decode frame.
@@ -239,7 +239,7 @@ namespace Silent::Utils
 
     void VideoPlayer::SwapFrameBuffer()
     {
-        _frameBuffer.Swap(false);
+        _frameBuffer.Swap();
     }
 
     void VideoPlayer::AppendAudio(const float* samples, int count)

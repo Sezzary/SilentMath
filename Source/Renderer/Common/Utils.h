@@ -21,20 +21,19 @@ namespace Silent::Renderer
      */
     Vector2 GetAlignmentPivot(AlignMode alignMode);
 
+    /** @brief Computes a screen position snapped to a virtual screen grid.
+     *
+     * @param pos Screen position to snap.
+     * @param virtualHeight Virtual screen grid height.
+     */
+    Vector2 GetGridAlignedScreenPercent(const Vector2& pos, float virtualHeight);
+
     /** @brief Computes the screen aspect ratio correction scale according to a provided scale mode.
      *
      * @param scaleMode Scale mode.
      * @return Screen aspect correction.
      */
     Vector2 GetScreenAspectCorrection(ScaleMode scaleMode);
-
-    /** @brief Computes a screen position in percent corrected according to the screen aspect ratio and a scale mode.
-     *
-     * @param pos Screen position in percent.
-     * @param scaleMode Scale mode.
-     * @return Screen position in percent corrected for the screen aspect ratio and scale mode.
-     */
-    Vector2 GetAspectCorrectScreenPosition(const Vector2 pos, ScaleMode scaleMode);
 
     /** @brief Converts a screen position in retro pixels to percent.
      *

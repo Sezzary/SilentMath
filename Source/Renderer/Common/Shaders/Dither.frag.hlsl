@@ -1,8 +1,8 @@
 #include "Utils/Constants.hlsli"
-#include "Utils/Math.hlsli"
 
 // References:
 // https://gist.github.com/ompuco/3209f1b32213cec5b7bccf0e67caf3e9
+// https://github.com/AlexeyNazariev/PS1-Graphics-Kit-URP/blob/f047fabf5b2492d9572ed85b4ac0cde2ff3b4004/Shaders/PS1_ObjectShader.shader
 
 Texture2D<float4> Texture : register(t0, space2);
 SamplerState      Sampler : register(s0, space2);
@@ -12,6 +12,12 @@ struct Input
     float4 Position : SV_Position;
     float2 TexCoord : TEXCOORD0;
     float4 Color    : COLOR0;
+};
+
+cbuffer PerFrame : register(b0, space3)
+{
+    float2 Resolution;
+    float  VirtualHeight;
 };
 
 static const uint   COLOR_MASK   = 0xF8;
@@ -29,8 +35,15 @@ float4 main(Input input) : SV_Target
     // Sample texture.
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
 
+    // Compute integer-snapped scale based on target virtual height.
+    float rawScale = Resolution.y / VirtualHeight;
+    float scale    = max(1.0, floor(rawScale));
+
     // Compute pixel position.
-    int2 pixelPos = int2(floor(input.Position.xy));
+    //float2 gridSize = floor(Resolution.xy / scale); // Even XY (adds extra X pixels to accommodate).
+    //float2 gridSize = float2(Resolution.x / scale, VirtualHeight); // Uneven X, even Y.
+    float2 gridSize = float2(Resolution.x / rawScale, VirtualHeight); // Uneven XY.
+    int2   pixelPos = int2(floor(input.TexCoord * gridSize));
 
     // Compute 8-bit dithered color.
     int    dither    = DITHER_TABLE[pixelPos.x % DITHER_SIZE][pixelPos.y % DITHER_SIZE];

@@ -7,14 +7,14 @@ using namespace Silent::Assets;
 namespace Silent::Game
 {
     /** @brief DMS cutscene segment states. */
-    enum e_DmsSegmentState
+    enum class DmsSegmentState
     {
-        DmsSegmentState_Interpolating = 0,
-        DmsSegmentState_SingleFrame   = 1,
-        DmsSegmentState_Ending        = 2
+        Interpolating = 0,
+        SingleFrame   = 1,
+        Ending        = 2
     };
 
-    /** @brief Gets a character transformation at a given playback time from a DMS header by entry name.
+    /** @brief Gets a character transformation at a given playback time from a DMS asset by entry name.
      *
      * @param pos Output character position.
      * @param rot Output character rotation.
@@ -27,18 +27,18 @@ namespace Silent::Game
     /** @brief Gets a DMS character entry index by name.
      *
      * @param charaName Name of the DMS character entry to find.
-     * @param dmsAsset DMS header.
+     * @param dmsAsset DMS asset.
      * @return DMS character entry index.
      */
-    int Dms_CharacterGetIdxByName(std::string& charaName, const Asset& dmsAsset);
+    int Dms_CharacterGetIdxByName(const std::string& charaName, const Asset& dmsAsset);
 
-    /** @brief Gets a character transformation at a given playback time from a DMS header by entry index.
+    /** @brief Gets a character transformation at a given playback time from a DMS asset by entry index.
      *
      * @param pos Output character position.
      * @param rot Output character rotation.
      * @param charaIdx DMS character entry index.
      * @param time Playback time.
-     * @param dmsAsset DMS header.
+     * @param dmsAsset DMS asset.
      */
     void Dms_CharacterTransformGetByIdx(VECTOR3* pos, SVECTOR3* rot, int charaIdx, q19_12 time, const Asset& dmsAsset);
 
@@ -53,16 +53,17 @@ namespace Silent::Game
                                           const DmsKeyframeCharacter& prevKeyframe, const DmsKeyframeCharacter& nextKeyframe,
                                           q19_12 alpha);
 
-    /** @brief Gets the camera position and look-at targets from a DMS header.
+    /** @brief Gets the camera position and look-at targets from a DMS asset.
      *
      * @param posTarget Output camera position target.
      * @param lookAtTarget Output camera look-at target.
      * @param unusedAngle @unused
      * @param time Playback time.
-     * @param dmsAsset DMS header.
+     * @param dmsAsset DMS asset.
+     * @return Projection distance.
      */
-    s32 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
-                            const DmsAsset* dmsAsset);
+    q19_12 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
+                                const DmsAsset& dmsAsset);
 
     /** @brief Linearly interpolates between two DMS camera keyframes.
      *
@@ -70,10 +71,11 @@ namespace Silent::Game
      * @param prevKeyframe Previous camera keyframe.
      * @param nextKeyframe Next camera keyframe.
      * @param alpha Interpolation alpha.
+     * @return Projection distance.
      */
-    s32 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
-                               const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
-                               q19_12 alpha);
+    q19_12 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
+                                  const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
+                                  q19_12 alpha);
 
     /** @brief Gets keyframe interpolation data at a given playback time from a given DMS camera entry.
      *
@@ -82,18 +84,18 @@ namespace Silent::Game
      * @param alpha Output interpolation alpha.
      * @param time Playback time.
      * @param camEntry DMS camera entry.
-     * @param dmsAsset DMS header.
+     * @param dmsAsset DMS asset.
      */
     void Dms_KeyframeInterpGet(int& prevKeyframeIdx, int& nextKeyframeIdx, q19_12& alpha, q19_12 time,
                                const DmsEntry& camEntry, const Asset& dmsAsset);
 
-    /** @brief Gets the state of a segment at a given playback time from a DMS header.
+    /** @brief Gets the state of a segment at a given playback time from a DMS asset.
      *
      * @param time Playback time.
-     * @param dmsAsset DMS header.
+     * @param dmsAsset DMS asset.
      * @return DMS segment state.
      */
-    e_DmsSegmentState Dms_SegmentStateGet(q19_12 time, const Asset& dmsAsset);
+    DmsSegmentState Dms_SegmentStateGet(q19_12 time, const Asset& dmsAsset);
 
     /** @brief Gets a keyframe index at a given playback frame from a DMS entry.
      *

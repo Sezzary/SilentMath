@@ -19,20 +19,6 @@ using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
-    void SceneDoubleBuffer::Swap()
-    {
-        std::swap(Render, Active);
-        Active.IsResized     = false;
-        Active.DrawCallCount = 0;
-        Active.ImmediatePrimitives2d.clear();
-        Active.ImmediatePrimitives3d.clear();
-        Active.DebugGuiDrawCalls.clear();
-        Active.TextureUploadQueue.clear();
-        Active.TextureReleaseQueue.clear();
-        Active.MeshUploadQueue.clear();
-        Active.MeshReleaseQueue.clear();
-    }
-
     RendererType RendererBase::GetType() const
     {
         return _type;
@@ -40,47 +26,78 @@ namespace Silent::Renderer
 
     int RendererBase::GetDrawCallCount() const
     {
-        return _doubleBuffer.Render.DrawCallCount;
+        return _scene.Frame.Front.DrawCallCount;
     }
 
     void RendererBase::SetClearColor(const Color& color)
     {
-        _clearColor = color;
+        _scene.Frame.Back.ClearColor = color;
+    }
+
+    void RendererBase::SetLumaFade(float alpha, bool isWhite)
+    {
+        _scene.Frame.Back.LumaFadeAlpha   = std::clamp(alpha, 0.0f, 1.0f);
+        _scene.Frame.Back.IsLumaFadeWhite = isWhite;
     }
 
     Vector2i RendererBase::GetViewportResolution() const
     {
         const auto& options = g_App.GetOptions();
 
-        auto res = g_App.GetWindowResolution();
-        return res;
+        auto res = _scene.Frame.Front.SwapchainResolution.ToVector2();
 
-        // @todo Render scale should be a post-process instead?
+        float virtualHeight = res.y;
         switch (options->RenderScale)
         {
-            case RenderScaleType::Original:
+            case RenderScaleType::Retro:
             {
-                res = RETRO_SCREEN_SPACE_RES.ToVector2i();
+                virtualHeight = RETRO_SCREEN_SPACE_RES.y;
                 break;
             }
-            case RenderScaleType::DoubleOriginal:
+            case RenderScaleType::Retro2x:
             {
-                res = RETRO_SCREEN_SPACE_RES.ToVector2i() * 2.0f;
+                virtualHeight = RETRO_SCREEN_SPACE_RES.y * 2.0f;
                 break;
             }
+            default:
             case RenderScaleType::Native:
             {
                 break;
             }
         }
 
-        return res;
+        float aspect = GetViewportAspectRatio();
+        return Vector2i(virtualHeight * aspect, virtualHeight);
     }
 
     float RendererBase::GetViewportAspectRatio() const
     {
-        auto res = GetViewportResolution().ToVector2();
-        return res.x / res.y;
+        const auto& options = g_App.GetOptions();
+
+        auto res = _scene.Frame.Front.SwapchainResolution.ToVector2();
+
+        // Compute aspect ratio.
+        float aspect = res.x / res.y;
+        switch (options->AspectRatio)
+        {
+            case AspectRatioType::Retro:
+            {
+                aspect = ASPECT_RATIO_4_TO_3;
+                break;
+            }
+            case AspectRatioType::Wide:
+            {
+                aspect = ASPECT_RATIO_16_TO_9;
+                break;
+            }
+            default:
+            case AspectRatioType::Native:
+            {
+                break;
+            }
+        }
+
+        return aspect;
     }
 
     const BoundingFrustum& RendererBase::GetViewFrustum() const
@@ -98,7 +115,10 @@ namespace Silent::Renderer
         auto& video    = g_App.GetVideo();
         auto& executor = g_App.GetExecutor();
 
-        // @todo Using parallelism here causes flickering. Why if lock guards are in place??
+        _scene.Frame.Back.SwapchainResolution = g_App.GetWindowResolution();
+
+        // @todo Using parallelism here causes flickering, but even without it some 2D objects don't draw. There's
+        // a severe bug somewhere.
         // Generate active buffer data.
         //auto tasks = ParallelTasks
         //{
@@ -113,45 +133,55 @@ namespace Silent::Renderer
         ProcessGlyphs2d();
         ProcessTriangles3d();
 
-        _doubleBuffer.Swap();
+        _scene.Frame.Swap();
+        _scene.Frame.Back.IsResized     = false;
+        _scene.Frame.Back.DrawCallCount = 0;
+        _scene.Frame.Back.ImmediatePrimitives2d.clear();
+        _scene.Frame.Back.ImmediatePrimitives3d.clear();
+        _scene.Frame.Back.DebugGuiDrawCalls.clear();
+        _scene.Frame.Back.TextureUploadQueue.clear();
+        _scene.Frame.Back.TextureReleaseQueue.clear();
+        _scene.Frame.Back.MeshUploadQueue.clear();
+        _scene.Frame.Back.MeshReleaseQueue.clear();
+
         video.SwapFrameBuffer();
     }
 
     void RendererBase::SignalResize()
     {
-        _doubleBuffer.Active.IsResized = true;
+        _scene.Frame.Back.IsResized = true;
     }
 
     void RendererBase::QueueTextureUpload(const std::string& assetName)
     {
-        _doubleBuffer.Active.TextureUploadQueue.push_back(assetName);
+        _scene.Frame.Back.TextureUploadQueue.push_back(assetName);
     }
 
     void RendererBase::QueueTextureRelease(const std::string& assetName)
     {
-        _doubleBuffer.Active.TextureReleaseQueue.push_back(assetName);
+        _scene.Frame.Back.TextureReleaseQueue.push_back(assetName);
     }
 
     void RendererBase::QueueMeshUpload(const std::string& assetName)
     {
-        _doubleBuffer.Active.MeshUploadQueue.push_back(assetName);
+        _scene.Frame.Back.MeshUploadQueue.push_back(assetName);
     }
 
     void RendererBase::QueueMeshRelease(const std::string& assetName)
     {
-        _doubleBuffer.Active.MeshReleaseQueue.push_back(assetName);
+        _scene.Frame.Back.MeshReleaseQueue.push_back(assetName);
     }
 
     bool RendererBase::SubmitShape2d(const Shape2d& shape)
     {
-        if (_sceneObjects.Shapes2d.size() >= SHAPE_2D_COUNT_MAX)
+        if (_scene.Objects.Shapes2d.size() >= SHAPE_2D_COUNT_MAX)
         {
             Debug::Log("Attempted to submit 2D shape to full container.",
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
             return false;
         }
 
-        _sceneObjects.Shapes2d.push_back(shape);
+        _scene.Objects.Shapes2d.push_back(shape);
         return true;
     }
 
@@ -159,7 +189,7 @@ namespace Silent::Renderer
     {
         auto& assets = g_App.GetAssets();
 
-        if (_sceneObjects.Sprites2d.size() >= SPRITE_2D_COUNT_MAX)
+        if (_scene.Objects.Sprites2d.size() >= SPRITE_2D_COUNT_MAX)
         {
             Debug::Log("Attempted to submit 2D sprite to full container.",
                        Debug::LogLevel::Warning, Debug::LogMode::Debug);
@@ -176,7 +206,7 @@ namespace Silent::Renderer
         //    return false;
         //}
 
-        _sceneObjects.Sprites2d.push_back(sprite);
+        _scene.Objects.Sprites2d.push_back(sprite);
         return true;
     }
 
@@ -191,10 +221,9 @@ namespace Silent::Renderer
         float heightScale      = (text.StyleFlags & (int)TextStyleFlags::HalfHeight) ? 0.5f : 1.0f;
         auto  textScale        = Vector2(1.0f, heightScale) * text.Scale;
         auto  textSize         = (Vector2(text.Shape.Width, (float)text.Font->GetPointSize()) * fontScaleFactor) * textScale;
-        auto  aspectCorrection = GetScreenAspectCorrection(text.ScaleMd);
+        auto  aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
 
         // Compute text position.
-        // @todo Use common function for alignment pivots.
         auto textOffset = Vector2::Zero;
         switch (text.AlignMd)
         {
@@ -244,7 +273,7 @@ namespace Silent::Renderer
                 break;
             }
         }
-        auto adjTextPos = text.Position + Vector2::Transform(textOffset, rotMat);
+        auto adjTextPos = text.Position + (Vector2::Transform(textOffset, rotMat) * aspectCorrection);
 
         // Compute shadow offset.
         auto shadowOffset    = (SHADOW_OFFSET * Vector2(1.0f, heightScale)) * aspectCorrection;
@@ -284,7 +313,7 @@ namespace Silent::Renderer
 
             auto AddGlyph = [&](const Vector2& offset, const Color& color, int depth, bool hasGradient)
             {
-                if (_sceneObjects.Glyphs2d.size() >= GLYPH_2D_COUNT_MAX)
+                if (_scene.Objects.Glyphs2d.size() >= GLYPH_2D_COUNT_MAX)
                 {
                     Debug::Log("Attempted to submit 2D glyph to full container.",
                                Debug::LogLevel::Warning, Debug::LogMode::Debug);
@@ -294,8 +323,8 @@ namespace Silent::Renderer
                 auto glyph = Glyph2d::CreateGlyph2d(shapedGlyph, hasGradient,
                                                     atlasName, uvMin, uvMax,
                                                     pos + offset, text.Rotation, scale, color,
-                                                    depth, text.ScaleMd);
-                _sceneObjects.Glyphs2d.push_back(glyph);
+                                                    depth);
+                _scene.Objects.Glyphs2d.push_back(glyph);
 
                 return true;
             };
@@ -307,7 +336,7 @@ namespace Silent::Renderer
             }
 
             // Submit 2D drop shadow glyph.
-            if (text.HasShadow)
+            if (text.StyleFlags & (int)TextStyleFlags::Shadow)
             {
                 auto shadowColor = SHADOW_COLOR;
                 shadowColor.A()  = text.Col.A();

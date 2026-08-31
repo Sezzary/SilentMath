@@ -30,6 +30,38 @@ namespace Silent::Assets
         HasClut = 1 << 3
     };
 
+    /** @brief Gets the intended aspect ratio of a TIM asset.
+     *
+     * @note Some TIMs are squashed and must be stretched horizontally.
+     *
+     * @param name Name.
+     * @param res True resolution.
+     * @return Intended aspect ratio.
+     */
+    static float GetAspectRatio(const std::string& name, const Vector2i& res)
+    {
+        static const auto TIM_RES_MAP = std::unordered_map<std::string, Vector2i>
+        {
+            { "TIM/TITLE.TIM",   Vector2i(640, 480) },
+            { "TIM/TITLE_E.TIM", Vector2i(640, 480) },
+        };
+
+        float aspect = 1.0f;
+
+        // Commpute intended aspect ratio.
+        const auto* obtuseTimRes = Find(TIM_RES_MAP, name);
+        if (obtuseTimRes != nullptr)
+        {
+            aspect = (float)(*obtuseTimRes).x / (float)(*obtuseTimRes).y;
+        }
+        else
+        {
+            aspect = (float)res.x / (float)res.y;
+        }
+
+        return aspect;
+    }
+
     /** @brief Sets an RGBA pixel in an image pixel buffer to a given CLUT color.
      *
      * @param pixels Output image RGBA pixel buffer.
@@ -45,10 +77,10 @@ namespace Silent::Assets
         constexpr int TRANSPARENT_COLOR_FLAG = 1 << 15;
 
         // Set extracted RGBA pixel components.
-        byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-        pixel[0]    = (color & 0x1F) << 3;         // R.
-        pixel[1]    = ((color >> 5) & 0x1F) << 3;  // G.
-        pixel[2]    = ((color >> 10) & 0x1F) << 3; // B.
+        auto pixel = ToSpan(&pixels[((y * res.x) + x) * RGBA_COMP_COUNT], RGBA_COMP_COUNT);
+        pixel[0]   = (color & 0x1F) << 3;         // R.
+        pixel[1]   = ((color >> 5) & 0x1F) << 3;  // G.
+        pixel[2]   = ((color >> 10) & 0x1F) << 3; // B.
 
         // Handle color palette atlas image.
         if (isPaletteAtlas)
@@ -83,11 +115,11 @@ namespace Silent::Assets
     static void SetPixelIndex(std::vector<byte>& pixels, const Vector2i& res, int x, int y, int idx)
     {
         // Set pixel color palette index.
-        byte* pixel = &pixels[((y * res.x) + x) * RGBA_COMP_COUNT];
-        pixel[0]    = idx; // Color index.
-        pixel[1]    = 0;   // Unused.
-        pixel[2]    = 0;   // Unused.
-        pixel[3]    = 255; // A.
+        auto pixel = ToSpan(&pixels[((y * res.x) + x) * RGBA_COMP_COUNT], RGBA_COMP_COUNT);
+        pixel[0]   = idx; // Color index.
+        pixel[1]   = 0;   // Unused.
+        pixel[2]   = 0;   // Unused.
+        pixel[3]   = 255; // A.
     }
 
     std::shared_ptr<void> ParseTim(const stdfs::path& filename)
@@ -292,7 +324,7 @@ namespace Silent::Assets
             .Resolution   = res,
             .Pixels       = std::move(pixels),
             .PaletteAtlas = std::move(paletteAtlas),
-            .AspectRatio  = (float)res.x / (float)res.y
+            .AspectRatio  = GetAspectRatio((filename.parent_path().filename() / filename.filename()).string(), res)
         };
         return std::make_shared<TimAsset>(std::move(asset));
     }

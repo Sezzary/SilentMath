@@ -53,7 +53,8 @@ float4 main(Input input) : SV_Target
 
     // Add vertical line effect.
     float lineShade = clamp((fmod(input.Position.x, 2.0f) - 1.0f) * 2.0f, 0.0f, 1.0f);
-    color *= 1.0f - (0.5f * float3(lineShade, lineShade, lineShade));
+    color          *= 1.0f - (0.5f * float3(lineShade, lineShade, lineShade));
 
+    // Compute final color.
     return float4(color, 1.0f);
 }

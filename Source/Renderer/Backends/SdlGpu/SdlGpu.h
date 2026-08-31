@@ -17,14 +17,16 @@ namespace Silent::Renderer::SdlGpu
     /** @brief GPU buffer draw batch. */
     struct DrawBatch
     {
-        //VertexBuffer<BufferVertex2d>* VertexBuffer = nullptr; // @todo
-        std::string TextureName  = {}; // @todo Or pointer to SDL_gpu texture handle?
-        RenderStage RenderStg    = RenderStage::Sprite2d;
-        BlendMode   BlendMd      = BlendMode::Opaque;
-        UniformType Uniform      = {};
-        int         VertexCount  = 0;
-        int         VertexOffset = 0;
-        int         IdxOffset    = 0;
+        std::string TextureName = {};
+        RenderStage RenderStg   = RenderStage::Sprite2d;
+        BlendMode   BlendMd     = BlendMode::Opaque;
+        
+        UniformType Uniform = {};
+        
+        VertexBuffer<BufferType>* VertexBuffer = nullptr;  // @todo
+        int                       VertexCount  = 0;
+        int                       VertexOffset = 0;
+        int                       IdxOffset    = 0;
     };
 
     /** @brief Sorted GPU buffer draw batches. */
@@ -52,17 +54,17 @@ namespace Silent::Renderer::SdlGpu
         // Fields
         // =======
 
-        SDL_GPUDevice*        _device        = nullptr;
-        SDL_GPUCommandBuffer* _commandBuffer = nullptr;
-        SDL_GPUFence*         _renderFence   = nullptr;
-        PipelineManager       _pipelines     = PipelineManager();
-        GpuBuffers            _gpuBuffers    = {};
-        DrawBatches           _drawBatches   = {};
+        SDL_GPUDevice*               _device        = nullptr;
+        SDL_GPUCommandBuffer*        _commandBuffer = nullptr;
+        SDL_GPUFence*                _renderFence   = nullptr;
+        std::vector<SDL_GPUSampler*> _samplers      = {};
+        PipelineManager              _pipelines     = PipelineManager();
+        GpuBuffers                   _gpuBuffers    = {};
+        DrawBatches                  _drawBatches   = {};
 
-        std::vector<SDL_GPUSampler*> _samplers         = {};
-        PingPongTexture              _renderTexture    = PingPongTexture();
-        SDL_GPUTexture*              _depthTexture     = nullptr;
-        SDL_GPUTexture*              _swapchainTexture = nullptr;
+        std::vector<PingPongTexture> _renderTargets   = {};
+        SDL_GPUTexture*              _depthTarget     = nullptr;
+        SDL_GPUTexture*              _swapchainTarget = nullptr;
 
     public:
         // =============
@@ -176,10 +178,19 @@ namespace Silent::Renderer::SdlGpu
         // ============================================================
 
         void Draw3dScene() override;
-        void DrawDither() override;
+        void Draw3dScenePostProcess() override;
         void Draw2dScene() override;
-        void DrawPostProcess() override;
+        void DrawScenePostProcess() override;
         void DrawViewport() override;
         void DrawDebugMenu() override;
+
+        /** @brief Runs a post-process pass on the scene.
+         *
+         * @note Before making successive calls to this function, copying the viewport quad to the GPU is required.
+         *
+         * @param renderStage Pipeline render stage.
+         * @param pushUniforms Callback to push shader uniforms.
+         */
+        void RunPostProcessPass(RenderStage renderStage, const std::function<void()>& pushUniforms);
     };
 }

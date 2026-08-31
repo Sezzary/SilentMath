@@ -440,21 +440,27 @@ namespace Silent::Game
                 continue;
             }
 
-            Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
-            Gfx_StringSetColor(StringColorId_White);
+            Gfx_StringPositionSet(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
+            Gfx_StringColorSet(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
             {
                 auto selectedEntryStr = //"{M}" +
-                                        translator(KEY_MAIN_MENU_OPENING_QUOTE) +
+                                        translator(KEY_MAIN_MENU_OPENING_QUOTE)    +
                                         translator(MAIN_MENU_ENTRY_STRING_KEYS[i]) +
-                                        translator(KEY_MAIN_MENU_CLOSING_QUOTE);
-                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
+                                        translator(KEY_MAIN_MENU_CLOSING_QUOTE)
+                                        ;
+                Gfx_StringDraw(selectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterBottom);
+
+                //g_StringPosition.x -= ConvertScreenPercentToRetroPixels(Vector2(width * 0.5f, 0.0f)).x;
+                //Gfx_StringDraw(translator(KEY_MAIN_MENU_OPENING_QUOTE), DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterRight);
+                //g_StringPosition.x += ConvertScreenPercentToRetroPixels(Vector2(width, 0.0f)).x;
+                //Gfx_StringDraw(translator(KEY_MAIN_MENU_CLOSING_QUOTE), DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterLeft);
             }
             else
             {
                 auto unselectedEntryStr = /*"{M}" + */translator(MAIN_MENU_ENTRY_STRING_KEYS[i]);
-                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true);
+                Gfx_StringDraw(unselectedEntryStr, DEFAULT_MAP_MESSAGE_LENGTH, true, AlignMode::CenterBottom);
             }
         }
     }
@@ -478,8 +484,8 @@ namespace Silent::Game
         // Draw selection strings.
         for (int i = 0; i < DIFFICULTY_MENU_SELECTION_COUNT; i++)
         {
-            Gfx_StringSetPosition(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
-            Gfx_StringSetColor(StringColorId_White);
+            Gfx_StringPositionSet(COLUMN_POS_X, COLUMN_POS_Y + (i * STR_OFFSET_Y));
+            Gfx_StringColorSet(StringColorId_White);
 
             if (i == g_MainMenu_SelectedEntry)
             {
@@ -510,7 +516,7 @@ namespace Silent::Game
         // Submit fullscreen sprite `TIM/TITLE_E.TIM`.
         auto sprite = Sprite2d::CreateSprite2d("TIM/TITLE_E.TIM", Vector2::Zero, Vector2::One,
                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, Color::White, 0,
-                                               100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                               100, AlignMode::Center, ScaleMode::Fit, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         //Screen_BackgroundImgDraw(&g_TitleImg);
 

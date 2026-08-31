@@ -136,10 +136,6 @@ namespace Silent::Utils
         /** @brief Clears all indices of glyph texture atlases marked for updating on the GPU. */
         void ClearDirtyGpuAtlasIdxs();
 
-        // ==========
-        // Inquirers
-        // ==========
-
     private:
         // ========
         // Helpers

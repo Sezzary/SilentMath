@@ -55,9 +55,6 @@ namespace Silent::Debug
                 ImGui::EndTable();
             }
 
-            // 'Alpha blend' slider.
-            ImGui::SliderFloat("Alpha Blend", &g_Work.BlendAlpha, 0.0f, 1.0f);
-
             ImGui::EndTabItem();
         }
     }

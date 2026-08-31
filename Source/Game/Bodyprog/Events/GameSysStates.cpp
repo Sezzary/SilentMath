@@ -218,7 +218,7 @@ namespace Silent::Game
             return;
         }
 
-        if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.light &&
+        if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.light &&
             g_SysWork.field_2388.field_154.effectsInfo.field_0.s_field_0.field_0 & (1 << 1))
         {
             //Game_FlashlightToggle();
@@ -228,7 +228,7 @@ namespace Silent::Game
         {
             SysWork_StateSetNext((e_SysState)g_MapEventSysState);
         }
-        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.pause)
+        else if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.pause)
         {
             SysWork_StateSetNext(SysState_GamePaused);
         }
@@ -236,16 +236,16 @@ namespace Silent::Game
         {
             return;
         }*/
-        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.item)
+        else if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.item)
         {
             SysWork_StateSetNext(SysState_StatusMenu);
         }
-        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.map)
+        else if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.map)
         {
             SysWork_StateSetNext(SysState_MapScreen);
             g_SysWork.isMgsStringSet = false;
         }
-        else if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.option)
+        else if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.option)
         {
             SysWork_StateSetNext(SysState_OptionsMenu);
         }
@@ -269,7 +269,7 @@ namespace Silent::Game
         D_800A9A68 += g_DeltaTimeRaw;
         if (!((D_800A9A68 >> 11) & (1 << 0)))
         {
-            Gfx_StringSetPosition(SCREEN_POSITION_X(39.25f), SCREEN_POSITION_Y(43.5f));
+            Gfx_StringPositionSet(131, 104);
             Gfx_StringDraw("\x07PAUSED", DEFAULT_MAP_MESSAGE_LENGTH);
         }
 
@@ -284,14 +284,14 @@ namespace Silent::Game
 
         // Debug button combo to bring up save screen from pause screen.
         // DPad-Left + L2 + L1 + LS-Left + RS-Left + L3
-        if ((g_Controller0->heldBtnFlags == (ControllerFlag_L3          |
+        if ((g_Controller0->buttonFlags.held == (ControllerFlag_L3          |
                                              ControllerFlag_DpadLeft    |
                                              ControllerFlag_L2          |
                                              ControllerFlag_L1          |
-                                             ControllerFlag_LStickLeft2 |
-                                             ControllerFlag_RStickLeft  |
-                                             ControllerFlag_LStickLeft)) &&
-            (g_Controller0->clickedBtnFlags & ControllerFlag_L3))
+                                             ControllerFlag_LStickLowLeft |
+                                             ControllerFlag_RStickLowLeft  |
+                                             ControllerFlag_LStickHighLeft)) &&
+            (g_Controller0->buttonFlags.clicked & ControllerFlag_L3))
         {
             D_800A9A68 = 0;
             SD_Call(4);
@@ -300,7 +300,7 @@ namespace Silent::Game
             return;
         }
 
-        if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.pause)
+        if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.pause)
         {
             D_800A9A68 = 0;
 
@@ -465,7 +465,7 @@ namespace Silent::Game
     {
         if (!HAS_PAPER_MAP(g_SavegamePtr->paperMapIdx))
         {
-            if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.map ||
+            if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.map ||
                 Gfx_MapMsg_Draw(MapMsgIdx_NoMap) > MapMsgState_Idle)
             {
                 SysWork_StateSetNext(SysState_Gameplay);
@@ -475,7 +475,7 @@ namespace Silent::Game
                 ((g_SysWork.field_2388.field_1C[0].effectsInfo.field_0.s_field_0.field_0 & (1 << 0)) ||
                 (g_SysWork.field_2388.field_1C[1].effectsInfo.field_0.s_field_0.field_0 & (1 << 0))))
         {
-            if (g_Controller0->clickedBtnFlags & g_GameWorkPtr->config.controllerConfig.map ||
+            if (g_Controller0->buttonFlags.clicked & g_GameWorkPtr->config.controllerConfig.map ||
                 Gfx_MapMsg_Draw(MapMsgIdx_TooDarkForMap) > MapMsgState_Idle)
             {
                 SysWork_StateSetNext(SysState_Gameplay);
@@ -932,11 +932,11 @@ namespace Silent::Game
                 SysWork_StateStepIncrement(0);
 
             case 3:
-                Gfx_StringSetPosition(SCREEN_POSITION_X(32.5f), SCREEN_POSITION_Y(43.5f));
+                Gfx_StringPositionSet(104, 104);
                 Gfx_StringDraw("\aGAME_OVER", DEFAULT_MAP_MESSAGE_LENGTH);
                 g_SysWork.field_28++;
 
-                if ((g_Controller0->clickedBtnFlags & (g_GameWorkPtr->config.controllerConfig.enter |
+                if ((g_Controller0->buttonFlags.clicked & (g_GameWorkPtr->config.controllerConfig.enter |
                                                        g_GameWorkPtr->config.controllerConfig.cancel)) ||
                     g_SysWork.field_28 > Q12(1.0f / 17.0f))
                 {
@@ -945,7 +945,7 @@ namespace Silent::Game
                 break;
 
             case 4:
-                Gfx_StringSetPosition(SCREEN_POSITION_X(32.5f), SCREEN_POSITION_Y(43.5f));
+                Gfx_StringPositionSet(104, 104);
                 Gfx_StringDraw("\aGAME_OVER", DEFAULT_MAP_MESSAGE_LENGTH);
                 //SysWork_StateStepIncrementAfterFade(2, true, 0, Q12(2.0f), false);
                 break;
@@ -973,7 +973,7 @@ namespace Silent::Game
                 g_SysWork.field_28++;
                 //Screen_BackgroundImgDraw(&g_DeathTipImg);
 
-                if (!(g_Controller0->clickedBtnFlags & (g_GameWorkPtr->config.controllerConfig.enter |
+                if (!(g_Controller0->buttonFlags.clicked & (g_GameWorkPtr->config.controllerConfig.enter |
                                                         g_GameWorkPtr->config.controllerConfig.cancel)))
                 {
                     if (g_SysWork.field_28 <= 480)

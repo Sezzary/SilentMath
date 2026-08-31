@@ -1,4 +1,5 @@
 #include "Utils/Constants.hlsli"
+#include "Utils/Math.hlsli"
 
 Texture2D<float4> Texture      : register(t0, space2);
 Texture2D<float4> PaletteAtlas : register(t1, space2);
@@ -17,11 +18,6 @@ cbuffer PerObject : register(b0, space3)
     uint IsFastAlpha;
 };
 
-int DecodeColorIdx(float3 color)
-{
-    return int((color.r * Constants::UINT8_MAX) + 0.5f);
-}
-
 float4 main(Input input) : SV_Target
 {
     // Sample texture.
@@ -31,12 +27,11 @@ float4 main(Input input) : SV_Target
     if (input.PaletteIdx != Constants::NO_VALUE)
     {
         // Get palette atlas dimensions.
-        uint paletteWidth;
-        uint paletteHeight;
-        PaletteAtlas.GetDimensions(paletteWidth, paletteHeight);
+        uint2 paletteSize;
+        PaletteAtlas.GetDimensions(paletteSize.x, paletteSize.y);
 
-        // Decode color index from byte-based red channel.
-        int colorIdx = DecodeColorIdx(texColor);
+        // Get color index.
+        int colorIdx = Math::DecodeColorIdx(texColor);
 
         // Set indexed texture color.
         int2 paletteCoords = int2(colorIdx, input.PaletteIdx);

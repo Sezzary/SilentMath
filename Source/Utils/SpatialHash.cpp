@@ -256,9 +256,9 @@ namespace Silent::Utils
         keys.reserve((int)(dist / _cellSize) + 1);
 
         // Compute cell position.
-        auto pos = Vector3(floor(ray.Origin.x / _cellSize) * _cellSize,
-                           floor(ray.Origin.y / _cellSize) * _cellSize,
-                           floor(ray.Origin.z / _cellSize) * _cellSize);
+        auto pos = Vector3(floorf(ray.Origin.x / _cellSize) * _cellSize,
+                           floorf(ray.Origin.y / _cellSize) * _cellSize,
+                           floorf(ray.Origin.z / _cellSize) * _cellSize);
 
         // Compute cell position step.
         auto posStep = Vector3((ray.Direction.x > 0.0f) ? _cellSize : -_cellSize,

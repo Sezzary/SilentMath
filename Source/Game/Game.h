@@ -396,7 +396,6 @@ namespace Silent::Game
         u8              field_14;                /** `bool` */
         u8              isFlashlightOn;          /** `bool` */
         u8              isFlashlightUnavailable; /** `bool` */
-        // 1 byte of padding.
         q3_12           flashlightIntensity;
         u16             field_1A;
         s_StructUnk3    field_1C[2];
@@ -443,8 +442,7 @@ namespace Silent::Game
         u8               field_234A   : 8; /** `bool` */
         u8               field_234B_0 : 4; /** `bool` | Related to particles. Used to trigger SFX? */
         u8               field_234B_4 : 4; // Related to particles.
-        s32              mapMsgTimer;
-        u8               enableHighResGlyphs : 4; /** `bool` */
+        q19_12           mapMsgTimer;
         u8               silentYesSelection  : 4; /** `bool` */
         u32              invItemSelectedIdx  : 8;
         u32              invItemLoadFlags    : 8; /** `e_InvItemLoadFlags` */
@@ -453,7 +451,6 @@ namespace Silent::Game
         u8               enablePlayerMatchAnim; /** `bool` | Activates the animation performed by Harry when lighting a match at the beginning of the game. */
         s8               unused_2359;           /** @unused */
         u8               playerStopFlags;       /** `e_PlayerStopFlags` */
-        // 1 byte of padding.
         GsCOORDINATE2*   lightBoneCoord;
         VECTOR3          lightPosition;      // } Often set to DMS cutscene data.
         GsCOORDINATE2*   lensFlareBoneCoord; // }
@@ -469,7 +466,6 @@ namespace Silent::Game
         s_SysWork_2514   field_2514;
         s8               field_254C[508]; /** Used through indirect pointer calls. Tied to `libkpad`.*/
         q3_12            bgmLayerVolumes[BGM_LAYER_COUNT];
-        // 2 bytes of padding.
         q23_8            field_275C; // } SFX volumes?
         q23_8            field_2760; // }
         q23_8            field_2764; // }

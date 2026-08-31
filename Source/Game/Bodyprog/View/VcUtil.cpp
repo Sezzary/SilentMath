@@ -251,36 +251,36 @@ namespace Silent::Game
 
         vwGetViewAngle(&cam_ang);
 
-        if (!(g_Controller1->heldBtnFlags & ControllerFlag_Circle))
+        if (!(g_Controller1->buttonFlags.held & ControllerFlag_Circle))
         {
-            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickDown)
+            if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighDown)
             {
                 cam_ang.vx = cam_ang.vx - (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickUp)
+            if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighUp)
             {
                 cam_ang.vx = cam_ang.vx + (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickRight)
+            if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighRight)
             {
                 cam_ang.vy = cam_ang.vy + (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickLeft)
+            if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighLeft)
             {
                 cam_ang.vy = cam_ang.vy - (g_VBlanks * V_BLANKS_MULT);
             }
 
-            if (g_Controller1->heldBtnFlags & (ControllerFlag_Triangle | ControllerFlag_Cross))
+            if (g_Controller1->buttonFlags.held & (ControllerFlag_Triangle | ControllerFlag_Cross))
             {
                 moveStep = Q8(0.0f);
-                if (g_Controller1->heldBtnFlags & ControllerFlag_Triangle)
+                if (g_Controller1->buttonFlags.held & ControllerFlag_Triangle)
                 {
                     moveStep = MOVE_DIST;
                 }
-                if (g_Controller1->heldBtnFlags & ControllerFlag_Cross)
+                if (g_Controller1->buttonFlags.held & ControllerFlag_Cross)
                 {
                     moveStep = -MOVE_DIST - 1; // TODO: `- 1` enforces a rounded down result, but `Q8` truncates toward 0.
                 }
@@ -292,23 +292,23 @@ namespace Silent::Game
         }
         else
         {
-            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickUp)
+            if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighUp)
             {
                 newCamPos.vy -= MOVE_DIST;
             }
-            if (g_Controller1->heldBtnFlags & ControllerFlag_LStickDown)
+            if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighDown)
             {
                 newCamPos.vy += MOVE_DIST;
             }
 
-            if (g_Controller1->heldBtnFlags & (ControllerFlag_LStickRight | ControllerFlag_LStickLeft))
+            if (g_Controller1->buttonFlags.held & (ControllerFlag_LStickHighRight | ControllerFlag_LStickHighLeft))
             {
                 moveStep = Q8(0.0f);
-                if (g_Controller1->heldBtnFlags & ControllerFlag_LStickRight)
+                if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighRight)
                 {
                     moveStep = MOVE_DIST;
                 }
-                if (g_Controller1->heldBtnFlags & ControllerFlag_LStickLeft)
+                if (g_Controller1->buttonFlags.held & ControllerFlag_LStickHighLeft)
                 {
                     moveStep = -MOVE_DIST - 1; // TODO: `- 1` enforces a rounded down result, but `Q8` truncates toward 0.
                 }
@@ -326,10 +326,10 @@ namespace Silent::Game
         lookAtMat.t[2] = newCamPos.vz;
         vwSetViewInfoDirectMatrix(nullptr, &lookAtMat);
 
-        if (g_Controller1->heldBtnFlags & (ControllerFlag_LStickUp    |
-                                         ControllerFlag_LStickRight |
-                                         ControllerFlag_LStickDown  |
-                                         ControllerFlag_LStickLeft  |
+        if (g_Controller1->buttonFlags.held & (ControllerFlag_LStickHighUp    |
+                                         ControllerFlag_LStickHighRight |
+                                         ControllerFlag_LStickHighDown  |
+                                         ControllerFlag_LStickHighLeft  |
                                          ControllerFlag_Cross       |
                                          ControllerFlag_Triangle))
         {

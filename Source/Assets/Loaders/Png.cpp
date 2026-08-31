@@ -16,12 +16,10 @@ namespace Silent::Assets
     {
         const auto& fs = g_App.GetFilesystem();
 
-        // Create asset.
-        auto asset = PngAsset{};
-
-        // Read pixels.
+        // Read image.
+        auto   res      = Vector2i::Zero;
         int    channels = 0;
-        uchar* pixels   = stbi_load(filename.string().c_str(), &asset.Resolution.x, &asset.Resolution.y, &channels, RGBA_COMP_COUNT);
+        uchar* pixels   = stbi_load(filename.string().c_str(), &res.x, &res.y, &channels, RGBA_COMP_COUNT);
         if (pixels == nullptr) 
         {
             throw std::runtime_error(Fmt("Failed to open PNG `{}`.",
@@ -29,13 +27,17 @@ namespace Silent::Assets
         }
 
         // Copy pixels.
-        asset.Pixels      = std::vector<byte>(pixels, pixels + ((asset.Resolution.x * asset.Resolution.y) * RGBA_COMP_COUNT));
-        asset.AspectRatio = (float)asset.Resolution.x / (float)asset.Resolution.y;
+        auto pixelsCpy = std::vector<byte>(pixels, pixels + ((res.x * res.y) * RGBA_COMP_COUNT));
 
         // Free resources.
         stbi_image_free(pixels);
 
-        return std::make_shared<PngAsset>(std::move(asset));
+        return std::make_shared<PngAsset>(PngAsset
+        {
+            .Resolution  = res,
+            .Pixels      = std::move(pixelsCpy),
+            .AspectRatio = (float)res.x / (float)res.y
+        });
     }
 
     void QueuePngGpuUpload(const Asset& asset)

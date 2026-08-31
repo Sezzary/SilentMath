@@ -2,9 +2,17 @@
 
 namespace Silent::Renderer
 {
-    /** @brief Per-object GPU uniform data for 3D primitive. */
-    struct alignas(16) UniformPrimitive3d
+    /** @brief Per-frame GPU uniform data for 3D primitive. */
+    struct alignas(16) UniformPrimitive3dPerFrame
     {
-        float ModelMat[4][4];
+        Matrix ViewProjectionMat   = Matrix::Identity;
+        uint   HasJitter           = false;
+        float  ViewportAspectRatio = 1.0f;
+    };
+
+    /** @brief Per-object GPU uniform data for 3D primitive. */
+    struct alignas(16) UniformPrimitive3dPerObject
+    {
+        Matrix ModelMat = Matrix::Identity;
     };
 }

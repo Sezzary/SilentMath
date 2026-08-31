@@ -5,24 +5,25 @@ namespace Silent::Renderer
     /** @brief Render stages representing pipelines or shader programs, depending on the backend. */
     enum class RenderStage
     {
-        // ==========
-        // Materials
-        // ==========
+        // =========
+        // Material
+        // =========
 
         Shape2d,
         Sprite2d,
         Glyph2d,
         Model,
 
-        // ========
-        // Effects
-        // ========
+        // =============
+        // Post-process
+        // =============
 
         Dither,
         LumaFade,
         FilmGrain,
         Vignette,
         Crt,
+        Fxaa,
 
         // ======
         // Final
@@ -47,6 +48,16 @@ namespace Silent::Renderer
         Count
     };
 
+    /** @brief Render target types. */
+    enum class RenderTargetType
+    {
+        Virtual240p,
+        Virtual480p,
+        Native,
+
+        Count
+    };
+
     /** @brief Screen space shape align modes. */
     enum class AlignMode
     {
@@ -64,10 +75,9 @@ namespace Silent::Renderer
     /** @brief Screen space scale modes relative to the display aspect ratio. */
     enum class ScaleMode
     {
-        ShortEdge,
-        LongEdge,
-        HorizontalEdge,
-        VerticalEdge,
-        Stretch
+        VerticalEdge,   /** Scales relative to the vertical screen edge. */
+        HorizontalEdge, /** Scales relative to the horizontal screen edge. */
+        Fit,            /** Scales to fit in fullscreen. */
+        Fill            /** Scales to fill in fullscreen. */
     };
 }

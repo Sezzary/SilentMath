@@ -1,22 +1,41 @@
 #pragma once
 
+#include "Renderer/Common/Enums.h"
+
+using namespace Silent::Renderer;
+
 namespace Silent::Game
 {
-
     constexpr char MAP_MSG_CODE_COLOR         = 'C'; /** Set color. */
     constexpr char MAP_MSG_CODE_DISPLAY_ALL   = 'D'; /** Display message instantly with no rollout. */
     constexpr char MAP_MSG_CODE_END           = 'E'; /** End message. */
+    constexpr char MAP_MSG_CODE_HALF_HEIGHT   = 'H'; /** Half-height glyphs. */
     constexpr char MAP_MSG_CODE_JUMP          = 'J'; /** Jump timer. */
-    constexpr char MAP_MSG_CODE_LINE_POSITION = 'L'; /** Set next line position. */
-    constexpr char MAP_MSG_CODE_MIDDLE        = 'M'; /** Align center. */
+    constexpr char MAP_MSG_CODE_LINE_POSITION = 'L'; /** Set next line position override. */
+    constexpr char MAP_MSG_CODE_ALIGN_CENTER  = 'M'; /** Align center. */
     constexpr char MAP_MSG_CODE_NEWLINE       = 'N'; /** Newline. */
     constexpr char MAP_MSG_CODE_SELECT        = 'S'; /** Display dialog prompt with selectable entries. */
     constexpr char MAP_MSG_CODE_TAB           = 'T'; /** Inset line. */
-    constexpr char MAP_MSG_CODE_RIGHT         = 'R'; /** Align right. */
-    constexpr char MAP_MSG_CODE_PAGE          = 'P'; /** Split page. */
+    constexpr char MAP_MSG_CODE_END_PAGE      = 'P'; /** End page. */ // @todo New.
+    constexpr char MAP_MSG_CODE_ALIGN_RIGHT   = 'R'; /** Align right. */
 
-    constexpr int FONT_12X16_GLYPH_SIZE_Y   = 16;
-    constexpr int FONT_12X16_LINE_COUNT_MAX = 9;
+    /** @brief Processed message node types. */
+    enum class NodeType
+    {
+        Text,
+        Command
+    };
+
+    /** @brief Message return codes. */
+    enum e_MsgReturnCode
+    {
+        MsgReturnCode_None    = 0,
+        MsgReturnCode_EndPage = -2, // @todo Implement this.
+        MsgReturnCode_End     = 1,
+        MsgReturnCode_Select2 = 2,
+        MsgReturnCode_Select3 = 3,
+        MsgReturnCode_Select4 = 4
+    };
 
     /** @brief String color IDs for strings displayed in screen space.
      * Used as indices into `STRING_COLORS`.
@@ -36,13 +55,6 @@ namespace Silent::Game
         StringColorId_Count
     };
 
-    /** @brief Processed message node types. */
-    enum class NodeType
-    {
-        Text,
-        Command
-    };
-
     /** @brief Processed message node. */
     struct MsgNode
     {
@@ -50,76 +62,85 @@ namespace Silent::Game
         std::string Value = {};
     };
 
-    /** Used in string parsing. */
-    struct s_800C38B0
+    /** @brief Parsed message data. */
+    struct ParsedMsg
     {
-        s8 field_0;
-        u8 positionIdx_1;
+        std::string          FontName   = {};
+        std::vector<MsgNode> Nodes      = {};
+        std::vector<float>   LineWidths = {};
+        float                LineHeight = 0.0f;
     };
 
-    extern s_800C38B0 D_800C38B0;
-
-    extern s32 g_MapMsg_WidthIdx;
-
-    extern s32 g_MapMsg_Widths[12];
-
-    /** String glyph sprite. */
-    extern GsSPRITE g_MapMsg_GlyphSprite;
-
-    extern s16 D_800C391C;
-
-    extern s32 D_800C3920;
-
-    /** String position. */
     extern Vector2i g_StringPosition;
+    extern u8       g_MapMsg_AudioLoadBlock;
 
-    /** String X position. It's unclear why there are two. */
-    extern int g_StringPositionX1;
-
-    extern s32 g_MapMsg_WidthIdx;
-
-    extern s32 g_MapMsg_Widths[12];
-
-    /** Sets the position of the next string to be drawn by `Gfx_StringDraw`. */
-    void Gfx_StringSetPosition(int posX, int posY);
-
-    void Gfx_Strings2dLayerIdxSet(s32 idx);
-
-    void Gfx_StringsReset2dLayerIdx();
-
-    /** Sets the color of the next string drawn by `Gfx_StringDraw`.
+    /** @brief Parses a tagged message.
      *
-     * @param colorId ID of the color to set.
+     * @param msg Tagged message.
+     * @param fontName Name of the font to use.
+     * @param lineHeight Height per line in screen percent.
+     * @return Parsed message.
      */
-    void Gfx_StringSetColor(e_StringColorId colorId);
+    ParsedMsg GetParsedMsg(const std::string& msg, const std::string& fontName, float lineHeight);
 
-    /** Draws a string in screen space using 12x16 glyphs.
+    /** @brief Draws a string in screen space.
      *
      * @param str String to draw.
-     * @param strLength String length for rollout
-     * @return Length of the string.
+     * @param fontName Name of the font to use.
+     * @param pos Position in screen percent.
+     * @param scale Scale relative to the screen height.
+     * @param color Color.
+     * @param styleFlags Style flags.
+     * @param alignMode Alignment mode.
      */
-    float Gfx_StringDraw(const std::string& str, int strLength, bool isHalfHeight = false);
+    void DrawString(const std::string& str, const std::string& fontName, const Vector2& pos, float scale,
+                    const Color& color, int styleFlags, AlignMode alignMode);
 
-    s32 Gfx_MapMsg_CalculateWidths(s32 mapMsgIdx);
+    /** @brief Draws a parsed message in screen space.
+     *
+     * @param msg Parsed message to draw.
+     * @param pos Start position in screen percent.
+     * @param scale Scale relative to the screen height.
+     * @param glyphCount Consecutive glyphs to draw from the message. Used for rollout.
+     * @return Map message return code.
+     */
+    e_MsgReturnCode DrawParsedMsg(const ParsedMsg& msg, const Vector2& pos, float scale,
+                                  int styleFlags, int displayLength = INT_MAX);
 
-    /** Draws string and returns map message index. */
-    s32 Gfx_MapMsg_StringDraw(char* mapMsg, s32 strLength, bool isHalfHeight = false);
+    /** @brief Sets the global position of the next string to be drawn by `Gfx_StringDraw`.
+     *
+     * @param x X screen position.
+     * @param y Y screen position.
+     */
+    void Gfx_StringPositionSet(int posX, int posY);
 
-    void func_8004B658();
+    /** @brief Sets the global color state of the next string drawn by `Gfx_StringDraw`.
+     *
+     * @param colorId ID of the new color to set (`e_ColorId`).
+     */
+    void Gfx_StringColorSet(e_StringColorId colorId);
 
-    void Gfx_MapMsg_DefaultStringInfoSet();
+    /** @brief Resets the global `g_StringLayerIdx` to `DEFAULT_TEXT_LAYER_IDX`. */
+    void Gfx_StringLayerIdxSet(s32 layerIdx);
 
-    /** @unused */
-    void func_8004B6D4(s16 arg0, s16 arg1);
+    /** @brief Resets global map message parameters to defaults. */
+    void Gfx_MapMsg_Reset();
 
-    /** @unused */
-    void func_8004B74C(s16 arg0);
+    /** @brief Draws a string in screen space using 12x16 glyphs. The position and color must be set by
+     * `Gfx_StringPositionSet` and `Gfx_StringColorSet` before calling this function.
+     *
+     * @note References glyphs in `FONT16.TIM`. The texture is loaded into VRAM across multiple texture pages,
+     * hence why the texture is a single row with 4-pixel padding every 21st glyph instead of a stacked arrangement.
+     *
+     * @param str String to draw.
+     * @param strLength Number of consecutive glyphs to draw from the string.
+     */
+    void Gfx_StringDraw(const std::string& str, int displayLength = INT_MAX, bool isHalfHeight = false, AlignMode alignMode = AlignMode::BottomLeft);
 
-    /** @unused Draws string. */
-    void func_8004B76C(char* str, bool useFixedWidth);
-
-    void Gfx_StringDrawInt(s32 widthMin, s32 strLength);
-
-    void func_8004BB10();
+    /** @brief Draws an integer string in screen space using 12x16 glyphs.
+     *
+     * @param widthMin Minimum width of the integer string.
+     * @param strLength Number of consecutive glyphs to draw from the integer string.
+     */
+    void Gfx_StringDrawInt(s32 widthMin, s32 displayLength = INT_MAX);
 }

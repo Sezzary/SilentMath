@@ -27,19 +27,23 @@ namespace Silent::Renderer
         // Getters
         // ========
 
-        /** @brief Gets the active read GPU texture.
-         * Used as the main render texture.
+        /** @brief Gets the active read GPU texture. Used as the main render texture.
          *
          * @return Read GPU texture.
          */
         SDL_GPUTexture*& Read();
 
-        /** @brief Gets the active write GPU texture.
-         * Used during multiple render passes to prevent race conditions which produce graphical artefacts.
+        /** @brief Gets the active write GPU texture. Used as the main draw texture.
          *
          * @return Write GPU texture.
          */
         SDL_GPUTexture*& Write();
+
+        // ===================
+        // Override Inquirers
+        // ===================
+
+        bool IsValid() const override;
 
         // ==========
         // Utilities

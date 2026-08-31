@@ -12,8 +12,8 @@ namespace Silent::Renderer
     {
         std::vector<Vertex2d> Vertices = {};
         int                   Depth    = 0;
-        ScaleMode             ScaleMd  = ScaleMode::ShortEdge;
-        BlendMode             BlendMd  = BlendMode::Alpha;
+        ScaleMode             ScaleMd  = ScaleMode::VerticalEdge;
+        BlendMode             BlendMd  = BlendMode::Opaque;
 
         /** @brief Creates a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in percent.
          *
@@ -26,7 +26,8 @@ namespace Silent::Renderer
          */
         static Shape2d CreateLine(const Vector2& from, const Vector2& to,
                                   const Color& colorFrom, const Color& colorTo,
-                                  int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge,
+                                  BlendMode blendMode = BlendMode::Opaque);
 
         /** @brief Creates a 2D line shape with a width of 1 retro pixel (320x240 resolution) using screen positions in retro pixels.
          *
@@ -39,7 +40,8 @@ namespace Silent::Renderer
          */
         static Shape2d CreateLine(const Vector2i& from, const Vector2i& to,
                                   const Color& colorFrom, const Color& colorTo,
-                                  int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge,
+                                  BlendMode blendMode = BlendMode::Opaque);
 
         /** @brief Creates a 2D triangle shape using screen positions in percent.
          *
@@ -54,7 +56,8 @@ namespace Silent::Renderer
          */
         static Shape2d CreateTriangle(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2,
                                       const Color& color0, const Color& color1, const Color& color2,
-                                      int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge,
+                                      BlendMode blendMode = BlendMode::Opaque);
 
         /** @brief Creates a 2D triangle shape using retro pixels.
          *
@@ -69,7 +72,8 @@ namespace Silent::Renderer
          */
         static Shape2d CreateTriangle(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2,
                                       const Color& color0, const Color& color1, const Color& color2,
-                                      int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                      int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge,
+                                      BlendMode blendMode = BlendMode::Opaque);
 
         /** @brief Creates a 2D quad shape.
          *
@@ -86,11 +90,15 @@ namespace Silent::Renderer
          */
         static Shape2d CreateQuad(const Vector2& vert0, const Vector2& vert1, const Vector2& vert2, const Vector2& vert3,
                                   const Color& color0, const Color& color1, const Color& color2, const Color& color3,
-                                  int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge,
+                                  BlendMode blendMode = BlendMode::Opaque);
 
         /** @brief Creates a 2D quad shape using retro pixels.
          *
          * @note Vertex order: top-left, bottom-left, top-right, bottom-right.
+         * 0---2
+         * | / |
+         * 1---3
          *
          * @param vert0 First vertex position in retro pixels (320x240 resolution).
          * @param vert1 Second vertex position in retro pixels (320x240 resolution).
@@ -105,6 +113,7 @@ namespace Silent::Renderer
          */
         static Shape2d CreateQuad(const Vector2i& vert0, const Vector2i& vert1, const Vector2i& vert2, const Vector2i& vert3,
                                   const Color& color0, const Color& color1, const Color& color2, const Color& color3,
-                                  int depth = 0, ScaleMode scaleMode = ScaleMode::ShortEdge, BlendMode blendMode = BlendMode::Alpha);
+                                  int depth = 0, ScaleMode scaleMode = ScaleMode::VerticalEdge,
+                                  BlendMode blendMode = BlendMode::Opaque);
     };
 }

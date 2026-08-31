@@ -15,8 +15,8 @@ namespace Silent::Services
     enum class GraphicsPresetType
     {
         None,
-        Original,
-        OriginalPlus,
+        Retro,
+        RetroPlus,
         Recommended,
         Max
     };
@@ -27,17 +27,17 @@ namespace Silent::Services
         Fps60
     };
 
-    enum class RenderScaleType
+    enum class AspectRatioType
     {
-        Original,
-        DoubleOriginal,
+        Retro,
+        Wide,
         Native
     };
 
-    enum class AspectRatioType
+    enum class RenderScaleType
     {
-        Ratio4to3,
-        Ratio16to9,
+        Retro,
+        Retro2x,
         Native
     };
 
@@ -49,14 +49,29 @@ namespace Silent::Services
 
     enum class TextQualityType
     {
-        Original,
-        Smooth
+        Retro,
+        Modern
     };
 
     enum class LightingType
     {
-        PerVertex,
-        PerPixel
+        Retro,
+        Modern
+    };
+
+    enum class AntialiasingType
+    {
+        None,
+        Low, /** FXAA. */
+        High /** SMAA. */
+    };
+
+    enum class DitheringScaleType
+    {
+        None,
+        Retro,
+        Retro2x,
+        Native
     };
 
     enum class SoundType
@@ -91,16 +106,16 @@ namespace Silent::Services
         SelfView
     };
 
-    enum class PaperMapQuality
+    enum class PaperMapQualityType
     {
-        Original,
-        Scalable,
+        Retro,
+        Modern,
     };
 
     enum class DialogPauseType
     {
-        Original,
-        Condensed
+        Retro,
+        Refined
     };
 
     /** @brief User options configuration data. */
@@ -117,20 +132,22 @@ namespace Silent::Services
         // Graphics (user)
         // ================
 
-        GraphicsPresetType PresetType         = GraphicsPresetType::None;
-        bool               EnableFullscreen   = false;
-        int                BrightnessLevel    = 0;
-        FrameRateType      FrameRate          = FrameRateType::Fps30;
-        RenderScaleType    RenderScale        = RenderScaleType::Native;
-        AspectRatioType    AspectRatio        = AspectRatioType::Native;
-        TextureFilterType  TextureFilter      = TextureFilterType::Nearest;
-        TextQualityType    TextQuality        = TextQualityType::Smooth;
-        LightingType       Lighting           = LightingType::PerVertex;
-        bool               EnableVertexJitter = false;
-        bool               EnableDithering    = false;
-        bool               EnableFilmGrain    = false;
-        bool               EnableVignette     = false;
-        bool               EnableCrtFilter    = false;
+        GraphicsPresetType PresetType             = GraphicsPresetType::None;
+        bool               EnableFullscreen       = false;
+        int                BrightnessLevel        = 0;
+        FrameRateType      FrameRate              = FrameRateType::Fps30; // @todo
+        AspectRatioType    AspectRatio            = AspectRatioType::Native; // @todo
+        RenderScaleType    RenderScale            = RenderScaleType::Native;
+        TextureFilterType  TextureFilter          = TextureFilterType::Nearest; // @todo
+        TextQualityType    TextQuality            = TextQualityType::Modern;
+        LightingType       Lighting               = LightingType::Retro; // @todo
+        AntialiasingType   Antialiasing           = AntialiasingType::None; // @todo High.
+        DitheringScaleType DitheringScale         = DitheringScaleType::Retro;
+        bool               EnableAmbientOcclusion = false; // @todo
+        bool               EnableVertexJitter     = false;
+        bool               EnableFilmGrain        = false;
+        bool               EnableVignette         = false;
+        bool               EnableCrtFilter        = false;
 
         // =========
         // Gameplay
@@ -171,8 +188,8 @@ namespace Silent::Services
         // Enhancements
         // =============
 
-        PaperMapQuality PaperMap    = PaperMapQuality::Original;
-        DialogPauseType DialogPause = DialogPauseType::Original;
+        PaperMapQualityType PaperMapQuality = PaperMapQualityType::Retro;
+        DialogPauseType     DialogPause     = DialogPauseType::Retro;
 
         // ==================
         // System (internal)
@@ -197,7 +214,7 @@ namespace Silent::Services
         // Fields
         // =======
 
-        Options _options = {}; /** Options configuration data. */
+        Options _options = {};
 
     public:
         // =============

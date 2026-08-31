@@ -577,7 +577,9 @@ namespace Silent::Input
 
     void InputManager::UpdateRumble()
     {
-        if (_rumble.Ticks == 0 || !IsGamepadConnected())
+        const auto& options = g_App.GetOptions();
+
+        if (!IsGamepadConnected() || !options->EnableVibration || _rumble.Ticks == 0)
         {
             _rumble = {};
             return;
@@ -594,7 +596,7 @@ namespace Silent::Input
         ushort freqHigh    = hasHighFreq ? (ushort)(intensity * USHRT_MAX) : 0;
 
         // Compute duration.
-        int durationMs = (int)round(TICK_TO_SEC(_rumble.DurationTicks) * 1000);
+        int durationMs = (int)roundf(TICK_TO_SEC(_rumble.DurationTicks) * 1000);
 
         // Rumble gamepad.
         if (!SDL_RumbleGamepad(_gamepad.Device, freqLow, freqHigh, durationMs))

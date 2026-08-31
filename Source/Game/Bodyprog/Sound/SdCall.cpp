@@ -85,7 +85,7 @@ namespace Silent::Game
             // Play SFX. Range [1280, 1791].
             case 5:
             case 6:
-                Sd_PlaySfx(cmd, 0, 0);
+                Sd_SfxPlay(cmd, 0, 0);
                 return;
 
             // Stop SFX. Range [1792, 2303].
@@ -367,7 +367,7 @@ namespace Silent::Game
         *right = vol;
     }
 
-    u8 Sd_PlaySfx(u16 sfxId, q0_7 balance, u8 vol) // 0x80046048
+    u8 Sd_SfxPlay(u16 sfxId, q0_7 balance, u8 vol) // 0x80046048
     {
         static s16   audioIdx;
         SpuVoiceAttr attr;
@@ -550,7 +550,7 @@ namespace Silent::Game
         //SpuSetVoiceAttr(&attr);
     }
 
-    // Plays audio, but it's only used on player's movement sounds and features pitch option unlike `Sd_PlaySfx`.
+    // Plays audio, but it's only used on player's movement sounds and features pitch option unlike `Sd_SfxPlay`.
     void func_80046620(u16 sfxId, q0_7 balance, u8 vol, s8 pitch) // 0x80046620
     {
         static s16 audioIdx;

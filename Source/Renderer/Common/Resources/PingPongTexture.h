@@ -26,6 +26,16 @@ namespace Silent::Renderer
         /** @brief Gracefully destroys the instance and frees GPU resources. */
         virtual ~PingPongTextureBase() = default;
 
+        // ==================
+        // Virtual Inquirers
+        // ==================
+
+        /** @brief Checks if the ping-pong texture has valid handles.
+         *
+         * @return `true` if the texture handles are valid, `false` otherwise.
+         */
+        virtual bool IsValid() const = 0;
+
         // ==========
         // Utilities
         // ==========

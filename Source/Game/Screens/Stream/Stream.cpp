@@ -92,8 +92,7 @@ namespace Silent::Game
 
     void open_main(s32 file_idx, s16 num_frames) // 0x801E2AA4
     {
-        //Fs_QueueWaitForEmpty();
-        //movie_main(nullptr, num_frames, g_FileTable[file_idx].startSector);
+        // @stub
     }
 
     bool movie_main(const std::string& file_name, s32 f_size, s32 sector) // 0x801E2B9C
@@ -117,17 +116,15 @@ namespace Silent::Game
             }
             else
             {
-                // @todo Use real delta time.
-                video.Update(1.0f / 30.0f);//Q12_TO_FLT(g_DeltaTime));
+                video.Update(Q12_TO_FLT(g_DeltaTime));
             }
         }
 
         // Submit fullscreen video sprite.
-        float aspect = video.GetAspectRatio();
-        auto  scale  = Vector2(std::max(aspect, 1.0f), std::min(aspect, 1.0f));
         auto  sprite = Sprite2d::CreateSprite2d(video.GetName(), Vector2::Zero, Vector2::One,
-                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), scale, Color::White, NO_VALUE,
-                                                100, AlignMode::Center, ScaleMode::ShortEdge, BlendMode::Opaque);
+                                                SCREEN_SPACE_RES / 2.0f, DEG_TO_RAD(0.0f), 1.0f, video.GetAspectRatio(),
+                                                Color::White, NO_VALUE,
+                                                100, AlignMode::Center, ScaleMode::Fit, BlendMode::Opaque);
         renderer.SubmitSprite2d(sprite);
         return true;
     }

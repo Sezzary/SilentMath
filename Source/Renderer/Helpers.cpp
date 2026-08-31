@@ -12,55 +12,63 @@ namespace Silent::Renderer
 {
     void RendererBase::InitializeDoubleBuffer()
     {
-        auto ReserveMemory = [](SceneDoubleBuffer::Data& data)
+        auto ReserveMemory = [](RendererFrame& frame)
         {
-            data.DebugGuiDrawCalls.reserve(DEBUG_GUI_COUNT_MAX);
-            data.ImmediatePrimitives2d.reserve(SHAPE_2D_COUNT_MAX + 
-                                               SPRITE_2D_COUNT_MAX + 
-                                               GLYPH_2D_COUNT_MAX);
-            data.ImmediatePrimitives3d.reserve(TRI_3D_COUNT_MAX);
+            frame.DebugGuiDrawCalls.reserve(DEBUG_GUI_COUNT_MAX);
+            frame.ImmediatePrimitives2d.reserve(SHAPE_2D_COUNT_MAX  +
+                                                SPRITE_2D_COUNT_MAX +
+                                                GLYPH_2D_COUNT_MAX);
+            frame.ImmediatePrimitives3d.reserve(TRI_3D_COUNT_MAX);
         };
-        ReserveMemory(_doubleBuffer.Active);
-        ReserveMemory(_doubleBuffer.Render);
+        ReserveMemory(_scene.Frame.Back);
+        ReserveMemory(_scene.Frame.Front);
 
-        _sceneObjects.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
-        _sceneObjects.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
-        _sceneObjects.Glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
-        _sceneObjects.Triangles3d.reserve(TRI_3D_COUNT_MAX);
+        _scene.Objects.Shapes2d.reserve(SHAPE_2D_COUNT_MAX);
+        _scene.Objects.Sprites2d.reserve(SPRITE_2D_COUNT_MAX);
+        _scene.Objects.Glyphs2d.reserve(GLYPH_2D_COUNT_MAX);
+        _scene.Objects.Triangles3d.reserve(TRI_3D_COUNT_MAX);
     }
 
     void RendererBase::ProcessShapes2d()
     {
-        // @todo How to apply this?
-        // Compute aspect correction.
-        auto aspectCorrection = GetScreenAspectCorrection(ScaleMode::ShortEdge);
-
-        for (const auto& shape : _sceneObjects.Shapes2d)
+        for (const auto& shape : _scene.Objects.Shapes2d)
         {
-            auto posArr = std::vector<Vector2>{};
-            posArr.reserve(shape.Vertices.size());
+            auto ndcs = std::vector<Vector2>{};
+            ndcs.reserve(shape.Vertices.size());
+
+            auto pos = Vector2::Zero;
+            for (const auto& vert : shape.Vertices)
+            {
+                pos += vert.Position;
+            }
+            pos /= shape.Vertices.size();
+
+            auto ndc = ConvertScreenPercentToNdc(pos);
+
+            // Compute aspect correction.
+            auto aspectCorrection = GetScreenAspectCorrection(shape.ScaleMd);
 
             // Triangle.
             if (shape.Vertices.size() == TRI_VERTEX_COUNT)
             {
                 // Compute vertex positions.
-                posArr =
+                ndcs =
                 {
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[0].Position.x, shape.Vertices[0].Position.y)),
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[1].Position.x, shape.Vertices[1].Position.y)),
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y))
+                    ConvertScreenPercentToNdc(shape.Vertices[0].Position),
+                    ConvertScreenPercentToNdc(shape.Vertices[1].Position),
+                    ConvertScreenPercentToNdc(shape.Vertices[2].Position)
                 };
             }
             // Line or quad.
             else if (shape.Vertices.size() == QUAD_VERTEX_COUNT)
             {
                 // Compute vertex positions.
-                posArr =
+                ndcs =
                 {
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[0].Position.x, shape.Vertices[0].Position.y)),
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[1].Position.x, shape.Vertices[1].Position.y)),
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[2].Position.x, shape.Vertices[2].Position.y)),
-                    ConvertScreenPercentToNdc(Vector2(shape.Vertices[3].Position.x, shape.Vertices[3].Position.y))
+                    ConvertScreenPercentToNdc(shape.Vertices[0].Position),
+                    ConvertScreenPercentToNdc(shape.Vertices[1].Position),
+                    ConvertScreenPercentToNdc(shape.Vertices[2].Position),
+                    ConvertScreenPercentToNdc(shape.Vertices[3].Position)
                 };
             }
 
@@ -71,7 +79,7 @@ namespace Silent::Renderer
             {
                 verts.push_back(Vertex2d
                 {
-                    .Position = posArr[i],
+                    .Position = ndcs[i],
                     .Col      = shape.Vertices[i].Col
                 });
             }
@@ -79,16 +87,16 @@ namespace Silent::Renderer
             // Add 2D primitive.
             // @lock Restrict 2D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives2dMutex);
+                auto lock = ParallelLock(_scene.Primitives2dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
+                _scene.Frame.Back.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices    = std::move(verts),
                     .Depth       = shape.Depth,
                     .TextureName = {},
                     .RenderStg   = RenderStage::Shape2d,
                     .BlendMd     = shape.BlendMd,
-                    .Uniform     = UniformSprite2d
+                    .Uniform     = UniformSprite2dPerObject
                     {
                         .IsFastAlpha = shape.BlendMd == BlendMode::FastAlpha
                     }
@@ -96,17 +104,13 @@ namespace Silent::Renderer
             }
         }
 
-        _sceneObjects.Shapes2d.clear();
+        _scene.Objects.Shapes2d.clear();
     }
 
     void RendererBase::ProcessSprites2d()
     {
-        for (const auto& sprite : _sceneObjects.Sprites2d)
+        for (const auto& sprite : _scene.Objects.Sprites2d)
         {
-            // @todo Apply scale mode later.
-            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
-            auto ndc = ConvertScreenPercentToNdc(sprite.Position);
-
             // Set alignment offset.
             auto offset = Vector2::Zero;
             switch (sprite.AlignMd)
@@ -169,10 +173,11 @@ namespace Silent::Renderer
             auto relPos3 = Vector2::Transform(-sprite.Scale                            + offset, rotMat) * aspectCorrection;
 
             // Compute vertex positions.
-            auto pos0 = Vector2(ndc.x + relPos0.x, ndc.y + relPos0.y);
-            auto pos1 = Vector2(ndc.x + relPos1.x, ndc.y + relPos1.y);
-            auto pos2 = Vector2(ndc.x + relPos2.x, ndc.y + relPos2.y);
-            auto pos3 = Vector2(ndc.x + relPos3.x, ndc.y + relPos3.y);
+            auto ndc  = ConvertScreenPercentToNdc(sprite.Position);
+            auto pos0 = ndc + relPos0;
+            auto pos1 = ndc + relPos1;
+            auto pos2 = ndc + relPos2;
+            auto pos3 = ndc + relPos3;
 
             // Compute vertex UVs.
             auto uv0 = sprite.UvMin;
@@ -183,9 +188,9 @@ namespace Silent::Renderer
             // Add 2D primitive.
             // @lock Restrict 2D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives2dMutex);
+                auto lock = ParallelLock(_scene.Primitives2dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
+                _scene.Frame.Back.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -222,7 +227,7 @@ namespace Silent::Renderer
                     .TextureName = sprite.TextureName,
                     .RenderStg   = RenderStage::Sprite2d,
                     .BlendMd     = sprite.BlendMd,
-                    .Uniform     = UniformSprite2d
+                    .Uniform     = UniformSprite2dPerObject
                     {
                         .IsFastAlpha = sprite.BlendMd == BlendMode::FastAlpha
                     }
@@ -230,19 +235,18 @@ namespace Silent::Renderer
             }
         }
 
-        _sceneObjects.Sprites2d.clear();
+        _scene.Objects.Sprites2d.clear();
     }
 
     void RendererBase::ProcessGlyphs2d()
     {
-        for (const auto& glyph : _sceneObjects.Glyphs2d)
+        for (const auto& glyph : _scene.Objects.Glyphs2d)
         {
-            //auto pos = GetAspectCorrectScreenPosition(Vector2(vert.Position.x, vert.Position.y), sprite.ScaleMd);
-            auto ndc = ConvertScreenPercentToNdc(glyph.Position);
+            // Set alignment offset.
+            auto offset = Vector2(glyph.Scale.x, glyph.Scale.y);
 
-            // Set alignment offset and aspect correction.
-            auto offset           = Vector2(glyph.Scale.x, glyph.Scale.y);
-            auto aspectCorrection = GetScreenAspectCorrection(glyph.ScaleMd);
+            // Compute aspect correction.
+            auto aspectCorrection = GetScreenAspectCorrection(GLYPH_SCALE_MODE);
 
             // Compute relative vertex positions.
             auto rotMat  = Matrix::CreateRotationZ(-glyph.Rotation);
@@ -252,6 +256,7 @@ namespace Silent::Renderer
             auto relPos3 = Vector2::Transform(-glyph.Scale                           + offset, rotMat) * aspectCorrection;
 
             // Compute vertex positions.
+            auto ndc  = ConvertScreenPercentToNdc(glyph.Position);
             auto pos0 = ndc + relPos0;
             auto pos1 = ndc + relPos1;
             auto pos2 = ndc + relPos2;
@@ -266,9 +271,9 @@ namespace Silent::Renderer
             // Add 2D primitive.
             // @lock Restrict 2D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives2dMutex);
+                auto lock = ParallelLock(_scene.Primitives2dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives2d.push_back(Primitive2d
+                _scene.Frame.Back.ImmediatePrimitives2d.push_back(Primitive2d
                 {
                     .Vertices =
                     {
@@ -301,10 +306,9 @@ namespace Silent::Renderer
                     .TextureName = glyph.AtlasName,
                     .RenderStg   = RenderStage::Glyph2d,
                     .BlendMd     = BlendMode::Alpha,
-                    .Uniform     = UniformGlyph2d
+                    .Uniform     = UniformGlyph2dPerObject
                     {
                         .HasGradient    = glyph.HasGradient,
-                        .GradientSteps  = (uint)glyph.GradientSteps,
                         .GradientUvMinY = glyph.GradientUvMinY,
                         .GradientUvMaxY = glyph.GradientUvMaxY
                     }
@@ -312,12 +316,12 @@ namespace Silent::Renderer
             }
         }
 
-        _sceneObjects.Glyphs2d.clear();
+        _scene.Objects.Glyphs2d.clear();
     }
 
     void RendererBase::ProcessTriangles3d()
     {
-        for (const auto& tri : _sceneObjects.Triangles3d)
+        for (const auto& tri : _scene.Objects.Triangles3d)
         {
             auto verts = std::vector<Vertex3d>{};
             verts.reserve(tri.Vertices.size());
@@ -336,15 +340,15 @@ namespace Silent::Renderer
             // Add 3D primitive.
             // @lock Restrict 3D primitives access.
             {
-                auto lock = ParallelLock(_doubleBuffer.Primitives3dMutex);
+                auto lock = ParallelLock(_scene.Primitives3dMutex);
 
-                _doubleBuffer.Active.ImmediatePrimitives3d.push_back(Primitive3d
+                _scene.Frame.Back.ImmediatePrimitives3d.push_back(Primitive3d
                 {
                     .Vertices    = std::move(verts),
                     .TextureName = tri.TextureName,
                     .RenderStg   = RenderStage::Model,
                     .BlendMd     = tri.BlendMd,
-                    .Uniform     = UniformModel
+                    .Uniform     = UniformModelPerObject
                     {
                         .IsFastAlpha = tri.BlendMd == BlendMode::FastAlpha
                     }
@@ -352,7 +356,7 @@ namespace Silent::Renderer
             }
         }
 
-        _sceneObjects.Triangles3d.clear();
+        _scene.Objects.Triangles3d.clear();
     }
 
     void RendererBase::SortRenderBufferData()
@@ -365,7 +369,7 @@ namespace Silent::Renderer
             // Sort 2D primitives.
             [&]()
             {
-                Sort(_doubleBuffer.Render.ImmediatePrimitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
+                Sort(_scene.Frame.Front.ImmediatePrimitives2d, [](const Primitive2d& prim0, const Primitive2d& prim1)
                 {
                     return prim0.Depth > prim1.Depth;
                 });
@@ -374,7 +378,7 @@ namespace Silent::Renderer
             // Sort 3D primitives.
             [&]()
             {
-                Sort(_doubleBuffer.Render.ImmediatePrimitives3d, [](const Primitive3d& prim0, const Primitive3d& prim1)
+                Sort(_scene.Frame.Front.ImmediatePrimitives3d, [](const Primitive3d& prim0, const Primitive3d& prim1)
                 {
                     return true;
                 });
@@ -387,11 +391,11 @@ namespace Silent::Renderer
     {
         // Scene.
         Draw3dScene();
-        DrawDither();
+        Draw3dScenePostProcess();
         Draw2dScene();
 
         // Final image.
-        DrawPostProcess();
+        DrawScenePostProcess();
         DrawViewport();
 
         // @debug

@@ -11,6 +11,9 @@
 #include "Renderer/Common/Resources/MeshCache.h"
 #include "Renderer/Common/Resources/TextureCache.h"
 #include "Renderer/Common/View.h"
+#include "Utils/DoubleBuffer.h"
+
+using namespace Silent::Utils;
 
 namespace Silent::Renderer
 {
@@ -20,40 +23,54 @@ namespace Silent::Renderer
         SdlGpu
     };
 
-    /** @brief Double-buffered scene data. */
-    struct SceneDoubleBuffer
+    /** @brief High-level renderer objects to draw submitted by game logic. */
+    struct RendererObjects
     {
-        struct Data
-        {
-            bool IsResized     = false;
-            int  DrawCallCount = 0;
+        // =========
+        // Retained
+        // =========
 
-            std::vector<Primitive2d>           ImmediatePrimitives2d = {};
-            std::vector<Primitive3d>           ImmediatePrimitives3d = {};
-            std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
+        // @todo Retained draw requests, such as for animated character models, particle effects, will go here.
 
-            std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
-            std::vector<std::string> TextureReleaseQueue = {}; /** GPU texture names. */
-            std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
-            std::vector<std::string> MeshReleaseQueue    = {}; /** GPU mesh names. */
-        };
+        // ==========
+        // Transient
+        // ==========
 
-        Data Active = {};
-        Data Render = {};
-
-        std::mutex Primitives2dMutex = {};
-        std::mutex Primitives3dMutex = {};
-
-        void Swap();
-    };
-
-    /** @brief Unprocessed scene objects. */
-    struct SceneObjects
-    {
         std::vector<Shape2d>    Shapes2d    = {};
         std::vector<Sprite2d>   Sprites2d   = {};
         std::vector<Glyph2d>    Glyphs2d    = {};
         std::vector<Triangle3d> Triangles3d = {};
+    };
+
+    /** @brief Thread-safe staged renderer frame. */
+    struct RendererFrame
+    {
+        Vector2i SwapchainResolution = Vector2i::Zero;
+        bool     IsResized           = false;
+        Color    ClearColor          = Color::Clear;
+
+        float LumaFadeAlpha   = 0.0f;
+        bool  IsLumaFadeWhite = false;
+        
+        std::vector<Primitive2d>           ImmediatePrimitives2d = {};
+        std::vector<Primitive3d>           ImmediatePrimitives3d = {};
+        std::vector<std::function<void()>> DebugGuiDrawCalls     = {};
+
+        std::vector<std::string> TextureUploadQueue  = {}; /** Asset names. */
+        std::vector<std::string> TextureReleaseQueue = {}; /** GPU texture names. */
+        std::vector<std::string> MeshUploadQueue     = {}; /** Asset names. */
+        std::vector<std::string> MeshReleaseQueue    = {}; /** GPU mesh names. */
+
+        int DrawCallCount = 0;
+    };
+
+    /** @brief Thread-safe renderer scene containing high-level objects and staged frame. */
+    struct RendererScene
+    {
+        RendererObjects             Objects           = {};
+        DoubleBuffer<RendererFrame> Frame             = {};
+        std::mutex                  Primitives2dMutex = {};
+        std::mutex                  Primitives3dMutex = {};
     };
 
     /** @brief Renderer base. */
@@ -64,15 +81,13 @@ namespace Silent::Renderer
         // Fields
         // =======
 
-        SDL_Window*  _window       = nullptr;
-        RendererType _type         = RendererType::SdlGpu;
-        Color        _clearColor   = Color::Clear;
-        View         _view         = View();
-        SceneObjects _sceneObjects = {};
+        SDL_Window*   _window = nullptr;
+        RendererType  _type   = RendererType::SdlGpu;
+        View          _view   = View();
+        RendererScene _scene  = {};
 
-        SceneDoubleBuffer                 _doubleBuffer = {};
-        std::unique_ptr<TextureCacheBase> _textures     = nullptr;
-        std::unique_ptr<MeshCacheBase>    _meshes       = nullptr;
+        std::unique_ptr<TextureCacheBase> _textures = nullptr;
+        std::unique_ptr<MeshCacheBase>    _meshes   = nullptr;
 
     public:
         // =============
@@ -122,6 +137,13 @@ namespace Silent::Renderer
          * @param color New clear color.
          */
         void SetClearColor(const Color& color);
+
+        /** @brief Sets the luma fade alpha and color.
+         *
+         * @param alpha Luma fade alpha.
+         * @param isWhite `true` for fade to white, `false` for fade to black.
+         */
+        void SetLumaFade(float alpha, bool isWhite);
 
         // ==========
         // Utilities
@@ -299,27 +321,27 @@ namespace Silent::Renderer
         // =====================
 
         /** @brief Draws a 3D scene to a cleared off-screen render texture.
-         * Called before `Draw2dScene`.
+         * Called before `Draw3dScenePostProcess`.
          */
         virtual void Draw3dScene() = 0;
 
-        /** @brief Draws dithering over the 3D scene to an off-screen render texture.
+        /** @brief Draws post-process effects on top of the 3D scene to an off-screen render texture.
          * Called after `Draw3dScene` and before `Draw2dScene`.
          */
-        virtual void DrawDither() = 0;
+        virtual void Draw3dScenePostProcess() = 0;
 
         /** @brief Draws a 2D scene on top of the 3D scene to an off-screen render texture.
-         * Called after `Draw3dScene` and before `DrawPostProcess`.
+         * Called after `Draw3dScenePostProcess` and before `DrawScenePostProcess`.
          */
         virtual void Draw2dScene() = 0;
 
         /** @brief Draws post-process effects on top of the combined 3D and 2D scenes to an off-screen render texture.
          * Called after `Draw2dScene` and before `DrawViewport`.
          */
-        virtual void DrawPostProcess() = 0;
+        virtual void DrawScenePostProcess() = 0;
 
         /** @brief Draws the viewport containing post-procesed, combined 3D and 2D scenes to the swapchain.
-         * Called after `DrawPostProcess` and before `DrawDebugMenu`.
+         * Called after `DrawScenePostProcess` and before `DrawDebugMenu`.
          */
         virtual void DrawViewport() = 0;
 

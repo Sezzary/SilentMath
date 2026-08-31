@@ -8,17 +8,17 @@ namespace Silent::Math
 {
     float FloorToStep(float x, float step)
     {
-        return floor(x / step) * step;
+        return floorf(x / step) * step;
     }
 
     float CeilToStep(float x, float step)
     {
-        return ceil(x / step) * step;
+        return ceilf(x / step) * step;
     }
 
     float RoundToStep(float x, float step)
     {
-        return round(x / step) * step;
+        return roundf(x / step) * step;
     }
 
     float Remap(float x, float fromMin, float fromMax, float toMin, float toMax)

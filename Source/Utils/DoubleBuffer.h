@@ -2,24 +2,19 @@
 
 namespace Silent::Utils
 {
-    /** @brief `std::vector`-based double buffer. */
+    /** @brief Double-buffered arbitrary data. */
     template <typename T>
     struct DoubleBuffer
     {
-        std::vector<T> Active = {};
-        std::vector<T> Render = {};
+        T Back  = {};
+        T Front = {};
 
-        void Swap(bool clearActive = true);
+        void Swap();
     };
 
     template <typename T>
-    void DoubleBuffer<T>::Swap(bool clearActive)
+    void DoubleBuffer<T>::Swap()
     {
-        std::swap(Render, Active);
-
-        if (clearActive)
-        {
-            Active.clear();
-        }
+        std::swap(Back, Front);
     }
 }

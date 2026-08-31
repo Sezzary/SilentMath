@@ -2,5 +2,6 @@
 
 namespace Silent::Game
 {
-    void Entry();
+    /** @brief Ticks the game state. */
+    void UpdateGame();
 }

@@ -3,10 +3,11 @@
 #include "Game/Bodyprog/Bodyprog.h"
 #include "Game/Bodyprog/Dms.h"
 
-//#include "Bodyprog/ItemScreens.h"
-#include "Bodyprog/Screen/ScreenDraw.h"
-#include "Bodyprog/Sound/SoundSystem.h"
-#include "Main/FsQueue.h"
+//#include "Game/Bodyprog/ItemScreens.h"
+#include "Game/Bodyprog/Screen/ScreenDraw.h"
+#include "Game/Bodyprog/Sound/SoundSystem.h"
+#include "Game/Bodyprog/Text/TextDebugDraw.h"
+#include "Game/Main/FsQueue.h"
 
 #include "Application.h"
 #include "Assets/AssetStreamer.h"
@@ -24,13 +25,12 @@ namespace Silent::Game
             Math_Vector3Zero(pos);
             Math_SVectorZero(rot);
 
-            Text_Debug_PositionSet(SCREEN_POSITION_X(15.75f), SCREEN_POSITION_Y(37.5f));
-
-    #if VERSION_EQUAL_OR_OLDER(PROTO_981216)
-            // Code seen in 98-12-16 build.
-            Text_Debug_Draw(charaName);
-            Text_Debug_Draw(" doesn't exist in dms.");
-    #endif
+            /*Text_Debug_PositionSet(50, 90);
+            #if VERSION_EQUAL_OR_OLDER(PROTO_981216)
+                // Code seen in 98-12-16 build.
+                Text_Debug_Draw(charaName);
+                Text_Debug_Draw(" doesn't exist in dms.");
+            #endif*/
         }
         else
         {
@@ -38,14 +38,15 @@ namespace Silent::Game
         }
     }
 
-    int Dms_CharacterGetIdxByName(std::string& charaName, const Asset& dmsAsset)
+    int Dms_CharacterGetIdxByName(const std::string& charaName, const Asset& dmsAsset)
     {
-        const auto& dmsData = dmsAsset.GetData<DmsAsset>();
+        const auto dmsData = dmsAsset.GetData<DmsAsset>();
 
         // Find matching name.
-        for (int i = 0; i < dmsData.CharacterEntryCount; i++)
+        for (int i = 0; i < dmsData->CharacterEntries.size(); i++)
         {
-            if (!strncmp(charaName.c_str(), dmsData.CharacterEntries[i].Name.c_str(), 4))
+            const auto& charaEntry = dmsData->CharacterEntries[i];
+            if (charaName == charaEntry.Name)
             {
                 return i;
             }
@@ -56,27 +57,27 @@ namespace Silent::Game
 
     void Dms_CharacterTransformGetByIdx(VECTOR3* pos, SVECTOR3* rot, int charaIdx, q19_12 time, const Asset& dmsAsset)
     {
-        const auto& dmsData = dmsAsset.GetData<DmsAsset>();
-
-        const auto& charaEntry = dmsData.CharacterEntries[charaIdx];
+        const auto  dmsData    = dmsAsset.GetData<DmsAsset>();
+        const auto& charaEntry = dmsData->CharacterEntries[charaIdx];
 
         // Get keyframe interpolation data.
         int    prevKeyframeIdx = 0;
         int    nextKeyframeIdx = 0;
         q19_12 alpha           = Q12(0.0f);
-        Dms_KeyframeInterpGet(prevKeyframeIdx, nextKeyframeIdx, alpha, time, charaEntry, dmsData);
+        Dms_KeyframeInterpGet(prevKeyframeIdx, nextKeyframeIdx, alpha, time, charaEntry, dmsAsset);
 
         // Interpolate frame.
         auto        activeCharaKeyframe = DmsKeyframeCharacter{};
-        const auto& charaKeyframes      = charaEntry.Keyframes.Character;
+        const auto& charaKeyframes      = charaEntry.Keyframes;
         Dms_CharacterKeyframeInterpolate(activeCharaKeyframe,
-                                         charaKeyframes[prevKeyframeIdx], charaKeyframes[nextKeyframeIdx],
+                                         std::get<DmsKeyframeCharacter>(charaKeyframes[prevKeyframeIdx]),
+                                         std::get<DmsKeyframeCharacter>(charaKeyframes[nextKeyframeIdx]),
                                          alpha);
 
         // Set position.
-        pos->vx = Q8_TO_Q12(activeCharaKeyframe.Position.x + dmsData.Origin.x);
-        pos->vy = Q8_TO_Q12(activeCharaKeyframe.Position.y + dmsData.Origin.y);
-        pos->vz = Q8_TO_Q12(activeCharaKeyframe.Position.z + dmsData.Origin.z);
+        pos->vx = Q8_TO_Q12(activeCharaKeyframe.Position.x + dmsData->Origin.x);
+        pos->vy = Q8_TO_Q12(activeCharaKeyframe.Position.y + dmsData->Origin.y);
+        pos->vz = Q8_TO_Q12(activeCharaKeyframe.Position.z + dmsData->Origin.z);
 
         // Set rotation.
         rot->vx = activeCharaKeyframe.Rotation.x;
@@ -99,53 +100,53 @@ namespace Silent::Game
         result.Rotation.z = Dms_AngleLerp(prevKeyframe.Rotation.z, nextKeyframe.Rotation.z, alpha);
     }
 
-    s32 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
-                            const Asset* dmsAsset)
+    q19_12 Dms_CameraTargetsGet(VECTOR3* posTarget, VECTOR3* lookAtTarget, q3_12* unusedAngle, q19_12 time,
+                                const Asset& dmsAsset)
     {
-        s32                 prevKeyframeIdx;
-        s32                 nextKeyframeIdx;
-        s32                 alpha;
-        s32                 camProjVal;
+        const auto  dmsData  = dmsAsset.GetData<DmsAsset>();
+        const auto& camEntry = dmsData->CameraEntry;
 
-        const auto& dmsData = asset.GetData<DmsAsset>();
-
-        const s_DmsEntry& camEntry = dmsHdr.CameraEntry;
-
+        // Get keyframe interpolation.
+        int    prevKeyframeIdx = 0;
+        int    nextKeyframeIdx = 0;
+        q19_12 alpha           = Q12(0.0f);
+        Dms_KeyframeInterpGet(prevKeyframeIdx, nextKeyframeIdx, alpha, time, camEntry, dmsAsset);
+        
         // Interpolate current keyframe.
-        auto activeCamKeyframe = s_DmsKeyframeCamera{};
-        Dms_KeyframeInterpGet(&prevKeyframeIdx, &nextKeyframeIdx, &alpha, time, camEntry, dmsHdr);
-        camProjVal = Dms_CameraKeyframeLerp(&activeCamKeyframe, camEntry.Keyframes.Camera[prevKeyframeIdx],
-                                            camEntry.Keyframes.Camera[nextKeyframeIdx],
-                                            alpha);
+        auto   activeCamKeyframe = DmsKeyframeCamera{};
+        q19_12 camProjDist       = Dms_CameraKeyframeLerp(activeCamKeyframe,
+                                                          std::get<DmsKeyframeCamera>(camEntry.Keyframes[prevKeyframeIdx]),
+                                                          std::get<DmsKeyframeCamera>(camEntry.Keyframes[nextKeyframeIdx]),
+                                                          alpha);
 
         // Set position target.
-        posTarget->vx = Q8_TO_Q12(activeCamKeyframe.PositionTarget.x + dmsData.Origin.x);
-        posTarget->vy = Q8_TO_Q12(activeCamKeyframe.PositionTarget.y + dmsData.Origin.y);
-        posTarget->vz = Q8_TO_Q12(activeCamKeyframe.PositionTarget.z + dmsData.Origin.z);
+        posTarget->vx = Q8_TO_Q12(activeCamKeyframe.PositionTarget.x + dmsData->Origin.x);
+        posTarget->vy = Q8_TO_Q12(activeCamKeyframe.PositionTarget.y + dmsData->Origin.y);
+        posTarget->vz = Q8_TO_Q12(activeCamKeyframe.PositionTarget.z + dmsData->Origin.z);
 
         // Set look-at target.
-        lookAtTarget->vx = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.x + dmsData.Origin.x);
-        lookAtTarget->vy = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.y + dmsData.Origin.y);
-        lookAtTarget->vz = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.z + dmsData.Origin.z);
+        lookAtTarget->vx = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.x + dmsData->Origin.x);
+        lookAtTarget->vy = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.y + dmsData->Origin.y);
+        lookAtTarget->vz = Q8_TO_Q12(activeCamKeyframe.LookAtTarget.z + dmsData->Origin.z);
 
-        // `camProjVal` comes from `curFrame.projectionDistance`, return value is passed to `vcChangeProjectionValue`.
+        // `camProjDist` comes from `curFrame.projectionDistance`, return value is passed to `vcChangeProjectionValue`.
         // Might be related to FOV?
-        return camProjVal;
+        return camProjDist;
     }
 
-    s32 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
-                               const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
-                               q19_12 alpha)
+    q19_12 Dms_CameraKeyframeLerp(DmsKeyframeCamera& result,
+                                  const DmsKeyframeCamera& prevKeyframe, const DmsKeyframeCamera& nextKeyframe,
+                                  q19_12 alpha)
     {
         // Set position target.
-        result.PositionTarget.vx = prevKeyframe.PositionTarget.vx + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.vx - prevKeyframe.PositionTarget.vx, alpha);
-        result.PositionTarget.vy = prevKeyframe.PositionTarget.vy + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.vy - prevKeyframe.PositionTarget.vy, alpha);
-        result.PositionTarget.vz = prevKeyframe.PositionTarget.vz + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.vz - prevKeyframe.PositionTarget.vz, alpha);
+        result.PositionTarget.x = prevKeyframe.PositionTarget.x + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.x - prevKeyframe.PositionTarget.x, alpha);
+        result.PositionTarget.y = prevKeyframe.PositionTarget.y + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.y - prevKeyframe.PositionTarget.y, alpha);
+        result.PositionTarget.z = prevKeyframe.PositionTarget.z + Q12_MULT_PRECISE(nextKeyframe.PositionTarget.z - prevKeyframe.PositionTarget.z, alpha);
 
         // Set look-at target.
-        result.LookAtTarget.vx = prevKeyframe.LookAtTarget.vx + Q12_MULT_PRECISE(nextKeyframe.LookAtTarget.vx - prevKeyframe.LookAtTarget.vx, alpha);
-        result.LookAtTarget.vy = prevKeyframe.LookAtTarget.vy + Q12_MULT_PRECISE(nextKeyframe.LookAtTarget.vy - prevKeyframe.LookAtTarget.vy, alpha);
-        result.LookAtTarget.vz = prevKeyframe.LookAtTarget.vz + Q12_MULT_PRECISE(nextKeyframe.LookAtTarget.vz - prevKeyframe.LookAtTarget.vz, alpha);
+        result.LookAtTarget.x = prevKeyframe.LookAtTarget.x + Q12_MULT_PRECISE(nextKeyframe.LookAtTarget.x - prevKeyframe.LookAtTarget.x, alpha);
+        result.LookAtTarget.y = prevKeyframe.LookAtTarget.y + Q12_MULT_PRECISE(nextKeyframe.LookAtTarget.y - prevKeyframe.LookAtTarget.y, alpha);
+        result.LookAtTarget.z = prevKeyframe.LookAtTarget.z + Q12_MULT_PRECISE(nextKeyframe.LookAtTarget.z - prevKeyframe.LookAtTarget.z, alpha);
 
         // Set projection distance.
         result.ProjectionDistance = prevKeyframe.ProjectionDistance + Q12_MULT_PRECISE(nextKeyframe.ProjectionDistance - prevKeyframe.ProjectionDistance, alpha);
@@ -154,27 +155,27 @@ namespace Silent::Game
     }
 
     void Dms_KeyframeInterpGet(int& prevKeyframeIdx, int& nextKeyframeIdx, q19_12& alpha, q19_12 time,
-                               const DmsEntry camEntry, const Asset& asset)
+                               const DmsEntry& camEntry, const Asset& dmsAsset)
     {
         int prevFrameIdx = 0;
         int nextFrameIdx = 0;
 
         // Define playback frames and set interpolation alpha.
-        switch (Dms_SegmentStateGet(time, asset))
+        switch (Dms_SegmentStateGet(time, dmsAsset))
         {
-            case DmsSegmentState_Interpolating:
+            case DmsSegmentState::Interpolating:
                 prevFrameIdx = FP_FROM(time, Q12_SHIFT);
                 nextFrameIdx = prevFrameIdx + 1;
                 alpha        = Q12_FRACT(time);
                 break;
 
-            case DmsSegmentState_SingleFrame:
+            case DmsSegmentState::SingleFrame:
                 prevFrameIdx = FP_FROM(time, Q12_SHIFT);
                 nextFrameIdx = prevFrameIdx;
                 alpha        = Q12(0.0f);
                 break;
 
-            case DmsSegmentState_Ending:
+            case DmsSegmentState::Ending:
                 prevFrameIdx = FP_FROM(time, Q12_SHIFT) - 1;
                 nextFrameIdx = prevFrameIdx + 1;
                 alpha        = Q12_FRACT(time) + Q12(1.0f);
@@ -186,14 +187,14 @@ namespace Silent::Game
         nextKeyframeIdx = Dms_KeyframeIdxGet(nextFrameIdx, camEntry);
     }
 
-    e_DmsSegmentState Dms_SegmentStateGet(q19_12 time, const Asset& dmsAsset)
+    DmsSegmentState Dms_SegmentStateGet(q19_12 time, const Asset& dmsAsset)
     {
-        const auto& dmsData = dmsAsset.GetData<DmsAsset>();
+        const auto dmsData = dmsAsset.GetData<DmsAsset>();
 
         int frameIdx = FP_FROM(time, Q12_SHIFT);
 
         // Run through segments.
-        for (const auto& curSegment: dmsData.Segments)
+        for (const auto& curSegment: dmsData->Segments)
         {
             // Check if at end playback frame.
             if (frameIdx != ((curSegment.StartFrameIdx + curSegment.FrameCount) - 1))
@@ -203,13 +204,13 @@ namespace Silent::Game
 
             if (curSegment.FrameCount > 1)
             {
-                return DmsSegmentState_Ending;
+                return DmsSegmentState::Ending;
             }
 
-            return DmsSegmentState_SingleFrame;
+            return DmsSegmentState::SingleFrame;
         }
 
-        return DmsSegmentState_Interpolating;
+        return DmsSegmentState::Interpolating;
     }
 
     int Dms_KeyframeIdxGet(int frameIdx, const DmsEntry& entry)
@@ -217,7 +218,7 @@ namespace Silent::Game
         int keyframeIdx = frameIdx;
 
         // Run through ranges to freeze or offset keyframe.
-        for (const auto& curHoldRange : entry-.HoldRanges)
+        for (const auto& curHoldRange : entry.HoldRanges)
         {
             // Check if target playback frame falls before hold range.
             if (frameIdx < curHoldRange.StartFrameIdx)
@@ -237,12 +238,12 @@ namespace Silent::Game
         }
 
         // Clamp keyframe index.
-        int clampedKeyframeIdx = CLAMP(keyframeIdx, 0, entry.KeyframeCount - 1);
+        int clampedKeyframeIdx = CLAMP(keyframeIdx, 0, entry.Keyframes.size() - 1);
         return clampedKeyframeIdx;
     }
 
     q19_12 Dms_AngleLerp(q3_12 angleFrom, q3_12 angleTo, q19_12 alpha)
     {
-        return Q12_ANGLE_NORM_S((q19_12)(Q12_MULT_PRECISE(Q12_ANGLE_NORM_S(angleTo - angleFrom), alpha)) + angleFrom);
+        return Q12_ANGLE_NORM_S((q19_12)Q12_MULT_PRECISE(Q12_ANGLE_NORM_S(angleTo - angleFrom), alpha) + angleFrom);
     }
 }

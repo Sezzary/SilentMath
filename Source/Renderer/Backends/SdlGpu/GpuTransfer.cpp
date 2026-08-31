@@ -61,22 +61,22 @@ namespace Silent::Renderer::SdlGpu
 
         // Release/upload textures.
         auto& texs = GetTextures();
-        for (const auto& name : _doubleBuffer.Render.TextureReleaseQueue)
+        for (const auto& name : _scene.Frame.Front.TextureReleaseQueue)
         {
             texs.Release(name);
         }
-        for (const auto& assetName : _doubleBuffer.Render.TextureUploadQueue)
+        for (const auto& assetName : _scene.Frame.Front.TextureUploadQueue)
         {
             texs.Upload(copyPass, assetName);
         }
 
         // Release/upload meshes.
         auto& meshes = GetMeshes();
-        for (const auto& name : _doubleBuffer.Render.MeshReleaseQueue)
+        for (const auto& name : _scene.Frame.Front.MeshReleaseQueue)
         {
             meshes.Release(name);
         }
-        for (const auto& assetName : _doubleBuffer.Render.MeshUploadQueue)
+        for (const auto& assetName : _scene.Frame.Front.MeshUploadQueue)
         {
             meshes.Upload(copyPass, assetName);
         }
@@ -133,18 +133,18 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
+        bufferVerts.reserve(_scene.Frame.Front.ImmediatePrimitives2d.size() * QUAD_VERTEX_COUNT);
+        bufferIdxs.reserve(_scene.Frame.Front.ImmediatePrimitives2d.size() * QUAD_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _doubleBuffer.Render.ImmediatePrimitives2d)
+        for (const auto& prim : _scene.Frame.Front.ImmediatePrimitives2d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
             {
-                float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_MAX, 0.0f, 1.0f);
+                float depthZ = std::clamp((float)prim.Depth / (float)DEPTH_2D_MAX, 0.0f, 1.0f);
                 auto  pos    = Vector3(prim.Vertices[i].Position.x, prim.Vertices[i].Position.y, depthZ);
                 bufferVerts.push_back(BufferVertex2d
                 {
@@ -217,13 +217,13 @@ namespace Silent::Renderer::SdlGpu
         auto bufferIdxs  = std::vector<uint16>{};
 
         // Reserve memory.
-        bufferVerts.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
-        bufferIdxs.reserve(_doubleBuffer.Render.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
+        bufferVerts.reserve(_scene.Frame.Front.ImmediatePrimitives3d.size() * TRI_VERTEX_COUNT);
+        bufferIdxs.reserve(_scene.Frame.Front.ImmediatePrimitives3d.size() * TRI_IDX_COUNT);
 
         // Create batched GPU buffer data.
         int vertOffset = 0;
         int idxOffset  = 0;
-        for (const auto& prim : _doubleBuffer.Render.ImmediatePrimitives3d)
+        for (const auto& prim : _scene.Frame.Front.ImmediatePrimitives3d)
         {
             // Add vertices.
             for (int i = 0; i < prim.Vertices.size(); i++)
@@ -311,26 +311,32 @@ namespace Silent::Renderer::SdlGpu
     {
         constexpr auto BUFFER_IDXS = std::array<uint16, QUAD_IDX_COUNT>{ 0, 2, 1, 1, 2, 3 };
 
-        // @todo Compute aspect-correct vertex positions.
+        auto  windowRes      = _scene.Frame.Back.SwapchainResolution.ToVector2();
+        float windowAspect   = windowRes.x / windowRes.y;
+        auto  viewportRes    = GetViewportResolution().ToVector2();
+        float viewportAspect = GetViewportAspectRatio();
+
+        auto scale = Vector2::One;//viewportRes / windowRes;
+
         auto bufferVerts = std::vector<BufferVertex2d>
         {
             {
-                .Position = Vector3(-1.0f, 1.0f, 0.0f),
+                .Position = Vector3(-scale.x, scale.y, 0.0f),
                 .Uv       = Vector2(0.0f, 0.0f),
                 .Col      = Color::White
             },
             {
-                .Position = Vector3(1.0f, 1.0f, 0.0f),
+                .Position = Vector3(scale.x, scale.y, 0.0f),
                 .Uv       = Vector2(1.0f, 0.0f),
                 .Col      = Color::White
             },
             {
-                .Position = Vector3(-1.0f, -1.0f, 0.0f),
+                .Position = Vector3(-scale.x, -scale.y, 0.0f),
                 .Uv       = Vector2(0.0f, 1.0f),
                 .Col      = Color::White
             },
             {
-                .Position = Vector3(1.0f, -1.0f, 0.0f),
+                .Position = Vector3(scale.x, -scale.y, 0.0f),
                 .Uv       = Vector2(1.0f, 1.0f),
                 .Col      = Color::White
             }

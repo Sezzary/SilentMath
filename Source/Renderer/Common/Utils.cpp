@@ -64,6 +64,23 @@ namespace Silent::Renderer
         return Vector2::Zero;
     }
 
+    Vector2 GetGridAlignedScreenPercent(const Vector2& pos, float virtualHeight)
+    {
+        // Compute grid size.
+        auto  res      = g_App.GetWindowResolution(); // @todo NOT thread safe!! Cannot use this function in renderer.
+        float rawScale = res.y / virtualHeight;
+        float scale    = std::max(1.0f, floorf(rawScale));
+        auto  gridSize = Vector2(res.x / rawScale, virtualHeight);
+
+        // Compute snapped pixel position.
+        auto uv           = pos / 100.0f;
+        auto snappedPixel = Vector2(floorf(uv.x * gridSize.x), 
+                                    floorf(uv.y * gridSize.y));
+
+        // Compute snapped screen position in percent.
+        return (snappedPixel / gridSize) * SCREEN_SPACE_RES;
+    }
+
     Vector2 GetScreenAspectCorrection(ScaleMode scaleMode)
     {
         const auto& renderer = g_App.GetRenderer();
@@ -73,63 +90,25 @@ namespace Silent::Renderer
         auto aspectCorrection = Vector2::One;
         switch(scaleMode)
         {
-            case ScaleMode::ShortEdge:
-            {
-                if (aspect >= 1.0f)
-                {
-                    aspectCorrection.x = 1.0f / aspect;
-                }
-                else
-                {
-                    aspectCorrection.y = aspect;
-                }
-                break;
-            }
-            case ScaleMode::LongEdge:
-            {
-                if (aspect >= 1.0f)
-                {
-                    aspectCorrection.y = aspect;
-                }
-                else
-                {
-                    aspectCorrection.x = 1.0f / aspect;
-                }
-                break;
-            }
-            case ScaleMode::HorizontalEdge:
+            case ScaleMode::VerticalEdge:
+            case ScaleMode::Fit:
             {
                 aspectCorrection.x = 1.0f / aspect;
                 break;
             }
-            case ScaleMode::VerticalEdge:
+            case ScaleMode::HorizontalEdge:
+            case ScaleMode::Fill:
             {
                 aspectCorrection.y = aspect;
                 break;
             }
             default:
-            case ScaleMode::Stretch:
             {
                 break;
             }
         }
-        
+
         return aspectCorrection;
-    }
-
-    Vector2 GetAspectCorrectScreenPosition(const Vector2 pos, ScaleMode scaleMode)
-    {
-        if (scaleMode == ScaleMode::Stretch)
-        {
-            return pos;
-        }
-
-        const auto& renderer = g_App.GetRenderer();
-
-        float aspect = renderer.GetViewportAspectRatio();
-        
-        // @todo Needs another adjustment.
-        return pos * GetScreenAspectCorrection(scaleMode);
     }
 
     Vector2 ConvertRetroScreenPixelsToPercent(const Vector2i& pos)
